@@ -2,9 +2,9 @@
  *
  *  $RCSfile: ww8graf.cxx,v $
  *
- *  $Revision: 1.129 $
+ *  $Revision: 1.130 $
  *
- *  last change: $Author: vg $ $Date: 2005-02-16 17:02:17 $
+ *  last change: $Author: vg $ $Date: 2005-03-08 13:55:08 $
  *
  *  The Contents of this file are made available subject to the terms of
  *  either of the following licenses
@@ -2409,10 +2409,6 @@ RndStdIds SwWW8ImplReader::ProcessEscherAlign(SvxMSDffImportRec* pRecord,
     UINT32 nXRelTo = nCntRelTo > pRecord->nXRelTo ? pRecord->nXRelTo : 1;
     UINT32 nYRelTo = nCntRelTo > pRecord->nYRelTo ? pRecord->nYRelTo : 1;
 
-    //Drawing layer stuff that is not going to be replaced as a fly,
-    //ideally we will be able to remove this special check.
-    bool bDrawingHacks = (!bOrgObjectWasReplace && !pRecord->bReplaceByFly);
-
     RndStdIds eAnchor = FLY_AUTO_CNTNT;
     SwFmtAnchor aAnchor( eAnchor );
     aAnchor.SetAnchor( pPaM->GetPoint() );
@@ -2507,8 +2503,9 @@ RndStdIds SwWW8ImplReader::ProcessEscherAlign(SvxMSDffImportRec* pRecord,
         }
         // <--
 
-        //#109311# Miserable miserable hack.
-        if (!bDrawingHacks)
+        // --> OD 2005-02-07 #i24255# - position of floating screen objects in
+        // R2L layout are given in L2R layout, thus convert them of all
+        // floating screen objects, which are imported.
         {
             //#109311# Miserable miserable hack.
             long nWidth = (pFSPA->nXaRight - pFSPA->nXaLeft);
@@ -2518,6 +2515,7 @@ RndStdIds SwWW8ImplReader::ProcessEscherAlign(SvxMSDffImportRec* pRecord,
                 pFSPA->nXaRight = pFSPA->nXaLeft + nWidth;
             }
         }
+        // <--
 
         // --> OD 2005-01-20 #118546# - if the object is anchored inside
         // a table cell, is horizontal aligned at frame|character and
@@ -2798,8 +2796,8 @@ SwFrmFmt* SwWW8ImplReader::Read_GrafLayer( long nGrafAnchorCp )
     // If we are to be "below text" then we are not to be opaque
     // #i14045# MM If we are in a header or footer then make the object transparent
     // Not exactly like word but close enough for now
-    if ( (pF->bBelowText || pRecord->bDrawHell) || 
-         ( ( bIsHeader || bIsFooter ) && pF->nwr == 3 ) ) 
+    if ( (pF->bBelowText || pRecord->bDrawHell) ||
+         ( ( bIsHeader || bIsFooter ) && pF->nwr == 3 ) )
         aFlySet.Put(SvxOpaqueItem(RES_OPAQUE,false));
 
     SwFrmFmt* pRetFrmFmt = 0;
@@ -2899,6 +2897,14 @@ SwFrmFmt* SwWW8ImplReader::Read_GrafLayer( long nGrafAnchorCp )
         }
     }
 
+    // --> OD 2005-02-07 #i24255# - position of floating screen object is
+    // given in the layout direction of its anchor.
+    if ( pRetFrmFmt )
+    {
+        pRetFrmFmt->SetPositionLayoutDir(
+            com::sun::star::text::PositionLayoutDir::PositionInLayoutDirOfAnchor );
+    }
+    // <--
     if (!IsInlineEscherHack())
         MapWrapIntoFlyFmt(pRecord, pRetFrmFmt);
     return AddAutoAnchor(pRetFrmFmt);
