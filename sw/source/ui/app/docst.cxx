@@ -2,9 +2,9 @@
  *
  *  $RCSfile: docst.cxx,v $
  *
- *  $Revision: 1.20 $
+ *  $Revision: 1.21 $
  *
- *  last change: $Author: hr $ $Date: 2004-09-08 15:02:16 $
+ *  last change: $Author: rt $ $Date: 2004-09-20 09:54:03 $
  *
  *  The Contents of this file are made available subject to the terms of
  *  either of the following licenses
@@ -59,8 +59,17 @@
  *
  ************************************************************************/
 
+#ifndef  _COM_SUN_STAR_STYLE_XSTYLEFAMILIESSUPPLIER_HPP_
+#include <com/sun/star/style/XStyleFamiliesSupplier.hpp>
+#endif
 
-#pragma hdrstop
+#ifndef _COM_SUN_STAR_BEANS_XPROPERTYSET_HPP_
+#include <com/sun/star/beans/XPropertySet.hpp>
+#endif
+
+#ifndef _COM_SUN_STAR_CONTAINER_XNAMEACCESS_HPP_
+#include <com/sun/star/container/XNameAccess.hpp>
+#endif
 
 #include <hintids.hxx>
 
@@ -139,8 +148,8 @@
 #include "edtwin.hxx"
 
 #include "app.hrc"
-#include <fmtui.hrc> //CHINA001 
-#include "swabstdlg.hxx" //CHINA001 
+#include <fmtui.hrc> //CHINA001
+#include "swabstdlg.hxx" //CHINA001
 /*--------------------------------------------------------------------
     Beschreibung:
  --------------------------------------------------------------------*/
@@ -362,7 +371,35 @@ void SwDocShell::ExecStyleSheet( SfxRequest& rReq )
             {
                 GetView()->GetViewFrame()->GetDispatcher()->Execute(SID_STYLE_DESIGNER, FALSE);
                 break;
-            }	// Fall through
+            }
+            else
+            {
+                // convert internal StyleName to DisplayName (slot implementation uses the latter)
+                SFX_REQUEST_ARG( rReq, pNameItem, SfxStringItem, SID_APPLY_STYLE, sal_False );
+                SFX_REQUEST_ARG( rReq, pFamilyItem, SfxStringItem, SID_STYLE_FAMILYNAME, sal_False );
+                if ( pFamilyItem && pNameItem )
+                {
+                    com::sun::star::uno::Reference< com::sun::star::style::XStyleFamiliesSupplier > xModel(GetModel(), com::sun::star::uno::UNO_QUERY);
+                    try
+                    {
+                        com::sun::star::uno::Reference< com::sun::star::container::XNameAccess > xStyles;
+                        com::sun::star::uno::Reference< com::sun::star::container::XNameAccess > xCont = xModel->getStyleFamilies();
+                        xCont->getByName(pFamilyItem->GetValue()) >>= xStyles;
+                        com::sun::star::uno::Reference< com::sun::star::beans::XPropertySet > xInfo;
+                        xStyles->getByName( pNameItem->GetValue() ) >>= xInfo;
+                        ::rtl::OUString aUIName;
+                        xInfo->getPropertyValue( ::rtl::OUString::createFromAscii("DisplayName") ) >>= aUIName;
+                        if ( aUIName.getLength() )
+                            rReq.AppendItem( SfxStringItem( SID_STYLE_APPLY, aUIName ) );
+                    }
+                    catch( com::sun::star::uno::Exception& )
+                    {
+                    }
+                }
+            }
+
+            // intentionally no break
+
         case SID_STYLE_EDIT:
         case SID_STYLE_DELETE:
         case SID_STYLE_WATERCAN:
@@ -417,6 +454,25 @@ void SwDocShell::ExecStyleSheet( SfxRequest& rReq )
                 if( SFX_ITEM_SET == pArgs->GetItemState(SID_STYLE_FAMILY,
                     FALSE, &pItem ))
                     nFamily = ((const SfxUInt16Item*)pItem)->GetValue();
+
+                if( SFX_ITEM_SET == pArgs->GetItemState(SID_STYLE_FAMILYNAME, FALSE, &pItem ))
+                {
+                    String aFamily = ((const SfxStringItem*)pItem)->GetValue();
+                    if(aFamily.CompareToAscii("CharacterStyles") == COMPARE_EQUAL)
+                        nFamily = SFX_STYLE_FAMILY_CHAR;
+                    else
+                    if(aFamily.CompareToAscii("ParagraphStyles") == COMPARE_EQUAL)
+                        nFamily = SFX_STYLE_FAMILY_PARA;
+                    else
+                    if(aFamily.CompareToAscii("PageStyles") == COMPARE_EQUAL)
+                        nFamily = SFX_STYLE_FAMILY_PAGE;
+                    else
+                    if(aFamily.CompareToAscii("FrameStyles") == COMPARE_EQUAL)
+                        nFamily = SFX_STYLE_FAMILY_FRAME;
+                    else
+                    if(aFamily.CompareToAscii("NumberingStyles") == COMPARE_EQUAL)
+                        nFamily = SFX_STYLE_FAMILY_PSEUDO;
+                }
 
                 if( SFX_ITEM_SET == pArgs->GetItemState(SID_STYLE_MASK,
                     FALSE, &pItem ))
@@ -1112,7 +1168,7 @@ USHORT SwDocShell::MakeByExample( const String &rName, USHORT nFamily,
 
                 SfxItemSet aSet(GetPool(), aFrmFmtSetRange );
                 pWrtShell->GetFlyFrmAttr( aSet );
-                
+
                 SwFrmFmt* pFFmt = pWrtShell->GetCurFrmFmt();
                 pFrm->SetDerivedFrom( pFFmt );
 
@@ -1201,11 +1257,11 @@ void  SwDocShell::LoadStyles( SfxObjectShell& rSource )
 {
     _LoadStyles(rSource, FALSE);
 }
-/* -----------------16.05.2003 15:45-----------------            
+/* -----------------16.05.2003 15:45-----------------
     bPreserveCurrentDocument determines whether SetFixFields() is called
-    This call modifies the source document. This mustn't happen when the source 
+    This call modifies the source document. This mustn't happen when the source
     is a document the user is working on.
-    Calls of ::LoadStyles() normally use files especially loaded for the purpose 
+    Calls of ::LoadStyles() normally use files especially loaded for the purpose
     of importing styles.
  --------------------------------------------------*/
 void SwDocShell::_LoadStyles( SfxObjectShell& rSource, BOOL bPreserveCurrentDocument )
