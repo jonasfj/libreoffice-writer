@@ -2,9 +2,9 @@
  *
  *  $RCSfile: unins.cxx,v $
  *
- *  $Revision: 1.15 $
+ *  $Revision: 1.16 $
  *
- *  last change: $Author: hr $ $Date: 2004-11-09 13:50:28 $
+ *  last change: $Author: rt $ $Date: 2004-11-26 16:27:10 $
  *
  *  The Contents of this file are made available subject to the terms of
  *  either of the following licenses
@@ -193,14 +193,14 @@ String * SwUndoInsert::GetTxtFromDoc() const
     SwNodeIndex aNd( pDoc->GetNodes(), nNode);
     SwCntntNode* pCNd = aNd.GetNode().GetCntntNode();
     SwPaM aPaM( *pCNd, nCntnt );
-    
+
     aPaM.SetMark();
-    
+
     if( pCNd->IsTxtNode() )
     {
-        pResult = new String( ((SwTxtNode*)pCNd)->GetTxt().Copy(nCntnt-nLen, 
+        pResult = new String( ((SwTxtNode*)pCNd)->GetTxt().Copy(nCntnt-nLen,
                                                              nLen ) );
-        
+
     }
 
     return pResult;
@@ -554,9 +554,12 @@ void SwUndoInsert::Repeat( SwUndoIter& rUndoIter )
             // TODO/MBA: seems that here a physical copy is done - not as in drawing layer! Testing!
             comphelper::EmbeddedObjectContainer aCnt;
             ::rtl::OUString aName;
-            com::sun::star::uno::Reference < com::sun::star::embed::XEmbeddedObject > aNew =
-                aCnt.CopyEmbeddedObject( rSwOLE.GetOleRef(), aName );
-            rDoc.Insert( *rUndoIter.pAktPam, aNew );
+            if ( aCnt.CopyEmbeddedObject( rSwOLE.GetOleRef(), aName ) )
+            {
+                com::sun::star::uno::Reference < com::sun::star::embed::XEmbeddedObject > aNew = aCnt.GetEmbeddedObject( aName );
+                rDoc.Insert( *rUndoIter.pAktPam, aNew );
+            }
+
             break;
         }
     }
@@ -577,7 +580,7 @@ SwRewriter SwUndoInsert::GetRewriter() const
     if (pStr)
     {
         String aString = ShortenString(DenoteSpecialCharacters(*pStr),
-                                       nUndoStringLength, 
+                                       nUndoStringLength,
                                        String(SW_RES(STR_LDOTS)));
 
         aResult.AddRule(UNDO_ARG1, aString);
@@ -666,7 +669,7 @@ SwRewriter SwUndoReplace::GetRewriter() const
     {
         {
             String aTmpStr;
-            
+
             aTmpStr += String(SW_RES(STR_START_QUOTE));
             // #i33488 #
             aTmpStr += ShortenString(aArr[0]->GetOld(), nUndoStringLength,
@@ -1148,7 +1151,7 @@ SwRewriter SwUndoInsertLabel::GetRewriter() const
     String aTmpStr;
 
     aTmpStr += String(SW_RES(STR_START_QUOTE));
-    aTmpStr += ShortenString(sText, nUndoStringLength, 
+    aTmpStr += ShortenString(sText, nUndoStringLength,
                              String(SW_RES(STR_LDOTS)));
     aTmpStr += String(SW_RES(STR_END_QUOTE));
 
