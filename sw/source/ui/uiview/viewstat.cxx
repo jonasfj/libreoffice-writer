@@ -2,9 +2,9 @@
  *
  *  $RCSfile: viewstat.cxx,v $
  *
- *  $Revision: 1.20 $
+ *  $Revision: 1.21 $
  *
- *  last change: $Author: hjs $ $Date: 2003-09-25 10:51:39 $
+ *  last change: $Author: hr $ $Date: 2004-02-03 16:59:58 $
  *
  *  The Contents of this file are made available subject to the terms of
  *  either of the following licenses
@@ -112,15 +112,14 @@
 #ifndef _SFXMSGPOOL_HXX
 #include <sfx2/msgpool.hxx>
 #endif
-#ifndef _OFF_APP_HXX //autogen
-#include <offmgr/app.hxx>
-#endif
 #ifndef _SWMODULE_HXX
 #include <swmodule.hxx>
 #endif
 #ifndef _TOX_HXX
 #include <tox.hxx>
 #endif
+
+#include <sfx2/app.hxx>
 
 #ifndef _REDLENUM_HXX
 #include <redlenum.hxx>
@@ -194,7 +193,7 @@ void SwView::GetState(SfxItemSet &rSet)
                         nSelectionType & SwWrtShell::SEL_TBL ||
                         nSelectionType & SwWrtShell::SEL_DRW) )
                     rSet.DisableItem(nWhich);
-                else if((pWrtShell->IsObjSelected()||pWrtShell->IsFrmSelected()) && 
+                else if((pWrtShell->IsObjSelected()||pWrtShell->IsFrmSelected()) &&
                         (pWrtShell->IsSelObjProtected( FLYPROTECT_PARENT)||
                             pWrtShell->IsSelObjProtected( FLYPROTECT_CONTENT )))
                     rSet.DisableItem(nWhich);
@@ -494,7 +493,7 @@ void SwView::GetDrawState(SfxItemSet &rSet)
                 rSet.Put(aEnum);
             }
             break;
-        
+
         case SID_SHOW_HIDDEN:
         case SID_SHOW_FORMS:
             rSet.DisableItem( nWhich );
