@@ -2,9 +2,9 @@
  *
  *  $RCSfile: unomailmerge.hxx,v $
  *
- *  $Revision: 1.4 $
+ *  $Revision: 1.5 $
  *
- *  last change: $Author: rt $ $Date: 2005-01-28 15:26:22 $
+ *  last change: $Author: vg $ $Date: 2005-03-08 13:42:15 $
  *
  *  The Contents of this file are made available subject to the terms of
  *  either of the following licenses
@@ -99,12 +99,12 @@
 #include <sfx2/objsh.hxx>   // SfxObjectShellRef
 #endif
 
-namespace com { namespace sun { namespace star { 
+namespace com { namespace sun { namespace star {
 
     namespace sdbc {
         class XResultSet;
         class XConnection;
-    }    
+    }
     namespace frame {
         class XModel;
     }
@@ -145,7 +145,7 @@ typedef cppu::OMultiTypeInterfaceContainerHelperVar
 
 ////////////////////////////////////////////////////////////
 
-class SwXMailMerge : 
+class SwXMailMerge :
     public cppu::WeakImplHelper5
     <
         com::sun::star::task::XJob,
@@ -182,30 +182,32 @@ class SwXMailMerge :
     sal_Bool        bEscapeProcessing;
     sal_Bool        bSinglePrintJobs;
     sal_Bool        bFileNameFromColumn;
-    
-    
-    ::rtl::OUString                                         sInServerPassword;           
-    ::rtl::OUString                                         sOutServerPassword; 
-    ::rtl::OUString                                         sSubject;           
-    ::rtl::OUString                                         sAddressFromColumn; 
-    ::rtl::OUString                                         sMailBody;          
-    ::rtl::OUString                                         sAttachmentName;    
-    ::rtl::OUString                                         sAttachmentFilter;  
-    com::sun::star::uno::Sequence< ::rtl::OUString >        aCopiesTo;          
-    com::sun::star::uno::Sequence< ::rtl::OUString >        aBlindCopiesTo;     
-    sal_Bool                                                bSendAsHTML;        
-    sal_Bool                                                bSendAsAttachment;      
-                                          
-    com::sun::star::uno::Sequence< ::com::sun::star::beans::PropertyValue > aPrintSettings;     
-                                          
-    sal_Bool                                                bSaveAsSingleFile;  
-    ::rtl::OUString                                         sSaveFilter;        
-        
-    
+
+
+    ::rtl::OUString                                         sInServerPassword;
+    ::rtl::OUString                                         sOutServerPassword;
+    ::rtl::OUString                                         sSubject;
+    ::rtl::OUString                                         sAddressFromColumn;
+    ::rtl::OUString                                         sMailBody;
+    ::rtl::OUString                                         sAttachmentName;
+    ::rtl::OUString                                         sAttachmentFilter;
+    com::sun::star::uno::Sequence< ::rtl::OUString >        aCopiesTo;
+    com::sun::star::uno::Sequence< ::rtl::OUString >        aBlindCopiesTo;
+    sal_Bool                                                bSendAsHTML;
+    sal_Bool                                                bSendAsAttachment;
+
+    com::sun::star::uno::Sequence< ::com::sun::star::beans::PropertyValue > aPrintSettings;
+
+    sal_Bool                                                bSaveAsSingleFile;
+    ::rtl::OUString                                         sSaveFilter;
+    ::rtl::OUString                                         sSaveFilterOptions;
+    com::sun::star::uno::Sequence< ::com::sun::star::beans::PropertyValue > aSaveFilterData;
+
+
 
     sal_Bool        bDisposing;
 
-    
+
     void    launchEvent( const com::sun::star::beans::PropertyChangeEvent &rEvt ) const;
 
     // disallow use of copy-constructor and assignment-operator for now
@@ -215,7 +217,7 @@ protected:
     virtual ~SwXMailMerge();
 public:
     SwXMailMerge();
-    
+
 
     void LaunchMailMergeEvent( const com::sun::star::text::MailMergeEvent &rData ) const;
 
