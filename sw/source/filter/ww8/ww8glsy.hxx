@@ -2,9 +2,9 @@
  *
  *  $RCSfile: ww8glsy.hxx,v $
  *
- *  $Revision: 1.7 $
+ *  $Revision: 1.8 $
  *
- *  last change: $Author: hr $ $Date: 2003-03-27 15:42:09 $
+ *  last change: $Author: rt $ $Date: 2003-09-25 07:43:55 $
  *
  *  The Contents of this file are made available subject to the terms of
  *  either of the following licenses
@@ -108,9 +108,9 @@ class WW8Glossary
 public:
     WW8Glossary( SvStorageStreamRef &refStrm, BYTE nVersion, SvStorage *pStg=0);
     bool Load( SwTextBlocks &rBlocks, bool bSaveRelFile );
-    ~WW8Glossary() 					{ delete pGlossary; }
-    WW8GlossaryFib *GetFib() 		{ return pGlossary; }
-    USHORT GetNoStrings() const		{ return nStrings; }
+    ~WW8Glossary()                  { delete pGlossary; }
+    WW8GlossaryFib *GetFib()        { return pGlossary; }
+    USHORT GetNoStrings() const     { return nStrings; }
 
 private:
     WW8GlossaryFib *pGlossary;
