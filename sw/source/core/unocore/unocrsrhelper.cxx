@@ -2,9 +2,9 @@
  *
  *  $RCSfile: unocrsrhelper.cxx,v $
  *
- *  $Revision: 1.18 $
+ *  $Revision: 1.19 $
  *
- *  last change: $Author: rt $ $Date: 2004-12-07 10:43:19 $
+ *  last change: $Author: rt $ $Date: 2005-01-11 12:22:57 $
  *
  *  The Contents of this file are made available subject to the terms of
  *  either of the following licenses
@@ -857,8 +857,6 @@ void InsertFile(SwUnoCrsr* pUnoCrsr,
         Reader *pRead = pDocSh->StartConvertFrom( *pMed, &pRdr, 0, pUnoCrsr);
         if( pRead )
         {
-            String sTmpBaseURL( INetURLObject::GetBaseURL() );
-            INetURLObject::SetBaseURL( pMed->GetName() );
 
             UnoActionContext aContext(pDoc);
 
@@ -868,7 +866,7 @@ void InsertFile(SwUnoCrsr* pUnoCrsr,
             SwNodeIndex aSave(  pUnoCrsr->GetPoint()->nNode, -1 );
             xub_StrLen nCntnt = pUnoCrsr->GetPoint()->nContent.GetIndex();
 
-            sal_uInt32 nErrno = pRdr->Read( *pRead );	// und Dokument einfuegen
+            sal_uInt32 nErrno = pRdr->Read( *pRead );   // und Dokument einfuegen
 
             if(!nErrno)
             {
@@ -883,8 +881,6 @@ void InsertFile(SwUnoCrsr* pUnoCrsr,
             }
 
             delete pRdr;
-
-            INetURLObject::SetBaseURL( sTmpBaseURL );
 
             // ggfs. alle Verzeichnisse updaten:
 /*			if( pWrtShell->IsUpdateTOX() )
@@ -903,10 +899,10 @@ void InsertFile(SwUnoCrsr* pUnoCrsr,
  *
  * --------------------------------------------------*/
 
-// insert text and scan for CR characters in order to insert 
+// insert text and scan for CR characters in order to insert
 // paragraph breaks at those positions by calling SplitNode
-sal_Bool DocInsertStringSplitCR( 
-        SwDoc &rDoc, 
+sal_Bool DocInsertStringSplitCR(
+        SwDoc &rDoc,
         const SwPaM &rNewCursor, const String &rText )
 {
     sal_Bool bOK = sal_True;
