@@ -2,9 +2,9 @@
  *
  *  $RCSfile: wrtxml.cxx,v $
  *
- *  $Revision: 1.35 $
+ *  $Revision: 1.36 $
  *
- *  last change: $Author: dvo $ $Date: 2001-08-03 16:21:37 $
+ *  last change: $Author: jp $ $Date: 2001-08-29 09:26:57 $
  *
  *  The Contents of this file are made available subject to the terms of
  *  either of the following licenses
@@ -65,7 +65,7 @@
 
 #pragma hdrstop
 
-#ifndef _COM_SUN_STAR_CONTAINER_XINDEXCONTAINER_HPP_ 
+#ifndef _COM_SUN_STAR_CONTAINER_XINDEXCONTAINER_HPP_
 #include <com/sun/star/container/XIndexContainer.hpp>
 #endif
 #ifndef _COM_SUN_STAR_BEANS_PROPERTYATTRIBUTE_HPP_
@@ -180,13 +180,13 @@ sal_uInt32 SwXMLWriter::_Write()
     if( pPersist )
     {
         if( pStg )
-            pObjectHelper = SvXMLEmbeddedObjectHelper::Create( 
+            pObjectHelper = SvXMLEmbeddedObjectHelper::Create(
                                              *pStg, *pPersist,
                                              EMBEDDEDOBJECTHELPER_MODE_WRITE,
                                              sal_False );
 #if SUPD > 632
         else
-            pObjectHelper = SvXMLEmbeddedObjectHelper::Create( 
+            pObjectHelper = SvXMLEmbeddedObjectHelper::Create(
                                              *pPersist,
                                              EMBEDDEDOBJECTHELPER_MODE_WRITE );
 #endif
@@ -201,10 +201,10 @@ sal_uInt32 SwXMLWriter::_Write()
     // create XPropertySet with three properties for status indicator
     comphelper::PropertyMapEntry aInfoMap[] =
     {
-        { "ProgressRange", sizeof("ProgressRange")-1, 0, 
-              &::getCppuType((sal_Int32*)0), 
+        { "ProgressRange", sizeof("ProgressRange")-1, 0,
+              &::getCppuType((sal_Int32*)0),
               beans::PropertyAttribute::MAYBEVOID, 0},
-        { "ProgressMax", sizeof("ProgressMax")-1, 0, 
+        { "ProgressMax", sizeof("ProgressMax")-1, 0,
               &::getCppuType((sal_Int32*)0),
               beans::PropertyAttribute::MAYBEVOID, 0},
         { "ProgressCurrent", sizeof("ProgressCurrent")-1, 0,
@@ -215,8 +215,8 @@ sal_uInt32 SwXMLWriter::_Write()
               beans::PropertyAttribute::MAYBEVOID, 0},
         { NULL, 0, 0, NULL, 0, 0 }
     };
-    uno::Reference< beans::XPropertySet > xInfoSet( 
-                comphelper::GenericPropertySet_CreateInstance( 
+    uno::Reference< beans::XPropertySet > xInfoSet(
+                comphelper::GenericPropertySet_CreateInstance(
                             new comphelper::PropertySetInfo( aInfoMap ) ) );
 
     // create XStatusIndicator
@@ -224,24 +224,32 @@ sal_uInt32 SwXMLWriter::_Write()
 
     if (bShowProgress)
     {
-        uno::Reference<frame::XModel> xModel( pDoc->GetDocShell()->GetModel());
-        if (xModel.is())
+        try
         {
-            uno::Reference<frame::XController> xController( 
-                xModel->getCurrentController());
-            if( xController.is())
+            uno::Reference<frame::XModel> xModel( pDoc->GetDocShell()->GetModel());
+            if (xModel.is())
             {
-                uno::Reference<frame::XFrame> xFrame( xController->getFrame());
-                if( xFrame.is())
+                uno::Reference<frame::XController> xController(
+                    xModel->getCurrentController());
+                if( xController.is())
                 {
-                    uno::Reference<task::XStatusIndicatorFactory> xFactory(
-                        xFrame, uno::UNO_QUERY );
-                    if( xFactory.is())
+                    uno::Reference<frame::XFrame> xFrame( xController->getFrame());
+                    if( xFrame.is())
                     {
-                        xStatusIndicator = xFactory->createStatusIndicator();
+                        uno::Reference<task::XStatusIndicatorFactory> xFactory(
+                            xFrame, uno::UNO_QUERY );
+                        if( xFactory.is())
+                        {
+                            xStatusIndicator =
+                                xFactory->createStatusIndicator();
+                        }
                     }
                 }
             }
+        }
+        catch( const RuntimeException& e )
+        {
+            xStatusIndicator = 0;
         }
 
         // set progress range and start status indicator
@@ -309,7 +317,7 @@ sal_uInt32 SwXMLWriter::_Write()
         pProps->Name = OUString( RTL_CONSTASCII_USTRINGPARAM("FileName") );
         (pProps++)->Value <<= OUString( *pOrigFileName  );
     }
-    
+
     // export sub streams for package, else full stream into a file
     sal_Bool bWarn = sal_False, bErr = sal_False;
     String sWarnFile, sErrFile;
@@ -319,7 +327,7 @@ sal_uInt32 SwXMLWriter::_Write()
         if( !bOrganizerMode && !bBlock &&
             SFX_CREATE_MODE_EMBEDDED != pDoc->GetDocShell()->GetCreateMode() )
         {
-            if( !WriteThroughComponent( 
+            if( !WriteThroughComponent(
                     xModelComp, "meta.xml", xServiceFactory,
                     "com.sun.star.comp.Writer.XMLMetaExporter",
                     aEmptyArgs, aProps, sal_True ) )
@@ -330,9 +338,9 @@ sal_uInt32 SwXMLWriter::_Write()
             }
         }
 
-        if( !WriteThroughComponent( 
+        if( !WriteThroughComponent(
                 xModelComp, "styles.xml", xServiceFactory,
-                "com.sun.star.comp.Writer.XMLStylesExporter", 
+                "com.sun.star.comp.Writer.XMLStylesExporter",
                 aFilterArgs, aProps, sal_False ) )
         {
             bErr = sal_True;
@@ -344,9 +352,9 @@ sal_uInt32 SwXMLWriter::_Write()
         {
             if( !bBlock )
             {
-                if( !WriteThroughComponent( 
+                if( !WriteThroughComponent(
                     xModelComp, "settings.xml", xServiceFactory,
-                    "com.sun.star.comp.Writer.XMLSettingsExporter", 
+                    "com.sun.star.comp.Writer.XMLSettingsExporter",
                     aEmptyArgs, aProps, sal_False ) )
                 {
                     if( !bWarn )
@@ -361,9 +369,9 @@ sal_uInt32 SwXMLWriter::_Write()
 
         if( !bOrganizerMode && !bErr )
         {
-            if( !WriteThroughComponent( 
+            if( !WriteThroughComponent(
                     xModelComp, "content.xml", xServiceFactory,
-                    "com.sun.star.comp.Writer.XMLContentExporter", 
+                    "com.sun.star.comp.Writer.XMLContentExporter",
                     aFilterArgs, aProps, sal_False ) )
             {
                 bErr = sal_True;
@@ -378,7 +386,7 @@ sal_uInt32 SwXMLWriter::_Write()
 //			DBG_ASSERT( !pDoc->GetDocStat().bModified,
 //						"doc stat is modified!" );
             OUString sStreamName( RTL_CONSTASCII_USTRINGPARAM("layout-cache") );
-            SvStorageStreamRef xStrm =	pStg->OpenStream( sStreamName, 
+            SvStorageStreamRef xStrm =	pStg->OpenStream( sStreamName,
                                    STREAM_WRITE | STREAM_SHARE_DENYWRITE );
             DBG_ASSERT(xStrm.Is(), "Can't create output stream in package!");
             if( xStrm.Is() )
@@ -398,9 +406,9 @@ sal_uInt32 SwXMLWriter::_Write()
     else
     {
         // create single stream and do full export
-        Reference<io::XOutputStream> xOut = 
+        Reference<io::XOutputStream> xOut =
             new utl::OOutputStreamWrapper( *pStrm );
-        bErr = !WriteThroughComponent( 
+        bErr = !WriteThroughComponent(
                     xOut, xModelComp, xServiceFactory,
                     "com.sun.star.comp.Writer.XMLExporter",
                     aFilterArgs, aProps );
@@ -475,8 +483,8 @@ sal_Bool SwXMLWriter::WriteThroughComponent(
     DBG_ASSERT( NULL != pStreamName, "Need stream name!" );
     DBG_ASSERT( NULL != pServiceName, "Need service name!" );
 
-    RTL_LOGFILE_TRACE_AUTHOR1( "sw", LOGFILE_AUTHOR, 
-                               "SwXMLWriter::WriteThroughComponent : stream %s", 
+    RTL_LOGFILE_TRACE_AUTHOR1( "sw", LOGFILE_AUTHOR,
+                               "SwXMLWriter::WriteThroughComponent : stream %s",
                                pStreamName );
 
     Reference< io::XOutputStream > xOutputStream;
@@ -484,7 +492,7 @@ sal_Bool SwXMLWriter::WriteThroughComponent(
 
     // open stream
     OUString sStreamName = OUString::createFromAscii( pStreamName );
-    xDocStream = pStg->OpenStream( sStreamName, 
+    xDocStream = pStg->OpenStream( sStreamName,
                                    STREAM_WRITE | STREAM_SHARE_DENYWRITE );
     DBG_ASSERT(xDocStream.Is(), "Can't create output stream in package!");
     if (! xDocStream.Is())
@@ -512,7 +520,7 @@ sal_Bool SwXMLWriter::WriteThroughComponent(
         aAny.setValue( &bTrue, ::getBooleanCppuType() );
         xDocStream->SetProperty( aPropName, aAny );
     }
-        
+
 
     // set buffer and create outputstream
     xDocStream->SetBufferSize( 16*1024 );
@@ -520,7 +528,7 @@ sal_Bool SwXMLWriter::WriteThroughComponent(
 
     // write the stuff
     sal_Bool bRet = WriteThroughComponent(
-        xOutputStream, xComponent, rFactory, 
+        xOutputStream, xComponent, rFactory,
         pServiceName, rArguments, rMediaDesc );
 
     // finally, commit stream.
@@ -528,7 +536,7 @@ sal_Bool SwXMLWriter::WriteThroughComponent(
         xDocStream->Commit();
 
     return bRet;
-    
+
 }
 
 sal_Bool SwXMLWriter::WriteThroughComponent(
@@ -547,7 +555,7 @@ sal_Bool SwXMLWriter::WriteThroughComponent(
                                 "SwXMLWriter::WriteThroughComponent" );
 
     // get component
-    Reference< io::XActiveDataSource > xSaxWriter( 
+    Reference< io::XActiveDataSource > xSaxWriter(
         rFactory->createInstance(
             String::CreateFromAscii(RTL_CONSTASCII_STRINGPARAM(
                 "com.sun.star.xml.sax.Writer")) ),
