@@ -2,9 +2,9 @@
  *
  *  $RCSfile: ww8graf.cxx,v $
  *
- *  $Revision: 1.23 $
+ *  $Revision: 1.24 $
  *
- *  last change: $Author: cmc $ $Date: 2001-04-25 12:55:01 $
+ *  last change: $Author: jp $ $Date: 2001-04-25 18:27:07 $
  *
  *  The Contents of this file are made available subject to the terms of
  *  either of the following licenses
@@ -1414,10 +1414,35 @@ SwFrmFmt* SwWW8ImplReader::InsertTxbxText(SdrTextObj* pTextObj,
 
                             // then import either an OLE of a Graphic
                             if( bObj )
+                            {
+                                if( bMakeSdrGrafObj && pTextObj &&
+                                    pTextObj->GetUpGroup() )
                                 {
-                                pFlyFmt = ImportOle();
-                                bObj=FALSE;
+                                    // SdrOleObj/SdrGrafObj anstatt des
+                                    // SdrTextObj in dessen Gruppe einsetzen
+
+                                    Graphic aGraph;
+                                    SdrObject* pNew = ImportOleBase( aGraph,
+                                                                FALSE, 0, 0 );
+                                    if( !pNew )
+                                    {
+                                        pNew = new SdrGrafObj;
+                                        ((SdrGrafObj*)pNew)->SetGraphic( aGraph );
+                                    }
+                                    if( !pDrawModel )
+                                        GrafikCtor();
+
+                                    pNew->SetModel( pDrawModel );
+                                    pNew->SetLogicRect( pTextObj->GetBoundRect() );
+                                    pNew->SetLayer( pTextObj->GetLayer() );
+
+                                    pTextObj->GetUpGroup()->GetSubList()->
+                                        ReplaceObject( pNew, pTextObj->GetOrdNum() );
                                 }
+                                else
+                                    pFlyFmt = ImportOle();
+                                bObj = FALSE;
+                            }
                             else
                             {
                                 InsertTxbxAttrs(nNewStartCp,
@@ -1425,9 +1450,9 @@ SwFrmFmt* SwWW8ImplReader::InsertTxbxText(SdrTextObj* pTextObj,
                                                 TRUE);
                                 //InsertTxbxCharAttrs(nNewStartCp, nNewStartCp+1, TRUE);
                                 pFlyFmt = ImportGraf(
-                                            bMakeSdrGrafObj ? pTextObj : 0,
-                                            pOldFlyFmt,
-                                            pTextObj
+                                        bMakeSdrGrafObj ? pTextObj : 0,
+                                        pOldFlyFmt,
+                                         pTextObj
                                           ? (nDrawHell == pTextObj->GetLayer())
                                           : FALSE );
                             }
@@ -1474,9 +1499,9 @@ SwFrmFmt* SwWW8ImplReader::InsertTxbxText(SdrTextObj* pTextObj,
 
     }
 
-    if( pnStartCp ) 
+    if( pnStartCp )
         *pnStartCp = nStartCp;
-    if( pnEndCp ) 
+    if( pnEndCp )
         *pnEndCp   = nEndCp;
 
     if( pbTestTxbxContainsText )
@@ -1541,11 +1566,11 @@ void SwWW8ImplReader::ReadTxtBox( WW8_DPHEAD* pHd, WW8_DO* pDo )
 
     SdrObject* pObj = new SdrRectObj( OBJ_TEXT, Rectangle( aP0, aP1 ) );
     pObj->SetModel( pDrawModel );
-    Size aSize( (INT16)SVBT16ToShort( pHd->dxa ) , 
+    Size aSize( (INT16)SVBT16ToShort( pHd->dxa ) ,
         (INT16)SVBT16ToShort( pHd->dya ) );
 
     long nStartCpFly,nEndCpFly;
-    InsertTxbxText(PTR_CAST(SdrTextObj,pObj), &aSize, 0, 0, 0, 0, FALSE, 
+    InsertTxbxText(PTR_CAST(SdrTextObj,pObj), &aSize, 0, 0, 0, 0, FALSE,
         bDummy,0,&nStartCpFly,&nEndCpFly);
 
     InsertObj( pObj, SVBT16ToShort( pDo->dhgt ) );
@@ -1569,13 +1594,13 @@ void SwWW8ImplReader::ReadTxtBox( WW8_DPHEAD* pHd, WW8_DO* pDo )
     //convert it successfully to a flyframe
     if (bHdFtFtnEdn)
     {
-        SfxItemSet aFlySet(rDoc.GetAttrPool(), RES_FRMATR_BEGIN, 
+        SfxItemSet aFlySet(rDoc.GetAttrPool(), RES_FRMATR_BEGIN,
             RES_FRMATR_END-1);
 
         //InnerDist is all 0 as word 6 doesn't store distance from borders and
         //neither does it store the border style so its always simple
         Rectangle aInnerDist(Point(0,0),Point(0,0));
-        MatchSdrItemsIntoFlySet( pObj, aFlySet, mso_lineSimple, aInnerDist, 
+        MatchSdrItemsIntoFlySet( pObj, aFlySet, mso_lineSimple, aInnerDist,
             TRUE);
 
         //undo the anchor setting for draw graphics, remove the setting in the
@@ -1584,7 +1609,7 @@ void SwWW8ImplReader::ReadTxtBox( WW8_DPHEAD* pHd, WW8_DO* pDo )
         pCtrlStck->DeleteAndDestroy(pCtrlStck->Count()-1);
         const SwFmtAnchor &rAnchor = (const SwFmtAnchor&)pDrawFmt->GetAttr(
             RES_ANCHOR);
-        SwFlyFrmFmt *pRetFrmFmt = rDoc.MakeFlySection( rAnchor.GetAnchorId(), 
+        SwFlyFrmFmt *pRetFrmFmt = rDoc.MakeFlySection( rAnchor.GetAnchorId(),
             pPaM->GetPoint(), &aFlySet );
         pDrawFmt->ResetAttr( RES_ANCHOR );
 
@@ -2826,7 +2851,7 @@ SwFrmFmt* SwWW8ImplReader::Read_GrafLayer( long nGrafAnchorCp )
                                     pPaM->GetCntntNode(), 0 );
 
                                 SwNodeIndex aStart(pPaM->GetPoint()->nNode);
-                                
+
                                 // lies den Text ein
                                 bTxbxFlySection = TRUE;
                                 ReadText( nStartCpFly, (nEndCpFly-nStartCpFly),
@@ -3118,7 +3143,7 @@ void SwWW8ImplReader::EmbeddedFlyFrameSizeLock(SwNodeIndex &rStart,
     SwFrmFmt *pFrmFmt)
 {
     /*
-    ##505### 
+    ##505###
     If we would ordinarily insert this textbox with a flexible size to expand
     to fit its contents, but it consists solely of a textbox inside a textbox
     where the internal textbox will force the size larger than itself then we
@@ -3143,10 +3168,10 @@ void SwWW8ImplReader::EmbeddedFlyFrameSizeLock(SwNodeIndex &rStart,
             {
                 const SwFmtFrmSize& rSNew = rFmts[iN]->GetFrmSize();
                 SwFmtFrmSize aSOld = pFrmFmt->GetFrmSize();
-                if ( 
+                if (
                     (rSNew.GetWidth() > aSOld.GetWidth()) ||
                     (rSNew.GetHeight() > aSOld.GetHeight())
-                   ) 
+                   )
                 {
                     aSOld.SetSizeType(ATT_FIX_SIZE);
                     pFrmFmt->SetAttr(aSOld);
@@ -3161,29 +3186,32 @@ void SwWW8ImplReader::EmbeddedFlyFrameSizeLock(SwNodeIndex &rStart,
 
       Source Code Control System - Header
 
-      $Header: /zpool/svn/migration/cvs_rep_09_09_08/code/sw/source/filter/ww8/ww8graf.cxx,v 1.23 2001-04-25 12:55:01 cmc Exp $
+      $Header: /zpool/svn/migration/cvs_rep_09_09_08/code/sw/source/filter/ww8/ww8graf.cxx,v 1.24 2001-04-25 18:27:07 jp Exp $
 
       Source Code Control System - Update
 
       $Log: not supported by cvs2svn $
+      Revision 1.23  2001/04/25 12:55:01  cmc
+      ##761## reenable auto for draw layer, keep auto for table borders and shadings disabled
+
       Revision 1.22  2001/04/24 16:17:10  cmc
       ##761## workaround. No automatic colour for table borders, cells or sdrtextobjs
-    
+
       Revision 1.21  2001/04/11 15:08:01  jp
       Bug #85614#: SdrOleObject - set InPlaceObject pointer to zero if the object is insert as SW-OleObject
-    
+
       Revision 1.20  2001/04/11 14:34:22  cmc
       Minor merge error fixes
-    
+
       Revision 1.19  2001/04/05 14:03:48  cmc
       ##640## Draw objects inside textbox import layout tweaks
-    
+
       Revision 1.18  2001/04/03 17:21:04  cmc
       ##505## Test for special case of textbox that contains only another textbox whose size is greater than container so as to disable autogrow
-    
+
       Revision 1.17  2001/03/30 11:21:05  cmc
       ##575## Convert WW6/95 TextBox to FlyFrame when we are in a header/footer
-    
+
       Revision 1.16  2001/03/27 12:01:49  cmc
       brightness, contrast, drawmode {im|ex}port, merge 0x01 and 0x08 graphics systems for escher to replace hack
 

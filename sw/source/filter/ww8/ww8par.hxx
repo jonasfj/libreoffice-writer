@@ -2,9 +2,9 @@
  *
  *  $RCSfile: ww8par.hxx,v $
  *
- *  $Revision: 1.23 $
+ *  $Revision: 1.24 $
  *
- *  last change: $Author: cmc $ $Date: 2001-04-24 10:26:11 $
+ *  last change: $Author: jp $ $Date: 2001-04-25 18:27:07 $
  *
  *  The Contents of this file are made available subject to the terms of
  *  either of the following licenses
@@ -805,7 +805,7 @@ friend class WW8FormulaControl;
     void MatchWrapDistancesIntoFlyFmt( SvxMSDffImportRec* pRecord,
                                        SwFrmFmt*          pFlyFmt );
 
-    void SetAttributesAtGrfNode( SvxMSDffImportRec* pRecord, SwFrmFmt *pFlyFmt, 
+    void SetAttributesAtGrfNode( SvxMSDffImportRec* pRecord, SwFrmFmt *pFlyFmt,
         WW8_FSPA *pF );
 
     BOOL StartApo( BYTE* pSprm29, BOOL bNowStyleApo );
@@ -838,6 +838,10 @@ friend class WW8FormulaControl;
                            BOOL        bSetToBackground = FALSE );
     BOOL ImportURL(String &sURL,String &sMark,WW8_CP nStart);
 
+    SdrObject* ImportOleBase( Graphic& rGraph,
+                                BOOL bTstOCXControls,
+                                const Graphic* pGrf,
+                                const SfxItemSet* pFlySet );
     SwFrmFmt* ImportOle( const Graphic* = 0, const SfxItemSet* pFlySet = 0 );
 
     BOOL ImportFormulaControl(WW8FormulaControl &rBox,WW8_CP nStart,
@@ -1155,26 +1159,29 @@ public:		// eigentlich private, geht aber leider nur public
 
     Source Code Control System - Header
 
-      $Header: /zpool/svn/migration/cvs_rep_09_09_08/code/sw/source/filter/ww8/ww8par.hxx,v 1.23 2001-04-24 10:26:11 cmc Exp $
+      $Header: /zpool/svn/migration/cvs_rep_09_09_08/code/sw/source/filter/ww8/ww8par.hxx,v 1.24 2001-04-25 18:27:07 jp Exp $
 
       Source Code Control System - Update
 
       $Log: not supported by cvs2svn $
+      Revision 1.23  2001/04/24 10:26:11  cmc
+      CJK Vertical Text Alignment {im|ex}port
+
       Revision 1.22  2001/04/23 11:16:23  cmc
       Enable automatic text foreground color {im|ex}port
-    
+
       Revision 1.21  2001/04/20 14:54:47  cmc
       base table handling on logical character positions and by using new property finding algorithm
-    
+
       Revision 1.20  2001/04/03 17:21:04  cmc
       ##505## Test for special case of textbox that contains only another textbox whose size is greater than container so as to disable autogrow
-    
+
       Revision 1.19  2001/03/27 12:01:49  cmc
       brightness, contrast, drawmode {im|ex}port, merge 0x01 and 0x08 graphics systems for escher to replace hack
-    
+
       Revision 1.18  2001/03/19 21:29:17  jp
       Bugfixes/Optimization for task #83168#
-    
+
       Revision 1.17  2001/03/16 17:16:00  jp
       new: im-/export emboss / engrave attribute
 
