@@ -2,9 +2,9 @@
  *
  *  $RCSfile: dbinsdlg.cxx,v $
  *
- *  $Revision: 1.40 $
+ *  $Revision: 1.41 $
  *
- *  last change: $Author: rt $ $Date: 2004-01-07 16:34:42 $
+ *  last change: $Author: kz $ $Date: 2004-02-26 11:40:02 $
  *
  *  The Contents of this file are made available subject to the terms of
  *  either of the following licenses
@@ -955,8 +955,7 @@ IMPL_LINK( SwInsertDBColAutoPilot, TblFmtHdl, PushButton*, pButton )
             for( USHORT n = 0, nStep = nWidth / (nCols+1), nW = nStep;
                     n < nCols; ++n, nW += nStep )
             {
-                aTabCols.Insert( nW, n );
-                aTabCols.InsertHidden( n, FALSE );
+                aTabCols.Insert( nW, FALSE, n );
             }
         delete pRep;
         pRep = new SwTableRep( aTabCols, FALSE );
@@ -1190,7 +1189,7 @@ void SwInsertDBColAutoPilot::DataToDoc( const Sequence<Any>& rSelection,
         xResultSet = SwNewDBMgr::createCursor(aDBData.sDataSource,aDBData.sCommand,aDBData.nCommandType,xConnection);
         bDisposeResultSet = xResultSet.is();
     }
-    
+
     Reference< sdbc::XRow > xRow(xResultSet, UNO_QUERY);
     if ( !xRow.is() )
         return;
@@ -1307,10 +1306,10 @@ void SwInsertDBColAutoPilot::DataToDoc( const Sequence<Any>& rSelection,
                     rSh.GoNextCell();
 
                 const SwInsDBColumn* pEntry = aColFlds[ n ];
-                
+
                 Reference< XColumn > xColumn;
                 xCols->getByName(pEntry->sColumn) >>= xColumn;
-                
+
                 try
                 {
                     if( pEntry->bHasFmt )
@@ -1474,14 +1473,14 @@ void SwInsertDBColAutoPilot::DataToDoc( const Sequence<Any>& rSelection,
                         bBreak = !xResultSet->first();
                 }
                 catch(Exception&)
-                { 
-                    bBreak = TRUE; 
+                {
+                    bBreak = TRUE;
                 }
 
                 if(bBreak)
                     break;
 
-                
+
                 for( n = 0; n < nCols; ++n )
                 {
                     _DB_Column* pDBCol = aColArr[ n ];
@@ -1505,10 +1504,10 @@ void SwInsertDBColAutoPilot::DataToDoc( const Sequence<Any>& rSelection,
                             SwDBField* pFld	= (SwDBField*)pDBCol->DB_ColumnData.
                                                 pField->Copy();
                             double nValue = DBL_MAX;
-                            
+
                             Reference< XPropertySet > xColumnProps;
                             xCols->getByName(pDBCol->pColInfo->sColumn) >>= xColumnProps;
-                            
+
                             pFld->SetExpansion( SwNewDBMgr::GetDBField(
                                                 xColumnProps,
                                                 aDBFormatData,
@@ -1599,7 +1598,7 @@ void SwInsertDBColAutoPilot::DataToDoc( const Sequence<Any>& rSelection,
     }
     rSh.ClearMark();
     rSh.EndAllAction();
-    
+
     if ( bDisposeResultSet )
         ::comphelper::disposeComponent(xResultSet);
 }
