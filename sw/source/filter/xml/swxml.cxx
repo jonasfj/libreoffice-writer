@@ -2,9 +2,9 @@
  *
  *  $RCSfile: swxml.cxx,v $
  *
- *  $Revision: 1.3 $
+ *  $Revision: 1.4 $
  *
- *  last change: $Author: mib $ $Date: 2000-10-26 09:38:52 $
+ *  last change: $Author: jp $ $Date: 2000-11-20 09:18:37 $
  *
  *  The Contents of this file are made available subject to the terms of
  *  either of the following licenses
@@ -70,8 +70,8 @@
 #include <rsc/rscsfx.hxx>
 #endif
 
-#ifndef _UNOTOOLS_PROCESSFACTORY_HXX_
-#include <unotools/processfactory.hxx>
+#ifndef _COMPHELPER_PROCESSFACTORY_HXX_
+#include <comphelper/processfactory.hxx>
 #endif
 #ifndef _COM_SUN_STAR_XML_SAX_INPUTSOURCE_HPP_
 #include <com/sun/star/xml/sax/InputSource.hpp>
@@ -79,7 +79,7 @@
 #ifndef _COM_SUN_STAR_XML_SAX_XPARSER_HPP_
 #include <com/sun/star/xml/sax/XParser.hpp>
 #endif
-#ifndef _COM_SUN_STAR_IO_XACTIVEDATACONTROL_HPP_ 
+#ifndef _COM_SUN_STAR_IO_XACTIVEDATACONTROL_HPP_
 #include <com/sun/star/io/XActiveDataControl.hpp>
 #endif
 
@@ -118,7 +118,7 @@ XMLReader::XMLReader()
 sal_uInt32 XMLReader::Read( SwDoc &rDoc, SwPaM &rPaM, const String & rName )
 {
     Reference< lang::XMultiServiceFactory > xServiceFactory =
-            utl::getProcessServiceFactory();
+            comphelper::getProcessServiceFactory();
     ASSERT( xServiceFactory.is(),
             "XMLReader::Read: got no service manager" );
     if( !xServiceFactory.is() )
@@ -271,24 +271,27 @@ sal_uInt32 XMLReader::Read( SwDoc &rDoc, SwPaM &rPaM, const String & rName )
 /*************************************************************************
 
       $Log: not supported by cvs2svn $
+      Revision 1.3  2000/10/26 09:38:52  mib
+      tables within headers and footers
+
       Revision 1.2  2000/10/06 06:37:01  mib
       Added missing include XActiveDataControl
-    
+
       Revision 1.1.1.1  2000/09/18 17:14:59  hr
       initial import
-    
+
       Revision 1.13  2000/09/18 16:05:04  willem.vandorp
       OpenOffice header added.
-    
+
       Revision 1.12  2000/07/07 13:58:36  mib
       text styles using StarOffice API
-    
+
       Revision 1.11  2000/05/03 12:08:05  mib
       unicode
-    
+
       Revision 1.10  2000/03/21 15:10:56  os
       UNOIII
-    
+
       Revision 1.9  2000/03/13 14:33:43  mib
       UNO3
 

@@ -2,9 +2,9 @@
  *
  *  $RCSfile: wrtxml.cxx,v $
  *
- *  $Revision: 1.3 $
+ *  $Revision: 1.4 $
  *
- *  last change: $Author: mib $ $Date: 2000-11-14 08:03:32 $
+ *  last change: $Author: jp $ $Date: 2000-11-20 09:18:37 $
  *
  *  The Contents of this file are made available subject to the terms of
  *  either of the following licenses
@@ -65,10 +65,9 @@
 
 #pragma hdrstop
 
-#ifndef _UNOTOOLS_PROCESSFACTORY_HXX_
-#include <unotools/processfactory.hxx>
+#ifndef _COMPHELPER_PROCESSFACTORY_HXX_
+#include <comphelper/processfactory.hxx>
 #endif
-
 #ifndef _XMLOFF_XMLKYWD_HXX
 #include <xmloff/xmlkywd.hxx>
 #endif
@@ -123,7 +122,7 @@ sal_uInt32 SwXMLWriter::Write( SwPaM& rPaM, SfxMedium& rMed,
                                const String* pFileName )
 {
     Reference< lang::XMultiServiceFactory > xServiceFactory =
-            utl::getProcessServiceFactory();
+            comphelper::getProcessServiceFactory();
     ASSERT( xServiceFactory.is(),
             "SwXMLWriter::Write: got no service manager" );
     if( !xServiceFactory.is() )
@@ -178,32 +177,35 @@ void GetXMLWriter( const String&, WriterRef& xRet )
 
       Source Code Control System - Header
 
-      $Header: /zpool/svn/migration/cvs_rep_09_09_08/code/sw/source/filter/xml/wrtxml.cxx,v 1.3 2000-11-14 08:03:32 mib Exp $
+      $Header: /zpool/svn/migration/cvs_rep_09_09_08/code/sw/source/filter/xml/wrtxml.cxx,v 1.4 2000-11-20 09:18:37 jp Exp $
 
       Source Code Control System - Update
 
       $Log: not supported by cvs2svn $
+      Revision 1.3  2000/11/14 08:03:32  mib
+      Adding of EditEngine- and Bullet-Font-Items temporarily removed
+
       Revision 1.2  2000/11/13 08:44:24  mib
       font declarations and asian/complex font properties
-    
+
       Revision 1.1.1.1  2000/09/18 17:14:59  hr
       initial import
-    
+
       Revision 1.17  2000/09/18 16:05:04  willem.vandorp
       OpenOffice header added.
-    
+
       Revision 1.16  2000/07/21 12:55:15  mib
       text import/export using StarOffice API
-    
+
       Revision 1.15  2000/06/08 09:45:54  aw
       changed to use functionality from xmloff project now
-    
+
       Revision 1.14  2000/05/03 12:08:05  mib
       unicode
-    
+
       Revision 1.13  2000/03/21 15:10:56  os
       UNOIII
-    
+
       Revision 1.12  2000/03/13 14:33:44  mib
       UNO3
 
