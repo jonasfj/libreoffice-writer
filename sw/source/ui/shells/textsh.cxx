@@ -2,9 +2,9 @@
  *
  *  $RCSfile: textsh.cxx,v $
  *
- *  $Revision: 1.29 $
+ *  $Revision: 1.30 $
  *
- *  last change: $Author: obo $ $Date: 2003-09-04 11:49:45 $
+ *  last change: $Author: rt $ $Date: 2003-09-19 08:47:24 $
  *
  *  The Contents of this file are made available subject to the terms of
  *  either of the following licenses
@@ -159,12 +159,6 @@
 #ifndef _FILTER_HXX //autogen
 #include <svtools/filter.hxx>
 #endif
-#ifndef SMDLL_HXX
-#include <starmath/smdll0.hxx>
-#endif
-#ifndef _SCHDLL0_HXX
-#include <sch/schdll0.hxx>
-#endif
 #ifndef _SCH_DLL_HXX
 #include <sch/schdll.hxx>
 #endif
@@ -186,6 +180,8 @@
 #ifndef _COM_SUN_STAR_I18N_TRANSLITERATIONMODULES_HDL_
 #include <com/sun/star/i18n/TransliterationModules.hdl>
 #endif
+
+#include <sot/clsids.hxx>
 
 #ifndef _SWWDOCSH_HXX //autogen
 #include <wdocsh.hxx>
@@ -414,7 +410,7 @@ void SwTextShell::ExecInsert(SfxRequest &rReq)
 
             if ( pURL->SetURL( aStrURL, INetURLObject::WAS_ENCODED ) )
             {
-                SvFactory * pFactory = SvFactory::GetDefaultPlugInFactory();
+                SvFactory *pFactory = (SvFactory*) SvPlugInObject::ClassFactory();
                 SvStorageRef aStor = new SvStorage( aEmptyStr, STREAM_STD_READWRITE );
                 SvPlugInObjectRef xObj = &pFactory->CreateAndInit( *pFactory, aStor );
                 xObj->SetPlugInMode( (USHORT)PLUGIN_EMBEDED );
@@ -453,14 +449,14 @@ void SwTextShell::ExecInsert(SfxRequest &rReq)
                 sClassLocation = pClassLocationItem->GetValue();
             SvCommandList aCommandList;
             if(pCommandsItem)
-            {        
+            {
                 USHORT nTemp;
                 aCommandList.AppendCommands( pCommandsItem->GetValue(), &nTemp );
             }
-            
+
             SvInPlaceObjectRef xIPObj;
             if(SID_INSERT_APPLET == nSlot)
-            {        
+            {
                 SwApplet_Impl aApplImpl( rSh.GetAttrPool(),
                                          RES_FRMATR_BEGIN, RES_FRMATR_END-1 );
                 aApplImpl.CreateApplet(sClass, aEmptyStr, FALSE, sClassLocation);
@@ -473,7 +469,7 @@ void SwTextShell::ExecInsert(SfxRequest &rReq)
             else
             {
                 SvStorageRef pStor = new SvStorage( aEmptyStr, STREAM_STD_READWRITE);
-                SvFactory *pPlugInFactory = SvFactory::GetDefaultPlugInFactory();
+                SvFactory *pPlugInFactory = (SvFactory*) SvPlugInObject::ClassFactory();
                 SvPlugInObjectRef xPlugin = &pPlugInFactory->CreateAndInit( *pPlugInFactory, pStor );
                 xIPObj = xPlugin;
                 xPlugin->EnableSetModified( FALSE );
@@ -483,7 +479,7 @@ void SwTextShell::ExecInsert(SfxRequest &rReq)
                 if(aCommandList.Count())
                     xPlugin->SetCommandList( aCommandList );
                 xPlugin->EnableSetModified ( TRUE );
-            }        
+            }
             if(xIPObj.Is())
                 rSh.InsertOle( xIPObj );
         }
@@ -504,7 +500,7 @@ void SwTextShell::ExecInsert(SfxRequest &rReq)
         SFX_REQUEST_ARG( rReq, pBorderItem, SfxBoolItem, FN_PARAM_5, sal_False );
 
         if(pURLItem) // URL is a _must_
-        {        
+        {
             SfxFrameDescriptor aFrameDesc(0);
             aFrameDesc.SetURL(pURLItem->GetValue());
             if(pNameItem)
@@ -557,7 +553,7 @@ void SwTextShell::ExecInsert(SfxRequest &rReq)
                 }
                 else
                 {
-                    rSh.Insert( 0, SCH_MOD()->pSchChartDocShellFactory, TRUE, 0, &rReq );
+                    rSh.Insert( 0, &SvGlobalName( SO3_SCH_CLASSID ), TRUE, 0, &rReq );
                 }
                 SvInPlaceObjectRef xOLE = rSh.GetOLEObj();
                 if(pItem && xOLE.Is())
@@ -579,7 +575,7 @@ void SwTextShell::ExecInsert(SfxRequest &rReq)
 
     case FN_INSERT_SMA:
         {
-            rSh.Insert( 0, SM_MOD()->pSmDocShellFactory, TRUE, 0, &rReq );
+            rSh.Insert( 0, &SvGlobalName( SO3_SM_CLASSID ), TRUE, 0, &rReq );
         }
         break;
 
@@ -1290,7 +1286,7 @@ void SwTextShell::InsertSymbol( SfxRequest& rReq )
         // Zeichen einfuegen
         rSh.Insert( aChars );
 
-        // #108876# a font attribute has to be set always due to a guessed script type  
+        // #108876# a font attribute has to be set always due to a guessed script type
         if( aNewFont.GetName().Len() )
         {
             bFontChanged = TRUE;
