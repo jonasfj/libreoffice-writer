@@ -2,9 +2,9 @@
  *
  *  $RCSfile: SwXDocumentSettings.cxx,v $
  *
- *  $Revision: 1.9 $
+ *  $Revision: 1.10 $
  *
- *  last change: $Author: mtg $ $Date: 2001-07-27 13:20:30 $
+ *  last change: $Author: os $ $Date: 2001-07-30 11:22:24 $
  *
  *  The Contents of this file are made available subject to the terms of
  *  either of the following licenses
@@ -219,7 +219,7 @@ void SwXDocumentSettings::_preSetValues ()
         throw UnknownPropertyException();
 
 }
-void SwXDocumentSettings::_setSingleValue( const comphelper::PropertyInfo & rInfo, const ::com::sun::star::uno::Any &rValue ) 
+void SwXDocumentSettings::_setSingleValue( const comphelper::PropertyInfo & rInfo, const ::com::sun::star::uno::Any &rValue )
         throw(::com::sun::star::beans::UnknownPropertyException, ::com::sun::star::beans::PropertyVetoException, ::com::sun::star::lang::IllegalArgumentException, ::com::sun::star::lang::WrappedTargetException )
 {
     switch( rInfo.mnHandle )
@@ -276,21 +276,19 @@ void SwXDocumentSettings::_setSingleValue( const comphelper::PropertyInfo & rInf
         break;
         case HANDLE_PRINTER_NAME:
         {
-            SfxPrinter *pPrinter = mpDoc->GetPrt ( sal_False );
-            if (pPrinter)
+            //the printer must be created
+            SfxPrinter *pPrinter = pDoc->GetPrt ( sal_True );
+            OUString sPrinterName;
+            if (*pValues >>= sPrinterName )
             {
-                OUString sPrinterName;
-                if (rValue >>= sPrinterName )
-                {
-                    SfxPrinter *pNewPrinter = new SfxPrinter ( pPrinter->GetOptions().Clone(), sPrinterName );
-                    if (pNewPrinter->IsKnown())
-                        mpDoc->SetPrt ( pNewPrinter );
-                    else
-                        delete pNewPrinter;
-                }
+                SfxPrinter *pNewPrinter = new SfxPrinter ( pPrinter->GetOptions().Clone(), sPrinterName );
+                if (pNewPrinter->IsKnown())
+                    pDoc->SetPrt ( pNewPrinter );
                 else
-                    throw IllegalArgumentException();
+                    delete pNewPrinter;
             }
+            else
+                throw IllegalArgumentException();
         }
         break;
         case HANDLE_PRINTER_SETUP:
@@ -414,7 +412,7 @@ void SwXDocumentSettings::_preGetValues ()
         throw UnknownPropertyException();
 }
 
-void SwXDocumentSettings::_getSingleValue( const comphelper::PropertyInfo & rInfo, ::com::sun::star::uno::Any & rValue ) 
+void SwXDocumentSettings::_getSingleValue( const comphelper::PropertyInfo & rInfo, ::com::sun::star::uno::Any & rValue )
         throw(::com::sun::star::beans::UnknownPropertyException, ::com::sun::star::lang::WrappedTargetException )
 {
     switch( rInfo.mnHandle )
