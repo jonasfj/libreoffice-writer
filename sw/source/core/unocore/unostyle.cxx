@@ -2,9 +2,9 @@
  *
  *  $RCSfile: unostyle.cxx,v $
  *
- *  $Revision: 1.3 $
+ *  $Revision: 1.4 $
  *
- *  last change: $Author: mib $ $Date: 2000-10-18 11:20:20 $
+ *  last change: $Author: os $ $Date: 2000-10-24 10:01:18 $
  *
  *  The Contents of this file are made available subject to the terms of
  *  either of the following licenses
@@ -1743,7 +1743,7 @@ void SwXStyle::setPropertyValue(const OUString& rPropertyName, const Any& aValue
                 }
                 //no break!
                 default:
-put_itemset:				
+put_itemset:
                 {
                     SfxItemSet& rStyleSet = aBase.GetItemSet();
                     SfxItemSet aSet(*rStyleSet.GetPool(), pMap->nWID, pMap->nWID);
@@ -2186,6 +2186,8 @@ Any SwXPageStyle::getPropertyValue(const OUString& rPropertyName) throw(::com::s
     const SfxItemPropertyMap*	pMap = SfxItemPropertyMap::GetByName(
                     aSwMapProvider.GetPropertyMap(PROPERTY_MAP_PAGE_STYLE),
                     rPropertyName);
+    if(!pMap)
+        throw beans::UnknownPropertyException();
     if(GetBasePool())
     {
         sal_uInt16 nRes;
@@ -2365,6 +2367,8 @@ void SwXPageStyle::setPropertyValue(const OUString& rPropertyName, const Any& aV
     const SfxItemPropertyMap*	pMap = SfxItemPropertyMap::GetByName(
                         aSwMapProvider.GetPropertyMap(PROPERTY_MAP_PAGE_STYLE),
                         rPropertyName);
+    if(!pMap)
+        throw beans::UnknownPropertyException();
     if(GetBasePool())
     {
         switch(pMap->nWID)
@@ -2567,18 +2571,21 @@ const SwStartNode* SwXPageStyle::GetStartNode(sal_Bool bHeader, sal_Bool bLeft)
 
 /*------------------------------------------------------------------------
     $Log: not supported by cvs2svn $
+    Revision 1.3  2000/10/18 11:20:20  mib
+    Setting/Getting PageNumber now works correctly for paragraph styles
+
     Revision 1.2  2000/10/12 17:15:50  mib
     (Header|Footer)Text(Left)? now don't respect UsedOn property
-    
+
     Revision 1.1.1.1  2000/09/19 00:08:29  hr
     initial import
-    
+
     Revision 1.96  2000/09/18 16:04:35  willem.vandorp
     OpenOffice header added.
-    
+
     Revision 1.95  2000/09/01 14:23:40  os
     #78380# Header and footer separated
-    
+
     Revision 1.94  2000/08/31 13:42:36  os
     DropCap: WhichId corrected
 
