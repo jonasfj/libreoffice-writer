@@ -2,9 +2,9 @@
  *
  *  $RCSfile: frmpage.cxx,v $
  *
- *  $Revision: 1.43 $
+ *  $Revision: 1.44 $
  *
- *  last change: $Author: obo $ $Date: 2004-07-05 14:42:35 $
+ *  last change: $Author: kz $ $Date: 2004-08-02 14:22:56 $
  *
  *  The Contents of this file are made available subject to the terms of
  *  either of the following licenses
@@ -673,7 +673,7 @@ SvxSwFramePosString::StringId lcl_ChangeResIdToVerticalOrRTL(SvxSwFramePosString
         };
         USHORT nIndex;
         for(nIndex = 0; nIndex < sizeof(aHoriIds) / sizeof(StringIdPair_Impl); ++nIndex)
-        {        
+        {
             if(aHoriIds[nIndex].eHori == eStringId)
             {
                 eStringId = aHoriIds[nIndex].eVert;
@@ -847,7 +847,6 @@ SwFrmPage::SwFrmPage ( Window *pParent, const SfxItemSet &rSet ) :
 
     aAutoWidthCB.SetClickHdl( LINK( this, SwFrmPage, AutoWidthClickHdl ) );
     aAutoHeightCB.SetClickHdl( LINK( this, SwFrmPage, AutoHeightClickHdl ) );
-
 }
 
 /*--------------------------------------------------------------------
@@ -1546,7 +1545,7 @@ ULONG SwFrmPage::FillRelLB( const FrmMap* _pMap,
                     {
                         if (aRelationMap[nRelPos].nLBRelation == nBit)
                         {
-                            SvxSwFramePosString::StringId eStrId1 = aMirrorPagesCB.IsChecked() ? 
+                            SvxSwFramePosString::StringId eStrId1 = aMirrorPagesCB.IsChecked() ?
                                             aRelationMap[nRelPos].eMirrorStrId : aRelationMap[nRelPos].eStrId;
                             eStrId1 = lcl_ChangeResIdToVerticalOrRTL(eStrId1, bIsVerticalFrame, bIsInRightToLeft);
                             String sEntry = aFramePosString.GetString(eStrId1);
@@ -2136,7 +2135,6 @@ IMPL_LINK_INLINE_START( SwFrmPage, RealSizeHdl, Button *, EMPTYARG )
     return 0;
 }
 IMPL_LINK_INLINE_END( SwFrmPage, RealSizeHdl, Button *, EMPTYARG )
-
 
 
 IMPL_LINK( SwFrmPage, AutoWidthClickHdl, void*, EMPTYARG )
