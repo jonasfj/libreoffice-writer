@@ -2,9 +2,9 @@
  *
  *  $RCSfile: ww8par5.cxx,v $
  *
- *  $Revision: 1.19 $
+ *  $Revision: 1.20 $
  *
- *  last change: $Author: cmc $ $Date: 2001-06-06 12:46:32 $
+ *  last change: $Author: ama $ $Date: 2001-07-05 12:41:56 $
  *
  *  The Contents of this file are made available subject to the terms of
  *  either of the following licenses
@@ -2082,8 +2082,8 @@ eF_ResT SwWW8ImplReader::Read_F_IncludeText( WW8FieldDesc* pF, String& rStr )
     {
         // Bereich aus Quelle ( kein Switch ) ?
         ConvertUFName( aBook );
-        aPara += cTokenSeperator;
-        aPara += cTokenSeperator;
+        aPara += so3::cTokenSeperator;
+        aPara += so3::cTokenSeperator;
         aPara += aBook;
     }
     String aStr(WW8_ASCII2STR( "WW" ));
@@ -2108,14 +2108,14 @@ eF_ResT SwWW8ImplReader::Read_F_IncludeText( WW8FieldDesc* pF, String& rStr )
     aSection.SetProtect( TRUE );
 
     pNewSection = rDoc.Insert( *pPaM, aSection, 0 ,FALSE);
-    
+
     const SwSectionNode* pSectionNode =	pNewSection->GetFmt()->GetSectionNode();
     pBehindSection = new SwNodeIndex( *pSectionNode->EndOfSectionNode(), 1 );
 
     pPaM->GetPoint()->nNode = pSectionNode->GetIndex()+1;
     pPaM->GetPoint()->nContent.Assign(pPaM->GetCntntNode(), 0 );
 
-    bTxbxFlySection=TRUE;	
+    bTxbxFlySection=TRUE;
     ReadText(pF->nSRes, pF->nLRes, pPlcxMan->GetManType());
 
     aSave.Restore( this );
@@ -3155,21 +3155,24 @@ void SwWW8ImplReader::Read_Invisible( USHORT, const BYTE* pData, short nLen )
 
       Source Code Control System - Header
 
-      $Header: /zpool/svn/migration/cvs_rep_09_09_08/code/sw/source/filter/ww8/ww8par5.cxx,v 1.19 2001-06-06 12:46:32 cmc Exp $
+      $Header: /zpool/svn/migration/cvs_rep_09_09_08/code/sw/source/filter/ww8/ww8par5.cxx,v 1.20 2001-07-05 12:41:56 ama Exp $
 
 
       Source Code Control System - Update
 
       $Log: not supported by cvs2svn $
+      Revision 1.19  2001/06/06 12:46:32  cmc
+      #76673# ##1005## Fastsave table Insert/Delete Cell implementation, const reworking required
+
       Revision 1.18  2001/04/11 14:34:22  cmc
       Minor merge error fixes
-    
+
       Revision 1.17  2001/04/06 13:51:33  cmc
       ##509## Fill in default content for sections that are linked to files to handle case where file is unavailable and support ww6 INCLUDE field
-    
+
       Revision 1.16  2001/03/19 21:29:17  jp
       Bugfixes/Optimization for task #83168#
-    
+
       Revision 1.15  2001/03/16 13:16:48  cmc
       ##443## Optimize bookmark quoting
 
