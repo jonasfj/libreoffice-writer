@@ -2,9 +2,9 @@
  *
  *  $RCSfile: ww8par2.cxx,v $
  *
- *  $Revision: 1.18 $
+ *  $Revision: 1.19 $
  *
- *  last change: $Author: cmc $ $Date: 2001-07-26 15:56:47 $
+ *  last change: $Author: jp $ $Date: 2001-07-26 19:23:34 $
  *
  *  The Contents of this file are made available subject to the terms of
  *  either of the following licenses
@@ -323,7 +323,7 @@ const BYTE* SwWW8ImplReader::TestApo( BOOL& rbStartApo, BOOL& rbStopApo,
         pSprm29       = 0;
         rbNowStyleApo = FALSE;
     }
-#else 
+#else
     if( bInTable && rbNowStyleApo )
     {
         pSprm37       = 0;
@@ -377,7 +377,7 @@ const BYTE* SwWW8ImplReader::TestApo( BOOL& rbStartApo, BOOL& rbStopApo,
 
     }
 #else
-    if( bApo && bNowApo && !bTableRowEnd && 
+    if( bApo && bNowApo && !bTableRowEnd &&
         !TestSameApo( pSprm29, rbNowStyleApo ) )
     {
         rbStopApo = rbStartApo = TRUE;				// two bordering eachother
@@ -486,7 +486,7 @@ void SwWW8ImplReader::SetAnlvStrings( SwNumFmt* pNum, WW8_ANLV* pAV,
                 if( pAV->cbTextBefore || pAV->cbTextAfter)
                     pNum->SetBulletChar( sTxt.GetChar( 0 ) );
                 else
-                    pNum->SetBulletChar( 0xF000 + 183 );
+                    pNum->SetBulletChar( 0x2190 );
             }
         }
     }
@@ -1062,7 +1062,7 @@ void WW8TabBandDesc::ProcessSprmTSetBRC( BOOL bVer67,
 }
 
 
-void WW8TabBandDesc::ProcessSprmTDxaCol( BOOL bVer67, 
+void WW8TabBandDesc::ProcessSprmTDxaCol( BOOL bVer67,
     const BYTE* pParamsTDxaCol )
 {
     // sprmTDxaCol (opcode 0x7623) changes the width of cells
@@ -1088,7 +1088,7 @@ void WW8TabBandDesc::ProcessSprmTDxaCol( BOOL bVer67,
     }
 }
 
-void WW8TabBandDesc::ProcessSprmTInsert( BOOL bVer67, 
+void WW8TabBandDesc::ProcessSprmTInsert( BOOL bVer67,
     const BYTE* pParamsTDelete )
 {
     if( nWwCols && pParamsTDelete )		   // set one or more cell length(s)
@@ -1131,16 +1131,16 @@ void WW8TabBandDesc::ProcessSprmTInsert( BOOL bVer67,
         //if itcMac is larger than full size, fill in missing ones first
         for( int i = nWwCols; i > nitcInsert+nWwCols; i--)
             nCenter[i] = i ? (nCenter[i - 1]+ndxaCol) : 0;
-        
+
         //now add in our new cells
         for( int j = 0;j < nctc; j++)
             nCenter[j + nitcInsert] = (j + nitcInsert) ? (nCenter[j + nitcInsert -1]+ndxaCol) : 0;
-    
+
         nWwCols = nNewWwCols;
     }
 }
 
-void WW8TabBandDesc::ProcessSprmTDelete( BOOL bVer67, 
+void WW8TabBandDesc::ProcessSprmTDelete( BOOL bVer67,
     const BYTE* pParamsTDelete )
 {
     if( nWwCols && pParamsTDelete )		   // set one or more cell length(s)
@@ -1296,7 +1296,7 @@ WW8TabDesc::WW8TabDesc( SwWW8ImplReader* pIoClass, WW8_CP nStartCp )
         pNewBand->nLineHeight = 0;
         BOOL bTabRowJustRead  = FALSE;
         const BYTE* pShadeSprm      = 0;
-      
+
         if( !SearchRowEnd( bVer67, bComplex, pPap, nStartCp ) )	// Suche Ende einer TabZeile
         {
             bOk = FALSE;
@@ -1456,7 +1456,7 @@ WW8TabDesc::WW8TabDesc( SwWW8ImplReader* pIoClass, WW8_CP nStartCp )
                 // Shift left x-position
                 *pCenter += nTabeDxaNew;
         }
-        
+
      // Bei Unterschieden gibt es ein neues Band
      // Zweite Zeile bekommt immer ein neues Band, damit die erste allein ist
         if( nRows == 1 || !IsEqual( pNewBand, pActBand ) )
@@ -1481,7 +1481,7 @@ WW8TabDesc::WW8TabDesc( SwWW8ImplReader* pIoClass, WW8_CP nStartCp )
         nRows++;
         pActBand->nRows++;
 
-        //Seek our pap to its next block of properties 
+        //Seek our pap to its next block of properties
         WW8PLCFxDesc aRes;
         aRes.pMemPos = 0;
         aRes.nStartPos = nStartCp;
@@ -1509,8 +1509,8 @@ WW8TabDesc::WW8TabDesc( SwWW8ImplReader* pIoClass, WW8_CP nStartCp )
 
         // Wenn Apo-Ende oder Apo-Wechsel, dann hoert die Tabelle hier auf
 #if 0
-        if( bStopApo )	
-            break;		
+        if( bStopApo )
+            break;
 #else
         /*
         ##513##, #79474#
@@ -1519,8 +1519,8 @@ WW8TabDesc::WW8TabDesc( SwWW8ImplReader* pIoClass, WW8_CP nStartCp )
         table, but instead is an absolutely positioned table outside of this
         one
         */
-        if( bStartApo || bStopApo )	
-            break;		
+        if( bStartApo || bStopApo )
+            break;
 #endif
 
     }while( 1 );
@@ -3267,11 +3267,14 @@ void SwWW8ImplReader::ReadDocInfo()
 
       Source Code Control System - Header
 
-      $Header: /zpool/svn/migration/cvs_rep_09_09_08/code/sw/source/filter/ww8/ww8par2.cxx,v 1.18 2001-07-26 15:56:47 cmc Exp $
+      $Header: /zpool/svn/migration/cvs_rep_09_09_08/code/sw/source/filter/ww8/ww8par2.cxx,v 1.19 2001-07-26 19:23:34 jp Exp $
 
       Source Code Control System - Update
 
       $Log: not supported by cvs2svn $
+      Revision 1.18  2001/07/26 15:56:47  cmc
+      #i1154# Merge Cells after table is complete
+    
       Revision 1.17  2001/07/20 10:11:34  mtg
       #89999# use the static methods in the new SwStyleNameMapper class for Programmatic Name <-> UI Name <-> Pool Id conversion
     
