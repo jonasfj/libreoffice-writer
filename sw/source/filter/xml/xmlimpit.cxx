@@ -2,9 +2,9 @@
  *
  *  $RCSfile: xmlimpit.cxx,v $
  *
- *  $Revision: 1.8 $
+ *  $Revision: 1.9 $
  *
- *  last change: $Author: rt $ $Date: 2003-12-01 17:30:46 $
+ *  last change: $Author: obo $ $Date: 2004-01-13 11:25:09 $
  *
  *  The Contents of this file are made available subject to the terms of
  *  either of the following licenses
@@ -237,7 +237,7 @@ void SvXMLImportItemMapper::importXML( SfxItemSet& rSet,
                         bPut = PutXMLValue( *pNewItem, rValue,
                                             pEntry->nMemberId & MID_FLAG_MASK,
                                             rUnitConverter );
-                                                    
+
                     }
                     else
                     {
@@ -298,13 +298,13 @@ void SvXMLImportItemMapper::importXML( SfxItemSet& rSet,
         rSet.Put( *pUnknownItem );
         delete pUnknownItem;
     }
-    
+
     finished( rSet );
 }
 
 /** this method is called for every item that has the
     MID_FLAG_SPECIAL_ITEM_IMPORT flag set */
-BOOL													
+BOOL
 SvXMLImportItemMapper::handleSpecialItem(  const SvXMLItemMapEntry& rEntry,
                                             SfxPoolItem& rItem,
                                             SfxItemSet& rSet,
@@ -336,9 +336,9 @@ void SvXMLImportItemMapper::finished( SfxItemSet& ) const
 
 
 // put an XML-string value into an item
-sal_Bool SvXMLImportItemMapper::PutXMLValue( 
+sal_Bool SvXMLImportItemMapper::PutXMLValue(
     SfxPoolItem& rItem,
-    const ::rtl::OUString& rValue, 
+    const ::rtl::OUString& rValue,
     sal_uInt16 nMemberId,
     const SvXMLUnitConverter& rUnitConverter )
 {
@@ -386,7 +386,7 @@ sal_Bool SvXMLImportItemMapper::PutXMLValue(
                     if( rValue.indexOf( sal_Unicode('%') ) != -1 )
                         bOk = rUnitConverter.convertPercent( nProp, rValue );
                     else
-                        bOk = rUnitConverter.convertMeasure( nAbs, rValue, 
+                        bOk = rUnitConverter.convertMeasure( nAbs, rValue,
                                                              -0x7fff, 0x7fff );
 
                     pLRSpace->SetTxtFirstLineOfst( (short)nAbs, (sal_uInt16)nProp );
@@ -519,13 +519,13 @@ sal_Bool SvXMLImportItemMapper::PutXMLValue(
             DBG_ASSERT( pBox != NULL, "Wrong WHich-ID" );
 
             /** copy SvxBorderLines */
-            SvxBorderLine* pTop    = pBox->GetTop() == NULL ? 
+            SvxBorderLine* pTop    = pBox->GetTop() == NULL ?
                                 NULL : new SvxBorderLine( *pBox->GetTop() );
-            SvxBorderLine* pBottom = pBox->GetBottom() == NULL ? 
+            SvxBorderLine* pBottom = pBox->GetBottom() == NULL ?
                                 NULL : new SvxBorderLine( *pBox->GetBottom() );
-            SvxBorderLine* pLeft   = pBox->GetLeft() == NULL ? 
+            SvxBorderLine* pLeft   = pBox->GetLeft() == NULL ?
                                 NULL : new SvxBorderLine( *pBox->GetLeft() );
-            SvxBorderLine* pRight  = pBox->GetRight() == NULL ? 
+            SvxBorderLine* pRight  = pBox->GetRight() == NULL ?
                                 NULL : new SvxBorderLine( *pBox->GetRight() );
 
             sal_Int32 nTemp;
@@ -705,13 +705,13 @@ sal_Bool SvXMLImportItemMapper::PutXMLValue(
                 switch( nMemberId )
                 {
                     case MID_BREAK_BEFORE:
-                        pFmtBreak->SetValue( (eEnum == 1) ? 
-                                             SVX_BREAK_COLUMN_BEFORE : 
+                        pFmtBreak->SetValue( (eEnum == 1) ?
+                                             SVX_BREAK_COLUMN_BEFORE :
                                              SVX_BREAK_PAGE_BEFORE );
                         break;
                     case MID_BREAK_AFTER:
                         pFmtBreak->SetValue( (eEnum == 1) ?
-                                             SVX_BREAK_COLUMN_AFTER : 
+                                             SVX_BREAK_COLUMN_AFTER :
                                              SVX_BREAK_PAGE_AFTER );
                         break;
                 }
@@ -803,13 +803,13 @@ sal_Bool SvXMLImportItemMapper::PutXMLValue(
                             {
                                 if( !bHori )
                                 {
-                                    ePos = nPrc < 25 ? GPOS_LT : 
+                                    ePos = nPrc < 25 ? GPOS_LT :
                                                (nPrc < 75 ? GPOS_MM : GPOS_RB);
                                     bHori = sal_True;
                                 }
                                 else
                                 {
-                                    eTmp = nPrc < 25 ? GPOS_LT: 
+                                    eTmp = nPrc < 25 ? GPOS_LT:
                                                (nPrc < 75 ? GPOS_LM : GPOS_LB);
                                     lcl_frmitems_MergeXMLVertPos( ePos, eTmp );
                                     bVert = sal_True;
@@ -890,14 +890,15 @@ sal_Bool SvXMLImportItemMapper::PutXMLValue(
         break;
 
         case RES_LAYOUT_SPLIT:
+        case RES_ROW_SPLIT:
         {
-            SwFmtLayoutSplit* pLayoutSplit = PTR_CAST(SwFmtLayoutSplit, &rItem);
-            DBG_ASSERT( pLayoutSplit != NULL, "Wrong Which-ID" );
+            SfxBoolItem* pSplit = PTR_CAST(SfxBoolItem, &rItem);
+            DBG_ASSERT( pSplit != NULL, "Wrong Which-ID" );
 
             sal_Bool bValue;
             bOk = rUnitConverter.convertBool( bValue, rValue );
             if( bOk )
-                pLayoutSplit->SetValue( bValue );
+                pSplit->SetValue( bValue );
         }
         break;
 
@@ -907,7 +908,7 @@ sal_Bool SvXMLImportItemMapper::PutXMLValue(
             DBG_ASSERT( pHoriOrient != NULL, "Wrong Which-ID" );
 
             sal_uInt16 nValue;
-            bOk = rUnitConverter.convertEnum( nValue, rValue, 
+            bOk = rUnitConverter.convertEnum( nValue, rValue,
                                               aXMLTableAlignMap );
             if( bOk )
                 pHoriOrient->SetHoriOrient( (SwHoriOrient)nValue );
@@ -1015,13 +1016,13 @@ sal_Bool SvXMLImportItemMapper::PutXMLValue(
 
         case RES_FRAMEDIR:
         {
-            const XMLPropertyHandler* pWritingModeHandler = 
-                XMLPropertyHandlerFactory::CreatePropertyHandler( 
+            const XMLPropertyHandler* pWritingModeHandler =
+                XMLPropertyHandlerFactory::CreatePropertyHandler(
                     XML_TYPE_TEXT_WRITING_MODE_WITH_DEFAULT );
             if( pWritingModeHandler != NULL )
             {
                 Any aAny;
-                bOk = pWritingModeHandler->importXML( rValue, aAny, 
+                bOk = pWritingModeHandler->importXML( rValue, aAny,
                                                       rUnitConverter );
                 if( bOk )
                     bOk = rItem.PutValue( aAny );
