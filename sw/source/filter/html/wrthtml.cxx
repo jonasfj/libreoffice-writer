@@ -2,9 +2,9 @@
  *
  *  $RCSfile: wrthtml.cxx,v $
  *
- *  $Revision: 1.10 $
+ *  $Revision: 1.11 $
  *
- *  last change: $Author: jp $ $Date: 2001-07-09 11:40:52 $
+ *  last change: $Author: jp $ $Date: 2001-07-19 15:52:33 $
  *
  *  The Contents of this file are made available subject to the terms of
  *  either of the following licenses
@@ -173,7 +173,7 @@
 #include <txatbase.hxx>
 #endif
 #ifndef _FRMATR_HXX
-#include "frmatr.hxx"
+#include <frmatr.hxx>
 #endif
 #ifndef _CHARFMT_HXX //autogen
 #include <charfmt.hxx>
@@ -181,9 +181,6 @@
 #ifndef _DOCARY_HXX
 #include <docary.hxx>
 #endif
-#ifdef TF_ONE51
-#endif
-
 #ifndef _PAM_HXX
 #include <pam.hxx>
 #endif
@@ -1411,20 +1408,23 @@ void GetHTMLWriter( const String&, WriterRef& xRet )
 
       Source Code Control System - Header
 
-      $Header: /zpool/svn/migration/cvs_rep_09_09_08/code/sw/source/filter/html/wrthtml.cxx,v 1.10 2001-07-09 11:40:52 jp Exp $
+      $Header: /zpool/svn/migration/cvs_rep_09_09_08/code/sw/source/filter/html/wrthtml.cxx,v 1.11 2001-07-19 15:52:33 jp Exp $
 
       Source Code Control System - Update
 
       $Log: not supported by cvs2svn $
+      Revision 1.10  2001/07/09 11:40:52  jp
+      changes for TF_DATA
+
       Revision 1.9  2001/07/03 07:49:47  mib
       #88156#: warning for unconvertable chars
-    
+
       Revision 1.8  2001/06/29 10:37:29  mib
       #88918#: Use UTF-8 for Clipboard, evaluate encoding in insert mode
-    
+
       Revision 1.7  2001/02/19 19:34:29  jp
       use HTMLOption of TextEncoding
-    
+
       Revision 1.6  2000/12/21 16:21:48  jp
       writegraphic optional in original format and not general as JPG
 
