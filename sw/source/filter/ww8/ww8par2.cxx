@@ -2,9 +2,9 @@
  *
  *  $RCSfile: ww8par2.cxx,v $
  *
- *  $Revision: 1.99 $
+ *  $Revision: 1.100 $
  *
- *  last change: $Author: hr $ $Date: 2004-03-08 12:30:07 $
+ *  last change: $Author: svesik $ $Date: 2004-04-21 09:58:48 $
  *
  *  The Contents of this file are made available subject to the terms of
  *  either of the following licenses
@@ -114,6 +114,9 @@
 #endif
 #ifndef _SVX_LANGITEM_HXX
 #include <svx/langitem.hxx>
+#endif
+#ifndef _SVX_CHARROTATEITEM_HXX
+#include <svx/charrotateitem.hxx>
 #endif
 
 #ifndef _PAM_HXX
@@ -225,6 +228,7 @@ struct WW8TabBandDesc
     bool mbHasSpacing;
     short nLineHeight;
     short nRows;
+    sal_uInt16 maDirections[MAX_COL + 1];
     short nCenter[MAX_COL + 1]; // X-Rand aller Zellen dieses Bandes
     short nWidth[MAX_COL + 1];  // Laenge aller Zellen dieses Bandes
     short nWwCols;      // BYTE wuerde reichen, alignment -> short
@@ -252,6 +256,7 @@ struct WW8TabBandDesc
     ~WW8TabBandDesc();
     static void setcelldefaults(WW8_TCell *pCells, short nCells);
     void ReadDef(bool bVer67, const BYTE* pS);
+    void ProcessDirection(const BYTE* pParams);
     void ProcessSprmTSetBRC(bool bVer67, const BYTE* pParamsTSetBRC);
     void ProcessSprmTDxaCol(const BYTE* pParamsTDxaCol);
     void ProcessSprmTDelete(const BYTE* pParamsTDelete);
@@ -264,13 +269,15 @@ struct WW8TabBandDesc
     enum wwDIR {wwTOP = 0, wwLEFT = 1, wwBOTTOM = 2, wwRIGHT = 3};
 };
 
-WW8TabBandDesc::WW8TabBandDesc() 
+WW8TabBandDesc::WW8TabBandDesc()
 {
-    memset(this, 0, sizeof(*this)); 
+    memset(this, 0, sizeof(*this));
+    for (size_t i = 0; i < sizeof(maDirections)/sizeof(sal_uInt16); ++i)
+        maDirections[i] = 4;
 }
 
 WW8TabBandDesc::~WW8TabBandDesc()
-{ 
+{
     delete[] pTCs;
     delete[] pSHDs;
     delete[] pNewSHDs;
@@ -324,6 +331,7 @@ class WW8TabDesc
     void SetTabBorders( SwTableBox* pBox, short nIdx );
     void SetTabShades( SwTableBox* pBox, short nWwIdx );
     void SetTabVertAlign( SwTableBox* pBox, short nWwIdx );
+    void SetTabDirection( SwTableBox* pBox, short nWwIdx );
     void CalcDefaults();
     bool SetPamInCell(short nWwCol, bool bPam);
     void InsertCells( short nIns );
@@ -337,6 +345,8 @@ class WW8TabDesc
     // (die Merge-Gruppen werden dann spaeter auf einen Schlag abgearbeitet)
     SwTableBox* UpdateTableMergeGroup(WW8_TCell& rCell,
         WW8SelBoxInfo* pActGroup, SwTableBox* pActBox, USHORT nCol  );
+    void StartMiserableHackForUnsupportedDirection(short nWwCol);
+    void EndMiserableHackForUnsupportedDirection(short nWwCol);
     //No copying
     WW8TabDesc(const WW8TabDesc&);
     WW8TabDesc &operator=(const WW8TabDesc&);
@@ -646,7 +656,7 @@ ApoTestResults SwWW8ImplReader::TestApo(int nCellLevel, bool bTableRowEnd,
     bool bTestAllowed = !bTxbxFlySection && !bTableRowEnd;
     if (bTestAllowed)
     {
-        //Test is allowed if there is no table. 
+        //Test is allowed if there is no table.
         //Otherwise only allowed if we are in the
         //first paragraph of the first cell of a row.
         //(And only if the row we are inside is at the
@@ -1180,7 +1190,6 @@ void SwWW8ImplReader::StopAnlToRestart(BYTE nNewType, bool bGoBack)
     bAnl = false;
 }
 
-
 WW8TabBandDesc::WW8TabBandDesc( WW8TabBandDesc& rBand )
 {
     *this = rBand;
@@ -1305,6 +1314,25 @@ void WW8TabBandDesc::ReadDef(bool bVer67, const BYTE* pS)
                 memcpy( pAktTC->rgbrc, pTc->rgbrcVer8, 4 * sizeof( WW8_BRC ) );
             }
         }
+
+        // #i25071 In '97 text direction appears to be only set using TC properties
+        // not with sprmTTextFlow so we need to cycle through the maDirections and
+        // double check any non-default directions
+        for (int i = 0; i < nCols; ++i)
+        {
+            if(maDirections[i] == 4)
+            {
+                if(pTCs[i].bVertical)
+                {
+                    if(pTCs[i].bBackward)
+                        maDirections[i] = 3;
+                    else
+                        maDirections[i] = 1;
+                }
+            }
+        }
+
+
     }
 }
 
@@ -1453,6 +1481,23 @@ void WW8TabBandDesc::ProcessSprmTInsert(const BYTE* pParamsTInsert)
     }
 }
 
+void WW8TabBandDesc::ProcessDirection(const BYTE* pParams)
+{
+    sal_uInt8 nStartCell = *pParams++;
+    sal_uInt8 nEndCell = *pParams++;
+    sal_uInt16 nCode = SVBT16ToShort(pParams);
+
+    ASSERT(nStartCell < nEndCell, "not as I thought");
+    ASSERT(nEndCell < MAX_COL + 1, "not as I thought");
+    if (nStartCell > MAX_COL)
+        return;
+    if (nEndCell > MAX_COL + 1)
+        nEndCell = MAX_COL + 1;
+
+    for (;nStartCell < nEndCell; ++nStartCell)
+        maDirections[nStartCell] = nCode;
+}
+
 void WW8TabBandDesc::ProcessSpacing(const BYTE* pParams)
 {
     BYTE nLen = pParams ? *(pParams - 1) : 0;
@@ -1500,8 +1545,8 @@ void WW8TabBandDesc::ProcessSpecificSpacing(const BYTE* pParams)
     if (nLen != 6)
         return;
     BYTE nWhichCell = *pParams++;
-    ASSERT(nWhichCell < nWwCols, "Cell out of range in spacings");
-    if (nWhichCell >= nWwCols)
+    ASSERT(nWhichCell < MAX_COL + 1, "Cell out of range in spacings");
+    if (nWhichCell >= MAX_COL + 1)
         return;
 
     *pParams++; //unknown byte
@@ -1636,7 +1681,7 @@ WW8TabDesc::WW8TabDesc(SwWW8ImplReader* pIoClass, WW8_CP nStartCp)
     nMinLeft(0), nConvertedLeft(0), nMaxRight(0), nSwWidth(0), bOk(true),
     bHeader(false), bClaimLineFmt(false), eOri(HORI_NONE), bIsBiDi(false),
     nAktRow(0), nAktBandRow(0), nAktCol(0), pTable(0), pParentPos(0),
-    pFlyFmt(0), 
+    pFlyFmt(0),
     aItemSet(pIo->rDoc.GetAttrPool(),RES_FRMATR_BEGIN,RES_FRMATR_END-1)
 {
     pIo->bAktAND_fNumberAcross = false;
@@ -1692,6 +1737,9 @@ WW8TabDesc::WW8TabDesc(SwWW8ImplReader* pIoClass, WW8_CP nStartCp)
             {
                 switch( aSprmIter.GetAktId() )
                 {
+                case 0x7629:
+                    pNewBand->ProcessDirection(pParams);
+                    break;
                 case 0x3403:
                     pNewBand->bCantSplit = *pParams;
                     bClaimLineFmt = true;
@@ -1865,7 +1913,7 @@ WW8TabDesc::WW8TabDesc(SwWW8ImplReader* pIoClass, WW8_CP nStartCp)
 
         //Are we at the end of available properties
         if (
-             !pPap->HasFkp() || pPap->Where() == LONG_MAX || 
+             !pPap->HasFkp() || pPap->Where() == LONG_MAX ||
              aRes.nStartPos == LONG_MAX
            )
         {
@@ -1893,7 +1941,7 @@ WW8TabDesc::WW8TabDesc(SwWW8ImplReader* pIoClass, WW8_CP nStartCp)
         aRes.pMemPos = 0;
         aRes.nStartPos = nStartCp;
 
-        // #114237 PlcxMan currently points too far ahead so we need to bring 
+        // #114237 PlcxMan currently points too far ahead so we need to bring
         // it back to where we are trying to make a table
         pIo->pPlcxMan->GetPap()->nOrigStartPos = aRes.nStartPos;
         if (!(pPap->SeekPos(aRes.nStartPos)))
@@ -2204,9 +2252,9 @@ void WW8TabDesc::CalcDefaults()
 
                 if ((nLowerLeft < nUpperLeft) || (nLowerRight > nUpperRight))
                     continue;
-                
+
                 WW8_BRC &rBelow = pNext->pTCs[l].rgbrc[WW8_TOP];
-                short nBelowThick = rBelow.IsEmpty(pIo->bVer67) ? 
+                short nBelowThick = rBelow.IsEmpty(pIo->bVer67) ?
                     0 : rBelow.DetermineBorderProperties(pIo->bVer67);
                 if (nAboveThick > nBelowThick)
                     rBelow = rAbove;
@@ -2602,7 +2650,7 @@ void WW8TabDesc::FinishSwTable()
     delete pIo->mpRedlineStack;
     pIo->mpRedlineStack = mpOldRedlineStack;
     mpOldRedlineStack = 0;
-    
+
     WW8DupProperties aDup(pIo->rDoc,pIo->pCtrlStck);
     pIo->pCtrlStck->SetAttr( *pIo->pPaM->GetPoint(), 0, false);
 
@@ -2772,7 +2820,7 @@ void WW8TabDesc::FinishSwTable()
                         pTargetBox->ChgFrmFmt(
                             (SwTableBoxFmt*)pBox->GetFrmFmt() );
                         pTargetBox->SetUpper(  pLine );
-    
+
                         // erst die Box loeschen!!
                         pLine->GetTabBoxes().DeleteAndDestroy( nPos );
                         // dann die pTargetBox einfuegen
@@ -2882,6 +2930,23 @@ bool WW8TabDesc::InFirstParaInCell() const
     return false;
 }
 
+void WW8TabDesc::StartMiserableHackForUnsupportedDirection(short nWwCol)
+{
+    ASSERT(pActBand, "Impossible");
+    if (pActBand && pActBand->maDirections[nWwCol] == 3)
+    {
+        pIo->pCtrlStck->NewAttr(*pIo->pPaM->GetPoint(),
+            SvxCharRotateItem(900, false));
+    }
+}
+
+void WW8TabDesc::EndMiserableHackForUnsupportedDirection(short nWwCol)
+{
+    ASSERT(pActBand, "Impossible");
+    if (pActBand && pActBand->maDirections[nWwCol] == 3)
+        pIo->pCtrlStck->SetAttr(*pIo->pPaM->GetPoint(), RES_CHRATR_ROTATE);
+}
+
 bool WW8TabDesc::SetPamInCell(short nWwCol, bool bPam)
 {
     ASSERT( pActBand, "pActBand ist 0" );
@@ -2906,7 +2971,7 @@ bool WW8TabDesc::SetPamInCell(short nWwCol, bool bPam)
             // The first paragraph in a cell with upper autospacing has upper
             // spacing set to 0
             if (
-                 pIo->bParaAutoBefore && pIo->bFirstPara && 
+                 pIo->bParaAutoBefore && pIo->bFirstPara &&
                  !pIo->pWDop->fDontUseHTMLAutoSpacing
                )
             {
@@ -2959,6 +3024,7 @@ bool WW8TabDesc::SetPamInCell(short nWwCol, bool bPam)
             //            nachzuahmen, braucht NICHT SetTxtFmtCollAndListLevel()
             //            verwendet zu werden.
         }
+        StartMiserableHackForUnsupportedDirection(nWwCol);
     }
     return true;
 }
@@ -3059,6 +3125,37 @@ void WW8TabDesc::SetTabShades( SwTableBox* pBox, short nWwIdx )
     }
 }
 
+SvxFrameDirection MakeDirection(sal_uInt16 nCode)
+{
+    SvxFrameDirection eDir = FRMDIR_ENVIRONMENT;
+    switch (nCode)
+    {
+        default:
+            ASSERT(eDir == 4, "unknown direction code, maybe its a bitfield");
+        case 3:
+            eDir = FRMDIR_HORI_LEFT_TOP;
+            break;
+        case 5:
+            eDir = FRMDIR_VERT_TOP_RIGHT;
+            break;
+        case 1:
+            eDir = FRMDIR_VERT_TOP_RIGHT;
+            break;
+        case 4:
+            eDir = FRMDIR_HORI_LEFT_TOP;
+            break;
+    }
+    return eDir;
+}
+
+void WW8TabDesc::SetTabDirection(SwTableBox* pBox, short nWwIdx)
+{
+    if (nWwIdx < 0 || nWwIdx >= pActBand->nWwCols)
+        return;
+    SvxFrameDirectionItem aItem(MakeDirection(pActBand->maDirections[nWwIdx]));
+    pBox->GetFrmFmt()->SetAttr(aItem);
+}
+
 void WW8TabDesc::SetTabVertAlign( SwTableBox* pBox, short nWwIdx )
 {
     if( nWwIdx < 0 || nWwIdx >= pActBand->nWwCols )
@@ -3153,6 +3250,7 @@ void WW8TabDesc::AdjustNewBand()
 
         SetTabBorders(pBox, j);
         SetTabVertAlign(pBox, j);
+        SetTabDirection(pBox, j);
         if( pActBand->pSHDs || pActBand->pNewSHDs)
             SetTabShades(pBox, j);
         j++;
@@ -3172,6 +3270,8 @@ void WW8TabDesc::AdjustNewBand()
 void WW8TabDesc::TableCellEnd()
 {
     ::SetProgressState(pIo->nProgress, pIo->mpDocShell);   // Update
+
+    EndMiserableHackForUnsupportedDirection(nAktCol);
 
     // neue Zeile
     if( pIo->bWasTabRowEnd )
@@ -3396,7 +3496,7 @@ void SwWW8ImplReader::StopTable()
 
     // We are leaving a table so make sure the next paragraph doesn't think
     // it's the first paragraph
-    bFirstPara = false;      
+    bFirstPara = false;
 
     pTableDesc->FinishSwTable();
     PopTableDesc();
