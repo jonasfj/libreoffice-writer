@@ -2,9 +2,9 @@
  *
  *  $RCSfile: ww8par3.cxx,v $
  *
- *  $Revision: 1.5 $
+ *  $Revision: 1.6 $
  *
- *  last change: $Author: cmc $ $Date: 2001-02-06 11:10:53 $
+ *  last change: $Author: os $ $Date: 2001-02-23 12:45:26 $
  *
  *  The Contents of this file are made available subject to the terms of
  *  either of the following licenses
@@ -391,7 +391,7 @@ eF_ResT SwWW8ImplReader::Read_F_FormTextBox( WW8FieldDesc* pF, String& rStr )
             the "default text" area. But MSOffice does not display that
             information, instead it display the result of the field,
             MSOffice just uses the default text of the control as its
-            initial value for the displayed default text. So we will swap in 
+            initial value for the displayed default text. So we will swap in
             the field result into the formula here in place of the default
             text.
             */
@@ -399,7 +399,7 @@ eF_ResT SwWW8ImplReader::Read_F_FormTextBox( WW8FieldDesc* pF, String& rStr )
 
             /* #80205#
             And also a blank TextBox is indicated by 5 of these
-            placeholder chars, convert a field result of this stuff 
+            placeholder chars, convert a field result of this stuff
             into an empty string.
             */
             static sal_Unicode __READONLY_DATA aFormTextBoxBlank[] =
@@ -805,10 +805,10 @@ sal_Bool WW8ListManager::ReadLVL( sal_uInt8 nLevel,
             aPrefix = sNumString.Copy( 1, aLVL.aOfsNumsXCH[ 0 ]-1 );
 #else
         /*
-        #83154#, #82192#, ##173## 
-        Our aOfsNumsXCH seems generally to be an array that contains the 
-        offset into sNumString of locations where the numbers should be 
-        filled in, so if the first "fill in a number" slot is greater than 
+        #83154#, #82192#, ##173##
+        Our aOfsNumsXCH seems generally to be an array that contains the
+        offset into sNumString of locations where the numbers should be
+        filled in, so if the first "fill in a number" slot is greater than
         1 there is a "prefix" before the number
         */
         if(aLVL.aOfsNumsXCH[0] <= 1)
@@ -819,17 +819,17 @@ sal_Bool WW8ListManager::ReadLVL( sal_uInt8 nLevel,
 
         if( nUpperLevel && ( sNumString.Len() > aLVL.aOfsNumsXCH[ nUpperLevel-1 ] ) )
         {
-#if 0	
+#if 0
             sNumString += String::CreateFromInt32(
                                     aLVL.aOfsNumsXCH[ nUpperLevel-1 ] );
             aPostfix = sNumString.Copy( 1 );
 #else
 
         /*
-        #83154#, #82192#, ##173## 
-        Bit of madness here when there was a change from a pointer to a 
-        String class during the rush to OOo initial release. This wasn't meant 
-        to be "append a number" at all it was originally an "increment a 
+        #83154#, #82192#, ##173##
+        Bit of madness here when there was a change from a pointer to a
+        String class during the rush to OOo initial release. This wasn't meant
+        to be "append a number" at all it was originally an "increment a
         pointer"
         */
             aPostfix = sNumString.Copy(aLVL.aOfsNumsXCH[nUpperLevel-1]);
@@ -855,9 +855,9 @@ sal_Bool WW8ListManager::ReadLVL( sal_uInt8 nLevel,
     // 6. entsprechendes NumFmt konfigurieren
     //
     if( bSetStartNo )
-        rNumFmt.SetStartValue( nStartNo );
-    rNumFmt.eType = eType;
-    rNumFmt.SetAdjust( eAdj );
+        rNumFmt.SetStart( nStartNo );
+    rNumFmt.SetNumberingType(eType);
+    rNumFmt.SetNumAdjust( eAdj );
 
     if( SVX_NUM_CHAR_SPECIAL == eType )
     {
@@ -872,8 +872,8 @@ sal_Bool WW8ListManager::ReadLVL( sal_uInt8 nLevel,
         // erinnern: Garnix ist default Prefix
             rNumFmt.SetPrefix( aPrefix );
         // erinnern: Punkt ist default	Postfix
-        rNumFmt.SetPostfix( aPostfix );
-        rNumFmt.SetUpperLevel( nUpperLevel );
+        rNumFmt.SetSuffix( aPostfix );
+        rNumFmt.SetIncludeUpperLevels( nUpperLevel );
     }
 
     rNumFmt.SetAbsLSpace( aLVL.nDxaLeft );
@@ -969,7 +969,7 @@ void WW8ListManager::AdjustLVL( sal_uInt8       nLevel,
     //
     // ggfs. Bullet Font an das NumFormat haengen
     //
-    if( SVX_NUM_CHAR_SPECIAL == aNumFmt.eType )
+    if( SVX_NUM_CHAR_SPECIAL == aNumFmt.GetNumberingType() )
     {
         SwCharFmt* pFmt = aNumFmt.GetCharFmt();
         Font aFont;
@@ -1323,7 +1323,7 @@ WW8ListManager::WW8ListManager(SvStream& rSt_, SwWW8ImplReader& rReader_)
                         }
                         else
                         if( aLFOLVL.bStartAt )
-                            aNumFmt.SetStartValue( (sal_uInt16)aLFOLVL.nStartAt );
+                            aNumFmt.SetStart( (sal_uInt16)aLFOLVL.nStartAt );
                         //
                         // 2.2.2.3 das NumFmt in die NumRule aufnehmen
                         //
@@ -2003,7 +2003,7 @@ void WW8FormulaControl::SetOthersFromDoc(uno::Reference< form::XFormComponent >&
 }
 
 
-BOOL WW8FormulaEditBox::Import(const uno::Reference< 
+BOOL WW8FormulaEditBox::Import(const uno::Reference<
     lang::XMultiServiceFactory >& rServiceFactory,
     uno::Reference< form::XFormComponent >& rFComp, awt::Size &rSz)
 {
@@ -2063,16 +2063,16 @@ BOOL WW8FormulaEditBox::Import(const uno::Reference<
 
 
 BOOL SwMSConvertControls::InsertControl(
-    const uno::Reference< form::XFormComponent > & rFComp, 
+    const uno::Reference< form::XFormComponent > & rFComp,
     const awt::Size& rSize,
     uno::Reference< drawing::XShape > *pShape,
     BOOL bFloatingCtrl)
 {
     uno::Reference< drawing::XShape >  xShape;
 
-    const uno::Reference< container::XIndexContainer > & rFormComps = 
+    const uno::Reference< container::XIndexContainer > & rFormComps =
         GetFormComps();
-    uno::Any aTmp( &rFComp, ::getCppuType((const uno::Reference< 
+    uno::Any aTmp( &rFComp, ::getCppuType((const uno::Reference<
         form::XFormComponent >*)0) );
     rFormComps->insertByIndex( rFormComps->getCount(), aTmp );
 
@@ -2091,7 +2091,7 @@ BOOL SwMSConvertControls::InsertControl(
     DBG_ASSERT(xShape.is(), "XShape nicht erhalten")
     xShape->setSize(rSize);
 
-    uno::Reference< beans::XPropertySet >  xShapePropSet( 
+    uno::Reference< beans::XPropertySet >  xShapePropSet(
         xCreate, uno::UNO_QUERY );
 
     //I lay a small bet that this will change to
@@ -2109,8 +2109,8 @@ BOOL SwMSConvertControls::InsertControl(
     aTmp <<= nTemp;
     xShapePropSet->setPropertyValue( WW8_ASCII2STR("VertOrient"), aTmp );
 
-    uno::Reference< text::XText >  xDummyTxtRef; 
-    uno::Reference< text::XTextRange >  xTxtRg = 
+    uno::Reference< text::XText >  xDummyTxtRef;
+    uno::Reference< text::XTextRange >  xTxtRg =
         new SwXTextRange( *pPaM, xDummyTxtRef );
 
     aTmp.setValue(&xTxtRg,::getCppuType((
@@ -2120,9 +2120,9 @@ BOOL SwMSConvertControls::InsertControl(
     GetShapes()->add( xShape );
 
     // Das Control-Model am Control-Shape setzen
-    uno::Reference< drawing::XControlShape >  xControlShape( xShape, 
+    uno::Reference< drawing::XControlShape >  xControlShape( xShape,
         uno::UNO_QUERY );
-    uno::Reference< awt::XControlModel >  xControlModel( rFComp, 
+    uno::Reference< awt::XControlModel >  xControlModel( rFComp,
         uno::UNO_QUERY );
     xControlShape->setControl( xControlModel );
 
@@ -2136,36 +2136,39 @@ BOOL SwMSConvertControls::InsertControl(
 
       Source Code Control System - Header
 
-      $Header: /zpool/svn/migration/cvs_rep_09_09_08/code/sw/source/filter/ww8/ww8par3.cxx,v 1.5 2001-02-06 11:10:53 cmc Exp $
+      $Header: /zpool/svn/migration/cvs_rep_09_09_08/code/sw/source/filter/ww8/ww8par3.cxx,v 1.6 2001-02-23 12:45:26 os Exp $
 
 
       Source Code Control System - Update
 
       $Log: not supported by cvs2svn $
+      Revision 1.5  2001/02/06 11:10:53  cmc
+      ##173##, #80858#, #82192# deeply flawed upgrade to String from pointer to character array fixed
+
       Revision 1.4  2001/01/30 09:27:25  cmc
       #80205# Keeping comments closely linked to bugids
-    
+
       Revision 1.3  2001/01/29 10:17:21  cmc
       #80205# Default FormTextField Text import
-    
+
       Revision 1.2  2000/10/10 16:54:06  cmc
       MSOffice 97/2000 Controls {Im|Ex}port
-    
+
       Revision 1.1.1.1  2000/09/18 17:14:58  hr
       initial import
-    
+
       Revision 1.53  2000/09/18 16:05:00  willem.vandorp
       OpenOffice header added.
-    
+
       Revision 1.52  2000/08/22 17:41:01  cmc
       #77315# 95 Formulas, bad string read
-    
+
       Revision 1.51  2000/07/20 14:47:21  khz
       #75709# Remove NumRule from Node wit no/invalid LFO
-    
+
       Revision 1.50  2000/06/26 09:58:42  jp
       must change: GetAppWindow->GetDefaultDevice
-    
+
       Revision 1.49  2000/06/23 10:29:55  khz
       #71707# Make sure pNdNum is set to zero when no numbering on node
 
