@@ -2,9 +2,9 @@
  *
  *  $RCSfile: wrtw8nds.cxx,v $
  *
- *  $Revision: 1.48 $
+ *  $Revision: 1.49 $
  *
- *  last change: $Author: vg $ $Date: 2003-04-01 12:58:56 $
+ *  last change: $Author: obo $ $Date: 2003-04-02 17:17:45 $
  *
  *  The Contents of this file are made available subject to the terms of
  *  either of the following licenses
@@ -116,7 +116,7 @@
 #ifndef _SVX_FRMDIRITEM_HXX
 #include <svx/frmdiritem.hxx>
 #endif
- 
+
 #ifndef _TOOLS_TENCCVT_HXX
 #include <tools/tenccvt.hxx>
 #endif
@@ -266,7 +266,7 @@ private:
     rtl_TextEncoding meCharSet;
 public:
     rtl_TextEncoding CharSet() const {return meCharSet;}
-    CurrentCharSet(const SwTxtAttr *pPointer, rtl_TextEncoding eCharSet) 
+    CurrentCharSet(const SwTxtAttr *pPointer, rtl_TextEncoding eCharSet)
         : mpPointer(pPointer), meCharSet(eCharSet) {}
     bool operator==(const CurrentCharSet &rSecond) const
     {
@@ -277,10 +277,10 @@ public:
 class swFlyFrm
 {
 public:
-    const SwFrmFmt* mpFlyFrm;     
+    const SwFrmFmt* mpFlyFrm;
     const SwCntntNode *mpNode;
     SwPosition maPos;
-    swFlyFrm(const SwFrmFmt* pFlyFrm, const SwCntntNode *pNode, 
+    swFlyFrm(const SwFrmFmt* pFlyFrm, const SwCntntNode *pNode,
         const SwPosition &rPos)
     :   mpFlyFrm(pFlyFrm), mpNode(pNode), maPos(rPos) {}
 };
@@ -356,7 +356,7 @@ public:
 };
 
 WW8_SwAttrIter::WW8_SwAttrIter(SwWW8Writer& rWr, const SwTxtNode& rTxtNd)
-    : WW8_AttrIter(rWr), rNd(rTxtNd), pCurRedline(0), nAktSwPos(0), 
+    : WW8_AttrIter(rWr), rNd(rTxtNd), pCurRedline(0), nAktSwPos(0),
     nTmpSwPos(0), nCurRedlinePos(USHRT_MAX), mbCharIsRTL(false)
 {
     SwPosition aPos(rTxtNd);
@@ -368,7 +368,7 @@ WW8_SwAttrIter::WW8_SwAttrIter(SwWW8Writer& rWr, const SwTxtNode& rTxtNd)
     // Attributwechsel an Pos 0 wird ignoriert, da davon ausgegangen
     // wird, dass am Absatzanfang sowieso die Attribute neu ausgegeben
     // werden.
-    eNdChrSet = 
+    eNdChrSet =
         ((SvxFontItem&)rNd.SwCntntNode::GetAttr(RES_CHRATR_FONT)).GetCharSet();
     eNdChrSet = GetExtendedTextEncoding(eNdChrSet);
 
@@ -384,7 +384,7 @@ WW8_SwAttrIter::WW8_SwAttrIter(SwWW8Writer& rWr, const SwTxtNode& rTxtNd)
         UBiDiDirection eDefaultDir = mbParaIsRTL ? UBIDI_RTL : UBIDI_LTR;
         UErrorCode nError = U_ZERO_ERROR;
         UBiDi* pBidi = ubidi_openSized(rTxt.Len(), 0, &nError);
-        ubidi_setPara(pBidi, rTxt.GetBuffer(), rTxt.Len(), eDefaultDir, NULL, 
+        ubidi_setPara(pBidi, rTxt.GetBuffer(), rTxt.Len(), eDefaultDir, NULL,
             &nError);
 
         sal_Int32 nCount = ubidi_countRuns(pBidi, &nError);
@@ -402,7 +402,7 @@ WW8_SwAttrIter::WW8_SwAttrIter(SwWW8Writer& rWr, const SwTxtNode& rTxtNd)
             implementation.
 
             It holds an embedding level and indicates the visual direction by
-            its bit 0 (even/odd value). 
+            its bit 0 (even/odd value).
 
             The value for UBIDI_DEFAULT_LTR is even and the one for
             UBIDI_DEFAULT_RTL is odd
@@ -430,7 +430,7 @@ WW8_SwAttrIter::WW8_SwAttrIter(SwWW8Writer& rWr, const SwTxtNode& rTxtNd)
             const SwPosition* pAnchor = pEntry->GetAnchor().GetCntntAnchor();
             if (pAnchor)
             {
-                maFlyFrms.push_back(swFlyFrm(pEntry, 
+                maFlyFrms.push_back(swFlyFrm(pEntry,
                     aIdx.GetNode().GetCntntNode(), *pAnchor));
             }
             else
@@ -438,7 +438,7 @@ WW8_SwAttrIter::WW8_SwAttrIter(SwWW8Writer& rWr, const SwTxtNode& rTxtNd)
                 SwPosition aPos(aIdx);
                 if (SwTxtNode* pTxtNd = aIdx.GetNode().GetTxtNode())
                     aPos.nContent.Assign(pTxtNd, pTxtNd->GetTxt().Len());
-                maFlyFrms.push_back(swFlyFrm(pEntry, 
+                maFlyFrms.push_back(swFlyFrm(pEntry,
                     aIdx.GetNode().GetCntntNode(), aPos));
             }
         }
@@ -536,7 +536,7 @@ xub_StrLen WW8_SwAttrIter::SearchNext( xub_StrLen nStartPos )
                 }
             }
             else
-            {	
+            {
                 // Attr ohne Ende Laenge 1 wegen CH_TXTATR im Text
                 nPos = *pHt->GetStart() + 1;
                 if( nPos >= nStartPos && nPos <= nMinPos )
@@ -568,7 +568,7 @@ xub_StrLen WW8_SwAttrIter::SearchNext( xub_StrLen nStartPos )
     if (maFlyIter != maFlyFrms.end())
     {
         const SwPosition &rAnchor = maFlyIter->maPos;
-    
+
         nPos = rAnchor.nContent.GetIndex();
         if (nPos >= nStartPos && nPos <= nMinPos)
             nMinPos = nPos;
@@ -614,9 +614,9 @@ void WW8_SwAttrIter::SetCharSet(const SwTxtAttr& rAttr, bool bStart)
         CurrentCharSet aEntry(p, GetExtendedTextEncoding(eChrSet));
         if (bStart)
             maCharSets.push_back(aEntry);
-        else 
+        else
         {
-            mychsiter aIter = std::find(maCharSets.begin(), maCharSets.end(), 
+            mychsiter aIter = std::find(maCharSets.begin(), maCharSets.end(),
                 aEntry);
             if (aIter != maCharSets.end())
                 maCharSets.erase(aIter);
@@ -920,7 +920,7 @@ void WW8_AttrIter::StartURL(const String &rUrl, const String &rTarget)
     if (rTarget.Len())
             (sURL.APPEND_CONST_ASC(" \\n ")) += rTarget;
 
-    
+
     rWrt.OutField( 0, 88, sURL,
                 WRITEFIELD_START | WRITEFIELD_CMD_START );
 
@@ -1303,7 +1303,7 @@ short SwWW8Writer::TrueFrameDirection(const SwFrmFmt &rFlyFmt) const
             if (FLY_PAGE != pAnchor->GetAnchorId() &&
                 pAnchor->GetCntntAnchor())
             {
-                pFlyFmt = 
+                pFlyFmt =
                     pAnchor->GetCntntAnchor()->nNode.GetNode().GetFlyFmt();
             }
             else
@@ -1328,7 +1328,7 @@ const SvxBrushItem* SwWW8Writer::GetCurrentPageBgBrush() const
     const SwFrmFmt  &rFmt = pAktPageDesc
                     ? pAktPageDesc->GetMaster()
                     : pDoc->GetPageDesc(0).GetMaster();
-  
+
     const SfxPoolItem* pItem = 0;
     //If not set, or "no fill", get real bg
     SfxItemState eState = rFmt.GetItemState(RES_BACKGROUND, true, &pItem);
@@ -1352,7 +1352,7 @@ SvxBrushItem SwWW8Writer::TrueFrameBgBrush(const SwFrmFmt &rFlyFmt) const
     {
         //If not set, or "no fill", get real bg
         const SfxPoolItem* pItem = 0;
-        SfxItemState eState = 
+        SfxItemState eState =
             pFlyFmt->GetItemState(RES_BACKGROUND, true, &pItem);
         pRet = (const SvxBrushItem*)pItem;
         if (SFX_ITEM_SET != eState || (!pRet->GetGraphic() &&
@@ -1363,7 +1363,7 @@ SvxBrushItem SwWW8Writer::TrueFrameBgBrush(const SwFrmFmt &rFlyFmt) const
             if (FLY_PAGE != pAnchor->GetAnchorId() &&
                 pAnchor->GetCntntAnchor())
             {
-                pFlyFmt = 
+                pFlyFmt =
                     pAnchor->GetCntntAnchor()->nNode.GetNode().GetFlyFmt();
             }
             else
@@ -1376,8 +1376,8 @@ SvxBrushItem SwWW8Writer::TrueFrameBgBrush(const SwFrmFmt &rFlyFmt) const
     if (!pRet)
         pRet = GetCurrentPageBgBrush();
 
-    SvxBrushItem aRet(Color(COL_WHITE));
-    if (pRet && (pRet->GetGraphic() || pRet->GetColor() != COL_TRANSPARENT))
+    SvxBrushItem aRet = Color(COL_WHITE);
+    if (pRet && (pRet->GetGraphic() ||( pRet->GetColor() != COL_TRANSPARENT)))
         aRet = *pRet;
 
     return aRet;
@@ -1455,7 +1455,7 @@ Writer& OutWW8_SwTxtNode( Writer& rWrt, SwCntntNode& rNode )
 
         aAttrIter.OutFlys(nAktPos);
         //Append bookmarks in this range after flys, exclusive of final
-        //position of this range 
+        //position of this range
         rWW8Wrt.AppendBookmarks( *pNd, nAktPos, nNextAttr - nAktPos );
         bool bTxtAtr = aAttrIter.IsTxtAttr( nAktPos );
         bool bAttrWithRange = aAttrIter.OutAttrWithRange( nAktPos );
@@ -1624,7 +1624,7 @@ Writer& OutWW8_SwTxtNode( Writer& rWrt, SwCntntNode& rNode )
         const SvxFrameDirectionItem* pItem = (const SvxFrameDirectionItem*)
             pNd->GetSwAttrSet().GetItem(RES_FRAMEDIR);
         if (
-            (!pItem || pItem->GetValue() == FRMDIR_ENVIRONMENT) && 
+            (!pItem || pItem->GetValue() == FRMDIR_ENVIRONMENT) &&
             aAttrIter.IsParaRTL()
            )
         {
@@ -1642,7 +1642,7 @@ Writer& OutWW8_SwTxtNode( Writer& rWrt, SwCntntNode& rNode )
             rWW8Wrt.pOutFmtNode = pNd;
 
             // Pap-Attrs, so script is not necessary
-            rWW8Wrt.Out_SfxItemSet( *pTmpSet, true, false, 
+            rWW8Wrt.Out_SfxItemSet( *pTmpSet, true, false,
                 com::sun::star::i18n::ScriptType::LATIN);
 
             rWW8Wrt.pStyAttr = 0;
@@ -1653,7 +1653,7 @@ Writer& OutWW8_SwTxtNode( Writer& rWrt, SwCntntNode& rNode )
         }
     }
 
-    rWW8Wrt.pPapPlc->AppendFkpEntry( rWrt.Strm().Tell(), pO->Count(), 
+    rWW8Wrt.pPapPlc->AppendFkpEntry( rWrt.Strm().Tell(), pO->Count(),
         pO->GetData() );
     pO->Remove( 0, pO->Count() );						// leeren
     return rWrt;
@@ -1775,7 +1775,7 @@ Writer& OutWW8_SwTblNode( Writer& rWrt, SwTableNode & rNode )
             if (!(nPageSize = aRect.Width()))
             {
                 const SvxLRSpaceItem& rLR = pParentFmt->GetLRSpace();
-                nPageSize = pParentFmt->GetFrmSize().GetWidth() - rLR.GetLeft() - 
+                nPageSize = pParentFmt->GetFrmSize().GetWidth() - rLR.GetLeft() -
                     rLR.GetRight();
             }
         }
@@ -1823,7 +1823,7 @@ Writer& OutWW8_SwTblNode( Writer& rWrt, SwTableNode & rNode )
         bool bFixRowHeight = false;
         USHORT nRealColCnt = 0;
         USHORT nTotal = rCells.Count();
-        ASSERT(nTotal <= rCols.Count(), 
+        ASSERT(nTotal <= rCols.Count(),
             "oh oh!,row has more cells than table is wide!");
         if (nTotal > rCols.Count())
             nTotal = rCols.Count();
@@ -1858,7 +1858,7 @@ Writer& OutWW8_SwTblNode( Writer& rWrt, SwTableNode & rNode )
         }
 
         //Winword column export limited to 31/64 cells
-        BYTE nWWColMax = nRealColCnt > nMaxCols ? 
+        BYTE nWWColMax = nRealColCnt > nMaxCols ?
             nMaxCols : static_cast<BYTE>(nRealColCnt);
 
         // 1.Zeile eine Headline?  sprmTTableHeader
