@@ -2,9 +2,9 @@
  *
  *  $RCSfile: frmmgr.cxx,v $
  *
- *  $Revision: 1.12 $
+ *  $Revision: 1.13 $
  *
- *  last change: $Author: hjs $ $Date: 2004-06-28 13:48:00 $
+ *  last change: $Author: kz $ $Date: 2004-08-02 14:22:42 $
  *
  *  The Contents of this file are made available subject to the terms of
  *  either of the following licenses
@@ -117,7 +117,7 @@
 #endif
 #ifndef _COM_SUN_STAR_TEXT_RELORIENTATION_HPP_
 #include <com/sun/star/text/RelOrientation.hpp>
-#endif 
+#endif
 using namespace ::com::sun::star::text;
 
 static USHORT __FAR_DATA aFrmMgrRange[] = {
@@ -337,8 +337,8 @@ void SwFlyFrmAttrMgr::SetAbsPos( const Point& rPoint )
 /*--------------------------------------------------------------------
     Beschreibung: Metriken auf Korrektheit pruefen
  --------------------------------------------------------------------*/
-void SwFlyFrmAttrMgr::ValidateMetrics( SvxSwFrameValidation& rVal, 
-        const SwPosition* pToCharCntntPos, 
+void SwFlyFrmAttrMgr::ValidateMetrics( SvxSwFrameValidation& rVal,
+        const SwPosition* pToCharCntntPos,
         BOOL bOnlyPercentRefValue )
 {
     if (!bOnlyPercentRefValue)
@@ -352,9 +352,9 @@ void SwFlyFrmAttrMgr::ValidateMetrics( SvxSwFrameValidation& rVal,
     // OD 18.09.2003 #i18732# - adjustment for allowing vertical position
     //      aligned to page for fly frame anchored to paragraph or to character.
     const RndStdIds eAnchorType = static_cast<RndStdIds >(rVal.nAnchorType);
-    pOwnSh->CalcBoundRect( aBoundRect, eAnchorType, 
+    pOwnSh->CalcBoundRect( aBoundRect, eAnchorType,
                            static_cast<SwRelationOrient>(rVal.nHRelOrient),
-                           static_cast<SwRelationOrient>(rVal.nVRelOrient), 
+                           static_cast<SwRelationOrient>(rVal.nVRelOrient),
                            pToCharCntntPos,
                            rVal.bFollowTextFlow,
                            rVal.bMirror, NULL, &rVal.aPercentSize);
@@ -428,7 +428,7 @@ void SwFlyFrmAttrMgr::ValidateMetrics( SvxSwFrameValidation& rVal,
     }
     // OD 12.11.2003 #i22341# - handle to character anchored objects vertical
     // aligned at character or top of line in a special case
-    else if ( eAnchorType == FLY_AT_CNTNT || 
+    else if ( eAnchorType == FLY_AT_CNTNT ||
                 ( eAnchorType == FLY_AUTO_CNTNT &&
                 !(rVal.nVRelOrient == RelOrientation::CHAR) &&
                 !(rVal.nVRelOrient == RelOrientation::TEXT_LINE) ) )
