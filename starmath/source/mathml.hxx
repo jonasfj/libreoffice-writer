@@ -2,9 +2,9 @@
  *
  *  $RCSfile: mathml.hxx,v $
  *
- *  $Revision: 1.25 $
+ *  $Revision: 1.26 $
  *
- *  last change: $Author: obo $ $Date: 2004-08-11 15:07:32 $
+ *  last change: $Author: kz $ $Date: 2004-10-04 18:03:41 $
  *
  *  The Contents of this file are made available subject to the terms of
  *  either of the following licenses
@@ -78,12 +78,11 @@
 #endif
 
 class SfxMedium;
-class SvStorage;
 namespace com { namespace sun { namespace star {
     namespace io {
         class XInputStream;
         class XOutputStream; }
-    namespace beans { 
+    namespace beans {
         class XPropertySet; }
 } } }
 
@@ -111,8 +110,8 @@ private:
         sal_Bool bEncrypted );
 
     ULONG ReadThroughComponent(
-        SvStorage* pStorage,
-        ::com::sun::star::uno::Reference< ::com::sun::star::lang::XComponent > xModelComponent,
+         const ::com::sun::star::uno::Reference< ::com::sun::star::embed::XStorage >& xStorage,
+                ::com::sun::star::uno::Reference< ::com::sun::star::lang::XComponent > xModelComponent,
         const sal_Char* pStreamName,
         const sal_Char* pCompatibilityStreamName,
         ::com::sun::star::uno::Reference< ::com::sun::star::lang::XMultiServiceFactory > & rFactory,
@@ -123,21 +122,21 @@ private:
     sal_Bool WriteThroughComponent(
         ::com::sun::star::uno::Reference< ::com::sun::star::io::XOutputStream >
             xOutputStream,
-        ::com::sun::star::uno::Reference< ::com::sun::star::lang::XComponent > 
+        ::com::sun::star::uno::Reference< ::com::sun::star::lang::XComponent >
             xComponent,
-        ::com::sun::star::uno::Reference< 
+        ::com::sun::star::uno::Reference<
             ::com::sun::star::lang::XMultiServiceFactory > & rFactory,
-        ::com::sun::star::uno::Reference< 
+        ::com::sun::star::uno::Reference<
             ::com::sun::star::beans::XPropertySet > & rPropSet,
         const sal_Char* pComponentName );
     sal_Bool WriteThroughComponent(
-        SvStorage* pStorage,
-        ::com::sun::star::uno::Reference< ::com::sun::star::lang::XComponent > 
+        const ::com::sun::star::uno::Reference< ::com::sun::star::embed::XStorage >& xStor,
+        ::com::sun::star::uno::Reference< ::com::sun::star::lang::XComponent >
             xComponent,
         const sal_Char* pStreamName,
-        ::com::sun::star::uno::Reference< 
+        ::com::sun::star::uno::Reference<
             ::com::sun::star::lang::XMultiServiceFactory > & rFactory,
-        ::com::sun::star::uno::Reference< 
+        ::com::sun::star::uno::Reference<
             ::com::sun::star::beans::XPropertySet > & rPropSet,
         const sal_Char* pComponentName,
         sal_Bool bCompress=sal_True );
@@ -161,7 +160,7 @@ public:
     // XServiceInfo (override parent method)
     ::rtl::OUString SAL_CALL getImplementationName()
         throw( ::com::sun::star::uno::RuntimeException );
-    
+
     void SAL_CALL endDocument(void)
         throw( ::com::sun::star::xml::sax::SAXException,
         ::com::sun::star::uno::RuntimeException );
@@ -428,11 +427,11 @@ public:
         com::sun::star::uno::Reference< com::sun::star::xml::sax::XDocumentHandler> &rHandler);
 
     virtual ~SmXMLExport() {};
-    
+
     // XServiceInfo (override parent method)
     ::rtl::OUString SAL_CALL getImplementationName()
         throw( ::com::sun::star::uno::RuntimeException );
-    
+
     void _ExportAutoStyles() {}
     void _ExportMasterStyles() {}
     void _ExportContent();
