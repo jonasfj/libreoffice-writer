@@ -2,9 +2,9 @@
  *
  *  $RCSfile: ww8scan.cxx,v $
  *
- *  $Revision: 1.23 $
+ *  $Revision: 1.24 $
  *
- *  last change: $Author: cmc $ $Date: 2001-08-01 16:56:06 $
+ *  last change: $Author: jp $ $Date: 2001-08-06 15:41:39 $
  *
  *  The Contents of this file are made available subject to the terms of
  *  either of the following licenses
@@ -190,7 +190,7 @@ void WW8SprmIter::UpdateMyMembers()
 // eigenen Iteratoren. Alle sich auf Iteratoren beziehenden Methoden
 // sind deshalb Dummies.
 
-WW8PLCFx_PCDAttrs::WW8PLCFx_PCDAttrs( BYTE nVersion, WW8PLCFx_PCD* pPLCFx_PCD, 
+WW8PLCFx_PCDAttrs::WW8PLCFx_PCDAttrs( BYTE nVersion, WW8PLCFx_PCD* pPLCFx_PCD,
     const WW8ScannerBase* pBase )
 : WW8PLCFx( nVersion, TRUE ),
   pPcd( pPLCFx_PCD ),
@@ -432,14 +432,14 @@ WW8_FC WW8PLCFx_PCD::AktPieceStartCp2Fc( WW8_CP nCp )
 }
 
 
-eCutT WW8PLCFx_PCD::AktPieceFc2Cp( long& rStartPos, long& rEndPos, 
+eCutT WW8PLCFx_PCD::AktPieceFc2Cp( long& rStartPos, long& rEndPos,
     const WW8ScannerBase *pSBase )
 {
     eCutT eRet = CUT_NONE;
     //No point going anywhere with this
     if ((rStartPos == LONG_MAX) && (rEndPos == LONG_MAX))
         return eRet;
-#ifndef CRUEL_CUT 
+#ifndef CRUEL_CUT
     rStartPos = pSBase->WW8Fc2Cp( rStartPos );
     rEndPos = pSBase->WW8Fc2Cp( rEndPos );
 #else
@@ -603,9 +603,9 @@ WW8_CP WW8ScannerBase::WW8Fc2Cp( WW8_FC nFcPos ) const
             on the very last cp of that piece
             */
             if (nFcPos >= nFcStart)
-            {	
+            {
                 // found
-                WW8_CP nTempCp = 
+                WW8_CP nTempCp =
                     nCpStart + ((nFcPos - nFcStart) / (bIsUnicode ? 2 : 1));
                 if (nFcPos < nFcStart + nLen)
                 {
@@ -1789,7 +1789,7 @@ BYTE* WW8PLCFx_Fc_FKP::WW8Fkp::GetLenAndIStdAndSprms(short& rLen)
 }
 
 
-const BYTE* WW8FindSprm( USHORT nId, long nLen, const BYTE* pSprms, 
+const BYTE* WW8FindSprm( USHORT nId, long nLen, const BYTE* pSprms,
     BYTE nVersion )
 {
     WW8SprmIter aSprmIter( pSprms, nLen, nVersion );
@@ -1977,7 +1977,7 @@ void WW8PLCFx_Fc_FKP::SetIdx( ULONG nIdx )
     else
     {									//Es gab einen Fkp
         //Lese PLCF um 1 Pos zurueck, um die Adresse des Fkp wiederzubekommen
-        pPLCF->SetIdx( ( nIdx >> 8 ) - 1 );  
+        pPLCF->SetIdx( ( nIdx >> 8 ) - 1 );
         if ( NewFkp() )					    // und lese Fkp wieder ein
             pFkp->SetIdx( nIdx & 0xff );	// Dann stelle Fkp-Pos wieder ein
     }
@@ -2087,12 +2087,12 @@ void WW8PLCFx_Fc_FKP::GetPCDSprms( WW8PLCFxDesc& rDesc )
 #if 1
         if( !pFkp )
         {
-            DBG_WARNING( 
+            DBG_WARNING(
                 "+Problem: GetPCDSprms: NewFkp necessay (not possible!)" );
             if( !NewFkp() )
                 return;
         }
-        
+
         pPCDAttrs->GetSprms( &rDesc );
 #else
         if( !pFkp )
@@ -2102,7 +2102,7 @@ void WW8PLCFx_Fc_FKP::GetPCDSprms( WW8PLCFxDesc& rDesc )
                 return;
         }
 
-        
+
         long nFcPos, nEnd;              // FCs
         short nLen;
         pFkp->Get( nFcPos, nEnd, nLen );
@@ -2189,15 +2189,15 @@ ULONG WW8PLCFx_Fc_FKP::GetParaHeight() const
 
 //-----------------------------------------
 
-WW8PLCFx_Cp_FKP::WW8PLCFx_Cp_FKP( SvStream* pSt, SvStream* pTblSt, 
+WW8PLCFx_Cp_FKP::WW8PLCFx_Cp_FKP( SvStream* pSt, SvStream* pTblSt,
     SvStream* pDataSt, const WW8ScannerBase& rBase, ePLCFT ePl )
-    : WW8PLCFx_Fc_FKP( pSt, pTblSt, pDataSt, *rBase.pWw8Fib, ePl, 
+    : WW8PLCFx_Fc_FKP( pSt, pTblSt, pDataSt, *rBase.pWw8Fib, ePl,
       rBase.WW8Cp2Fc( 0 )),
     rSBase( rBase ), nAttrStart( -1 ), nAttrEnd( -1 ), bLineEnd( FALSE ),
     bComplex( (7 < rBase.pWw8Fib->nVersion) || (0 != rBase.pWw8Fib->fComplex) )
 {
     ResetAttrStartEnd();
-    pPcd = rSBase.pPiecePLCF ? new WW8PLCFx_PCD( rBase.pWw8Fib->nVersion, 
+    pPcd = rSBase.pPiecePLCF ? new WW8PLCFx_PCD( rBase.pWw8Fib->nVersion,
         rBase.pPiecePLCF, 0, ((6 == GetVersion()) || (7 == GetVersion())) )
         : 0;
 
@@ -2206,8 +2206,8 @@ WW8PLCFx_Cp_FKP::WW8PLCFx_Cp_FKP( SvStream* pSt, SvStream* pTblSt,
     //despite the fact that such attributes can only be found through a cp
     //based mechanism.
     if (pPcd)
-        pPCDAttrs = rSBase.pPLCFx_PCDAttrs ? new WW8PLCFx_PCDAttrs( 
-            rSBase.pWw8Fib->nVersion, pPcd, &rSBase) 
+        pPCDAttrs = rSBase.pPLCFx_PCDAttrs ? new WW8PLCFx_PCDAttrs(
+            rSBase.pWw8Fib->nVersion, pPcd, &rSBase)
             : 0;
 
     pPieceIter = rSBase.pPieceIter;
@@ -2287,7 +2287,7 @@ void WW8PLCFx_Cp_FKP::GetSprms( WW8PLCFxDesc* p )
     {
 
         // Init ( noch kein ++ gerufen )
-        if( (nAttrStart >  nAttrEnd) || (nAttrStart == -1) )  
+        if( (nAttrStart >  nAttrEnd) || (nAttrStart == -1) )
         {
             p->bRealLineEnd = (ePLCF == PAP);
 
@@ -2302,9 +2302,9 @@ void WW8PLCFx_Cp_FKP::GetSprms( WW8PLCFxDesc* p )
                 /*
                 To find the end of a paragraph for a character in a
                 complex format file.
-                
+
                 It is necessary to know the piece that contains the
-                character and the FC assigned to the character. 
+                character and the FC assigned to the character.
                 */
 
                 //Set to the piece that contains the character
@@ -2317,7 +2317,7 @@ void WW8PLCFx_Cp_FKP::GetSprms( WW8PLCFxDesc* p )
                 /*
                 Using the FC of the character, first search the FKP that
                 describes the character to find the smallest FC in the
-                rgfc that is larger than the character FC. 
+                rgfc that is larger than the character FC.
                 */
                 //Search done, next largest FC is p->nEndPos;
                 WW8_FC nLarger = nOldEndPos;
@@ -2336,16 +2336,16 @@ void WW8PLCFx_Cp_FKP::GetSprms( WW8PLCFxDesc* p )
                 WW8_FC nBeginLimitFC = nLimitFC;
                 if( 8 <= GetVersion() )
                 {
-                    nBeginLimitFC = 
-                        WW8PLCFx_PCD::TransformPieceAddress(nLimitFC, 
+                    nBeginLimitFC =
+                        WW8PLCFx_PCD::TransformPieceAddress(nLimitFC,
                         bIsUnicode);
                 }
-                nLimitFC = nBeginLimitFC + 
+                nLimitFC = nBeginLimitFC +
                     (nCpEnd - nCpStart) * (bIsUnicode ? 2 : 1);
-                
+
                 if (nOldEndPos <= nLimitFC)
                 {
-                    p->nEndPos = nCpEnd - 
+                    p->nEndPos = nCpEnd -
                         (nLimitFC-nOldEndPos) / (bIsUnicode ? 2 : 1);
                 }
                 else
@@ -2360,9 +2360,9 @@ void WW8PLCFx_Cp_FKP::GetSprms( WW8PLCFxDesc* p )
                         If the FKP FC that was found was greater than the FC
                         of the end of the piece, scan piece by piece toward
                         the end of the document until a piece is found that
-                        contains a	paragraph end mark. 
+                        contains a	paragraph end mark.
                         */
-                        
+
                         /*
                         It's possible to check if a piece contains a paragraph
                         mark by using the FC of the beginning of the piece to
@@ -2373,14 +2373,14 @@ void WW8PLCFx_Cp_FKP::GetSprms( WW8PLCFxDesc* p )
                         the paragraph is the character immediately before the
                         FKP fc
                         */
-                        
+
                         (*pPieceIter)++;
 
                         for (;pPieceIter->GetIdx() < pPieceIter->GetIMax();
                             (*pPieceIter)++)
                         {
                             if( !pPieceIter->Get( nCpStart, nCpEnd, pData ) )
-                            {	
+                            {
                                 ASSERT( !this, "piece iter broken!" );
                                 break;
                             }
@@ -2389,24 +2389,24 @@ void WW8PLCFx_Cp_FKP::GetSprms( WW8PLCFxDesc* p )
 
                             if( 8 <= GetVersion() )
                             {
-                                nFcStart = 
-                                    WW8PLCFx_PCD::TransformPieceAddress( 
+                                nFcStart =
+                                    WW8PLCFx_PCD::TransformPieceAddress(
                                     nFcStart,bIsUnicode );
                             }
-                            nLimitFC = nFcStart + (nCpEnd - nCpStart) * 
+                            nLimitFC = nFcStart + (nCpEnd - nCpStart) *
                                 (bIsUnicode ? 2 : 1);
 
                             //if it doesn't exist, skip it
-                            if (!SeekPos(nCpStart))	
+                            if (!SeekPos(nCpStart))
                                 continue;
 
                             WW8_FC nOne,nSmallest;
-                            p->pMemPos = WW8PLCFx_Fc_FKP::GetSprms( 
+                            p->pMemPos = WW8PLCFx_Fc_FKP::GetSprms(
                                 nOne, nSmallest, p->nSprmsLen );
 
                             if (nSmallest <= nLimitFC)
                             {
-                                p->nEndPos = nCpEnd - 
+                                p->nEndPos = nCpEnd -
                                     (nLimitFC-nSmallest) / (bIsUnicode ? 2 : 1);
                                 break;
                             }
@@ -2956,8 +2956,8 @@ BOOL WW8PLCFx_FLD::GetPara( long nIdx, WW8FieldDesc& rF )
 //-----------------------------------------
 
 /*  to be optimized like this:    */
-void WW8ReadSTTBF(BOOL bVer8, SvStream& rStrm, UINT32 nStart, INT32 nLen, 
-    USHORT nExtraLen, rtl_TextEncoding eCS, SvStrings &rArray, 
+void WW8ReadSTTBF(BOOL bVer8, SvStream& rStrm, UINT32 nStart, INT32 nLen,
+    USHORT nExtraLen, rtl_TextEncoding eCS, SvStrings &rArray,
     SvStrings* pExtraArray)
 {
     ULONG nOldPos = rStrm.Tell();
@@ -2989,7 +2989,7 @@ void WW8ReadSTTBF(BOOL bVer8, SvStream& rStrm, UINT32 nStart, INT32 nLen,
                 BYTE nBChar;
                 rStrm >> nBChar;
                 ByteString aTmp;
-                sal_Size nWasRead = rStrm.Read( aTmp.AllocBuffer( nBChar ), 
+                sal_Size nWasRead = rStrm.Read( aTmp.AllocBuffer( nBChar ),
                     nBChar );
                 if( nWasRead != nBChar )
                     aTmp.ReleaseBufferAccess( nWasRead );
@@ -3004,7 +3004,7 @@ void WW8ReadSTTBF(BOOL bVer8, SvStream& rStrm, UINT32 nStart, INT32 nLen,
                 if( pExtraArray )
                 {
                     ByteString aTmp;
-                    sal_Size nWasRead = rStrm.Read( aTmp.AllocBuffer( 
+                    sal_Size nWasRead = rStrm.Read( aTmp.AllocBuffer(
                         nExtraLen ), nExtraLen );
                     if( nWasRead != nExtraLen )
                         aTmp.ReleaseBufferAccess( nWasRead );
@@ -3031,7 +3031,7 @@ void WW8ReadSTTBF(BOOL bVer8, SvStream& rStrm, UINT32 nStart, INT32 nLen,
             if( nBChar )
             {
                 ByteString aTmp;
-                sal_Size nWasRead = rStrm.Read( aTmp.AllocBuffer( nBChar ), 
+                sal_Size nWasRead = rStrm.Read( aTmp.AllocBuffer( nBChar ),
                     nBChar );
                 if( nWasRead != nBChar )
                     aTmp.ReleaseBufferAccess( nWasRead );
@@ -3050,7 +3050,7 @@ void WW8ReadSTTBF(BOOL bVer8, SvStream& rStrm, UINT32 nStart, INT32 nLen,
                 if( pExtraArray )
                 {
                     ByteString aTmp;
-                    sal_Size nWasRead = rStrm.Read( aTmp.AllocBuffer( 
+                    sal_Size nWasRead = rStrm.Read( aTmp.AllocBuffer(
                         nExtraLen ), nExtraLen );
                     if( nWasRead != nExtraLen )
                         aTmp.ReleaseBufferAccess( nWasRead );
@@ -3330,15 +3330,15 @@ void WW8PLCFMan::AdjustEnds( WW8PLCFxDesc& rDesc )
              && (rDesc.nEndPos > rDesc.nStartPos) )
             rDesc.nEndPos--;					// ... dann um 1 Zeichen verkuerzen
     }
-#ifdef CRUEL_CUT 
+#ifdef CRUEL_CUT
     /*
     So what, I don't think there's anything wrong with that, its fastsaved so
     the fc could be anywhere, all we care about is where the next *CP*
     location of a property change occurs.
     */
     if( rDesc.nStartPos > rDesc.nEndPos )	// allgemeiner Plausibilitaetstest
-    {	
-        ASSERT( !this, 
+    {
+        ASSERT( !this,
             "+Anfang und Ende des WW86-Attributes stehen ueber Kreuz" );
         rDesc.nEndPos = rDesc.nStartPos;
     }
@@ -3362,13 +3362,13 @@ void WW8PLCFMan::GetNewSprms( WW8PLCFxDesc& rDesc )
         attributes attached to a piece that might span subdocument boundaries
         */
         if (rDesc.nCpOfs > rDesc.nStartPos)
-            rDesc.nStartPos = 0; 
+            rDesc.nStartPos = 0;
         else
             rDesc.nStartPos -= rDesc.nCpOfs;
     }
-    if( rDesc.nEndPos   != LONG_MAX ) 
+    if( rDesc.nEndPos   != LONG_MAX )
     {
-        ASSERT(rDesc.nCpOfs <= rDesc.nEndPos, 
+        ASSERT(rDesc.nCpOfs <= rDesc.nEndPos,
             "oh oh, so much for the subdocument piece theory");
         rDesc.nEndPos   -= rDesc.nCpOfs;
     }
@@ -3395,13 +3395,13 @@ void WW8PLCFMan::GetNewNoSprms( WW8PLCFxDesc& rDesc )
         change.
         */
         if (rDesc.nCpOfs > rDesc.nStartPos)
-            rDesc.nStartPos = 0; 
+            rDesc.nStartPos = 0;
         else
             rDesc.nStartPos -= rDesc.nCpOfs;
     }
-    if( rDesc.nEndPos != LONG_MAX ) 
+    if( rDesc.nEndPos != LONG_MAX )
     {
-        ASSERT(rDesc.nCpOfs <= rDesc.nEndPos, 
+        ASSERT(rDesc.nCpOfs <= rDesc.nEndPos,
             "oh oh, so much for the subdocument piece theory");
         rDesc.nEndPos -= rDesc.nCpOfs;
     }
@@ -3909,16 +3909,16 @@ void WW8PLCFMan::AdvNoSprm( short nIdx, BOOL bStart )
     register WW8PLCFxDesc* p = &aD[nIdx];
 
     if( p == pPcd )
-    {						
+    {
         AdvSprm(nIdx+1,bStart);
         if( bStart )
             p->nStartPos = aD[nIdx+1].nStartPos;
         else
-        {								
+        {
             if( !aD[nIdx+1].pIdStk->Count() )
             {
                 (*p->pPLCFx)++;
-                p->pMemPos = 0;					
+                p->pMemPos = 0;
                 GetNewSprms( aD[nIdx+1] );
                 GetNewNoSprms( *p );
             }
@@ -5054,7 +5054,7 @@ WW8Fonts::WW8Fonts( SvStream& rSt, WW8Fib& rFib )
                 if (p->ibszAlt)
                 {
                     p->sFontname.Append(';');
-                    p->sFontname += String(pVer6->szFfn+p->ibszAlt, 
+                    p->sFontname += String(pVer6->szFfn+p->ibszAlt,
                         RTL_TEXTENCODING_MS_1252 );
                 }
                 pVer6 = (WW8_FFN_Ver6*)( ((BYTE*)pVer6) + pVer6->cbFfnM1 + 1 );
@@ -5080,7 +5080,8 @@ WW8Fonts::WW8Fonts( SvStream& rSt, WW8Fib& rFib )
 
 #ifdef __WW8_NEEDS_COPY
                 {
-                    for(UINT16* pTmp = pVer8->szFfn, BYTE nLen=0x28; 
+                    BYTE nLen;
+                    for( UINT16* pTmp = pVer8->szFfn, nLen=0x28;
                         nLen < pVer8->cbFfnM1 + 1 ; ++pTmp, nLen+=2 )
                     {
                         *pTmp = SVBT16ToShort( *(SVBT16*)pTmp );
@@ -6461,11 +6462,14 @@ BYTE WW8SprmDataOfs( USHORT nId )
 /*************************************************************************
       Source Code Control System - Header
 
-      $Header: /zpool/svn/migration/cvs_rep_09_09_08/code/sw/source/filter/ww8/ww8scan.cxx,v 1.23 2001-08-01 16:56:06 cmc Exp $
+      $Header: /zpool/svn/migration/cvs_rep_09_09_08/code/sw/source/filter/ww8/ww8scan.cxx,v 1.24 2001-08-06 15:41:39 jp Exp $
 
       Source Code Control System - Update
 
       $Log: not supported by cvs2svn $
+      Revision 1.23  2001/08/01 16:56:06  cmc
+      #89193# Alternative font support for WW
+    
       Revision 1.22  2001/07/30 09:18:10  cmc
       #i1353# Import Vertical Cell Alignment
     
