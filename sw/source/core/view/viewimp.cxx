@@ -2,9 +2,9 @@
  *
  *  $RCSfile: viewimp.cxx,v $
  *
- *  $Revision: 1.15 $
+ *  $Revision: 1.16 $
  *
- *  last change: $Author: mib $ $Date: 2002-08-09 12:47:41 $
+ *  last change: $Author: tl $ $Date: 2002-09-06 05:54:23 $
  *
  *  The Contents of this file are made available subject to the terms of
  *  either of the following licenses
@@ -384,6 +384,13 @@ Color SwViewImp::GetRetoucheColor() const
         else
             aRet = SW_MOD()->GetColorConfig().GetColorValue(svx::DOCCOLOR).nColor;
     }
+    else
+    {
+        // added for PDF export
+        OutputDevice *pOut = rSh.GetOut();
+        if (pOut && OUTDEV_VIRDEV == pOut->GetOutDevType())
+            aRet.SetColor( COL_WHITE );
+    }
     return aRet;
 }
 
@@ -489,16 +496,16 @@ void SwViewImp::InvalidateAccessibleRelationSet( const SwFlyFrm *pMaster,
     do
     {
         if( pTmp->Imp()->IsAccessible() )
-            pTmp->Imp()->GetAccessibleMap().InvalidateRelationSet( pMaster, 
+            pTmp->Imp()->GetAccessibleMap().InvalidateRelationSet( pMaster,
                                                                    pFollow );
         pTmp = (ViewShell *)pTmp->GetNext();
     } while ( pTmp != pVSh );
 }
 
-void SwViewImp::UpdateAccessiblePreview( sal_uInt8 nRow, sal_uInt8 nColumn, 
+void SwViewImp::UpdateAccessiblePreview( sal_uInt8 nRow, sal_uInt8 nColumn,
                                          sal_Int16 nStartPage,
-                                         const Size& rPageSize, 
-                                         const Point& rFreePoint, 
+                                         const Size& rPageSize,
+                                         const Point& rFreePoint,
                                          const Fraction& rScale,
                                            sal_uInt16 nSelectedPage )
 {
