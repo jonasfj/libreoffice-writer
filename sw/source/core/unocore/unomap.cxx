@@ -2,9 +2,9 @@
  *
  *  $RCSfile: unomap.cxx,v $
  *
- *  $Revision: 1.168 $
+ *  $Revision: 1.169 $
  *
- *  last change: $Author: obo $ $Date: 2004-11-16 10:23:43 $
+ *  last change: $Author: obo $ $Date: 2004-11-17 10:57:59 $
  *
  *  The Contents of this file are made available subject to the terms of
  *  either of the following licenses
@@ -1189,7 +1189,7 @@ const SfxItemPropertyMap* SwUnoPropertyMapProvider::GetPropertyMap(sal_uInt16 nP
                     // OD 2004-05-04 #i26791#
                     { SW_PROP_NMID(UNO_NAME_IS_FOLLOWING_TEXT_FLOW), RES_FOLLOW_TEXT_FLOW,     CPPU_E2T(CPPUTYPE_BOOLEAN), PROPERTY_NONE, 0},
                     // --> OD 2004-06-29 #i28701#
-                    { SW_PROP_NMID(UNO_NAME_WRAP_INFLUENCE_ON_POSITION), RES_WRAP_INFLUENCE_ON_OBJPOS, CPPU_E2T(CPPUTYPE_INT8), PROPERTY_NONE, MID_WRAP_INFLUENCE}, 
+                    { SW_PROP_NMID(UNO_NAME_WRAP_INFLUENCE_ON_POSITION), RES_WRAP_INFLUENCE_ON_OBJPOS, CPPU_E2T(CPPUTYPE_INT8), PROPERTY_NONE, MID_WRAP_INFLUENCE},
                     // --> OD 2004-08-06 #i28749#
                     { SW_PROP_NMID( UNO_NAME_TRANSFORMATION_IN_HORI_L2R),
                                     FN_SHAPE_TRANSFORMATION_IN_HORI_L2R,
@@ -1199,6 +1199,16 @@ const SfxItemPropertyMap* SwUnoPropertyMapProvider::GetPropertyMap(sal_uInt16 nP
                                     FN_SHAPE_POSITION_LAYOUT_DIR,
                                     CPPU_E2T(CPPUTYPE_INT16),
                                     PROPERTY_NONE, 0},
+                    // <--
+                    // --> OD 2004-10-28 #i36248#
+                    { SW_PROP_NMID( UNO_NAME_STARTPOSITION_IN_HORI_L2R),
+                                    FN_SHAPE_STARTPOSITION_IN_HORI_L2R,
+                                    CPPU_E2T(CPPUTYPE_AWTPOINT),
+                                    PropertyAttribute::READONLY, 0},
+                    { SW_PROP_NMID( UNO_NAME_ENDPOSITION_IN_HORI_L2R),
+                                    FN_SHAPE_ENDPOSITION_IN_HORI_L2R,
+                                    CPPU_E2T(CPPUTYPE_AWTPOINT),
+                                    PropertyAttribute::READONLY, 0},
                     // <--
                     {0,0,0,0,0}
                 };
