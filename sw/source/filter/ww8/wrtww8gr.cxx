@@ -2,9 +2,9 @@
  *
  *  $RCSfile: wrtww8gr.cxx,v $
  *
- *  $Revision: 1.31 $
+ *  $Revision: 1.32 $
  *
- *  last change: $Author: obo $ $Date: 2003-09-01 12:41:41 $
+ *  last change: $Author: rt $ $Date: 2003-09-25 07:43:17 $
  *
  *  The Contents of this file are made available subject to the terms of
  *  either of the following licenses
@@ -119,10 +119,10 @@
 #include <ndgrf.hxx>
 #endif
 #ifndef _FRMFMT_HXX
-#include <frmfmt.hxx>		// class SwFlyFrmFmt
+#include <frmfmt.hxx>       // class SwFlyFrmFmt
 #endif
 #ifndef _GRFATR_HXX
-#include <grfatr.hxx>		// class SwCropGrf
+#include <grfatr.hxx>       // class SwCropGrf
 #endif
 #ifndef _NDOLE_HXX
 #include <ndole.hxx>
@@ -257,6 +257,7 @@ bool SwWW8Writer::TestOleNeedsGraphic(const SwAttrSet& rSet,
 
 Writer& OutWW8_SwOleNode( Writer& rWrt, SwCntntNode& rNode )
 {
+    using namespace ww;
     SwWW8Writer& rWW8Wrt = (SwWW8Writer&)rWrt;
     if( !(rWW8Wrt.GetIniFlags() & WWFL_NO_OLE ) )
     {
@@ -264,14 +265,14 @@ Writer& OutWW8_SwOleNode( Writer& rWrt, SwCntntNode& rNode )
         BYTE *pDataAdr;
         short nSize;
         static BYTE aSpecOLE_WW8[] = {
-                0x03, 0x6a, 0, 0, 0, 0,	// sprmCPicLocation
-                0x0a, 0x08, 1,			// sprmCFOLE2
-                0x56, 0x08, 1   		// sprmCFObj
+                0x03, 0x6a, 0, 0, 0, 0, // sprmCPicLocation
+                0x0a, 0x08, 1,          // sprmCFOLE2
+                0x56, 0x08, 1           // sprmCFObj
             };
         static BYTE aSpecOLE_WW6[] = {
-                68, 4, 0, 0, 0, 0,		// sprmCPicLocation (len is 4)
-                75, 1,					// sprmCFOLE2
-                118, 1					// sprmCFObj
+                68, 4, 0, 0, 0, 0,      // sprmCPicLocation (len is 4)
+                75, 1,                  // sprmCFOLE2
+                118, 1                  // sprmCFObj
             };
 
         if( rWW8Wrt.bWrtWW8 )
@@ -327,12 +328,12 @@ Writer& OutWW8_SwOleNode( Writer& rWrt, SwCntntNode& rNode )
 
                     // write as embedded field - the other things will be done
                     // in the escher export
-                    String sServer(CREATE_CONST_ASC(" EINBETTEN "));
+                    String sServer(FieldString(eEMBED));
                     sServer += xOleStg->GetUserName();
                     sServer += ' ';
 
-                    rWW8Wrt.OutField( 0, 58, sServer, WRITEFIELD_START |
-                        WRITEFIELD_CMD_START | WRITEFIELD_CMD_END );
+                    rWW8Wrt.OutField(0, eEMBED, sServer, WRITEFIELD_START |
+                        WRITEFIELD_CMD_START | WRITEFIELD_CMD_END);
 
                     rWW8Wrt.pChpPlc->AppendFkpEntry( rWrt.Strm().Tell(),
                             nSize, pSpecOLE );
@@ -376,8 +377,8 @@ Writer& OutWW8_SwOleNode( Writer& rWrt, SwCntntNode& rNode )
                         rWW8Wrt.OutGrf(rNode.GetOLENode());
                     }
 
-                    rWW8Wrt.OutField( 0, 58, aEmptyStr, 
-                        WRITEFIELD_END | WRITEFIELD_CLOSE );
+                    rWW8Wrt.OutField(0, eEMBED, aEmptyStr, 
+                        WRITEFIELD_END | WRITEFIELD_CLOSE);
 
                     if (bEndCR) //No newline in inline case
                         rWW8Wrt.WriteCR();
@@ -393,9 +394,9 @@ Writer& OutWW8_SwOleNode( Writer& rWrt, SwCntntNode& rNode )
 void SwWW8Writer::OutGrf( const SwNoTxtNode* pNd )
 {
     if( nIniFlags & WWFL_NO_GRAF )
-        return;		// Iniflags: kein Grafik-Export
+        return;     // Iniflags: kein Grafik-Export
 
-    if( !pFlyFmt )				// Grafik mit eigenem Frame ( eigentlich immer )
+    if( !pFlyFmt )              // Grafik mit eigenem Frame ( eigentlich immer )
     {
         ASSERT( !this, "+Grafik ohne umgebenden Fly" );
         return ;
@@ -405,9 +406,9 @@ void SwWW8Writer::OutGrf( const SwNoTxtNode* pNd )
     pGrf->Insert( pNd, pFlyFmt );
 
     pChpPlc->AppendFkpEntry( pStrm->Tell(), pO->Count(), pO->GetData() );
-    pO->Remove( 0, pO->Count() );					// leeren
+    pO->Remove( 0, pO->Count() );                   // leeren
 
-    WriteChar( (char)1 );	// Grafik-Sonderzeichen in Haupttext einfuegen
+    WriteChar( (char)1 );   // Grafik-Sonderzeichen in Haupttext einfuegen
 
     BYTE aArr[ 18 ];
     BYTE* pArr = aArr;
@@ -475,15 +476,15 @@ void SwWW8Writer::OutGrf( const SwNoTxtNode* pNd )
         WriteChar( (char)0x0d ); // umgebenden Rahmen mit CR abschliessen
 
         static BYTE __READONLY_DATA nSty[2] = { 0, 0 };
-        pO->Insert( nSty, 2, pO->Count() );		// Style #0
+        pO->Insert( nSty, 2, pO->Count() );     // Style #0
         bool bOldGrf = bOutGrf;
         bOutGrf = true;
 
-        Out_SwFmt(*pFlyFmt, false, false, true);			// Fly-Attrs
+        Out_SwFmt(*pFlyFmt, false, false, true);            // Fly-Attrs
 
         bOutGrf = bOldGrf;
-        pPapPlc->AppendFkpEntry( pStrm->Tell(),	pO->Count(), pO->GetData() );
-        pO->Remove( 0, pO->Count() );					// leeren
+        pPapPlc->AppendFkpEntry( pStrm->Tell(), pO->Count(), pO->GetData() );
+        pO->Remove( 0, pO->Count() );                   // leeren
     }
 }
 
@@ -491,8 +492,8 @@ static Size lcl_GetSwappedInSize(const SwNoTxtNode& rNd)
 {
     Size aGrTwipSz(rNd.GetTwipSize());
     //JP 05.12.98: falls die Grafik noch nie angezeigt wurde und es sich
-    //				um eine gelinkte handelt, so ist keine Size gesetzt. In
-    //				diesem Fall sollte man sie mal reinswappen.
+    //              um eine gelinkte handelt, so ist keine Size gesetzt. In
+    //              diesem Fall sollte man sie mal reinswappen.
     if (
          (!aGrTwipSz.Width() || !aGrTwipSz.Height()) &&
          rNd.IsGrfNode() &&
@@ -561,7 +562,7 @@ void SwWW8WrGrf::WritePICFHeader(SvStream& rStrm, const SwNoTxtNode* pNd,
             const SvxBoxItem* pBox = (const SvxBoxItem*)pItem;
             if( pBox )
             {
-                bool bShadow = false;				// Shadow ?
+                bool bShadow = false;               // Shadow ?
                 const SvxShadowItem* pSI = 
                     sw::util::HasItem<SvxShadowItem>(rAttrSet, RES_SHADOW);
                 if (pSI)
@@ -614,10 +615,10 @@ void SwWW8WrGrf::WritePICFHeader(SvStream& rStrm, const SwNoTxtNode* pNd,
         }
     }
 
-    pArr = aArr + 4;							    //skip lcb
-    Set_UInt16( pArr, nHdrLen );	    			// set cbHeader
+    pArr = aArr + 4;                                //skip lcb
+    Set_UInt16( pArr, nHdrLen );                    // set cbHeader
 
-    Set_UInt16( pArr, mm );	    					// set mm
+    Set_UInt16( pArr, mm );                         // set mm
 
     /*
     #92494#
@@ -631,13 +632,13 @@ void SwWW8WrGrf::WritePICFHeader(SvStream& rStrm, const SwNoTxtNode* pNd,
             aGrTwipSz.Width() = nWidth;
             aGrTwipSz.Height() = nHeight;
         }
-    Set_UInt16(pArr, aGrTwipSz.Width() * 254L / 144);	 	// set xExt
-    Set_UInt16(pArr, aGrTwipSz.Height() * 254L / 144);	// set yExt
-    pArr += 16;	    								// skip hMF & rcWinMF
-    Set_UInt16( pArr, (UINT16)aGrTwipSz.Width() );	// set dxaGoal
-    Set_UInt16( pArr, (UINT16)aGrTwipSz.Height() );	// set dyaGoal
+    Set_UInt16(pArr, aGrTwipSz.Width() * 254L / 144);       // set xExt
+    Set_UInt16(pArr, aGrTwipSz.Height() * 254L / 144);  // set yExt
+    pArr += 16;                                     // skip hMF & rcWinMF
+    Set_UInt16( pArr, (UINT16)aGrTwipSz.Width() );  // set dxaGoal
+    Set_UInt16( pArr, (UINT16)aGrTwipSz.Height() ); // set dyaGoal
 
-    if( aGrTwipSz.Width() + nXSizeAdd )				// set mx
+    if( aGrTwipSz.Width() + nXSizeAdd )             // set mx
     {
         double fVal = nWidth * 1000.0 / (aGrTwipSz.Width() + nXSizeAdd);
         Set_UInt16( pArr, (USHORT)::rtl::math::round(fVal) );
@@ -645,7 +646,7 @@ void SwWW8WrGrf::WritePICFHeader(SvStream& rStrm, const SwNoTxtNode* pNd,
     else
         pArr += 2;
 
-    if( aGrTwipSz.Height() + nYSizeAdd )			// set my
+    if( aGrTwipSz.Height() + nYSizeAdd )            // set my
     {
         double fVal = nHeight * 1000.0 / (aGrTwipSz.Height() + nYSizeAdd);
         Set_UInt16( pArr, (USHORT)::rtl::math::round(fVal) );
@@ -653,10 +654,10 @@ void SwWW8WrGrf::WritePICFHeader(SvStream& rStrm, const SwNoTxtNode* pNd,
     else
         pArr += 2;
 
-    Set_UInt16( pArr, nCropL );						// set dxaCropLeft
-    Set_UInt16( pArr, nCropT );						// set dyaCropTop
-    Set_UInt16( pArr, nCropR );						// set dxaCropRight
-    Set_UInt16( pArr, nCropB );						// set dyaCropBottom
+    Set_UInt16( pArr, nCropL );                     // set dxaCropLeft
+    Set_UInt16( pArr, nCropT );                     // set dyaCropTop
+    Set_UInt16( pArr, nCropR );                     // set dxaCropRight
+    Set_UInt16( pArr, nCropB );                     // set dyaCropBottom
 
     rStrm.Write( aArr, nHdrLen );
 }
@@ -664,7 +665,7 @@ void SwWW8WrGrf::WritePICFHeader(SvStream& rStrm, const SwNoTxtNode* pNd,
 void SwWW8WrGrf::WriteGrfFromGrfNode(SvStream& rStrm, const SwGrfNode* pGrfNd,
     const SwFlyFrmFmt* pFly, UINT16 nWidth, UINT16 nHeight)
 {
-    if (pGrfNd->IsLinkedFile())		// Linked File
+    if (pGrfNd->IsLinkedFile())     // Linked File
     {
         String aFileN, aFiltN;
         UINT16 mm;
@@ -677,20 +678,20 @@ void SwWW8WrGrf::WriteGrfFromGrfNode(SvStream& rStrm, const SwGrfNode* pGrfNd,
             aFileN = aUrl.PathToFileName();
 
 //JP 05.12.98: nach einigen tests hat sich gezeigt, das WW mit 99 nicht
-//				klarkommt. Sie selbst schreiben aber bei Verknuepfunfen,
-//				egal um welchen Type es sich handelt, immer den Wert 94.
-//				Bug 59859
-//		if ( COMPARE_EQUAL == aFiltN.ICompare( "TIF", 3 ) )
-//			mm = 99;					// 99 = TIFF
-//		else
-            mm = 94;					// 94 = BMP, GIF
+//              klarkommt. Sie selbst schreiben aber bei Verknuepfunfen,
+//              egal um welchen Type es sich handelt, immer den Wert 94.
+//              Bug 59859
+//      if ( COMPARE_EQUAL == aFiltN.ICompare( "TIF", 3 ) )
+//          mm = 99;                    // 99 = TIFF
+//      else
+            mm = 94;                    // 94 = BMP, GIF
 
-        WritePICFHeader(rStrm, pGrfNd, pFly, mm, nWidth, nHeight);	// Header
-        rStrm << (BYTE)aFileN.Len();	// Pascal-String schreiben
+        WritePICFHeader(rStrm, pGrfNd, pFly, mm, nWidth, nHeight);  // Header
+        rStrm << (BYTE)aFileN.Len();    // Pascal-String schreiben
         SwWW8Writer::WriteString8(rStrm, aFileN, false, 
             RTL_TEXTENCODING_MS_1252);
     }
-    else								// Embedded File oder DDE oder so was
+    else                                // Embedded File oder DDE oder so was
     {
         if (rWrt.bWrtWW8 && pFly)
         {
@@ -703,12 +704,12 @@ void SwWW8WrGrf::WriteGrfFromGrfNode(SvStream& rStrm, const SwGrfNode* pGrfNd,
         {
             Graphic& rGrf = (Graphic&)(pGrfNd->GetGrf());
             bool bSwapped = rGrf.IsSwapOut() ? true : false;
-            ((SwGrfNode*)pGrfNd)->SwapIn();	// immer ueber den Node einswappen!
+            ((SwGrfNode*)pGrfNd)->SwapIn(); // immer ueber den Node einswappen!
 
             GDIMetaFile aMeta;
             switch (rGrf.GetType())
             {
-                case GRAPHIC_BITMAP:		// Bitmap -> in Metafile abspielen
+                case GRAPHIC_BITMAP:        // Bitmap -> in Metafile abspielen
                     {
                         VirtualDevice aVirt;
                         aMeta.Record(&aVirt);
@@ -719,7 +720,7 @@ void SwWW8WrGrf::WriteGrfFromGrfNode(SvStream& rStrm, const SwGrfNode* pGrfNd,
                         aMeta.SetPrefSize( rGrf.GetPrefSize());
                     }
                     break;
-                case GRAPHIC_GDIMETAFILE :		// GDI ( =SV ) Metafile
+                case GRAPHIC_GDIMETAFILE :      // GDI ( =SV ) Metafile
                     aMeta = rGrf.GetGDIMetaFile();
                     break;
                 default:
@@ -741,7 +742,7 @@ void SwWW8WrGrf::WriteGraphicNode(SvStream& rStrm, const SwNoTxtNode* pNd,
     if (!pNd || (!pNd->IsGrfNode() && !pNd->IsOLENode()))
         return;
 
-    UINT32 nPos = rStrm.Tell();			// Grafik-Anfang merken
+    UINT32 nPos = rStrm.Tell();         // Grafik-Anfang merken
 
     if (pNd->IsGrfNode())
         WriteGrfFromGrfNode(rStrm, pNd->GetGrfNode(), pFly, nWidth, nHeight);
@@ -753,8 +754,8 @@ void SwWW8WrGrf::WriteGraphicNode(SvStream& rStrm, const SwNoTxtNode* pNd,
             // cast away const
             SwOLENode *pOleNd = ((SwNoTxtNode*)pNd)->GetOLENode(); 
             ASSERT( pOleNd, " Wer hat den OleNode versteckt ?" );
-            SwOLEObj&					rSObj= pOleNd->GetOLEObj();
-            const SvInPlaceObjectRef	rObj(  rSObj.GetOleRef() );
+            SwOLEObj&                   rSObj= pOleNd->GetOLEObj();
+            const SvInPlaceObjectRef    rObj(  rSObj.GetOleRef() );
 
             GDIMetaFile aMtf;
             rObj->GetGDIMetaFile(aMtf);
@@ -763,7 +764,7 @@ void SwWW8WrGrf::WriteGraphicNode(SvStream& rStrm, const SwNoTxtNode* pNd,
             aMtf.Play(Application::GetDefaultDevice(), Point(0, 0), 
                 Size(2880, 2880));
             
-            WritePICFHeader(rStrm, pNd, pFly, 8, nWidth, nHeight);	// Header
+            WritePICFHeader(rStrm, pNd, pFly, 8, nWidth, nHeight);  // Header
             WriteWindowMetafileBits(rStrm, aMtf);
         }
         else
@@ -781,8 +782,8 @@ void SwWW8WrGrf::WriteGraphicNode(SvStream& rStrm, const SwNoTxtNode* pNd,
         // cast away const
         SwOLENode *pOleNd = ((SwNoTxtNode*)pNd)->GetOLENode(); 
         ASSERT( pOleNd, " Wer hat den OleNode versteckt ?" );
-        SwOLEObj&					rSObj= pOleNd->GetOLEObj();
-        const SvInPlaceObjectRef	rObj(  rSObj.GetOleRef() );
+        SwOLEObj&                   rSObj= pOleNd->GetOLEObj();
+        const SvInPlaceObjectRef    rObj(  rSObj.GetOleRef() );
 
         GDIMetaFile aMtf;
         rObj->GetGDIMetaFile(aMtf);
@@ -792,17 +793,17 @@ void SwWW8WrGrf::WriteGraphicNode(SvStream& rStrm, const SwNoTxtNode* pNd,
         aMtf.Play(Application::GetDefaultDevice(), Point(0, 0), 
             Size(2880, 2880));
 
-        WritePICFHeader( rStrm, pNd, pFly, 8, nWidth, nHeight );	// Header
-        WriteWindowMetafileBits( rStrm, aMtf );			// eigentliche Grafik
+        WritePICFHeader( rStrm, pNd, pFly, 8, nWidth, nHeight );    // Header
+        WriteWindowMetafileBits( rStrm, aMtf );         // eigentliche Grafik
 #endif
     }
 
-    UINT32 nPos2 = rStrm.Tell();					// Ende merken
+    UINT32 nPos2 = rStrm.Tell();                    // Ende merken
     rStrm.Seek( nPos );
     SVBT32 nLen;
-    LongToSVBT32( nPos2 - nPos, nLen );				// Grafik-Laenge ausrechnen
-    rStrm.Write( nLen, 4 );							// im Header einpatchen
-    rStrm.Seek( nPos2 );							// Pos wiederherstellen
+    LongToSVBT32( nPos2 - nPos, nLen );             // Grafik-Laenge ausrechnen
+    rStrm.Write( nLen, 4 );                         // im Header einpatchen
+    rStrm.Seek( nPos2 );                            // Pos wiederherstellen
 }
 
 // SwWW8WrGrf::Write() wird nach dem Text gerufen. Es schreibt die alle
@@ -820,7 +821,7 @@ void SwWW8WrGrf::Write()
     {
         const SwNoTxtNode* pNd = aIter->mpNd;
 
-        UINT32 nPos = rStrm.Tell();					// auf 4 Bytes alignen
+        UINT32 nPos = rStrm.Tell();                 // auf 4 Bytes alignen
         if( nPos & 0x3 )
             SwWW8Writer::FillCount( rStrm, 4 - ( nPos & 0x3 ) );
 
