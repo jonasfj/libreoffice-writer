@@ -2,9 +2,9 @@
  *
  *  $RCSfile: pview.cxx,v $
  *
- *  $Revision: 1.28 $
+ *  $Revision: 1.29 $
  *
- *  last change: $Author: os $ $Date: 2002-11-27 08:55:02 $
+ *  last change: $Author: od $ $Date: 2002-12-02 07:57:41 $
  *
  *  The Contents of this file are made available subject to the terms of
  *  either of the following licenses
@@ -115,10 +115,10 @@
 #ifndef _SFXDISPATCH_HXX //autogen
 #include <sfx2/dispatch.hxx>
 #endif
-#ifndef _SV_MSGBOX_HXX 
+#ifndef _SV_MSGBOX_HXX
 #include <vcl/msgbox.hxx>
 #endif
-#ifndef _SVX_ZOOM_HXX 
+#ifndef _SVX_ZOOM_HXX
 #include <svx/zoom.hxx>
 #endif
 #ifndef _SVX_STDDLG_HXX //autogen
@@ -221,6 +221,8 @@
 #include <swslots.hxx>
 #endif
 
+// OD 02.12.2002 #103492#
+#define NEW_PREVIEW
 
 SFX_IMPL_VIEWFACTORY(SwPagePreView, SW_RES(STR_NONAME))
 {
@@ -247,12 +249,12 @@ TYPEINIT1(SwPagePreView,SfxViewShell)
 #define MIN_PREVIEW_ZOOM 25
 #define MAX_PREVIEW_ZOOM 600
 /*  */
-/* -----------------26.11.2002 10:41-----------------                            
- * 
+/* -----------------26.11.2002 10:41-----------------
+ *
  * --------------------------------------------------*/
 USHORT lcl_GetNextZoomStep(USHORT nCurrentZoom, BOOL bZoomIn)
 {
-    static USHORT aZoomArr[] = 
+    static USHORT aZoomArr[] =
     {
         25, 50, 75, 100, 150, 200, 400, 600
     };
@@ -261,13 +263,13 @@ USHORT lcl_GetNextZoomStep(USHORT nCurrentZoom, BOOL bZoomIn)
         {
             if(nCurrentZoom > aZoomArr[i] || !i)
                 return aZoomArr[i];
-        }        
+        }
     else
         for(USHORT i = 0; i < sizeof(aZoomArr) / sizeof(USHORT); i++)
         {
             if(nCurrentZoom < aZoomArr[i])
                 return aZoomArr[i];
-        }        
+        }
     return bZoomIn ? MAX_PREVIEW_ZOOM : MIN_PREVIEW_ZOOM;
 };
 /*--------------------------------------------------------------------
@@ -762,7 +764,7 @@ void 	PrtPrvWindow::Paint(const Rectangle&)
         else
         {
             SetFillColor( Color( COL_WHITE ) );
-            SetLineColor(Color( COL_BLACK ) );    
+            SetLineColor(Color( COL_BLACK ) );
         }
 
         DrawRect(aRect);
@@ -791,7 +793,7 @@ void 	PrtPrvWindow::Paint(const Rectangle&)
             SetFillColor( GetSettings().GetStyleSettings().GetShadowColor() );
         else
             SetFillColor( Color( COL_GRAY ) );
-        
+
 
         aRect = Rectangle(aTL, aPrvPageSize);
         for(USHORT i = 0; i < rSettings.nRows; i++)
@@ -861,6 +863,21 @@ void  SwPagePreViewWin::Paint( const Rectangle& rRect )
             aWinSize = GetOutputSizePixel();
 
         Rectangle aRect( LogicToPixel( rRect ));
+#ifdef NEW_PREVIEW // OD 29.11.2002 #103492#
+        {
+            nRow = BYTE( nRowCol >> 8 );
+            nCol = BYTE( nRowCol & 0xff );
+            Size aPreviewDocSize;
+            pViewShell->InitPreviewLayout( nCol, nRow, aPreviewDocSize,
+                                           true, &aWinSize );
+            aPgSize = aPreviewDocSize; // for testing
+            Point aAbsStartPt;
+            pViewShell->PreparePreviewPaint( 1, Point(0,0),
+                                             nSttPage, nVirtPage, aAbsStartPt );
+            nSelectedPage = nSttPage;
+            pViewShell->PaintPreview( nSelectedPage, PixelToLogic( aRect ) );
+        }
+#else
         nSelectedPage = nSttPage = pViewShell->CalcPreViewPage( aWinSize, nRowCol,
                                                 0, aPgSize, nVirtPage,
                                                 nSelectedPage );
@@ -868,6 +885,7 @@ void  SwPagePreViewWin::Paint( const Rectangle& rRect )
                                     aPgSize, nSelectedPage );
         nRow = BYTE( nRowCol >> 8 );
         nCol = BYTE( nRowCol & 0xff );
+#endif
         SetPagePreview(nRow, nCol);
         aScale = GetMapMode().GetScaleX();
     }
@@ -877,7 +895,11 @@ void  SwPagePreViewWin::Paint( const Rectangle& rRect )
         aMM.SetScaleX( aScale );
         aMM.SetScaleY( aScale );
         SetMapMode( aMM );
+#ifdef NEW_PREVIEW // OD 29.11.2002 #103492#
+        pViewShell->PaintPreview( nSelectedPage, rRect );
+#else
         pViewShell->PreViewPage( rRect, nRowCol, nSttPage, aPgSize, nSelectedPage );
+#endif
     }
 }
 
@@ -897,10 +919,25 @@ void SwPagePreViewWin::CalcWish( BYTE nNewRow, BYTE nNewCol )
     if( nSttPage > nLastSttPg )
         nSttPage = nLastSttPg;
 
+#ifdef NEW_PREVIEW // OD 29.11.2002 #103492#
+    {
+        nRow = BYTE( nRowCol >> 8 );
+        nCol = BYTE( nRowCol & 0xff );
+        Size aPreviewDocSize;
+        pViewShell->InitPreviewLayout( nCol, nRow, aPreviewDocSize,
+                                       true, &aWinSize );
+        aPgSize = aPreviewDocSize; // for testing
+        Point aAbsStartPt;
+        pViewShell->PreparePreviewPaint( 1, Point(0,0),
+                                         nSttPage, nVirtPage, aAbsStartPt );
+        nSelectedPage = nSttPage;
+    }
+#else
     nSelectedPage = nSttPage = pViewShell->CalcPreViewPage( aWinSize, nRowCol, nSttPage,
                                             aPgSize, nVirtPage, USHRT_MAX );
     nRow = BYTE( nRowCol >> 8 );
     nCol = BYTE( nRowCol & 0xff );
+#endif
     SetPagePreview(nRow, nCol);
     aScale = GetMapMode().GetScaleX();
 
@@ -947,8 +984,8 @@ int SwPagePreViewWin::MovePage( int eMoveMode )
                             nNewSttPage = nLastSttPg;
                         nSelectedPage += nPages;
                         break;
-    case MV_DOC_STT: 	nNewSttPage = nDefSttPg;
-        nSelectedPage = nNewSttPage ? nNewSttPage : 1;
+    case MV_DOC_STT:    nNewSttPage = nDefSttPg;
+                        nSelectedPage = nNewSttPage ? nNewSttPage : 1;
                         break;
     case MV_DOC_END:	nNewSttPage = nLastSttPg;
                         nSelectedPage = nPageCount - 1;
@@ -965,9 +1002,24 @@ int SwPagePreViewWin::MovePage( int eMoveMode )
 
     Size aSave( aPgSize );
     USHORT nRowCol = ( nRow << 8 ) + nCol;	// Zeilen / DoppelSeiten
+#ifdef NEW_PREVIEW // OD 29.11.2002 #103492#
+    {
+        nRow = BYTE( nRowCol >> 8 );
+        nCol = BYTE( nRowCol & 0xff );
+        Size aPreviewDocSize;
+        pViewShell->InitPreviewLayout( nCol, nRow, aPreviewDocSize,
+                                       true, &aWinSize );
+        aPgSize = aPreviewDocSize; // for testing
+        Point aAbsStartPt;
+        pViewShell->PreparePreviewPaint( nNewSttPage, Point(0,0),
+                                         nNewSttPage, nVirtPage, aAbsStartPt );
+        nSelectedPage = nNewSttPage;
+    }
+#else
     nNewSttPage = pViewShell->CalcPreViewPage( aWinSize, nRowCol,
                                             nNewSttPage, aPgSize, nVirtPage,
                                             nSelectedPage );
+#endif
     if( nNewSttPage == nSttPage && aPgSize == aSave )
         return FALSE;
 
@@ -1001,9 +1053,25 @@ void SwPagePreViewWin::SetWinSize( const Size& rNewSize )
 
     if( USHRT_MAX == nSttPage )
         nSelectedPage = nSttPage = GetDefSttPage();
+
+#ifdef NEW_PREVIEW // OD 29.11.2002 #103492#
+    {
+        nRow = BYTE( nRowCol >> 8 );
+        nCol = BYTE( nRowCol & 0xff );
+        Size aPreviewDocSize;
+        pViewShell->InitPreviewLayout( nCol, nRow, aPreviewDocSize,
+                                       true, &aWinSize );
+        aPgSize = aPreviewDocSize; // for testing
+        Point aAbsStartPt;
+        pViewShell->PreparePreviewPaint( nSttPage, Point(0,0),
+                                         nSttPage, nVirtPage, aAbsStartPt );
+        nSelectedPage = nSttPage;
+    }
+#else
     nSttPage = pViewShell->CalcPreViewPage( aWinSize, nRowCol,
                                             nSttPage, aPgSize,
                                             nVirtPage, nSelectedPage );
+#endif
     if(nSelectedPage < nSttPage || nSelectedPage > nSttPage + (nRow * nCol) )
     {
         nSelectedPage = nSttPage ? nSttPage : 1;
@@ -1182,11 +1250,11 @@ void  SwPagePreView::Execute( SfxRequest &rReq )
                 BYTE nRows = (BYTE)((SfxUInt16Item &)pArgs->Get(
                                         SID_ATTR_TABLE_ROW)).GetValue();
                 aViewWin.CalcWish( nRows, nCols );
-                
+
             }
             else
                 SwPreViewZoomDlg( aViewWin ).Execute();
-            
+
         }
         break;
         case FN_SHOW_TWO_PAGES:
@@ -1224,7 +1292,7 @@ void  SwPagePreView::Execute( SfxRequest &rReq )
                 enum SvxZoomType eType = SVX_ZOOM_PERCENT;
                 USHORT nZoomFactor = USHRT_MAX;
                 if(SFX_ITEM_SET == pArgs->GetItemState(SID_ATTR_ZOOM, TRUE, &pItem))
-                {        
+                {
                     eType = ((const SvxZoomItem *)pItem)->GetType();
                     nZoomFactor = ((const SvxZoomItem *)pItem)->GetValue();
                 }
@@ -1240,7 +1308,7 @@ void  SwPagePreView::Execute( SfxRequest &rReq )
         {
             enum SvxZoomType eType = SVX_ZOOM_PERCENT;
             const SwViewOption* pVOpt = GetViewShell().GetViewOptions();
-            SetZoom(eType, 
+            SetZoom(eType,
                     lcl_GetNextZoomStep(pVOpt->GetZoom(), SID_ZOOM_IN == rReq.GetSlot()));
             static USHORT __READONLY_DATA aInval[] =
             {
@@ -2293,9 +2361,24 @@ void  SwPagePreViewWin::GetOptimalSize( Size& rSize ) const
 
     Size aPageSize;
     USHORT nVirtPage;
+#ifdef NEW_PREVIEW // OD 29.11.2002 #103492#
+    {
+        BYTE nRow = BYTE( nRowCol >> 8 );
+        BYTE nCol = BYTE( nRowCol & 0xff );
+        Size aPreviewDocSize;
+        pViewShell->InitPreviewLayout( nCol, nRow, aPreviewDocSize,
+                                       true, &rSize );
+        aPageSize = aPreviewDocSize; // for testing
+        Point aAbsStartPt;
+        sal_uInt16 nDummy;
+        pViewShell->PreparePreviewPaint( nSttPage, Point(0,0),
+                                         nDummy, nVirtPage, aAbsStartPt );
+    }
+#else
     pViewShell->CalcPreViewPage( rSize, nRowCol,
                                     nSttPage, aPageSize,
                                     nVirtPage, USHRT_MAX );
+#endif
 
     if(aPageSize.Width() && aPageSize.Height())
     {
@@ -2406,14 +2489,14 @@ sal_Bool SwPagePreView::IsVScrollbarVisible()const
     return pVScrollbar->IsVisible();
 }
 /* -----------------25.11.2002 16:36-----------------
- * 
+ *
  * --------------------------------------------------*/
-void SwPagePreView::SetZoom(SvxZoomType eType, USHORT nFactor)   
+void SwPagePreView::SetZoom(SvxZoomType eType, USHORT nFactor)
 {
     ViewShell& rSh = GetViewShell();
     SwViewOption aOpt(*rSh.GetViewOptions());
     aOpt.SetZoom(nFactor);
     aOpt.SetZoomType(eType);
     rSh.ApplyViewOptions( aOpt );
-}        
+}
 
