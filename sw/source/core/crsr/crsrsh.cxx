@@ -2,9 +2,9 @@
  *
  *  $RCSfile: crsrsh.cxx,v $
  *
- *  $Revision: 1.29 $
+ *  $Revision: 1.30 $
  *
- *  last change: $Author: vg $ $Date: 2003-06-24 07:51:49 $
+ *  last change: $Author: rt $ $Date: 2003-10-30 10:17:07 $
  *
  *  The Contents of this file are made available subject to the terms of
  *  either of the following licenses
@@ -140,8 +140,8 @@
 #ifndef _DOCSH_HXX
 #include <docsh.hxx>
 #endif
-#ifndef _DRAWFONT_HXX
-#include <drawfont.hxx>
+#ifndef _SCRIPTINFO_HXX
+#include <scriptinfo.hxx>
 #endif
 #ifndef _SWGLOBDOCSH_HXX //autogen
 #include <globdoc.hxx>
@@ -2582,15 +2582,15 @@ FASTBOOL SwCrsrShell::FindValidCntntNode( BOOL bOnlyText )
     // #i9059# cursor may not stand in protected cells
     //         (unless cursor in protected areas is OK.)
     const SwTableNode* pTableNode = rNdIdx.GetNode().FindTableNode();
-    if( !IsReadOnlyAvailable()  &&  
+    if( !IsReadOnlyAvailable()  &&
         pTableNode != NULL  &&  rNdIdx.GetNode().IsProtect() )
     {
         // we're in a table, and we're in a protected area, so we're
-        // probably in a protected cell. 
+        // probably in a protected cell.
 
         // move forward into non-protected area.
         SwPaM aPam( rNdIdx.GetNode(), 0 );
-        while( aPam.GetNode()->IsProtect() && 
+        while( aPam.GetNode()->IsProtect() &&
                aPam.Move( fnMoveForward, fnGoCntnt ) )
             ; // nothing to do in the loop; the aPam.Move does the moving!
 
@@ -2599,11 +2599,11 @@ FASTBOOL SwCrsrShell::FindValidCntntNode( BOOL bOnlyText )
         {
             SwPaM aTmpPaM( rNdIdx.GetNode(), 0 );
             aPam = aTmpPaM;
-            while( aPam.GetNode()->IsProtect() && 
+            while( aPam.GetNode()->IsProtect() &&
                    aPam.Move( fnMoveBackward, fnGoCntnt ) )
                 ; // nothing to do in the loop; the aPam.Move does the moving!
         }
-            
+
         // if we're successful, set the new position
         if( ! aPam.GetNode()->IsProtect() )
         {
@@ -2966,7 +2966,7 @@ FASTBOOL SwCrsrShell::IsSelection() const
 FASTBOOL SwCrsrShell::IsMultiSelection() const
 {
     return pCurCrsr->GetNext() != pCurCrsr;
-}        
+}
 
 // pruefe ob vom aktuellen Crsr der SPoint/Mark in einer Tabelle stehen
 const SwTableNode* SwCrsrShell::IsCrsrInTbl( BOOL bIsPtInTbl ) const
