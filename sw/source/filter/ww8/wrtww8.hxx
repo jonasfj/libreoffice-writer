@@ -2,9 +2,9 @@
  *
  *  $RCSfile: wrtww8.hxx,v $
  *
- *  $Revision: 1.12 $
+ *  $Revision: 1.13 $
  *
- *  last change: $Author: cmc $ $Date: 2001-11-02 09:59:45 $
+ *  last change: $Author: jp $ $Date: 2001-11-28 11:50:45 $
  *
  *  The Contents of this file are made available subject to the terms of
  *  either of the following licenses
@@ -145,7 +145,7 @@ class WW8_WrPlc0;
 class WW8_WrPlc1;
 class WW8_WrPlcDrawObj;
 class WW8_WrPlcFld;
-class WW8_WrMagicTable;  
+class WW8_WrMagicTable;
 class WW8_WrPlcFtnEdn;
 class WW8_WrPlcPn;
 class WW8_WrPlcPostIt;
@@ -366,9 +366,9 @@ public:
     WW8_WrPlcFld* pFldEdn;			// Felder in EndNotes
     WW8_WrPlcFld* pFldTxtBxs;		// fields in textboxes
     WW8_WrPlcFld* pFldHFTxtBxs;		// fields in header/footer textboxes
-    WW8_WrMagicTable *pMagicTable;  // keeps track of table cell positions, and 
+    WW8_WrMagicTable *pMagicTable;  // keeps track of table cell positions, and
                                     // marks those that contain graphics,
-                                    // which is required to make word display 
+                                    // which is required to make word display
                                     // graphics inside tables
     SwWW8WrGrf* pGrf;
     const SwAttrSet* pStyAttr;		// StyleAttr fuer Tabulatoren
@@ -452,9 +452,9 @@ public:
     void StartCommentOutput( const String& rName );
     void EndCommentOutput(   const String& rName );
     void OutGrf( const SwNoTxtNode* pNd );
-    BOOL TestOleNeedsGraphic(const SwAttrSet& rSet, SvStorageRef xOleStg, 
+    BOOL TestOleNeedsGraphic(const SwAttrSet& rSet, SvStorageRef xOleStg,
         SvStorageRef xObjStg, String &rStorageName, SwOLENode *pOLENd);
-    void AppendBookmarks( const SwTxtNode& rNd, xub_StrLen nAktPos, 
+    void AppendBookmarks( const SwTxtNode& rNd, xub_StrLen nAktPos,
         xub_StrLen nLen );
     void AppendBookmark( const String& rName, USHORT nOffset = 0 );
     String GetBookmarkName( USHORT nTyp, const String* pNm, USHORT nSeqNo );
@@ -467,7 +467,7 @@ public:
     void WriteChar( sal_Unicode c );
     void WriteCellEnd();
     void WriteRowEnd();
-    USHORT StartTableFromFrmFmt(WW8Bytes &rAt, const SwFrmFmt *pFmt, 
+    USHORT StartTableFromFrmFmt(WW8Bytes &rAt, const SwFrmFmt *pFmt,
         SwTwips &rPageSize, SwTwips &rTblOffset);
 
     void OutSwString( const String&, xub_StrLen nStt, xub_StrLen nLen,
@@ -650,7 +650,8 @@ public:
 class WW8_WrPlc1
 {
     SvULongs aPos;				// PTRARR von CPs
-    WW8Bytes aDat;				// Inhalte ( Strukturen )
+    BYTE* pData;				// Inhalte ( Strukturen )
+    ULONG nDataLen;
     USHORT nStructSiz;
 protected:
     USHORT Count() const { return aPos.Count(); }
@@ -658,6 +659,7 @@ protected:
 
 public:
     WW8_WrPlc1( USHORT nStructSz );
+    ~WW8_WrPlc1();
     void Append( WW8_CP nCp, const void* pData );
     void Finish( ULONG nLastCp, ULONG nStartCp );
 };
