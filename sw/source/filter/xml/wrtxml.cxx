@@ -2,9 +2,9 @@
  *
  *  $RCSfile: wrtxml.cxx,v $
  *
- *  $Revision: 1.47 $
+ *  $Revision: 1.48 $
  *
- *  last change: $Author: obo $ $Date: 2005-01-05 11:48:04 $
+ *  last change: $Author: rt $ $Date: 2005-01-11 12:37:19 $
  *
  *  The Contents of this file are made available subject to the terms of
  *  either of the following licenses
@@ -156,8 +156,9 @@ using namespace ::com::sun::star::lang;
 
 #define LOGFILE_AUTHOR "mb93740"
 
-SwXMLWriter::SwXMLWriter()
+SwXMLWriter::SwXMLWriter( const String& rBaseURL )
 {
+    SetBaseURL( rBaseURL );
 }
 
 
@@ -321,25 +322,13 @@ sal_uInt32 SwXMLWriter::_Write()
     nRedlineMode &= ~REDLINE_SHOW_MASK;
     nRedlineMode |= REDLINE_SHOW_INSERT;
     pDoc->SetRedlineMode( nRedlineMode );
-    
+
     // TODO/LATER : either target medium or mediadescriptor for the current storing must be accessible here
     SfxMedium* pMedDescrMedium = NULL;
 
     // Set base URI
     OUString sPropName( RTL_CONSTASCII_USTRINGPARAM("BaseURI") );
-    ::rtl::OUString aBaseURL;
-    sal_Bool bBaseURLSet = sal_False;
-    if ( pMedDescrMedium && pMedDescrMedium->GetItemSet() )
-    {
-        const SfxStringItem* pBaseURLItem = static_cast<const SfxStringItem*>(
-                   pMedDescrMedium->GetItemSet()->GetItem(SID_DOC_BASEURL) );
-        if ( pBaseURLItem )
-        {
-            aBaseURL = pBaseURLItem->GetValue();
-            bBaseURLSet = sal_True;
-        }
-    }
-    xInfoSet->setPropertyValue( sPropName, makeAny( aBaseURL ) );
+    xInfoSet->setPropertyValue( sPropName, makeAny( ::rtl::OUString( GetBaseURL() ) ) );
 
     // TODO/LATER: separate links from normal embedded objects
     if( SFX_CREATE_MODE_EMBEDDED == pDoc->GetDocShell()->GetCreateMode() )
@@ -355,12 +344,10 @@ sal_uInt32 SwXMLWriter::_Write()
 
         if( aName.getLength() )
         {
-            sPropName = OUString(RTL_CONSTASCII_USTRINGPARAM("StreamRelPath")); 
-            xInfoSet->setPropertyValue( sPropName, makeAny( aName ) ); 
+            sPropName = OUString(RTL_CONSTASCII_USTRINGPARAM("StreamRelPath"));
+            xInfoSet->setPropertyValue( sPropName, makeAny( aName ) );
         }
     }
-    else if ( !bBaseURLSet )
-        xInfoSet->setPropertyValue( sPropName, makeAny( ::rtl::OUString( INetURLObject::GetBaseURL() ) ) );
 
     if( bBlock )
     {
@@ -709,9 +696,9 @@ sal_Bool SwXMLWriter::WriteThroughComponent(
 
 // -----------------------------------------------------------------------
 
-void GetXMLWriter( const String& rName, WriterRef& xRet )
+void GetXMLWriter( const String& rName, const String& rBaseURL, WriterRef& xRet )
 {
-    xRet = new SwXMLWriter();
+    xRet = new SwXMLWriter( rBaseURL );
 }
 
 // -----------------------------------------------------------------------
