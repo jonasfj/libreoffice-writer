@@ -2,9 +2,9 @@
  *
  *  $RCSfile: unoftn.cxx,v $
  *
- *  $Revision: 1.1.1.1 $
+ *  $Revision: 1.2 $
  *
- *  last change: $Author: hr $ $Date: 2000-09-19 00:08:28 $
+ *  last change: $Author: os $ $Date: 2000-09-27 14:22:03 $
  *
  *  The Contents of this file are made available subject to the terms of
  *  either of the following licenses
@@ -323,6 +323,8 @@ void SwXFootnote::attachToRange(const uno::Reference< text::XTextRange > & xText
             const SwFmtFtn& rFtn = pTxtAttr->GetFtn();
             pFmtFtn = &rFtn;
             pDoc->GetUnoCallBack()->Add(this);
+            //force creation of sequence id - is used for references
+            ((SwTxtFtn*)pTxtAttr)->SetSeqRefNo();
         }
         m_bIsDescriptor = sal_False;
         SetDoc(pDoc);
@@ -614,12 +616,15 @@ void SwXFootnote::removeVetoableChangeListener( const OUString& PropertyName,
 /*------------------------------------------------------------------------
 
     $Log: not supported by cvs2svn $
+    Revision 1.1.1.1  2000/09/19 00:08:28  hr
+    initial import
+
     Revision 1.8  2000/09/18 16:04:32  willem.vandorp
     OpenOffice header added.
-    
+
     Revision 1.7  2000/09/12 11:42:58  os
     #78682# support of service TextContent
-    
+
     Revision 1.6  2000/09/11 12:05:29  os
     #78606# references to footnotes
 
