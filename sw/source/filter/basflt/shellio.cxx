@@ -2,9 +2,9 @@
  *
  *  $RCSfile: shellio.cxx,v $
  *
- *  $Revision: 1.10 $
+ *  $Revision: 1.11 $
  *
- *  last change: $Author: jp $ $Date: 2001-04-05 15:01:03 $
+ *  last change: $Author: jp $ $Date: 2001-08-31 13:49:22 $
  *
  *  The Contents of this file are made available subject to the terms of
  *  either of the following licenses
@@ -585,8 +585,9 @@ SwDoc* Reader::GetTemplateDoc()
         {
             Date aTstDate;
             Time aTstTime;
-            if( FStatHelper::GetModifiedDateTimeOfFile( aTDir.GetMainURL(),
-                                                &aTstDate, &aTstTime ) &&
+            if( FStatHelper::GetModifiedDateTimeOfFile(
+                            aTDir.GetMainURL( INetURLObject::NO_DECODE ),
+                            &aTstDate, &aTstTime ) &&
                 ( !pTemplate || aDStamp != aTstDate || aTStamp != aTstTime ))
             {
                 bLoad = TRUE;
@@ -659,7 +660,8 @@ SwDoc* Reader::GetTemplateDoc()
             }
         }
 
-        ASSERT( !pTemplate || FStatHelper::IsDocument( aTDir.GetMainURL() ) ||
+        ASSERT( !pTemplate || FStatHelper::IsDocument(
+                aTDir.GetMainURL( INetURLObject::NO_DECODE ) ) ||
                 aTemplateNm.EqualsAscii( "$$Dummy$$" ),
                 "TemplatePtr but no template exist!" );
     }
@@ -1145,21 +1147,24 @@ BOOL SetHTMLTemplate( SwDoc & rDoc )
 /*************************************************************************
 
       $Log: not supported by cvs2svn $
+      Revision 1.10  2001/04/05 15:01:03  jp
+      access the html.vor only at used time, not in startup
+
       Revision 1.9  2001/03/07 08:05:56  mib
       #84201#: 6.0 template support
-    
+
       Revision 1.8  2001/03/06 11:08:40  mib
       organizer support for XML file format
-    
+
       Revision 1.7  2001/02/08 12:48:41  jp
       remove using statements
-    
+
       Revision 1.6  2001/01/22 13:42:57  mib
       Block mode for Readers added
-    
+
       Revision 1.5  2000/12/21 13:50:00  jp
       remove function GetTmpFileName
-    
+
       Revision 1.4  2000/11/06 09:27:12  jp
       must changes: tempfile
 
