@@ -2,9 +2,9 @@
  *
  *  $RCSfile: unotxvw.cxx,v $
  *
- *  $Revision: 1.48 $
+ *  $Revision: 1.49 $
  *
- *  last change: $Author: rt $ $Date: 2004-07-12 15:53:22 $
+ *  last change: $Author: kz $ $Date: 2004-10-04 19:35:00 $
  *
  *  The Contents of this file are made available subject to the terms of
  *  either of the following licenses
@@ -1010,7 +1010,7 @@ void SAL_CALL SwXTextView::setRubyList(
 /*-- 29.12.02 15:45:29---------------------------------------------------
 
   -----------------------------------------------------------------------*/
-SfxObjectShellRef SwXTextView::BuildTmpSelectionDoc( SvEmbeddedObjectRef &rRef )
+SfxObjectShellRef SwXTextView::BuildTmpSelectionDoc( SfxObjectShellRef& rRef )
 {
     SwWrtShell* pOldSh = &pView->GetWrtShell();
     SfxPrinter *pPrt = pOldSh->GetPrt();
@@ -1285,7 +1285,7 @@ void SwXTextViewCursor::gotoRange(
         SwWrtShell& rSh = pView->GetWrtShell();
         // call EnterStdMode in non-text selections only
         if(!bExpand ||
-           (eSelMode != SEL_TABLE_TEXT && 
+           (eSelMode != SEL_TABLE_TEXT &&
             eSelMode != SEL_LIST_TEXT &&
             eSelMode != SEL_TABLE_LIST_TEXT &&
             eSelMode != SEL_TEXT ))
@@ -1979,18 +1979,18 @@ sal_Int64 SAL_CALL SwXTextViewCursor::getSomething(
 // -----------------------------------------------------------------------------
 
 IMPLEMENT_FORWARD_XINTERFACE2(SwXTextViewCursor,SwXTextViewCursor_Base,OTextCursorHelper)
-const SwDoc* 		SwXTextViewCursor::GetDoc() const	
-{ 
+const SwDoc* 		SwXTextViewCursor::GetDoc() const
+{
     SwDoc* pDoc = pView->GetDocShell()->GetDoc();
     SwWrtShell& rSh = pView->GetWrtShell();
-    return	 rSh.GetCrsr() ? rSh.GetCrsr()->GetDoc() : 0; 
+    return	 rSh.GetCrsr() ? rSh.GetCrsr()->GetDoc() : 0;
 }
 // -----------------------------------------------------------------------------
-SwDoc* 	SwXTextViewCursor::GetDoc()		
-{ 
+SwDoc* 	SwXTextViewCursor::GetDoc()
+{
     SwDoc* pDoc = pView->GetDocShell()->GetDoc();
     SwWrtShell& rSh = pView->GetWrtShell();
-    return	 rSh.GetCrsr() ? rSh.GetCrsr()->GetDoc() : 0; 
+    return	 rSh.GetCrsr() ? rSh.GetCrsr()->GetDoc() : 0;
 }
 // -----------------------------------------------------------------------------
 const SwPaM* 	SwXTextViewCursor::GetPaM() const
