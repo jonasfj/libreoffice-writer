@@ -2,9 +2,9 @@
  *
  *  $RCSfile: swdtflvr.cxx,v $
  *
- *  $Revision: 1.66 $
+ *  $Revision: 1.67 $
  *
- *  last change: $Author: vg $ $Date: 2003-04-17 15:22:42 $
+ *  last change: $Author: vg $ $Date: 2003-04-17 16:10:46 $
  *
  *  The Contents of this file are made available subject to the terms of
  *  either of the following licenses
@@ -134,7 +134,7 @@
 #ifndef _HTMLOUT_HXX
 #include <svtools/htmlout.hxx>
 #endif
-#ifndef _SVX_HLNKITEM_HXX 
+#ifndef _SVX_HLNKITEM_HXX
 #include <svx/hlnkitem.hxx>
 #endif
 #ifndef _INETIMG_HXX
@@ -266,7 +266,7 @@
 #ifndef _SWUNODEF_HXX
 #include <swunodef.hxx>
 #endif
-#ifndef _SV_SOUND_HXX 
+#ifndef _SV_SOUND_HXX
 #include <vcl/sound.hxx>
 #endif
 
@@ -564,7 +564,7 @@ sal_Bool SwTransferable::GetData( const DATA_FLAVOR& rFlavor )
 
         pClpDocFac = new SwDocFac;
         SwDoc* pTmpDoc = pClpDocFac->GetDoc();
-        
+
         const SfxDocumentInfo * pInfo = pWrtShell->GetInfo();
         if (pInfo)
             pTmpDoc->SetInfo(*pInfo);
@@ -919,7 +919,7 @@ int SwTransferable::Copy( BOOL bIsCut )
             pWrtShell->CreateCrsr();
 
         SwDoc* pTmpDoc = pClpDocFac->GetDoc();
-        
+
         const SfxDocumentInfo * pInfo = pWrtShell->GetInfo();
         if (pInfo)
             pTmpDoc->SetInfo(*pInfo);
@@ -1675,7 +1675,7 @@ int SwTransferable::_PasteFileContent( TransferableDataHelper& rData,
     default:
         if( rData.GetSotStorageStream( nFmt, xStrm ) )
         {
-            if( ( SOT_FORMATSTR_ID_HTML_SIMPLE == nFmt ) || 
+            if( ( SOT_FORMATSTR_ID_HTML_SIMPLE == nFmt ) ||
                 ( SOT_FORMATSTR_ID_HTML_NO_COMMENT == nFmt ) )
             {
                 pStream = aMSE40ClpObj.IsValid( *xStrm );
@@ -1683,7 +1683,7 @@ int SwTransferable::_PasteFileContent( TransferableDataHelper& rData,
                 pRead->SetReadUTF8( TRUE );
                 INetURLObject::SetBaseURL( aMSE40ClpObj.GetBaseURL() );
 
-                BOOL bNoComments = 
+                BOOL bNoComments =
                     ( nFmt == SOT_FORMATSTR_ID_HTML_NO_COMMENT );
                 pRead->SetIgnoreHTMLComments( bNoComments );
             }
@@ -2410,10 +2410,10 @@ int SwTransferable::_PasteFileName( TransferableDataHelper& rData,
                                             pPt, nActionFlags, bMsg );
 
     if( !nRet )
-    {        
+    {
         String sFile, sDesc;
         if( rData.GetString( nFmt, sFile ) && sFile.Len() )
-        {        
+        {
             if(Sound::IsSoundFile( sFile ))
             {
                 SvxHyperlinkItem aHyperLink( SID_HYPERLINK_SETLINK, sFile, sFile,
@@ -2421,9 +2421,9 @@ int SwTransferable::_PasteFileName( TransferableDataHelper& rData,
                                 SW_PASTESDR_INSERT == nAction ? HLINK_BUTTON : HLINK_FIELD);
                 SwView& rView = rSh.GetView();
                 rView.GetViewFrame()->GetDispatcher()->Execute(
-                                SID_HYPERLINK_SETLINK, SFX_CALLMODE_ASYNCHRON, 
+                                SID_HYPERLINK_SETLINK, SFX_CALLMODE_ASYNCHRON,
                                 &aHyperLink,0L);
-            }        
+            }
             else
             {
                 BOOL bIsURLFile = SwTransferable::_CheckForURLOrLNKFile( rData, sFile, &sDesc );
@@ -3171,10 +3171,14 @@ int SwTransferable::PrivatePaste( SwWrtShell& rShell )
          bSmart = TRNSFR_DOCUMENT_WORD & eBufferType;
     if( bSmart )
     {
-        if( SCRIPTTYPE_LATIN != rShell.GetScriptType() )
-            bSmart = FALSE;
-        else
-        {
+// #108491# Why not for other Scripts? If TRNSFR_DOCUMENT_WORD is set, we have
+// a word in the buffer, word in this context means 'something with spaces at
+// beginning and end'. In this case we definitely want these spaces to be inserted
+// here.
+//      if( SCRIPTTYPE_LATIN != rShell.GetScriptType() )
+//          bSmart = FALSE;
+//      else
+//      {
             bInWrd = rShell.IsInWrd();
              bEndWrd = rShell.IsEndWrd();
             bSmart = bInWrd || bEndWrd;
@@ -3184,7 +3188,7 @@ int SwTransferable::PrivatePaste( SwWrtShell& rShell )
                 if( bSmart && !bSttWrd && (bInWrd || bEndWrd) )
                     rShell.SwEditShell::Insert(' ');
             }
-        }
+//      }
     }
 
     int nRet = rShell.Paste( pClpDocFac->GetDoc() );
