@@ -2,9 +2,9 @@
  *
  *  $RCSfile: cmdid.h,v $
  *
- *  $Revision: 1.53 $
+ *  $Revision: 1.54 $
  *
- *  last change: $Author: kz $ $Date: 2004-08-02 13:02:32 $
+ *  last change: $Author: rt $ $Date: 2004-08-23 08:00:54 $
  *
  *  The Contents of this file are made available subject to the terms of
  *  either of the following licenses
@@ -672,7 +672,7 @@ Achtung: Ab sofort sind in diesem File keine C++-Kommentare (//) mehr
 #define FN_TABLE_MODE_FIX_PROP      (FN_FORMAT + 190)  /*  -"-  */
 #define FN_TABLE_MODE_VARIABLE		(FN_FORMAT + 191)  /*  -"-  */
 #define FN_TABLE_BOX_TEXTDIRECTION  (FN_FORMAT + 192)  /*  text direction of table cells */
-        
+
 #define FN_TABLE_AUTOSUM 			(FN_FORMAT + 195)  /* Autosumme*/
 #define FN_SET_CONTROL_HANDLER   	(FN_FORMAT + 199)  /* Macro setzen */
 
@@ -1152,6 +1152,13 @@ Achtung: Ab sofort sind in diesem File keine C++-Kommentare (//) mehr
 #define FN_DROP_CHAR_STYLE_NAME         (FN_PARAM2+19) /* character style of drop caps - for recording */
 #define FN_PARAM_CHAIN_PREVIOUS         (FN_PARAM2+20) /* Name of frame to be added as chain successor */
 #define FN_PARAM_CHAIN_NEXT             (FN_PARAM2+21) /* Name of frame to be added as chain predecessor */
+
+// --> OD 2004-08-06 #i28749#
+// com::sun::star::text::Shape::TransformationInHoriL2R property
+#define FN_SHAPE_TRANSFORMATION_IN_HORI_L2R (FN_PARAM2+22)
+// com::sun::star::text::Shape::PositionLayoutDir property
+#define FN_SHAPE_POSITION_LAYOUT_DIR    (FN_PARAM2+23)
+// <--
 /*--------------------------------------------------------------------
     Bereich: Druckoptionen
  --------------------------------------------------------------------*/
