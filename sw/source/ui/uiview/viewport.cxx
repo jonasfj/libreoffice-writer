@@ -2,9 +2,9 @@
  *
  *  $RCSfile: viewport.cxx,v $
  *
- *  $Revision: 1.23 $
+ *  $Revision: 1.24 $
  *
- *  last change: $Author: hr $ $Date: 2003-03-27 15:44:48 $
+ *  last change: $Author: vg $ $Date: 2003-04-15 17:04:13 $
  *
  *  The Contents of this file are made available subject to the terms of
  *  either of the following licenses
@@ -288,7 +288,7 @@ extern int bDocSzUpdated;
     if ( bModified )
         SetVisArea( aNewVisArea, FALSE );
 
-    if ( UpdateScrollbars() && !bInOuterResizePixel && !bInInnerResizePixel && 
+    if ( UpdateScrollbars() && !bInOuterResizePixel && !bInInnerResizePixel &&
             !GetDocShell()->GetProtocol().IsInPlaceActive())
         OuterResizePixel( Point(),
                           GetViewFrame()->GetWindow().GetOutputSizePixel() );
@@ -1140,11 +1140,11 @@ void SwView::InnerResizePixel( const Point &rOfst, const Size &rSize )
         //VisArea einstellen, aber dort nicht das SetVisArea der DocShell rufen!
         bProtectDocShellVisArea = TRUE;
         CalcVisArea( aEditSz );
-        //visibility changes of the automatic horizontal scrollbar 
+        //visibility changes of the automatic horizontal scrollbar
         //require to repeat the ViewResizePixel() call - but only once!
-        if(bRepeat) 
+        if(bRepeat)
             bRepeat = FALSE;
-        else if(bHScrollVisible != pHScrollbar->IsVisible(TRUE) || 
+        else if(bHScrollVisible != pHScrollbar->IsVisible(TRUE) ||
                 bVScrollVisible != pVScrollbar->IsVisible(TRUE))
             bRepeat = TRUE;
     }while( bRepeat );
@@ -1233,10 +1233,10 @@ void SwView::OuterResizePixel( const Point &rOfst, const Size &rSize )
         //nicht mehr zum aktuell sichtbaren Bereich passen
         pWrtShell->ResetCursorStack();
 
-#ifdef DEBUG
+#if OSL_DEBUG_LEVEL > 1
         SwEditWin &rW = GetEditWin();
 #endif
-        ASSERT( !GetEditWin().IsVisible() || 
+        ASSERT( !GetEditWin().IsVisible() ||
                     (( aEditSz.Width() > 0 && aEditSz.Height() > 0 )
                         || !aVisArea.IsEmpty()), "Small world, isn't it?" );
 
