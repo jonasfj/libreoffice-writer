@@ -2,9 +2,9 @@
  *
  *  $RCSfile: ww8graf2.cxx,v $
  *
- *  $Revision: 1.50 $
+ *  $Revision: 1.51 $
  *
- *  last change: $Author: obo $ $Date: 2003-09-01 12:42:49 $
+ *  last change: $Author: rt $ $Date: 2003-09-25 07:44:16 $
  *
  *  The Contents of this file are made available subject to the terms of
  *  either of the following licenses
@@ -125,7 +125,7 @@
 #endif
 
 #ifndef _GRFATR_HXX
-#include <grfatr.hxx>			// class SwCropGrf
+#include <grfatr.hxx>           // class SwCropGrf
 #endif
 #ifndef _FMTFLCNT_HXX //autogen
 #include <fmtflcnt.hxx>
@@ -146,10 +146,10 @@
 #include <doc.hxx>
 #endif
 #ifndef _NDTXT_HXX
-#include <ndtxt.hxx>			// class SwTxtNode
+#include <ndtxt.hxx>            // class SwTxtNode
 #endif
 #ifndef _MDIEXP_HXX
-#include <mdiexp.hxx>			// Progress
+#include <mdiexp.hxx>           // Progress
 #endif
 
 #ifndef _WW8STRUC_HXX
@@ -159,10 +159,10 @@
 #include "ww8scan.hxx"
 #endif
 #ifndef _WW8PAR_HXX
-#include "ww8par.hxx"			// class SwWWImplReader
+#include "ww8par.hxx"           // class SwWWImplReader
 #endif
 #ifndef _WW8PAR2_HXX
-#include "ww8par2.hxx"			// struct WWFlyPara
+#include "ww8par2.hxx"          // struct WWFlyPara
 #endif
 #ifndef _WW8GRAF_HXX
 #include "ww8graf.hxx"
@@ -254,7 +254,7 @@ ULONG wwZOrderer::GetEscherObjectPos(ULONG nSpId)
 void wwZOrderer::InsertDrawingObject(SdrObject* pObj, short nWwHeight)
 {
     ULONG nPos = GetDrawingObjectPos(nWwHeight);
-    if (nWwHeight & 0x2000)					// Heaven ?
+    if (nWwHeight & 0x2000)                 // Heaven ?
         maSetLayer.SendObjectToHeaven(*pObj);
     else
         maSetLayer.SendObjectToHell(*pObj);
@@ -335,8 +335,8 @@ bool SwWW8ImplReader::GetPictGrafFromStream(Graphic& rGraphic, SvStream& rSrc)
 
 bool SwWW8ImplReader::ReadGrafFile(String& rFileName, Graphic*& rpGraphic,
     const WW8_PIC& rPic, SvStream* pSt, ULONG nFilePos, bool* pbInDoc)
-{												   // Grafik in File schreiben
-    *pbInDoc = true;							   // default
+{                                                  // Grafik in File schreiben
+    *pbInDoc = true;                               // default
 
     ULONG nPosFc = nFilePos + rPic.cbHeader;
 
@@ -349,8 +349,8 @@ bool SwWW8ImplReader::ReadGrafFile(String& rFileName, Graphic*& rpGraphic,
             rFileName = WW8ReadPString(*pSt, eStructCharSet, 0);
             if (rFileName.Len())
                 rFileName = URIHelper::SmartRelToAbs(rFileName);
-            *pbInDoc = false;		// Datei anschliessend nicht loeschen
-            return rFileName.Len() != 0;		// Einlesen OK
+            *pbInDoc = false;       // Datei anschliessend nicht loeschen
+            return rFileName.Len() != 0;        // Einlesen OK
     }
 
     GDIMetaFile aWMF;
@@ -405,7 +405,7 @@ struct WW8PicDesc
 
 WW8PicDesc::WW8PicDesc( const WW8_PIC& rPic )
 {
-    long nOriWidth = (long)rPic.dxaGoal;		// Groesse in 1/100 mm ?
+    long nOriWidth = (long)rPic.dxaGoal;        // Groesse in 1/100 mm ?
     long nOriHeight = (long)rPic.dyaGoal;
 
     nCL = rPic.dxaCropLeft;
@@ -413,7 +413,7 @@ WW8PicDesc::WW8PicDesc( const WW8_PIC& rPic )
     nCT = rPic.dyaCropTop;
     nCB = rPic.dyaCropBottom;
 
-    long nAddWidth  = nOriWidth + nCL + nCR;		// Groesse nach Crop
+    long nAddWidth  = nOriWidth + nCL + nCR;        // Groesse nach Crop
     long nAddHeight = nOriHeight + nCT + nCB;
     if(!nAddWidth  )
         nAddWidth  = 1;
@@ -425,7 +425,7 @@ WW8PicDesc::WW8PicDesc( const WW8_PIC& rPic )
     nCT = (short)((long)nCT * nOriWidth / nAddWidth );// auf Original-ImageSize
     nCB = (short)((long)nCB * nOriWidth / nAddWidth );
 
-    nWidth = nAddWidth * rPic.mx / 1000;		// entgueltige Sw-Groesse
+    nWidth = nAddWidth * rPic.mx / 1000;        // entgueltige Sw-Groesse
     nHeight = nAddHeight * rPic.my / 1000;
 }
 
@@ -437,7 +437,7 @@ void SwWW8ImplReader::ReplaceObj(const SdrObject &rReplaceObj,
     {
         SdrObjList* pObjectList = pGroupObject->GetSubList();
 #if 0
-        if( !pDrawModel )	// 1. GrafikObjekt des Docs
+        if( !pDrawModel )   // 1. GrafikObjekt des Docs
             GrafikCtor();
 
         pGrafObj->SetModel(pDrawModel);
@@ -501,10 +501,10 @@ SwFrmFmt* SwWW8ImplReader::MakeGrafInCntnt(const WW8_PIC& rPic,
 
     SwFrmFmt* pFlyFmt = 0;
 
-    if (!rFileName.Len() && nObjLocFc)		// dann sollte ists ein OLE-Object
+    if (!rFileName.Len() && nObjLocFc)      // dann sollte ists ein OLE-Object
         pFlyFmt = ImportOle( pGraph, &aFlySet );
 
-    if( !pFlyFmt )							// dann eben als Graphic
+    if( !pFlyFmt )                          // dann eben als Graphic
     {
 
         pFlyFmt = rDoc.Insert( *pPaM, rFileName, aEmptyStr, pGraph, &aFlySet,
@@ -512,7 +512,7 @@ SwFrmFmt* SwWW8ImplReader::MakeGrafInCntnt(const WW8_PIC& rPic,
     }
 
     // Grafik im Rahmen ? ok, Rahmen auf Bildgroesse vergroessern
-    //	( nur wenn Auto-Breite )
+    //  ( nur wenn Auto-Breite )
     if( pSFlyPara )
         pSFlyPara->BoxUpWidth( rPD.nWidth );
     return pFlyFmt;
@@ -533,7 +533,7 @@ SwFrmFmt* SwWW8ImplReader::ImportGraf1(WW8_PIC& rPic, SvStream* pSt,
     if (!bOk)
     {
         delete pGraph;
-        return 0;						// Grafik nicht korrekt eingelesen
+        return 0;                       // Grafik nicht korrekt eingelesen
     }
 
     WW8PicDesc aPD( rPic );
@@ -584,9 +584,9 @@ SwFrmFmt* SwWW8ImplReader::ImportGraf(SdrTextObj* pTextObj,
         return 0;
     }
 
-    ::SetProgressState( nProgress, rDoc.GetDocShell() );		 // Update
+    ::SetProgressState( nProgress, rDoc.GetDocShell() );         // Update
 
-    if (!pDrawModel)	// 1. GrafikObjekt des Docs
+    if (!pDrawModel)    // 1. GrafikObjekt des Docs
         GrafikCtor();
 
     /*
@@ -614,10 +614,10 @@ SwFrmFmt* SwWW8ImplReader::ImportGraf(SdrTextObj* pTextObj,
             WW8FlySet aFlySet( *this, pPaM, aPic, aPD.nWidth, aPD.nHeight );
 
             //JP 17.1.2002: the correct anchor is set in Read_F_IncludePicture
-            //				and the current PaM point's behind the position if
-            //				it is anchored in content; because this anchor add
-            //				a character into the textnode.
-            //				IussueZilla task 2806
+            //              and the current PaM point's behind the position if
+            //              it is anchored in content; because this anchor add
+            //              a character into the textnode.
+            //              IussueZilla task 2806
             if( FLY_IN_CNTNT ==
                 pFlyFmtOfJustInsertedGraphic->GetAnchor().GetAnchorId() )
                 aFlySet.ClearItem( RES_ANCHOR );
@@ -741,7 +741,7 @@ SwFrmFmt* SwWW8ImplReader::ImportGraf(SdrTextObj* pTextObj,
                     }
                 }
 
-                   bool bTextObjWasGrouped = false;
+                bool bTextObjWasGrouped = false;
                 if (pOldFlyFmt && pTextObj && pTextObj->GetUpGroup())
                     bTextObjWasGrouped = true;
 
@@ -858,10 +858,10 @@ void WW8PicShadowToReal( WW8_PIC_SHADOW * pPicS, WW8_PIC * pPic )
 
 void WW8FSPAShadowToReal( WW8_FSPA_SHADOW * pFSPAS, WW8_FSPA * pFSPA )
 {
-    //long nSpId;		//Shape Identifier. Used in conjunction with the office art data (found via fcDggInfo in the FIB) to find the actual data for this shape.
-    //long nXaLeft;	//left of rectangle enclosing shape relative to the origin of the shape
-    //long nYaTop;		//top of rectangle enclosing shape relative to the origin of the shape
-    //long nXaRight;	//right of rectangle enclosing shape relative to the origin of the shape
+    //long nSpId;       //Shape Identifier. Used in conjunction with the office art data (found via fcDggInfo in the FIB) to find the actual data for this shape.
+    //long nXaLeft; //left of rectangle enclosing shape relative to the origin of the shape
+    //long nYaTop;      //top of rectangle enclosing shape relative to the origin of the shape
+    //long nXaRight;    //right of rectangle enclosing shape relative to the origin of the shape
     //long nYaBottom;//bottom of the rectangle enclosing shape relative to the origin of the shape
     //USHORT bHdr:1;
     //USHORT nbx:2;
@@ -873,22 +873,22 @@ void WW8FSPAShadowToReal( WW8_FSPA_SHADOW * pFSPAS, WW8_FSPA * pFSPA )
     //long nTxbx; //count of textboxes in shape (undo doc only)
 
 
-    pFSPA->nSpId		= SVBT32ToLong( pFSPAS->nSpId );
-    pFSPA->nXaLeft		= SVBT32ToLong( pFSPAS->nXaLeft );
-    pFSPA->nYaTop		= SVBT32ToLong( pFSPAS->nYaTop );
-    pFSPA->nXaRight		= SVBT32ToLong( pFSPAS->nXaRight );
-    pFSPA->nYaBottom	= SVBT32ToLong( pFSPAS->nYaBottom );
+    pFSPA->nSpId        = SVBT32ToLong( pFSPAS->nSpId );
+    pFSPA->nXaLeft      = SVBT32ToLong( pFSPAS->nXaLeft );
+    pFSPA->nYaTop       = SVBT32ToLong( pFSPAS->nYaTop );
+    pFSPA->nXaRight     = SVBT32ToLong( pFSPAS->nXaRight );
+    pFSPA->nYaBottom    = SVBT32ToLong( pFSPAS->nYaBottom );
 
-    USHORT nBits		= SVBT16ToShort( pFSPAS->aBits1 );
+    USHORT nBits        = SVBT16ToShort( pFSPAS->aBits1 );
 
-    pFSPA->bHdr			= 0 !=	( nBits & 0x0001 );
-    pFSPA->nbx			=		( nBits & 0x0006 ) >> 1;
-    pFSPA->nby			=		( nBits & 0x0018 ) >> 3;
-    pFSPA->nwr			=		( nBits & 0x01E0 ) >> 5;
-    pFSPA->nwrk			=		( nBits & 0x1E00 ) >> 9;
-    pFSPA->bRcaSimple	= 0 !=	( nBits & 0x2000 );
-    pFSPA->bBelowText	= 0 !=	( nBits & 0x4000 );
-    pFSPA->bAnchorLock	= 0 !=	( nBits & 0x8000 );
+    pFSPA->bHdr         = 0 !=  ( nBits & 0x0001 );
+    pFSPA->nbx          =       ( nBits & 0x0006 ) >> 1;
+    pFSPA->nby          =       ( nBits & 0x0018 ) >> 3;
+    pFSPA->nwr          =       ( nBits & 0x01E0 ) >> 5;
+    pFSPA->nwrk         =       ( nBits & 0x1E00 ) >> 9;
+    pFSPA->bRcaSimple   = 0 !=  ( nBits & 0x2000 );
+    pFSPA->bBelowText   = 0 !=  ( nBits & 0x4000 );
+    pFSPA->bAnchorLock  = 0 !=  ( nBits & 0x8000 );
     pFSPA->nTxbx = SVBT32ToLong( pFSPAS->nTxbx );
 }
 #endif // defined __WW8_NEEDS_COPY
