@@ -2,9 +2,9 @@
  *
  *  $RCSfile: txatbase.hxx,v $
  *
- *  $Revision: 1.1.1.1 $
+ *  $Revision: 1.2 $
  *
- *  last change: $Author: hr $ $Date: 2000-09-18 17:14:28 $
+ *  last change: $Author: jp $ $Date: 2000-10-23 11:58:55 $
  *
  *  The Contents of this file are made available subject to the terms of
  *  either of the following licenses
@@ -95,6 +95,8 @@ class SvxCrossedOutItem;
 class SvxColorItem;
 class SvxCharSetColorItem;
 class SvXMLAttrContainerItem;
+class SwFmtRuby;
+class SwFmt2Lines;
 
 class SwFmtCharFmt;
 class SwFmtINetFmt;
@@ -182,6 +184,9 @@ public:
     inline const SwFmtRefMark			&GetRefMark() const;
     inline const SwFmtINetFmt			&GetINetFmt() const;
     inline const SvXMLAttrContainerItem	&GetXMLAttrContainer() const;
+
+    inline const SwFmtRuby				&GetRuby() const;
+    inline const SwFmt2Lines			&Get2Lines() const;
 
 private:
     SwTxtAttr( const SwTxtAttr& );
@@ -400,18 +405,34 @@ inline const SvXMLAttrContainerItem& SwTxtAttr::GetXMLAttrContainer() const
     return (const SvXMLAttrContainerItem&)*pAttr;
 }
 
+inline const SwFmtRuby& SwTxtAttr::GetRuby() const
+{
+    ASSERT( pAttr && pAttr->Which() == RES_TXTATR_CJK_RUBY,
+            "Falsche Abfrage" );
+    return (const SwFmtRuby&)*pAttr;
+}
+inline const SwFmt2Lines& SwTxtAttr::Get2Lines() const
+{
+    ASSERT( pAttr && pAttr->Which() == RES_TXTATR_TWO_LINES,
+            "Falsche Abfrage" );
+    return (const SwFmt2Lines&)*pAttr;
+}
+
 /*************************************************************************
 
       $Log: not supported by cvs2svn $
+      Revision 1.1.1.1  2000/09/18 17:14:28  hr
+      initial import
+
       Revision 1.23  2000/09/18 16:03:31  willem.vandorp
       OpenOffice header added.
-    
+
       Revision 1.22  2000/09/08 13:24:29  willem.vandorp
       Header and footer replaced
-    
+
       Revision 1.21  2000/05/10 12:47:25  ama
       Unicode changes
-    
+
       Revision 1.20  1999/12/07 21:09:51  jp
       Task #70258#: textattr for XMLAttrContainer
 
