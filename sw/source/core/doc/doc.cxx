@@ -2,9 +2,9 @@
  *
  *  $RCSfile: doc.cxx,v $
  *
- *  $Revision: 1.35 $
+ *  $Revision: 1.36 $
  *
- *  last change: $Author: rt $ $Date: 2005-01-05 15:59:33 $
+ *  last change: $Author: vg $ $Date: 2005-03-08 13:43:06 $
  *
  *  The Contents of this file are made available subject to the terms of
  *  either of the following licenses
@@ -655,17 +655,20 @@ sal_uInt16 SwDoc::GetPageCount() const
     return GetRootFrm() ? GetRootFrm()->GetPageNum() : 0;
 }
 
-const Size SwDoc::GetPageSize( sal_uInt16 nPageNum ) const
+const Size SwDoc::GetPageSize( sal_uInt16 nPageNum, bool bSkipEmptyPages ) const
 {
     Size aSize;
     if( GetRootFrm() && nPageNum )
     {
         const SwPageFrm* pPage = static_cast<const SwPageFrm*>
                                  (GetRootFrm()->Lower());
+
         while( --nPageNum && pPage->GetNext() )
             pPage = static_cast<const SwPageFrm*>( pPage->GetNext() );
-        if( pPage->IsEmptyPage() && pPage->GetNext() )
+
+        if( !bSkipEmptyPages && pPage->IsEmptyPage() && pPage->GetNext() )
             pPage = static_cast<const SwPageFrm*>( pPage->GetNext() );
+
         aSize = pPage->Frm().SSize();
     }
     return aSize;
@@ -1149,13 +1152,17 @@ BOOL SwDoc::ConvertFieldsToText()
 {
     BOOL bRet = FALSE;
     StartUndo( UIUNDO_REPLACE );
-    
+
     const SwFldTypes* pFldTypes = GetFldTypes();
     sal_uInt16 nCount = pFldTypes->Count();
     //go backward, field types are removed
     for(sal_uInt16 nType = nCount;  nType > 0;  --nType)
     {
         const SwFieldType *pCurType = pFldTypes->GetObject(nType - 1);
+
+        if ( RES_POSTITFLD == pCurType->Which() )
+            continue;
+
         SwClientIter aIter( *(SwFieldType*)pCurType );
         const SwFmtFld* pCurFldFmt = (SwFmtFld*)aIter.First( TYPE( SwFmtFld ));
         ::std::vector<const SwFmtFld*> aFieldFmts;
@@ -1167,14 +1174,14 @@ BOOL SwDoc::ConvertFieldsToText()
         ::std::vector<const SwFmtFld*>::iterator aBegin = aFieldFmts.begin();
         ::std::vector<const SwFmtFld*>::iterator aEnd = aFieldFmts.end();
         while(aBegin != aEnd)
-        {        
+        {
             const SwTxtFld *pTxtFld = (*aBegin)->GetTxtFld();
             // skip fields that are currently not in the document
             // e.g. fields in undo or redo array
             BOOL bSkip = !pTxtFld ||
                          !pTxtFld->GetpTxtNode()->GetNodes().IsDocNodes() ||
                          IsInHeaderFooter(SwNodeIndex(*pTxtFld->GetpTxtNode(), 0));
-    
+
             if (!bSkip)
             {
                 const SwFmtFld& rFmtFld = pTxtFld->GetFld();
@@ -1194,12 +1201,12 @@ BOOL SwDoc::ConvertFieldsToText()
             ++aBegin;
         }
     }
-    
+
     if( bRet )
         SetModified();
     EndUndo( UIUNDO_REPLACE );
     return bRet;
-    
+
 }
 
     // embedded alle lokalen Links (Bereiche/Grafiken)
