@@ -2,9 +2,9 @@
  *
  *  $RCSfile: regionsw.cxx,v $
  *
- *  $Revision: 1.29 $
+ *  $Revision: 1.30 $
  *
- *  last change: $Author: vg $ $Date: 2003-06-20 09:38:19 $
+ *  last change: $Author: hr $ $Date: 2004-02-03 16:38:10 $
  *
  *  The Contents of this file are made available subject to the terms of
  *  either of the following licenses
@@ -99,9 +99,6 @@
 #ifndef _SFXDOCFILE_HXX //autogen
 #include <sfx2/docfile.hxx>
 #endif
-#ifndef _OFF_APP_HXX //autogen
-#include <offmgr/app.hxx>
-#endif
 #ifndef _LINKMGR_HXX
 #include <so3/linkmgr.hxx>
 #endif
@@ -112,9 +109,7 @@
 #ifndef _SVX_BACKGRND_HXX //autogen
 #include <svx/backgrnd.hxx>
 #endif
-#ifndef _OFA_HTMLCFG_HXX
-#include <offmgr/htmlcfg.hxx>
-#endif
+#include <svx/htmlcfg.hxx>
 
 #ifndef _BOOKMRK_HXX //autogen
 #include <bookmrk.hxx>
@@ -835,7 +830,7 @@ IMPL_LINK( SwEditRegionDlg, OkHdl, CheckBox *, EMPTYARG )
 
             if( pFmt->GetFrmDir() != pRepr->GetFrmDir() )
                 pSet->Put( pRepr->GetFrmDir() );
-            
+
             if( pFmt->GetLRSpace() != pRepr->GetLRSpace())
                 pSet->Put( pRepr->GetLRSpace());
 
@@ -1163,7 +1158,7 @@ IMPL_LINK( SwEditRegionDlg, OptionsHdl, PushButton *, EMPTYARG )
                                         RES_COLUMNBALANCE, FALSE, &pBalanceItem );
                 SfxItemState eFrmDirState = pOutSet->GetItemState(
                                         RES_FRAMEDIR, FALSE, &pFrmDirItem );
-                SfxItemState eLRState = pOutSet->GetItemState( 
+                SfxItemState eLRState = pOutSet->GetItemState(
                                         RES_LR_SPACE, FALSE, &pLRSpaceItem);
 
                 if( SFX_ITEM_SET == eColState ||
@@ -1421,7 +1416,7 @@ void SwBaseShell::InsertRegionDialog(SfxRequest& rReq)
 
     SfxItemSet aSet(GetPool(),
             RES_COL, RES_COL,
-            RES_LR_SPACE, RES_LR_SPACE, 
+            RES_LR_SPACE, RES_LR_SPACE,
             RES_COLUMNBALANCE, RES_FRAMEDIR,
             RES_BACKGROUND, RES_BACKGROUND,
             RES_FRM_SIZE, RES_FRM_SIZE,
@@ -1652,7 +1647,7 @@ SwInsertSectionTabDialog::SwInsertSectionTabDialog(
     AddTabPage(TP_SECTION_FTNENDNOTES, SwSectionFtnEndTabPage::Create, 0);
     AddTabPage(TP_SECTION_INDENTS, SwSectionIndentTabPage::Create, 0);
 
-    OfaHtmlOptions* pHtmlOpt = OFF_APP()->GetHtmlOptions();
+    SvxHtmlOptions* pHtmlOpt = SvxHtmlOptions::Get();
     long nHtmlMode = pHtmlOpt->GetExportMode();
 
     BOOL bWeb = 0 != PTR_CAST( SwWebDocShell, rSh.GetView().GetDocShell() );
@@ -2395,7 +2390,7 @@ SwSectionPropertyTabDialog::SwSectionPropertyTabDialog(
     AddTabPage(TP_SECTION_FTNENDNOTES, SwSectionFtnEndTabPage::Create, 0);
     AddTabPage(TP_SECTION_INDENTS, SwSectionIndentTabPage::Create, 0);
 
-    OfaHtmlOptions* pHtmlOpt = OFF_APP()->GetHtmlOptions();
+    SvxHtmlOptions* pHtmlOpt = SvxHtmlOptions::Get();
     long nHtmlMode = pHtmlOpt->GetExportMode();
     BOOL bWeb = 0 != PTR_CAST( SwWebDocShell, rSh.GetView().GetDocShell() );
     if(bWeb)
@@ -2428,7 +2423,7 @@ void SwSectionPropertyTabDialog::PageCreated( USHORT nId, SfxTabPage &rPage )
         ((SwSectionIndentTabPage&)rPage).SetWrtShell(rWrtSh);
 }
 /*-- 13.06.2003 09:59:08---------------------------------------------------
-            
+
   -----------------------------------------------------------------------*/
 SwSectionIndentTabPage::SwSectionIndentTabPage( Window *pParent, const SfxItemSet &rAttrSet ) :
     SfxTabPage(pParent, SW_RES(TP_SECTION_INDENTS), rAttrSet),
@@ -2445,27 +2440,27 @@ SwSectionIndentTabPage::SwSectionIndentTabPage( Window *pParent, const SfxItemSe
     aAfterMF.SetModifyHdl(aLk);
 }
 /*-- 13.06.2003 09:59:23---------------------------------------------------
-    
+
   -----------------------------------------------------------------------*/
 SwSectionIndentTabPage::~SwSectionIndentTabPage()
 {
 }
 /*-- 13.06.2003 09:59:23---------------------------------------------------
-    
+
   -----------------------------------------------------------------------*/
 BOOL SwSectionIndentTabPage::FillItemSet( SfxItemSet& rSet)
 {
     if(aBeforeMF.IsValueModified() ||
             aAfterMF.IsValueModified())
     {
-        SvxLRSpaceItem aLRSpace(aBeforeMF.Denormalize(aBeforeMF.GetValue(FUNIT_TWIP)) , 
+        SvxLRSpaceItem aLRSpace(aBeforeMF.Denormalize(aBeforeMF.GetValue(FUNIT_TWIP)) ,
                 aAfterMF.Denormalize(aAfterMF.GetValue(FUNIT_TWIP)));
         rSet.Put(aLRSpace);
     }
     return TRUE;
 }
 /*-- 13.06.2003 09:59:24---------------------------------------------------
-    
+
   -----------------------------------------------------------------------*/
 void SwSectionIndentTabPage::Reset( const SfxItemSet& rSet)
 {
@@ -2473,7 +2468,7 @@ void SwSectionIndentTabPage::Reset( const SfxItemSet& rSet)
     FieldUnit aMetric = ::GetDfltMetric(FALSE);
     SetMetric(aBeforeMF, aMetric);
     SetMetric(aAfterMF , aMetric);
-    
+
     SfxItemState eItemState = rSet.GetItemState( RES_LR_SPACE );
     if ( eItemState >= SFX_ITEM_AVAILABLE )
     {
@@ -2493,7 +2488,7 @@ void SwSectionIndentTabPage::Reset( const SfxItemSet& rSet)
     IndentModifyHdl(0);
 }
 /*-- 13.06.2003 09:59:24---------------------------------------------------
-    
+
   -----------------------------------------------------------------------*/
 SfxTabPage*  SwSectionIndentTabPage::Create( Window* pParent, const SfxItemSet& rAttrSet)
 {
@@ -2510,7 +2505,7 @@ void SwSectionIndentTabPage::SetWrtShell(SwWrtShell& rSh)
     const SwRect& rPageRect = rSh.GetAnyCurRect( RECT_PAGE, 0 );
     Size aPageSize(rPageRect.Width(), rPageRect.Height());
     aPreviewWin.SetSize(aPageSize);
-}        
+}
 /* -----------------13.06.2003 14:02-----------------
 
  --------------------------------------------------*/
