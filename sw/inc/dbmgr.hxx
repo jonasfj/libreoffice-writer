@@ -2,9 +2,9 @@
  *
  *  $RCSfile: dbmgr.hxx,v $
  *
- *  $Revision: 1.14 $
+ *  $Revision: 1.15 $
  *
- *  last change: $Author: oj $ $Date: 2002-08-21 12:18:40 $
+ *  last change: $Author: os $ $Date: 2002-09-18 10:39:26 $
  *
  *  The Contents of this file are made available subject to the terms of
  *  either of the following licenses
@@ -198,7 +198,7 @@ struct SwNewDBMgr_Impl
     SwDSParam*          pMergeData;
     SwMailMergeDlg*		pMergeDialog;
 
-    SwNewDBMgr_Impl() 
+    SwNewDBMgr_Impl()
        :pMergeData(0)
        ,pMergeDialog(0)
         {}
@@ -298,7 +298,8 @@ public:
     void			EndMerge();
 
     void 			ExecuteFormLetter(SwWrtShell& rSh,
-                        const ::com::sun::star::uno::Sequence< ::com::sun::star::beans::PropertyValue>& rProperties);
+                        const ::com::sun::star::uno::Sequence< ::com::sun::star::beans::PropertyValue>& rProperties,
+                        BOOL bWithDataSourceBrowser = FALSE);
 
     void 			InsertText(SwWrtShell& rSh,
                         const ::com::sun::star::uno::Sequence< ::com::sun::star::beans::PropertyValue>& rProperties);
@@ -359,16 +360,16 @@ public:
 
     static SwDbtoolsClient&    GetDbtoolsClient();
 
-    /** try to get the data source from the given connection through the XChild interface. 
+    /** try to get the data source from the given connection through the XChild interface.
         If this is not possible, the data source will be created through its name.
         @param _xConnection
             The connection which should support the XChild interface. (not a must)
         @param _sDataSourceName
             The data source name will be used to create the data source when the connection can not be used for it.
-        @return 
+        @return
             The data source.
     */
-    static ::com::sun::star::uno::Reference< ::com::sun::star::sdbc::XDataSource> 
+    static ::com::sun::star::uno::Reference< ::com::sun::star::sdbc::XDataSource>
             getDataSourceAsParent(const ::com::sun::star::uno::Reference< ::com::sun::star::sdbc::XConnection>& _xConnection,const ::rtl::OUString& _sDataSourceName);
 
     /** creates a RowSet, which must be disposed after use.
@@ -384,7 +385,7 @@ public:
             The new created RowSet.
 
     */
-    static ::com::sun::star::uno::Reference< ::com::sun::star::sdbc::XResultSet> 
+    static ::com::sun::star::uno::Reference< ::com::sun::star::sdbc::XResultSet>
             createCursor(	const ::rtl::OUString& _sDataSourceName,
                             const ::rtl::OUString& _sCommand,
                             sal_Int32 _nCommandType,
