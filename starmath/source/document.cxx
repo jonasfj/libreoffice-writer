@@ -2,9 +2,9 @@
  *
  *  $RCSfile: document.cxx,v $
  *
- *  $Revision: 1.71 $
+ *  $Revision: 1.72 $
  *
- *  last change: $Author: rt $ $Date: 2005-01-11 13:08:26 $
+ *  last change: $Author: rt $ $Date: 2005-01-31 08:29:25 $
  *
  *  The Contents of this file are made available subject to the terms of
  *  either of the following licenses
@@ -373,6 +373,9 @@ void SmDocShell::SetText(const String& rBuffer)
                         aOldValue, aNewValue );
             }
         }
+
+        if ( GetCreateMode() == SFX_CREATE_MODE_EMBEDDED )
+            OnDocumentPrinterChanged(0);
     }
 }
 
@@ -1419,7 +1422,7 @@ void SmDocShell::Execute(SfxRequest& rReq)
                 if (pUndoMgr)
                     pUndoMgr->AddUndoAction(
                         new SmFormatAction(this, aOldFormat, aNewFormat));
-                
+
                 SetFormat( aNewFormat );
                 Repaint();
             }
