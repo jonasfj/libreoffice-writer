@@ -2,9 +2,9 @@
  *
  *  $RCSfile: ww8par.hxx,v $
  *
- *  $Revision: 1.118 $
+ *  $Revision: 1.119 $
  *
- *  last change: $Author: obo $ $Date: 2003-09-01 12:43:17 $
+ *  last change: $Author: rt $ $Date: 2003-09-25 07:44:38 $
  *
  *  The Contents of this file are made available subject to the terms of
  *  either of the following licenses
@@ -79,7 +79,7 @@
 #endif
 
 #ifndef _FLTSHELL_HXX
-#include <fltshell.hxx>			// fuer den Attribut Stack
+#include <fltshell.hxx>         // fuer den Attribut Stack
 #endif
 
 #ifndef __SGI_STL_VECTOR
@@ -102,10 +102,10 @@
 #include "tracer.hxx"
 #endif
 #ifndef _WW8STRUC_HXX
-#include "ww8struc.hxx"		// WW8_BRC 
-#endif						
+#include "ww8struc.hxx"     // WW8_BRC 
+#endif                      
 #ifndef _WW8SCAN_HXX
-#include "ww8scan.hxx"	// WW8Fib
+#include "ww8scan.hxx"  // WW8Fib
 #endif
 #ifndef _WW8GLSY_HXX
 #include "ww8glsy.hxx"
@@ -184,9 +184,8 @@ namespace com{namespace sun {namespace star{
 // defines nur fuer die WW8-variable der INI-Datei
 #define WW8FL_NO_TEXT        1
 #define WW8FL_NO_STYLES      2
-#define WW8FL_NO_ZSTYLES     4	// keine Zeichenstyles importieren
+#define WW8FL_NO_ZSTYLES     4  // keine Zeichenstyles importieren
 #define WW8FL_NO_GRAF     0x80
-#define WW8FL_NO_LRUL    0x200
 
 // falls gestetzt, werden fuer Writer-Def-Styles neue Styles mit den
 // WW8-Def-Style-Eigenschaften erzeugt, statt die Writer-Standards zu
@@ -216,8 +215,8 @@ struct WW8OleMap;
 typedef WW8OleMap* WW8OleMap_Ptr;
 
 SV_DECL_PTRARR_DEL(WW8LFOInfos,WW8LFOInfo_Ptr,16,16)
-SV_DECL_PTRARR_SORT_DEL(WW8AuthorInfos,	WW8AuthorInfo_Ptr,16,16)
-SV_DECL_PTRARR_SORT_DEL(WW8OleMaps,	WW8OleMap_Ptr,16,16)
+SV_DECL_PTRARR_SORT_DEL(WW8AuthorInfos, WW8AuthorInfo_Ptr,16,16)
+SV_DECL_PTRARR_SORT_DEL(WW8OleMaps, WW8OleMap_Ptr,16,16)
 
 struct WW8OleMap
 {
@@ -227,8 +226,8 @@ struct WW8OleMap
     WW8OleMap(sal_uInt32 nWWid) 
         : mnWWid(nWWid) {}
 
-    WW8OleMap(sal_uInt32 nWWid, String sStorageName) :
-        mnWWid(nWWid), msStorageName(sStorageName) {}
+     WW8OleMap(sal_uInt32 nWWid, String sStorageName) 
+        : mnWWid(nWWid), msStorageName(sStorageName) {}
 
     bool operator==(const WW8OleMap & rEntry) const
     {
@@ -448,7 +447,16 @@ struct WW8AuthorInfo
     }
 };
 
-
+class FieldEntry
+{
+public:
+    SwPosition maStartPos;
+    sal_uInt16 mnFieldId;
+    FieldEntry(SwPosition &rPos, sal_uInt16 nFieldId) throw();
+    FieldEntry(const FieldEntry &rOther) throw();
+    FieldEntry &operator=(const FieldEntry &rOther) throw();
+    void Swap(FieldEntry &rOther) throw();
+};
 
 //-----------------------------------------
 //    Mini-Merker fuer einige Flags
@@ -459,16 +467,19 @@ private:
     WW8PLCFxSaveAll maPLCFxSave;
     SwPosition maTmpPos;
     std::deque<bool> maOldApos;
-    std::deque<USHORT> maOldFieldStack;
+    std::deque<FieldEntry> maOldFieldStack;
     SwWW8FltControlStack* mpOldStck;
     SwWW8FltAnchorStack* mpOldAnchorStck;
     wwRedlineStack *mpOldRedlines;
     WW8PLCFMan* mpOldPlcxMan;
     WW8FlyPara* mpWFlyPara;
     WW8SwFlyPara* mpSFlyPara;
+    SwPaM* mpPreviousNumPaM;
+    const SwNumRule* mpPrevNumRule;
     WW8TabDesc* mpTableDesc;
     int mnInTable;
     USHORT mnAktColl;
+    USHORT mnParaNumber;
     sal_Unicode mcSymbol;
     bool mbIgnoreText;
     bool mbSymbol;
@@ -668,7 +679,7 @@ public:
     bool PageRestartNo() const { return maSep.fPgnRestart ? true : false; }
     bool IsBiDi() const { return maSep.fBiDi ? true : false; }
     sal_uInt16 GetPageWidth() const { return nPgWidth; }
-    sal_uInt16 GetPageHeight() const { return maSep.yaPage; }
+    sal_uInt32 GetPageHeight() const { return maSep.yaPage; }
     sal_uInt16 GetPageLeft() const { return nPgLeft; }
     sal_uInt16 GetPageRight() const { return nPgRight; }
     bool IsLandScape() const { return maSep.dmOrientPage ? true : false; }
@@ -684,6 +695,9 @@ private:
     std::deque<wwSection> maSegments;
     typedef ::std::deque<wwSection>::iterator mySegIter;
     typedef ::std::deque<wwSection>::reverse_iterator mySegrIter;
+
+    //Num of page desc's entered into the document
+    sal_uInt16 mnDesc;
 
     struct wwULSpaceData
     {
@@ -710,12 +724,20 @@ private:
     SwSectionFmt *InsertSection(SwPaM& rMyPaM, wwSection &rSection);
     bool SetCols(SwFrmFmt &rFmt, const wwSection &rSection, USHORT nNettoWidth);
     void SetLeftRight(wwSection &rSection);
+    bool IsNewDoc() const;
+    /*
+     The segment we're inserting, the start of the segments container, and the
+     nodeindex of where we want the page break to (normally the segments start
+     position
+    */
+    bool SetSwFmtPageDesc(mySegIter &rIter, mySegIter &rStart, 
+        SwNodeIndex &rWhere, bool bIgnoreCols);
 
     //No copying
     wwSectionManager(const wwSectionManager&);
     wwSectionManager& operator=(const wwSectionManager&);
 public:
-    wwSectionManager(SwWW8ImplReader &rReader) : mrReader(rReader)
+    wwSectionManager(SwWW8ImplReader &rReader) : mrReader(rReader), mnDesc(0)
         {};
     void SetCurrentSectionHasFootnote();
     bool CurrentSectionIsVertical() const;
@@ -723,7 +745,7 @@ public:
     USHORT CurrentSectionColCount() const;
     bool WillHavePageDescHere(SwNodeIndex aIdx) const;
     void CreateSep(const long nTxtPos, bool bMustHaveBreak);
-    void InsertSegments(bool bIsNewDoc);
+    void InsertSegments();
     void JoinNode(const SwPosition &rPos, const SwNode &rNode);
     short GetPageLeft() const;
     short GetPageRight() const;
@@ -802,21 +824,23 @@ friend class SwWW8FltControlStack;
 friend class WW8FormulaControl;
 friend class wwSectionManager;
 
+public:
     /*
     To log unimplemented features
     */
     sw::log::Tracer maTracer;
+private:
 
-    SvStorage* pStg;				// Input-Storage
-    SvStream* pStrm;				// Input-(Storage)Stream
-    SvStream* pTableStream;			// Input-(Storage)Stream
-    SvStream* pDataStream;	  		// Input-(Storage)Stream
+    SvStorage* pStg;                // Input-Storage
+    SvStream* pStrm;                // Input-(Storage)Stream
+    SvStream* pTableStream;         // Input-(Storage)Stream
+    SvStream* pDataStream;          // Input-(Storage)Stream
 
 // allgemeines
     SwDoc& rDoc;
     SwPaM* pPaM;
 
-    SwWW8FltControlStack* pCtrlStck;	// Stack fuer die Attribute
+    SwWW8FltControlStack* pCtrlStck;    // Stack fuer die Attribute
 
     /*
     This stack is for redlines, because their sequence of discovery can
@@ -849,8 +873,8 @@ friend class wwSectionManager;
     where the end point will fall, to do so fully correctly duplicates the
     main logic of the filter itself.
     */
-    std::deque<USHORT> maFieldStack;
-    typedef std::deque<USHORT>::const_iterator mycFieldIter;
+    std::deque<FieldEntry> maFieldStack;
+    typedef std::deque<FieldEntry>::const_iterator mycFieldIter;
 
     /*
     A stack of open footnotes. Should only be one in it at any time.
@@ -883,10 +907,12 @@ friend class wwSectionManager;
     */
     std::stack<rtl_TextEncoding> maFontSrcCharSets;
 
-    SwMSConvertControls *pFormImpl;	// Control-Implementierung
+    SwMSConvertControls *pFormImpl; // Control-Implementierung
 
     SwFlyFrmFmt* pFlyFmtOfJustInsertedGraphic;
     SwFrmFmt* pFmtOfJustInsertedApo;
+    SwPaM* pPreviousNumPaM;
+    const SwNumRule* pPrevNumRule;
 
     //Keep track of APO environments
     std::deque<bool> maApos;
@@ -904,26 +930,26 @@ friend class wwSectionManager;
     WW8ScannerBase* pSBase;
     WW8PLCFMan* pPlcxMan;
 
-    WW8RStyle* pStyles;		// Pointer auf die Style-Einleseklasse
-    SwFmt* pAktColl;		// gerade zu erzeugende Collection
+    WW8RStyle* pStyles;     // Pointer auf die Style-Einleseklasse
+    SwFmt* pAktColl;        // gerade zu erzeugende Collection
                             // ( ist ausserhalb einer Style-Def immer 0 )
     SfxItemSet* pAktItemSet;// gerade einzulesende Zeichenattribute
                             // (ausserhalb des WW8ListManager Ctor's immer 0)
-    SwWW8StyInf* pCollA;	// UEbersetzungs-Array der Styles
-    const SwTxtFmtColl* pDfltTxtFmtColl;	// Default
+    SwWW8StyInf* pCollA;    // UEbersetzungs-Array der Styles
+    const SwTxtFmtColl* pDfltTxtFmtColl;    // Default
     SwFmt* pStandardFmtColl;// "Standard"
 
-    WW8PLCF_HdFt* pHdFt;		// Pointer auf Header / Footer - Scannerklasse
+    WW8PLCF_HdFt* pHdFt;        // Pointer auf Header / Footer - Scannerklasse
 
-    WW8FlyPara* pWFlyPara;		// WW-Parameter
-    WW8SwFlyPara* pSFlyPara;	// daraus erzeugte Sw-Parameter
+    WW8FlyPara* pWFlyPara;      // WW-Parameter
+    WW8SwFlyPara* pSFlyPara;    // daraus erzeugte Sw-Parameter
 
-    WW8TabDesc* pTableDesc;		// Beschreibung der Tabelleneigenschaften
+    WW8TabDesc* pTableDesc;     // Beschreibung der Tabelleneigenschaften
     //Keep track of tables within tables
-    std::stack<WW8TabDesc*> aTableStack;
+    std::stack<WW8TabDesc*> maTableStack;
 
-    SwNumRule* mpNumRule;		// fuer Nummerierung / Aufzaehlungen im Text
-    WW8_OLST* pNumOlst;			// Gliederung im Text
+    SwNumRule* mpNumRule;       // fuer Nummerierung / Aufzaehlungen im Text
+    WW8_OLST* pNumOlst;         // Gliederung im Text
 
     SwNode* pNode_FLY_AT_CNTNT; // set: WW8SwFlyPara()   read: CreateSwTable()
 
@@ -932,118 +958,110 @@ friend class wwSectionManager;
     EditEngine* pDrawEditEngine;
     wwZOrderer *pWWZOrder;
 
-    SwFieldType* pNumFldType;	// fuer Nummernkreis
+    SwFieldType* pNumFldType;   // fuer Nummernkreis
 
     SwMSDffManager* pMSDffManager;
 
     std::vector<String>* mpAtnNames;
 
-    WW8AuthorInfos*	pAuthorInfos;
-
-    /*
-    Tabstops on a paragraph need to be adjusted when the lrspace has been
-    changed. To safely collect all lrchanges we process them at the closing of
-    the lr attribute, and store the start pos for the newly modified tabstop
-    here.
-    */
-    SwNodeIndex *pTabNode;
-    xub_StrLen nTabCntnt;
+    WW8AuthorInfos* pAuthorInfos;
 
                                 // Ini-Flags:
-    ULONG nIniFlags;			// Flags aus der writer.ini
-    ULONG nIniFlags1;			// dito ( zusaetzliche Flags )
-    ULONG nFieldFlags;			// dito fuer Feldern
-    ULONG nFieldTagAlways[3];	// dito fuers Taggen von Feldern
-    ULONG nFieldTagBad[3];		// dito fuers Taggen von nicht importierbaren F.
+    ULONG nIniFlags;            // Flags aus der writer.ini
+    ULONG nIniFlags1;           // dito ( zusaetzliche Flags )
+    ULONG nFieldFlags;          // dito fuer Feldern
+    ULONG nFieldTagAlways[3];   // dito fuers Taggen von Feldern
+    ULONG nFieldTagBad[3];      // dito fuers Taggen von nicht importierbaren F.
 
-    WW8_CP nDrawCpO;			// Anfang der Txbx-SubDocs
+    WW8_CP nDrawCpO;            // Anfang der Txbx-SubDocs
 
-    ULONG nPicLocFc;			// Picture Location in File (FC)
-    ULONG nObjLocFc;			// Object Location in File (FC)
+    ULONG nPicLocFc;            // Picture Location in File (FC)
+    ULONG nObjLocFc;            // Object Location in File (FC)
 
-    INT32 nIniFlyDx;			// X-Verschiebung von Flys
-    INT32 nIniFlyDy;			// Y-Verschiebung von Flys
+    INT32 nIniFlyDx;            // X-Verschiebung von Flys
+    INT32 nIniFlyDy;            // Y-Verschiebung von Flys
 
-    rtl_TextEncoding eTextCharSet;	  // Default charset for Text
+    rtl_TextEncoding eTextCharSet;    // Default charset for Text
     rtl_TextEncoding eStructCharSet;  // rtl_TextEncoding for structures 
     rtl_TextEncoding eHardCharSet;    // Hard rtl_TextEncoding-Attribute
-    USHORT nProgress;			// %-Angabe fuer Progressbar
-    USHORT nColls;				// Groesse des Arrays
-    USHORT nAktColl;			// gemaess WW-Zaehlung
-    USHORT nDrawTxbx;			// Nummer der Textbox ( noetig ?? )
-    USHORT nFldNum;				// laufende Nummer dafuer
+    USHORT nProgress;           // %-Angabe fuer Progressbar
+    USHORT nColls;              // Groesse des Arrays
+    USHORT nAktColl;            // gemaess WW-Zaehlung
+    USHORT nParaNumber;         // paragraph number
+    USHORT nDrawTxbx;           // Nummer der Textbox ( noetig ?? )
+    USHORT nFldNum;             // laufende Nummer dafuer
     USHORT nLFOPosition;
 
-    short nCharFmt;				// gemaess WW-Zaehlung, <0 fuer keine
-
-    short nLeftParaMgn;			// Absatz L-Space
-    short nTxtFirstLineOfst;	// Absatz 1st line ofset
+    short nCharFmt;             // gemaess WW-Zaehlung, <0 fuer keine
 
     short nDrawXOfs, nDrawYOfs;
     short nDrawXOfs2, nDrawYOfs2;
 
-    sal_Unicode cSymbol;		// aktuell einzulesendes Symbolzeichen
+    sal_Unicode cSymbol;        // aktuell einzulesendes Symbolzeichen
 
 
-    BYTE nWantedVersion;		// urspruenglich vom Writer
+    BYTE nWantedVersion;        // urspruenglich vom Writer
                                 // angeforderte WW-Doc-Version
 
 
-    BYTE nSwNumLevel;			// LevelNummer fuer Outline / Nummerierung
-    BYTE nWwNumType;			// Gliederung / Nummerg / Aufzaehlg
+    BYTE nSwNumLevel;           // LevelNummer fuer Outline / Nummerierung
+    BYTE nWwNumType;            // Gliederung / Nummerg / Aufzaehlg
     BYTE nListLevel;
 
-    BYTE nPgChpDelim;			// ChapterDelim from PageNum
-    BYTE nPgChpLevel;			// ChapterLevel of Heading from PageNum
+    BYTE nPgChpDelim;           // ChapterDelim from PageNum
+    BYTE nPgChpLevel;           // ChapterLevel of Heading from PageNum
 
-    bool mbNewDoc;			// Neues Dokument ?
-    bool bReadNoTbl;		// Keine Tabellen
-    bool bPgSecBreak;		// Page- oder Sectionbreak ist noch einzufuegen
-    bool bSpec;				// Special-Char im Text folgt
-    bool bObj;				// Obj im Text
-    bool bTxbxFlySection;	// FlyFrame, der als Ersatz fuer Winword Textbox eingefuegt wurde
-    bool bHasBorder;		// fuer Buendelung der Border
-    bool bSymbol;			// z.B. Symbol statt Times
-    bool bIgnoreText;		// z.B. fuer FieldVanish
-     int  nInTable;			// wird gerade eine Tabelle eingelesen
-    bool bWasTabRowEnd;		// Tabelle : Row End Mark
+    bool mbNewDoc;          // Neues Dokument ?
+    bool bReadNoTbl;        // Keine Tabellen
+    bool bPgSecBreak;       // Page- oder Sectionbreak ist noch einzufuegen
+    bool bSpec;             // Special-Char im Text folgt
+    bool bObj;              // Obj im Text
+    bool bTxbxFlySection;   // FlyFrame, der als Ersatz fuer Winword Textbox eingefuegt wurde
+    bool bHasBorder;        // fuer Buendelung der Border
+    bool bSymbol;           // z.B. Symbol statt Times
+    bool bIgnoreText;       // z.B. fuer FieldVanish
+    int  nInTable;          // wird gerade eine Tabelle eingelesen
+    bool bWasTabRowEnd;     // Tabelle : Row End Mark
 
-    bool bShdTxtCol;		// Textfarbe indirekt gesetzt ( Hintergrund sw )
-    bool bCharShdTxtCol;	// Textfarbe indirekt gesetzt ( Zeichenhintergrund sw )
-    bool bAnl;				// Nummerierung in Bearbeitung
+    bool bShdTxtCol;        // Textfarbe indirekt gesetzt ( Hintergrund sw )
+    bool bCharShdTxtCol;    // Textfarbe indirekt gesetzt ( Zeichenhintergrund sw )
+    bool bAnl;              // Nummerierung in Bearbeitung
                                 // Anl heisst Autonumber level
 
-    bool bHdFtFtnEdn;		// Spezialtext: Kopf- Fuss- usw.
-    bool bFtnEdn;			// Fussnote oder Endnote
-    bool bIsHeader;			// Text aus Header wird gelesen ( Zeilenhoehe )
-    bool bIsFooter;			// Text aus Footer wird gelesen ( Zeilenhoehe )
+    bool bHdFtFtnEdn;       // Spezialtext: Kopf- Fuss- usw.
+    bool bFtnEdn;           // Fussnote oder Endnote
+    bool bIsHeader;         // Text aus Header wird gelesen ( Zeilenhoehe )
+    bool bIsFooter;         // Text aus Footer wird gelesen ( Zeilenhoehe )
 
-    bool bIsUnicode;			// aktuelles Text-Stueck ist als 2-Bytiger-Unicode kodiert
+    bool bIsUnicode;            // aktuelles Text-Stueck ist als 2-Bytiger-Unicode kodiert
                                 // bitte NICHT als Bitfeld kodieren!
 
-    bool bCpxStyle;			// Style im Complex Part
-    bool bStyNormal;		// Style mit Id 0 wird gelesen
-    bool bWWBugNormal;		// WW-Version nit Bug Dya in Style Normal
-    bool bNoAttrImport;		// Attribute ignorieren zum Ignorieren v. Styles
+    bool bCpxStyle;         // Style im Complex Part
+    bool bStyNormal;        // Style mit Id 0 wird gelesen
+    bool bWWBugNormal;      // WW-Version nit Bug Dya in Style Normal
+    bool bNoAttrImport;     // Attribute ignorieren zum Ignorieren v. Styles
     bool bInHyperlink;      // Sonderfall zum einlesen eines 0x01
                                    // siehe: SwWW8ImplReader::Read_F_Hyperlink()
     bool bWasParaEnd;
 
     // praktische Hilfsvariablen:
-    bool bVer67;			// ( (6 == nVersion) || (7 == nVersion) );
-    bool bVer6;				//   (6 == nVersion);
-    bool bVer7;				//   (7 == nVersion);
-    bool bVer8;				//   (8 == nVersion);
+    bool bVer67;            // ( (6 == nVersion) || (7 == nVersion) );
+    bool bVer6;             //   (6 == nVersion);
+    bool bVer7;             //   (7 == nVersion);
+    bool bVer8;             //   (8 == nVersion);
 
-    bool bPgChpLevel;		// ChapterLevel of Heading from PageNum
-    bool bEmbeddObj;		// EmbeddField gelesen
+    bool bPgChpLevel;       // ChapterLevel of Heading from PageNum
+    bool bEmbeddObj;        // EmbeddField gelesen
 
-    bool bAktAND_fNumberAcross;	// current active Annotated List Deskriptor - ROW flag
+    bool bAktAND_fNumberAcross; // current active Annotated List Deskriptor - ROW flag
 
-    bool bNoLnNumYet;		// no Line Numbering has been activated yet (we import
+    bool bNoLnNumYet;       // no Line Numbering has been activated yet (we import
                             //     the very 1st Line Numbering and ignore the rest)
 
+    bool bParaAutoBefore;
+    bool bParaAutoAfter;
 
+    bool bDropCap;
 
 //---------------------------------------------
 
@@ -1056,6 +1074,7 @@ friend class wwSectionManager;
     void Read_HdFt(BYTE nWhichItems, BYTE grpfIhdt, int nSect, SwPageDesc* pPD, 
         const SwPageDesc *pPrev);
     void Read_HdFtText(long nStartCp, long nLen, SwFrmFmt* pHdFtFmt);
+    bool HasOwnHeaderFooter(BYTE nWhichItems, BYTE grpfIhdt, int nSect);
 
     void HandleLineNumbering(const wwSection &rSection);
 
@@ -1063,9 +1082,9 @@ friend class wwSectionManager;
                            SwPageDesc* pNewPageDesc, BYTE nCode );
 
     void DeleteStk(SwFltControlStack* prStck);
-    void DeleteCtrlStk()	{ DeleteStk( pCtrlStck	); pCtrlStck   = 0; }
-    void DeleteRefStk()		{ DeleteStk( pRefStck ); pRefStck = 0; }
-    void DeleteAnchorStk()	{ DeleteStk( pAnchorStck ); pAnchorStck = 0; }
+    void DeleteCtrlStk()    { DeleteStk( pCtrlStck  ); pCtrlStck   = 0; }
+    void DeleteRefStk()     { DeleteStk( pRefStck ); pRefStck = 0; }
+    void DeleteAnchorStk()  { DeleteStk( pAnchorStck ); pAnchorStck = 0; }
     bool AddTextToParagraph(const String& sAddString);
     bool HandlePageBreakChar();
     bool ReadChar(long nPosCp, long nCpOfs);
@@ -1111,7 +1130,7 @@ friend class wwSectionManager;
         BYTE nSetBorders=0xFF, bool bChkBtwn = false);
 
     void GetBorderDistance(const WW8_BRC* pbrc, Rectangle& rInnerDist);
-
+    sal_uInt16 GetParagraphAutoSpace(bool fDontUseHTMLAutoSpacing);
     bool SetShadow(SvxShadowItem& rShadow, const SvxBoxItem& rBox,
         const WW8_BRC pbrc[4]);
 
@@ -1134,6 +1153,7 @@ friend class wwSectionManager;
     void SetAttributesAtGrfNode( SvxMSDffImportRec* pRecord, SwFrmFmt *pFlyFmt,
         WW8_FSPA *pF );
 
+    bool IsDropCap();
     WW8FlyPara *ConstructApo(const ApoTestResults &rApo, WW8_TablePos *pTabPos);
     bool StartApo(const ApoTestResults &rApo, WW8_TablePos *pTabPos);
     void StopApo();
@@ -1230,12 +1250,12 @@ friend class wwSectionManager;
         USHORT nSequence);
     bool GetTxbxText(String& rString, long StartCp, long nEndCp);
     SwFrmFmt* InsertTxbxText(SdrTextObj* pTextObj, Size* pObjSiz, 
-        USHORT nTxBxS, USHORT nSequence, long nPosCp, SwFrmFmt*	pFlyFmt,
-        bool bMakeSdrGrafObj, bool&	rbEraseTextObj, 
-        bool* pbTestTxbxContainsText = 0, long*	pnStartCp = 0, 
+        USHORT nTxBxS, USHORT nSequence, long nPosCp, SwFrmFmt* pFlyFmt,
+        bool bMakeSdrGrafObj, bool& rbEraseTextObj, 
+        bool* pbTestTxbxContainsText = 0, long* pnStartCp = 0, 
         long* pnEndCp = 0, bool* pbContainsGraphics = 0, 
         SvxMSDffImportRec* pRecord = 0);
-    bool TxbxChainContainsRealText(	USHORT nTxBxS,
+    bool TxbxChainContainsRealText( USHORT nTxBxS,
                                     long&  rStartCp,
                                     long&  rEndCp );
     SdrObject *ReadTxtBox(WW8_DPHEAD* pHd, const WW8_DO* pDo,
@@ -1319,14 +1339,14 @@ friend class wwSectionManager;
     void SetOutLineStyles();
 
     bool IsInlineEscherHack() const
-        {return !maFieldStack.empty() ? maFieldStack.back() == 95 : false; };
+        {return !maFieldStack.empty() ? maFieldStack.back().mnFieldId == 95 : false; };
 
     void StoreMacroCmds();
 
     //No copying
     SwWW8ImplReader(const SwWW8ImplReader &);
     SwWW8ImplReader& operator=(const SwWW8ImplReader&);
-public:		// eigentlich private, geht aber leider nur public
+public:     // eigentlich private, geht aber leider nur public
     void ConvertUFName( String& rName );
 
     long Read_Ftn(WW8PLCFManResult* pRes);
@@ -1343,54 +1363,51 @@ public:		// eigentlich private, geht aber leider nur public
     void Read_PicLoc(USHORT, const BYTE* pData, short nLen );
     void Read_BoldUsw(USHORT nId, const BYTE*, short nLen);
     void Read_BoldBiDiUsw(USHORT nId, const BYTE*, short nLen);
-    void Read_SubSuper(			USHORT, const BYTE*, short nLen );
+    void Read_SubSuper(         USHORT, const BYTE*, short nLen );
     bool ConvertSubToGraphicPlacement();
     SwFrmFmt *ContainsSingleInlineGraphic(const SwPaM &rRegion);
-    void Read_SubSuperProp(		USHORT, const BYTE*, short nLen );
-    void Read_Underline(		USHORT, const BYTE*, short nLen );
-    void Read_TxtColor(			USHORT, const BYTE*, short nLen );
-    void Read_FontCode(			USHORT, const BYTE*, short nLen );
-    void Read_FontSize(			USHORT, const BYTE*, short nLen );
+    void Read_SubSuperProp(     USHORT, const BYTE*, short nLen );
+    void Read_Underline(        USHORT, const BYTE*, short nLen );
+    void Read_TxtColor(         USHORT, const BYTE*, short nLen );
+    void Read_FontCode(         USHORT, const BYTE*, short nLen );
+    void Read_FontSize(         USHORT, const BYTE*, short nLen );
     void Read_CharSet(USHORT , const BYTE* pData, short nLen);
-    void Read_Language(			USHORT, const BYTE*, short nLen );
-    void Read_CColl(			USHORT, const BYTE*, short nLen );
-    void Read_Kern(				USHORT, const BYTE* pData, short nLen );
-    void Read_FontKern(			USHORT, const BYTE* pData, short nLen );
+    void Read_Language(         USHORT, const BYTE*, short nLen );
+    void Read_CColl(            USHORT, const BYTE*, short nLen );
+    void Read_Kern(             USHORT, const BYTE* pData, short nLen );
+    void Read_FontKern(         USHORT, const BYTE* pData, short nLen );
     void Read_Invisible(USHORT, const BYTE* pData, short nLen);
-    void Read_Emphasis(			USHORT, const BYTE* pData, short nLen );
-    void Read_ScaleWidth(		USHORT, const BYTE* pData, short nLen );
-    void Read_Relief( 			USHORT, const BYTE* pData, short nLen);
-    void Read_TxtAnim( 			USHORT, const BYTE* pData, short nLen);
+    void Read_Emphasis(         USHORT, const BYTE* pData, short nLen );
+    void Read_ScaleWidth(       USHORT, const BYTE* pData, short nLen );
+    void Read_Relief(           USHORT, const BYTE* pData, short nLen);
+    void Read_TxtAnim(      USHORT, const BYTE* pData, short nLen);
 
-    void Read_NoLineNumb(		USHORT nId, const BYTE* pData, short nLen );
+    void Read_NoLineNumb(       USHORT nId, const BYTE* pData, short nLen );
     
-    void Read_LR(				USHORT nId, const BYTE*, short nLen );
-    void NeedAdjustStyleTabStops(short nLeft, short nFirstLineOfst,
-        SwWW8StyInf *pSty);
-    void NeedAdjustTextTabStops(short nLeft, short nFirstLineOfst, 
-        SwNodeIndex *pPos,xub_StrLen nIndex);
-    void Read_UL(				USHORT nId, const BYTE*, short nLen );
+    void Read_LR(               USHORT nId, const BYTE*, short nLen );
+    void AdjustStyleTabStops(short nLeft, SwWW8StyInf *pSty);
+    void Read_UL(               USHORT nId, const BYTE*, short nLen );
     void Read_ParaAutoBefore(USHORT , const BYTE *pData, short nLen);
     void Read_ParaAutoAfter(USHORT , const BYTE *pData, short nLen);
-    void Read_LineSpace(		USHORT, const BYTE*, short nLen );
+    void Read_LineSpace(        USHORT, const BYTE*, short nLen );
     void Read_Justify(USHORT, const BYTE*, short nLen);
     bool IsRightToLeft();
     void Read_RTLJustify(USHORT, const BYTE*, short nLen);
-    void Read_Hyphenation(		USHORT, const BYTE* pData, short nLen );
-    void Read_WidowControl(		USHORT, const BYTE* pData, short nLen );
-    void Read_AlignFont(		USHORT, const BYTE* pData, short nLen );
+    void Read_Hyphenation(      USHORT, const BYTE* pData, short nLen );
+    void Read_WidowControl(     USHORT, const BYTE* pData, short nLen );
+    void Read_AlignFont(        USHORT, const BYTE* pData, short nLen );
     void Read_UsePgsuSettings(  USHORT, const BYTE* pData, short nLen );
-    void Read_KeepLines(		USHORT, const BYTE* pData, short nLen );
-    void Read_KeepParas(		USHORT, const BYTE* pData, short nLen );
-    void Read_BreakBefore(		USHORT, const BYTE* pData, short nLen );
-    void Read_ApoPPC(			USHORT, const BYTE* pData, short nLen );
+    void Read_KeepLines(        USHORT, const BYTE* pData, short nLen );
+    void Read_KeepParas(        USHORT, const BYTE* pData, short nLen );
+    void Read_BreakBefore(      USHORT, const BYTE* pData, short nLen );
+    void Read_ApoPPC(           USHORT, const BYTE* pData, short nLen );
 
-    void Read_BoolItem(			USHORT nId, const BYTE*, short nLen );
+    void Read_BoolItem(         USHORT nId, const BYTE*, short nLen );
 
-    void Read_Border(			USHORT nId, const BYTE* pData, short nLen );
-    void Read_Tab(				USHORT nId, const BYTE* pData, short nLen );
+    void Read_Border(           USHORT nId, const BYTE* pData, short nLen );
+    void Read_Tab(              USHORT nId, const BYTE* pData, short nLen );
     void Read_Symbol(USHORT, const BYTE* pData, short nLen);
-    void Read_FldVanish(		USHORT nId, const BYTE* pData, short nLen );
+    void Read_FldVanish(        USHORT nId, const BYTE* pData, short nLen );
 
     // Revision Marks ( == Redlining )
 
@@ -1404,23 +1421,23 @@ public:		// eigentlich private, geht aber leider nur public
     void Read_CPropRMark(USHORT , const BYTE* pData, short nLen); // complex!
 
 
-    void Read_TabRowEnd(		USHORT, const BYTE* pData, short nLen );
+    void Read_TabRowEnd(        USHORT, const BYTE* pData, short nLen );
     static bool ParseTabPos(WW8_TablePos *aTabPos, WW8PLCFx_Cp_FKP* pPap);
-    void Read_Shade(			USHORT, const BYTE* pData, short nLen );
-    void Read_ANLevelNo(		USHORT, const BYTE* pData, short nLen );
-    void Read_ANLevelDesc(		USHORT, const BYTE* pData, short nLen );
+    void Read_Shade(            USHORT, const BYTE* pData, short nLen );
+    void Read_ANLevelNo(        USHORT, const BYTE* pData, short nLen );
+    void Read_ANLevelDesc(      USHORT, const BYTE* pData, short nLen );
 
     // Gliederungsebene Ver8
     void Read_POutLvl(USHORT, const BYTE* pData, short nLen); 
 
-    void Read_OLST(				USHORT, const BYTE* pData, short nLen );
+    void Read_OLST(             USHORT, const BYTE* pData, short nLen );
 
-    void Read_CharShadow(		USHORT, const BYTE* pData, short nLen );
-    void Read_CharHighlight(	USHORT, const BYTE* pData, short nLen );
+    void Read_CharShadow(       USHORT, const BYTE* pData, short nLen );
+    void Read_CharHighlight(    USHORT, const BYTE* pData, short nLen );
                                         // Ver8-Listen
 
-    void Read_ListLevel( 		USHORT nId, const sal_uInt8* pData, short nLen);
-    void Read_LFOPosition( 		USHORT nId, const sal_uInt8* pData, short nLen);
+    void Read_ListLevel(        USHORT nId, const sal_uInt8* pData, short nLen);
+    void Read_LFOPosition(      USHORT nId, const sal_uInt8* pData, short nLen);
     bool SetTxtFmtCollAndListLevel(const SwPaM& rRg, SwWW8StyInf& rStyleInfo);
 
     void Read_StyleCode(USHORT, const BYTE* pData, short nLen);
@@ -1444,7 +1461,9 @@ public:		// eigentlich private, geht aber leider nur public
     eF_ResT Read_F_DocInfo( WW8FieldDesc* pF, String& rStr );
     eF_ResT Read_F_Author( WW8FieldDesc*, String& );
     eF_ResT Read_F_TemplName( WW8FieldDesc*, String& );
-    short GetTimeDatePara(String& rStr, ULONG& rFormat, bool &rbForceJapanese);
+    short GetTimeDatePara(String& rStr, ULONG& rFormat, USHORT &rLang, 
+        bool bHijri = false);
+    bool ForceFieldLanguage(SwField &rFld, USHORT nLang);
     eF_ResT Read_F_DateTime( WW8FieldDesc*, String& rStr );
     eF_ResT Read_F_FileName( WW8FieldDesc*, String& rStr);
     eF_ResT Read_F_Anz( WW8FieldDesc* pF, String& );
@@ -1487,10 +1506,10 @@ public:		// eigentlich private, geht aber leider nur public
 
     bool SearchRowEnd(WW8PLCFx_Cp_FKP* pPap,WW8_CP &rStartCp, int nLevel) const;
 
-    const WW8Fib& GetFib() const	{ return *pWwFib; }
-    SwDoc& GetDoc() const			{ return rDoc; }
-    USHORT GetNAktColl()  const		{ return nAktColl; }
-    void SetNAktColl( USHORT nColl ) { nAktColl = nColl;	}
+    const WW8Fib& GetFib() const    { return *pWwFib; }
+    SwDoc& GetDoc() const           { return rDoc; }
+    USHORT GetNAktColl()  const     { return nAktColl; }
+    void SetNAktColl( USHORT nColl ) { nAktColl = nColl;    }
     void SetAktItemSet( SfxItemSet* pItemSet ) { pAktItemSet = pItemSet; }
     const USHORT StyleUsingLFO( USHORT nLFOIndex ) const ;
     const SwFmt* GetStyleWithOrgWWName( String& rName ) const ;
@@ -1514,11 +1533,28 @@ public:		// eigentlich private, geht aber leider nur public
 bool CanUseRemoteLink(const String &rGrfName);
 void UseListIndent(SwWW8StyInf &rStyle, const SwNumFmt &rFmt);
 void SetStyleIndent(SwWW8StyInf &rStyleInfo, const SwNumFmt &rFmt);
-void SyncParagraphIndentWithList(SvxLRSpaceItem &rLR, const SwNumFmt &rFmt);
-void SyncStyleIndentWithList(SvxLRSpaceItem &rLR, const SwNumFmt &rFmt);
+void SyncIndentWithList(SvxLRSpaceItem &rLR, const SwNumFmt &rFmt);
 long GetListFirstLineIndent(const SwNumFmt &rFmt);
 const SwNumFmt* GetNumFmtFromTxtNode(const SwTxtNode &rTxtNode, 
     const SwDoc &rDocb);
+
+namespace sw
+{
+    namespace util
+    {
+        /*
+         For no good reason except to complicate my life writer tabs are
+         relative to the left of the paragraph text body indent. More
+         reasonably word's are absolute Adjust tabs converts tabs originally
+         relative from nSourceLeft to be relative to nDestLeft. nSourceLeft is
+         0 when converting from word to writer, and vice versa when converting
+         to word, and both values are set when moving writer tabs after an
+         indent change
+        */
+        bool AdjustTabs(long nDestLeft, long nSrcLeft, SvxTabStopItem &rTabs);
+    }
+}
+
 String BookmarkToWriter(const String &rBookmark);
 bool RTLGraphicsHack(long &rLeft, long nWidth,
     SwHoriOrient eHoriOri, SwRelationOrient eHoriRel, SwTwips nPageLeft,
