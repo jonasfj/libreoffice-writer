@@ -2,9 +2,9 @@
  *
  *  $RCSfile: ww8glsy.hxx,v $
  *
- *  $Revision: 1.9 $
+ *  $Revision: 1.10 $
  *
- *  last change: $Author: obo $ $Date: 2004-01-13 17:11:11 $
+ *  last change: $Author: kz $ $Date: 2004-10-04 19:19:12 $
  *
  *  The Contents of this file are made available subject to the terms of
  *  either of the following licenses
@@ -64,9 +64,7 @@
 #ifndef _WW8GLSY_HXX
 #define _WW8GLSY_HXX
 
-#ifndef _SVSTOR_HXX
-#include <so3/svstor.hxx>
-#endif
+#include <sot/storage.hxx>
 
 #ifndef _WW8SCAN_HXX
 #include "ww8scan.hxx"
@@ -120,7 +118,7 @@ private:
     USHORT nStrings;
 
     bool MakeEntries(SwDoc *pD, SwTextBlocks &rBlocks, bool bSaveRelFile,
-        const ::std::vector<String>& rStrings, 
+        const ::std::vector<String>& rStrings,
         const ::std::vector<ww::bytes>& rExtra);
     bool HasBareGraphicEnd(SwDoc *pD,SwNodeIndex &rIdx);
 
