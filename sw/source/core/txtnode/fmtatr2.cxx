@@ -2,9 +2,9 @@
  *
  *  $RCSfile: fmtatr2.cxx,v $
  *
- *  $Revision: 1.16 $
+ *  $Revision: 1.17 $
  *
- *  last change: $Author: dvo $ $Date: 2002-02-06 12:34:22 $
+ *  last change: $Author: mba $ $Date: 2002-05-27 14:35:03 $
  *
  *  The Contents of this file are made available subject to the terms of
  *  either of the following licenses
@@ -343,6 +343,7 @@ BOOL SwFmtINetFmt::QueryValue( uno::Any& rVal, BYTE nMemberId ) const
 {
     BOOL bRet = TRUE;
     XubString sVal;
+    nMemberId &= ~CONVERT_TWIPS;
     switch(nMemberId)
     {
         case MID_URL_URL:
@@ -390,6 +391,7 @@ BOOL SwFmtINetFmt::QueryValue( uno::Any& rVal, BYTE nMemberId ) const
 BOOL SwFmtINetFmt::PutValue( const uno::Any& rVal, BYTE nMemberId  )
 {
     BOOL bRet = TRUE;
+    nMemberId &= ~CONVERT_TWIPS;
 
     // all properties except HyperlinkEvents are of type string, hence
     // we treat HyperlinkEvents specially
@@ -433,7 +435,7 @@ BOOL SwFmtINetFmt::PutValue( const uno::Any& rVal, BYTE nMemberId  )
             {
                 String aString;
                 SwStyleNameMapper::FillUIName( sVal, aString, GET_POOLID_CHRFMT, sal_True );
-                aVisitedFmt = OUString ( aString ); 
+                aVisitedFmt = OUString ( aString );
                 nVisitedId = SwStyleNameMapper::GetPoolIdFromUIName( aVisitedFmt,
                                                GET_POOLID_CHRFMT );
             }
@@ -442,7 +444,7 @@ BOOL SwFmtINetFmt::PutValue( const uno::Any& rVal, BYTE nMemberId  )
             {
                 String aString;
                 SwStyleNameMapper::FillUIName( sVal, aString, GET_POOLID_CHRFMT, sal_True );
-                aINetFmt = OUString ( aString ); 
+                aINetFmt = OUString ( aString );
                 nINetId = SwStyleNameMapper::GetPoolIdFromUIName( aINetFmt,	GET_POOLID_CHRFMT );
             }
             break;
@@ -511,6 +513,7 @@ BOOL SwFmtRuby::QueryValue( com::sun::star::uno::Any& rVal,
                             BYTE nMemberId ) const
 {
     BOOL bRet = TRUE;
+    nMemberId &= ~CONVERT_TWIPS;
     switch( nMemberId )
     {
         case MID_RUBY_TEXT: rVal <<= (OUString)sRubyTxt; 					break;
@@ -537,6 +540,7 @@ BOOL SwFmtRuby::PutValue( const com::sun::star::uno::Any& rVal,
                             BYTE nMemberId  )
 {
     BOOL bRet = TRUE;
+    nMemberId &= ~CONVERT_TWIPS;
     switch( nMemberId )
     {
         case MID_RUBY_TEXT:

@@ -2,9 +2,9 @@
  *
  *  $RCSfile: atrfrm.cxx,v $
  *
- *  $Revision: 1.28 $
+ *  $Revision: 1.29 $
  *
- *  last change: $Author: tl $ $Date: 2002-03-22 11:25:42 $
+ *  last change: $Author: mba $ $Date: 2002-05-27 14:34:30 $
  *
  *  The Contents of this file are made available subject to the terms of
  *  either of the following licenses
@@ -2078,6 +2078,7 @@ int SwFmtFtnEndAtTxtEnd::operator==( const SfxPoolItem& rItem ) const
 
 BOOL SwFmtFtnEndAtTxtEnd::QueryValue( uno::Any& rVal, BYTE nMemberId ) const
 {
+    nMemberId &= ~CONVERT_TWIPS;
     switch(nMemberId)
     {
         case MID_COLLECT	 :
@@ -2110,6 +2111,7 @@ BOOL SwFmtFtnEndAtTxtEnd::QueryValue( uno::Any& rVal, BYTE nMemberId ) const
 BOOL SwFmtFtnEndAtTxtEnd::PutValue( const uno::Any& rVal, BYTE nMemberId )
 {
     BOOL bRet = TRUE;
+    nMemberId &= ~CONVERT_TWIPS;
     switch(nMemberId)
     {
         case MID_COLLECT	 :
@@ -2412,12 +2414,12 @@ BOOL SwTextGridItem::QueryValue( com::sun::star::uno::Any& rVal,
             rVal.setValue( &bDisplayGrid, ::getBooleanCppuType() );
             break;
         case MID_GRID_BASEHEIGHT:
-            DBG_ASSERT( (nMemberId & CONVERT_TWIPS) != 0, 
+            DBG_ASSERT( (nMemberId & CONVERT_TWIPS) != 0,
                         "This value needs TWIPS-MM100 conversion" );
             rVal <<= (sal_Int32) TWIP_TO_MM100(nBaseHeight);
             break;
         case MID_GRID_RUBYHEIGHT:
-            DBG_ASSERT( (nMemberId & CONVERT_TWIPS) != 0, 
+            DBG_ASSERT( (nMemberId & CONVERT_TWIPS) != 0,
                         "This value needs TWIPS-MM100 conversion" );
             rVal <<= (sal_Int32)TWIP_TO_MM100(nRubyHeight);
             break;
@@ -2444,7 +2446,7 @@ BOOL SwTextGridItem::QueryValue( com::sun::star::uno::Any& rVal,
             bRet = FALSE;
             break;
     }
-            
+
     return bRet;
 }
 
@@ -2484,7 +2486,7 @@ BOOL SwTextGridItem::PutValue( const com::sun::star::uno::Any& rVal,
         case MID_GRID_BASEHEIGHT:
         case MID_GRID_RUBYHEIGHT:
         {
-            DBG_ASSERT( (nMemberId & CONVERT_TWIPS) != 0, 
+            DBG_ASSERT( (nMemberId & CONVERT_TWIPS) != 0,
                         "This value needs TWIPS-MM100 conversion" );
             sal_Int32 nTmp;
             bRet = (rVal >>= nTmp);
