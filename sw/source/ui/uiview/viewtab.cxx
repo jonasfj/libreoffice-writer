@@ -2,9 +2,9 @@
  *
  *  $RCSfile: viewtab.cxx,v $
  *
- *  $Revision: 1.14 $
+ *  $Revision: 1.15 $
  *
- *  last change: $Author: os $ $Date: 2002-09-17 14:41:25 $
+ *  last change: $Author: os $ $Date: 2002-09-18 11:03:26 $
  *
  *  The Contents of this file are made available subject to the terms of
  *  either of the following licenses
@@ -730,7 +730,7 @@ void SwView::ExecTabWin( SfxRequest& rReq )
         {
             SwFrmFmt* pFmt = ((SwFrmFmt*)rSh.GetFlyFrmFmt());
             const SwRect &rRect = rSh.GetAnyCurRect(RECT_FLY_EMBEDDED);
-            
+
             BOOL bRTL;
             BOOL bVerticalFrame = (bFrmSelection && rSh.IsFrmVertical(TRUE, bRTL))|| (!bFrmSelection && bVerticalWriting);
             long nDeltaX = bVerticalFrame ?
@@ -740,7 +740,7 @@ void SwView::ExecTabWin( SfxRequest& rReq )
             SfxItemSet aSet( GetPool(), RES_FRM_SIZE, RES_FRM_SIZE,
                                         RES_VERT_ORIENT, RES_HORI_ORIENT,
                                         RES_COL, RES_COL, 0 );
-            
+
             if(bVerticalFrame)
             {
                 SwFmtVertOrient aVertOrient(pFmt->GetVertOrient());
@@ -1232,16 +1232,6 @@ void SwView::StateTabWin(SfxItemSet& rSet)
     const BOOL 	bFrmSelection = rSh.IsFrmSelected();
 
     BOOL bBrowse = rSh.IsBrowseMode();
-    WinBits nStyle = pHRuler->GetStyle();
-    if(!(nStyle&WB_EXTRAFIELD) != bBrowse)
-    {
-        if(bBrowse)
-            nStyle &= ~WB_EXTRAFIELD;
-        else
-            nStyle |= WB_EXTRAFIELD;
-        pHRuler->SetStyle(nStyle);
-    }
-
     // PageOffset/Begrenzer
     const SwRect& rPageRect = rSh.GetAnyCurRect( RECT_PAGE, pPt );
     const SwRect& rPagePrtRect = rSh.GetAnyCurRect( RECT_PAGE_PRT, pPt );
@@ -1254,7 +1244,8 @@ void SwView::StateTabWin(SfxItemSet& rSet)
 
     //enable tab stop display on the rulers depending on the writing direction
     WinBits nRulerStyle = pHRuler->GetStyle() & ~WB_EXTRAFIELD;
-    pHRuler->SetStyle(bVerticalWriting ? nRulerStyle : nRulerStyle|WB_EXTRAFIELD);
+    pHRuler->SetStyle(bVerticalWriting||bBrowse ? nRulerStyle : nRulerStyle|WB_EXTRAFIELD);
+
     nRulerStyle = pVRuler->GetStyle() & ~WB_EXTRAFIELD;
     pVRuler->SetStyle(bVerticalWriting ? nRulerStyle|WB_EXTRAFIELD : nRulerStyle);
 
