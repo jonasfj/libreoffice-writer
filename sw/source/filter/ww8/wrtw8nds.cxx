@@ -2,9 +2,9 @@
  *
  *  $RCSfile: wrtw8nds.cxx,v $
  *
- *  $Revision: 1.2 $
+ *  $Revision: 1.3 $
  *
- *  last change: $Author: jp $ $Date: 2000-10-09 17:58:48 $
+ *  last change: $Author: jp $ $Date: 2000-10-20 13:43:39 $
  *
  *  The Contents of this file are made available subject to the terms of
  *  either of the following licenses
@@ -540,11 +540,11 @@ void WW8_SwAttrIter::OutSwFmtINetFmt( const SwFmtINetFmt& rINet, BOOL bStart )
     if( bStart )
     {
         INetURLObject aURL( rINet.GetValue() );
-        String sURL( aURL.GetURLNoMark(INetURLObject::DECODE_WITH_CHARSET) );
-        String sMark( aURL.GetMark(INetURLObject::DECODE_WITH_CHARSET) );
+        String sURL( aURL.GetURLNoMark(INetURLObject::DECODE_UNAMBIGUOUS) );
+        String sMark( aURL.GetMark(INetURLObject::DECODE_UNAMBIGUOUS) );
 
         sURL = INetURLObject::AbsToRel( sURL, INetURLObject::WAS_ENCODED,
-                                        INetURLObject::DECODE_WITH_CHARSET );
+                                        INetURLObject::DECODE_UNAMBIGUOUS);
         sURL.Insert( String::CreateFromAscii(
                         RTL_CONSTASCII_STRINGPARAM( "HYPERLINK \"" )), 0 );
         sURL += '\"';
@@ -1566,7 +1566,7 @@ Writer& OutWW8_SwSectionNode( Writer& rWrt, SwSectionNode& rSectionNode )
         else if( rNd.IsCntntNode() )
         {
             pSet = &rNd.GetCntntNode()->GetSwAttrSet();
-            nRstLnNum = ((SwFmtLineNumber&)pSet->Get( 
+            nRstLnNum = ((SwFmtLineNumber&)pSet->Get(
                             RES_LINENUMBER )).GetStartValue();
         }
         else
@@ -1863,23 +1863,26 @@ SwNodeFnTab aWW8NodeFnTab = {
 
       Source Code Control System - Header
 
-      $Header: /zpool/svn/migration/cvs_rep_09_09_08/code/sw/source/filter/ww8/wrtw8nds.cxx,v 1.2 2000-10-09 17:58:48 jp Exp $
+      $Header: /zpool/svn/migration/cvs_rep_09_09_08/code/sw/source/filter/ww8/wrtw8nds.cxx,v 1.3 2000-10-20 13:43:39 jp Exp $
 
       Source Code Control System - Update
 
       $Log: not supported by cvs2svn $
+      Revision 1.2  2000/10/09 17:58:48  jp
+      Bug #78395#: don't write UniCode by a W95 export
+
       Revision 1.1.1.1  2000/09/18 17:14:58  hr
       initial import
-    
+
       Revision 1.42  2000/09/18 16:04:57  willem.vandorp
       OpenOffice header added.
-    
+
       Revision 1.41  2000/08/21 10:13:58  khz
       Export Line Numbering (restart on new section)
-    
+
       Revision 1.40  2000/08/18 13:02:21  jp
       don't export escaped URLs
-    
+
       Revision 1.39  2000/08/04 10:57:10  jp
       Soft-/HardHyphens & HardBlanks changed from attribute to unicode character
 

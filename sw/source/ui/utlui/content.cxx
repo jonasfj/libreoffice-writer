@@ -2,9 +2,9 @@
  *
  *  $RCSfile: content.cxx,v $
  *
- *  $Revision: 1.1.1.1 $
+ *  $Revision: 1.2 $
  *
- *  last change: $Author: hr $ $Date: 2000-09-18 17:14:50 $
+ *  last change: $Author: jp $ $Date: 2000-10-20 13:42:18 $
  *
  *  The Contents of this file are made available subject to the terms of
  *  either of the following licenses
@@ -490,7 +490,7 @@ void SwContentType::Init(sal_Bool* pbInvalidateWindow)
                                     INetURLObject::decode(
                                         p->rINetAttr.GetINetFmt().GetValue(),
                                         INET_HEX_ESCAPE,
-                                           INetURLObject::DECODE_WITH_CHARSET,
+                                           INetURLObject::DECODE_UNAMBIGUOUS,
                                         RTL_TEXTENCODING_UTF8 ),
                                     &p->rINetAttr,
                                     n );
@@ -693,7 +693,7 @@ void	SwContentType::FillMemberList(sal_Bool* pbLevelOrVisibiblityChanged)
                     pWrtShell->GetGrfNms( &sLink, 0, (SwFlyFrmFmt*) pFrmFmt);
                     pCnt = new SwGraphicContent(this, sFrmName,
                                 INetURLObject::decode( sLink, INET_HEX_ESCAPE,
-                                           INetURLObject::DECODE_WITH_CHARSET,
+                                           INetURLObject::DECODE_UNAMBIGUOUS,
                                         RTL_TEXTENCODING_UTF8 ),
                                 pFrmFmt->FindLayoutRect(sal_False, &aNullPt).Top());
                 }
@@ -792,7 +792,7 @@ void	SwContentType::FillMemberList(sal_Bool* pbLevelOrVisibiblityChanged)
                                     INetURLObject::decode(
                                         p->rINetAttr.GetINetFmt().GetValue(),
                                         INET_HEX_ESCAPE,
-                                           INetURLObject::DECODE_WITH_CHARSET,
+                                           INetURLObject::DECODE_UNAMBIGUOUS,
                                         RTL_TEXTENCODING_UTF8 ),
                                     &p->rINetAttr,
                                     n );
@@ -3171,15 +3171,18 @@ void SwContentLBoxString::Paint( const Point& rPos, SvLBox& rDev, sal_uInt16 nFl
 /*------------------------------------------------------------------------
 
     $Log: not supported by cvs2svn $
+    Revision 1.1.1.1  2000/09/18 17:14:50  hr
+    initial import
+
     Revision 1.161  2000/09/18 16:06:17  willem.vandorp
     OpenOffice header added.
-    
+
     Revision 1.160  2000/09/08 15:11:58  os
     use configuration service
-    
+
     Revision 1.159  2000/09/07 15:59:34  os
     change: SFX_DISPATCHER/SFX_BINDINGS removed
-    
+
     Revision 1.158  2000/08/17 13:46:34  jp
     UI with decode URL; integer -> string bugs fixed
 
