@@ -2,9 +2,9 @@
  *
  *  $RCSfile: fetab.cxx,v $
  *
- *  $Revision: 1.17 $
+ *  $Revision: 1.18 $
  *
- *  last change: $Author: rt $ $Date: 2003-12-01 17:18:05 $
+ *  last change: $Author: obo $ $Date: 2004-01-13 11:09:26 $
  *
  *  The Contents of this file are made available subject to the terms of
  *  either of the following licenses
@@ -212,7 +212,7 @@ void SwFEShell::ParkCursorInTab()
      */
     do
     {
-        const SwPosition * pPt = pTmpCrsr->GetPoint(), 
+        const SwPosition * pPt = pTmpCrsr->GetPoint(),
             * pMk = pTmpCrsr->GetMark();
 
         if (*pPt < aStartPos)
@@ -266,12 +266,12 @@ void SwFEShell::ParkCursorInTab()
         /* If the cursor is not in the last row of the table, first
            try to move it to the next cell. If that fails move it
            to the previous cell. */
-                        
+
         {
             SwCursor aTmpCrsr(aEndPos);
             *pSwCrsr = aTmpCrsr;
         }
- 
+
         if (! pSwCrsr->GoNextCell())
         {
             SwCursor aTmpCrsr(aStartPos);
@@ -755,6 +755,26 @@ void SwFEShell::GetTabCols( SwTabCols &rToFill ) const
 
     _GetTabCols( rToFill, pFrm );
 }
+
+/***********************************************************************
+ *  Class      :  SwFEShell
+ *  Methoden   :  SetRowSplit(), GetRowSplit()
+ *  Datum      :  FME 13.11.2003
+ ***********************************************************************/
+
+void SwFEShell::SetRowSplit( const SwFmtRowSplit& rNew )
+{
+    SET_CURR_SHELL( this );
+    StartAllAction();
+    GetDoc()->SetRowSplit( GetShellCursor( *this ), rNew );
+    EndAllActionAndCall();
+}
+
+void SwFEShell::GetRowSplit( SwFmtRowSplit*& rpSz ) const
+{
+    GetDoc()->GetRowSplit( GetShellCursor( *this ), rpSz );
+}
+
 
 /***********************************************************************
 #*	Class	   :  SwFEShell
@@ -1350,7 +1370,7 @@ USHORT SwFEShell::GetCurTabColNum() const
         {
             long nX = (pFrm->Frm().*fnRect->fnGetRight)();
             const long nRight = aTabCols.GetLeftMin() + aTabCols.GetRight();;
-            
+
             if ( !::IsSame( nX, nRight ) )
             {
                 nX = nRight - nX + aTabCols.GetLeft();
@@ -1393,11 +1413,14 @@ USHORT SwFEShell::GetCurTabColNum() const
 const SwFrm *lcl_FindFrmInTab( const SwLayoutFrm *pLay, const Point &rPt, SwTwips nFuzzy )
 {
     const SwFrm *pFrm = pLay->Lower();
-    do
-    {	if ( pFrm->Frm().IsNear( rPt, nFuzzy ) )
+
+    while( pFrm && pLay->IsAnLower( pFrm ) )
+    {
+        if ( pFrm->Frm().IsNear( rPt, nFuzzy ) )
         {
-            if ( pFrm->IsCellFrm() && ( !((SwCellFrm*)pFrm)->Lower()->IsLayoutFrm() ||
-                ((SwCellFrm*)pFrm)->Lower()->IsSctFrm() ) )
+            if ( pFrm->IsCellFrm() && ((SwCellFrm*)pFrm)->Lower() &&
+                 ( !((SwCellFrm*)pFrm)->Lower()->IsLayoutFrm() ||
+                    ((SwCellFrm*)pFrm)->Lower()->IsSctFrm() ) )
                 return pFrm;
             if ( pFrm->IsLayoutFrm() )
             {
@@ -1408,7 +1431,7 @@ const SwFrm *lcl_FindFrmInTab( const SwLayoutFrm *pLay, const Point &rPt, SwTwip
             break;
         }
         pFrm = pFrm->FindNext();
-    } while ( pFrm && pLay->IsAnLower( pFrm ) );
+    };
 
     return 0;
 }
@@ -1713,21 +1736,21 @@ BOOL SwFEShell::SetColRowWidthHeight( USHORT eType, USHORT nDiff )
         nDiff = USHORT((pFrm->Frm().*fnRect->fnGetWidth)());
 
         // we must move the cursor outside the current cell before
-        // deleting the cells. 
-        TblChgWidthHeightType eTmp = 
+        // deleting the cells.
+        TblChgWidthHeightType eTmp =
             static_cast<TblChgWidthHeightType>( eType & 0xfff );
         switch( eTmp )
         {
-        case WH_ROW_TOP:    
+        case WH_ROW_TOP:
             lcl_GoTableRow( this, true );
             break;
-        case WH_ROW_BOTTOM: 
+        case WH_ROW_BOTTOM:
             lcl_GoTableRow( this, false );
             break;
-        case WH_COL_LEFT:   
+        case WH_COL_LEFT:
             GoPrevCell();
             break;
-        case WH_COL_RIGHT:  
+        case WH_COL_RIGHT:
             GoNextCell();
             break;
         default:
