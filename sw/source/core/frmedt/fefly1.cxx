@@ -2,9 +2,9 @@
  *
  *  $RCSfile: fefly1.cxx,v $
  *
- *  $Revision: 1.7 $
+ *  $Revision: 1.8 $
  *
- *  last change: $Author: vg $ $Date: 2002-09-03 10:05:05 $
+ *  last change: $Author: fme $ $Date: 2002-09-16 08:46:09 $
  *
  *  The Contents of this file are made available subject to the terms of
  *  either of the following licenses
@@ -619,7 +619,7 @@ Point SwFEShell::FindAnchorPos( const Point& rAbsPos, sal_Bool bMoveIt )
         if( !pCheck &&
             pFooterOrHeader == pNewAnch->FindFooterOrHeader() )
         {
-            aRet = pNewAnch->Frm().Pos();
+            aRet = pNewAnch->GetAnchorPos();
             if( bMoveIt || nAnchorId == FLY_AUTO_CNTNT )
             {
                 SwFmtAnchor aAnch( pFmt->GetAnchor() );
@@ -1334,7 +1334,7 @@ const SwFrmFmt* SwFEShell::GetFlyFrmFmt() const
     return 0;
 }
 
-SwFrmFmt* SwFEShell::GetFlyFrmFmt() 
+SwFrmFmt* SwFEShell::GetFlyFrmFmt()
 {
     SwFlyFrm* pFly = FindFlyFrm();
     if ( !pFly )
@@ -1944,7 +1944,7 @@ static USHORT SwFmtGetPageNum(const SwFlyFrmFmt * pFmt)
         aResult = pFrm->GetPhyPageNum();
     else
         aResult = pFmt->GetAnchor().GetPageNum();
-    
+
     return aResult;
 }
 
@@ -1955,7 +1955,7 @@ static USHORT SwFmtGetPageNum(const SwFlyFrmFmt * pFmt)
 #include <iterator>
 
 
-static ::std::ostream & operator << (::std::ostream & aStream, 
+static ::std::ostream & operator << (::std::ostream & aStream,
                                      const String & aString)
 {
     ByteString aByteString(aString, RTL_TEXTENCODING_ASCII_US);
@@ -1979,7 +1979,7 @@ void lcl_PrintFrameChainNext(const SwFrmFmt * pFmt)
     if (pFmt != NULL)
     {
         ::std::clog << "->" << pFmt->GetName();
-        
+
         lcl_PrintFrameChainPrev(pFmt->GetChain().GetNext());
     }
 }
@@ -2024,16 +2024,16 @@ String lcl_GetChainableString(int nVal)
 }
 #endif
 
-void SwFEShell::GetConnectableFrmFmts(SwFrmFmt & rFmt, 
-                                      const String & rReference, 
-                                      BOOL bSuccessors, 
+void SwFEShell::GetConnectableFrmFmts(SwFrmFmt & rFmt,
+                                      const String & rReference,
+                                      BOOL bSuccessors,
                                       ::std::vector< String > & aPrevPageVec,
                                       ::std::vector< String > & aThisPageVec,
                                       ::std::vector< String > & aNextPageVec,
-                                      ::std::vector< String > & aRestVec) 
+                                      ::std::vector< String > & aRestVec)
 {
 #if 0
-    ::std::clog << "Connectables:" << rFmt.GetName() << "," 
+    ::std::clog << "Connectables:" << rFmt.GetName() << ","
                 << (bSuccessors ? "succ" : "pred") << "," << rReference
                 << ::std::endl;
     lcl_PrintFrameChain(rFmt);
@@ -2041,7 +2041,7 @@ void SwFEShell::GetConnectableFrmFmts(SwFrmFmt & rFmt,
 #endif
 
     StartAction();
-    
+
     SwFmtChain rChain = rFmt.GetChain();
     SwFrmFmt * pOldChainNext = (SwFrmFmt *) rChain.GetNext();
     SwFrmFmt * pOldChainPrev = (SwFrmFmt *) rChain.GetPrev();
@@ -2056,14 +2056,14 @@ void SwFEShell::GetConnectableFrmFmts(SwFrmFmt & rFmt,
 
     /* potential successors resp. predecessors */
     ::std::vector< const SwFrmFmt * > aTmpSpzArray;
- 
+
     SwFrmFmt * pNext = (SwFrmFmt *) pDoc->FindFlyByName(rReference);
-   
+
     for (sal_uInt16 n = 0; n < nCnt; n++)
-    {       
+    {
         const SwFrmFmt & rFmt1 = *(pDoc->GetFlyNum(n, FLYCNTTYPE_FRM));
 
-        /* 
+        /*
            pFmt is a potential successor of rFmt if it is chainable after
            rFmt.
 
@@ -2088,14 +2088,14 @@ void SwFEShell::GetConnectableFrmFmts(SwFrmFmt & rFmt,
 #if 0
             ::std::clog << lcl_GetChainableString(nChainState) << ::std::endl;
 #endif
-        
+
         if (nChainState == SW_CHAIN_OK)
         {
             aTmpSpzArray.push_back(&rFmt1);
 
         }
 
-    } 
+    }
 
     if  (aTmpSpzArray.size() > 0)
     {
@@ -2112,22 +2112,22 @@ void SwFEShell::GetConnectableFrmFmts(SwFrmFmt & rFmt,
         for (aIt = aTmpSpzArray.begin(); aIt != aTmpSpzArray.end(); aIt++)
         {
             String  aString = (*aIt)->GetName();
-            
+
             /* rFmt is not a vaild successor or predecessor of
                itself */
             if (aString != rReference && aString != rFmt.GetName())
             {
-                USHORT nNum1 = 
+                USHORT nNum1 =
                     SwFmtGetPageNum((SwFlyFrmFmt *) *aIt);
 
                 if (nNum1 == nPageNum -1)
-                    aPrevPageVec.push_back(aString); 
+                    aPrevPageVec.push_back(aString);
                 else if (nNum1 == nPageNum)
                     aThisPageVec.push_back(aString);
                 else if (nNum1 == nPageNum + 1)
                     aNextPageVec.push_back(aString);
                 else
-                    aRestVec.push_back(aString);                        
+                    aRestVec.push_back(aString);
             }
         }
 
@@ -2142,16 +2142,16 @@ void SwFEShell::GetConnectableFrmFmts(SwFrmFmt & rFmt,
     EndAction();
 
 #if 0
-    ::std::copy(aPrevPageVec.begin(), aPrevPageVec.end(), 
+    ::std::copy(aPrevPageVec.begin(), aPrevPageVec.end(),
                 ::std::ostream_iterator<String>(::std::clog, "\n"));
     ::std::clog << "-------------------------" << ::std::endl;
-    ::std::copy(aThisPageVec.begin(), aThisPageVec.end(), 
+    ::std::copy(aThisPageVec.begin(), aThisPageVec.end(),
                 ::std::ostream_iterator<String>(::std::clog, "\n"));
     ::std::clog << "-------------------------" << ::std::endl;
-    ::std::copy(aNextPageVec.begin(), aNextPageVec.end(), 
+    ::std::copy(aNextPageVec.begin(), aNextPageVec.end(),
                 ::std::ostream_iterator<String>(::std::clog, "\n"));
     ::std::clog << "-------------------------" << ::std::endl;
-    ::std::copy(aRestVec.begin(), aRestVec.end(), 
+    ::std::copy(aRestVec.begin(), aRestVec.end(),
                 ::std::ostream_iterator<String>(::std::clog, "\n"));
     ::std::clog << "-------------------------" << ::std::endl;
 #endif
