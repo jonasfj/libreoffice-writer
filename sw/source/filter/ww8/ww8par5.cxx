@@ -2,9 +2,9 @@
  *
  *  $RCSfile: ww8par5.cxx,v $
  *
- *  $Revision: 1.13 $
+ *  $Revision: 1.14 $
  *
- *  last change: $Author: cmc $ $Date: 2001-03-05 13:13:24 $
+ *  last change: $Author: jp $ $Date: 2001-03-06 14:38:27 $
  *
  *  The Contents of this file are made available subject to the terms of
  *  either of the following licenses
@@ -2109,8 +2109,8 @@ eF_ResT SwWW8ImplReader::Read_F_DBNum( WW8FieldDesc*, String& )
     return F_OK;
 }
 
-/* 
-    EQ , only the usage for 
+/*
+    EQ , only the usage for
     a. Combined Characters supported, must be exactly in the form that word
     only accepts as combined charactersm, i.e.
     eq \o(\s\up Y(XXX),\s\do Y(XXX))
@@ -2132,7 +2132,7 @@ eF_ResT SwWW8ImplReader::Read_F_Equation( WW8FieldDesc* pF, String& rStr )
 void SwWW8ImplReader::Read_SubF_Combined( _ReadFieldParams& rReadParam)
 {
     String sCombinedCharacters;
-    if ((-2 == rReadParam.SkipToNextToken()) && 
+    if ((-2 == rReadParam.SkipToNextToken()) &&
             rReadParam.GetResult().EqualsIgnoreCaseAscii('(', 1, 0))
     {
         for (int i=0;i<2;i++)
@@ -2154,11 +2154,11 @@ void SwWW8ImplReader::Read_SubF_Combined( _ReadFieldParams& rReadParam)
                         //Word disallows brackets in this field, which
                         //aids figuring out the case of an end of )) vs )
                         xub_StrLen nEnd = sPart.Search(')');
-                        
-                        if ((nBegin != STRING_NOTFOUND) && 
+
+                        if ((nBegin != STRING_NOTFOUND) &&
                             (nEnd != STRING_NOTFOUND))
                         {
-                            sCombinedCharacters += 
+                            sCombinedCharacters +=
                                 sPart.Copy(nBegin+1,nEnd-nBegin-1);
                         }
                     }
@@ -2189,17 +2189,17 @@ void SwWW8ImplReader::Read_SubF_Ruby( _ReadFieldParams& rReadParam)
         case -2:
             {
                 String sTemp = rReadParam.GetResult();
-                if( sTemp.EqualsIgnoreCaseAscii( "jc", 0, 2 ) )  
+                if( sTemp.EqualsIgnoreCaseAscii( "jc", 0, 2 ) )
                 {
                     sTemp.Erase(0,2);
                     nJustificationCode = static_cast<USHORT>(sTemp.ToInt32());
                 }
-                else if( sTemp.EqualsIgnoreCaseAscii( "hps", 0, 3 ) )  
+                else if( sTemp.EqualsIgnoreCaseAscii( "hps", 0, 3 ) )
                 {
                     sTemp.Erase(0,3);
                     nFontSize= static_cast<UINT32>(sTemp.ToInt32());
                 }
-                else if( sTemp.EqualsIgnoreCaseAscii( "Font:", 0, 5 ) )  
+                else if( sTemp.EqualsIgnoreCaseAscii( "Font:", 0, 5 ) )
                 {
                     sTemp.Erase(0,5);
                     sFontName = sTemp;
@@ -2211,7 +2211,7 @@ void SwWW8ImplReader::Read_SubF_Ruby( _ReadFieldParams& rReadParam)
         case 'o':
             while( -1 != ( nRet = rReadParam.SkipToNextToken() ))
             {
-                if ('u' == nRet) 
+                if ('u' == nRet)
                 {
                     if (-2 == rReadParam.SkipToNextToken() &&
                       (rReadParam.GetResult().EqualsIgnoreCaseAscii('p', 1, 0)))
@@ -2221,17 +2221,17 @@ void SwWW8ImplReader::Read_SubF_Ruby( _ReadFieldParams& rReadParam)
                             String sPart = rReadParam.GetResult();
                             xub_StrLen nBegin = sPart.Search('(');
 
-                            //Word disallows brackets in this field, 
+                            //Word disallows brackets in this field,
                             xub_StrLen nEnd = sPart.Search(')');
-                            
-                            if ((nBegin != STRING_NOTFOUND) && 
+
+                            if ((nBegin != STRING_NOTFOUND) &&
                                 (nEnd != STRING_NOTFOUND))
                             {
                                 sRuby = sPart.Copy(nBegin+1,nEnd-nBegin-1);
                             }
                             nBegin = sPart.Search(',',nEnd);
                             nEnd = sPart.SearchBackward(')');
-                            if ((nBegin != STRING_NOTFOUND) && 
+                            if ((nBegin != STRING_NOTFOUND) &&
                                 (nEnd != STRING_NOTFOUND))
                             {
                                 sText = sPart.Copy(nBegin+1,nEnd-nBegin-1);
@@ -2281,12 +2281,12 @@ void SwWW8ImplReader::Read_SubF_Ruby( _ReadFieldParams& rReadParam)
         for(USHORT i=0;i<aRubyCharFmts.Count();i++)
         {
             SwCharFmt *pFmt = aRubyCharFmts[i];
-            const SvxFontHeightItem &rF = 
+            const SvxFontHeightItem &rF =
                 (const SvxFontHeightItem &)(pFmt->GetAttr(
                 GetWhichOfScript(RES_CHRATR_FONTSIZE,nScript)));
             if (rF.GetHeight() == nFontSize*10)
             {
-                const SvxFontItem &rF = 
+                const SvxFontItem &rF =
                     (const SvxFontItem &)(pFmt->GetAttr(
                     GetWhichOfScript(RES_CHRATR_FONT,nScript)));
                 if (rF.GetFamilyName().Equals(sFontName))
@@ -2312,14 +2312,14 @@ void SwWW8ImplReader::Read_SubF_Ruby( _ReadFieldParams& rReadParam)
             aFontItem.SetWhich(GetWhichOfScript(RES_CHRATR_FONT,nScript));
             pCharFmt->SetAttr(aHeightItem);
             pCharFmt->SetAttr(aFontItem);
-            aRubyCharFmts.Insert(pCharFmt,aRubyCharFmts.Count());
+            aRubyCharFmts.C40_INSERT( SwCharFmt, pCharFmt, aRubyCharFmts.Count() );
         }
 
         //Set the charstyle and justification
         aRuby.SetCharFmtName(pCharFmt->GetName());
         aRuby.SetCharFmtId(pCharFmt->GetPoolFmtId());
         aRuby.SetAdjustment(nJustificationCode);
-        
+
         NewAttr(aRuby);
         rDoc.Insert( *pPaM, sText );
         pCtrlStck->SetAttr( *pPaM->GetPoint(), RES_TXTATR_CJK_RUBY );
@@ -3091,12 +3091,15 @@ void SwWW8ImplReader::Read_Invisible( USHORT, BYTE* pData, short nLen )
 
       Source Code Control System - Header
 
-      $Header: /zpool/svn/migration/cvs_rep_09_09_08/code/sw/source/filter/ww8/ww8par5.cxx,v 1.13 2001-03-05 13:13:24 cmc Exp $
+      $Header: /zpool/svn/migration/cvs_rep_09_09_08/code/sw/source/filter/ww8/ww8par5.cxx,v 1.14 2001-03-06 14:38:27 jp Exp $
 
 
       Source Code Control System - Update
 
       $Log: not supported by cvs2svn $
+      Revision 1.13  2001/03/05 13:13:24  cmc
+      One too many field handlers, my 1st dublin test checkin
+    
       Revision 1.12  2001/02/27 16:25:05  cmc
       #81314#,#81326# Index fixes
     
