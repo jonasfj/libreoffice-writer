@@ -2,9 +2,9 @@
  *
  *  $RCSfile: docfmt.cxx,v $
  *
- *  $Revision: 1.32 $
+ *  $Revision: 1.33 $
  *
- *  last change: $Author: obo $ $Date: 2005-01-05 11:47:00 $
+ *  last change: $Author: kz $ $Date: 2005-01-21 10:29:55 $
  *
  *  The Contents of this file are made available subject to the terms of
  *  either of the following licenses
@@ -237,12 +237,12 @@ struct ParaRstFmt
 
     ParaRstFmt( const SwPosition* pStt, const SwPosition* pEnd,
             SwHistory* pHst, USHORT nWhch = 0, const SfxItemSet* pSet = 0 )
-        : pFmtColl(0), pHistory(pHst), pSttNd(pStt), pEndNd(pEnd), 
+        : pFmtColl(0), pHistory(pHst), pSttNd(pStt), pEndNd(pEnd),
         pDelSet(pSet), nWhich(nWhch), bResetAll(TRUE), bInclRefToxMark(FALSE)
     {}
 
     ParaRstFmt( SwHistory* pHst )
-        : pFmtColl(0), pHistory(pHst), pSttNd(0), pEndNd(0), pDelSet(0), 
+        : pFmtColl(0), pHistory(pHst), pSttNd(0), pEndNd(0), pDelSet(0),
         nWhich(0), bResetAll(TRUE), bInclRefToxMark(FALSE)
     {}
 };
@@ -623,13 +623,13 @@ BOOL InsAttr( SwDoc *pDoc, const SwPaM &rRg, const SfxItemSet& rChgSet,
         {
             SwTxtNode * pTxtNd = pNode->GetTxtNode();
             const SwNodeNum * pNdNum = pTxtNd->GetNum();
-            
+
             if (pNdNum )
             {
                 SwNumRule * pNumRule = pTxtNd->GetNumRule();
 
                 SwNumFmt aNumFmt = pNumRule->Get(pNdNum->GetRealLevel());
-                SwCharFmt * pCharFmt = 
+                SwCharFmt * pCharFmt =
                     pDoc->FindCharFmtByName(aNumFmt.GetCharFmtName());
 
                 if (pCharFmt)
@@ -644,7 +644,7 @@ BOOL InsAttr( SwDoc *pDoc, const SwPaM &rRg, const SfxItemSet& rChgSet,
             return TRUE;
         }
         // <- #i27615#
-        
+
         const SwIndex& rSt = pStt->nContent;
 
         // Attribute ohne Ende haben keinen Bereich
@@ -1225,7 +1225,7 @@ void SwDoc::SetDefault( const SfxItemSet& rSet )
         }
 
         const SfxPoolItem* pItem;
-        if( ( SFX_ITEM_SET == 
+        if( ( SFX_ITEM_SET ==
                 aNew.GetItemState( RES_PARATR_TABSTOP, FALSE, &pItem ) ) &&
             ((SvxTabStopItem*)pItem)->Count() )
         {
@@ -1282,7 +1282,7 @@ const SfxPoolItem& SwDoc::GetDefault( USHORT nFmtHint ) const
  */
 void SwDoc::DelCharFmt(USHORT nFmt, BOOL bBroadcast)
 {
-    SwCharFmt * pDel = (*pCharFmtTbl)[nFmt]; 
+    SwCharFmt * pDel = (*pCharFmtTbl)[nFmt];
 
     if (bBroadcast)
         BroadcastStyleOperation(pDel->GetName(), SFX_STYLE_FAMILY_CHAR,
@@ -1290,9 +1290,9 @@ void SwDoc::DelCharFmt(USHORT nFmt, BOOL bBroadcast)
 
     if (DoesUndo())
     {
-        SwUndo * pUndo = 
+        SwUndo * pUndo =
             new SwUndoCharFmtDelete(pDel, this);
-        
+
         AppendUndo(pUndo);
     }
 
@@ -1326,17 +1326,17 @@ void SwDoc::DelFrmFmt( SwFrmFmt *pFmt, BOOL bBroadcast )
         if ( USHRT_MAX != ( nPos = pFrmFmtTbl->GetPos( pFmt )) )
         {
             if (bBroadcast)
-                BroadcastStyleOperation(pFmt->GetName(), 
+                BroadcastStyleOperation(pFmt->GetName(),
                                         SFX_STYLE_FAMILY_FRAME,
                                         SFX_STYLESHEET_ERASED);
-            
+
             if (DoesUndo())
             {
                 SwUndo * pUndo = new SwUndoFrmFmtDelete(pFmt, this);
-                
+
                 AppendUndo(pUndo);
             }
-            
+
             pFrmFmtTbl->DeleteAndDestroy( nPos );
         }
         else
@@ -1439,11 +1439,11 @@ SwFrmFmt *SwDoc::MakeFrmFmt(const String &rFmtName,
     {
         BroadcastStyleOperation(rFmtName, SFX_STYLE_FAMILY_PARA,
                                 SFX_STYLESHEET_CREATED);
-        
+
         if (DoesUndo())
         {
             SwUndo * pUndo = new SwUndoFrmFmtCreate(pFmt, pDerivedFrom, this);
-            
+
             AppendUndo(pUndo);
         }
     }
@@ -1451,9 +1451,12 @@ SwFrmFmt *SwDoc::MakeFrmFmt(const String &rFmtName,
     return pFmt;
 }
 
+// --> OD 2005-01-13 #i40550# - add parameter <bAuto> - not relevant
 SwCharFmt *SwDoc::MakeCharFmt( const String &rFmtName,
-                               SwCharFmt *pDerivedFrom, 
-                               BOOL bBroadcast)
+                               SwCharFmt *pDerivedFrom,
+                               BOOL bBroadcast,
+                               BOOL bAuto )
+// <--
 {
     SwCharFmt *pFmt = new SwCharFmt( GetAttrPool(), rFmtName, pDerivedFrom );
     pCharFmtTbl->Insert( pFmt, pCharFmtTbl->Count() );
@@ -1481,10 +1484,12 @@ SwCharFmt *SwDoc::MakeCharFmt( const String &rFmtName,
  * Erzeugen der FormatCollections
  */
 // TXT
-
+// --> OD 2005-01-13 #i40550# - add parameter <bAuto> - not relevant
 SwTxtFmtColl* SwDoc::MakeTxtFmtColl( const String &rFmtName,
-                                     SwTxtFmtColl *pDerivedFrom, 
-                                     BOOL bBroadcast)
+                                     SwTxtFmtColl *pDerivedFrom,
+                                     BOOL bBroadcast,
+                                     BOOL bAuto )
+// <--
 {
     SwTxtFmtColl *pFmtColl = new SwTxtFmtColl( GetAttrPool(), rFmtName,
                                                 pDerivedFrom );
@@ -1494,7 +1499,7 @@ SwTxtFmtColl* SwDoc::MakeTxtFmtColl( const String &rFmtName,
 
     if (DoesUndo())
     {
-        SwUndo * pUndo = new SwUndoTxtFmtCollCreate(pFmtColl, pDerivedFrom, 
+        SwUndo * pUndo = new SwUndoTxtFmtCollCreate(pFmtColl, pDerivedFrom,
                                                     this);
         AppendUndo(pUndo);
     }
@@ -1553,9 +1558,9 @@ void SwDoc::DelTxtFmtColl(USHORT nFmtColl, BOOL bBroadcast)
 
     if (DoesUndo())
     {
-        SwUndoTxtFmtCollDelete * pUndo = 
+        SwUndoTxtFmtCollDelete * pUndo =
             new SwUndoTxtFmtCollDelete(pDel, this);
-        
+
         AppendUndo(pUndo);
     }
 
@@ -1592,7 +1597,7 @@ BOOL lcl_SetTxtFmtColl( const SwNodePtr& rpNode, void* pArgs )
                                     ND_TEXTNODE );
 
         pCNd->ChgFmtColl( pPara->pFmtColl );
-            
+
         pPara->nWhich++;
     }
     return TRUE;
@@ -1649,8 +1654,8 @@ BOOL SwDoc::SetTxtFmtColl(const SwPaM &rRg, SwTxtFmtColl *pFmt, BOOL bReset)
             {
                 pRule = GetOutlineNumRule();
             }
-            else if (SFX_ITEM_SET == 
-                     pFmt->GetAttrSet().GetItemState(RES_PARATR_NUMRULE, 
+            else if (SFX_ITEM_SET ==
+                     pFmt->GetAttrSet().GetItemState(RES_PARATR_NUMRULE,
                                                      TRUE, &pItem))
             {
                 pRule = FindNumRulePtr(reinterpret_cast<const SwNumRuleItem *>
@@ -1660,7 +1665,7 @@ BOOL SwDoc::SetTxtFmtColl(const SwPaM &rRg, SwTxtFmtColl *pFmt, BOOL bReset)
             if (pRule)
             {
                 SwPaM aPam(*pCNd);
-                
+
                 SetNumRule(aPam, *pRule);
             }
         }
@@ -1697,7 +1702,9 @@ SwFmt* SwDoc::CopyFmt( const SwFmt& rFmt,
                                 fnCopyFmt, rDfltFmt );
 
     // erzeuge das Format und kopiere die Attribute
-    SwFmt* pNewFmt = (this->*fnCopyFmt)( rFmt.GetName(), pParent, sal_False );
+    // --> OD 2005-01-13 #i40550#
+    SwFmt* pNewFmt = (this->*fnCopyFmt)( rFmt.GetName(), pParent, FALSE, TRUE );
+    // <--
     pNewFmt->SetAuto( rFmt.IsAuto() );
     pNewFmt->CopyAttrs( rFmt, TRUE );			// kopiere Attribute
 
@@ -1857,7 +1864,9 @@ void SwDoc::CopyFmtArr( const SvPtrarr& rSourceArr,
             if( RES_CONDTXTFMTCOLL == pSrc->Which() )
                 MakeCondTxtFmtColl( pSrc->GetName(), (SwTxtFmtColl*)&rDfltFmt );
             else
-                (this->*fnCopyFmt)( pSrc->GetName(), &rDfltFmt, sal_False );
+                // --> OD 2005-01-13 #i40550#
+                (this->*fnCopyFmt)( pSrc->GetName(), &rDfltFmt, FALSE, TRUE );
+                // <--
         }
     }
 
@@ -2361,13 +2370,13 @@ void SwDoc::SetNumRuleFromColl(SwFmt & rFmt)
 
     if (SFX_ITEM_SET == rFmt.GetItemState(RES_PARATR_NUMRULE, TRUE, &pItem))
     {
-        SwNumRule * pRule = 
+        SwNumRule * pRule =
             FindNumRulePtr(((const SwNumRuleItem *) pItem)->GetValue());
 
         if (pRule)
         {
             SwClientIter aIter(rFmt);
-            
+
             const SwClient * pClient = aIter.First(TYPE(SwTxtNode));
             while (pClient)
             {
@@ -2437,11 +2446,11 @@ void SwDoc::RenameFmt(SwFmt & rFmt, const String & sNewName,
             pUndo = new SwUndoRenameFrmFmt(rFmt.GetName(), sNewName, this);
             eFamily = SFX_STYLE_FAMILY_FRAME;
             break;
-            
+
         default:
             break;
         }
-        
+
         if (pUndo)
             AppendUndo(pUndo);
     }
