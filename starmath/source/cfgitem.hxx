@@ -2,9 +2,9 @@
  *
  *  $RCSfile: cfgitem.hxx,v $
  *
- *  $Revision: 1.5 $
+ *  $Revision: 1.6 $
  *
- *  last change: $Author: tl $ $Date: 2001-07-06 14:23:03 $
+ *  last change: $Author: tl $ $Date: 2002-08-29 08:40:47 $
  *
  *  The Contents of this file are made available subject to the terms of
  *  either of the following licenses
@@ -87,6 +87,7 @@
 #endif
 
 #include <symbol.hxx>
+#include <types.hxx>
 
 using namespace com::sun::star;
 
@@ -97,10 +98,6 @@ struct SmCfgOther;
 
 /////////////////////////////////////////////////////////////////
 
-enum SmPrintSize { PRINT_SIZE_NORMAL, PRINT_SIZE_SCALED, PRINT_SIZE_ZOOMED };
-
-/////////////////////////////////////////////////////////////////
-
 class SmMathConfigItem : public utl::ConfigItem
 {
     // disallow copy-constructor and assignment-operator for now
@@ -108,7 +105,7 @@ class SmMathConfigItem : public utl::ConfigItem
     SmMathConfigItem & operator = ( const SmMathConfigItem & );
 
 public:
-    inline SmMathConfigItem( const rtl::OUString &rPath, 
+    inline SmMathConfigItem( const rtl::OUString &rPath,
                       sal_Int16 nMode = CONFIG_MODE_IMMEDIATE_UPDATE );
 
     uno::Sequence< rtl::OUString > GetFormatPropertyNames();
@@ -116,19 +113,19 @@ public:
 
     uno::Sequence< uno::Any >
         GetProperties( const uno::Sequence< rtl::OUString > &rNames )
-        { 
-            return ConfigItem::GetProperties(rNames); 
+        {
+            return ConfigItem::GetProperties(rNames);
         }
 
-    sal_Bool 
+    sal_Bool
         PutProperties( const uno::Sequence< rtl::OUString > &rNames,
                        const uno::Sequence< uno::Any > &rValues)
         {
             return ConfigItem::PutProperties( rNames, rValues);
         }
 
-    sal_Bool 
-        SetSetProperties( const rtl::OUString &rNode, 
+    sal_Bool
+        SetSetProperties( const rtl::OUString &rNode,
                           uno::Sequence< beans::PropertyValue > rValues )
         {
             return ConfigItem::SetSetProperties( rNode, rValues );
@@ -139,9 +136,9 @@ public:
         {
             return ConfigItem::GetNodeNames( rNode );
         }
-    
+
     sal_Bool
-        ReplaceSetProperties( const rtl::OUString& rNode, 
+        ReplaceSetProperties( const rtl::OUString& rNode,
                               uno::Sequence< beans::PropertyValue > rValues )
         {
             return ConfigItem::ReplaceSetProperties( rNode, rValues );
@@ -149,9 +146,9 @@ public:
 };
 
 
-inline SmMathConfigItem::SmMathConfigItem( 
-        const rtl::OUString &rPath, 
-        sal_Int16 nMode ) : 
+inline SmMathConfigItem::SmMathConfigItem(
+        const rtl::OUString &rPath,
+        sal_Int16 nMode ) :
     ConfigItem( rPath, nMode )
 {
 }
@@ -204,7 +201,7 @@ public:
     void    Clear();
     void    AddFontFormat( const String &rFntFmtId, const SmFontFormat &rFntFmt );
     void    RemoveFontFormat( const String &rFntFmtId );
-    
+
     const SmFontFormat *    GetFontFormat( const String &rFntFmtId ) const;
     const SmFontFormat *    GetFontFormat( USHORT nPos ) const;
     const String            GetFontFormatId( const SmFontFormat &rFntFmt ) const;
@@ -234,26 +231,26 @@ class SmMathConfig
     // disallow copy-constructor and assignment-operator for now
     SmMathConfig( const SmMathConfig & );
     SmMathConfig & operator = ( const SmMathConfig & );
- 
+
     void	LoadSymbols();
-    
+
     void    LoadOther();
     void    SaveOther();
     void    LoadFormat();
     void    SaveFormat();
     void    LoadFontFormatList();
     void    SaveFontFormatList();
-    
+
     void    StripFontFormatList( const SmSym *pUsedSymbols[], USHORT nCount );
-    
+
 
     void    Save();
-    
+
     SmSym           ReadSymbol( SmMathConfigItem &rCfg,
-                        const rtl::OUString &rSymbolName, 
+                        const rtl::OUString &rSymbolName,
                         const rtl::OUString &rBaseNode ) const;
     SmFontFormat    ReadFontFormat( SmMathConfigItem &rCfg,
-                        const rtl::OUString &rSymbolName, 
+                        const rtl::OUString &rSymbolName,
                         const rtl::OUString &rBaseNode ) const;
 
     void            SetOtherIfNotEqual( BOOL &rbItem, BOOL bNewVal );
@@ -282,7 +279,7 @@ public:
 
     const SmFormat &    GetStandardFormat() const;
     void                SetStandardFormat( const SmFormat &rFormat );
-    
+
     BOOL            IsPrintTitle() const;
     void            SetPrintTitle( BOOL bVal );
     BOOL            IsPrintFormulaText() const;
