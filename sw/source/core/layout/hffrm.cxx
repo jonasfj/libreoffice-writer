@@ -2,9 +2,9 @@
  *
  *  $RCSfile: hffrm.cxx,v $
  *
- *  $Revision: 1.9 $
+ *  $Revision: 1.10 $
  *
- *  last change: $Author: hbrinkm $ $Date: 2002-10-08 12:42:24 $
+ *  last change: $Author: fme $ $Date: 2002-10-23 11:16:54 $
  *
  *  The Contents of this file are made available subject to the terms of
  *  either of the following licenses
@@ -96,18 +96,18 @@ static SwTwips lcl_GetFrmMinHeight(const SwLayoutFrm & rFrm)
 {
     const SwFmtFrmSize &rSz = rFrm.GetFmt()->GetFrmSize();
     SwTwips nMinHeight;
-    
+
     switch (rSz.GetSizeType())
-    { 
+    {
     case ATT_MIN_SIZE:
         nMinHeight = rSz.GetHeight();
-        
+
         break;
-        
-    default: 
+
+    default:
         nMinHeight = 0;
     }
-    
+
 
     return nMinHeight;
 }
@@ -123,7 +123,7 @@ static SwTwips lcl_CalcContentHeight(SwLayoutFrm & frm)
     while ( pFrm )
     {
         SwTwips nTmp;
-        
+
         nTmp = pFrm->Frm().Height();
         nRemaining += nTmp;
         if( pFrm->IsTxtFrm() && ((SwTxtFrm*)pFrm)->IsUndersized() )
@@ -142,11 +142,11 @@ static SwTwips lcl_CalcContentHeight(SwLayoutFrm & frm)
 
         nNum++;
     }
-    
+
     return nRemaining;
 }
 
-static void lcl_LayoutFrmEnsureMinHeight(SwLayoutFrm & rFrm, 
+static void lcl_LayoutFrmEnsureMinHeight(SwLayoutFrm & rFrm,
                                          const SwBorderAttrs * pAttrs)
 {
     SwTwips nMinHeight = lcl_GetFrmMinHeight(rFrm);
@@ -157,7 +157,7 @@ static void lcl_LayoutFrmEnsureMinHeight(SwLayoutFrm & rFrm,
     }
 }
 
-SwHeadFootFrm::SwHeadFootFrm( SwFrmFmt * pFmt, USHORT nTypeIn) 
+SwHeadFootFrm::SwHeadFootFrm( SwFrmFmt * pFmt, USHORT nTypeIn)
     : SwLayoutFrm(pFmt)
 {
     nType = nTypeIn;
@@ -187,28 +187,28 @@ void SwHeadFootFrm::FormatPrt(SwTwips & nUL, const SwBorderAttrs * pAttrs)
 
         nMinHeight -= pAttrs->CalcTop();
         nMinHeight -= pAttrs->CalcBottom();
-        
+
         /* If the minimal height of the print area is negative, try to
            compensate by overlapping */
         SwTwips nOverlap = 0;
         if (nMinHeight < 0)
         {
             nOverlap = -nMinHeight;
-            nMinHeight = 0;        
-        }    
-        
+            nMinHeight = 0;
+        }
+
         /* Calculate desired height of content. The minimal height has to be
            adhered. */
         SwTwips nHeight;
-        
+
         if ( ! HasFixSize() )
             nHeight = lcl_CalcContentHeight(*this);
         else
             nHeight = nMinHeight;
-        
+
         if (nHeight < nMinHeight)
             nHeight = nMinHeight;
-        
+
         /* calculate initial spacing/line space */
         SwTwips nSpace, nLine;
 
@@ -222,7 +222,7 @@ void SwHeadFootFrm::FormatPrt(SwTwips & nUL, const SwBorderAttrs * pAttrs)
             nSpace = pAttrs->CalcTop();
             nLine = pAttrs->CalcTopLine();
         }
-        
+
         /* calculate overlap and correct spacing */
         nOverlap += nHeight - nMinHeight;
         if (nOverlap < nSpace - nLine)
@@ -238,7 +238,7 @@ void SwHeadFootFrm::FormatPrt(SwTwips & nUL, const SwBorderAttrs * pAttrs)
 
         /* set print area */
         SwTwips nLR = pAttrs->CalcLeft(this) + pAttrs->CalcRight();
-    
+
         aPrt.Left(pAttrs->CalcLeft(this));
 
         if (IsHeaderFrm())
@@ -256,14 +256,14 @@ void SwHeadFootFrm::FormatPrt(SwTwips & nUL, const SwBorderAttrs * pAttrs)
             nNewHeight = 0;
 
         aPrt.Height(nNewHeight);
-        
+
     }
     else
     {
         //Position einstellen.
         aPrt.Left( pAttrs->CalcLeft( this ) );
         aPrt.Top ( pAttrs->CalcTop()  );
-        
+
         //Sizes einstellen; die Groesse gibt der umgebende Frm vor, die
         //die Raender werden einfach abgezogen.
         SwTwips nLR = pAttrs->CalcLeft(this) + pAttrs->CalcRight();
@@ -290,7 +290,7 @@ void SwHeadFootFrm::FormatSize(SwTwips nUL, const SwBorderAttrs * pAttrs)
 
             if (nMinHeight < 0)
                 nMinHeight = 0;
-        
+
             ColLock();
 
             SwTwips nMaxHeight = LONG_MAX;
@@ -314,15 +314,15 @@ void SwHeadFootFrm::FormatSize(SwTwips nUL, const SwBorderAttrs * pAttrs)
                 nRemaining = 0;
                 pFrm = Lower();
                 while ( pFrm )
-                {  
+                {
                     nRemaining += pFrm->Frm().Height();
-                    
-                    if( pFrm->IsTxtFrm() && 
+
+                    if( pFrm->IsTxtFrm() &&
                         ((SwTxtFrm*)pFrm)->IsUndersized() )
                         // Dieser TxtFrm waere gern ein bisschen groesser
                         nRemaining += ((SwTxtFrm*)pFrm)->GetParHeight()
                             - pFrm->Prt().Height();
-                    else if( pFrm->IsSctFrm() && 
+                    else if( pFrm->IsSctFrm() &&
                              ((SwSectionFrm*)pFrm)->IsUndersized() )
                         nRemaining += ((SwSectionFrm*)pFrm)->Undersize();
                     pFrm = pFrm->GetNext();
@@ -357,22 +357,24 @@ void SwHeadFootFrm::FormatSize(SwTwips nUL, const SwBorderAttrs * pAttrs)
                     ColUnlock();
                     if ( nDiff > 0 )
                     {
-                        pFrm = Lower();
-                        
-                        while ( pFrm )
+                        if ( Grow( nDiff PHEIGHT ) )
                         {
-                            if( pFrm->IsTxtFrm())
+                            pFrm = Lower();
+
+                            while ( pFrm )
                             {
-                                SwTxtFrm * pTmpFrm = (SwTxtFrm*) pFrm;
-                                if (pTmpFrm->IsUndersized() )
-                                {                                    
-                                    pTmpFrm->InvalidateSize();
-                                    pTmpFrm->Prepare(PREP_ADJUST_FRM);
+                                if( pFrm->IsTxtFrm())
+                                {
+                                    SwTxtFrm * pTmpFrm = (SwTxtFrm*) pFrm;
+                                    if (pTmpFrm->IsUndersized() )
+                                    {
+                                        pTmpFrm->InvalidateSize();
+                                        pTmpFrm->Prepare(PREP_ADJUST_FRM);
+                                    }
                                 }
+                                pFrm = pFrm->GetNext();
                             }
-                            pFrm = pFrm->GetNext();
                         }
-                      Grow( nDiff PHEIGHT );
                     }
                     else
                         Shrink( -nDiff PHEIGHT );
@@ -404,7 +406,7 @@ void SwHeadFootFrm::FormatSize(SwTwips nUL, const SwBorderAttrs * pAttrs)
     else //if ( GetType() & 0x0018 )
     {
         do
-        {	
+        {
             if ( Frm().Height() != pAttrs->GetSize().Height() )
                 ChgSize( Size( Frm().Width(), pAttrs->GetSize().Height()));
             bValidSize = TRUE;
@@ -429,10 +431,10 @@ void SwHeadFootFrm::Format(const SwBorderAttrs * pAttrs)
         lcl_LayoutFrmEnsureMinHeight(*this, pAttrs);
 
         long nUL = pAttrs->CalcTop()  + pAttrs->CalcBottom();
-        
+
         if ( !bValidPrtArea )
             FormatPrt(nUL, pAttrs);
-        
+
         if ( !bValidSize )
             FormatSize(nUL, pAttrs);
     }
@@ -454,44 +456,44 @@ SwTwips SwHeadFootFrm::GrowFrm( SwTwips nDist, BOOL bTst,  BOOL bInfo )
     {
         nResult = 0;
 
-        SwBorderAttrAccess * pAccess = 
+        SwBorderAttrAccess * pAccess =
             new SwBorderAttrAccess( SwFrm::GetCache(), this );
         ASSERT(pAccess, "no border attributes");
-    
+
         SwBorderAttrs * pAttrs = pAccess->Get();
-    
-        /* First assume the whole amount to grow can be provided by eating 
+
+        /* First assume the whole amount to grow can be provided by eating
            spacing. */
         SwTwips nEat = nDist;
         SwTwips nMaxEat;
-    
+
         /* calculate maximum eatable spacing */
         if (IsHeaderFrm())
             nMaxEat = aFrm.Height() - aPrt.Bottom() - pAttrs->CalcBottomLine();
         else
             nMaxEat = aPrt.Top() - pAttrs->CalcTopLine();
-    
+
         delete pAccess;
-    
+
         if (nMaxEat < 0)
             nMaxEat = 0;
-    
+
         /* If the frame is too small, eat less spacing thus letting the frame
            grow more. */
         SwTwips nMinHeight = lcl_GetFrmMinHeight(*this);
         SwTwips nFrameTooSmall = nMinHeight - Frm().Height();
-    
+
         if (nFrameTooSmall > 0)
             nEat -= nFrameTooSmall;
-    
+
         /* No negative eating, not eating more than allowed. */
         if (nEat < 0)
             nEat = 0;
         else if (nEat > nMaxEat)
             nEat = nMaxEat;
-    
+
         if (nEat > 0)
-        {        
+        {
             if ( ! bTst)
             {
                 if (! IsHeaderFrm())
@@ -502,25 +504,25 @@ SwTwips SwHeadFootFrm::GrowFrm( SwTwips nDist, BOOL bTst,  BOOL bInfo )
 
                 InvalidateAll();
             }
-        
+
             nResult += nEat;
         }
 
         if (nDist - nEat > 0)
         {
-            SwTwips nFrmGrow = 
+            SwTwips nFrmGrow =
                 SwLayoutFrm::GrowFrm( nDist - nEat, bTst, bInfo );
 
             nResult += nFrmGrow;
         }
     }
-    
+
     if ( nResult && !bTst )
         SetCompletePaint();
 
     return nResult;
 }
- 
+
 SwTwips SwHeadFootFrm::ShrinkFrm( SwTwips nDist, BOOL bTst, BOOL bInfo )
 {
     SwTwips nResult;
@@ -537,7 +539,7 @@ SwTwips SwHeadFootFrm::ShrinkFrm( SwTwips nDist, BOOL bTst, BOOL bInfo )
     {
         nResult = 0;
 
-        SwTwips nMinHeight = lcl_GetFrmMinHeight(*this); 
+        SwTwips nMinHeight = lcl_GetFrmMinHeight(*this);
         SwTwips nOldHeight = Frm().Height();
         SwTwips nRest = 0; // Amount to shrink by spitting out spacing
 
@@ -563,15 +565,15 @@ SwTwips SwHeadFootFrm::ShrinkFrm( SwTwips nDist, BOOL bTst, BOOL bInfo )
 
         if (nRest > 0)
         {
-            
-            SwBorderAttrAccess * pAccess = 
+
+            SwBorderAttrAccess * pAccess =
                 new SwBorderAttrAccess( SwFrm::GetCache(), this );
             ASSERT(pAccess, "no border attributes");
-            
+
             SwBorderAttrs * pAttrs = pAccess->Get();
 
             /* minimal height of print area */
-            SwTwips nMinPrtHeight = nMinHeight 
+            SwTwips nMinPrtHeight = nMinHeight
                 - pAttrs->CalcTop()
                 - pAttrs->CalcBottom();
 
@@ -597,23 +599,23 @@ SwTwips SwHeadFootFrm::ShrinkFrm( SwTwips nDist, BOOL bTst, BOOL bInfo )
             {
                 if (! IsHeaderFrm() )
                 {
-                    aPrt.Top(aPrt.Top() + nShrink);                
+                    aPrt.Top(aPrt.Top() + nShrink);
                     aPrt.Height(aPrt.Height() - nShrink);
                 }
 
                 InvalidateAll();
             }
             nResult += nShrink;
-            
+
         }
-        
+
         /* The shrinking not providable by spitting out spacing has to be done
            by the frame. */
         if (nDist - nRest > 0)
-            nResult += SwLayoutFrm::ShrinkFrm( nDist - nRest, bTst, 
-                                               bInfo ); 
+            nResult += SwLayoutFrm::ShrinkFrm( nDist - nRest, bTst,
+                                               bInfo );
     }
-    
+
     return nResult;
 }
 
