@@ -2,9 +2,9 @@
  *
  *  $RCSfile: xmlimp.cxx,v $
  *
- *  $Revision: 1.80 $
+ *  $Revision: 1.81 $
  *
- *  last change: $Author: rt $ $Date: 2004-07-13 09:07:43 $
+ *  last change: $Author: kz $ $Date: 2004-08-02 14:21:51 $
  *
  *  The Contents of this file are made available subject to the terms of
  *  either of the following licenses
@@ -394,7 +394,7 @@ SvXMLImportContext *SwXMLImport::CreateContext(
 // #110680#
 SwXMLImport::SwXMLImport(
     const ::com::sun::star::uno::Reference< ::com::sun::star::lang::XMultiServiceFactory > xServiceFactory,
-    sal_uInt16 nImportFlags) 
+    sal_uInt16 nImportFlags)
 :	SvXMLImport( xServiceFactory, nImportFlags ),
     bLoadDoc( sal_True ),
     bInsert( sal_False ),
@@ -419,14 +419,14 @@ SwXMLImport::SwXMLImport(
 // #110680#
 SwXMLImport::SwXMLImport(
     const ::com::sun::star::uno::Reference< ::com::sun::star::lang::XMultiServiceFactory > xServiceFactory,
-    SwDoc& rDoc, 
+    SwDoc& rDoc,
     const SwPaM& rPaM,
-    sal_Bool bLDoc, 
-    sal_Bool bInsertMode, 
+    sal_Bool bLDoc,
+    sal_Bool bInsertMode,
     sal_uInt16 nStyleFamMask,
     const ::com::sun::star::uno::Reference<	::com::sun::star::frame::XModel > & rModel,
     const ::com::sun::star::uno::Reference<	::com::sun::star::document::XGraphicObjectResolver > & rEGO,
-    SvStorage *pPkg ) 
+    SvStorage *pPkg )
 :	SvXMLImport( xServiceFactory, rModel, rEGO ),
     bLoadDoc( bLDoc ),
     bInsert( bInsertMode ),
@@ -1043,6 +1043,8 @@ void SwXMLImport::SetConfigurationSettings(const Sequence < PropertyValue > & aC
     bool bUseFormerObjectPositioning = false;
     // --> FME #108724#
     bool bUseFormerTextWrapping = false;
+    // --> OD 2004-07-08 #i28701#
+    bool bConsiderWrapOnObjPos = false;
 
     OUString sRedlineProtectionKey( RTL_CONSTASCII_USTRINGPARAM( "RedlineProtectionKey" ) );
 
@@ -1090,15 +1092,16 @@ void SwXMLImport::SetConfigurationSettings(const Sequence < PropertyValue > & aC
                 // OD 2004-03-17 #i11860#
                 else if( pValues->Name.equalsAsciiL(RTL_CONSTASCII_STRINGPARAM("UseFormerObjectPositioning")) )
                     bUseFormerObjectPositioning = true;
-                // OD 2004-03-17 #i11860#
+                // FME #108724#
                 else if( pValues->Name.equalsAsciiL(RTL_CONSTASCII_STRINGPARAM("UseFormerTextWrapping")) )
                     bUseFormerTextWrapping = true;
-
-
                 // #111955#
                 else if( pValues->Name.equalsAsciiL(RTL_CONSTASCII_STRINGPARAM("UseOldNumbering")) )
                     bUseOldNumbering = true;
-
+                // --> OD 2004-07-08 #i28701#
+                else if( pValues->Name.equalsAsciiL(RTL_CONSTASCII_STRINGPARAM("ConsiderTextWrapOnObjPos")) )
+                    bConsiderWrapOnObjPos = true;
+                // <--
             }
             catch( Exception& )
             {
@@ -1162,6 +1165,14 @@ void SwXMLImport::SetConfigurationSettings(const Sequence < PropertyValue > & aC
     {
         xProps->setPropertyValue(
             OUString( RTL_CONSTASCII_USTRINGPARAM("UseFormerTextWrapping")), makeAny( true ) );
+    }
+    // <--
+
+    // --> OD 2004-07-08 #i28701#
+    if( !bConsiderWrapOnObjPos )
+    {
+        xProps->setPropertyValue(
+            OUString( RTL_CONSTASCII_USTRINGPARAM("ConsiderTextWrapOnObjPos")), makeAny( false ) );
     }
     // <--
 
@@ -1298,7 +1309,7 @@ uno::Reference< uno::XInterface > SAL_CALL SwXMLImportContent_createInstance(
     //	IMPORT_AUTOSTYLES |	IMPORT_CONTENT | IMPORT_SCRIPTS |
     //	IMPORT_FONTDECLS );
     return (cppu::OWeakObject*)new SwXMLImport(
-        rSMgr, 
+        rSMgr,
         IMPORT_AUTOSTYLES |	IMPORT_CONTENT | IMPORT_SCRIPTS |
         IMPORT_FONTDECLS );
 }
