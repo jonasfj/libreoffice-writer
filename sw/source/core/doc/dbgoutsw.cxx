@@ -2,9 +2,9 @@
  *
  *  $RCSfile: dbgoutsw.cxx,v $
  *
- *  $Revision: 1.4 $
+ *  $Revision: 1.5 $
  *
- *  last change: $Author: hjs $ $Date: 2004-06-28 12:58:06 $
+ *  last change: $Author: kz $ $Date: 2004-08-02 14:00:54 $
  *
  *  The Contents of this file are made available subject to the terms of
  *  either of the following licenses
@@ -98,7 +98,7 @@ struct CompareUShort
     }
 };
 
-map<USHORT,String,CompareUShort> & GetItemWhichMap() 
+map<USHORT,String,CompareUShort> & GetItemWhichMap()
 {
     static map<USHORT,String,CompareUShort> aItemWhichMap;
     static bool bInitialized = false;
@@ -266,9 +266,9 @@ static const String lcl_dbg_out(const SfxItemSet & rSet)
         {
             if (!bFirst)
                 aStr += String(", ", RTL_TEXTENCODING_ASCII_US);
-            
+
             aStr += lcl_dbg_out(*pItem);
-            
+
             bFirst = false;
         }
         else
@@ -352,13 +352,13 @@ static String lcl_dbg_out(const SwPaM & rPam)
    String aStr("[ Pt: ", RTL_TEXTENCODING_ASCII_US);
 
    aStr += lcl_dbg_out(*rPam.GetPoint());
-   
+
    if (rPam.HasMark())
    {
        aStr += String(", Mk: ", RTL_TEXTENCODING_ASCII_US);
        aStr += lcl_dbg_out(*rPam.GetMark());
    }
-       
+
    aStr += String(" ]", RTL_TEXTENCODING_ASCII_US);
 
    return aStr;
@@ -375,22 +375,22 @@ static String lcl_dbg_out(const SwNodeNum & rNum)
 
     aStr += String::CreateFromInt32(rNum.GetLevel());
     aStr += String(": ", RTL_TEXTENCODING_ASCII_US);
-    
+
     bool first = true;
     for (int i = 0; i < MAXLEVEL; i++)
     {
         if (! first)
             aStr += String(", ", RTL_TEXTENCODING_ASCII_US);
-        
+
         aStr += String::CreateFromInt32(rNum.GetLevelVal()[i]);
-        
+
         first = false;
     }
-    
+
     if (rNum.IsStart())
         aStr += String(" (Start)", RTL_TEXTENCODING_ASCII_US);
 
-    aStr += String(" ]", RTL_TEXTENCODING_ASCII_US);    
+    aStr += String(" ]", RTL_TEXTENCODING_ASCII_US);
 
     return aStr;
 }
@@ -422,7 +422,7 @@ static const String lcl_dbg_out(const SwNode & rNode)
     {
         aTmpStr += String(" Txt ", RTL_TEXTENCODING_ASCII_US);
         aTmpStr += pTxtNode->GetTxt().Copy(0, 10);
-        
+
 
          const SwNodeNum * pNodeNum = pTxtNode->GetNum();
 
@@ -444,7 +444,7 @@ static const String lcl_dbg_out(const SwNode & rNode)
 
             if (pNodeNum != NULL)
             {
-                const SwNumFmt * pNumFmt = 
+                const SwNumFmt * pNumFmt =
                     pNumRule->GetNumFmt(pNodeNum->GetRealLevel());
 
                 if (pNumFmt)
@@ -458,32 +458,32 @@ static const String lcl_dbg_out(const SwNode & rNode)
 
                         break;
                     case SVX_NUM_CHARS_UPPER_LETTER:
-                        aTmpStr += String(" CHARS_UPPER_LETTER", 
+                        aTmpStr += String(" CHARS_UPPER_LETTER",
                                           RTL_TEXTENCODING_ASCII_US);
 
                         break;
                     case SVX_NUM_CHARS_LOWER_LETTER:
-                        aTmpStr += String(" CHARS_LOWER_LETTER", 
+                        aTmpStr += String(" CHARS_LOWER_LETTER",
                                           RTL_TEXTENCODING_ASCII_US);
 
                         break;
                     case SVX_NUM_ROMAN_UPPER:
-                        aTmpStr += String(" ROMAN_UPPER", 
+                        aTmpStr += String(" ROMAN_UPPER",
                                           RTL_TEXTENCODING_ASCII_US);
 
                         break;
                     case SVX_NUM_ROMAN_LOWER:
-                        aTmpStr += String(" ROMAN_LOWER", 
+                        aTmpStr += String(" ROMAN_LOWER",
                                           RTL_TEXTENCODING_ASCII_US);
 
                         break;
                     case SVX_NUM_ARABIC:
-                        aTmpStr += String(" ARABIC", 
+                        aTmpStr += String(" ARABIC",
                                           RTL_TEXTENCODING_ASCII_US);
 
                         break;
                     default:
-                        aTmpStr += String(" ??", 
+                        aTmpStr += String(" ??",
                                           RTL_TEXTENCODING_ASCII_US);
 
                         break;
@@ -521,7 +521,7 @@ const char * dbg_out(const SwNode * pNode)
 {
     if (NULL != pNode)
         return dbg_out(*pNode);
-    else 
+    else
         return NULL;
 }
 
@@ -529,7 +529,7 @@ const char * dbg_out(const SwCntntNode * pNode)
 {
     if (NULL != pNode)
         return dbg_out(*pNode);
-    else 
+    else
         return NULL;
 }
 
@@ -537,7 +537,7 @@ const char * dbg_out(const SwTxtNode * pNode)
 {
     if (NULL != pNode)
         return dbg_out(*pNode);
-    else 
+    else
         return NULL;
 }
 
@@ -548,6 +548,7 @@ BOOL lcl_dbg_add_node(const SwNodePtr & pNode, void * pArgs)
         (*((String *) pArgs)) += lcl_dbg_out(*pNode);
         (*((String *) pArgs)) += String("\n", RTL_TEXTENCODING_ASCII_US);
     }
+
     return TRUE;
 }
 
