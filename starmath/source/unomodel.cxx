@@ -2,9 +2,9 @@
  *
  *  $RCSfile: unomodel.cxx,v $
  *
- *  $Revision: 1.16 $
+ *  $Revision: 1.17 $
  *
- *  last change: $Author: hr $ $Date: 2001-10-18 12:19:09 $
+ *  last change: $Author: tl $ $Date: 2002-07-02 11:03:40 $
  *
  *  The Contents of this file are made available subject to the terms of
  *  either of the following licenses
@@ -97,7 +97,7 @@
 #ifndef _RTL_USTRBUF_HXX_
 #include <rtl/ustrbuf.hxx>
 #endif
-#ifndef _COMPHELPER_PROPERTSETINFO_HXX_ 
+#ifndef _COMPHELPER_PROPERTSETINFO_HXX_
 #include <comphelper/propertysetinfo.hxx>
 #endif
 #ifndef SYMBOL_HXX
@@ -195,7 +195,7 @@ enum SmModelPropertyHandles
 
 PropertySetInfo * lcl_createModelPropertyInfo ()
 {
-    static PropertyMapEntry aModelPropertyInfoMap[] = 
+    static PropertyMapEntry aModelPropertyInfoMap[] =
     {
         { RTL_CONSTASCII_STRINGPARAM( "Alignment"                          ), HANDLE_ALIGNMENT                          , 		&::getCppuType((const sal_Int16*)0), 	PROPERTY_NONE, 0},
         { RTL_CONSTASCII_STRINGPARAM( "BaseFontHeight"                  ), HANDLE_BASE_FONT_HEIGHT                   , 		&::getCppuType((const sal_Int16*)0), 	PROPERTY_NONE, 0},
@@ -263,7 +263,7 @@ PropertySetInfo * lcl_createModelPropertyInfo ()
 //-----------------------------------------------------------------------
 SmModel::SmModel( SfxObjectShell *pObjSh )
 : SfxBaseModel(pObjSh)
-, PropertySetHelper ( lcl_createModelPropertyInfo () )  
+, PropertySetHelper ( lcl_createModelPropertyInfo () )
 {
 }
 //-----------------------------------------------------------------------
@@ -324,7 +324,7 @@ uno::Sequence< uno::Type > SAL_CALL SmModel::getTypes(  ) throw(uno::RuntimeExce
     // XPropertyState not supported?? (respective virtual functions from
     // PropertySetHelper not overloaded)
     //pTypes[nLen++] = ::getCppuType((Reference<XPropertyState>*)0);
-    
+
     return aTypes;
 }
 /* -----------------------------28.03.00 14:23--------------------------------
@@ -515,9 +515,14 @@ void SmModel::_setPropertyValues(const PropertyMapEntry** ppEntries, const Any* 
                 nVal = static_cast < sal_Int16 > ( TWIP_TO_MM100(nVal) );
                 aSize.Height() = nVal;
                 aFormat.SetBaseSize(aSize);
+
+                // apply base size to fonts
+                const Size aTmp( aFormat.GetBaseSize() );
+                for (USHORT  i = FNT_BEGIN;  i <= FNT_END;  i++)
+                    aFormat.SetFontSize(i, aTmp);
             }
             break;
-            case HANDLE_RELATIVE_FONT_HEIGHT_TEXT       	:
+            case HANDLE_RELATIVE_FONT_HEIGHT_TEXT          :
             case HANDLE_RELATIVE_FONT_HEIGHT_INDICES       :
             case HANDLE_RELATIVE_FONT_HEIGHT_FUNCTIONS     :
             case HANDLE_RELATIVE_FONT_HEIGHT_OPERATORS     :
@@ -807,7 +812,7 @@ void SmModel::_getPropertyValues( const PropertyMapEntry **ppEntries, Any *pValu
                 // this is get
                 const SmSymSetManager &rManager = pDocSh->GetSymSetManager();
                 vector < const SmSym * > aVector;
-                
+
                 USHORT nCount = 0;
                 for (USHORT i = 0, nEnd = rManager.GetSymbolCount(); i < nEnd; i++)
                 {
@@ -820,7 +825,7 @@ void SmModel::_getPropertyValues( const PropertyMapEntry **ppEntries, Any *pValu
                 }
                 Sequence < SymbolDescriptor > aSequence ( nCount );
                 SymbolDescriptor * pDescriptor = aSequence.getArray();
-            
+
                 vector <const SmSym * >::const_iterator aIter = aVector.begin(), aEnd = aVector.end();
                 for(; aIter != aEnd; pDescriptor++, aIter++)
                 {
@@ -828,7 +833,7 @@ void SmModel::_getPropertyValues( const PropertyMapEntry **ppEntries, Any *pValu
                     pDescriptor->sExportName = (*aIter)->GetExportName();
                     pDescriptor->sSymbolSet = (*aIter)->GetSetName();
                     pDescriptor->nCharacter = static_cast < sal_Int32 > ((*aIter)->GetCharacter());
-                    
+
                     Font rFont = (*aIter)->GetFace();
                     pDescriptor->sFontName = rFont.GetName();
                     pDescriptor->nCharSet  = rFont.GetCharSet();
