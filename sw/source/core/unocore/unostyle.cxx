@@ -2,9 +2,9 @@
  *
  *  $RCSfile: unostyle.cxx,v $
  *
- *  $Revision: 1.23 $
+ *  $Revision: 1.24 $
  *
- *  last change: $Author: mib $ $Date: 2001-05-04 08:47:42 $
+ *  last change: $Author: th $ $Date: 2001-05-11 09:52:43 $
  *
  *  The Contents of this file are made available subject to the terms of
  *  either of the following licenses
@@ -193,9 +193,9 @@
 
 #define STYLE_FAMILY_COUNT 5            // wir habe fuenf Familien
 
-#define TYPE_BOOL 		0
-#define TYPE_SIZE 		1
-#define TYPE_BRUSH 		2
+#define TYPE_BOOL       0
+#define TYPE_SIZE       1
+#define TYPE_BRUSH      2
 #define TYPE_ULSPACE    3
 #define TYPE_SHADOW     4
 #define TYPE_LRSPACE    5
@@ -222,28 +222,28 @@ USHORT lcl_ConvertFNToRES(USHORT nFNId)
         case FN_UNO_HEADER_ON:
         break;
         case FN_UNO_FOOTER_BACKGROUND:
-        case FN_UNO_HEADER_BACKGROUND:		nRes = RES_BACKGROUND;
+        case FN_UNO_HEADER_BACKGROUND:      nRes = RES_BACKGROUND;
         break;
         case FN_UNO_FOOTER_BOX:
-        case FN_UNO_HEADER_BOX:				nRes = RES_BOX;
+        case FN_UNO_HEADER_BOX:             nRes = RES_BOX;
         break;
         case FN_UNO_FOOTER_LR_SPACE:
-        case FN_UNO_HEADER_LR_SPACE:		nRes = RES_LR_SPACE;
+        case FN_UNO_HEADER_LR_SPACE:        nRes = RES_LR_SPACE;
         break;
         case FN_UNO_FOOTER_SHADOW:
-        case FN_UNO_HEADER_SHADOW:			nRes = RES_SHADOW;
+        case FN_UNO_HEADER_SHADOW:          nRes = RES_SHADOW;
         break;
         case FN_UNO_FOOTER_BODY_DISTANCE:
-        case FN_UNO_HEADER_BODY_DISTANCE:	nRes = RES_UL_SPACE;
+        case FN_UNO_HEADER_BODY_DISTANCE:   nRes = RES_UL_SPACE;
         break;
         case FN_UNO_FOOTER_IS_DYNAMIC_DISTANCE:
         case FN_UNO_HEADER_IS_DYNAMIC_DISTANCE: nRes = SID_ATTR_PAGE_DYNAMIC;
         break;
         case FN_UNO_FOOTER_SHARE_CONTENT:
-        case FN_UNO_HEADER_SHARE_CONTENT:	nRes = SID_ATTR_PAGE_SHARED;
+        case FN_UNO_HEADER_SHARE_CONTENT:   nRes = SID_ATTR_PAGE_SHARED;
         break;
         case FN_UNO_FOOTER_HEIGHT:
-        case FN_UNO_HEADER_HEIGHT:			nRes = SID_ATTR_PAGE_SIZE;
+        case FN_UNO_HEADER_HEIGHT:          nRes = SID_ATTR_PAGE_SIZE;
         break;
     }
     return nRes;
@@ -296,12 +296,12 @@ const Programmatic2UIName_Impl* lcl_GetStyleNameTable(SfxStyleFamily eFamily)
         {
             static BOOL bInitialized = FALSE;
             static Programmatic2UIName_Impl aParaFamilyNames[
-                    ( STR_POCO_PRGM_HEADLINE10 	  -  STR_POCO_PRGM_STANDARD 	) +
-                    ( STR_POCO_PRGM_BUL_NONUM5	  -  STR_POCO_PRGM_NUMBUL_BASE	 )+
-                    ( STR_POCO_PRGM_LABEL_DRAWING -  STR_POCO_PRGM_HEADER		 )+
-                    ( STR_POCO_PRGM_TOX_USER10 	  -  STR_POCO_PRGM_REGISTER_BASE  )+
-                    ( STR_POCO_PRGM_DOC_SUBTITEL  -  STR_POCO_PRGM_DOC_TITEL  	 )+
-                    ( STR_POCO_PRGM_HTML_DT  	  -  STR_POCO_PRGM_HTML_BLOCKQUOTE)+
+                    ( STR_POCO_PRGM_HEADLINE10    -  STR_POCO_PRGM_STANDARD     ) +
+                    ( STR_POCO_PRGM_BUL_NONUM5    -  STR_POCO_PRGM_NUMBUL_BASE   )+
+                    ( STR_POCO_PRGM_LABEL_DRAWING -  STR_POCO_PRGM_HEADER        )+
+                    ( STR_POCO_PRGM_TOX_USER10    -  STR_POCO_PRGM_REGISTER_BASE  )+
+                    ( STR_POCO_PRGM_DOC_SUBTITEL  -  STR_POCO_PRGM_DOC_TITEL     )+
+                    ( STR_POCO_PRGM_HTML_DT       -  STR_POCO_PRGM_HTML_BLOCKQUOTE)+
                     + 7 ];
 
 
@@ -313,12 +313,12 @@ const Programmatic2UIName_Impl* lcl_GetStyleNameTable(SfxStyleFamily eFamily)
                 };
                 ParaIds aParaIds[] =
                 {
-                    {STR_POOLCOLL_STANDARD, 		STR_POOLCOLL_HEADLINE10, 	STR_POCO_PRGM_STANDARD 		 },
-                    {STR_POOLCOLL_NUMBUL_BASE, 		STR_POOLCOLL_BUL_NONUM5, 	STR_POCO_PRGM_NUMBUL_BASE	 },
-                    {STR_POOLCOLL_HEADER, 			STR_POOLCOLL_LABEL_DRAWING, STR_POCO_PRGM_HEADER			 },
-                    {STR_POOLCOLL_REGISTER_BASE, 	STR_POOLCOLL_TOX_USER10, 	STR_POCO_PRGM_REGISTER_BASE   },
-                    {STR_POOLCOLL_DOC_TITEL, 		STR_POOLCOLL_DOC_SUBTITEL, 	STR_POCO_PRGM_DOC_TITEL  	 },
-                    {STR_POOLCOLL_HTML_BLOCKQUOTE, 	STR_POOLCOLL_HTML_DT, 		STR_POCO_PRGM_HTML_BLOCKQUOTE },
+                    {STR_POOLCOLL_STANDARD,         STR_POOLCOLL_HEADLINE10,    STR_POCO_PRGM_STANDARD       },
+                    {STR_POOLCOLL_NUMBUL_BASE,      STR_POOLCOLL_BUL_NONUM5,    STR_POCO_PRGM_NUMBUL_BASE    },
+                    {STR_POOLCOLL_HEADER,           STR_POOLCOLL_LABEL_DRAWING, STR_POCO_PRGM_HEADER             },
+                    {STR_POOLCOLL_REGISTER_BASE,    STR_POOLCOLL_TOX_USER10,    STR_POCO_PRGM_REGISTER_BASE   },
+                    {STR_POOLCOLL_DOC_TITEL,        STR_POOLCOLL_DOC_SUBTITEL,  STR_POCO_PRGM_DOC_TITEL      },
+                    {STR_POOLCOLL_HTML_BLOCKQUOTE,  STR_POOLCOLL_HTML_DT,       STR_POCO_PRGM_HTML_BLOCKQUOTE },
                 };
                 bInitialized = TRUE;
                 int nUIResId;
@@ -398,7 +398,7 @@ const Programmatic2UIName_Impl* lcl_GetStyleNameTable(SfxStyleFamily eFamily)
     }
     return pRet;
 }
-const String&	SwXStyleFamilies::GetProgrammaticName(const String& rUIName, SfxStyleFamily eFamily)
+const String&   SwXStyleFamilies::GetProgrammaticName(const String& rUIName, SfxStyleFamily eFamily)
 {
     const Programmatic2UIName_Impl* pNames =lcl_GetStyleNameTable(eFamily);
     DBG_ASSERT(pNames, "no mapping found!!!")
@@ -411,7 +411,7 @@ const String&	SwXStyleFamilies::GetProgrammaticName(const String& rUIName, SfxSt
     while((++pNames)->sUIName.Len());
     return rUIName;
 }
-const String&	SwXStyleFamilies::GetUIName(const String& rProgrammaticName, SfxStyleFamily eFamily)
+const String&   SwXStyleFamilies::GetUIName(const String& rProgrammaticName, SfxStyleFamily eFamily)
 {
     const Programmatic2UIName_Impl* pNames = lcl_GetStyleNameTable(eFamily);
     do
@@ -635,13 +635,13 @@ void SwXStyleFamilies::loadStylesFromURL(const OUString& rURL,
     throw( io::IOException, RuntimeException )
 {
     vos::OGuard aGuard(Application::GetSolarMutex());
-    sal_Bool 	bLoadStyleText = sal_True;
-    sal_Bool 	LoadStyleFrame = sal_True;
-    sal_Bool 	bLoadStylePage = sal_True;
-    sal_Bool 	bLoadStyleOverwrite = sal_True;
-    sal_Bool 	bLoadStyleNumbering = sal_True;
-    sal_Bool 	bLoadStyleFrame = sal_True;
-    if(IsValid() && rURL.len())
+    sal_Bool    bLoadStyleText = sal_True;
+    sal_Bool    LoadStyleFrame = sal_True;
+    sal_Bool    bLoadStylePage = sal_True;
+    sal_Bool    bLoadStyleOverwrite = sal_True;
+    sal_Bool    bLoadStyleNumbering = sal_True;
+    sal_Bool    bLoadStyleFrame = sal_True;
+    if(IsValid() && rURL.getLength())
     {
         const Any* pVal;
         int nCount = aOptions.getLength();
@@ -737,7 +737,7 @@ SwXStyleFamily::SwXStyleFamily(SwDocShell* pDocSh, sal_uInt16 nFamily) :
         pDocShell(pDocSh),
         eFamily((SfxStyleFamily)nFamily)
 {
-/*	switch( nFamily )
+/*  switch( nFamily )
     {
         case SFX_STYLE_FAMILY_CHAR:
             _pPropMap = aSwMapProvider.GetPropertyMap(PROPERTY_MAP_CHAR_STYLE);
@@ -956,7 +956,7 @@ void SwXStyleFamily::insertByName(const OUString& rName, const Any& rElement)
                         SfxStyleSheetBase* pParentBase = pBasePool->Find(sParentStyleName);
                         if(pParentBase && pParentBase->GetFamily() == eFamily &&
                             &pParentBase->GetPool() == pBasePool)
-                            pBasePool->SetParent( eFamily, sStyleName,	sParentStyleName );
+                            pBasePool->SetParent( eFamily, sStyleName,  sParentStyleName );
 
                     }
                     //so, jetzt sollten noch die Properties des Descriptors angewandt werden
@@ -1041,9 +1041,9 @@ void SwXStyleFamily::Notify( SfxBroadcaster& rBC, const SfxHint& rHint )
 /*-- 16.12.98 16:03:59---------------------------------------------------
 
   -----------------------------------------------------------------------*/
-SwXStyle* 	SwXStyleFamily::_FindStyle(const String& rStyleName)const
+SwXStyle*   SwXStyleFamily::_FindStyle(const String& rStyleName)const
 {
-    sal_uInt16	nLCount = pBasePool->GetListenerCount();
+    sal_uInt16  nLCount = pBasePool->GetListenerCount();
     SfxListener* pListener = 0;
     for( sal_uInt16 i = 0; i < nLCount; i++)
     {
@@ -1060,18 +1060,18 @@ SwXStyle* 	SwXStyleFamily::_FindStyle(const String& rStyleName)const
  ******************************************************************/
 class SwStyleProperties_Impl
 {
-    const SfxItemPropertyMap* 	_pMap;
-    Any**					pAnyArr;
-    sal_uInt16 						nArrLen;
+    const SfxItemPropertyMap*   _pMap;
+    Any**                   pAnyArr;
+    sal_uInt16                      nArrLen;
 
 public:
     SwStyleProperties_Impl(const SfxItemPropertyMap* _pMap);
     ~SwStyleProperties_Impl();
 
-    sal_Bool 	SetProperty(const String& rName, Any aVal);
-    sal_Bool 	GetProperty(const String& rName, Any*& rpAny);
+    sal_Bool    SetProperty(const String& rName, Any aVal);
+    sal_Bool    GetProperty(const String& rName, Any*& rpAny);
 
-    const SfxItemPropertyMap* 	GetPropertyMap() const {return _pMap;}
+    const SfxItemPropertyMap*   GetPropertyMap() const {return _pMap;}
 };
 //--------------------------------------------------------------------
 //--------------------------------------------------------------------
@@ -1235,11 +1235,11 @@ SwXStyle::SwXStyle(SfxStyleFamily eFam, BOOL bConditional) :
     sal_uInt16 nMapId = PROPERTY_MAP_CHAR_STYLE;
     switch( eFamily )
     {
-        //case SFX_STYLE_FAMILY_CHAR:	nMapId = PROPERTY_MAP_CHAR_STYLE; 		break;
-        case SFX_STYLE_FAMILY_PARA:	nMapId = PROPERTY_MAP_PARA_STYLE;		break;
-        case SFX_STYLE_FAMILY_PAGE:	nMapId = PROPERTY_MAP_PAGE_STYLE;		break;
-        case SFX_STYLE_FAMILY_FRAME :	nMapId = PROPERTY_MAP_FRAME_STYLE;	break;
-        case SFX_STYLE_FAMILY_PSEUDO:	nMapId = PROPERTY_MAP_NUM_STYLE;	break;
+        //case SFX_STYLE_FAMILY_CHAR:   nMapId = PROPERTY_MAP_CHAR_STYLE;       break;
+        case SFX_STYLE_FAMILY_PARA: nMapId = PROPERTY_MAP_PARA_STYLE;       break;
+        case SFX_STYLE_FAMILY_PAGE: nMapId = PROPERTY_MAP_PAGE_STYLE;       break;
+        case SFX_STYLE_FAMILY_FRAME :   nMapId = PROPERTY_MAP_FRAME_STYLE;  break;
+        case SFX_STYLE_FAMILY_PSEUDO:   nMapId = PROPERTY_MAP_NUM_STYLE;    break;
     }
     pPropImpl = new SwStyleProperties_Impl(aSwMapProvider.GetPropertyMap(nMapId));
 }
@@ -1247,7 +1247,7 @@ SwXStyle::SwXStyle(SfxStyleFamily eFam, BOOL bConditional) :
 
   -----------------------------------------------------------------------*/
 SwXStyle::SwXStyle(SfxStyleSheetBasePool& rPool, SfxStyleFamily eFam,
-        SwDoc* 	pDoc,	const String& rStyleName) :
+        SwDoc*  pDoc,   const String& rStyleName) :
     sStyleName(rStyleName),
     pBasePool(&rPool),
     eFamily(eFam),
@@ -1316,7 +1316,7 @@ void SwXStyle::setName(const OUString& rName) throw( RuntimeException )
         if(pBase && pBase->IsUserDefined())
         {
             SwDocStyleSheet aTmp( *(SwDocStyleSheet*)pBase );
-             bExcept = !aTmp.SetName(rName);
+            bExcept = !aTmp.SetName(rName);
             if(!bExcept)
                 sStyleName = String(rName);
         }
@@ -1491,7 +1491,7 @@ Reference< XPropertySetInfo >  SwXStyle::getPropertySetInfo(void)
 /* -----------------23.04.99 13:28-------------------
  *
  * --------------------------------------------------*/
-void	SwXStyle::ApplyDescriptorProperties()
+void    SwXStyle::ApplyDescriptorProperties()
 {
     bIsDescriptor = sal_False;
     const SfxItemPropertyMap* pTemp = pPropImpl->GetPropertyMap();
@@ -1893,7 +1893,7 @@ void SwXStyle::setPropertyValues(
         case SFX_STYLE_FAMILY_PAGE: nPropSetId = PROPERTY_SET_PAGE_STYLE  ;break;
         case SFX_STYLE_FAMILY_PSEUDO: nPropSetId = PROPERTY_SET_NUM_STYLE   ;break;
     }
-    SfxItemPropertySet&	aPropSet = aSwMapProvider.GetPropertySet(nPropSetId);
+    SfxItemPropertySet& aPropSet = aSwMapProvider.GetPropertySet(nPropSetId);
 
     if(rPropertyNames.getLength() != rValues.getLength())
         throw IllegalArgumentException();
@@ -2250,7 +2250,7 @@ Sequence< PropertyState > SwXStyle::getPropertyStates(
             {
                 case SFX_STYLE_FAMILY_PARA: nPropSetId = PROPERTY_SET_PARA_STYLE  ; break;
                 case SFX_STYLE_FAMILY_FRAME: nPropSetId = PROPERTY_SET_FRAME_STYLE ;break;
-                case SFX_STYLE_FAMILY_PAGE:	nPropSetId = PROPERTY_SET_PAGE_STYLE;	break;
+                case SFX_STYLE_FAMILY_PAGE: nPropSetId = PROPERTY_SET_PAGE_STYLE;   break;
                 case SFX_STYLE_FAMILY_PSEUDO: nPropSetId = PROPERTY_SET_NUM_STYLE   ;break;
             }
 
@@ -2268,7 +2268,7 @@ Sequence< PropertyState > SwXStyle::getPropertyStates(
                         (sPropName.EqualsAscii("Header", 0, 6)
                             || sPropName.EqualsAscii("Footer", 0, 6)))
                 {
-                    const SfxItemPropertyMap*	pMap = SfxItemPropertyMap::GetByName(
+                    const SfxItemPropertyMap*   pMap = SfxItemPropertyMap::GetByName(
                                                     rStylePropSet.getPropertyMap(), sPropName);
                     if(!pMap)
                         throw UnknownPropertyException();
@@ -2901,7 +2901,7 @@ void SwXPageStyle::setPropertyValue(const OUString& rPropertyName, const Any& rV
     throw( UnknownPropertyException,
         PropertyVetoException,
         lang::IllegalArgumentException,
-         lang::WrappedTargetException,
+        lang::WrappedTargetException,
         RuntimeException)
 {
     const Sequence<OUString> aProperties(&rPropertyName, 1);

@@ -2,9 +2,9 @@
  *
  *  $RCSfile: htmlforw.cxx,v $
  *
- *  $Revision: 1.3 $
+ *  $Revision: 1.4 $
  *
- *  last change: $Author: jl $ $Date: 2001-03-23 12:39:50 $
+ *  last change: $Author: th $ $Date: 2001-05-11 09:54:05 $
  *
  *  The Contents of this file are made available subject to the terms of
  *  either of the following licenses
@@ -213,14 +213,14 @@ using namespace ::com::sun::star::uno;
 using namespace ::rtl;
 /*  */
 
-const sal_uInt32 HTML_FRMOPTS_CONTROL	=
+const sal_uInt32 HTML_FRMOPTS_CONTROL   =
     0;
-const sal_uInt32 HTML_FRMOPTS_CONTROL_CSS1	=
+const sal_uInt32 HTML_FRMOPTS_CONTROL_CSS1  =
     HTML_FRMOPT_S_ALIGN |
     HTML_FRMOPT_S_SIZE |
     HTML_FRMOPT_S_SPACE |
     HTML_FRMOPT_BRCLEAR;
-const sal_uInt32 HTML_FRMOPTS_IMG_CONTROL	=
+const sal_uInt32 HTML_FRMOPTS_IMG_CONTROL   =
     HTML_FRMOPT_ALIGN |
     HTML_FRMOPT_BRCLEAR;
 const sal_uInt32 HTML_FRMOPTS_IMG_CONTROL_CSS1 =
@@ -234,8 +234,8 @@ struct HTMLControl
 {
     // die Form, zu der das Control gehoert
     Reference< container::XIndexContainer > xFormComps;
-    sal_uInt32 nNdIdx;				// der Node, in dem es verankert ist
-    xub_StrLen nCount;				// wie viele Controls sind in dem Node
+    sal_uInt32 nNdIdx;              // der Node, in dem es verankert ist
+    xub_StrLen nCount;              // wie viele Controls sind in dem Node
 
     HTMLControl( const Reference< container::XIndexContainer > & rForm,
                  sal_uInt32 nIdx );
@@ -314,7 +314,7 @@ void lcl_html_outEvents( SvStream& rStrm,
     {
         ScriptType eScriptType = EXTENDED_STYPE;
         String aScriptType( pDescs[i].ScriptType );
-        if(	aScriptType.EqualsIgnoreCaseAscii(SVX_MACRO_LANGUAGE_JAVASCRIPT) )
+        if( aScriptType.EqualsIgnoreCaseAscii(SVX_MACRO_LANGUAGE_JAVASCRIPT) )
             eScriptType = JAVASCRIPT;
         else if( aScriptType.EqualsIgnoreCaseAscii(SVX_MACRO_LANGUAGE_STARBASIC ) )
             eScriptType = STARBASIC;
@@ -346,7 +346,7 @@ void lcl_html_outEvents( SvStream& rStrm,
         else
             (((sOut += sHTML_O_sdevent)
                 += ByteString( sListener, RTL_TEXTENCODING_ASCII_US)) += '-')
-                 += ByteString( sMethod, RTL_TEXTENCODING_ASCII_US);
+                += ByteString( sMethod, RTL_TEXTENCODING_ASCII_US);
         sOut += "=\"";
         rStrm << sOut.GetBuffer();
         HTMLOutFuncs::Out_String( rStrm, pDescs[i].ScriptCode, eDestEnc );
@@ -356,7 +356,7 @@ void lcl_html_outEvents( SvStream& rStrm,
         {
             (((((sOut = ' ') += sHTML_O_sdaddparam)
                 += ByteString( sListener, RTL_TEXTENCODING_ASCII_US)) += '-')
-                 += ByteString( sMethod, RTL_TEXTENCODING_ASCII_US))
+                += ByteString( sMethod, RTL_TEXTENCODING_ASCII_US))
                 += "=\"";
             rStrm << sOut.GetBuffer();
             HTMLOutFuncs::Out_String( rStrm, pDescs[i].AddListenerParam,
@@ -400,8 +400,8 @@ sal_Bool SwHTMLWriter::HasControls() const
 
 void SwHTMLWriter::OutForm( sal_Bool bTagOn, const SwStartNode *pStartNd )
 {
-    if( bPreserveForm )		// wir sind in einer Tabelle oder einem Bereich
-        return;				// ueber dem eine Form aufgespannt wurde
+    if( bPreserveForm )     // wir sind in einer Tabelle oder einem Bereich
+        return;             // ueber dem eine Form aufgespannt wurde
 
     if( !bTagOn )
     {
@@ -415,9 +415,9 @@ void SwHTMLWriter::OutForm( sal_Bool bTagOn, const SwStartNode *pStartNd )
         return;
     }
 
-    Reference< container::XIndexContainer > xNewFormComps;	// die neue Form
+    Reference< container::XIndexContainer > xNewFormComps;  // die neue Form
     sal_uInt32 nStartIdx = pStartNd ? pStartNd->GetIndex()
-                                       : pCurPam->GetPoint()->nNode.GetIndex();
+                                    : pCurPam->GetPoint()->nNode.GetIndex();
 
     // Ueberspringen von Controls vor dem interesanten Bereich
     for( sal_uInt16 i=0; i < aHTMLControls.Count() &&
@@ -428,7 +428,7 @@ void SwHTMLWriter::OutForm( sal_Bool bTagOn, const SwStartNode *pStartNd )
     {
         // Check fuer einen einzelnen Node: da ist nur interessant, ob
         // es zu dem Node ein Control gibt und zu welcher Form es gehoert
-        if(	i < aHTMLControls.Count() &&
+        if( i < aHTMLControls.Count() &&
             aHTMLControls[i]->nNdIdx == nStartIdx )
             xNewFormComps = aHTMLControls[i]->xFormComps;
     }
@@ -441,7 +441,7 @@ void SwHTMLWriter::OutForm( sal_Bool bTagOn, const SwStartNode *pStartNd )
 
         Reference< container::XIndexContainer > xCurrentFormComps;// die aktuelle Form in der Tabelle
         const SwStartNode *pCurrentStNd = 0; // und der Start-Node eines Ctrls
-        xub_StrLen nCurrentCtrls = 0;	// und die in ihr gefundenen Controls
+        xub_StrLen nCurrentCtrls = 0;   // und die in ihr gefundenen Controls
         sal_uInt32 nEndIdx =  pStartNd->EndOfSectionIndex();
         for( ; i < aHTMLControls.Count() &&
             aHTMLControls[i]->nNdIdx <= nEndIdx; i++ )
@@ -505,7 +505,7 @@ void SwHTMLWriter::OutForm( sal_Bool bTagOn, const SwStartNode *pStartNd )
             // Form trotzdem
             OutForm( sal_False, *pxFormComps );
 
-            //!!!nWarn = 1;	// Control wird falscher Form zugeordnet
+            //!!!nWarn = 1; // Control wird falscher Form zugeordnet
         }
 
         if( !pxFormComps )
@@ -668,7 +668,7 @@ void SwHTMLWriter::OutForm( sal_Bool bOn,
                     OUString::createFromAscii( "SubmitMethod" ) );
     if( aTmp.getValueType() == ::getCppuType((const form::FormSubmitMethod*)0) )
     {
-         form::FormSubmitMethod eMethod =
+        form::FormSubmitMethod eMethod =
                 *( form::FormSubmitMethod*)aTmp.getValue();
         if( form::FormSubmitMethod_POST==eMethod )
         {
@@ -681,7 +681,7 @@ void SwHTMLWriter::OutForm( sal_Bool bOn,
                     OUString::createFromAscii( "SubmitEncoding" ) );
     if( aTmp.getValueType()==::getCppuType((const form::FormSubmitEncoding*)0) )
     {
-         form::FormSubmitEncoding eEncType =
+        form::FormSubmitEncoding eEncType =
                     *( form::FormSubmitEncoding*)aTmp.getValue();
         const sal_Char *pStr = 0;
         switch( eEncType )
@@ -888,8 +888,8 @@ Writer& OutHTML_DrawFrmFmtAsControl( Writer& rWrt,
 
     Reference< beans::XPropertySet > xPropSet( xControlModel, UNO_QUERY );
 
-//!!!	if( rHTMLWrt.pForm != pVCSbxCtrl->GetVCForm() )
-//!!!		rHTMLWrt.nWarn = 1;	// Control wird falscher Form zugeordnet
+//!!!   if( rHTMLWrt.pForm != pVCSbxCtrl->GetVCForm() )
+//!!!       rHTMLWrt.nWarn = 1; // Control wird falscher Form zugeordnet
     rHTMLWrt.nFormCntrlCnt++;
 
     const sal_Char *pTag = sHTML_input, *pType = 0;
@@ -921,7 +921,7 @@ Writer& OutHTML_DrawFrmFmtAsControl( Writer& rWrt,
 
         {
             const OUString& rVal = *(OUString*)aTmp.getValue();
-            if( !rVal.len() )
+            if( !rVal.getLength() )
                 bEmptyValue = sal_True;
             else if( rVal.compareToAscii( sHTML_on ) != 0 )
                 sValue = rVal;
@@ -1115,7 +1115,7 @@ Writer& OutHTML_DrawFrmFmtAsControl( Writer& rWrt,
         }
         break;
 #endif
-    default:				// kennt HTML nicht
+    default:                // kennt HTML nicht
         pTag = 0;        // also ueberspringen
         break;
     }
@@ -1373,7 +1373,7 @@ Writer& OutHTML_DrawFrmFmtAsControl( Writer& rWrt,
             aTmp = xPropSet->getPropertyValue(
                             OUString::createFromAscii( "ListSource" ) );
             Sequence<OUString> aValList;
-            if(	aTmp.getValueType() == ::getCppuType((Sequence<OUString>*)0) )
+            if( aTmp.getValueType() == ::getCppuType((Sequence<OUString>*)0) )
             {
                 aValList = *(Sequence<OUString>*)aTmp.getValue();
                 nValCnt = aValList.getLength();
@@ -1386,7 +1386,7 @@ Writer& OutHTML_DrawFrmFmtAsControl( Writer& rWrt,
             sal_Int32 nSel = 0;
             sal_Int32 nSelCnt = 0;
             Sequence<sal_Int16> aSelList;
-            if(	aSelTmp.getValueType() ==::getCppuType((Sequence<sal_Int16>*)0))
+            if( aSelTmp.getValueType() ==::getCppuType((Sequence<sal_Int16>*)0))
             {
                 aSelList = *(Sequence<sal_Int16>*)aSelTmp.getValue();
                 nSelCnt = aSelList.getLength();
@@ -1587,14 +1587,17 @@ HTMLControl::~HTMLControl()
 
       Source Code Control System - Header
 
-      $Header: /zpool/svn/migration/cvs_rep_09_09_08/code/sw/source/filter/html/htmlforw.cxx,v 1.3 2001-03-23 12:39:50 jl Exp $
+      $Header: /zpool/svn/migration/cvs_rep_09_09_08/code/sw/source/filter/html/htmlforw.cxx,v 1.4 2001-05-11 09:54:05 th Exp $
 
       Source Code Control System - Update
 
       $Log: not supported by cvs2svn $
+      Revision 1.3  2001/03/23 12:39:50  jl
+      replaced: Float->float
+
       Revision 1.2  2000/10/20 13:43:01  jp
       use correct INetURL-Decode enum
-    
+
       Revision 1.1.1.1  2000/09/18 17:14:55  hr
       initial import
 

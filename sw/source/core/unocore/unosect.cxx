@@ -2,9 +2,9 @@
  *
  *  $RCSfile: unosect.cxx,v $
  *
- *  $Revision: 1.21 $
+ *  $Revision: 1.22 $
  *
- *  last change: $Author: dvo $ $Date: 2001-03-20 18:51:04 $
+ *  last change: $Author: th $ $Date: 2001-05-11 09:51:57 $
  *
  *  The Contents of this file are made available subject to the terms of
  *  either of the following licenses
@@ -152,20 +152,20 @@ TYPEINIT1(SwXTextSection, SwClient);
 struct SwTextSectionProperties_Impl
 {
 
-    String 	sCondition;
-    String 	sLinkFileName;
-    String 	sSectionFilter;
-    String 	sSectionRegion;
+    String  sCondition;
+    String  sLinkFileName;
+    String  sSectionFilter;
+    String  sSectionRegion;
     uno::Sequence<sal_Int8> aPassword;
 
-    SwFmtCol*	pColItem;
+    SwFmtCol*   pColItem;
     SvxBrushItem* pBrushItem;
     SwFmtFtnAtTxtEnd* pFtnItem;
     SwFmtEndAtTxtEnd* pEndItem;
-    sal_Bool	bDDE;
-    sal_Bool	bHidden;
-    sal_Bool 	bProtect;
-    sal_Bool	bUpdateType;
+    sal_Bool    bDDE;
+    sal_Bool    bHidden;
+    sal_Bool    bProtect;
+    sal_Bool    bUpdateType;
 
     SwTextSectionProperties_Impl() :
         bDDE(0),
@@ -225,7 +225,7 @@ SwXTextSection::SwXTextSection(SwSectionFmt* pFmt, BOOL bIndexHeader) :
         SwClient(pFmt),
         aLstnrCntnr( (text::XTextContent*)this),
         aPropSet(aSwMapProvider.GetPropertyMap(PROPERTY_MAP_SECTION)),
-//  		_pMap(aSwMapProvider.getPropertyMap(PROPERTY_MAP_SECTION)),
+//          _pMap(aSwMapProvider.getPropertyMap(PROPERTY_MAP_SECTION)),
         m_bIsDescriptor(pFmt == 0),
         m_bIndexHeader(bIndexHeader),
         pProps(pFmt ? 0 : new SwTextSectionProperties_Impl())
@@ -507,12 +507,12 @@ void SwXTextSection::setPropertyValues(
                         lang::WrappedTargetException, RuntimeException)
 {
     vos::OGuard aGuard(Application::GetSolarMutex());
-    SwSectionFmt*	pFmt = GetFmt();
+    SwSectionFmt*   pFmt = GetFmt();
     if(rPropertyNames.getLength() != rValues.getLength())
         throw IllegalArgumentException();
     if(pFmt || m_bIsDescriptor)
     {
-        SwSection	aSection(CONTENT_SECTION, aEmptyStr);
+        SwSection   aSection(CONTENT_SECTION, aEmptyStr);
         SwSection* pSect = pFmt ? pFmt->GetSection() : 0;
         if(pFmt)
             aSection = *pSect;
@@ -524,7 +524,7 @@ void SwXTextSection::setPropertyValues(
         sal_Bool bLinkMode;
         for(sal_Int32 nProperty = 0; nProperty < rPropertyNames.getLength(); nProperty++)
         {
-            const SfxItemPropertyMap*	pMap = SfxItemPropertyMap::GetByName(
+            const SfxItemPropertyMap*   pMap = SfxItemPropertyMap::GetByName(
                                     aPropSet.getPropertyMap(), pPropertyNames[nProperty]);
             if(pMap)
             {
@@ -589,7 +589,7 @@ void SwXTextSection::setPropertyValues(
                     {
                         if(pValues[nProperty].getValueType() == ::getCppuType((const text::SectionFileLink*)0))
                         {
-                             text::SectionFileLink* pLink =  (text::SectionFileLink*)	pValues[nProperty].getValue();
+                            text::SectionFileLink* pLink =  (text::SectionFileLink*)    pValues[nProperty].getValue();
                             if(m_bIsDescriptor)
                             {
                                 pProps->bDDE = sal_False;
@@ -599,7 +599,7 @@ void SwXTextSection::setPropertyValues(
                             else
                             {
                                 if(aSection.GetType() != FILE_LINK_SECTION &&
-                                    pLink->FileURL.len())
+                                    pLink->FileURL.getLength())
                                     aSection.SetType(FILE_LINK_SECTION);
                                 String sFileName(URIHelper::SmartRelToAbs( pLink->FileURL) );
                                 sFileName += cTokenSeperator;
@@ -724,7 +724,7 @@ void SwXTextSection::setPropertyValues(
                 {
                     pDoc->ChgSection( i, aSection, aItemSet.pItemSet, pDoc->IsInReading());
                     SwSection* pSect = pFmt->GetSection();
-                    if(	bLinkModeChanged && pSect->GetType() == DDE_LINK_SECTION)
+                    if( bLinkModeChanged && pSect->GetType() == DDE_LINK_SECTION)
                     {
                         // set update type; needs an established link
                         if(!pSect->IsConnected())
@@ -732,7 +732,7 @@ void SwXTextSection::setPropertyValues(
                             pSect->CreateLink(CREATE_CONNECT);
                         }
                         pSect->SetUpdateType(bLinkMode ? LINKUPDATE_ALWAYS
-                                                 : LINKUPDATE_ONCALL);
+                                                : LINKUPDATE_ONCALL);
                     }
                     // section found and processed: break from loop
                     break;
@@ -750,7 +750,7 @@ void SwXTextSection::setPropertyValues(
 void SwXTextSection::setPropertyValue(
     const OUString& rPropertyName, const uno::Any& aValue)
     throw( beans::UnknownPropertyException, beans::PropertyVetoException,
-        lang::IllegalArgumentException,		lang::WrappedTargetException,
+        lang::IllegalArgumentException,     lang::WrappedTargetException,
         uno::RuntimeException )
 {
     vos::OGuard aGuard(Application::GetSolarMutex());
@@ -770,14 +770,14 @@ Sequence< Any > SwXTextSection::getPropertyValues(
     vos::OGuard aGuard(Application::GetSolarMutex());
     Sequence< Any > aRet(rPropertyNames.getLength());
     Any* pRet = aRet.getArray();
-    SwSectionFmt*	pFmt = GetFmt();
+    SwSectionFmt*   pFmt = GetFmt();
     if(pFmt||m_bIsDescriptor)
     {
         SwSection* pSect = pFmt ? pFmt->GetSection() : 0;
         const OUString* pPropertyNames = rPropertyNames.getConstArray();
         for(sal_Int32 nProperty = 0; nProperty < rPropertyNames.getLength(); nProperty++)
         {
-            const SfxItemPropertyMap*	pMap = SfxItemPropertyMap::GetByName(
+            const SfxItemPropertyMap*   pMap = SfxItemPropertyMap::GetByName(
                                                 aPropSet.getPropertyMap(), pPropertyNames[nProperty]);
             if(pMap)
             {
@@ -818,7 +818,7 @@ Sequence< Any > SwXTextSection::getPropertyValues(
                     break;
                     case WID_SECT_LINK     :
                     {
-                         text::SectionFileLink aLink;
+                        text::SectionFileLink aLink;
                         if(m_bIsDescriptor)
                         {
                             if(!pProps->bDDE)
@@ -872,7 +872,7 @@ Sequence< Any > SwXTextSection::getPropertyValues(
                         SwSection* pEnclosingSection = pSect;
                         while ( (pEnclosingSection != NULL) &&
                                 (TOX_CONTENT_SECTION !=
-                                 pEnclosingSection->GetType()) )
+                                pEnclosingSection->GetType()) )
                         {
                             pEnclosingSection = pEnclosingSection->GetParent();
                         }
@@ -1060,7 +1060,7 @@ Sequence< PropertyState > SwXTextSection::getPropertyStates(
 {
     vos::OGuard aGuard(Application::GetSolarMutex());
     Sequence< PropertyState > aStates(rPropertyNames.getLength());
-    SwSectionFmt*	pFmt = GetFmt();
+    SwSectionFmt*   pFmt = GetFmt();
     if(pFmt||m_bIsDescriptor)
     {
         PropertyState* pStates = aStates.getArray();
@@ -1068,7 +1068,7 @@ Sequence< PropertyState > SwXTextSection::getPropertyStates(
         for(sal_Int32 i = 0; i < rPropertyNames.getLength(); i++)
         {
             pStates[i] = PropertyState_DEFAULT_VALUE;
-            const SfxItemPropertyMap*	pMap = SfxItemPropertyMap::GetByName(
+            const SfxItemPropertyMap*   pMap = SfxItemPropertyMap::GetByName(
                                                 aPropSet.getPropertyMap(), pNames[i]);
             if(!pMap)
             {
@@ -1128,14 +1128,14 @@ void SwXTextSection::setPropertyToDefault( const OUString& rPropertyName )
     throw(UnknownPropertyException, RuntimeException)
 {
     vos::OGuard aGuard(Application::GetSolarMutex());
-    SwSectionFmt*	pFmt = GetFmt();
+    SwSectionFmt*   pFmt = GetFmt();
     if(pFmt||m_bIsDescriptor)
     {
-        SwSection	aSection(CONTENT_SECTION, aEmptyStr);
+        SwSection   aSection(CONTENT_SECTION, aEmptyStr);
         SwSection* pSect = pFmt ? pFmt->GetSection() : 0;
         if(pFmt)
             aSection = *pSect;
-        const SfxItemPropertyMap*	pMap = SfxItemPropertyMap::GetByName(
+        const SfxItemPropertyMap*   pMap = SfxItemPropertyMap::GetByName(
                                                 aPropSet.getPropertyMap(), rPropertyName);
         if(!pMap)
             throw UnknownPropertyException();
@@ -1226,8 +1226,8 @@ Any SwXTextSection::getPropertyDefault( const OUString& rPropertyName )
 {
     vos::OGuard aGuard(Application::GetSolarMutex());
     uno::Any aRet;
-    SwSectionFmt*	pFmt = GetFmt();
-    const SfxItemPropertyMap*	pMap = SfxItemPropertyMap::GetByName(
+    SwSectionFmt*   pFmt = GetFmt();
+    const SfxItemPropertyMap*   pMap = SfxItemPropertyMap::GetByName(
                                             aPropSet.getPropertyMap(), rPropertyName);
     switch(pMap->nWID)
     {
@@ -1278,7 +1278,7 @@ OUString SwXTextSection::getName(void) throw( uno::RuntimeException )
 {
     vos::OGuard aGuard(Application::GetSolarMutex());
     String sRet;
-    const SwSectionFmt*	pFmt = GetFmt();
+    const SwSectionFmt* pFmt = GetFmt();
     if(pFmt)
         sRet = pFmt->GetSection()->GetName();
     else if(m_bIsDescriptor)
@@ -1293,10 +1293,10 @@ OUString SwXTextSection::getName(void) throw( uno::RuntimeException )
 void SwXTextSection::setName(const OUString& rName) throw( uno::RuntimeException )
 {
     vos::OGuard aGuard(Application::GetSolarMutex());
-    SwSectionFmt*	pFmt = GetFmt();
+    SwSectionFmt*   pFmt = GetFmt();
     if(pFmt)
     {
-        SwSection	aSection(CONTENT_SECTION, aEmptyStr);
+        SwSection   aSection(CONTENT_SECTION, aEmptyStr);
         SwSection* pSect = pFmt->GetSection();
         aSection = *pSect;
         String sNewName(rName);

@@ -2,9 +2,9 @@
  *
  *  $RCSfile: wrtsh3.cxx,v $
  *
- *  $Revision: 1.1.1.1 $
+ *  $Revision: 1.2 $
  *
- *  last change: $Author: hr $ $Date: 2000-09-18 17:14:53 $
+ *  last change: $Author: th $ $Date: 2001-05-11 09:50:08 $
  *
  *  The Contents of this file are made available subject to the terms of
  *  either of the following licenses
@@ -120,22 +120,22 @@
 using namespace ::com::sun::star;
 using namespace ::rtl;
 
-extern sal_Bool bNoInterrupt;		// in mainwn.cxx
+extern sal_Bool bNoInterrupt;       // in mainwn.cxx
 
-FASTBOOL SwWrtShell::MoveBookMark( 	BookMarkMove eFuncId,
+FASTBOOL SwWrtShell::MoveBookMark(  BookMarkMove eFuncId,
                                     sal_uInt16 nPos,
                                     sal_Bool bStart )
 {
 //JP 08.03.96: die Wizards brauchen die Selektion !!
-//	EndSelect();
+//  EndSelect();
     (this->*fnKillSel)( 0, sal_False );
 
     FASTBOOL bRet = sal_True;
     switch(eFuncId)
     {
         case BOOKMARK_INDEX:bRet = SwCrsrShell::GotoBookmark( nPos );break;
-        case BOOKMARK_NEXT:	bRet = SwCrsrShell::GoNextBookmark();break;
-        case BOOKMARK_PREV:	bRet = SwCrsrShell::GoPrevBookmark();break;
+        case BOOKMARK_NEXT: bRet = SwCrsrShell::GoNextBookmark();break;
+        case BOOKMARK_PREV: bRet = SwCrsrShell::GoPrevBookmark();break;
     }
 
     if( bRet && IsSelFrmMode() )
@@ -168,7 +168,7 @@ void SwWrtShell::DrawSelChanged(SdrView* pView)
     GetView().GetViewFrame()->GetBindings().Invalidate(aInval);
 
     sal_Bool bOldVal = bNoInterrupt;
-    bNoInterrupt = sal_True;	// Trick, um AttrChangedNotify ueber Timer auszufuehren
+    bNoInterrupt = sal_True;    // Trick, um AttrChangedNotify ueber Timer auszufuehren
     GetView().AttrChangedNotify(this);
     bNoInterrupt = bOldVal;
 }
@@ -305,7 +305,7 @@ sal_Bool SwWrtShell::SetURLToButton( const String& rURL, const String& rDescr )
                 // Darf man eine util::URL an dem Objekt setzen?
                 uno::Reference< beans::XPropertySetInfo >  xPropInfoSet = xPropSet->getPropertySetInfo();
                 beans::Property aProp = xPropInfoSet->getPropertyByName( C2U("TargetURL") );
-                if (aProp.Name.len())
+                if (aProp.Name.getLength())
                 {
                     // Ja!
                     aTmp <<= OUString(rDescr);
@@ -329,12 +329,15 @@ sal_Bool SwWrtShell::SetURLToButton( const String& rURL, const String& rDescr )
 
 /*-------------------------------------------------------------------------
     $Log: not supported by cvs2svn $
+    Revision 1.1.1.1  2000/09/18 17:14:53  hr
+    initial import
+
     Revision 1.65  2000/09/18 16:06:27  willem.vandorp
     OpenOffice header added.
-    
+
     Revision 1.64  2000/09/07 15:59:36  os
     change: SFX_DISPATCHER/SFX_BINDINGS removed
-    
+
     Revision 1.63  2000/05/16 09:15:15  os
     project usr removed
 
