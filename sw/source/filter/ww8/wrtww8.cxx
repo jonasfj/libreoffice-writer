@@ -2,9 +2,9 @@
  *
  *  $RCSfile: wrtww8.cxx,v $
  *
- *  $Revision: 1.7 $
+ *  $Revision: 1.8 $
  *
- *  last change: $Author: cmc $ $Date: 2001-02-01 16:11:30 $
+ *  last change: $Author: jp $ $Date: 2001-02-07 12:41:56 $
  *
  *  The Contents of this file are made available subject to the terms of
  *  either of the following licenses
@@ -411,7 +411,7 @@ static sal_Unicode __READONLY_DATA aLangNotEnd[4][51] = {
 {
 0x0028, 0x005b, 0x007b, 0x00a3, 0x00a5, 0x2018, 0x201c, 0x2035, 0x3008, 0x300a,
 0x300c, 0x300e, 0x3010, 0x3014, 0x301d, 0xfe35, 0xfe37, 0xfe39, 0xfe3b, 0xfe3d,
-0xfe3f, 0xfe41, 0xfe43, 0xfe59, 0xfe5b, 0xfe5d, 0xff08, 0xff5b 
+0xfe3f, 0xfe41, 0xfe43, 0xfe59, 0xfe5b, 0xfe5d, 0xff08, 0xff5b
 },
 };
 
@@ -437,7 +437,7 @@ sal_Unicode WW8DopTypography::aJapanEndLevel1[51] =
 
 /*
 Converts the OOo Asian Typography into a best fit match for Microsoft
-Asian typography. This structure is actually dumped to disk within the 
+Asian typography. This structure is actually dumped to disk within the
 Dop Writer. Assumption is that rTypo is cleared to 0 on entry
 */
 void SwWW8Writer::ExportDopTypography(WW8DopTypography &rTypo)
@@ -457,7 +457,7 @@ void SwWW8Writer::ExportDopTypography(WW8DopTypography &rTypo)
     in Word and Writer. I already suspect that they are different between
     different version of word itself.
 
-    So what have come up with is to simply see if any of the four languages 
+    So what have come up with is to simply see if any of the four languages
     in OOo have been changed away from OUR defaults, and if one has then
     export that. If more than one has in the future we may hack in something
     which examines our document properties to see which language is used the
@@ -466,7 +466,7 @@ void SwWW8Writer::ExportDopTypography(WW8DopTypography &rTypo)
 
     /*Our default Japanese Level is 2, this is a special MS hack to set this*/
     rTypo.reserved2 = 1;
-    
+
     for (rTypo.reserved1=8;rTypo.reserved1>0;rTypo.reserved1-=2)
     {
         if (pForbidden = pDoc->GetForbiddenCharacters(rTypo.GetConvertedLang(),
@@ -474,7 +474,7 @@ void SwWW8Writer::ExportDopTypography(WW8DopTypography &rTypo)
 
         {
             if ((memcmp(pForbidden->endLine.getStr(),
-                aLangNotEnd[(rTypo.reserved1-2)/2], 
+                aLangNotEnd[(rTypo.reserved1-2)/2],
                 sizeof(aLangNotEnd[(rTypo.reserved1-2)/2])))
             || (memcmp(pForbidden->beginLine.getStr(),
                 aLangNotBegin[(rTypo.reserved1-2)/2],
@@ -495,7 +495,7 @@ void SwWW8Writer::ExportDopTypography(WW8DopTypography &rTypo)
                         continue;
                     }
                 }
-                
+
                 if (!pUseMe)
                 {
                     pUseMe = pForbidden;
@@ -520,7 +520,7 @@ void SwWW8Writer::ExportDopTypography(WW8DopTypography &rTypo)
             (pUseMe->endLine.getLength());
         if (rTypo.cchLeadingPunct > WW8DopTypography::MaxLeading)
             rTypo.cchLeadingPunct = WW8DopTypography::MaxLeading;
-    
+
         memcpy(rTypo.rgxchFPunct,pUseMe->beginLine.getStr(),
             (rTypo.cchFollowingPunct+1)*2);
 
@@ -1444,7 +1444,8 @@ void SwWW8Writer::InsUInt32( WW8Bytes& rO, UINT32 n )
 
 void SwWW8Writer::InsAsString16( WW8Bytes& rO, const String& rStr )
 {
-    for( const sal_Unicode* pStr = rStr.GetBuffer(); *pStr; ++pStr )
+    const sal_Unicode* pStr = rStr.GetBuffer();
+    for( xub_StrLen n = 0, nLen = rStr.Len(); n < nLen; ++n, ++pStr )
         SwWW8Writer::InsUInt16( rO, *pStr );
 }
 
@@ -1860,7 +1861,7 @@ void SwWW8Writer::WriteFkpPlcUsw()
 
         //Convert OOo asian typography into MS typography structure
         ExportDopTypography(pDop->doptypography);
-        
+
         WriteDop( *this );						// Document-Properties
     }
     Strm().Seek( 0 );
@@ -2253,17 +2254,20 @@ void GetWW8Writer( const String& rFltName, WriterRef& xRet )
 
       Source Code Control System - Header
 
-      $Header: /zpool/svn/migration/cvs_rep_09_09_08/code/sw/source/filter/ww8/wrtww8.cxx,v 1.7 2001-02-01 16:11:30 cmc Exp $
+      $Header: /zpool/svn/migration/cvs_rep_09_09_08/code/sw/source/filter/ww8/wrtww8.cxx,v 1.8 2001-02-07 12:41:56 jp Exp $
 
       Source Code Control System - Update
 
       $Log: not supported by cvs2svn $
+      Revision 1.7  2001/02/01 16:11:30  cmc
+      #83362# Missing i18n header include
+
       Revision 1.6  2001/01/30 20:11:06  cmc
       #83362# CJK Forbidden Character {Im|Ex}port
-    
+
       Revision 1.5  2001/01/23 10:14:33  os
       update of filter configuration
-    
+
       Revision 1.4  2000/11/20 14:12:26  jp
       ReadFilterFlags removed, use new class SwFilterOptions
 
