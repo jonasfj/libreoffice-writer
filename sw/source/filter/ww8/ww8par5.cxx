@@ -2,9 +2,9 @@
  *
  *  $RCSfile: ww8par5.cxx,v $
  *
- *  $Revision: 1.83 $
+ *  $Revision: 1.84 $
  *
- *  last change: $Author: obo $ $Date: 2004-11-16 12:54:28 $
+ *  last change: $Author: obo $ $Date: 2005-01-05 14:34:23 $
  *
  *  The Contents of this file are made available subject to the terms of
  *  either of the following licenses
@@ -2864,13 +2864,12 @@ eF_ResT SwWW8ImplReader::Read_F_Tox( WW8FieldDesc* pF, String& rStr )
                                 FormTokenType ePrevType = TOKEN_END;
                                 FormTokenType eType;
                                 // -> #i21237#
-                                SwFormTokens aPattern = 
+                                SwFormTokens aPattern =
                                     aForm.GetPattern(nLevel);
                                 SwFormTokens::iterator aIt = aPattern.begin();
                                 do
                                 {
-                                    aIt++;
-                                    eType = aIt->eTokenType;
+                                    eType = ++aIt == aPattern.end() ? TOKEN_END : aIt->eTokenType;
 
                                     if (eType == TOKEN_PAGE_NUMS)
                                     {
@@ -2888,10 +2887,10 @@ eF_ResT SwWW8ImplReader::Read_F_Tox( WW8FieldDesc* pF, String& rStr )
                                             }
                                             aForm.SetPattern(nLevel, aPattern);
                                         }
-                                        
+
                                         eType = TOKEN_END;
                                     }
-                                    
+
                                     ePrevType = eType;
                                 }
                                 while (TOKEN_END != eType);
@@ -3012,14 +3011,13 @@ eF_ResT SwWW8ImplReader::Read_F_Tox( WW8FieldDesc* pF, String& rStr )
                                 FormTokenType ePrevType = TOKEN_END;
                                 FormTokenType eType;
 
-                                // -> #i21237#                                
+                                // -> #i21237#
                                 SwFormTokens aPattern = aForm.GetPattern(nLevel);
                                 SwFormTokens::iterator aIt = aPattern.begin();
                                 do
                                 {
-                                    aIt++;
+                                    eType = ++aIt == aPattern.end() ? TOKEN_END : aIt->eTokenType;
 
-                                    eType = aIt->eTokenType;
                                     if (eType == TOKEN_PAGE_NUMS)
                                     {
                                         if (TOKEN_TAB_STOP == ePrevType)
@@ -3074,15 +3072,14 @@ eF_ResT SwWW8ImplReader::Read_F_Tox( WW8FieldDesc* pF, String& rStr )
                             SwFormTokens::iterator aIt = aPattern.begin();
                             do
                             {
-                                aIt++;
-                                eType = aIt->eTokenType;
+                                eType = ++aIt == aPattern.end() ? TOKEN_END : aIt->eTokenType;
 
                                 if (eType == TOKEN_PAGE_NUMS)
                                 {
                                     aIt = aPattern.erase(aIt);
                                     aIt--;
                                     if (
-                                         TOKEN_TAB_STOP == 
+                                         TOKEN_TAB_STOP ==
                                          aIt->eTokenType
                                        )
                                     {
@@ -3117,7 +3114,7 @@ eF_ResT SwWW8ImplReader::Read_F_Tox( WW8FieldDesc* pF, String& rStr )
                 SwFormToken aLinkStart(TOKEN_LINK_START);
                 SwFormToken aLinkEnd(TOKEN_LINK_END);
 
-                // -> #i21237#                
+                // -> #i21237#
                 for(USHORT nLevel = 1; nLevel <= nEnd; ++nLevel)
                 {
                     SwFormTokens aPattern = aForm.GetPattern(nLevel);
@@ -3129,7 +3126,7 @@ eF_ResT SwWW8ImplReader::Read_F_Tox( WW8FieldDesc* pF, String& rStr )
                     aForm.SetPattern(nLevel, aPattern);
 
                 }
-                // <- #i21237#                
+                // <- #i21237#
                 pBase->SetTOXForm(aForm);
             }
 
@@ -3149,6 +3146,45 @@ eF_ResT SwWW8ImplReader::Read_F_Tox( WW8FieldDesc* pF, String& rStr )
                         {
                             if (AddExtraOutlinesAsExtraStyles(*pBase))
                                 eCreateFrom |= (TOX_TEMPLATE | TOX_OUTLINELEVEL);
+
+                            // --> FME 2004-12-16 #i19683# Insert a text token " " between the
+                            // number and entry token. In an ideal world we could handle the
+                            // tab stop between the number and the entry correctly, but I
+                            // currently have no clue how to obtain the tab stop position.
+                            // It is _not_ set at the paragraph style.
+                            SwForm* pForm = 0;
+                            for (USHORT nI = 0; nI < nColls; ++nI)
+                            {
+                                const SwWW8StyInf& rSI = pCollA[nI];
+                                if (rSI.IsOutlineNumbered())
+                                {
+                                    sal_uInt16 nStyleLevel = rSI.nOutlineLevel;
+                                    const SwNumFmt& rFmt = rSI.GetOutlineNumrule()->Get( nStyleLevel );
+                                    if ( SVX_NUM_NUMBER_NONE != rFmt.GetNumberingType() )
+                                    {
+                                        ++nStyleLevel;
+
+                                        if ( !pForm )
+                                            pForm = new SwForm( pBase->GetTOXForm() );
+                                    
+                                        SwFormTokens aPattern = pForm->GetPattern(nStyleLevel);
+                                        SwFormTokens::iterator aIt =
+                                                find_if(aPattern.begin(), aPattern.end(),
+                                                SwFormTokenEqualToFormTokenType(TOKEN_ENTRY_NO));
+                                    
+                                        if ( aIt != aPattern.end() )
+                                        {
+                                            SwFormToken aNumberEntrySeparator( TOKEN_TEXT );
+                                            aNumberEntrySeparator.sText = String::CreateFromAscii(" ");
+                                            aPattern.insert( ++aIt, aNumberEntrySeparator );
+                                            pForm->SetPattern( nStyleLevel, aPattern );
+                                        }
+                                    }
+                                }
+                            }
+                            if ( pForm )
+                                pBase->SetTOXForm( *pForm );
+                            // <--
                         }
 
                         if (eCreateFrom)
@@ -3175,7 +3211,7 @@ eF_ResT SwWW8ImplReader::Read_F_Tox( WW8FieldDesc* pF, String& rStr )
                         SwForm aForm( eType );
                         USHORT nEnd = aForm.GetFormMax()-1;
 
-                        // -> #i21237#                
+                        // -> #i21237#
                         for(USHORT nLevel = 1; nLevel <= nEnd; ++nLevel)
                         {
                             SwFormTokens aPattern = aOldForm.GetPattern(nLevel);
@@ -3188,7 +3224,7 @@ eF_ResT SwWW8ImplReader::Read_F_Tox( WW8FieldDesc* pF, String& rStr )
                             aForm.SetTemplate( nLevel,
                                 aOldForm.GetTemplate(nLevel));
                         }
-                        // <- #i21237#                
+                        // <- #i21237#
 
                         pBase->SetTOXForm( aForm );
                     }
@@ -3209,9 +3245,9 @@ eF_ResT SwWW8ImplReader::Read_F_Tox( WW8FieldDesc* pF, String& rStr )
     // Update fuer TOX anstossen
     rDoc.SetUpdateTOX(true);
 
-    // #i21237#                
+    // #i21237#
     // propagate tab stops from paragraph styles used in TOX to
-    // patterns of the TOX 
+    // patterns of the TOX
     pBase->AdjustTabStops(rDoc, TRUE);
 
     //#i10028# inserting a toc implicltly acts like a parabreak
