@@ -2,9 +2,9 @@
  *
  *  $RCSfile: unomailmerge.cxx,v $
  *
- *  $Revision: 1.6 $
+ *  $Revision: 1.7 $
  *
- *  last change: $Author: vg $ $Date: 2003-04-17 15:53:58 $
+ *  last change: $Author: rt $ $Date: 2003-09-19 08:49:13 $
  *
  *  The Contents of this file are made available subject to the terms of
  *  either of the following licenses
@@ -260,7 +260,7 @@ osl::Mutex &    GetMailMergeMutex()
 }
 
 ////////////////////////////////////////////////////////////
- 
+
 enum CloseResult
 {
     eSuccess,		// successfully closed
@@ -268,7 +268,7 @@ enum CloseResult
     eFailed			// failed for some unknown reason
 };
 static CloseResult CloseModelAndDocSh(
-       Reference< frame::XModel > &rxModel, 
+       Reference< frame::XModel > &rxModel,
        SfxObjectShellRef &rxDocSh )
 {
     CloseResult eResult = eSuccess;
@@ -287,7 +287,7 @@ static CloseResult CloseModelAndDocSh(
         }
         catch (util::CloseVetoException &)
         {
-            //! here we have the problem that the temporary file that is 
+            //! here we have the problem that the temporary file that is
             //! currently being printed will never be deleted. :-(
             eResult = eVetoed;
         }
@@ -518,8 +518,8 @@ namespace
 ////////////////////////////////////////////////////////////
 
 static BOOL DeleteTmpFile_Impl(
-        Reference< frame::XModel > &rxModel, 
-        SfxObjectShellRef &rxDocSh, 
+        Reference< frame::XModel > &rxModel,
+        SfxObjectShellRef &rxDocSh,
         const String &rTmpFileURL )
 {
     BOOL bRes = FALSE;
@@ -1221,8 +1221,7 @@ uno::Reference< uno::XInterface > SAL_CALL SwXMailMerge_createInstance(
     vos::OGuard aGuard( Application::GetSolarMutex() );
 
     //the module may not be loaded
-    SW_MOD()->Load();
-
+    SwDLL::Init();
     uno::Reference< uno::XInterface > xRef = (cppu::OWeakObject *) new SwXMailMerge();
     return xRef;
 }
