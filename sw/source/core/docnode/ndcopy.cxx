@@ -2,9 +2,9 @@
  *
  *  $RCSfile: ndcopy.cxx,v $
  *
- *  $Revision: 1.6 $
+ *  $Revision: 1.7 $
  *
- *  last change: $Author: jp $ $Date: 2002-03-14 16:59:30 $
+ *  last change: $Author: hbrinkm $ $Date: 2002-11-05 12:37:07 $
  *
  *  The Contents of this file are made available subject to the terms of
  *  either of the following licenses
@@ -698,8 +698,7 @@ BOOL SwDoc::Copy( SwPaM& rPam, SwPosition& rPos ) const
     BOOL bRet = FALSE;
 
     if( pDoc && pDoc != this )
-        bRet = _Copy( rPam, rPos, TRUE, pRedlineRange );	// nur normales Kopieren
-
+        bRet = _Copy( rPam, rPos, TRUE, pRedlineRange );    // nur normales Kopieren
     // Copy in sich selbst (ueber mehrere Nodes wird hier gesondert
     // behandelt; in einem TextNode wird normal behandelt)
     else if( ! ( *pStt <= rPos && rPos < *pEnd &&
