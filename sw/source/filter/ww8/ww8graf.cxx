@@ -2,9 +2,9 @@
  *
  *  $RCSfile: ww8graf.cxx,v $
  *
- *  $Revision: 1.120 $
+ *  $Revision: 1.121 $
  *
- *  last change: $Author: rt $ $Date: 2004-07-12 13:34:57 $
+ *  last change: $Author: kz $ $Date: 2004-08-02 14:21:07 $
  *
  *  The Contents of this file are made available subject to the terms of
  *  either of the following licenses
@@ -3094,7 +3094,7 @@ SwFlyFrmFmt* SwWW8ImplReader::ConvertDrawTextToFly(SdrObject* &rpObject,
     return pRetFrmFmt;
 }
 
-void MatchEscherMirrorIntoFlySet(const SvxMSDffImportRec &rRecord, 
+void MatchEscherMirrorIntoFlySet(const SvxMSDffImportRec &rRecord,
     SfxItemSet &rFlySet)
 {
     if (rRecord.bVFlip || rRecord.bHFlip)
