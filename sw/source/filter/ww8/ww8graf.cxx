@@ -2,9 +2,9 @@
  *
  *  $RCSfile: ww8graf.cxx,v $
  *
- *  $Revision: 1.30 $
+ *  $Revision: 1.31 $
  *
- *  last change: $Author: cmc $ $Date: 2001-08-03 15:39:16 $
+ *  last change: $Author: fme $ $Date: 2001-08-16 09:27:08 $
  *
  *  The Contents of this file are made available subject to the terms of
  *  either of the following licenses
@@ -316,11 +316,7 @@ using namespace ::rtl;
     }
 #endif
     if( nWC[3] & 0x1 ){								// Spezialfarbe: Grau
-#ifdef VCL
         register BYTE u = (BYTE)( (ULONG)( 200 - nWC[0] ) * 256 / 200 );
-#else
-        register USHORT u = (USHORT)( (ULONG)( 200 - nWC[0] ) * 65535L / 200 );
-#endif
         return Color( u, u, u );
     }
                     // User-Color
@@ -451,21 +447,12 @@ static void SetFill( SfxItemSet& rSet, WW8_DP_FILL& rFill )
         }else{										// Brush -> Farbmischung
             Color aB( WW8TransCol( rFill.dlpcBg ) );
             Color aF( WW8TransCol( rFill.dlpcFg ) );
-#ifdef VCL
             aB.SetRed( (BYTE)( ( (ULONG)aF.GetRed() * nPatA[nPat]
                         + (ULONG)aB.GetRed() * ( 100 - nPatA[nPat] ) ) / 100 ) );
             aB.SetGreen( (BYTE)( ( (ULONG)aF.GetGreen() * nPatA[nPat]
                         + (ULONG)aB.GetGreen() * ( 100 - nPatA[nPat] ) ) / 100 ) );
             aB.SetBlue( (BYTE)( ( (ULONG)aF.GetBlue() * nPatA[nPat]
                         + (ULONG)aB.GetBlue() * ( 100 - nPatA[nPat] ) ) / 100 ) );
-#else
-            aB.SetRed( (USHORT)( ( (ULONG)aF.GetRed() * nPatA[nPat]
-                        + (ULONG)aB.GetRed() * ( 100 - nPatA[nPat] ) ) / 100 ) );
-            aB.SetGreen( (USHORT)( ( (ULONG)aF.GetGreen() * nPatA[nPat]
-                        + (ULONG)aB.GetGreen() * ( 100 - nPatA[nPat] ) ) / 100 ) );
-            aB.SetBlue( (USHORT)( ( (ULONG)aF.GetBlue() * nPatA[nPat]
-                        + (ULONG)aB.GetBlue() * ( 100 - nPatA[nPat] ) ) / 100 ) );
-#endif
             rSet.Put( XFillColorItem( aEmptyStr, aB ) );
         }
     }
@@ -2126,8 +2113,8 @@ void SwWW8ImplReader::ProcessEscherAlign( SvxMSDffImportRec* pRecord,
             :  2 <= nYRelTo  ?  FLY_AT_CNTNT :  FLY_PAGE;
 
 
-        //No drawing layer stuff in the header, so if 
-        //this is going to be in the headerfooter and 
+        //No drawing layer stuff in the header, so if
+        //this is going to be in the headerfooter and
         //cannot be replaced by a fly then anchor it
         //to the current page.
         if ((bIsHeader || bIsFooter) && (!pRecord->bReplaceByFly))
@@ -2976,29 +2963,32 @@ void SwWW8ImplReader::EmbeddedFlyFrameSizeLock(SwNodeIndex &rStart,
 
       Source Code Control System - Header
 
-      $Header: /zpool/svn/migration/cvs_rep_09_09_08/code/sw/source/filter/ww8/ww8graf.cxx,v 1.30 2001-08-03 15:39:16 cmc Exp $
+      $Header: /zpool/svn/migration/cvs_rep_09_09_08/code/sw/source/filter/ww8/ww8graf.cxx,v 1.31 2001-08-16 09:27:08 fme Exp $
 
       Source Code Control System - Update
 
       $Log: not supported by cvs2svn $
+      Revision 1.30  2001/08/03 15:39:16  cmc
+      #90098# Drawing objects in headers must be anchored to page as a hackaround for lack of true drawing in header support
+
       Revision 1.29  2001/07/31 18:38:30  jp
       Bug #90443#: don't call GetSlotId with our filter items
-    
+
       Revision 1.28  2001/06/12 09:24:43  cmc
       #87558# #87591# ##976## ##980## Implement draw textbox attributes by using normal writer import and mapping to draw attributes using slotids
-    
+
       Revision 1.27  2001/06/06 12:46:32  cmc
       #76673# ##1005## Fastsave table Insert/Delete Cell implementation, const reworking required
-    
+
       Revision 1.26  2001/06/02 16:06:14  cmc
       #68662# ##989## parent frame of a fly in fly exported as a table
-    
+
       Revision 1.25  2001/05/29 13:52:03  cmc
       #87557# ##974## CJK FontHeight in drawing layer
-    
+
       Revision 1.24  2001/04/25 18:27:07  jp
       Bug #83181#: don't insert in GroupObjects SW-OLE-Objects
-    
+
       Revision 1.23  2001/04/25 12:55:01  cmc
       ##761## reenable auto for draw layer, keep auto for table borders and shadings disabled
 

@@ -2,9 +2,9 @@
  *
  *  $RCSfile: drawbase.cxx,v $
  *
- *  $Revision: 1.1.1.1 $
+ *  $Revision: 1.2 $
  *
- *  last change: $Author: hr $ $Date: 2000-09-18 17:14:46 $
+ *  last change: $Author: fme $ $Date: 2001-08-16 09:34:40 $
  *
  *  The Contents of this file are made available subject to the terms of
  *  either of the following licenses
@@ -681,11 +681,7 @@ void SwDrawBase::BreakCreate()
 void SwDrawBase::SetDrawPointer()
 {
     SdrView *pSdrView = pSh->GetDrawView();
-#ifdef VCL
         Point aPnt(pWin->OutputToScreenPixel(pWin->GetPointerPosPixel()));
-#else
-        Point aPnt = Pointer::GetPosPixel();
-#endif
     aPnt = pWin->PixelToLogic(pWin->ScreenToOutputPixel(aPnt));
     const Pointer aPointTyp = pSdrView->GetPreferedPointer(aPnt, pSh->GetOut());
     const Pointer aDrawPt(aPointTyp);
@@ -729,12 +725,15 @@ void SwDrawBase::EnterSelectMode(const MouseEvent& rMEvt)
 /*************************************************************************
 
       $Log: not supported by cvs2svn $
+      Revision 1.1.1.1  2000/09/18 17:14:46  hr
+      initial import
+
       Revision 1.80  2000/09/18 16:06:01  willem.vandorp
       OpenOffice header added.
-    
+
       Revision 1.79  2000/09/07 15:59:27  os
       change: SFX_DISPATCHER/SFX_BINDINGS removed
-    
+
       Revision 1.78  2000/05/10 11:54:15  os
       Basic API removed
 
