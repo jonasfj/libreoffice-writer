@@ -2,9 +2,9 @@
  *
  *  $RCSfile: unotxdoc.cxx,v $
  *
- *  $Revision: 1.33 $
+ *  $Revision: 1.34 $
  *
- *  last change: $Author: mtg $ $Date: 2001-04-11 10:28:58 $
+ *  last change: $Author: os $ $Date: 2001-04-17 07:38:10 $
  *
  *  The Contents of this file are made available subject to the terms of
  *  either of the following licenses
@@ -1537,15 +1537,10 @@ void SwXTextDocument::Invalidate()
                     aNumTunnel.getValue();
                 pNumFmt = (SvNumberFormatsSupplierObj*)
                         xNumTunnel->getSomething(SvNumberFormatsSupplierObj::getUnoTunnelId());
-
+                pNumFmt->SetNumberFormatter(0);
             }
             DBG_ASSERT(pNumFmt, "No number formatter available");
-            pNumFmt->SetNumberFormatter(0);
         }
-        Reference< XInterface >  x0;
-        xNumFmtAgg->setDelegator(x0);
-        xNumFmtAgg = 0;
-
     }
     InitNewDoc();
     pDocShell = 0;
@@ -2106,7 +2101,7 @@ void SwXTextDocument::setPropertyValue(const OUString& rPropertyName,
             {
                 // if setting to true, and we don't have an
                 // SdrModel, then we are changing the default and
-                // must thus create an SdrModel, if we don't have an 
+                // must thus create an SdrModel, if we don't have an
                 // SdrModel and we are leaving the default at false,
                 // we don't need to make an SdrModel and can do nothing
                 pDrawDoc = reinterpret_cast < SwDrawDocument * > (pDocShell->GetDoc()->MakeDrawModel() );
@@ -2125,9 +2120,9 @@ void SwXTextDocument::setPropertyValue(const OUString& rPropertyName,
             {
                 // if setting to false, and we don't have an
                 // SdrModel, then we are changing the default and
-                // must thus create an SdrModel, if we don't have an 
+                // must thus create an SdrModel, if we don't have an
                 // SdrModel and we are leaving the default at true,
-                // we don't need to make an SdrModel and can do 
+                // we don't need to make an SdrModel and can do
                 // nothing
                 pDrawDoc = reinterpret_cast < SwDrawDocument * > (pDocShell->GetDoc()->MakeDrawModel() );
                 pDrawDoc->SetOpenInDesignMode ( bMode );
@@ -2303,7 +2298,7 @@ Any SwXTextDocument::getPropertyValue(const OUString& rPropertyName)
         {
             SfxPrinter *pPrinter = pDocShell->GetDoc()->GetPrt ( sal_False );
             aAny <<= pPrinter ? OUString ( pPrinter->GetName()) : OUString();
-            
+
         }
         break;
         case WID_DOC_IS_KERN_ASIAN_PUNCTUATION:
@@ -2318,7 +2313,7 @@ Any SwXTextDocument::getPropertyValue(const OUString& rPropertyName)
             sal_Bool bAuto;
             if ( ( pDrawDoc = reinterpret_cast < SwDrawDocument * > (pDocShell->GetDoc()->GetDrawModel() ) ) )
                 bAuto = pDrawDoc->GetAutoControlFocus();
-            else 
+            else
                 bAuto = sal_False;
             aAny.setValue(&bAuto, ::getBooleanCppuType());
         }
@@ -2329,7 +2324,7 @@ Any SwXTextDocument::getPropertyValue(const OUString& rPropertyName)
             sal_Bool bMode;
             if ( ( pDrawDoc = reinterpret_cast < SwDrawDocument * > (pDocShell->GetDoc()->GetDrawModel() ) ) )
                 bMode = pDrawDoc->GetOpenInDesignMode();
-            else 
+            else
                 bMode = sal_True;
             aAny.setValue(&bMode, ::getBooleanCppuType());
         }
@@ -2488,7 +2483,7 @@ void SwXTextDocument::updateLinks(  ) throw(RuntimeException)
     }
 }
 //XPropertyState
-PropertyState SAL_CALL SwXTextDocument::getPropertyState( const OUString& rPropertyName ) 
+PropertyState SAL_CALL SwXTextDocument::getPropertyState( const OUString& rPropertyName )
     throw (UnknownPropertyException, RuntimeException)
 {
     ::vos::OGuard aGuard(Application::GetSolarMutex());
@@ -2554,7 +2549,7 @@ PropertyState SAL_CALL SwXTextDocument::getPropertyState( const OUString& rPrope
     }
     return eRet;
 }
-Sequence< PropertyState > SAL_CALL SwXTextDocument::getPropertyStates( const Sequence< OUString >& rPropertyNames ) 
+Sequence< PropertyState > SAL_CALL SwXTextDocument::getPropertyStates( const Sequence< OUString >& rPropertyNames )
     throw (UnknownPropertyException, RuntimeException)
 {
     const sal_Int32 nCount = rPropertyNames.getLength();
@@ -2567,7 +2562,7 @@ Sequence< PropertyState > SAL_CALL SwXTextDocument::getPropertyStates( const Seq
 
     return aRet;
 }
-void SAL_CALL SwXTextDocument::setPropertyToDefault( const OUString& rPropertyName ) 
+void SAL_CALL SwXTextDocument::setPropertyToDefault( const OUString& rPropertyName )
     throw (UnknownPropertyException, RuntimeException)
 {
     ::vos::OGuard aGuard(Application::GetSolarMutex());
@@ -2602,7 +2597,7 @@ void SAL_CALL SwXTextDocument::setPropertyToDefault( const OUString& rPropertyNa
         break;
     }
 }
-Any SAL_CALL SwXTextDocument::getPropertyDefault( const OUString& rPropertyName ) 
+Any SAL_CALL SwXTextDocument::getPropertyDefault( const OUString& rPropertyName )
     throw (UnknownPropertyException, WrappedTargetException, RuntimeException)
 {
     ::vos::OGuard aGuard(Application::GetSolarMutex());
