@@ -2,9 +2,9 @@
  *
  *  $RCSfile: unotbl.cxx,v $
  *
- *  $Revision: 1.40 $
+ *  $Revision: 1.41 $
  *
- *  last change: $Author: mtg $ $Date: 2001-10-18 15:35:41 $
+ *  last change: $Author: mtg $ $Date: 2001-10-23 12:17:53 $
  *
  *  The Contents of this file are made available subject to the terms of
  *  either of the following licenses
@@ -605,7 +605,7 @@ void lcl_GetTblSeparators(uno::Any& rRet, SwTable* pTable, SwTableBox* pBox, sal
     uno::Sequence< TableColumnSeparator> aColSeq(nSepCount);
      TableColumnSeparator* pArray = aColSeq.getArray();
     sal_Bool bError = sal_False;
-    for(sal_uInt16 i = 0; i < nSepCount; i++)
+    for(sal_uInt16 i = 0; i < nSepCount; i++)	
     {
         pArray[i].Position = aCols[i];
         pArray[i].IsVisible = !aCols.IsHidden(i);
@@ -1699,7 +1699,10 @@ sal_Bool SwXTextTableCursor::mergeRange(void) throw( uno::RuntimeException )
         SwUnoTableCrsr* pTblCrsr = *pUnoCrsr;
         pTblCrsr->MakeBoxSels();
 
-        bRet = TBLMERGE_OK == pTblCrsr->GetDoc()->MergeTbl(*pTblCrsr);
+        {
+            UnoActionContext aContext(pUnoCrsr->GetDoc());
+            bRet = TBLMERGE_OK == pTblCrsr->GetDoc()->MergeTbl(*pTblCrsr);
+        }
         pTblCrsr->MakeBoxSels();
     }
     return bRet;
@@ -1720,8 +1723,10 @@ sal_Bool SwXTextTableCursor::splitRange(sal_Int16 Count, sal_Bool Horizontal) th
         }
         SwUnoTableCrsr* pTblCrsr = *pUnoCrsr;
         pTblCrsr->MakeBoxSels();
-
-        bRet = pTblCrsr->GetDoc()->SplitTbl( pTblCrsr->GetBoxes(), !Horizontal, Count );
+        {
+            UnoActionContext aContext(pUnoCrsr->GetDoc());
+            bRet = pTblCrsr->GetDoc()->SplitTbl( pTblCrsr->GetBoxes(), !Horizontal, Count );
+        }
         pTblCrsr->MakeBoxSels();
     }
     return bRet;
