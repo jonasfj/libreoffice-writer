@@ -2,9 +2,9 @@
  *
  *  $RCSfile: unoobj.hxx,v $
  *
- *  $Revision: 1.33 $
+ *  $Revision: 1.34 $
  *
- *  last change: $Author: obo $ $Date: 2004-06-01 07:39:53 $
+ *  last change: $Author: kz $ $Date: 2004-08-02 13:58:44 $
  *
  *  The Contents of this file are made available subject to the terms of
  *  either of the following licenses
@@ -275,8 +275,10 @@ SV_DECL_PTRARR(SwDependArr, SwDepend*, 2, 2);
 SwPageDesc*	GetPageDescByName_Impl(SwDoc& rDoc, const String& rName);
 ::com::sun::star::uno::Sequence< sal_Int8 > CreateUnoTunnelId();
 
+// OD 2004-05-07 #i28701# - adjust 4th parameter
 void CollectFrameAtNode( SwClient& rClnt, const SwNodeIndex& rIdx,
-                            SwDependArr& rFrameArr, BOOL bSort );
+                         SwDependArr& rFrameArr,
+                         const bool _bAtCharAnchoredObjs );
 
 /* -----------------29.04.98 07:35-------------------
  *
@@ -446,7 +448,7 @@ class SwXTextCursor : public SwXTextCursor_Base,
 
     void 	DeleteAndInsert(const String& rText);
 
-    DECL_STATIC_LINK( SwXTextCursor, RemoveCursor_Impl, 
+    DECL_STATIC_LINK( SwXTextCursor, RemoveCursor_Impl,
                       ::com::sun::star::uno::Reference<
                       ::com::sun::star::uno::XInterface>* );
 
@@ -458,7 +460,7 @@ public:
     SwXTextCursor(::com::sun::star::uno::Reference< ::com::sun::star::text::XText >  xParent, SwUnoCrsr* pSourceCrsr, CursorType eSet = CURSOR_ALL);
     //invalid Cursor!
     SwXTextCursor(SwXText* pParent = 0);
-    
+
 
     static const ::com::sun::star::uno::Sequence< sal_Int8 > & getUnoTunnelId();
 
@@ -524,16 +526,16 @@ public:
     virtual ::com::sun::star::uno::Any SAL_CALL getPropertyDefault( const ::rtl::OUString& aPropertyName ) throw(::com::sun::star::beans::UnknownPropertyException, ::com::sun::star::lang::WrappedTargetException, ::com::sun::star::uno::RuntimeException);
 
     static void SwXTextCursor::SetPropertyValue(
-                        SwPaM& rPaM, 
-                        const SfxItemPropertySet& rPropSet, 
-                        const rtl::OUString& rPropertyName, 
-                        const ::com::sun::star::uno::Any& aValue, 
+                        SwPaM& rPaM,
+                        const SfxItemPropertySet& rPropSet,
+                        const rtl::OUString& rPropertyName,
+                        const ::com::sun::star::uno::Any& aValue,
                         const SfxItemPropertyMap* pMap = 0,
-                        USHORT nAttrMode = 0)  
-                            throw(::com::sun::star::beans::UnknownPropertyException, 
-                                ::com::sun::star::beans::PropertyVetoException, 
-                                ::com::sun::star::lang::IllegalArgumentException, 
-                                ::com::sun::star::lang::WrappedTargetException, 
+                        USHORT nAttrMode = 0)
+                            throw(::com::sun::star::beans::UnknownPropertyException,
+                                ::com::sun::star::beans::PropertyVetoException,
+                                ::com::sun::star::lang::IllegalArgumentException,
+                                ::com::sun::star::lang::WrappedTargetException,
                                 ::com::sun::star::uno::RuntimeException);
      static ::com::sun::star::uno::Any  SwXTextCursor::GetPropertyValue(	SwPaM& rPaM, const SfxItemPropertySet& rPropSet, const ::rtl::OUString& rPropertyName) throw(::com::sun::star::beans::UnknownPropertyException, ::com::sun::star::lang::WrappedTargetException, ::com::sun::star::uno::RuntimeException);
      static ::com::sun::star::uno::Sequence< ::com::sun::star::beans::PropertyState > SwXTextCursor::GetPropertyStates(	SwPaM& rPaM, SfxItemPropertySet& rPropSet,		const ::com::sun::star::uno::Sequence< ::rtl::OUString >& PropertyNames, SwGetPropertyStatesCaller eCaller = SW_PROPERTY_STATE_CALLER_DEFAULT)			throw(::com::sun::star::beans::UnknownPropertyException, ::com::sun::star::uno::RuntimeException);
@@ -669,7 +671,7 @@ protected:
     virtual ~SwXBookmark();
 public:
         SwXBookmark(SwBookmark* pBkm = 0, SwDoc* pDoc = 0);
-        
+
     TYPEINFO();
 
     static const ::com::sun::star::uno::Sequence< sal_Int8 > & getUnoTunnelId();
@@ -729,7 +731,7 @@ protected:
     virtual ~SwXBodyText();
 public:
     SwXBodyText(SwDoc* pDoc);
-    
+
 
     virtual ::com::sun::star::uno::Any SAL_CALL queryInterface( const ::com::sun::star::uno::Type& aType ) throw(::com::sun::star::uno::RuntimeException);
     virtual void SAL_CALL acquire(  ) throw(){OWeakObject::acquire();}
