@@ -2,9 +2,9 @@
  *
  *  $RCSfile: writerhelper.cxx,v $
  *
- *  $Revision: 1.10 $
+ *  $Revision: 1.11 $
  *
- *  last change: $Author: rt $ $Date: 2004-09-20 15:19:16 $
+ *  last change: $Author: kz $ $Date: 2004-10-04 19:17:58 $
  *
  *  The Contents of this file are made available subject to the terms of
  *  either of the following licenses
@@ -62,10 +62,17 @@
 /* -*- Mode: C; tab-width: 4; indent-tabs-mode: nil -*- */
 
 #ifndef SW_WRITERHELPER
-#	include "writerhelper.hxx" 
+#	include "writerhelper.hxx"
 #endif
 #ifndef SW_MS_MSFILTER_HXX
 #   include <msfilter.hxx>
+#endif
+
+#ifndef _COM_SUN_STAR_EMBED_EMBEDSTATES_HPP_
+#include <com/sun/star/embed/EmbedStates.hpp>
+#endif
+#ifndef _COM_SUN_STAR_UTIL_XCLOSEABLE_HPP_
+#include <com/sun/star/util/XCloseable.hpp>
 #endif
 
 #include <algorithm>                //std::swap
@@ -140,6 +147,10 @@
 #ifndef _FCHRFMT_HXX
 #   include <fchrfmt.hxx>           //SwFmtCharFmt
 #endif
+#ifndef _UNOTOOLS_STREAMWRAP_HXX
+#   include <unotools/streamwrap.hxx>
+#endif
+
 #ifdef DEBUGDUMP
 #   ifndef _SV_SVAPP_HXX
 #       include <vcl/svapp.hxx>
@@ -155,7 +166,7 @@
 #   endif
 #endif
 
-namespace 
+namespace
 {
     /*
      Stroustroup forgets copy_if, See C++ Programming language Chp 18, pg 530
@@ -173,7 +184,7 @@ namespace
     }
 
     //Utility to sort SwTxtFmtColl's by their outline numbering level
-    class outlinecmp : public 
+    class outlinecmp : public
         std::binary_function<const SwTxtFmtColl*, const SwTxtFmtColl*, bool>
     {
     public:
@@ -191,7 +202,7 @@ namespace
     /*
      Utility to convert a SwPosFlyFrms into a simple vector of sw::Frames
 
-     The crucial thing is that a sw::Frame always has an anchor which 
+     The crucial thing is that a sw::Frame always has an anchor which
      points to some content in the document. This is a requirement of exporting
      to Word
     */
@@ -216,7 +227,7 @@ namespace
     }
 
     /*
-     Utility to extract flyfmts from a document, potentially from a 
+     Utility to extract flyfmts from a document, potentially from a
      selection, and with bAll off ignores the drawing objects
     */
     sw::Frames GetFrames(const SwDoc &rDoc, SwPaM *pPaM, bool bAll)
@@ -242,11 +253,11 @@ namespace
         }
     };
 }
- 
+
 namespace sw
 {
     Frame::Frame(const SwFrmFmt &rFmt, const SwPosition &rPos)
-        : mpFlyFrm(&rFmt), maPos(rPos), meWriterType(eTxtBox), 
+        : mpFlyFrm(&rFmt), maPos(rPos), meWriterType(eTxtBox),
         mpStartFrameContent(0)
     {
         mbIsInline = (rFmt.GetAnchor().GetAnchorId() == FLY_IN_CNTNT);
@@ -338,45 +349,45 @@ namespace sw
             return nWhich;
         }
 
-        USHORT GetSetWhichFromSwDocWhich(const SfxItemSet &rSet, 
+        USHORT GetSetWhichFromSwDocWhich(const SfxItemSet &rSet,
             const SwDoc &rDoc, USHORT nWhich)
         {
             if (RES_WHICHHINT_END < *(rSet.GetRanges()))
             {
-                nWhich = TransformWhichBetweenPools(*rSet.GetPool(), 
+                nWhich = TransformWhichBetweenPools(*rSet.GetPool(),
                     rDoc.GetAttrPool(), nWhich);
             }
             return nWhich;
         }
 
-        DrawingOLEAdaptor::DrawingOLEAdaptor(SdrOle2Obj &rObj, 
-            SvPersist &rPers)
-            : msOrigPersistName(rObj.GetPersistName()), 
-            mxIPRef(rObj.GetObjRef()), mrPers(rPers)
+        DrawingOLEAdaptor::DrawingOLEAdaptor(SdrOle2Obj &rObj,
+            SfxObjectShell &rPers)
+            : msOrigPersistName(rObj.GetPersistName()),
+            mxIPRef(rObj.GetObjRef()), mrPers(rPers),
+            mpGraphic( rObj.GetGraphic() )
         {
-            rObj.SetPersistName(String());
-            rObj.SetObjRef(SvInPlaceObjectRef());
+            //rObj.SetPersistName(String());
+            //rObj.SetObjRef(0);
+            rObj.AbandonObject();
         }
 
-        bool DrawingOLEAdaptor::TransferToDoc(const String &rName)
+        bool DrawingOLEAdaptor::TransferToDoc( ::rtl::OUString &rName )
         {
-            ASSERT(mxIPRef.Is(), "Transferring invalid object to doc");
-            if (!mxIPRef.Is())
+            ASSERT(mxIPRef.is(), "Transferring invalid object to doc");
+            if (!mxIPRef.is())
                 return false;
 
-            SvInfoObjectRef refObj = new SvEmbeddedInfoObject(mxIPRef, rName);
-            bool bSuccess = mrPers.Move(refObj, rName);
+            bool bSuccess = mrPers.GetEmbeddedObjectContainer().InsertEmbeddedObject( mxIPRef, rName );
             if (bSuccess)
             {
-                SvPersist *pO = mxIPRef;
-                ASSERT(!pO->IsModified(), "Not expected to be modified here");
-                if (pO->IsModified())
-                {
-                    pO->DoSave();
-                    pO->DoSaveCompleted();
-                }
-                mxIPRef.Clear();
-                bSuccess = mrPers.Unload(pO);
+                if ( mpGraphic )
+                    ::svt::EmbeddedObjectRef::SetGraphicToContainer( *mpGraphic,
+                                                                    mrPers.GetEmbeddedObjectContainer(),
+                                                                    rName,
+                                                                    ::rtl::OUString() );
+
+                //mxIPRef->changeState( com::sun::star::embed::EmbedStates::LOADED );
+                mxIPRef = 0;
             }
 
             return bSuccess;
@@ -384,16 +395,20 @@ namespace sw
 
         DrawingOLEAdaptor::~DrawingOLEAdaptor()
         {
-            if (mxIPRef.Is())
+            if (mxIPRef.is())
             {
-                if (SvInfoObject* pInfo = mrPers.Find(msOrigPersistName))
+                DBG_ASSERT( !mrPers.GetEmbeddedObjectContainer().HasEmbeddedObject( mxIPRef ), "Object in adaptor is inserted?!" );
+                try
                 {
-                    pInfo->SetDeleted(TRUE);
-                    pInfo->SetObj(0);
+                    com::sun::star::uno::Reference < com::sun::star::util::XCloseable > xClose( mxIPRef, com::sun::star::uno::UNO_QUERY );
+                    if ( xClose.is() )
+                        xClose->close(sal_True);
                 }
-                mxIPRef->DoClose();
-                mrPers.Remove(mxIPRef);
-                mxIPRef.Clear();
+                catch ( com::sun::star::util::CloseVetoException& )
+                {
+                }
+
+                mxIPRef = 0;
             }
         }
 
@@ -415,7 +430,7 @@ namespace sw
                 aURL.Append(aFileName);
 
                 pDbgOut = ::utl::UcbStreamHelper::CreateStream(
-                    aURL.GetMainURL(INetURLObject::NO_DECODE), 
+                    aURL.GetMainURL(INetURLObject::NO_DECODE),
                     STREAM_TRUNC | STREAM_WRITE);
             }
             return pDbgOut;
@@ -478,7 +493,7 @@ namespace sw
         {
             SetObjectLayer(rObject, eHeaven);
         }
-        
+
         void SetLayer::SetObjectLayer(SdrObject &rObject, Layer eLayer) const
         {
             if (FmFormInventor == rObject.GetObjInventor())
@@ -506,7 +521,7 @@ namespace sw
         }
 
         SetLayer::SetLayer(const SwDoc &rDoc)
-            : mnHeavenLayer(rDoc.GetHeavenId()), 
+            : mnHeavenLayer(rDoc.GetHeavenId()),
             mnHellLayer(rDoc.GetHellId()),
             mnFormLayer(rDoc.GetControlsId())
         {
@@ -534,14 +549,14 @@ namespace sw
                 SfxItemIter aIter(rSet);
                 if (const SfxPoolItem *pItem = aIter.GetCurItem())
                 {
-                    do 
+                    do
                         rItems[pItem->Which()] = pItem;
                     while (!aIter.IsAtEnd() && (pItem = aIter.NextItem()));
                 }
             }
         }
 
-        const SfxPoolItem *SearchPoolItems(const PoolItems &rItems, 
+        const SfxPoolItem *SearchPoolItems(const PoolItems &rItems,
             sal_uInt16 eType)
         {
             sw::cPoolItemIter aIter = rItems.find(eType);
@@ -585,7 +600,7 @@ namespace sw
             if (!pColl)
             {
                 // Collection not found, try in Pool ?
-                sal_uInt16 n = SwStyleNameMapper::GetPoolIdFromUIName(rName, 
+                sal_uInt16 n = SwStyleNameMapper::GetPoolIdFromUIName(rName,
                     GET_POOLID_TXTCOLL);
                 if (n != SAL_MAX_UINT16)       // found or standard
                     pColl = rDoc.GetTxtCollFromPoolSimple(n, false);
@@ -622,14 +637,14 @@ namespace sw
             return GetFrames(rDoc, pPaM, false);
         }
 
-        Frames GetFramesBetweenNodes(const Frames &rFrames, 
+        Frames GetFramesBetweenNodes(const Frames &rFrames,
             const SwNode &rStart, const SwNode &rEnd)
         {
             Frames aRet;
             ULONG nEnd = rEnd.GetIndex();
             for (ULONG nI = rStart.GetIndex(); nI < nEnd; ++nI)
             {
-                my_copy_if(rFrames.begin(), rFrames.end(), 
+                my_copy_if(rFrames.begin(), rFrames.end(),
                     std::back_inserter(aRet), anchoredto(nI));
             }
             return aRet;
@@ -639,7 +654,7 @@ namespace sw
         Frames GetFramesInNode(const Frames &rFrames, const SwNode &rNode)
         {
             Frames aRet;
-            my_copy_if(rFrames.begin(), rFrames.end(), 
+            my_copy_if(rFrames.begin(), rFrames.end(),
                 std::back_inserter(aRet), anchoredto(rNode.GetIndex()));
             return aRet;
         }
@@ -648,7 +663,7 @@ namespace sw
         {
             const SwNumRule *pRule = 0;
             const SwNodeNum* pNum = 0;
-            if ( 
+            if (
                 (pNum = rTxtNode.GetNum()) &&
                 (MAXLEVEL > pNum->GetLevel()) &&
                 (pRule = rTxtNode.GetNumRule())
@@ -661,7 +676,7 @@ namespace sw
             if (!rTxtNode.GetDoc())
                 return 0;
 
-            if ( 
+            if (
                   (pNum = rTxtNode.GetOutlineNum()) &&
                   (MAXLEVEL > pNum->GetLevel()) &&
                   (pRule = rTxtNode.GetDoc()->GetOutlineNumRule())
@@ -690,7 +705,7 @@ namespace sw
             if (!rTxtNode.GetDoc())
                 return 0;
 
-            if ( 
+            if (
                 (pNum = rTxtNode.GetOutlineNum()) &&
                 (MAXLEVEL > pNum->GetLevel()) &&
                 (pRule = rTxtNode.GetDoc()->GetOutlineNumRule())
@@ -708,7 +723,7 @@ namespace sw
             const SwNumRule *pRule = 0;
             const SwNodeNum* pNum;
 
-            if ( 
+            if (
                 (pNum = rTxtNode.GetNum()) &&
                 (MAXLEVEL > pNum->GetLevel()) &&
                 (pRule = rTxtNode.GetNumRule())
@@ -778,7 +793,7 @@ namespace sw
                 return Polygon();
             else
             {
-                ASSERT(rNewPolyPoly.Count() == 1, 
+                ASSERT(rNewPolyPoly.Count() == 1,
                     "I (cmc) must not have understood PolyPoly3D Merge");
                 return rPolyPoly.GetObject(0);
             }
