@@ -2,9 +2,9 @@
  *
  *  $RCSfile: xmltexti.hxx,v $
  *
- *  $Revision: 1.16 $
+ *  $Revision: 1.17 $
  *
- *  last change: $Author: dvo $ $Date: 2001-05-02 16:26:26 $
+ *  last change: $Author: jp $ $Date: 2001-05-22 15:47:34 $
  *
  *  The Contents of this file are made available subject to the terms of
  *  either of the following licenses
@@ -65,6 +65,9 @@
 #ifndef _XMLOFF_TXTIMP_HXX
 #include <xmloff/txtimp.hxx>
 #endif
+#ifndef _XMLOFF_FUNCTIONAL_HXX
+#include <xmloff/functional.hxx>
+#endif
 
 #ifndef _PLUGIN_HXX //autogen
 #include <so3/plugin.hxx>
@@ -96,7 +99,7 @@ public:
             const ::com::sun::star::uno::Reference <
                 ::com::sun::star::beans::XPropertySet>& rInfoSet,
             sal_Bool bInsertM, sal_Bool bStylesOnlyM, sal_Bool bProgress,
-            sal_Bool bBlockM, sal_Bool bOrganizerM, 
+            sal_Bool bBlockM, sal_Bool bOrganizerM,
             sal_Bool bPreserveRedlineMode );
     ~SwXMLTextImportHelper();
 
@@ -138,13 +141,13 @@ public:
 
     // redlining helper methods
     // (here is the real implementation)
-    virtual void RedlineAdd( 
+    virtual void RedlineAdd(
         const ::rtl::OUString& rType,		/// redline type (insert, del,... )
         const ::rtl::OUString& rId,			/// use to identify this redline
         const ::rtl::OUString& rAuthor,		/// name of the author
         const ::rtl::OUString& rComment,	/// redline comment
         const ::com::sun::star::util::DateTime& rDateTime);		/// date+time
-    virtual ::com::sun::star::uno::Reference< 
+    virtual ::com::sun::star::uno::Reference<
         ::com::sun::star::text::XTextCursor> RedlineCreateText(
             ::com::sun::star::uno::Reference< 	/// needed to get the document
                     ::com::sun::star::text::XTextCursor> & rOldCursor,
@@ -157,7 +160,7 @@ public:
         sal_Bool bStart);
     virtual void SetShowChanges( sal_Bool bShowChanges );
     virtual void SetRecordChanges( sal_Bool bRecordChanges );
-    virtual void SetChangesProtectionKey( 
+    virtual void SetChangesProtectionKey(
         const ::com::sun::star::uno::Sequence<sal_Int8> & rKey );
 };
 
