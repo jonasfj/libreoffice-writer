@@ -2,9 +2,9 @@
  *
  *  $RCSfile: swbaslnk.cxx,v $
  *
- *  $Revision: 1.5 $
+ *  $Revision: 1.6 $
  *
- *  last change: $Author: hr $ $Date: 2003-03-27 15:39:48 $
+ *  last change: $Author: vg $ $Date: 2003-04-15 16:49:32 $
  *
  *  The Contents of this file are made available subject to the terms of
  *  either of the following licenses
@@ -69,10 +69,10 @@
 
 #include <hintids.hxx>
 
-#ifndef _SV_SVAPP_HXX 
+#ifndef _SV_SVAPP_HXX
 #include <vcl/svapp.hxx>
 #endif
-#ifndef _SV_OUTDEV_HXX 
+#ifndef _SV_OUTDEV_HXX
 #include <vcl/outdev.hxx>
 #endif
 
@@ -256,8 +256,8 @@ void SwBaseLink::DataChanged( const String& rMimeType,
             if( static_cast< const SwGrfNode * >( pCntntNode )->IsChgTwipSizeFromPixel() )
             {
                 const MapMode aMapTwip( MAP_TWIP );
-                aFrmFmtSz = 
-                    Application::GetDefaultDevice()->PixelToLogic( 
+                aFrmFmtSz =
+                    Application::GetDefaultDevice()->PixelToLogic(
                         aGrf.GetSizePixel(), aMapTwip );
 
             }
@@ -500,7 +500,7 @@ FASTBOOL SwBaseLink::SwapIn( BOOL bWaitForData, BOOL bNativFormat )
         ReleaseRef();
     }
 
-#ifdef DEBUG
+#if OSL_DEBUG_LEVEL > 1
     {
         String sGrfNm;
         GetLinkManager()->GetDisplayNames( this, 0, &sGrfNm, 0, 0 );
