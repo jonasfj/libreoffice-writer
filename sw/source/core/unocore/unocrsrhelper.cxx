@@ -2,9 +2,9 @@
  *
  *  $RCSfile: unocrsrhelper.cxx,v $
  *
- *  $Revision: 1.11 $
+ *  $Revision: 1.12 $
  *
- *  last change: $Author: vg $ $Date: 2003-04-17 14:42:10 $
+ *  last change: $Author: rt $ $Date: 2003-09-19 08:44:34 $
  *
  *  The Contents of this file are made available subject to the terms of
  *  either of the following licenses
@@ -498,9 +498,9 @@ sal_Bool getCrsrPropertyValue(const SfxItemPropertyMap* pMap
         break;
         case FN_UNO_CHARFMT_SEQUENCE:
         {
-            
+
             SwTxtNode* pTxtNode;
-            if((pTxtNode = (SwTxtNode*)rPam.GetNode( TRUE )) == rPam.GetNode(FALSE) && 
+            if((pTxtNode = (SwTxtNode*)rPam.GetNode( TRUE )) == rPam.GetNode(FALSE) &&
                     pTxtNode->GetpSwpHints())
             {
                 USHORT nPaMStart = rPam.GetPoint()->nContent.GetIndex();
@@ -510,7 +510,7 @@ sal_Bool getCrsrPropertyValue(const SfxItemPropertyMap* pMap
                     USHORT nTmp = nPaMStart;
                     nPaMStart = nPaMEnd;
                     nPaMEnd = nTmp;
-                }        
+                }
                 Sequence< ::rtl::OUString> aCharStyles;
                 USHORT nCharStylesFound = 0;
                 SwpHints* pHints = pTxtNode->GetpSwpHints();
@@ -527,8 +527,8 @@ sal_Bool getCrsrPropertyValue(const SfxItemPropertyMap* pMap
                         //check for overlapping
                         if(nAttrStart > nPaMStart ||
                                     nAttrEnd < nPaMEnd)
-                        {        
-                            aCharStyles.realloc(0);                                
+                        {
+                            aCharStyles.realloc(0);
                             eNewState = PropertyState_AMBIGUOUS_VALUE;
                             break;
                         }
@@ -541,13 +541,13 @@ sal_Bool getCrsrPropertyValue(const SfxItemPropertyMap* pMap
                             //now the name of the style has to be added to the sequence
                             aCharStyles.realloc(aCharStyles.getLength() + 1);
                             DBG_ASSERT(pAttr->GetCharFmt().GetCharFmt(), "no character format set");
-                            aCharStyles.getArray()[aCharStyles.getLength() - 1] = 
+                            aCharStyles.getArray()[aCharStyles.getLength() - 1] =
                                         SwStyleNameMapper::GetProgName(
                                             pAttr->GetCharFmt().GetCharFmt()->GetName(), GET_POOLID_CHRFMT);
                         }
                     }
-                        
-                }        
+
+                }
                 if(aCharStyles.getLength())
                     eNewState = PropertyState_DIRECT_VALUE;
                 if(pAny)
@@ -759,7 +759,7 @@ void resetCrsrPropertyValue(const SfxItemPropertyMap* pMap, SwPaM& rPam)
 //    		lcl_setNumberingProperty(aValue, pUnoCrsr);
         break;
         case FN_UNO_CHARFMT_SEQUENCE:
-        {    
+        {
             SvUShortsSort aWhichIds;
             aWhichIds.Insert(RES_TXTATR_CHARFMT);
             pDoc->ResetAttr(rPam, sal_True, &aWhichIds);
@@ -783,11 +783,11 @@ void InsertFile(SwUnoCrsr* pUnoCrsr,
         return;
 
     SfxObjectFactory& rFact = pDocSh->GetFactory();
-    const SfxFilter* pFilter = rFact.GetFilterContainer()->GetFilter( rFilterName );
+    const SfxFilter* pFilter = rFact.GetFilterContainer()->GetFilter4FilterName( rFilterName );
     if ( !pFilter )
     {
         pMed = new SfxMedium(rFileName, STREAM_READ, sal_True, 0, 0 );
-        SfxFilterMatcher aMatcher( rFact.GetFilterContainer() );
+        SfxFilterMatcher aMatcher( rFact.GetFilterContainer()->GetName() );
         ErrCode nErr = aMatcher.GuessFilter( *pMed, &pFilter, sal_False );
         if ( nErr || !pFilter)
             DELETEZ(pMed);
