@@ -2,9 +2,9 @@
  *
  *  $RCSfile: edtwin.cxx,v $
  *
- *  $Revision: 1.111 $
+ *  $Revision: 1.112 $
  *
- *  last change: $Author: os $ $Date: 2005-03-15 09:59:14 $
+ *  last change: $Author: fme $ $Date: 2005-03-21 13:02:36 $
  *
  *  The Contents of this file are made available subject to the terms of
  *  either of the following licenses
@@ -1395,7 +1395,7 @@ void SwEditWin::KeyInput(const KeyEvent &rKEvt)
 
                        KS_NextCell, KS_PrevCell, KS_OutlineUp, KS_OutlineDown,
                        KS_GlossaryExpand, KS_NextPrevGlossary,
-                       KS_AutoFmtByInput, 
+                       KS_AutoFmtByInput,
                        KS_NextObject, KS_PrevObject,
                        KS_KeyToView,
                        KS_LaunchOLEObject, KS_GoIntoFly, KS_GoIntoDrawing,
@@ -1994,8 +1994,7 @@ KEYINPUT_CHECKTABLE_INSDEL:
         case KS_KeyToView:
             {
                 eKeyState = KS_Ende;
-                bNormalChar = 
-                        (rKeyCode.IsMod2() || (0 == ((KEY_MOD1 | KEY_CONTROLMOD) & rKeyCode.GetAllModifier()))) &&
+                bNormalChar = !rKeyCode.IsControlMod() &&
                                 SW_ISPRINTABLE( aCh );
 
                 if (bNormalChar && rSh.IsInFrontOfLabel())
