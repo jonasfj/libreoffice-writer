@@ -2,9 +2,9 @@
  *
  *  $RCSfile: SwXMLBlockListContext.cxx,v $
  *
- *  $Revision: 1.3 $
+ *  $Revision: 1.4 $
  *
- *  last change: $Author: mtg $ $Date: 2001-07-11 11:31:46 $
+ *  last change: $Author: jp $ $Date: 2001-10-19 13:28:41 $
  *
  *  The Contents of this file are made available subject to the terms of
  *  either of the following licenses
@@ -59,9 +59,8 @@
  *
  ************************************************************************/
 
-#ifndef _SW_XMLBLOCKLIST_CONTEXT_HXX
-#include <SwXMLBlockListContext.hxx>
-#endif
+#pragma hdrstop
+
 #ifndef _XMLOFF_XMLIMP_HXX
 #include <xmloff/xmlimp.hxx>
 #endif
@@ -74,29 +73,34 @@
 #ifndef _XMLOFF_XMLKYWD_HXX
 #include <xmloff/xmlkywd.hxx>
 #endif
+#ifndef _UNOTOOLS_CHARCLASS_HXX
+#include <unotools/charclass.hxx>
+#endif
+
 #ifndef _SW_XMLBLOCKIMPORT_HXX
 #include <SwXMLBlockImport.hxx>
 #endif
 #ifndef _SW_XMLTEXTBLOCKS_HXX
 #include <SwXMLTextBlocks.hxx>
 #endif
-#ifndef _UNOTOOLS_CHARCLASS_HXX
-#include <unotools/charclass.hxx>
+#ifndef _SW_XMLBLOCKLIST_CONTEXT_HXX
+#include <SwXMLBlockListContext.hxx>
 #endif
 #ifndef _SWTYPES_HXX
 #include <swtypes.hxx>
 #endif
+
 
 using namespace ::com::sun::star::uno;
 using namespace ::com::sun::star;
 using namespace ::xmloff::token;
 using namespace ::rtl;
 
-SwXMLBlockListContext::SwXMLBlockListContext( 
+SwXMLBlockListContext::SwXMLBlockListContext(
    SwXMLBlockListImport& rImport,
-   sal_uInt16 nPrefix, 
+   sal_uInt16 nPrefix,
    const OUString& rLocalName,
-   const com::sun::star::uno::Reference< 
+   const com::sun::star::uno::Reference<
    com::sun::star::xml::sax::XAttributeList > & xAttrList ) :
     rLocalRef (rImport),
     SvXMLImportContext ( rImport, nPrefix, rLocalName )
@@ -137,11 +141,11 @@ SvXMLImportContext *SwXMLBlockListContext::CreateChildContext(
     return pContext;
 }
 
-SwXMLBlockContext::SwXMLBlockContext( 
+SwXMLBlockContext::SwXMLBlockContext(
    SwXMLBlockListImport& rImport,
-   sal_uInt16 nPrefix, 
+   sal_uInt16 nPrefix,
    const OUString& rLocalName,
-   const com::sun::star::uno::Reference< 
+   const com::sun::star::uno::Reference<
    com::sun::star::xml::sax::XAttributeList > & xAttrList ) :
     rLocalRef(rImport),
     SvXMLImportContext ( rImport, nPrefix, rLocalName )
@@ -187,11 +191,11 @@ SwXMLBlockContext::~SwXMLBlockContext ( void )
 {
 }
 
-SwXMLTextBlockDocumentContext::SwXMLTextBlockDocumentContext( 
+SwXMLTextBlockDocumentContext::SwXMLTextBlockDocumentContext(
    SwXMLTextBlockImport& rImport,
-   sal_uInt16 nPrefix, 
+   sal_uInt16 nPrefix,
    const OUString& rLocalName,
-   const com::sun::star::uno::Reference< 
+   const com::sun::star::uno::Reference<
    com::sun::star::xml::sax::XAttributeList > & xAttrList ) :
     rLocalRef(rImport),
     SvXMLImportContext ( rImport, nPrefix, rLocalName )
@@ -214,11 +218,11 @@ SvXMLImportContext *SwXMLTextBlockDocumentContext::CreateChildContext(
 SwXMLTextBlockDocumentContext::~SwXMLTextBlockDocumentContext ( void )
 {
 }
-SwXMLTextBlockBodyContext::SwXMLTextBlockBodyContext( 
+SwXMLTextBlockBodyContext::SwXMLTextBlockBodyContext(
    SwXMLTextBlockImport& rImport,
-   sal_uInt16 nPrefix, 
+   sal_uInt16 nPrefix,
    const OUString& rLocalName,
-   const com::sun::star::uno::Reference< 
+   const com::sun::star::uno::Reference<
    com::sun::star::xml::sax::XAttributeList > & xAttrList ) :
     rLocalRef(rImport),
     SvXMLImportContext ( rImport, nPrefix, rLocalName )
@@ -241,11 +245,11 @@ SvXMLImportContext *SwXMLTextBlockBodyContext::CreateChildContext(
 SwXMLTextBlockBodyContext::~SwXMLTextBlockBodyContext ( void )
 {
 }
-SwXMLTextBlockParContext::SwXMLTextBlockParContext( 
+SwXMLTextBlockParContext::SwXMLTextBlockParContext(
    SwXMLTextBlockImport& rImport,
-   sal_uInt16 nPrefix, 
+   sal_uInt16 nPrefix,
    const OUString& rLocalName,
-   const com::sun::star::uno::Reference< 
+   const com::sun::star::uno::Reference<
    com::sun::star::xml::sax::XAttributeList > & xAttrList ) :
     rLocalRef(rImport),
     SvXMLImportContext ( rImport, nPrefix, rLocalName )
