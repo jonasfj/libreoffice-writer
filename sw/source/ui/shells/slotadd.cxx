@@ -2,9 +2,9 @@
  *
  *  $RCSfile: slotadd.cxx,v $
  *
- *  $Revision: 1.8 $
+ *  $Revision: 1.9 $
  *
- *  last change: $Author: os $ $Date: 2002-04-25 14:56:31 $
+ *  last change: $Author: mba $ $Date: 2002-05-27 14:48:39 $
  *
  *  The Contents of this file are made available subject to the terms of
  *  either of the following licenses
@@ -305,14 +305,9 @@
 #pragma code_seg( "SWSTATICS" )
 #endif
 
-#define SwShadowItem  SvxShadowItem
-#define SwPageSizeItem  SvxSizeItem
-#define SwGraphicSizeItem  SvxSizeItem
 #define SvxDrawToolItem  SfxEnumItem
 #define SvxDrawAlignItem SfxEnumItem
 #define SvxDrawBezierItem SfxEnumItem
-#define SwPageLRSpaceItem SvxLRSpaceItem
-#define SwPageULSpaceItem SvxULSpaceItem
 
 #define SFX_TYPEMAP
 #include "itemdef.hxx"
@@ -324,15 +319,18 @@
 
 /*-------------------------------------------------------------------------
     $Log: not supported by cvs2svn $
+    Revision 1.8  2002/04/25 14:56:31  os
+    #97499# support for SID_IMAGE_ORIENTATION implemented
+
     Revision 1.7  2001/04/09 07:28:09  tl
     include for SfxStringListItem added
-    
+
     Revision 1.6  2001/03/30 14:56:18  tl
     include for clipfmtitem.hxx added
-    
+
     Revision 1.5  2000/12/02 15:23:54  jp
     Task #80752#: integrate the grafik filter
-    
+
     Revision 1.4  2000/11/10 15:46:52  tbe
     removed outcommented basctl include file idetemp.hxx
 
