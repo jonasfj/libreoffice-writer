@@ -2,9 +2,9 @@
  *
  *  $RCSfile: docnum.cxx,v $
  *
- *  $Revision: 1.34 $
+ *  $Revision: 1.35 $
  *
- *  last change: $Author: hr $ $Date: 2004-09-08 15:17:53 $
+ *  last change: $Author: obo $ $Date: 2004-09-16 10:13:47 $
  *
  *  The Contents of this file are made available subject to the terms of
  *  either of the following licenses
@@ -350,13 +350,13 @@ BOOL SwDoc::OutlineUpDown( const SwPaM& rPam, short nOffset )
         {
             n++;
 
-            SwTxtFmtColl *aTmpColl = 
+            SwTxtFmtColl *aTmpColl =
                 GetTxtCollFromPool(RES_POOLCOLL_HEADLINE1 + n);
-            
+
             if (aTmpColl->GetOutlineLevel() == n)
             {
                 aCollArr[n] = aTmpColl;
-                
+
                 break;
             }
         }
@@ -379,9 +379,9 @@ BOOL SwDoc::OutlineUpDown( const SwPaM& rPam, short nOffset )
         {
             n--;
 
-            SwTxtFmtColl *aTmpColl = 
+            SwTxtFmtColl *aTmpColl =
                 GetTxtCollFromPool(RES_POOLCOLL_HEADLINE1 + n);
-            
+
             if (aTmpColl->GetOutlineLevel() == n)
             {
                 aCollArr[n] = aTmpColl;
@@ -395,7 +395,7 @@ BOOL SwDoc::OutlineUpDown( const SwPaM& rPam, short nOffset )
     /* --> #i13747#
 
        Build a move table that states from which level an outline will
-     
+
   be moved to which other level. */
 
     /* the move table
@@ -509,7 +509,7 @@ BOOL SwDoc::OutlineUpDown( const SwPaM& rPam, short nOffset )
     }
     if (DoesUndo())
         EndUndo(UNDO_OUTLINE_LR);
-    
+
     SetModified();
     return TRUE;
 }
@@ -704,12 +704,12 @@ USHORT lcl_FindOutlineNum( const SwNodes& rNds, String& rName )
             for( BYTE n = 0; (n < nLevel) && bEqual; ++n )
             {
                 bEqual = pLevelVal[n] == nLevelVal[n];
-            }            
+            }
             if(bEqual)
             {
                 break;
-            }            
-        }    
+            }
+        }
     }
     if( nPos >= rOutlNds.Count() )
         nPos = USHRT_MAX;
@@ -810,7 +810,7 @@ void SwNumRuleInfo::MakeList( SwDoc& rDoc, BOOL bOutline )
         for (int i = 0; i < rOutlineNodes.Count(); i++)
         {
             SwTxtNode & aNode = *((SwTxtNode *) rOutlineNodes[i]);
-            
+
             AddNode(aNode);
         }
     }
@@ -897,7 +897,7 @@ void lcl_ChgNumRule( SwDoc& rDoc, const SwNumRule& rRule, SwHistory* pHist,
         nFirst < nLast; ++nFirst )
     {
         SwTxtNode* pTxtNd = pUpd->GetList().GetObject( nFirst );
-        if( pTxtNd->GetNum() && 
+        if( pTxtNd->GetNum() &&
             ( nLvl = (pTxtNd->GetNum()->GetRealLevel()) ) < MAXLEVEL )
         {
             if( nChgFmtLevel & ( 1 << nLvl ))
@@ -970,21 +970,21 @@ void SwDoc::SetNumRule( const SwPaM& rPam, const SwNumRule& rRule,
                     the adjustment according to the text direction of
                     the paragraph. */
 
-                SvxFrameDirection aDir = (SvxFrameDirection) 
+                SvxFrameDirection aDir = (SvxFrameDirection)
                     rAttrSet.GetFrmDir().GetValue();
 
                 switch (aDir)
                 {
                 case FRMDIR_HORI_LEFT_TOP:
                     pNew->SetNumAdjust(SVX_ADJUST_LEFT);
-                    
+
                     break;
-                    
+
                 case FRMDIR_HORI_RIGHT_TOP:
                     pNew->SetNumAdjust(SVX_ADJUST_RIGHT);
-                    
+
                     break;
-                    
+
                 default:
                     break;
                 }
@@ -1138,7 +1138,7 @@ void SwDoc::ReplaceNumRule(const SwPaM & rPaM, const SwNumRule & rNumRule)
 
     ULONG nStt = rPaM.Start()->nNode.GetIndex();
     ULONG nEnd = rPaM.End()->nNode.GetIndex();
-    
+
     for (ULONG n = nStt; n <= nEnd; n++)
     {
         SwTxtNode * pCNd = GetNodes()[n]->GetTxtNode();
@@ -1146,13 +1146,13 @@ void SwDoc::ReplaceNumRule(const SwPaM & rPaM, const SwNumRule & rNumRule)
         if (pCNd && NULL != pCNd->GetNumRule())
         {
             SwPaM aPam(*pCNd);
-            
+
             Insert(aPam, SwNumRuleItem(rNumRule.GetName()));
-        }        
+        }
     }
 
     if (DoesUndo())
-        EndUndo(UNDO_START);    
+        EndUndo(UNDO_START);
 }
 
 void SwDoc::SetNumRuleStart( const SwPosition& rPos, BOOL bFlag )
@@ -1205,9 +1205,9 @@ BOOL SwDoc::DelNumRule( const String& rName, BOOL bBroadcast )
     {
         if (DoesUndo())
         {
-            SwUndo * pUndo = 
+            SwUndo * pUndo =
                 new SwUndoNumruleDelete(*(*pNumRuleTbl)[nPos], this);
-            
+
             AppendUndo(pUndo);
         }
 
@@ -1690,7 +1690,7 @@ BOOL SwDoc::GotoNextNum( SwPosition& rPos, BOOL bOverUpper,
 }
 
 // -> #i23731#
-const SwNumRule *  SwDoc::SearchNumRule(SwPosition & rPos, 
+const SwNumRule *  SwDoc::SearchNumRule(SwPosition & rPos,
                                         BOOL bForward,
                                         BOOL bNum,
                                         BOOL bOutline,
@@ -1735,12 +1735,12 @@ const SwNumRule *  SwDoc::SearchNumRule(SwPosition & rPos,
 
                     if (nNonEmptyAllowed < 0)
                         nNonEmptyAllowed = -1;
-                }                    
+                }
             }
 
             pNode = &aIdx.GetNode();
         }
-        while (! (pNode == aNodes.DocumentSectionStartNode(pStartFromNode) || 
+        while (! (pNode == aNodes.DocumentSectionStartNode(pStartFromNode) ||
                   pNode == aNodes.DocumentSectionEndNode(pStartFromNode)));
     }
 
@@ -1769,7 +1769,7 @@ BOOL SwDoc::NumUpDown( const SwPaM& rPam, BOOL bDown )
     for (ULONG n = nStt; n <= nEnd; n++)
     {
         SwTxtNode * pTxtNd = GetNodes()[n]->GetTxtNode();
-        
+
         if (pTxtNd)
         {
             SwNumRule * pRule = pTxtNd->GetNumRule();
@@ -1793,19 +1793,19 @@ BOOL SwDoc::NumUpDown( const SwPaM& rPam, BOOL bDown )
         bRet = OutlineUpDown(rPam, nDiff);
     else if (bOnlyNonOutline)
     {
-        
+
         const SfxPoolItem* pItem;
         const String* pName;
-        
-        /* --> #i24560# 
-           
+
+        /* --> #i24560#
+
         Only promote or demote if all selected paragraphs are
-        promotable resp. demotable. 
-        
+        promotable resp. demotable.
+
         */
         for (ULONG nTmp = nStt; nTmp <= nEnd; ++nTmp)
         {
-            SwTxtNode* pTNd = GetNodes()[ nTmp ]->GetTxtNode();        
+            SwTxtNode* pTNd = GetNodes()[ nTmp ]->GetTxtNode();
             if( pTNd)
             {
                 pItem = pTNd->GetNoCondAttr(RES_PARATR_NUMRULE, TRUE );
@@ -1842,8 +1842,8 @@ BOOL SwDoc::NumUpDown( const SwPaM& rPam, BOOL bDown )
                 if( pTNd)
                 {
                     pItem = pTNd->GetNoCondAttr(RES_PARATR_NUMRULE, TRUE );
-            
-                    if (0 != pItem) 
+
+                    if (0 != pItem)
                     {
                         pName = &((SwNumRuleItem*)pItem)->GetValue();
 
@@ -1853,7 +1853,7 @@ BOOL SwDoc::NumUpDown( const SwPaM& rPam, BOOL bDown )
                             nLevel += nDiff;
                             SwNodeNum aNum( *pTNd->GetNum() );
                             aNum.SetLevel( nLevel );
-                            
+
                             pTNd->UpdateNum( aNum );
 #ifndef NUM_RELSPACE
                             pTNd->SetNumLSpace( TRUE );
@@ -2169,7 +2169,7 @@ BOOL SwDoc::NumOrNoNum( const SwNodeIndex& rIdx, BOOL bDel )
     SwTxtNode* pTNd = rIdx.GetNode().GetTxtNode();
 
     BOOL bTmp = FALSE;
-    if (pTNd) 
+    if (pTNd)
     {
         BOOL bTmp = FALSE;
         USHORT nOldLevel = 0;
@@ -2196,12 +2196,12 @@ BOOL SwDoc::NumOrNoNum( const SwNodeIndex& rIdx, BOOL bDel )
             nOldLevel = pNum->GetLevel();
         }
 
-        if (bTmp && 
+        if (bTmp &&
             SVX_NUM_NUMBER_NONE != pRule->Get(GetRealLevel(pNum->GetLevel())).
             GetNumberingType())
         {
             SwNodeNum aNum( *pNum );
-            
+
             if( bDel )
                 aNum.SetNoNum(TRUE); // #i29560#
             else
@@ -2217,10 +2217,10 @@ BOOL SwDoc::NumOrNoNum( const SwNodeIndex& rIdx, BOOL bDel )
 #ifndef NUM_RELSPACE
             pTNd->SetNumLSpace( TRUE );
 #endif
-            
+
             ((SwNumRule*)pRule)->SetInvalidRule( TRUE );
             UpdateNumRule( pRule->GetName(), rIdx.GetIndex() );
-            
+
             bRet = TRUE;
             SetModified();
         }
@@ -2229,9 +2229,9 @@ BOOL SwDoc::NumOrNoNum( const SwNodeIndex& rIdx, BOOL bDel )
         if (! bRet && bDel && pNum && !IsNum(nOldLevel)) // #i29560#
         {
             SwPaM aPam(*pTNd);
-        
+
             DelNumRules(aPam);
-            
+
             bRet = TRUE;
         }
         // <- #115901#
@@ -2319,7 +2319,7 @@ USHORT SwDoc::MakeNumRule( const String &rName, const SwNumRule* pCpy,
     if (bBroadcast)
         BroadcastStyleOperation(pNew->GetName(), SFX_STYLE_FAMILY_PSEUDO,
                                 SFX_STYLESHEET_CREATED);
-        
+
 
     return nRet;
 }
@@ -2421,8 +2421,8 @@ void SwDoc::UpdateNumRule()
     for( USHORT n = 0; n < rNmTbl.Count(); ++n )
         if( rNmTbl[ n ]->IsInvalidRule() )
             UpdateNumRule( rNmTbl[ n ]->GetName(), ULONG_MAX );
-    
-    
+
+
 }
 
 // -> #111955#
@@ -2430,7 +2430,7 @@ void SwDoc::UpdateNumRule()
    Reset numbering to start values.
 
    @param rNum                   the numbering to reset
-   @param rNumRule               the numbering rule to take the start values 
+   @param rNumRule               the numbering rule to take the start values
                                  from
    @param nStartLevel            the level to start
    @param bInitializedLevels     array to mark reset levels in
@@ -2440,7 +2440,7 @@ void SwDoc::UpdateNumRule()
    all levels >= nStartLevel the accroding entry in bInitializedLevels
    is set to true.
 */
-void lcl_NodeNumReset(SwNodeNum & rNum, const SwNumRule & rNumRule, 
+void lcl_NodeNumReset(SwNodeNum & rNum, const SwNumRule & rNumRule,
                       int nStartLevel, bool * bInitializedLevels)
 {
     for (int i = nStartLevel; i < MAXLEVEL; i++)
@@ -2479,7 +2479,7 @@ void SwDoc::UpdateNumRule( SwNumRule & rRule, ULONG nUpdatePos)
     if (IsOldNumbering())
     {
         UpdateNumRuleOld(rRule, nUpdatePos);
-        
+
         return;
     }
 
@@ -2503,27 +2503,27 @@ void SwDoc::UpdateNumRule( SwNumRule & rRule, ULONG nUpdatePos)
     if (nUpdatePos >= aNumRuleInfo.GetList().Count())
     {
         nUpdatePos = 0;
-    }   
+    }
 
     /* Temporal numbering holding the values to be changed in the
        current node*/
     SwNodeNum aNum(0);
-    /* Array for initialized levels.        
-    bInitializedLevels[i] == true -> level i is initialized. 
+    /* Array for initialized levels.
+    bInitializedLevels[i] == true -> level i is initialized.
     */
     bool bInitializedLevels[MAXLEVEL];
     /* flag for initialized continuous numbering. */
     bool bInitialized = false;
     /* counter for continuous numbering */
     int nCount = 0;
-    
+
     /* If all paragraphs found are to be processed initialize all
        levels with their start values.*/
     if (nUpdatePos == 0)
     {
         for (int i = 0; i < MAXLEVEL; i++)
             bInitializedLevels[i] = false;
-            
+
         lcl_NodeNumReset(aNum, rRule, 0, bInitializedLevels);
 
         nCount = rRule.Get(0).GetStart();
@@ -2535,14 +2535,14 @@ void SwDoc::UpdateNumRule( SwNumRule & rRule, ULONG nUpdatePos)
     {
         for (int i = 0; i < MAXLEVEL; i++)
             bInitializedLevels[i] = true;
-        
+
         aNum = *aNumRuleInfo.GetList().GetObject(nUpdatePos)->
             GetNum(); // #115901#
 
         nCount = aNum.GetLevelVal()[aNum.GetRealLevel()];
         bInitialized = true;
     }
-     
+
     /* The old level is the level of the first node to process. */
     const SwNodeNum * pNum = aNumRuleInfo.GetList().GetObject(nUpdatePos)->
         GetNum();
@@ -2560,15 +2560,15 @@ void SwDoc::UpdateNumRule( SwNumRule & rRule, ULONG nUpdatePos)
                ensure the current node gets the resulting style. */
             if( RES_CONDTXTFMTCOLL == pTxtNode->GetFmtColl()->Which() )
                 pTxtNode->ChkCondColl();
-            
+
             /* Get old numbering of the current node. */
             const SwNodeNum * pOldNum = pTxtNode->GetNum(); // #115901#
 
             // #111955# fixed loop due to not increasing nUpdatePos when
             // pOldNum == 0
             if (pOldNum && pOldNum->IsNum()) // #i29560#
-            {                         
-                BYTE nLevel = pOldNum->GetRealLevel();              
+            {
+                BYTE nLevel = pOldNum->GetRealLevel();
 
                 /* If numbering restarts at the current node ...*/
                 if (pOldNum->IsStart())
@@ -2599,17 +2599,17 @@ void SwDoc::UpdateNumRule( SwNumRule & rRule, ULONG nUpdatePos)
                    level initialize the subsequent levels. */
                 else if (nOldLevel != nLevel)
                 {
-                    lcl_NodeNumReset(aNum, rRule, nLevel + 1, 
+                    lcl_NodeNumReset(aNum, rRule, nLevel + 1,
                                      bInitializedLevels);
                 }
                 nOldLevel = nLevel;
-        
+
                 int i;
-        
+
                 /* All previous levels are initialized. */
                 for (i = nLevel - 1; i >= 0; i--)
                     bInitializedLevels[i] = false;
-        
+
                 /* If the level of the current node is initialized do not
                    increase the value for this level. Mark this level as
                    uninitialized. */
@@ -2638,7 +2638,7 @@ void SwDoc::UpdateNumRule( SwNumRule & rRule, ULONG nUpdatePos)
                     aNum.GetLevelVal()[nLevel] = nCount;
                     aNum.SetContinuousNum();
                 }
-                else 
+                else
                 {
                     aNum.SetContinuousNum(FALSE);
                 }
@@ -2658,14 +2658,14 @@ void SwDoc::UpdateNumRule( SwNumRule & rRule, ULONG nUpdatePos)
                     aTmpNum.GetLevelVal()[nLevel] = nCount;
                     bChanged = true;
                 }
-        
+
                 /* For each level synchronize the local numbering (aNum)
                    with the numbering to be set in the current node
                    (aTmpNum). If there are differences propagate the value
                    fom aNum to aTmpNum. In this case the numbering of the
                    current node. */
                 for (i = 0; i < MAXLEVEL; i++)
-                {            
+                {
                     if (aTmpNum.GetLevelVal()[i] != aNum.GetLevelVal()[i])
                     {
                         aTmpNum.GetLevelVal()[i] = aNum.GetLevelVal()[i];
@@ -2770,7 +2770,7 @@ void SwDoc::UpdateNumRuleOld( SwNumRule & rRule, ULONG nUpdPos )
         for( ; nUpdPos < aUpd.GetList().Count(); ++nUpdPos )
         {
             pStt = aUpd.GetList().GetObject( nUpdPos );
-            
+
             const SwNode* pTmpBaseNd = lcl_FindBaseNode( *pStt );
             if( pTmpBaseNd != pBaseNd )
             {
@@ -2879,8 +2879,8 @@ void SwDoc::UpdateNumRuleOld( SwNumRule & rRule, ULONG nUpdPos )
                         {
                             const SwNumFmt * pTmpNumFmt = pRule->GetNumFmt(nLevel);
 
-                            if (pTmpNumFmt && 
-                                SVX_NUM_NUMBER_NONE != 
+                            if (pTmpNumFmt &&
+                                SVX_NUM_NUMBER_NONE !=
                                 pTmpNumFmt->GetNumberingType())
                                 aNum.GetLevelVal()[ nLevel ]++;
                         }
@@ -2950,15 +2950,15 @@ void SwDoc::UpdateNumRuleOld( SwNumRule & rRule, ULONG nUpdPos )
 // -> #i27615#
 void SwDoc::SetMarkedNumLevel(SwNumRule & rNumRule, BYTE nLevel, BOOL nValue)
 {
-    /* 
-       - Set new marked level. 
+    /*
+       - Set new marked level.
        - Notify all affected nodes of the changed mark.
     */
-    
+
     SwBitArray aChangedLevels = rNumRule.SetLevelMarked(nLevel, nValue);
 
     SwNumRuleInfo aInfo(rNumRule.GetName());
-    
+
     aInfo.MakeList(*this, FALSE);
 
     for (int i = 0; i < aInfo.GetList().Count(); i++)
@@ -2971,7 +2971,7 @@ void SwDoc::SetMarkedNumLevel(SwNumRule & rNumRule, BYTE nLevel, BOOL nValue)
     }
 }
 
-void SwDoc::SetMarkedNumLevel(const String & sNumRule, BYTE nLevel, 
+void SwDoc::SetMarkedNumLevel(const String & sNumRule, BYTE nLevel,
                               BOOL bValue)
 {
     SwNumRule * pNumRule = FindNumRulePtr(sNumRule);
@@ -3005,28 +3005,8 @@ BOOL SwDoc::IsFirstOfNumRule(SwPosition & rPos)
     return bResult;
 }
 
-// #106897#
-sal_Bool SwDoc::RenameNumRule(const String & rOldName, const String & rNewName)
-{
-    sal_Bool bResult = sal_False;
-    SwNumRule * pOldRule = FindNumRulePtr(rOldName);
-
-    if (pOldRule)
-    {
-        MakeNumRule(rNewName, pOldRule);
-            
-        SwPosition aPos = SwPosition(SwNodeIndex(*aNodes[0]));
-        bResult = ReplaceNumRule(aPos, rOldName, rNewName);
-
-        if (bResult)
-            bResult = DelNumRule(rOldName);
-    }
-
-    return bResult;
-}
-
 // #i23726#
-void SwDoc::IndentNumRule(SwPosition & rPos, short nAmount) 
+void SwDoc::IndentNumRule(SwPosition & rPos, short nAmount)
 {
     if (SwTxtNode * pTxtNode = rPos.nNode.GetNode().GetTxtNode())
     {
