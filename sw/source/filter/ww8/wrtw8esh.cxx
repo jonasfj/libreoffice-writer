@@ -2,9 +2,9 @@
  *
  *  $RCSfile: wrtw8esh.cxx,v $
  *
- *  $Revision: 1.65 $
+ *  $Revision: 1.66 $
  *
- *  last change: $Author: obo $ $Date: 2003-09-01 12:40:22 $
+ *  last change: $Author: rt $ $Date: 2003-09-25 07:42:09 $
  *
  *  The Contents of this file are made available subject to the terms of
  *  either of the following licenses
@@ -172,9 +172,6 @@
 #include <com/sun/star/form/FormComponentType.hpp>
 #endif
 
-#ifndef _WRTWW8_HXX
-#include <wrtww8.hxx>
-#endif
 #ifndef _FLYPOS_HXX
 #include <flypos.hxx>
 #endif
@@ -250,6 +247,9 @@
 #ifndef _ERRHDL_HXX
 #include <errhdl.hxx>
 #endif
+#ifndef _PAGEDESC_HXX 
+#include <pagedesc.hxx>
+#endif
 #ifndef _GRFMGR_HXX
 #include <goodies/grfmgr.hxx>
 #endif
@@ -257,8 +257,14 @@
 #ifndef SW_WRITERHELPER
 #include "writerhelper.hxx"
 #endif
+#ifndef _WRTWW8_HXX
+#include "wrtww8.hxx"
+#endif
 #ifndef _ESCHER_HXX
 #include "escher.hxx"
+#endif
+#ifndef WW_FIELDS_HXX
+#include "fields.hxx"
 #endif
 
 using namespace ::com::sun::star;
@@ -324,7 +330,8 @@ void SwWW8Writer::DoComboBox(const rtl::OUString &rName, const rtl::OUString &rS
     ASSERT(bWrtWW8, "Not allowed");
     if (!bWrtWW8)
         return;
-    OutField(0, 83, CREATE_CONST_ASC(" FORMDROPDOWN "), WRITEFIELD_START | WRITEFIELD_CMD_START);
+    OutField(0, ww::eFORMDROPDOWN, FieldString(ww::eFORMDROPDOWN), 
+        WRITEFIELD_START | WRITEFIELD_CMD_START);
     // write the refence to the "picture" structure
     ULONG nDataStt = pDataStrm->Tell();
     pChpPlc->AppendFkpEntry( Strm().Tell() );
@@ -343,7 +350,8 @@ void SwWW8Writer::DoComboBox(const rtl::OUString &rName, const rtl::OUString &rS
 
     pChpPlc->AppendFkpEntry(Strm().Tell(), sizeof(aArr1), aArr1);
 
-    OutField(0, 83, CREATE_CONST_ASC(" FORMDROPDOWN "), WRITEFIELD_CLOSE);
+    OutField(0, ww::eFORMDROPDOWN, FieldString(ww::eFORMDROPDOWN), 
+        WRITEFIELD_CLOSE);
 
     static BYTE __READONLY_DATA aComboData1[] = 
     {
@@ -421,7 +429,8 @@ void SwWW8Writer::DoComboBox(const rtl::OUString &rName, const rtl::OUString &rS
 
 void SwWW8Writer::DoCheckBox(uno::Reference<beans::XPropertySet> xPropSet)
 {
-    OutField(0, 71, CREATE_CONST_ASC(" FORMCHECKBOX "), WRITEFIELD_START | WRITEFIELD_CMD_START);
+    OutField(0, ww::eFORMCHECKBOX, FieldString(ww::eFORMCHECKBOX), 
+        WRITEFIELD_START | WRITEFIELD_CMD_START);
     // write the refence to the "picture" structure
     ULONG nDataStt = pDataStrm->Tell();
     pChpPlc->AppendFkpEntry( Strm().Tell() );
@@ -506,7 +515,7 @@ void SwWW8Writer::DoCheckBox(uno::Reference<beans::XPropertySet> xPropSet)
     SwWW8Writer::WriteLong( *pDataStrm, nDataStt,
         pDataStrm->Tell() - nDataStt );
 
-    OutField( 0, 0, aEmptyStr, WRITEFIELD_CLOSE );
+    OutField(0, ww::eFORMCHECKBOX, aEmptyStr, WRITEFIELD_CLOSE);
 }
 
 namespace wwUtility
@@ -549,7 +558,7 @@ bool SwWW8Writer::MiserableRTLGraphicsHack(long &rLeft,  long nWidth,
     nPageSize = CurrentPageWidth(nPageLeft, nPageRight);
 
     return RTLGraphicsHack(rLeft, nWidth,
-    eHoriOri, eHoriRel, nPageLeft, nPageRight, nPageSize, bBiDi);
+        eHoriOri, eHoriRel, nPageLeft, nPageRight, nPageSize, bBiDi);
 }
 
 void PlcDrawObj::WritePlc(SwWW8Writer& rWrt) const
@@ -662,7 +671,7 @@ void PlcDrawObj::WritePlc(SwWW8Writer& rWrt) const
             if( FLY_PAGE == rFmt.GetAnchor().GetAnchorId())
                 nFlags = 0x0000;
             else
-                nFlags = 0x0014;		// x-rel to text,  y-rel to text
+                nFlags = 0x0014;        // x-rel to text,  y-rel to text
 
             const SwFmtSurround& rSurr = rFmt.GetSurround();
             USHORT nContour = rSurr.IsContour() ? 0x0080 : 0x0040;
@@ -839,15 +848,15 @@ void SwWW8Writer::AppendFlyInFlys(WW8_CP& rCP, const SwFrmFmt& rFrmFmt,
     if (pDrwO->Append( *this, rCP, rFrmFmt, rNdTopLeft))
     {
         static BYTE __READONLY_DATA aSpec8[] = {
-            0x03, 0x6a, 0, 0, 0, 0,	// sprmCObjLocation
-            0x55, 0x08, 1			// sprmCFSpec
+            0x03, 0x6a, 0, 0, 0, 0, // sprmCObjLocation
+            0x55, 0x08, 1           // sprmCFSpec
         };
                                                 // fSpec-Attribut true
                             // Fuer DrawObjets muss ein Spezial-Zeichen
                             // in den Text und darum ein fSpec-Attribut
         pChpPlc->AppendFkpEntry( Strm().Tell() );
         WriteChar( 0x8 );
-        rCP += 1;		// to next charakter position
+        rCP += 1;       // to next charakter position
         pChpPlc->AppendFkpEntry( Strm().Tell(), sizeof( aSpec8 ), aSpec8 );
 
         if (RES_FLYFRMFMT == rFrmFmt.Which())
@@ -879,7 +888,7 @@ private:
     SvUShorts aChrSetArr;
     USHORT nPara;
     xub_StrLen nAktSwPos;
-    xub_StrLen nTmpSwPos;					// fuer HasItem()
+    xub_StrLen nTmpSwPos;                   // fuer HasItem()
     rtl_TextEncoding eNdChrSet;
     USHORT nScript;
     BYTE mnTyp;
@@ -905,9 +914,9 @@ public:
     virtual const SfxPoolItem* HasTextItem( USHORT nWhich ) const;
     virtual const SfxPoolItem& GetItem( USHORT nWhich ) const;
     bool OutAttrWithRange(xub_StrLen nPos);
-    xub_StrLen WhereNext() const				{ return nAktSwPos; }
+    xub_StrLen WhereNext() const                { return nAktSwPos; }
     rtl_TextEncoding GetNextCharSet() const;
-    rtl_TextEncoding GetNodeCharSet() const		{ return eNdChrSet; }
+    rtl_TextEncoding GetNodeCharSet() const     { return eNdChrSet; }
 };
 
 
@@ -960,25 +969,25 @@ xub_StrLen WW8_SdrAttrIter::SearchNext( xub_StrLen nStartPos )
     for( i = 0; i < aTxtAtrArr.Count(); i++ )
     {
         const EECharAttrib& rHt = aTxtAtrArr[ i ];
-        nPos = rHt.nStart;	// gibt erstes Attr-Zeichen
+        nPos = rHt.nStart;  // gibt erstes Attr-Zeichen
         if( nPos >= nStartPos && nPos <= nMinPos )
         {
             nMinPos = nPos;
             SetCharSet(rHt, true);
         }
 
-//??		if( pHt->GetEnd() )			// Attr mit Ende
+//??        if( pHt->GetEnd() )         // Attr mit Ende
         {
-            nPos = rHt.nEnd;		// gibt letztes Attr-Zeichen + 1
+            nPos = rHt.nEnd;        // gibt letztes Attr-Zeichen + 1
             if( nPos >= nStartPos && nPos < nMinPos )
             {
                 nMinPos = nPos;
                 SetCharSet(rHt, false);
             }
         }
-/*		else
-        {									// Attr ohne Ende
-            nPos = rHt.nStart + 1;	// Laenge 1 wegen CH_TXTATR im Text
+/*      else
+        {                                   // Attr ohne Ende
+            nPos = rHt.nStart + 1;  // Laenge 1 wegen CH_TXTATR im Text
             if( nPos >= nStartPos && nPos < nMinPos )
             {
                 nMinPos = nPos;
@@ -1090,7 +1099,7 @@ void WW8_SdrAttrIter::OutAttr( xub_StrLen nSwPos )
                 break;
         }
 
-        nTmpSwPos = 0;		// HasTextItem nur in dem obigen Bereich erlaubt
+        nTmpSwPos = 0;      // HasTextItem nur in dem obigen Bereich erlaubt
         rWrt.pOutFmtNode = pOldMod;
     }
 }
@@ -1130,11 +1139,11 @@ const SfxPoolItem* WW8_SdrAttrIter::HasTextItem( USHORT nWhich ) const
             if( nWhich == rHt.pAttr->Which() &&
                 nTmpSwPos >= rHt.nStart && nTmpSwPos < rHt.nEnd )
             {
-                pRet = rHt.pAttr;		// gefunden
+                pRet = rHt.pAttr;       // gefunden
                 break;
             }
             else if( nTmpSwPos < rHt.nStart )
-                break;				// dann kommt da nichts mehr
+                break;              // dann kommt da nichts mehr
         }
     }
     return pRet;
@@ -1169,7 +1178,7 @@ void WW8_SdrAttrIter::OutParaAttr(bool bCharAttr)
         FnAttrOut pOut;
 
         const SfxItemPool* pSrcPool = pEditPool,
-                            * pDstPool = &rWrt.pDoc->GetAttrPool();
+                         * pDstPool = &rWrt.pDoc->GetAttrPool();
 
         do {
                 USHORT nWhich = pItem->Which(),
@@ -1237,17 +1246,17 @@ void SwWW8Writer::WriteSdrTextObj(const SdrObject& rObj, BYTE nTyp)
                             // Am Zeilenende werden die Attribute bis ueber das CR
                             // aufgezogen. Ausnahme: Fussnoten am Zeilenende
                 if( nNextAttr == nEnd && !bTxtAtr )
-                    WriteCR();				// CR danach
+                    WriteCR();              // CR danach
 
                                                 // Ausgabe der Zeichenattribute
-                aAttrIter.OutAttr( nAktPos );	// nAktPos - 1 ??
+                aAttrIter.OutAttr( nAktPos );   // nAktPos - 1 ??
                 pChpPlc->AppendFkpEntry( Strm().Tell(),
                                                 pO->Count(), pO->GetData() );
-                pO->Remove( 0, pO->Count() );					// leeren
+                pO->Remove( 0, pO->Count() );                   // leeren
 
                             // Ausnahme: Fussnoten am Zeilenende
                 if( nNextAttr == nEnd && bTxtAtr )
-                    WriteCR();				// CR danach
+                    WriteCR();              // CR danach
 
                 nAktPos = nNextAttr;
                 eChrSet = eNextChrSet;
@@ -1257,7 +1266,7 @@ void SwWW8Writer::WriteSdrTextObj(const SdrObject& rObj, BYTE nTyp)
 
             ASSERT( !pO->Count(), " pO ist am ZeilenEnde nicht leer" );
 
-            pO->Insert( bNul, pO->Count() );		// Style # as short
+            pO->Insert( bNul, pO->Count() );        // Style # as short
             pO->Insert( bNul, pO->Count() );
 
             aAttrIter.OutParaAttr(false);
@@ -1265,7 +1274,7 @@ void SwWW8Writer::WriteSdrTextObj(const SdrObject& rObj, BYTE nTyp)
             ULONG nPos = Strm().Tell();
             pPapPlc->AppendFkpEntry( Strm().Tell(),
                                             pO->Count(), pO->GetData() );
-            pO->Remove( 0, pO->Count() );						// leeren
+            pO->Remove( 0, pO->Count() );                       // leeren
             pChpPlc->AppendFkpEntry( nPos );
         }
         bAnyWrite = 0 != nPara;
@@ -1293,7 +1302,9 @@ void WinwordAnchoring::WriteData( EscherEx& rEx ) const
 
 void SwWW8Writer::CreateEscher()
 {
-    if(pHFSdrObjs->size() || pSdrObjs->size())
+    SfxItemState eBackSet = 
+        pDoc->GetPageDesc(0).GetMaster().GetItemState(RES_BACKGROUND);
+    if (pHFSdrObjs->size() || pSdrObjs->size() || SFX_ITEM_SET == eBackSet)
     {
         ASSERT( !pEscher, "wer hat den Pointer nicht geloescht?" );
         SvMemoryStream* pEscherStrm = new SvMemoryStream;
@@ -1304,7 +1315,7 @@ void SwWW8Writer::CreateEscher()
 
 void SwWW8Writer::WriteEscher()
 {
-    if( pEscher )
+    if (pEscher)
     {
         ULONG nStart = pTableStrm->Tell();
 
@@ -1388,14 +1399,14 @@ INT32 SwBasicEscherEx::WriteGrfFlyFrame(const SwFrmFmt& rFmt, UINT32 nShapeId)
     {
         rGrfNd.SwapIn(true);
 
-        Graphic			aGraphic( rGrfNd.GetGrf() );
-        GraphicObject	aGraphicObject( aGraphic );
-        ByteString		aUniqueId = aGraphicObject.GetUniqueID();
+        Graphic         aGraphic( rGrfNd.GetGrf() );
+        GraphicObject   aGraphicObject( aGraphic );
+        ByteString      aUniqueId = aGraphicObject.GetUniqueID();
 
         if ( aUniqueId.Len() )
         {
-             const	MapMode aMap100mm( MAP_100TH_MM );
-            Size	aSize( aGraphic.GetPrefSize() );
+            const   MapMode aMap100mm( MAP_100TH_MM );
+            Size    aSize( aGraphic.GetPrefSize() );
 
             if ( MAP_PIXEL == aGraphic.GetPrefMapMode().GetMapUnit() )
             {
@@ -1413,8 +1424,8 @@ INT32 SwBasicEscherEx::WriteGrfFlyFrame(const SwFrmFmt& rFmt, UINT32 nShapeId)
 
             sal_uInt32 nBlibId = GetBlibID( *QueryPicStream(), aUniqueId,
                 aRect, 0 );
-            if ( nBlibId )
-                aPropOpt.AddOpt( ESCHER_Prop_pib, nBlibId, sal_True );
+            if (nBlibId)
+                aPropOpt.AddOpt(ESCHER_Prop_pib, nBlibId, sal_True);
         }
     }
 
@@ -1427,7 +1438,7 @@ INT32 SwBasicEscherEx::WriteGrfFlyFrame(const SwFrmFmt& rFmt, UINT32 nShapeId)
     // store anchor attribute
     WriteFrmExtraData( rFmt );
 
-    CloseContainer();	// ESCHER_SpContainer
+    CloseContainer();   // ESCHER_SpContainer
     return nBorderThick;
 }
 
@@ -1563,13 +1574,72 @@ INT32 SwBasicEscherEx::WriteOLEFlyFrame(const SwFrmFmt& rFmt, UINT32 nShapeId)
         // store anchor attribute
         WriteFrmExtraData( rFmt );
 
-        CloseContainer();	// ESCHER_SpContainer
+        CloseContainer();   // ESCHER_SpContainer
     }
     return nBorderThick;
 }
 
-INT32 SwBasicEscherEx::WriteFlyFrameAttr(const SwFrmFmt& rFmt, MSO_SPT eShapeType,
+void SwBasicEscherEx::WriteBrushAttr(const SvxBrushItem &rBrush,
     EscherPropertyContainer& rPropOpt)
+{
+    bool bSetOpacity = false;
+    sal_uInt32 nOpaque = 0;
+    if (const GraphicObject *pGraphicObject = rBrush.GetGraphicObject())
+    {
+        ByteString aUniqueId = pGraphicObject->GetUniqueID();
+        if (aUniqueId.Len())
+        {
+            const Graphic &rGraphic = pGraphicObject->GetGraphic();
+            Size aSize(rGraphic.GetPrefSize());
+            const MapMode aMap100mm(MAP_100TH_MM);
+            if (MAP_PIXEL == rGraphic.GetPrefMapMode().GetMapUnit())
+            {
+                aSize = Application::GetDefaultDevice()->PixelToLogic(
+                    aSize, aMap100mm);
+            }
+            else
+            {
+                aSize = OutputDevice::LogicToLogic(aSize,
+                    rGraphic.GetPrefMapMode(), aMap100mm);
+            }
+
+            Point aEmptyPoint = Point();
+            Rectangle aRect(aEmptyPoint, aSize);
+
+            sal_uInt32 nBlibId = GetBlibID(*QueryPicStream(), aUniqueId,
+                aRect, 0);
+            if (nBlibId)
+                rPropOpt.AddOpt(ESCHER_Prop_fillBlip,nBlibId,sal_True);
+        }
+
+        if ((nOpaque = pGraphicObject->GetAttr().GetTransparency()))
+            bSetOpacity = true;
+
+        rPropOpt.AddOpt( ESCHER_Prop_fillType, ESCHER_FillPicture );
+        rPropOpt.AddOpt( ESCHER_Prop_fNoFillHitTest, 0x140014 );
+        rPropOpt.AddOpt( ESCHER_Prop_fillBackColor, 0 );
+    }
+    else
+    {
+        UINT32 nFillColor = GetColor(rBrush.GetColor(), false);
+        rPropOpt.AddOpt( ESCHER_Prop_fillColor, nFillColor );
+        rPropOpt.AddOpt( ESCHER_Prop_fillBackColor, nFillColor ^ 0xffffff );
+        rPropOpt.AddOpt( ESCHER_Prop_fNoFillHitTest, 0x100010 );
+
+        if ((nOpaque = rBrush.GetColor().GetTransparency()))
+            bSetOpacity = true;
+    }
+
+    if (bSetOpacity)
+    {
+        nOpaque = (nOpaque * 100) / 0xFE;
+        nOpaque = ((100 - nOpaque) << 16) / 100;
+        rPropOpt.AddOpt(ESCHER_Prop_fillOpacity, nOpaque);
+    }
+}
+
+INT32 SwBasicEscherEx::WriteFlyFrameAttr(const SwFrmFmt& rFmt, 
+    MSO_SPT eShapeType, EscherPropertyContainer& rPropOpt)
 {
     INT32 nLineWidth=0;
     const SfxPoolItem* pItem;
@@ -1627,7 +1697,7 @@ INT32 SwBasicEscherEx::WriteFlyFrameAttr(const SwFrmFmt& rFmt, MSO_SPT eShapeTyp
                     ((SvxBoxItem*)pItem)->GetDistance( n ) ));
             }
     }
-    if( bFirstLine )				// no valid line found
+    if( bFirstLine )                // no valid line found
     {
         rPropOpt.AddOpt( ESCHER_Prop_fNoLineDrawDash, 0x80000 );
         rPropOpt.AddOpt( ESCHER_Prop_dyTextTop, 0 );
@@ -1637,60 +1707,7 @@ INT32 SwBasicEscherEx::WriteFlyFrameAttr(const SwFrmFmt& rFmt, MSO_SPT eShapeTyp
     }
 
     SvxBrushItem aBrush(rWrt.TrueFrameBgBrush(rFmt));
-    bool bSetOpacity = false;
-    sal_uInt32 nOpaque = 0;
-    if (const GraphicObject *pGraphicObject = aBrush.GetGraphicObject())
-    {
-        ByteString aUniqueId = pGraphicObject->GetUniqueID();
-        if (aUniqueId.Len())
-        {
-            const Graphic &rGraphic = pGraphicObject->GetGraphic();
-            Size aSize(rGraphic.GetPrefSize());
-            const MapMode aMap100mm(MAP_100TH_MM);
-            if (MAP_PIXEL == rGraphic.GetPrefMapMode().GetMapUnit())
-            {
-                aSize = Application::GetDefaultDevice()->PixelToLogic(
-                    aSize, aMap100mm);
-            }
-            else
-            {
-                aSize = OutputDevice::LogicToLogic(aSize,
-                    rGraphic.GetPrefMapMode(), aMap100mm);
-            }
-
-            Point aEmptyPoint = Point();
-            Rectangle aRect(aEmptyPoint, aSize);
-
-            sal_uInt32 nBlibId = GetBlibID(*QueryPicStream(), aUniqueId,
-                aRect, 0);
-            if (nBlibId)
-                rPropOpt.AddOpt(ESCHER_Prop_fillBlip,nBlibId,sal_True);
-        }
-
-        if ((nOpaque = pGraphicObject->GetAttr().GetTransparency()))
-            bSetOpacity = true;
-
-        rPropOpt.AddOpt( ESCHER_Prop_fillType, ESCHER_FillPicture );
-        rPropOpt.AddOpt( ESCHER_Prop_fNoFillHitTest, 0x140014 );
-        rPropOpt.AddOpt( ESCHER_Prop_fillBackColor, 0 );
-    }
-    else
-    {
-        UINT32 nFillColor = GetColor(aBrush.GetColor(), false);
-        rPropOpt.AddOpt( ESCHER_Prop_fillColor, nFillColor );
-        rPropOpt.AddOpt( ESCHER_Prop_fillBackColor, nFillColor ^ 0xffffff );
-        rPropOpt.AddOpt( ESCHER_Prop_fNoFillHitTest, 0x100010 );
-
-        if ((nOpaque = aBrush.GetColor().GetTransparency()))
-            bSetOpacity = true;
-    }
-
-    if (bSetOpacity)
-    {
-        nOpaque = (nOpaque * 100) / 0xFE;
-        nOpaque = ((100 - nOpaque) << 16) / 100;
-        rPropOpt.AddOpt(ESCHER_Prop_fillOpacity, nOpaque);
-    }
+    WriteBrushAttr(aBrush, rPropOpt);
 
     const SdrObject* pObj = rFmt.FindRealSdrObject();
     if( pObj && (pObj->GetLayer() == GetHellLayerId() ||
@@ -1806,17 +1823,17 @@ SwEscherEx::SwEscherEx(SvStream* pStrm, SwWW8Writer& rWW8Wrt)
     OpenContainer( ESCHER_DggContainer );
 
     sal_uInt16 nColorCount = 4;
-    *pStrm	<< (sal_uInt16)( nColorCount << 4 )		// instance
-            << (sal_uInt16)ESCHER_SplitMenuColors	// record type
-            << (sal_uInt32)( nColorCount * 4 )		// size
+    *pStrm  << (sal_uInt16)( nColorCount << 4 )     // instance
+            << (sal_uInt16)ESCHER_SplitMenuColors   // record type
+            << (sal_uInt32)( nColorCount * 4 )      // size
             << (sal_uInt32)0x08000004
             << (sal_uInt32)0x08000001
             << (sal_uInt32)0x08000002
             << (sal_uInt32)0x100000f7;
 
-    CloseContainer();	// ESCHER_DggContainer
+    CloseContainer();   // ESCHER_DggContainer
 
-    BYTE i = 2;		// for header/footer and the other
+    BYTE i = 2;     // for header/footer and the other
     PlcDrawObj *pSdrObjs = rWrt.pHFSdrObjs;
     pTxtBxs = rWrt.pHFTxtBxs;
 
@@ -1893,7 +1910,7 @@ SwEscherEx::SwEscherEx(SvStream* pStrm, SwWW8Writer& rWW8Wrt)
             pSdrObjs->SetShapeDetails(*(aSorted[n]), nShapeId, nBorderThick);
         }
 
-        EndSdrObjectPage();		    // ???? Bugfix for 74724
+        EndSdrObjectPage();         // ???? Bugfix for 74724
 
         if( nSecondShapeId )
         {
@@ -1902,31 +1919,35 @@ SwEscherEx::SwEscherEx(SvStream* pStrm, SwWW8Writer& rWW8Wrt)
             AddShape( ESCHER_ShpInst_Rectangle, 0xe00, nSecondShapeId );
 
             EscherPropertyContainer aPropOpt;
-            // default Fuellfarbe ist das StarOffice blau7
-            // ----> von DrawingLayer besorgen !!
-            aPropOpt.AddOpt( ESCHER_Prop_fillColor, 0xffb800 );
-            aPropOpt.AddOpt( ESCHER_Prop_fillBackColor, 0 );
-            aPropOpt.AddOpt( ESCHER_Prop_fNoFillHitTest, 0x00100010 );
+            const SwFrmFmt &rFmt = rWrt.pDoc->GetPageDesc(0).GetMaster();
+            const SfxPoolItem* pItem = 0;
+            SfxItemState eState = rFmt.GetItemState(RES_BACKGROUND, true, 
+                &pItem);
+            if (SFX_ITEM_SET == eState && pItem)
+            {
+                const SvxBrushItem* pBrush = (const SvxBrushItem*)pItem;
+                WriteBrushAttr(*pBrush, aPropOpt);
+            }
             aPropOpt.AddOpt( ESCHER_Prop_lineColor, 0x8000001 );
             aPropOpt.AddOpt( ESCHER_Prop_fNoLineDrawDash, 0x00080008 );
             aPropOpt.AddOpt( ESCHER_Prop_shadowColor, 0x8000002 );
             aPropOpt.AddOpt( ESCHER_Prop_lineWidth, 0 );
 
 // winword defaults!
-//			aPropOpt.AddOpt( ESCHER_Prop_fNoFillHitTest, 0x100000 );
-//			aPropOpt.AddOpt( ESCHER_Prop_lineWidth, 0 );
-//			aPropOpt.AddOpt( ESCHER_Prop_fNoLineDrawDash, 0x80000 );
-//			aPropOpt.AddOpt( ESCHER_Prop_bWMode, 0x9 );
-//			aPropOpt.AddOpt( ESCHER_Prop_fBackground, 0x10001 );
+//          aPropOpt.AddOpt( ESCHER_Prop_fNoFillHitTest, 0x100000 );
+//          aPropOpt.AddOpt( ESCHER_Prop_lineWidth, 0 );
+//          aPropOpt.AddOpt( ESCHER_Prop_fNoLineDrawDash, 0x80000 );
+//          aPropOpt.AddOpt( ESCHER_Prop_bWMode, 0x9 );
+//          aPropOpt.AddOpt( ESCHER_Prop_fBackground, 0x10001 );
 
             aPropOpt.Commit( *pStrm );
 
             AddAtom( 4, ESCHER_ClientData );
             GetStream() << 1L;
 
-            CloseContainer();	// ESCHER_SpContainer
+            CloseContainer();   // ESCHER_SpContainer
         }
-    CloseContainer();	// ESCHER_DgContainer
+    CloseContainer();   // ESCHER_DgContainer
     }
 }
 
@@ -1955,8 +1976,8 @@ void WinwordAnchoring::SetAnchoring(const SwFrmFmt& rFmt, bool bBROKEN)
 {
     const RndStdIds eAnchor = rFmt.GetAnchor().GetAnchorId();
 
-    const SwFmtHoriOrient&	rHoriOri = rFmt.GetHoriOrient();
-    const SwFmtVertOrient&	rVertOri = rFmt.GetVertOrient();
+    const SwFmtHoriOrient&  rHoriOri = rFmt.GetHoriOrient();
+    const SwFmtVertOrient&  rVertOri = rFmt.GetVertOrient();
 
     const SwHoriOrient eHOri = rHoriOri.GetHoriOrient();
     const SwVertOrient eVOri = rVertOri.GetVertOrient();
@@ -2011,7 +2032,7 @@ void WinwordAnchoring::SetAnchoring(const SwFrmFmt& rFmt, bool bBROKEN)
     switch( eHRel )
     {
         case FRAME:
-        //	nHIndex |= 0x00000000;
+        //  nHIndex |= 0x00000000;
             break;
         case PRTAREA:
             nHIndex |= 0x00010000;
@@ -2045,7 +2066,7 @@ void WinwordAnchoring::SetAnchoring(const SwFrmFmt& rFmt, bool bBROKEN)
     switch( eHOri )
     {
         case HORI_LEFT:
-        //	nHIndex |= 0x00000000;
+        //  nHIndex |= 0x00000000;
             break;
         case HORI_INSIDE:
             nHIndex |= 0x00000100;
@@ -2070,7 +2091,7 @@ void WinwordAnchoring::SetAnchoring(const SwFrmFmt& rFmt, bool bBROKEN)
     switch( eVRel )
     {
         case FRAME:
-        //	nVIndex |= 0x00000000;
+        //  nVIndex |= 0x00000000;
             break;
         case PRTAREA:
             nVIndex |= 0x00010000;
@@ -2086,7 +2107,7 @@ void WinwordAnchoring::SetAnchoring(const SwFrmFmt& rFmt, bool bBROKEN)
     switch( eVOri )
     {
         case VERT_TOP:
-        //	nVIndex |= 0x00000000;
+        //  nVIndex |= 0x00000000;
             break;
         case VERT_BOTTOM:
             nVIndex |= 0x00000100;
@@ -2552,9 +2573,9 @@ INT32 SwEscherEx::WriteTxtFlyFrame(const SwFrmFmt& rFmt, UINT32 nShapeId,
     // store anchor attribute
     WriteFrmExtraData( rFmt );
 
-    AddAtom( 4, ESCHER_ClientTextbox );	GetStream() << nTxtBox;
+    AddAtom( 4, ESCHER_ClientTextbox ); GetStream() << nTxtBox;
 
-    CloseContainer();	// ESCHER_SpContainer
+    CloseContainer();   // ESCHER_SpContainer
     return nBorderThick;
 }
 
@@ -2602,7 +2623,7 @@ void SwEscherEx::WriteOCXControl( const SwFrmFmt& rFmt, UINT32 nShapeId )
         // store anchor attribute
         WriteFrmExtraData( rFmt );
 
-        CloseContainer();	// ESCHER_SpContainer
+        CloseContainer();   // ESCHER_SpContainer
     }
 }
 
@@ -2726,6 +2747,7 @@ UINT32 SwEscherEx::QueryTextID(
 
 bool SwMSConvertControls::ExportControl(Writer &rWrt, const SdrObject *pObj)
 {
+    using namespace ww;
     SwWW8Writer& rWW8Wrt = (SwWW8Writer&)rWrt;
 
     if (!rWW8Wrt.bWrtWW8)
@@ -2774,16 +2796,18 @@ bool SwMSConvertControls::ExportControl(Writer &rWrt, const SdrObject *pObj)
     BYTE *pData = aSpecOLE+2;
     Set_UInt32(pData,(UINT32)pObj);
 
-    sName.InsertAscii(" CONTROL Forms.",0);
-    sName.APPEND_CONST_ASC(".1 \\s ");
+    String sFld(FieldString(eCONTROL));
+    sFld.APPEND_CONST_ASC("Forms.");
+    sFld += sName;
+    sFld.APPEND_CONST_ASC(".1 \\s ");
 
-    rWW8Wrt.OutField(0,87,sName,
+    rWW8Wrt.OutField(0, eCONTROL, sFld,
         WRITEFIELD_START|WRITEFIELD_CMD_START|WRITEFIELD_CMD_END);
 
     rWW8Wrt.pChpPlc->AppendFkpEntry(rWW8Wrt.Strm().Tell(),sizeof(aSpecOLE),
         aSpecOLE);
     rWW8Wrt.WriteChar( 0x1 );
-    rWW8Wrt.OutField( 0, 87, aEmptyStr, WRITEFIELD_END | WRITEFIELD_CLOSE );
+    rWW8Wrt.OutField(0, eCONTROL, aEmptyStr, WRITEFIELD_END | WRITEFIELD_CLOSE);
     return true;
 }
 
