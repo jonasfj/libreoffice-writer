@@ -2,9 +2,9 @@
  *
  *  $RCSfile: accselectionhelper.cxx,v $
  *
- *  $Revision: 1.9 $
+ *  $Revision: 1.10 $
  *
- *  last change: $Author: rt $ $Date: 2004-06-16 09:30:46 $
+ *  last change: $Author: vg $ $Date: 2004-12-23 10:02:31 $
  *
  *  The Contents of this file are made available subject to the terms of
  *  either of the following licenses
@@ -59,7 +59,6 @@
  *
  ************************************************************************/
 
-
 #pragma hdrstop
 
 #ifndef _COM_SUN_STAR_ACCESSIBILITY_XACCESSIBLESELECTION_HPP_
@@ -104,7 +103,7 @@ using ::com::sun::star::lang::IndexOutOfBoundsException;
 
 
 
-SwAccessibleSelectionHelper::SwAccessibleSelectionHelper( 
+SwAccessibleSelectionHelper::SwAccessibleSelectionHelper(
     SwAccessibleContext& rCtxt ) :
         rContext( rCtxt )
 {
@@ -118,7 +117,7 @@ SwFEShell* SwAccessibleSelectionHelper::GetFEShell()
 {
     DBG_ASSERT( rContext.GetMap() != NULL, "no map?" );
     ViewShell* pViewShell = rContext.GetMap()->GetShell();
-    DBG_ASSERT( pViewShell != NULL, 
+    DBG_ASSERT( pViewShell != NULL,
                 "No view shell? Then what are you looking at?" );
 
     SwFEShell* pFEShell = NULL;
@@ -130,7 +129,7 @@ SwFEShell* SwAccessibleSelectionHelper::GetFEShell()
     return pFEShell;
 }
 
-void SwAccessibleSelectionHelper::throwIndexOutOfBoundsException() 
+void SwAccessibleSelectionHelper::throwIndexOutOfBoundsException()
         throw ( ::com::sun::star::lang::IndexOutOfBoundsException )
 {
     Reference < XAccessibleContext > xThis( &rContext );
@@ -144,9 +143,9 @@ void SwAccessibleSelectionHelper::throwIndexOutOfBoundsException()
 
 //=====  XAccessibleSelection  ============================================
 
-void SwAccessibleSelectionHelper::selectAccessibleChild( 
-    sal_Int32 nChildIndex ) 
-    throw ( IndexOutOfBoundsException, 
+void SwAccessibleSelectionHelper::selectAccessibleChild(
+    sal_Int32 nChildIndex )
+    throw ( IndexOutOfBoundsException,
             RuntimeException )
 {
     vos::OGuard aGuard(Application::GetSolarMutex());
@@ -173,9 +172,9 @@ void SwAccessibleSelectionHelper::selectAccessibleChild(
     // return bRet;
 }
 
-sal_Bool SwAccessibleSelectionHelper::isAccessibleChildSelected( 
-    sal_Int32 nChildIndex ) 
-    throw ( IndexOutOfBoundsException, 
+sal_Bool SwAccessibleSelectionHelper::isAccessibleChildSelected(
+    sal_Int32 nChildIndex )
+    throw ( IndexOutOfBoundsException,
             RuntimeException )
 {
     vos::OGuard aGuard(Application::GetSolarMutex());
@@ -203,13 +202,13 @@ sal_Bool SwAccessibleSelectionHelper::isAccessibleChildSelected(
     return bRet;
 }
 
-void SwAccessibleSelectionHelper::clearAccessibleSelection(  ) 
+void SwAccessibleSelectionHelper::clearAccessibleSelection(  )
     throw ( RuntimeException )
 {
     // return sal_False     // we can't deselect
 }
 
-void SwAccessibleSelectionHelper::selectAllAccessibleChildren(  ) 
+void SwAccessibleSelectionHelper::selectAllAccessibleChildren(  )
     throw ( RuntimeException )
 {
     vos::OGuard aGuard(Application::GetSolarMutex());
@@ -241,21 +240,21 @@ void SwAccessibleSelectionHelper::selectAllAccessibleChildren(  )
     }
 }
 
-sal_Int32 SwAccessibleSelectionHelper::getSelectedAccessibleChildCount(  ) 
+sal_Int32 SwAccessibleSelectionHelper::getSelectedAccessibleChildCount(  )
     throw ( RuntimeException )
 {
     vos::OGuard aGuard(Application::GetSolarMutex());
 
     sal_Int32 nCount = 0;
     // Only one frame can be selected at a time, and we only frames
-    // for selectable children. 
+    // for selectable children.
     SwFEShell* pFEShell = GetFEShell();
     if( pFEShell != 0 )
     {
         const SwFlyFrm *pFlyFrm = pFEShell->GetCurrFlyFrm();
         if( pFlyFrm )
         {
-            if( rContext.GetParent(pFlyFrm, rContext.IsInPagePreview()) == 
+            if( rContext.GetParent(pFlyFrm, rContext.IsInPagePreview()) ==
                 rContext.GetFrm() )
             {
                 nCount = 1;
@@ -277,7 +276,7 @@ sal_Int32 SwAccessibleSelectionHelper::getSelectedAccessibleChildCount(  )
                 {
                     const SwFrmOrObj& rChild = *aIter;
                     if( rChild.GetSdrObject() && !rChild.GetSwFrm() &&
-                        rContext.GetParent(rChild, rContext.IsInPagePreview()) 
+                        rContext.GetParent(rChild, rContext.IsInPagePreview())
                            == rContext.GetFrm() &&
                          pFEShell->IsObjSelected( *rChild.GetSdrObject() ) )
                     {
@@ -291,9 +290,9 @@ sal_Int32 SwAccessibleSelectionHelper::getSelectedAccessibleChildCount(  )
     return nCount;
 }
 
-Reference<XAccessible> SwAccessibleSelectionHelper::getSelectedAccessibleChild( 
-    sal_Int32 nSelectedChildIndex ) 
-    throw ( IndexOutOfBoundsException, 
+Reference<XAccessible> SwAccessibleSelectionHelper::getSelectedAccessibleChild(
+    sal_Int32 nSelectedChildIndex )
+    throw ( IndexOutOfBoundsException,
             RuntimeException)
 {
     vos::OGuard aGuard(Application::GetSolarMutex());
@@ -311,7 +310,7 @@ Reference<XAccessible> SwAccessibleSelectionHelper::getSelectedAccessibleChild(
     if( pFlyFrm )
     {
         if( 0 == nSelectedChildIndex &&
-            rContext.GetParent(pFlyFrm, rContext.IsInPagePreview()) == 
+            rContext.GetParent(pFlyFrm, rContext.IsInPagePreview()) ==
                 rContext.GetFrm() )
         {
             aChild = pFlyFrm;
@@ -332,7 +331,7 @@ Reference<XAccessible> SwAccessibleSelectionHelper::getSelectedAccessibleChild(
         {
             const SwFrmOrObj& rChild = *aIter;
             if( rChild.GetSdrObject() && !rChild.GetSwFrm() &&
-                rContext.GetParent(rChild, rContext.IsInPagePreview()) == 
+                rContext.GetParent(rChild, rContext.IsInPagePreview()) ==
                     rContext.GetFrm() &&
                 pFEShell->IsObjSelected( *rChild.GetSdrObject() ) )
             {
@@ -353,7 +352,7 @@ Reference<XAccessible> SwAccessibleSelectionHelper::getSelectedAccessibleChild(
     if( aChild.GetSwFrm() )
     {
         ::vos::ORef < SwAccessibleContext > xChildImpl(
-                rContext.GetMap()->GetContextImpl( aChild.GetSwFrm(), 
+                rContext.GetMap()->GetContextImpl( aChild.GetSwFrm(),
                 sal_True ) );
         if( xChildImpl.isValid() )
         {
@@ -364,7 +363,7 @@ Reference<XAccessible> SwAccessibleSelectionHelper::getSelectedAccessibleChild(
     else
     {
         ::vos::ORef < ::accessibility::AccessibleShape > xChildImpl(
-                rContext.GetMap()->GetContextImpl( aChild.GetSdrObject(), 
+                rContext.GetMap()->GetContextImpl( aChild.GetSdrObject(),
                                           &rContext, sal_True )  );
         if( xChildImpl.isValid() )
             xChild = xChildImpl.getBodyPtr();
@@ -372,13 +371,14 @@ Reference<XAccessible> SwAccessibleSelectionHelper::getSelectedAccessibleChild(
     return xChild;
 }
 
-void SwAccessibleSelectionHelper::deselectAccessibleChild( 
-    sal_Int32 nSelectedChildIndex ) 
-    throw ( IndexOutOfBoundsException, 
+// --> OD 2004-11-16 #111714# - index has to be treated as global child index.
+void SwAccessibleSelectionHelper::deselectAccessibleChild(
+    sal_Int32 nChildIndex )
+    throw ( IndexOutOfBoundsException,
             RuntimeException )
 {
     // return sal_False     // we can't deselect
-    if( nSelectedChildIndex < 0 ||
-        nSelectedChildIndex >= getSelectedAccessibleChildCount() )
+    if( nChildIndex < 0 ||
+        nChildIndex >= rContext.GetChildCount() )
         throwIndexOutOfBoundsException();
 }
