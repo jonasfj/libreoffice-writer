@@ -2,9 +2,9 @@
  *
  *  $RCSfile: doc.hxx,v $
  *
- *  $Revision: 1.81 $
+ *  $Revision: 1.82 $
  *
- *  last change: $Author: hr $ $Date: 2004-09-08 14:49:28 $
+ *  last change: $Author: obo $ $Date: 2004-09-13 09:31:59 $
  *
  *  The Contents of this file are made available subject to the terms of
  *  either of the following licenses
@@ -911,9 +911,9 @@ public:
     sal_Bool Undo( SwUndoIter& );
     // -> #111827#
 
-    /** 
+    /**
         Opens undo block.
-        
+
         @param nUndoId        undo ID for the start object
         @param pRewriter      rewriter for comments @see SwUndo::GetComment
 
@@ -922,7 +922,7 @@ public:
 
         @return the undo ID of the created object
     */
-    sal_uInt16 StartUndo( sal_uInt16 nUndoId = 0, 
+    sal_uInt16 StartUndo( sal_uInt16 nUndoId = 0,
                           const SwRewriter * pRewriter = 0);
 
     /**
@@ -930,7 +930,7 @@ public:
 
        @param nUndoId         undo ID for the closure object
        @param pRewriter       rewriter for comments @see SwUndo::GetComment
-       
+
        If the given nUndoId is equal to zero an undo object with ID
        UNDO_START will be generated.
 
@@ -1033,8 +1033,8 @@ public:
        @retval TRUE             update was successful
        @retval FALSE            else
     */
-    BOOL  UpdateFld(SwTxtFld * rDstFmtFld, SwField & rSrcFld, 
-                    SwMsgPoolItem * pMsgHnt, 
+    BOOL  UpdateFld(SwTxtFld * rDstFmtFld, SwField & rSrcFld,
+                    SwMsgPoolItem * pMsgHnt,
                     BOOL bUpdateTblFlds);
 
     void UpdateRefFlds( SfxPoolItem* pHt = 0);
@@ -1256,7 +1256,7 @@ public:
     // Remove all language dependencies from all existing formats
     void RemoveAllFmtLanguageDependencies();
 
-    SwFrmFmt  *MakeFrmFmt(const String &rFmtName, SwFrmFmt *pDerivedFrom, 
+    SwFrmFmt  *MakeFrmFmt(const String &rFmtName, SwFrmFmt *pDerivedFrom,
                           BOOL bBroadcast = FALSE);
     void	   DelFrmFmt( SwFrmFmt *pFmt, BOOL bBroadcast = FALSE );
     SwFrmFmt* FindFrmFmtByName( const String& rName ) const
@@ -1470,7 +1470,7 @@ public:
 
         //fuer Reader
 
-    SwPageDesc * GetPageDesc( const String & rName ); 
+    SwPageDesc * GetPageDesc( const String & rName );
     SwPageDesc& _GetPageDesc( sal_uInt16 i ) const { return *aPageDescs[i]; }
     void ChgPageDesc( const String & rName, const SwPageDesc& );
     void ChgPageDesc( sal_uInt16 i, const SwPageDesc& );
@@ -1482,9 +1482,9 @@ public:
     void PreDelPageDesc(SwPageDesc * pDel); // #i7983#
     // -> #116530#
     sal_uInt16 MakePageDesc( const String &rName, const SwPageDesc* pCpy = 0,
-                             BOOL bRegardLanguage = TRUE, 
-                             BOOL bBroadcast = FALSE); 
-    void BroadcastStyleOperation(String rName, SfxStyleFamily eFamily, 
+                             BOOL bRegardLanguage = TRUE,
+                             BOOL bBroadcast = FALSE);
+    void BroadcastStyleOperation(String rName, SfxStyleFamily eFamily,
                                  USHORT nOp);
     // <- #116530#
         // Methoden fuer die Verzeichnisse:
@@ -2223,8 +2223,9 @@ public:
 
     // Change a format undoable.
     void ChgFmt(SwFmt & rFmt, const SfxItemSet & rSet);
+    void ChgFmt(SwFmt & rFmt, const SfxPoolItem & rItem);
 
-    void RenameFmt(SwFmt & rFmt, const String & sNewName, 
+    void RenameFmt(SwFmt & rFmt, const String & sNewName,
                    BOOL bBroadcast = FALSE);
 
     // Change a TOX undoable.
@@ -2251,7 +2252,7 @@ public:
     String GetPaMDescr(const SwPaM & rPaM) const;
 
     // -> #111840#
-    
+
     /**
        Returns the field at a certain position.
 
