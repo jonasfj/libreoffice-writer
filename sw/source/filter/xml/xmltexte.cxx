@@ -2,9 +2,9 @@
  *
  *  $RCSfile: xmltexte.cxx,v $
  *
- *  $Revision: 1.7 $
+ *  $Revision: 1.8 $
  *
- *  last change: $Author: mtg $ $Date: 2001-02-26 13:27:54 $
+ *  last change: $Author: mib $ $Date: 2001-03-02 14:03:38 $
  *
  *  The Contents of this file are made available subject to the terms of
  *  either of the following licenses
@@ -287,6 +287,22 @@ void SwXMLTextParagraphExport::getTextEmbeddedObjectProperties(
     }
 }
 
+void SwXMLTextParagraphExport::setTextEmbeddedGraphicURL(
+    const Reference < XPropertySet >& rPropSet,
+    OUString& rURL) const
+{
+    if( !rURL.getLength() )
+        return;
+
+    SwGrfNode *pGrfNd = GetNoTxtNode( rPropSet )->GetGrfNode();
+    if( !pGrfNd->IsGrfLink() )
+    {
+        String aNewURL( RTL_CONSTASCII_STRINGPARAM("vnd.sun.star.Package:") );
+        aNewURL += String(rURL.copy( 1 ) );
+        pGrfNd->SetNewStreamName( aNewURL );
+    }
+}
+    
 void SwXMLTextParagraphExport::_exportTextEmbedded(
         const Reference < XPropertySet > & rPropSet,
         const Reference < XPropertySetInfo > & rPropSetInfo )
