@@ -2,9 +2,9 @@
  *
  *  $RCSfile: tox.cxx,v $
  *
- *  $Revision: 1.13 $
+ *  $Revision: 1.14 $
  *
- *  last change: $Author: hr $ $Date: 2004-11-27 11:41:42 $
+ *  last change: $Author: obo $ $Date: 2005-01-05 14:32:05 $
  *
  *  The Contents of this file are made available subject to the terms of
  *  either of the following licenses
@@ -209,7 +209,7 @@ SwFormTokens lcl_GetAuthPattern(USHORT nTypeId)
 {
     SwFormTokens aRet; // #i21237#
 
-    
+
     PatternIni aIni = aPatternIni[nTypeId];
     USHORT nVals[5];
     nVals[0] = aIni.n1;
@@ -224,11 +224,11 @@ SwFormTokens lcl_GetAuthPattern(USHORT nTypeId)
             break;
          // -> #i21237#
         SwFormToken aToken(TOKEN_AUTHORITY);
-        
+
         aToken.nAuthorityField = nVals[i];
         aRet.push_back(aToken);
         // <- #i21237#
-    }    
+    }
 
     return aRet;
 }
@@ -370,18 +370,16 @@ SwForm::SwForm( USHORT nTyp ) // #i21237#
     }
     else
         aTokens.push_back(SwFormToken(TOKEN_ENTRY));
-                          
+
     if (TOX_AUTHORITIES != nType)
     {
         SwFormToken aToken(TOKEN_TAB_STOP);
-        aToken.nTabStopPosition = USHRT_MAX;
-        
-        if(TOX_CONTENT == nType || TOX_TABLES == nType || 
-           TOX_ILLUSTRATIONS == nType || TOX_OBJECTS == nType)
-        {
-            aToken.cTabFillChar = '.';
-            aToken.eTabAlign = SVX_TAB_ADJUST_END;
-        }
+        aToken.nTabStopPosition = 0;
+
+        // --> FME 2004-12-10 #i36870# right aligned tab for all
+        aToken.cTabFillChar = '.';
+        aToken.eTabAlign = SVX_TAB_ADJUST_END;
+        // <--
 
         aTokens.push_back(aToken);
         aTokens.push_back(SwFormToken(TOKEN_PAGE_NUMS));
@@ -483,10 +481,10 @@ USHORT SwForm::GetFirstTabPos() const   // #i21237#
     if (2 <= count_if(aTokens.begin(), aTokens.end(),
                       SwFormTokenEqualToFormTokenType(TOKEN_TAB_STOP)))
     {
-        SwFormTokens::const_iterator aIt = 
-            find_if(aTokens.begin(), aTokens.end(), 
+        SwFormTokens::const_iterator aIt =
+            find_if(aTokens.begin(), aTokens.end(),
                     SwFormTokenEqualToFormTokenType(TOKEN_TAB_STOP));
-        
+
         if (aIt != aTokens.end())
             nRet = aIt->nTabStopPosition;
     }
@@ -503,10 +501,10 @@ void SwForm::SetFirstTabPos( USHORT n )     // #i21237#
         if (2 <= count_if(aTokens.begin(), aTokens.end(),
                           SwFormTokenEqualToFormTokenType(TOKEN_TAB_STOP)))
         {
-            SwFormTokens::iterator aIt = 
-                find_if(aTokens.begin(), aTokens.end(), 
+            SwFormTokens::iterator aIt =
+                find_if(aTokens.begin(), aTokens.end(),
                         SwFormTokenEqualToFormTokenType(TOKEN_TAB_STOP));
-            
+
             SwFormToken aToken(TOKEN_TAB_STOP);
             aToken.eTabAlign = aIt->eTabAlign;
             aToken.cTabFillChar = aIt->cTabFillChar;
@@ -526,7 +524,7 @@ void SwForm::SetFirstTabPos( USHORT n )     // #i21237#
 }
 
 //-----------------------------------------------------------------------------
-void SwForm::AdjustTabStops(SwDoc& rDoc, BOOL bDefaultRightTabStop) // #i21237#
+void SwForm::AdjustTabStops(SwDoc& rDoc, BOOL bInsertNewTapStops) // #i21237#
 {
     for(USHORT nLevel = 1; nLevel < GetFormMax(); nLevel++)
     {
@@ -540,68 +538,62 @@ void SwForm::AdjustTabStops(SwDoc& rDoc, BOOL bDefaultRightTabStop) // #i21237#
             if( USHRT_MAX != nId )
                 pColl = rDoc.GetTxtCollFromPool( nId );
         }
-        if( pColl )
+
+        const SvxTabStopItem* pTabStops = 0;
+        USHORT nTabCount = 0;
+        if( pColl &&
+            0 != ( pTabStops = &pColl->GetTabStops(FALSE) ) &&
+            0 != ( nTabCount = pTabStops->Count() ) )
         {
-            const SvxTabStopItem& rTabStops = pColl->GetTabStops( FALSE );
-            USHORT nTabCount = rTabStops.Count();
             // #i21237#
             SwFormTokens aCurrentPattern = GetPattern(nLevel);
             SwFormTokens::iterator aIt = aCurrentPattern.begin();
 
-            xub_StrLen nLastTabFoundEndPos = 0;
             BOOL bChanged = FALSE;
 
-            for(USHORT nTab = 0; nTab < nTabCount; nTab++)
+            for(USHORT nTab = 0; nTab < nTabCount; ++nTab)
             {
-                bChanged = TRUE;
-                const SvxTabStop& rTab = rTabStops[nTab];
-                xub_StrLen nStart, nEnd;
+                const SvxTabStop& rTab = (*pTabStops)[nTab];
 
-                // -> #i21237
-                if (aIt != aCurrentPattern.end())
-                    aIt = find_if(aIt, aCurrentPattern.end(), 
+                // --> FME 2004-12-16 #i29178#
+                // For Word import, we do not want to replace exising tokens,
+                // we insert new tabstop tokens without a tabstop character:
+                if ( bInsertNewTapStops )
+                {
+                    if ( SVX_TAB_ADJUST_DEFAULT != rTab.GetAdjustment() )
+                    {
+                        bChanged = TRUE;
+                        SwFormToken aToken(TOKEN_TAB_STOP);
+                        aToken.bWithTab = FALSE;
+                        aToken.nTabStopPosition = rTab.GetTabPos();
+                        aToken.eTabAlign = rTab.GetAdjustment();
+                        aToken.cTabFillChar = rTab.GetFill();
+                        aCurrentPattern.push_back(aToken);
+                    }
+                }
+                // <--
+                else
+                {
+                    aIt = find_if(aIt, aCurrentPattern.end(),
                                   SwFormTokenEqualToFormTokenType
                                   (TOKEN_TAB_STOP));
-
-                if (aIt == aCurrentPattern.end())
-                {
-                    SwFormToken aToken(TOKEN_TAB_STOP);
-                    aToken.bWithTab = FALSE;
-
-                    aCurrentPattern.push_back(aToken);
-                    aIt = aCurrentPattern.end();
-                    aIt--;
-                }
-
-                aIt->nTabStopPosition = rTab.GetTabPos();
-                aIt->eTabAlign = rTab.GetAdjustment();
-                aIt->cTabFillChar = rTab.GetFill();
-                
-                if( nTab == nTabCount - 1 && 
-                        rTab.GetAdjustment() == SVX_TAB_ADJUST_RIGHT)
-                        aIt->eTabAlign = SVX_TAB_ADJUST_END;
-                
-                if ( aIt != aCurrentPattern.end())
-                    aIt++;
-                // <- #i21237
-            }
-
-            // -> #i21237
-            if (bDefaultRightTabStop)
-            {
-                SwFormTokens::reverse_iterator aIt = aCurrentPattern.rbegin();
-                
-                if (aIt == aCurrentPattern.rend() || 
-                    aIt->eTabAlign != SVX_TAB_ADJUST_END)
-                {
-                    SwFormToken aToken(TOKEN_TAB_STOP);
-                    aToken.eTabAlign = SVX_TAB_ADJUST_END;
-                    aToken.bWithTab = FALSE;
-                    
-                    aCurrentPattern.push_back(aToken);
+                    if ( aIt != aCurrentPattern.end() )
+                    {
+                        bChanged = TRUE;
+                        aIt->nTabStopPosition = rTab.GetTabPos();
+                        aIt->eTabAlign = nTab == nTabCount - 1 &&
+                                         SVX_TAB_ADJUST_RIGHT == rTab.GetAdjustment() ?
+                                         SVX_TAB_ADJUST_END :
+                                         rTab.GetAdjustment();
+                        aIt->cTabFillChar = rTab.GetFill();
+                        ++aIt;
+                    }
+                    else
+                        break; // no more tokens to replace
                 }
             }
-            // <- #i21237
+            // <--
+
             if(bChanged)
                 SetPattern(nLevel, aCurrentPattern); // #i21237#
         }
@@ -1000,11 +992,8 @@ SwFormTokensHelper::SwFormTokensHelper(const String & rPattern)
         nCurPatternPos += nCurPatternLen;
 
         SwFormToken aToken = BuildToken(rPattern, nCurPatternPos);
-        aTokens.push_back(aToken);                         
+        aTokens.push_back(aToken);
     }
-
-    SwFormToken aToken(TOKEN_END);
-    aTokens.push_back(aToken);
 }
 
 SwFormToken SwFormTokensHelper::BuildToken( const String & sPattern,
@@ -1079,7 +1068,7 @@ String SwFormTokensHelper::SearchNextToken( const String & sPattern,
     //USHORT nTokenEnd = sPattern.Search('>');
 
     String aResult;
-    
+
     xub_StrLen nEnd = sPattern.Search( '>', nStt );
     if( STRING_NOTFOUND == nEnd )
     {
@@ -1105,7 +1094,7 @@ String SwFormTokensHelper::SearchNextToken( const String & sPattern,
     return aResult;
 }
 
-FormTokenType SwFormTokensHelper::GetTokenType(const String & sToken, 
+FormTokenType SwFormTokensHelper::GetTokenType(const String & sToken,
                                                xub_StrLen * pTokenLen) const
 {
     static struct
@@ -1158,7 +1147,7 @@ void SwForm::SetPattern(USHORT nLevel, const SwFormTokens& rTokens)
 void SwForm::SetPattern(USHORT nLevel, const String & rStr)
 {
     ASSERT(nLevel < GetFormMax(), "Index >= FORM_MAX");
-    
+
     SwFormTokensHelper aHelper(rStr);
     aPattern[nLevel] = aHelper.GetTokens();
 }
