@@ -2,9 +2,9 @@
  *
  *  $RCSfile: xmlexp.cxx,v $
  *
- *  $Revision: 1.72 $
+ *  $Revision: 1.73 $
  *
- *  last change: $Author: rt $ $Date: 2004-07-13 09:06:35 $
+ *  last change: $Author: kz $ $Date: 2004-10-04 19:22:06 $
  *
  *  The Contents of this file are made available subject to the terms of
  *  either of the following licenses
@@ -62,19 +62,19 @@
 
 #pragma hdrstop
 
-#ifndef _COM_SUN_STAR_TEXT_XTEXTDOCUMENT_HPP_ 
+#ifndef _COM_SUN_STAR_TEXT_XTEXTDOCUMENT_HPP_
 #include <com/sun/star/text/XTextDocument.hpp>
 #endif
-#ifndef _COM_SUN_STAR_DRAWING_XDRAWPAGESUPPLIER_HPP_ 
+#ifndef _COM_SUN_STAR_DRAWING_XDRAWPAGESUPPLIER_HPP_
 #include <com/sun/star/drawing/XDrawPageSupplier.hpp>
 #endif
-#ifndef _COM_SUN_STAR_DRAWING_XDRAWPAGE_HPP_ 
+#ifndef _COM_SUN_STAR_DRAWING_XDRAWPAGE_HPP_
 #include <com/sun/star/drawing/XDrawPage.hpp>
 #endif
-#ifndef _COM_SUN_STAR_TEXT_XTEXT_HPP_ 
+#ifndef _COM_SUN_STAR_TEXT_XTEXT_HPP_
 #include <com/sun/star/text/XText.hpp>
 #endif
-#ifndef _COM_SUN_STAR_BEANS_XPROPERTYSET_HPP_ 
+#ifndef _COM_SUN_STAR_BEANS_XPROPERTYSET_HPP_
 #include <com/sun/star/beans/XPropertySet.hpp>
 #endif
 #ifndef _COM_SUN_STAR_FORM_XFORMSSUPPLIER_HPP_
@@ -90,10 +90,10 @@
 #include <com/sun/star/uno/RuntimeException.hpp>
 #endif
 
-#ifndef _SVDMODEL_HXX 
+#ifndef _SVDMODEL_HXX
 #include <svx/svdmodel.hxx>
 #endif
-#ifndef _SVDPAGE_HXX 
+#ifndef _SVDPAGE_HXX
 #include <svx/svdpage.hxx>
 #endif
 #ifndef _XMLGRHLP_HXX
@@ -127,7 +127,7 @@
 #ifndef _XMLOFF_PROGRESSBARHELPER_HXX
 #include <xmloff/ProgressBarHelper.hxx>
 #endif
-#ifndef _XMLOFF_XMLUCONV_HXX 
+#ifndef _XMLOFF_XMLUCONV_HXX
 #include <xmloff/xmluconv.hxx>
 #endif
 
@@ -218,7 +218,7 @@ void SwXMLExport::SetCurPaM( SwPaM& rPaM, sal_Bool bWhole, sal_Bool bTabOnly )
         *pCurPaM->GetPoint() = *rPaM.Start();
         *pCurPaM->GetMark() = *rPaM.End();
     }
-    
+
     // Set PaM to table/section start node if whole doc should be exported
     if( bWhole )
     {
@@ -246,7 +246,7 @@ void SwXMLExport::SetCurPaM( SwPaM& rPaM, sal_Bool bWhole, sal_Bool bTabOnly )
 // #110680#
 SwXMLExport::SwXMLExport(
     const ::com::sun::star::uno::Reference< ::com::sun::star::lang::XMultiServiceFactory > xServiceFactory,
-    sal_uInt16 nExportFlags) 
+    sal_uInt16 nExportFlags)
 :	SvXMLExport( xServiceFactory, MAP_INCH, XML_TEXT, nExportFlags ),
 #ifdef XML_CORE_API
     pCurPaM( 0 ),
@@ -269,15 +269,15 @@ SwXMLExport::SwXMLExport(
 
 #ifdef XML_CORE_API
 // #110680#
-SwXMLExport::SwXMLExport( 
+SwXMLExport::SwXMLExport(
     const ::com::sun::star::uno::Reference< ::com::sun::star::lang::XMultiServiceFactory > xServiceFactory,
-    const Reference< XModel >& rModel, 
+    const Reference< XModel >& rModel,
     SwPaM& rPaM,
     const OUString& rFileName,
     const Reference< XDocumentHandler > & rHandler,
     const Reference< XGraphicObjectResolver > & rEmbeddedGrfObjs,
     sal_Bool bExpWholeDoc, sal_Bool bExpFirstTableOnly,
-    sal_Bool bShowProg ) 
+    sal_Bool bShowProg )
 :	SvXMLExport( xServiceFactory, rFileName, rHandler, rModel, rEmbeddedGrfObjs,
                  SW_MOD()->GetMetric( rPaM.GetDoc()->IsHTMLMode() ) ),
     pCurPaM( 0 ),
@@ -347,7 +347,7 @@ sal_uInt32 SwXMLExport::exportDoc( enum XMLTokenEnum eClass )
             {
                 if( 0 != (pItem = rPool.GetItem( nWhichId , i ) ) )
                 {
-                    const SvXMLAttrContainerItem *pUnknown = 
+                    const SvXMLAttrContainerItem *pUnknown =
                                 PTR_CAST( SvXMLAttrContainerItem, pItem );
                     ASSERT( pUnknown, "illegal attribute container item" );
                     if( pUnknown && (pUnknown->GetAttrCount() > 0) )
@@ -410,9 +410,9 @@ sal_uInt32 SwXMLExport::exportDoc( enum XMLTokenEnum eClass )
             if( aDocStat.bModified )
                 pDoc->UpdateDocStat( aDocStat );
 
-            // count each item once, and then multiply by two to reach the 
+            // count each item once, and then multiply by two to reach the
             // figures given above
-            // The styles in pDoc also count the default style that never 
+            // The styles in pDoc also count the default style that never
             // gets exported -> subtract one.
             sal_Int32 nRef = 1;
             nRef += pDoc->GetCharFmts()->Count() - 1;
@@ -456,7 +456,7 @@ sal_uInt32 SwXMLExport::exportDoc( enum XMLTokenEnum eClass )
     SvXMLEmbeddedObjectHelper *pEmbeddedResolver = 0;
     if( !GetEmbeddedResolver().is() )
     {
-        SvPersist *pPersist = pDoc->GetPersist();
+        SfxObjectShell *pPersist = pDoc->GetPersist();
         if( pPersist )
         {
             pEmbeddedResolver = SvXMLEmbeddedObjectHelper::Create(
@@ -469,7 +469,7 @@ sal_uInt32 SwXMLExport::exportDoc( enum XMLTokenEnum eClass )
 
     // set redline mode if we export STYLES or CONTENT, unless redline
     // mode is taken care of outside (through info XPropertySet)
-    sal_Bool bSaveRedline = 
+    sal_Bool bSaveRedline =
         ( (getExportFlags() & (EXPORT_CONTENT|EXPORT_STYLES)) != 0 );
     if( bSaveRedline )
     {
@@ -490,7 +490,7 @@ sal_uInt32 SwXMLExport::exportDoc( enum XMLTokenEnum eClass )
     {
         // now save and switch redline mode
         nRedlineMode = pDoc->GetRedlineMode();
-        pDoc->SetRedlineMode( 
+        pDoc->SetRedlineMode(
             ( nRedlineMode & REDLINE_SHOW_MASK ) | REDLINE_INSERT );
     }
 
@@ -501,7 +501,7 @@ sal_uInt32 SwXMLExport::exportDoc( enum XMLTokenEnum eClass )
     {
         pDoc->SetRedlineMode( nRedlineMode );
     }
-    
+
 
     if( pGraphicResolver )
         SvXMLGraphicHelper::Destroy( pGraphicResolver );
@@ -565,7 +565,7 @@ void SwXMLExport::GetViewSettings(Sequence<PropertyValue>& aProps)
 #if 0
         Any aAny;
         sal_Int32 i=0;
-        for ( SfxViewFrame *pFrame = SfxViewFrame::GetFirst(); 
+        for ( SfxViewFrame *pFrame = SfxViewFrame::GetFirst();
                 pFrame;
                 i++, pFrame = SfxViewFrame::GetNext(*pFrame ) )
         {
@@ -604,8 +604,8 @@ void SwXMLExport::GetViewSettings(Sequence<PropertyValue>& aProps)
 
     SwDoc *pDoc = pText->GetDoc();
     const Rectangle rRect =
-        pDoc->GetDocShell()->SfxInPlaceObject::GetVisArea();
-    sal_Bool bTwip = pDoc->GetDocShell()->SfxInPlaceObject::GetMapUnit ( ) == MAP_TWIP;
+        pDoc->GetDocShell()->GetVisArea( ASPECT_CONTENT );
+    sal_Bool bTwip = pDoc->GetDocShell()->GetMapUnit ( ) == MAP_TWIP;
 
     ASSERT ( bTwip, "Map unit for visible area is not in TWIPS!" );
 
@@ -656,7 +656,7 @@ void SwXMLExport::GetConfigurationSettings( Sequence < PropertyValue >& rProps)
         Reference< XPropertySet > xProps( xFac->createInstance( OUString( RTL_CONSTASCII_USTRINGPARAM( "com.sun.star.document.Settings" ) ) ), UNO_QUERY );
         if( xProps.is() )
             SvXMLUnitConverter::convertPropertySet( rProps, xProps );
-    }	
+    }
 }
 
 void SwXMLExport::_ExportContent()
@@ -672,7 +672,7 @@ void SwXMLExport::_ExportContent()
             // #103597# prevent export of form controls which are embedded in
             // mute sections
             Reference<XIndexAccess> xIAPage( xPage, UNO_QUERY );
-            GetTextParagraphExport()->PreventExportOfControlsInMuteSections( 
+            GetTextParagraphExport()->PreventExportOfControlsInMuteSections(
                 xIAPage, GetFormExport() );
 
             Reference<XFormsSupplier> xFormSupp(xPage, UNO_QUERY);
@@ -872,8 +872,8 @@ Reference< XInterface > SAL_CALL SwXMLExportStyles_createInstance(
     throw( Exception )
 {
     // #110680#
-    //return (cppu::OWeakObject*)new SwXMLExport( 
-    //	EXPORT_STYLES | EXPORT_MASTERSTYLES | EXPORT_AUTOSTYLES | 
+    //return (cppu::OWeakObject*)new SwXMLExport(
+    //	EXPORT_STYLES | EXPORT_MASTERSTYLES | EXPORT_AUTOSTYLES |
     //	EXPORT_FONTDECLS );
     return (cppu::OWeakObject*)new SwXMLExport( rSMgr,
         EXPORT_STYLES | EXPORT_MASTERSTYLES | EXPORT_AUTOSTYLES | 
@@ -900,7 +900,7 @@ Reference< XInterface > SAL_CALL SwXMLExportContent_createInstance(
 {
     // #110680#
     //return (cppu::OWeakObject*)new SwXMLExport(
-    //	EXPORT_AUTOSTYLES | EXPORT_CONTENT | EXPORT_SCRIPTS | 
+    //	EXPORT_AUTOSTYLES | EXPORT_CONTENT | EXPORT_SCRIPTS |
     //	EXPORT_FONTDECLS );
     return (cppu::OWeakObject*)new SwXMLExport(
         rSMgr,
@@ -971,7 +971,7 @@ sal_Int64 SAL_CALL SwXMLExport::getSomething( const Sequence< sal_Int8 >& rId )
 
 // XServiceInfo
 // override empty method from parent class
-OUString SAL_CALL SwXMLExport::getImplementationName() 
+OUString SAL_CALL SwXMLExport::getImplementationName()
     throw(RuntimeException)
 {
     switch( getExportFlags() )
@@ -1017,7 +1017,7 @@ void SwXMLExport::ExportCurPaM( sal_Bool bExportWholePaM )
                                 pCurPaM->GetMark()->nContent.GetIndex() ) )
     {
         SwNode *pNd = pCurPaM->GetNode();
-        
+
         aNextNumInfo.Set( *pNd );
         ExportListChange( aPrevNumInfo, aNextNumInfo );
 
