@@ -2,9 +2,9 @@
  *
  *  $RCSfile: SwStyleNameMapper.cxx,v $
  *
- *  $Revision: 1.6 $
+ *  $Revision: 1.7 $
  *
- *  last change: $Author: mtg $ $Date: 2001-08-16 12:10:24 $
+ *  last change: $Author: os $ $Date: 2002-06-05 14:48:36 $
  *
  *  The Contents of this file are made available subject to the terms of
  *  either of the following licenses
@@ -156,7 +156,7 @@ const struct SwTableEntry TextProgNameTable [] =
 };
 
 const struct SwTableEntry ListsProgNameTable [] =
-{ 
+{
     ENTRY( "List" ), // STR_POCO_PRGM_NUMBUL_BASE
     ENTRY( "Numbering 1 Start" ), // STR_POCO_PRGM_NUM_LEVEL1S
     ENTRY( "Numbering 1" ),
@@ -312,6 +312,7 @@ const struct SwTableEntry ChrFmtProgNameTable [] =
     ENTRY( "Footnote anchor" ),
     ENTRY( "Endnote anchor" ),
     ENTRY( "Rubies" ), // RES_POOLCHR_RUBYTEXT
+    ENTRY( "Vertical Numbering Symbols" ), // RES_POOLCHR_VERT_NUMBER
     { 0, NULL }
 };
 
@@ -364,7 +365,7 @@ sal_Bool SwStyleNameMapper::SuffixIsUser ( const String & rString )
     const sal_Unicode *pChar = rString.GetBuffer();
     sal_Int32 nLen = rString.Len();
     return nLen <= 8 ? sal_False :
-           pChar[nLen-7] == ' ' && 
+           pChar[nLen-7] == ' ' &&
            pChar[nLen-6] == '(' &&
            pChar[nLen-5] == 'u' &&
            pChar[nLen-4] == 's' &&
@@ -377,7 +378,7 @@ void SwStyleNameMapper::CheckSuffixAndDelete ( String & rString )
     const sal_Unicode *pChar = rString.GetBuffer();
     sal_Int32 nLen = rString.Len();
     if (nLen > 8 &&
-        pChar[nLen-7] == ' ' && 
+        pChar[nLen-7] == ' ' &&
         pChar[nLen-6] == '(' &&
         pChar[nLen-5] == 'u' &&
         pChar[nLen-4] == 's' &&
@@ -692,7 +693,7 @@ void SwStyleNameMapper::FillProgName ( const String& rName, String& rFillName, S
     }
     else
     {
-        // If we aren't trying to disambiguate, then just do a normal fill 
+        // If we aren't trying to disambiguate, then just do a normal fill
         fillNameFromId ( nId, rFillName, sal_True);
     }
 }
@@ -708,7 +709,7 @@ void SwStyleNameMapper::FillUIName ( const String& rName, String& rFillName, SwG
     }
     else
     {
-        // If we aren't trying to disambiguate, then just do a normal fill 
+        // If we aren't trying to disambiguate, then just do a normal fill
         fillNameFromId ( nId, rFillName, sal_False);
     }
 }
