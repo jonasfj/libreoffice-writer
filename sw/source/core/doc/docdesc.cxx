@@ -2,9 +2,9 @@
  *
  *  $RCSfile: docdesc.cxx,v $
  *
- *  $Revision: 1.23 $
+ *  $Revision: 1.24 $
  *
- *  last change: $Author: hr $ $Date: 2004-11-26 23:05:22 $
+ *  last change: $Author: rt $ $Date: 2005-01-11 12:18:01 $
  *
  *  The Contents of this file are made available subject to the terms of
  *  either of the following licenses
@@ -357,7 +357,7 @@ void SwDoc::ChgPageDesc( USHORT i, const SwPageDesc &rChged )
 
     BOOL bDoesUndo = DoesUndo();
     if (DoesUndo())
-    {        
+    {
         AppendUndo(new SwUndoPageDesc(*pDesc, rChged, this));
         DoUndo(FALSE);
     }
@@ -668,18 +668,18 @@ void SwDoc::PreDelPageDesc(SwPageDesc * pDel)
 }
 
 // #116530#
-void SwDoc::BroadcastStyleOperation(String rName, SfxStyleFamily eFamily, 
+void SwDoc::BroadcastStyleOperation(String rName, SfxStyleFamily eFamily,
                                     USHORT nOp)
 {
     if (pDocShell)
     {
         SfxStyleSheetBasePool * pPool = pDocShell->GetStyleSheetPool();
-        
+
         if (pPool)
         {
             pPool->SetSearchMask(eFamily, SFXSTYLEBIT_ALL );
             SfxStyleSheetBase * pBase = pPool->Find(rName);
-            
+
             pPool->Broadcast
                 (SfxStyleSheetHint( nOp, *pBase ));
         }
@@ -694,7 +694,7 @@ void SwDoc::DelPageDesc( USHORT i, BOOL bBroadcast )
         return;
 
     SwPageDesc *pDel = aPageDescs[i];
-    
+
     // -> #116530#
     if (bBroadcast)
         BroadcastStyleOperation(pDel->GetName(), SFX_STYLE_FAMILY_PAGE,
@@ -933,15 +933,8 @@ void SwDoc::PrtOLENotify( BOOL bAll )
                     aName = SvGlobalName( xObj->getClassID() );
                 else  //Noch nicht geladen
                 {
-                    String sBaseURL( INetURLObject::GetBaseURL() );
-                    const SfxMedium *pMedium;
-                    if( 0 != (pMedium = GetDocShell()->GetMedium()) &&
-                        pMedium->GetName() != sBaseURL )
-                        INetURLObject::SetBaseURL( pMedium->GetName() );
-
-                    // TODO/LATER: retrieve ClassID of an unloaded object
-                    // aName = ????
-                    INetURLObject::SetBaseURL( sBaseURL );
+                        // TODO/LATER: retrieve ClassID of an unloaded object
+                        // aName = ????
                 }
 
                 BOOL bFound = FALSE;
