@@ -2,9 +2,9 @@
  *
  *  $RCSfile: xmlimp.cxx,v $
  *
- *  $Revision: 1.10 $
+ *  $Revision: 1.11 $
  *
- *  last change: $Author: mib $ $Date: 2000-12-06 14:25:52 $
+ *  last change: $Author: os $ $Date: 2000-12-07 16:56:47 $
  *
  *  The Contents of this file are made available subject to the terms of
  *  either of the following licenses
@@ -65,10 +65,10 @@
 
 #pragma hdrstop
 
-#ifndef _COM_SUN_STAR_TEXT_XTEXTRANGE_HPP_ 
+#ifndef _COM_SUN_STAR_TEXT_XTEXTRANGE_HPP_
 #include <com/sun/star/text/XTextRange.hpp>
 #endif
-#ifndef _COM_SUN_STAR_TEXT_XTEXT_HPP_ 
+#ifndef _COM_SUN_STAR_TEXT_XTEXT_HPP_
 #include <com/sun/star/text/XText.hpp>
 #endif
 
@@ -87,10 +87,10 @@
 #ifndef _XMLOFF_TXTIMP_HXX
 #include <xmloff/txtimp.hxx>
 #endif
-#ifndef _XMLOFF_XMLTEXTSHAPEIMPORTHELPER_HXX_ 
+#ifndef _XMLOFF_XMLTEXTSHAPEIMPORTHELPER_HXX_
 #include <xmloff/XMLTextShapeImportHelper.hxx>
 #endif
-#ifndef _XMLOFF_XMLFONTSTYLESCONTEXT_HXX_ 
+#ifndef _XMLOFF_XMLFONTSTYLESCONTEXT_HXX_
 #include <xmloff/XMLFontStylesContext.hxx>
 #endif
 #ifndef _XMLOFF_PROGRESSBARHELPER_HXX
@@ -300,7 +300,7 @@ SwXMLImport::SwXMLImport(
             Reference<XUnoTunnel> xCrsrTunnel( GetTextImport()->GetCursor(),
                                                UNO_QUERY);
             ASSERT( xCrsrTunnel.is(), "missing XUnoTunnel for Cursor" );
-            SwXTextCursor *pTxtCrsr = 
+            SwXTextCursor *pTxtCrsr =
                     (SwXTextCursor*)xCrsrTunnel->getSomething(
                                             SwXTextCursor::getUnoTunnelId() );
             ASSERT( pTxtCrsr, "SwXTextCursor missing" );
@@ -332,7 +332,7 @@ SwXMLImport::~SwXMLImport()
         Reference<XUnoTunnel> xCrsrTunnel( GetTextImport()->GetCursor(),
                                               UNO_QUERY);
         ASSERT( xCrsrTunnel.is(), "missing XUnoTunnel for Cursor" );
-        SwXTextCursor *pTxtCrsr = 
+        SwXTextCursor *pTxtCrsr =
                 (SwXTextCursor*)xCrsrTunnel->getSomething(
                                             SwXTextCursor::getUnoTunnelId() );
         ASSERT( pTxtCrsr, "SwXTextCursor missing" );
@@ -344,7 +344,8 @@ SwXMLImport::~SwXMLImport()
             // Revert the first split node.
             SwTxtNode* pTxtNode = pSttNdIdx->GetNode().GetTxtNode();
             SwNodeIndex aNxtIdx( *pSttNdIdx );
-            if( pTxtNode && pTxtNode->CanJoinNext( &aNxtIdx ))
+            if( pTxtNode && pTxtNode->CanJoinNext( &aNxtIdx ) &&
+                pSttNdIdx->GetIndex() + 1 == aNxtIdx.GetIndex() )
             {
                 // If the PaM points to the first new node, move the PaM to the
                 // end of the previous node.
@@ -509,7 +510,7 @@ void SwXMLImport::SetProgressRef( sal_Int32 nParagraphs )
         // - 5% are taken reading styles
         // - 5% are taken reading automatic styles
         // - 85% are taken reading the rest of the document
-        // The 85% correspond exactly to the number of paragarphs 
+        // The 85% correspond exactly to the number of paragarphs
         // contained in the document
         nProgressRef = (nParagraphs *100) / 85;
         ProgressBarHelper *pProgress = GetProgressBarHelper();
