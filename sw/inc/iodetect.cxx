@@ -2,9 +2,9 @@
  *
  *  $RCSfile: iodetect.cxx,v $
  *
- *  $Revision: 1.7 $
+ *  $Revision: 1.8 $
  *
- *  last change: $Author: kz $ $Date: 2004-01-29 14:10:58 $
+ *  last change: $Author: hr $ $Date: 2004-02-02 18:15:17 $
  *
  *  The Contents of this file are made available subject to the terms of
  *  either of the following licenses
@@ -148,17 +148,7 @@ struct SwIoDetect
 
 #endif
 
-#if !( defined(PRODUCT) || defined(MAC) || defined(PM2))
-#define DEB_DBWRT_SwIoEntry(sNm, cCharLen, pWrt, bDel)	, SwIoEntry(sNm, cCharLen, pWrt, bDel)
-#else
-#define DEB_DBWRT_SwIoEntry(sNm, cCharLen, pWrt, bDel)
-#endif
-
-
 const USHORT MAXFILTER =
-#if !( defined(PRODUCT) || defined(MAC) || defined(PM2))
-        2 +
-#endif
 #ifdef DEBUG_SH
         1 +
 #endif
@@ -204,7 +194,7 @@ sal_Char __FAR_DATA FILTER_XMLVW[] 	= "CXMLVWEB";
 sal_Char __FAR_DATA sSwDos[] 		= "SW6";
 
 
-SwIoDetect aReaderWriter[ MAXFILTER ] = 
+SwIoDetect aReaderWriter[ MAXFILTER ] =
 {
 /*	0*/ SwIoEntry(FILTER_SW5, 		4, 			&::GetSw3Writer, 	TRUE),
 /*	1*/ SwIoEntry(FILTER_SW4, 		4, 			&::GetSw3Writer, 	FALSE),
@@ -228,8 +218,6 @@ SwIoDetect aReaderWriter[ MAXFILTER ] =
 /* 19*/ SwIoEntry(FILTER_XML,		4,			&::GetXMLWriter,	TRUE)
 
 /* opt*/ DEB_SH_SwIoEntry(sW4W_Int, STRING_LEN, 0,				  	TRUE)
-/* opt*/ DEB_DBWRT_SwIoEntry(sDebug,STRING_LEN, &::GetDebugWriter,	FALSE)
-/* opt*/ DEB_DBWRT_SwIoEntry(sUndo,	STRING_LEN, &::GetUndoWriter,	FALSE)
                                                                           ,
 /*last*/ SwIoEntry(FILTER_TEXT, 	4,			&::GetASCWriter, 	TRUE)
 };
@@ -419,7 +407,7 @@ FASTBOOL SwIoSystem::IsValidStgFilter(SotStorage& rStg, const SfxFilter& rFilter
 
 void TerminateBuffer(sal_Char *pBuffer, ULONG nBytesRead, ULONG nBufferLen)
 {
-    ASSERT(nBytesRead <= nBufferLen - 2, 
+    ASSERT(nBytesRead <= nBufferLen - 2,
         "what you read must be less than the max + null termination");
     ASSERT(!(nBufferLen & 0x00000001), "nMaxReadBuf must be an even number");
     if (nBytesRead <= nBufferLen - 2)
