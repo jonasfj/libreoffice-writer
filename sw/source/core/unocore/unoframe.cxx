@@ -2,9 +2,9 @@
  *
  *  $RCSfile: unoframe.cxx,v $
  *
- *  $Revision: 1.59 $
+ *  $Revision: 1.60 $
  *
- *  last change: $Author: mtg $ $Date: 2001-11-07 14:06:27 $
+ *  last change: $Author: os $ $Date: 2001-11-15 15:48:44 $
  *
  *  The Contents of this file are made available subject to the terms of
  *  either of the following licenses
@@ -692,7 +692,7 @@ sal_Bool    SwFrameProperties_Impl::AnyToItemSet(SwDoc *pDoc, SfxItemSet& rSet, 
     {
         SwDocStyleSheet aStyle (*pStyle);
         const SfxItemSet *pItemSet = &aStyle.GetItemSet();
-           bRet = FillBaseProperties( rSet, *pItemSet, rSizeFound ); 
+           bRet = FillBaseProperties( rSet, *pItemSet, rSizeFound );
         lcl_FillCol ( rSet, *pItemSet, pColumns );
     }
     else
@@ -911,7 +911,7 @@ SwXFrame::SwXFrame(FlyCntType eSet,	const SfxItemPropertyMap* pMap, SwDoc *pDoc 
     // Get the style families
     Reference < XNameAccess > xFamilies = xFamilySupplier->getStyleFamilies();
     // Get the Frame family (and keep it for later)
-    Any aAny = xFamilies->getByName ( OUString ( RTL_CONSTASCII_USTRINGPARAM ( "FrameStyles" ) ) ); 
+    Any aAny = xFamilies->getByName ( OUString ( RTL_CONSTASCII_USTRINGPARAM ( "FrameStyles" ) ) );
     aAny >>= mxStyleFamily;
     // In the derived class, we'll ask mxStyleFamily for the relevant default style
     // mxStyleFamily is initialised in the SwXFrame constructor
@@ -1365,7 +1365,7 @@ void SwXFrame::setPropertyValue(const OUString& rPropertyName, const uno::Any& a
         {
             OUString sStyleName;
             aValue >>= sStyleName;
-            try 
+            try
             {
                 Any aAny = mxStyleFamily->getByName ( sStyleName );
                 aAny >>= mxStyleData;
@@ -1790,7 +1790,7 @@ void 	SwXFrame::Modify( SfxPoolItem *pOld, SfxPoolItem *pNew)
     ClientModify(this, pOld, pNew);
     if(!GetRegisteredIn())
     {
-        mxStyleData.clear();	
+        mxStyleData.clear();
         mxStyleFamily.clear();
         mpDoc = 0;
         aLstnrCntnr.Disposing();
@@ -2254,7 +2254,12 @@ uno::Reference< XTextCursor >  SwXTextFrame::createTextCursor(void) throw( Runti
     SwFrmFmt* pFmt = GetFrmFmt();
     if(pFmt)
     {
-        SwPaM aPam(pFmt->GetCntnt().GetCntntIdx()->GetNode());
+        //save current start node to be able to check if there is content after the table -
+        //otherwise the cursor would be in the body text!
+        const SwNode& rNode = pFmt->GetCntnt().GetCntntIdx()->GetNode();
+        const SwStartNode* pOwnStartNode = rNode.FindSttNodeByType(SwFlyStartNode);
+
+        SwPaM aPam(rNode);
         aPam.Move(fnMoveForward, fnGoNode);
         SwTableNode* pTblNode = aPam.GetNode()->FindTableNode();
         SwCntntNode* pCont = 0;
@@ -2266,6 +2271,15 @@ uno::Reference< XTextCursor >  SwXTextFrame::createTextCursor(void) throw( Runti
         }
         if(pCont)
             aPam.GetPoint()->nContent.Assign(pCont, 0);
+
+        const SwStartNode* pNewStartNode =
+            aPam.GetNode()->FindSttNodeByType(SwFlyStartNode);
+        if(!pNewStartNode || pNewStartNode != pOwnStartNode)
+        {
+            uno::RuntimeException aExcept;
+            aExcept.Message = S2U("no text available");
+            throw aExcept;
+        }
 
         SwXTextCursor* pXCrsr = new SwXTextCursor(this, *aPam.GetPoint(), CURSOR_FRAME, pFmt->GetDoc());
         aRef =  (XWordCursor*)pXCrsr;
