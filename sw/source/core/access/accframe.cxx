@@ -2,9 +2,9 @@
  *
  *  $RCSfile: accframe.cxx,v $
  *
- *  $Revision: 1.10 $
+ *  $Revision: 1.11 $
  *
- *  last change: $Author: mib $ $Date: 2002-04-11 13:45:32 $
+ *  last change: $Author: os $ $Date: 2002-04-25 13:57:37 $
  *
  *  The Contents of this file are made available subject to the terms of
  *  either of the following licenses
@@ -168,7 +168,7 @@ SwFrmOrObj SwAccessibleFrame::GetChild( const SwRect& rVisArea,
 
     if( rPos >= 0 )
     {
-        if( SwFrmOrObjMap::IsSortingRequired( pFrm ) )  
+        if( SwFrmOrObjMap::IsSortingRequired( pFrm ) )
         {
             // We need a sorted list here
             const SwFrmOrObjMap aVisMap( rVisArea, pFrm );
@@ -227,7 +227,7 @@ sal_Bool SwAccessibleFrame::GetChildIndex( const SwRect& rVisArea,
 {
     sal_Bool bFound = sal_False;
 
-    if( SwFrmOrObjMap::IsSortingRequired( pFrm ) )  
+    if( SwFrmOrObjMap::IsSortingRequired( pFrm ) )
     {
         // We need a sorted list here
         const SwFrmOrObjMap aVisMap( rVisArea, pFrm );
@@ -284,7 +284,7 @@ SwFrmOrObj SwAccessibleFrame::GetChildAt( const SwRect& rVisArea,
 {
     SwFrmOrObj aRet;
 
-    if( SwFrmOrObjMap::IsSortingRequired( pFrm ) )  
+    if( SwFrmOrObjMap::IsSortingRequired( pFrm ) )
     {
         // We need a sorted list here, and we have to reverse iterate,
         // because objects in front should be returned.
@@ -396,7 +396,7 @@ sal_Bool SwAccessibleFrame::IsOpaque( ViewShell *pVSh ) const
 
     const SwViewOption *pVOpt = pVSh->GetViewOptions();
     do
-    {	
+    {
         const SwFrm *pFrm = aFrm.GetSwFrm();
         if( pFrm->IsRootFrm() )
             return sal_True;
@@ -414,7 +414,7 @@ sal_Bool SwAccessibleFrame::IsOpaque( ViewShell *pVSh ) const
             const SwSection* pSection = ((SwSectionFrm*)pFrm)->GetSection();
             if( pSection && ( TOX_HEADER_SECTION == pSection->GetType() ||
                 TOX_CONTENT_SECTION == pSection->GetType() ) &&
-                pVOpt->IsIndexBackground() )
+                SwViewOption::IsIndexShadings() )
                 return sal_True;
         }
         if( pFrm->IsFlyFrm() )

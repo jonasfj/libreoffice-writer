@@ -2,9 +2,9 @@
  *
  *  $RCSfile: accportions.cxx,v $
  *
- *  $Revision: 1.17 $
+ *  $Revision: 1.18 $
  *
- *  last change: $Author: dvo $ $Date: 2002-04-24 13:08:01 $
+ *  last change: $Author: os $ $Date: 2002-04-25 13:54:47 $
  *
  *  The Contents of this file are made available subject to the terms of
  *  either of the following licenses
@@ -162,9 +162,9 @@ using com::sun::star::i18n::Boundary;
 #define PORATTR_GRAY        4
 #define PORATTR_TERM        128
 
-SwAccessiblePortionData::SwAccessiblePortionData( 
+SwAccessiblePortionData::SwAccessiblePortionData(
     const SwTxtNode* pTxtNd,
-    const SwViewOption* pViewOpt ) : 
+    const SwViewOption* pViewOpt ) :
     SwPortionHandler(),
     pTxtNode( pTxtNd ),
     pViewOptions( pViewOpt ),
@@ -216,9 +216,9 @@ void SwAccessiblePortionData::Text(USHORT nLength, USHORT nType)
     aPortionAttrs.push_back( nAttr );
 
     // update buffer + nModelPosition
-    aBuffer.append( OUString( 
+    aBuffer.append( OUString(
         pTxtNode->GetTxt().Copy(
-            static_cast<USHORT>( nModelPosition ), 
+            static_cast<USHORT>( nModelPosition ),
             nLength ) ) );
     nModelPosition += nLength;
 
@@ -243,9 +243,9 @@ void SwAccessiblePortionData::Special(
         case POR_POSTITS:
         {
             // get field, and if it's a Post-It, generate the replacement text
-            // (e.g. script fields also use Post-It portions, so we need 
+            // (e.g. script fields also use Post-It portions, so we need
             //  to check)
-            SwTxtAttr* pAttr = pTxtNode->GetTxtAttr( 
+            SwTxtAttr* pAttr = pTxtNode->GetTxtAttr(
                 static_cast<USHORT>( nModelPosition ), RES_TXTATR_FIELD );
             DBG_ASSERT( pAttr != NULL, "Frank hat mich angelogen!" );
 
@@ -255,9 +255,9 @@ void SwAccessiblePortionData::Special(
             {
                 // We have a real Post-It portion, so we can now
                 // construct the replacement text
-                OUString sPostItText = OUString( 
+                OUString sPostItText = OUString(
                     static_cast<const SwPostItField*>(pField)->GetTxt() );
-                sDisplay = SwAccessibleContext::GetResource( 
+                sDisplay = SwAccessibleContext::GetResource(
                     STR_ACCESS_REPLACEMENT_POSTIT, &sPostItText );
             }
             else
@@ -270,13 +270,13 @@ void SwAccessiblePortionData::Special(
             // Retrieve the Graphic/OLE-Node (as SwNoTxtNode) and ask
             // for the its description. If it's no SwNoTxtNode, or the
             // description is empty, use the SwFrmFmt name instead.
-            SwTxtAttr* pAttr = pTxtNode->GetTxtAttr( 
+            SwTxtAttr* pAttr = pTxtNode->GetTxtAttr(
                 static_cast<USHORT>( nModelPosition ), RES_TXTATR_FLYCNT );
             DBG_ASSERT( pAttr != NULL, "Fly expected!" );
 
             const SwFrmFmt* rFrameFmt = pAttr->GetFlyCnt().GetFrmFmt();
             const SfxPoolItem& rItem = rFrameFmt->GetAttr( RES_CNTNT, FALSE );
-            const SwNodeIndex* pFlyCntntIndex = 
+            const SwNodeIndex* pFlyCntntIndex =
                 static_cast<const SwFmtCntnt&>( rItem ).GetCntntIdx();
             if( pFlyCntntIndex != NULL )
             {
@@ -292,7 +292,7 @@ void SwAccessiblePortionData::Special(
                 if( sDescription.getLength() == 0 )
                     sDescription = OUString( rFrameFmt->GetName() );
 
-                sDisplay = SwAccessibleContext::GetResource( 
+                sDisplay = SwAccessibleContext::GetResource(
                      STR_ACCESS_REPLACEMENT_FRAME, &sDescription );
             }
             else
@@ -304,10 +304,10 @@ void SwAccessiblePortionData::Special(
         }
         break;
         case POR_GRFNUM:
-            sDisplay = SwAccessibleContext::GetResource( 
+            sDisplay = SwAccessibleContext::GetResource(
                 STR_ACCESS_REPLACEMENT_BULLET_GRAPHICS );
             break;
-        default:    
+        default:
             sDisplay = rText;
             break;
     }
@@ -374,7 +374,7 @@ void SwAccessiblePortionData::Finish()
 }
 
 
-sal_Bool SwAccessiblePortionData::IsPortionAttrSet( 
+sal_Bool SwAccessiblePortionData::IsPortionAttrSet(
     size_t nPortionNo, sal_uInt8 nAttr )
 {
     DBG_ASSERT( (nPortionNo >= 0) && (nPortionNo < aPortionAttrs.size()),
@@ -405,16 +405,18 @@ sal_Bool SwAccessiblePortionData::IsGrayPortionType( USHORT nType )
     sal_Bool bGray = sal_False;
     switch( nType )
     {
-        case POR_FTN:       bGray = pViewOptions->IsFootNote();     break;
-        case POR_ISOTOX:
-        case POR_TOX:       bGray = pViewOptions->IsTox();          break;
+        case POR_FTN:
         case POR_ISOREF:
-        case POR_REF:       bGray = pViewOptions->IsRef();          break;
+        case POR_REF:
         case POR_QUOVADIS:
         case POR_NUMBER:
         case POR_FLD:
         case POR_URL:
-        case POR_HIDDEN:    bGray = pViewOptions->IsField();        break;
+        case POR_ISOTOX:
+        case POR_TOX:
+        case POR_HIDDEN:
+            bGray = !pViewOptions->IsPagePreview() && SwViewOption::IsFieldShadings();
+        break;
         case POR_TAB:       bGray = pViewOptions->IsTab();          break;
         case POR_SOFTHYPH:  bGray = pViewOptions->IsSoftHyph();     break;
         case POR_BLANK:     bGray = pViewOptions->IsHardBlank();    break;
@@ -433,11 +435,11 @@ const OUString& SwAccessiblePortionData::GetAccessibleString()
 }
 
 
-void SwAccessiblePortionData::GetLineBoundary( 
-    Boundary& rBound, 
+void SwAccessiblePortionData::GetLineBoundary(
+    Boundary& rBound,
     sal_Int32 nPos )
 {
-    FillBoundary( rBound, aLineBreaks, 
+    FillBoundary( rBound, aLineBreaks,
                   FindBreak( aLineBreaks, nPos ) );
 }
 
@@ -460,7 +462,7 @@ USHORT SwAccessiblePortionData::GetModelPosition( sal_Int32 nPos )
 
         // 'wide' portions have to be of the same width
         DBG_ASSERT( ( nEndPos - nStartPos ) ==
-                    ( aAccessiblePositions[nPortionNo+1] - 
+                    ( aAccessiblePositions[nPortionNo+1] -
                       aAccessiblePositions[nPortionNo] ),
                     "accesability portion disagrees with text model" );
 
@@ -468,14 +470,14 @@ USHORT SwAccessiblePortionData::GetModelPosition( sal_Int32 nPos )
         nStartPos += nWithinPortion;
     }
     // else: return nStartPos unmodified
-    
-    DBG_ASSERT( (nStartPos >= 0) && (nStartPos < USHRT_MAX), 
+
+    DBG_ASSERT( (nStartPos >= 0) && (nStartPos < USHRT_MAX),
                 "How can the SwTxtNode have so many characters?" );
     return static_cast<USHORT>(nStartPos);
 }
 
 void SwAccessiblePortionData::FillBoundary(
-    Boundary& rBound, 
+    Boundary& rBound,
     const Positions_t& rPositions,
     size_t nPos )
 {
@@ -484,13 +486,13 @@ void SwAccessiblePortionData::FillBoundary(
 }
 
 
-size_t SwAccessiblePortionData::FindBreak( 
+size_t SwAccessiblePortionData::FindBreak(
     const Positions_t& rPositions,
     sal_Int32 nValue )
 {
     DBG_ASSERT( rPositions.size() >= 2, "need min + max value" );
     DBG_ASSERT( rPositions[0] <= nValue, "need min value" );
-    DBG_ASSERT( rPositions[rPositions.size()-1] >= nValue, 
+    DBG_ASSERT( rPositions[rPositions.size()-1] >= nValue,
                 "need first terminator value" );
     DBG_ASSERT( rPositions[rPositions.size()-2] >= nValue,
                 "need second terminator value" );
@@ -503,7 +505,7 @@ size_t SwAccessiblePortionData::FindBreak(
     {
         // check loop invariants
         DBG_ASSERT( ( (nMin == 0) && (rPositions[nMin] <= nValue) ) ||
-                    ( (nMin != 0) && (rPositions[nMin] < nValue) ), 
+                    ( (nMin != 0) && (rPositions[nMin] < nValue) ),
                     "minvalue not minimal" );
         DBG_ASSERT( nValue <= rPositions[nMax], "max value not maximal" );
 
@@ -513,9 +515,9 @@ size_t SwAccessiblePortionData::FindBreak(
         DBG_ASSERT( nMiddle < nMax, "progress?" );
 
         // check array
-        DBG_ASSERT( rPositions[nMin] <= rPositions[nMiddle], 
+        DBG_ASSERT( rPositions[nMin] <= rPositions[nMiddle],
                     "garbled positions array" );
-        DBG_ASSERT( rPositions[nMiddle] <= rPositions[nMax], 
+        DBG_ASSERT( rPositions[nMiddle] <= rPositions[nMax],
                     "garbled positions array" );
 
         if( nValue > rPositions[nMiddle] )
@@ -532,16 +534,16 @@ size_t SwAccessiblePortionData::FindBreak(
     // finally, check to see whether the returned value is the 'right' position
     DBG_ASSERT( rPositions[nMin] <= nValue, "not smaller or equal" );
     DBG_ASSERT( nValue <= rPositions[nMin+1], "not equal or larger" );
-    DBG_ASSERT( (nMin == 0) || (rPositions[nMin-1] <= nValue), 
+    DBG_ASSERT( (nMin == 0) || (rPositions[nMin-1] <= nValue),
                 "earlier value should have been returned" );
 
-    DBG_ASSERT( nMin < rPositions.size()-1, 
+    DBG_ASSERT( nMin < rPositions.size()-1,
                 "shouldn't return last position (due to termintator values)" );
 
     return nMin;
 }
 
-size_t SwAccessiblePortionData::FindLastBreak( 
+size_t SwAccessiblePortionData::FindLastBreak(
     const Positions_t& rPositions,
     sal_Int32 nValue )
 {
@@ -555,8 +557,8 @@ size_t SwAccessiblePortionData::FindLastBreak(
 }
 
 
-void SwAccessiblePortionData::GetSentenceBoundary( 
-    Boundary& rBound, 
+void SwAccessiblePortionData::GetSentenceBoundary(
+    Boundary& rBound,
     sal_Int32 nPos )
 {
     DBG_ASSERT( nPos >= 0, "illegal position; check before" );
@@ -582,7 +584,7 @@ void SwAccessiblePortionData::GetSentenceBoundary(
                  USHORT nModelPos = GetModelPosition( nCurrent );
 
                  sal_Int32 nNew = pBreakIt->xBreak->endOfSentence(
-                     sAccessibleString, nCurrent, 
+                     sAccessibleString, nCurrent,
                      pBreakIt->GetLocale(pTxtNode->GetLang(nModelPos)) ) + 1;
 
                  if( (nNew < 0) && (nNew > nLength) )
@@ -610,14 +612,14 @@ void SwAccessiblePortionData::GetSentenceBoundary(
     FillBoundary( rBound, *pSentences, FindBreak( *pSentences, nPos ) );
 }
 
-void SwAccessiblePortionData::GetAttributeBoundary( 
-    Boundary& rBound, 
+void SwAccessiblePortionData::GetAttributeBoundary(
+    Boundary& rBound,
     sal_Int32 nPos)
 {
     DBG_ASSERT( pTxtNode != NULL, "Need SwTxtNode!" );
 
     // attribute boundaries can only occur on portion boundaries
-    FillBoundary( rBound, aAccessiblePositions, 
+    FillBoundary( rBound, aAccessiblePositions,
                   FindBreak( aAccessiblePositions, nPos ) );
 }
 
@@ -627,7 +629,7 @@ sal_Int32 SwAccessiblePortionData::GetAccessiblePosition( USHORT nPos )
     DBG_ASSERT( nPos <= pTxtNode->GetTxt().Len(), "illegal position" );
 
     // find the portion number
-    size_t nPortionNo = FindBreak( aModelPositions, 
+    size_t nPortionNo = FindBreak( aModelPositions,
                                    static_cast<sal_Int32>(nPos) );
 
     sal_Int32 nRet = aAccessiblePositions[nPortionNo];
@@ -640,7 +642,7 @@ sal_Int32 SwAccessiblePortionData::GetAccessiblePosition( USHORT nPos )
     {
         // 'wide' portions have to be of the same width
         DBG_ASSERT( ( nEndPos - nStartPos ) ==
-                    ( aAccessiblePositions[nPortionNo+1] - 
+                    ( aAccessiblePositions[nPortionNo+1] -
                       aAccessiblePositions[nPortionNo] ),
                     "accesability portion disagrees with text model" );
 
@@ -648,8 +650,8 @@ sal_Int32 SwAccessiblePortionData::GetAccessiblePosition( USHORT nPos )
         nRet += nWithinPortion;
     }
     // else: return nRet unmodified
-    
-    DBG_ASSERT( (nRet >= 0) && (nRet <= sAccessibleString.getLength()), 
+
+    DBG_ASSERT( (nRet >= 0) && (nRet <= sAccessibleString.getLength()),
                 "too long!" );
     return nRet;
 }
@@ -662,8 +664,8 @@ sal_Int32 SwAccessiblePortionData::GetLineNumber( sal_Int32 nPos )
 
 
 
-USHORT SwAccessiblePortionData::FillSpecialPos( 
-    sal_Int32 nPos, 
+USHORT SwAccessiblePortionData::FillSpecialPos(
+    sal_Int32 nPos,
     SwSpecialPos& rPos,
     SwSpecialPos*& rpPos )
 {
@@ -698,12 +700,12 @@ USHORT SwAccessiblePortionData::FillSpecialPos(
             DBG_ASSERT( nModelPos >= 0, "Can't happen." );
             DBG_ASSERT( nCorePortionNo >= nBeforePortions, "Can't happen." );
         }
-        DBG_ASSERT( nModelPos != nModelEndPos, 
+        DBG_ASSERT( nModelPos != nModelEndPos,
                     "portion with core-representation expected" );
 
         // if we have anything except plain text, compute nExtend + nRefPos
         if( (nModelEndPos - nModelPos == 1) &&
-            (pTxtNode->GetTxt().GetChar(static_cast<USHORT>(nModelPos)) != 
+            (pTxtNode->GetTxt().GetChar(static_cast<USHORT>(nModelPos)) !=
              sAccessibleString.getStr()[nPos]) )
         {
             // case 1: a one-character, non-text portion
@@ -716,7 +718,7 @@ USHORT SwAccessiblePortionData::FillSpecialPos(
         else if(nPortionNo != nCorePortionNo)
         {
             // case 2: a multi-character (text!) portion, followed by
-            // zero-length portions 
+            // zero-length portions
             // reference position is the first character of the next
             // portion, and we are 'behind'
             nRefPos = aAccessiblePositions[ nCorePortionNo+1 ];
@@ -727,7 +729,7 @@ USHORT SwAccessiblePortionData::FillSpecialPos(
         {
             // case 3: regular text portion
             DBG_ASSERT( ( nModelEndPos - nModelPos ) ==
-                        ( aAccessiblePositions[nPortionNo+1] - 
+                        ( aAccessiblePositions[nPortionNo+1] -
                           aAccessiblePositions[nPortionNo] ),
                         "text portion expected" );
 
@@ -739,8 +741,8 @@ USHORT SwAccessiblePortionData::FillSpecialPos(
     {
         DBG_ASSERT( rpPos == &rPos, "Yes!" );
         DBG_ASSERT( nRefPos <= nPos, "wrong reference" );
-        DBG_ASSERT( (nExtend == SP_EXTEND_RANGE_NONE) || 
-                    (nExtend == SP_EXTEND_RANGE_BEFORE) || 
+        DBG_ASSERT( (nExtend == SP_EXTEND_RANGE_NONE) ||
+                    (nExtend == SP_EXTEND_RANGE_BEFORE) ||
                     (nExtend == SP_EXTEND_RANGE_BEHIND), "need extend" );
 
         // get the line number, and adjust nRefPos for the line
@@ -767,8 +769,8 @@ sal_Bool SwAccessiblePortionData::IsInGrayPortion( sal_Int32 nPos )
 
 void SwAccessiblePortionData::AdjustAndCheck(
     sal_Int32 nPos,
-    size_t& nPortionNo, 
-    USHORT& nCorePos, 
+    size_t& nPortionNo,
+    USHORT& nCorePos,
     sal_Bool& bEdit)
 {
     // find portion and get mode position
@@ -780,11 +782,11 @@ void SwAccessiblePortionData::AdjustAndCheck(
     if( IsSpecialPortion( nPortionNo ) )
         bEdit &= nPos == aAccessiblePositions[nPortionNo];
     else
-        nCorePos += static_cast<USHORT>( 
+        nCorePos += static_cast<USHORT>(
             nPos - aAccessiblePositions[nPortionNo] );
 }
 
-sal_Bool SwAccessiblePortionData::GetEditableRange( 
+sal_Bool SwAccessiblePortionData::GetEditableRange(
     sal_Int32 nStart, sal_Int32 nEnd,
     USHORT& nCoreStart, USHORT& nCoreEnd )
 {
@@ -795,7 +797,7 @@ sal_Bool SwAccessiblePortionData::GetEditableRange(
     AdjustAndCheck( nStart, nStartPortion, nCoreStart, bIsEditable );
     AdjustAndCheck( nEnd,   nEndPortion,   nCoreEnd,   bIsEditable );
 
-    // iterate over portions, and make sure there is no read-only portion 
+    // iterate over portions, and make sure there is no read-only portion
     // in-between
     size_t nLastPortion = nEndPortion;
     if( (nLastPortion > 0) && IsSpecialPortion(nLastPortion) )
