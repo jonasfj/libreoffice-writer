@@ -2,9 +2,9 @@
  *
  *  $RCSfile: unostyle.cxx,v $
  *
- *  $Revision: 1.57 $
+ *  $Revision: 1.58 $
  *
- *  last change: $Author: obo $ $Date: 2004-08-12 12:43:38 $
+ *  last change: $Author: kz $ $Date: 2004-10-04 19:14:31 $
  *
  *  The Contents of this file are made available subject to the terms of
  *  either of the following licenses
@@ -80,9 +80,6 @@
 #endif
 #ifndef _SFXSTYLE_HXX
 #include <svtools/style.hxx>
-#endif
-#ifndef _SVSTOR_HXX //autogen
-#include <so3/svstor.hxx>
 #endif
 
 #ifndef _SVX_PAGEITEM_HXX //autogen
@@ -662,7 +659,7 @@ sal_Int32 lcl_GetCountOrName ( const SwDoc &rDoc, SfxStyleFamily eFamily, String
                     {
                         // the default character format needs to be set to "Default!"
                         if(rDoc.GetDfltCharFmt() == pFmt)
-                            SwStyleNameMapper::FillUIName( 
+                            SwStyleNameMapper::FillUIName(
                                 RES_POOLCOLL_STANDARD, *pString );
                         else
                             *pString = pFmt->GetName();
@@ -2143,10 +2140,10 @@ put_itemset:
 /* -----------------------------18.04.01 13:29--------------------------------
 
  ---------------------------------------------------------------------------*/
-void SAL_CALL SwXStyle::SetPropertyValues_Impl( 
-    const uno::Sequence< OUString >& rPropertyNames, 
-    const uno::Sequence< Any >& rValues ) 
-    throw( UnknownPropertyException, PropertyVetoException, IllegalArgumentException, 
+void SAL_CALL SwXStyle::SetPropertyValues_Impl(
+    const uno::Sequence< OUString >& rPropertyNames,
+    const uno::Sequence< Any >& rValues )
+    throw( UnknownPropertyException, PropertyVetoException, IllegalArgumentException,
             WrappedTargetException, RuntimeException)
 {
     if ( !m_pDoc )
@@ -2216,7 +2213,7 @@ void SwXStyle::setPropertyValues(
     vos::OGuard aGuard(Application::GetSolarMutex());
 
     // workaround for bad designed API
-    try 
+    try
     {
         SetPropertyValues_Impl( rPropertyNames, rValues );
     }
@@ -2381,8 +2378,8 @@ query_itemset:
 /* -----------------------------19.04.01 09:26--------------------------------
 
  ---------------------------------------------------------------------------*/
-uno::Sequence< Any > SAL_CALL SwXStyle::GetPropertyValues_Impl( 
-        const uno::Sequence< OUString > & rPropertyNames ) 
+uno::Sequence< Any > SAL_CALL SwXStyle::GetPropertyValues_Impl(
+        const uno::Sequence< OUString > & rPropertyNames )
     throw( UnknownPropertyException, WrappedTargetException, RuntimeException )
 {
     if ( !m_pDoc )
@@ -2490,7 +2487,7 @@ Sequence< Any > SwXStyle::getPropertyValues(
     {
         throw RuntimeException(OUString ( RTL_CONSTASCII_USTRINGPARAM ( "WrappedTargetException caught" ) ), static_cast < cppu::OWeakObject * > ( this ) );
     }
-    
+
     return aValues;
 }
 /*-- 18.04.01 13:07:29---------------------------------------------------
@@ -3007,10 +3004,10 @@ SwXPageStyle::~SwXPageStyle()
 /* -----------------------------18.04.01 13:50--------------------------------
 
  ---------------------------------------------------------------------------*/
-void SAL_CALL SwXPageStyle::SetPropertyValues_Impl( 
-    const uno::Sequence< OUString >& rPropertyNames, 
-    const uno::Sequence< Any >& rValues ) 
-    throw( UnknownPropertyException, PropertyVetoException, IllegalArgumentException, 
+void SAL_CALL SwXPageStyle::SetPropertyValues_Impl(
+    const uno::Sequence< OUString >& rPropertyNames,
+    const uno::Sequence< Any >& rValues )
+    throw( UnknownPropertyException, PropertyVetoException, IllegalArgumentException,
             WrappedTargetException, RuntimeException)
 {
     if(!GetDoc())
@@ -3224,7 +3221,7 @@ void SwXPageStyle::setPropertyValues(
     vos::OGuard aGuard(Application::GetSolarMutex());
 
     // workaround for bad designed API
-    try 
+    try
     {
         SetPropertyValues_Impl( rPropertyNames, rValues );
     }
@@ -3240,8 +3237,8 @@ void SwXPageStyle::setPropertyValues(
 /* -----------------------------04.11.03 13:50--------------------------------
 
  ---------------------------------------------------------------------------*/
-uno::Sequence< Any > SAL_CALL SwXPageStyle::GetPropertyValues_Impl( 
-        const uno::Sequence< OUString >& rPropertyNames ) 
+uno::Sequence< Any > SAL_CALL SwXPageStyle::GetPropertyValues_Impl(
+        const uno::Sequence< OUString >& rPropertyNames )
     throw( UnknownPropertyException, WrappedTargetException, RuntimeException )
 {
     if(!GetDoc())
@@ -3474,7 +3471,7 @@ Sequence< Any > SwXPageStyle::getPropertyValues(
     {
         throw RuntimeException(OUString ( RTL_CONSTASCII_USTRINGPARAM ( "WrappedTargetException caught" ) ), static_cast < cppu::OWeakObject * > ( this ) );
     }
-    
+
     return aValues;
 }
 /*-- 17.12.98 08:43:36---------------------------------------------------
