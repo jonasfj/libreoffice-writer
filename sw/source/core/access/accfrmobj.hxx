@@ -2,9 +2,9 @@
  *
  *  $RCSfile: accfrmobj.hxx,v $
  *
- *  $Revision: 1.11 $
+ *  $Revision: 1.12 $
  *
- *  last change: $Author: rt $ $Date: 2004-06-16 09:29:49 $
+ *  last change: $Author: hjs $ $Date: 2004-06-28 13:31:28 $
  *
  *  The Contents of this file are made available subject to the terms of
  *  either of the following licenses
@@ -117,7 +117,7 @@ inline void SwFrmOrObj::Init( const SdrObject *pO )
 {
     pObj = pO;
     // #110094#-1
-    pFrm = pObj && pObj->ISA(SwVirtFlyDrawObj) 
+    pFrm = pObj && pObj->ISA(SwVirtFlyDrawObj)
                 ? static_cast < const SwVirtFlyDrawObj * >( pObj )->GetFlyFrm()
                 : 0;
 }
@@ -211,7 +211,7 @@ inline const SwFrm *SwFrmOrObj::GetSwFrm() const
 inline sal_Bool SwFrmOrObj::IsAccessible( sal_Bool bPagePreview ) const
 {
     return ( pFrm && pFrm->IsAccessibleFrm() &&
-             ( !pFrm->IsCellFrm() || 
+             ( !pFrm->IsCellFrm() ||
               static_cast<const SwCellFrm *>( pFrm )->GetTabBox()
                                                      ->GetSttNd() != 0 ) &&
              ( bPagePreview || !pFrm->IsPageFrm() ) ) ||
@@ -223,15 +223,15 @@ inline sal_Bool SwFrmOrObj::IsVisibleChildrenOnly() const
 {
     return !pFrm || pFrm->IsRootFrm() ||
            !( pFrm->IsTabFrm() || pFrm->IsInTab() ||
-             (IsBoundAsChar() &&
-              static_cast< const SwFlyFrm *>(pFrm)->GetAnchor()->IsInTab()) );
+              ( IsBoundAsChar() &&
+                static_cast<const SwFlyFrm*>(pFrm)->GetAnchorFrm()->IsInTab()) );
 }
 
 inline SwRect SwFrmOrObj::GetBox() const
 {
     if( pFrm )
     {
-        if( pFrm->IsPageFrm() && 
+        if( pFrm->IsPageFrm() &&
             static_cast< const SwPageFrm * >( pFrm )->IsEmptyPage() )
         {
             SwRect aBox( pFrm->Frm().Left(), pFrm->Frm().Top()-1, 1, 1 );
@@ -248,15 +248,15 @@ inline SwRect SwFrmOrObj::GetBox() const
     }
     else if( pObj )
         return SwRect( pObj->GetCurrentBoundRect() );
-    return SwRect();
-        
+    else
+        return SwRect();
 }
 
 inline SwRect SwFrmOrObj::GetBounds() const
 {
     if( pFrm )
     {
-        if( pFrm->IsPageFrm() && 
+        if( pFrm->IsPageFrm() &&
             static_cast< const SwPageFrm * >( pFrm )->IsEmptyPage() )
         {
             SwRect aBox( pFrm->Frm().Left(), pFrm->Frm().Top()-1, 0, 0 );
