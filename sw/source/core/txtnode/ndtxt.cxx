@@ -2,9 +2,9 @@
  *
  *  $RCSfile: ndtxt.cxx,v $
  *
- *  $Revision: 1.44 $
+ *  $Revision: 1.45 $
  *
- *  last change: $Author: vg $ $Date: 2005-02-21 16:05:55 $
+ *  last change: $Author: vg $ $Date: 2005-02-22 08:21:10 $
  *
  *  The Contents of this file are made available subject to the terms of
  *  either of the following licenses
@@ -1000,11 +1000,11 @@ void SwTxtNode::Update( const SwIndex & aPos, xub_StrLen nLen,
         {
             // Bookmarks must never grow to either side, when
             // editing (directly) to the left or right (#i29942#)!
-            // And a bookmark with same start and end must remain 
+            // And a bookmark with same start and end must remain
             // to the left of the inserted text (used in XML import).
             const SwPosition* pEnd = rBkmk[i]->End();
             pIdx = (SwIndex*)&pEnd->nContent;
-            if( this == &pEnd->nNode.GetNode() && 
+            if( this == &pEnd->nNode.GetNode() &&
                 aPos.GetIndex() == pIdx->GetIndex() )
                 pIdx->Assign( &aTmpIdxReg, pIdx->GetIndex() );
         }
@@ -1054,12 +1054,12 @@ void SwTxtNode::_ChgTxtCollUpdateNum( const SwTxtFmtColl *pOldColl,
     {
         // Numerierung aufheben, falls sie aus der Vorlage kommt
         // und nicht nicht aus der neuen
-        if( NO_NUMBERING != nNewLevel && pNdNum && 
+        if( NO_NUMBERING != nNewLevel && pNdNum &&
             ( !GetpSwAttrSet() ||
-              SFX_ITEM_SET != 
+              SFX_ITEM_SET !=
               GetpSwAttrSet()->GetItemState(RES_PARATR_NUMRULE, FALSE )))
         {
-            if ((!pNewColl || 
+            if ((!pNewColl ||
                  SFX_ITEM_SET != pNewColl->GetItemState(RES_PARATR_NUMRULE )) )
                 delete pNdNum, pNdNum = 0;
         }
@@ -1069,10 +1069,10 @@ void SwTxtNode::_ChgTxtCollUpdateNum( const SwTxtFmtColl *pOldColl,
     }
 
     const SfxPoolItem * pItem = NULL;
-    if (SFX_ITEM_SET == 
+    if (SFX_ITEM_SET ==
         pNewColl->GetItemState(RES_PARATR_NUMRULE, FALSE, &pItem))
     {
-        SwNumRule * pRule = 
+        SwNumRule * pRule =
             GetDoc()->FindNumRulePtr(((SwNumRuleItem *) pItem)->GetValue());
 
         if (pRule)
@@ -2253,6 +2253,7 @@ void SwTxtNode::GCAttr()
     }
 }
 
+
 const SwNodeNum* SwTxtNode::UpdateNum( const SwNodeNum& rNum )
 {
     // #111955#
@@ -2501,10 +2502,6 @@ SwTxtAttr *SwTxtNode::GetTxtAttr( const xub_StrLen nIdx,
     return 0;
 }
 
-/*************************************************************************
- *						SwTxtNode::GetExpandTxt
- *************************************************************************/
-// Felder werden expandiert:
 // -> #i29560#
 BOOL SwTxtNode::HasNumber() const
 {
@@ -2557,14 +2554,14 @@ XubString SwTxtNode::GetNumString() const
     {
         const SwNumRule* pRule = GetNumRule();
 
-        if (pRule && 
-            pNum->GetLevel() < MAXLEVEL && 
+        if (pRule &&
+            pNum->GetLevel() < MAXLEVEL &&
             pRule->Get(pNum->GetLevel()).IsTxtFmt())
             return pRule->MakeNumString(*pNum);
     }
 
     return aEmptyStr;
-            
+
 #if 0
     if( (( 0 != ( pNum = GetNum() ) &&
             0 != ( pRule = GetNumRule() )) ||
@@ -2706,6 +2703,11 @@ void SwTxtNode::Replace0xFF( XubString& rTxt, xub_StrLen& rTxtStt,
         }
     }
 }
+
+/*************************************************************************
+ *                      SwTxtNode::GetExpandTxt
+ * Expand fields
+ *************************************************************************/
 
 XubString SwTxtNode::GetExpandTxt( const xub_StrLen nIdx, const xub_StrLen nLen,
                                 const BOOL bWithNum  ) const
@@ -3063,7 +3065,7 @@ const SwNodeNum * SwTxtNode::GetNum(BOOL bUpdate) const
         if (bUpdate && pRule->IsInvalidRule())
             const_cast<SwDoc *>(GetDoc())->UpdateNumRule(*pRule, 0);
     }
- 
+
     return pNdNum;
 }
 
@@ -3074,7 +3076,7 @@ BOOL SwTxtNode::IsOutline() const
 
     if (pRule && pRule->IsOutlineRule())
         bResult = TRUE;
-    
+
     return bResult;
 }
 
@@ -3111,7 +3113,7 @@ BYTE SwTxtNode::GetOutlineLevel() const
 
     if (pNum)
         aResult = pNum->GetRealLevel();
-    else 
+    else
     {
         SwFmtColl * pFmtColl = GetFmtColl();
 
@@ -3144,9 +3146,35 @@ void SwTxtNode::SetOutlineLevel(BYTE nLevel)
     else
     {
         SwFmtColl * pFmtColl = GetFmtColl();
-        
+
         if (pFmtColl)
             ((SwTxtFmtColl *) pFmtColl)->SetOutlineLevel(nLevel);
     }
 }
 
+/**
+   Returns if the paragraph has a visible numbering or bullet.
+   This includes all kinds of numbering/bullet/outlines.
+   Note: This function returns false, if the numbering format is
+   SVX_NUM_NUMBER_NONE or if the numbering/bullet has been deleted.
+ */
+
+bool SwTxtNode::HasVisibleNumberingOrBullet() const
+{
+    bool bRet = false;
+
+    if ( pNdNum && pNdNum->IsShowNum() )
+    {
+        const SwNumRule * pRule = GetNumRule();
+        if ( pRule )
+        {
+            const SwNumFmt& rFmt = pRule->Get( pNdNum->GetRealLevel() );
+            if ( SVX_NUM_NUMBER_NONE != rFmt.GetNumberingType() )
+            {
+                bRet = true;
+            }
+        }
+    }
+
+    return bRet;
+}
