@@ -2,9 +2,9 @@
  *
  *  $RCSfile: ww8par.hxx,v $
  *
- *  $Revision: 1.133 $
+ *  $Revision: 1.134 $
  *
- *  last change: $Author: obo $ $Date: 2005-01-05 14:33:54 $
+ *  last change: $Author: rt $ $Date: 2005-01-11 12:36:38 $
  *
  *  The Contents of this file are made available subject to the terms of
  *  either of the following licenses
@@ -704,7 +704,7 @@ private:
     void SetHdFt(wwSection &rSection, int nSect, const wwSection *pPrevious);
 
     SwSectionFmt *InsertSection(SwPaM& rMyPaM, wwSection &rSection);
-    bool SetCols(SwFrmFmt &rFmt, const wwSection &rSection, 
+    bool SetCols(SwFrmFmt &rFmt, const wwSection &rSection,
         sal_uInt32 nNettoWidth) const;
     bool SectionIsProtected(const wwSection &rSection) const;
     void SetLeftRight(wwSection &rSection);
@@ -737,7 +737,7 @@ public:
     sal_uInt32 GetPageWidth() const;
     sal_uInt32 GetTextAreaWidth() const;
 };
-    
+
 class wwFrameNamer
 {
 private:
@@ -770,7 +770,7 @@ public:
         { }
 };
 
-class FtnDescriptor 
+class FtnDescriptor
 {
 public:
     ManTypes meType;
@@ -786,8 +786,8 @@ struct ApoTestResults
     const BYTE* mpSprm37;
     const BYTE* mpSprm29;
     WW8FlyPara* mpStyleApo;
-    ApoTestResults() : 
-        mbStartApo(false), mbStopApo(false), mpSprm37(0), mpSprm29(0), 
+    ApoTestResults() :
+        mbStartApo(false), mbStopApo(false), mpSprm37(0), mpSprm29(0),
         mpStyleApo(0) {}
     bool HasStartStop() const { return (mbStartApo || mbStopApo); }
     bool HasFrame() const { return (mpSprm29 || mpSprm37 || mpStyleApo); }
@@ -982,6 +982,7 @@ private:
     std::vector<String>* mpAtnNames;
 
     sw::util::AuthorInfos* pAuthorInfos;
+    String sBaseURL;
 
                                 // Ini-Flags:
     ULONG nIniFlags;            // Flags aus der writer.ini
@@ -999,7 +1000,7 @@ private:
     INT32 nIniFlyDy;            // Y-Verschiebung von Flys
 
     rtl_TextEncoding eTextCharSet;    // Default charset for Text
-    rtl_TextEncoding eStructCharSet;  // rtl_TextEncoding for structures 
+    rtl_TextEncoding eStructCharSet;  // rtl_TextEncoding for structures
     rtl_TextEncoding eHardCharSet;    // Hard rtl_TextEncoding-Attribute
     USHORT nProgress;           // %-Angabe fuer Progressbar
     USHORT nColls;              // Groesse des Arrays
@@ -1088,10 +1089,10 @@ private:
     SwWW8StyInf *GetStyle(USHORT nColl) const;
     void AppendTxtNode(SwPosition& rPos);
 
-    void Read_HdFt(bool bIsTitle, int nSect, const SwPageDesc *pPrev, 
+    void Read_HdFt(bool bIsTitle, int nSect, const SwPageDesc *pPrev,
         const wwSection &rSection);
     void Read_HdFtText(long nStartCp, long nLen, SwFrmFmt* pHdFtFmt);
-    void Read_HdFtTextAsHackedFrame(long nStart, long nLen, 
+    void Read_HdFtTextAsHackedFrame(long nStart, long nLen,
         SwFrmFmt &rHdFtFmt, sal_uInt16 nPageWidth);
 
     bool HasOwnHeaderFooter(BYTE nWhichItems, BYTE grpfIhdt, int nSect);
@@ -1120,7 +1121,7 @@ private:
     void CloseAttrEnds();
     bool ReadText(long nStartCp, long nTextLen, short nType);
 
-    void ReadRevMarkAuthorStrTabl( SvStream& rStrm, INT32 nTblPos, 
+    void ReadRevMarkAuthorStrTabl( SvStream& rStrm, INT32 nTblPos,
         INT32 nTblSiz, SwDoc& rDoc );
 
     void Read_HdFtFtnText( const SwNodeIndex* pSttIdx, long nStartCp,
@@ -1131,7 +1132,7 @@ private:
     void EndSprm( USHORT nId );
     void NewAttr( const SfxPoolItem& rAttr );
 
-    bool GetFontParams(USHORT, FontFamily&, String&, FontPitch&, 
+    bool GetFontParams(USHORT, FontFamily&, String&, FontPitch&,
         rtl_TextEncoding&);
     bool SetNewFontAttr(USHORT nFCode, bool bSetEnums, USHORT nWhich);
     void ResetCharSetVars();
@@ -1168,9 +1169,9 @@ private:
         SvxBoxItem& rBox );
     void MatchSdrItemsIntoFlySet( SdrObject*    pSdrObj, SfxItemSet &aFlySet,
         MSO_LineStyle eLineStyle, MSO_SPT eShapeType, Rectangle &rInnerDist );
-    void AdjustLRWrapForWordMargins(const SvxMSDffImportRec &rRecord, 
+    void AdjustLRWrapForWordMargins(const SvxMSDffImportRec &rRecord,
         SvxLRSpaceItem &rLR);
-    void AdjustULWrapForWordMargins(const SvxMSDffImportRec &rRecord, 
+    void AdjustULWrapForWordMargins(const SvxMSDffImportRec &rRecord,
         SvxULSpaceItem &rUL);
     void MapWrapIntoFlyFmt(SvxMSDffImportRec* pRecord, SwFrmFmt* pFlyFmt);
 
@@ -1180,12 +1181,12 @@ private:
     bool IsDropCap();
     bool IsListOrDropcap() { return (!pAktItemSet  || bDropCap); };
 
-    WW8FlyPara *ConstructApo(const ApoTestResults &rApo, 
+    WW8FlyPara *ConstructApo(const ApoTestResults &rApo,
         const WW8_TablePos *pTabPos);
     bool StartApo(const ApoTestResults &rApo, const WW8_TablePos *pTabPos);
     void StopApo();
     bool TestSameApo(const ApoTestResults &rApo, const WW8_TablePos *pTabPos);
-    ApoTestResults TestApo(int nCellLevel, bool bTableRowEnd, 
+    ApoTestResults TestApo(int nCellLevel, bool bTableRowEnd,
         const WW8_TablePos *pTabPos);
 
     void EndSpecial();
@@ -1195,22 +1196,22 @@ private:
     bool ReadGrafFile(String& rFileName, Graphic*& rpGraphic,
        const WW8_PIC& rPic, SvStream* pSt, ULONG nFilePos, bool* pDelIt);
 
-    void ReplaceObj(const SdrObject &rReplaceTextObj, 
+    void ReplaceObj(const SdrObject &rReplaceTextObj,
         SdrObject &rSubObj);
 
-    SwFlyFrmFmt* MakeGrafNotInCntnt(const WW8PicDesc& rPD, 
-        const Graphic* pGraph, const String& rFileName, 
+    SwFlyFrmFmt* MakeGrafNotInCntnt(const WW8PicDesc& rPD,
+        const Graphic* pGraph, const String& rFileName,
         const SfxItemSet& rGrfSet);
 
     SwFrmFmt* MakeGrafInCntnt(const WW8_PIC& rPic, const WW8PicDesc& rPD,
-        const Graphic* pGraph, const String& rFileName, 
+        const Graphic* pGraph, const String& rFileName,
         const SfxItemSet& rGrfSet);
 
     SwFrmFmt *AddAutoAnchor(SwFrmFmt *pFmt);
     SwFrmFmt* ImportGraf1(WW8_PIC& rPic, SvStream* pSt, ULONG nFilePos);
     SwFrmFmt* ImportGraf(SdrTextObj* pTextObj = 0, SwFrmFmt* pFlyFmt = 0);
 
-    SdrObject* ImportOleBase( Graphic& rGraph, const Graphic* pGrf=0, 
+    SdrObject* ImportOleBase( Graphic& rGraph, const Graphic* pGrf=0,
         const SfxItemSet* pFlySet=0 );
 
     SwFrmFmt* ImportOle( const Graphic* = 0, const SfxItemSet* pFlySet = 0,
@@ -1264,28 +1265,28 @@ private:
 
     bool ReadGrafStart(void* pData, short nDataSiz, WW8_DPHEAD* pHd,
         const WW8_DO* pDo, SfxAllItemSet &rSet);
-    SdrObject *ReadLine(WW8_DPHEAD* pHd, const WW8_DO* pDo, 
+    SdrObject *ReadLine(WW8_DPHEAD* pHd, const WW8_DO* pDo,
         SfxAllItemSet &rSet);
-    SdrObject *ReadRect(WW8_DPHEAD* pHd, const WW8_DO* pDo, 
+    SdrObject *ReadRect(WW8_DPHEAD* pHd, const WW8_DO* pDo,
         SfxAllItemSet &rSet);
-    SdrObject *ReadElipse(WW8_DPHEAD* pHd, const WW8_DO* pDo, 
+    SdrObject *ReadElipse(WW8_DPHEAD* pHd, const WW8_DO* pDo,
         SfxAllItemSet &rSet);
-    SdrObject *ReadArc(WW8_DPHEAD* pHd, const WW8_DO* pDo, 
+    SdrObject *ReadArc(WW8_DPHEAD* pHd, const WW8_DO* pDo,
         SfxAllItemSet &rSet);
-    SdrObject *ReadPolyLine(WW8_DPHEAD* pHd, const WW8_DO* pDo, 
+    SdrObject *ReadPolyLine(WW8_DPHEAD* pHd, const WW8_DO* pDo,
         SfxAllItemSet &rSet);
     ESelection GetESelection( long nCpStart, long nCpEnd );
     void InsertTxbxStyAttrs( SfxItemSet& rS, USHORT nColl );
     void InsertTxbxAttrs(long nStartCp, long nEndCp, bool bONLYnPicLocFc);
 
-    bool GetTxbxTextSttEndCp(long& rStartCp, long& rEndCp, USHORT nTxBxS, 
+    bool GetTxbxTextSttEndCp(long& rStartCp, long& rEndCp, USHORT nTxBxS,
         USHORT nSequence);
     bool GetTxbxText(String& rString, long StartCp, long nEndCp);
-    SwFrmFmt* InsertTxbxText(SdrTextObj* pTextObj, Size* pObjSiz, 
+    SwFrmFmt* InsertTxbxText(SdrTextObj* pTextObj, Size* pObjSiz,
         USHORT nTxBxS, USHORT nSequence, long nPosCp, SwFrmFmt* pFlyFmt,
-        bool bMakeSdrGrafObj, bool& rbEraseTextObj, 
-        bool* pbTestTxbxContainsText = 0, long* pnStartCp = 0, 
-        long* pnEndCp = 0, bool* pbContainsGraphics = 0, 
+        bool bMakeSdrGrafObj, bool& rbEraseTextObj,
+        bool* pbTestTxbxContainsText = 0, long* pnStartCp = 0,
+        long* pnEndCp = 0, bool* pbContainsGraphics = 0,
         SvxMSDffImportRec* pRecord = 0);
     bool TxbxChainContainsRealText( USHORT nTxBxS,
                                     long&  rStartCp,
@@ -1330,10 +1331,10 @@ private:
 
 // Ver8-Listen
 
-    void RegisterNumFmtOnTxtNode(USHORT nActLFO, BYTE nActLevel, 
+    void RegisterNumFmtOnTxtNode(USHORT nActLFO, BYTE nActLevel,
         bool bSetAttr = true);
     void RegisterNumFmtOnStyle(USHORT nStyle);
-    void SetStylesList(sal_uInt16 nStyle, sal_uInt16 nActLFO, 
+    void SetStylesList(sal_uInt16 nStyle, sal_uInt16 nActLFO,
         sal_uInt8 nActLevel);
     void RegisterNumFmt(USHORT nActLFO, BYTE nActLevel);
 
@@ -1421,7 +1422,7 @@ public:     // eigentlich private, geht aber leider nur public
     void Read_TxtAnim(      USHORT, const BYTE* pData, short nLen);
 
     void Read_NoLineNumb(       USHORT nId, const BYTE* pData, short nLen );
-    
+
     void Read_LR(               USHORT nId, const BYTE*, short nLen );
     void AdjustStyleTabStops(long nLeft, SwWW8StyInf *pSty);
     void Read_UL(               USHORT nId, const BYTE*, short nLen );
@@ -1468,7 +1469,7 @@ public:     // eigentlich private, geht aber leider nur public
     void Read_ANLevelDesc(      USHORT, const BYTE* pData, short nLen );
 
     // Gliederungsebene Ver8
-    void Read_POutLvl(USHORT, const BYTE* pData, short nLen); 
+    void Read_POutLvl(USHORT, const BYTE* pData, short nLen);
 
     void Read_OLST(             USHORT, const BYTE* pData, short nLen );
 
@@ -1501,7 +1502,7 @@ public:     // eigentlich private, geht aber leider nur public
     eF_ResT Read_F_DocInfo( WW8FieldDesc* pF, String& rStr );
     eF_ResT Read_F_Author( WW8FieldDesc*, String& );
     eF_ResT Read_F_TemplName( WW8FieldDesc*, String& );
-    short GetTimeDatePara(String& rStr, ULONG& rFormat, USHORT &rLang, 
+    short GetTimeDatePara(String& rStr, ULONG& rFormat, USHORT &rLang,
         int nWhichDefault, bool bHijri = false);
     bool ForceFieldLanguage(SwField &rFld, USHORT nLang);
     eF_ResT Read_F_DateTime( WW8FieldDesc*, String& rStr );
@@ -1522,7 +1523,7 @@ public:     // eigentlich private, geht aber leider nur public
     eF_ResT Read_F_FormCheckBox( WW8FieldDesc* pF, String& rStr );
     eF_ResT Read_F_FormListBox( WW8FieldDesc* pF, String& rStr);
     com::sun::star::awt::Size MiserableDropDownFormHack(const String &rString,
-        com::sun::star::uno::Reference<com::sun::star::beans::XPropertySet>& 
+        com::sun::star::uno::Reference<com::sun::star::beans::XPropertySet>&
         rPropSet);
 
     eF_ResT Read_F_Macro( WW8FieldDesc*, String& rStr );
@@ -1556,13 +1557,14 @@ public:     // eigentlich private, geht aber leider nur public
 
     static bool GetPictGrafFromStream(Graphic& rGraphic, SvStream& rSrc);
     static void PicRead( SvStream *pDataStream, WW8_PIC *pPic, bool bVer67);
-    static bool ImportOleWMF( SvStorageRef xSrc1, GDIMetaFile &rWMF, 
+    static bool ImportOleWMF( SvStorageRef xSrc1, GDIMetaFile &rWMF,
         long &rX, long &rY);
     static ColorData GetCol(BYTE nIco);
 
-    SwWW8ImplReader( BYTE nVersionPara, SvStorage* pStorage, SvStream* pSt, 
-        SwDoc& rD, bool bNewDoc );
+    SwWW8ImplReader( BYTE nVersionPara, SvStorage* pStorage, SvStream* pSt,
+        SwDoc& rD, const String& rBaseURL, bool bNewDoc );
 
+    const String& GetBaseURL() const { return sBaseURL; }
     // Laden eines kompletten DocFiles
     ULONG LoadDoc( SwPaM&,WW8Glossary *pGloss=0);
     CharSet GetCurrentCharSet();
@@ -1577,7 +1579,7 @@ String BookmarkToWriter(const String &rBookmark);
 bool RTLGraphicsHack(long &rLeft, long nWidth,
     SwHoriOrient eHoriOri, SwRelationOrient eHoriRel, SwTwips nPageLeft,
     SwTwips nPageRight, SwTwips nPageSize);
-void MatchEscherMirrorIntoFlySet(const SvxMSDffImportRec &rRecord, 
+void MatchEscherMirrorIntoFlySet(const SvxMSDffImportRec &rRecord,
     SfxItemSet &rFlySet);
 bool RTLDrawingsHack(long &rLeft, long nWidth,
     SwHoriOrient eHoriOri, SwRelationOrient eHoriRel, SwTwips nPageLeft,
