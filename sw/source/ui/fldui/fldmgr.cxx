@@ -2,9 +2,9 @@
  *
  *  $RCSfile: fldmgr.cxx,v $
  *
- *  $Revision: 1.1.1.1 $
+ *  $Revision: 1.2 $
  *
- *  last change: $Author: hr $ $Date: 2000-09-18 17:14:36 $
+ *  last change: $Author: os $ $Date: 2000-10-20 14:18:03 $
  *
  *  The Contents of this file are made available subject to the terms of
  *  either of the following licenses
@@ -102,8 +102,8 @@
 #ifndef _COM_SUN_STAR_BEANS_XPROPERTYSET_HPP_
 #include <com/sun/star/beans/XPropertySet.hpp>
 #endif
-#ifndef _UNOTOOLS_PROCESSFACTORY_HXX_
-#include <unotools/processfactory.hxx>
+#ifndef _COMPHELPER_PROCESSFACTORY_HXX_
+#include <comphelper/processfactory.hxx>
 #endif
 
 #else
@@ -2084,7 +2084,7 @@ Reference<XNameAccess> SwFldMgr::GetDBContext()
 {
     if(!xDBContext.is())
     {
-        Reference< XMultiServiceFactory > xMgr( ::utl::getProcessServiceFactory() );
+        Reference< XMultiServiceFactory > xMgr( ::comphelper::getProcessServiceFactory() );
         if( xMgr.is() )
         {
             Reference<XInterface> xInstance = xMgr->createInstance( C2U( "com.sun.star.sdb.DatabaseContext" ));
@@ -2099,12 +2099,15 @@ Reference<XNameAccess> SwFldMgr::GetDBContext()
 /*************************************************************************
 
       $Log: not supported by cvs2svn $
+      Revision 1.1.1.1  2000/09/18 17:14:36  hr
+      initial import
+
       Revision 1.285  2000/09/18 16:05:29  willem.vandorp
       OpenOffice header added.
-    
+
       Revision 1.284  2000/09/07 15:59:23  os
       change: SFX_DISPATCHER/SFX_BINDINGS removed
-    
+
       Revision 1.283  2000/09/04 11:43:16  tbe
       basicide, isetbrw, si, vcdlged moved from svx to basctl
 

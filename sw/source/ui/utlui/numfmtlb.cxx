@@ -2,9 +2,9 @@
  *
  *  $RCSfile: numfmtlb.cxx,v $
  *
- *  $Revision: 1.2 $
+ *  $Revision: 1.3 $
  *
- *  last change: $Author: os $ $Date: 2000-10-20 09:51:30 $
+ *  last change: $Author: os $ $Date: 2000-10-20 14:18:07 $
  *
  *  The Contents of this file are made available subject to the terms of
  *  either of the following licenses
@@ -69,8 +69,8 @@
 #ifndef _COM_SUN_STAR_LANG_XMULTISERVICEFACTORY_HPP_
 #include <com/sun/star/lang/XMultiServiceFactory.hpp>
 #endif
-#ifndef _UNOTOOLS_PROCESSFACTORY_HXX_
-#include <unotools/processfactory.hxx>
+#ifndef _COMPHELPER_PROCESSFACTORY_HXX_
+#include <comphelper/processfactory.hxx>
 #endif
 
 #ifndef _SV_SVAPP_HXX //autogen
@@ -185,7 +185,7 @@ void NumFormatListBox::Init(short nFormatType, BOOL bUsrFmts)
 
     if (bUsrFmts == FALSE)
        {
-        Reference< XMultiServiceFactory > xMSF = ::utl::getProcessServiceFactory();
+        Reference< XMultiServiceFactory > xMSF = ::comphelper::getProcessServiceFactory();
         pOwnFormatter = new SvNumberFormatter(xMSF, eCurLanguage);
     }
 
@@ -601,15 +601,18 @@ void NumFormatListBox::Clear()
       Source Code Control System - History
 
       $Log: not supported by cvs2svn $
+      Revision 1.2  2000/10/20 09:51:30  os
+      change: use SvNumberFormatter ctor using XMultiServiceFactory
+
       Revision 1.1.1.1  2000/09/18 17:14:50  hr
       initial import
-    
+
       Revision 1.31  2000/09/18 16:06:18  willem.vandorp
       OpenOffice header added.
-    
+
       Revision 1.30  2000/04/18 15:14:08  os
       UNICODE
-    
+
       Revision 1.29  2000/03/03 15:17:05  os
       StarView remainders removed
 

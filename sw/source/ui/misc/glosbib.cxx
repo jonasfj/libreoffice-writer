@@ -2,9 +2,9 @@
  *
  *  $RCSfile: glosbib.cxx,v $
  *
- *  $Revision: 1.1.1.1 $
+ *  $Revision: 1.2 $
  *
- *  last change: $Author: hr $ $Date: 2000-09-18 17:14:44 $
+ *  last change: $Author: os $ $Date: 2000-10-20 14:18:05 $
  *
  *  The Contents of this file are made available subject to the terms of
  *  either of the following licenses
@@ -88,8 +88,8 @@
 #ifndef _SFXINIMGR_HXX
 #include <svtools/iniman.hxx>
 #endif
-#ifndef _UNOTOOLS_PROCESSFACTORY_HXX_
-#include <unotools/processfactory.hxx>
+#ifndef _COMPHELPER_PROCESSFACTORY_HXX_
+#include <comphelper/processfactory.hxx>
 #endif
 #ifndef _COM_SUN_STAR_UCB_XCONTENTPROVIDER_HPP_
 #include <com/sun/star/ucb/XContentProvider.hpp>
@@ -191,7 +191,7 @@ SwGlossaryGroupDlg::SwGlossaryGroupDlg(Window * pParent,
             nCaseReadonly |= PATH_READONLY;
         else
         {
-            Reference< lang::XMultiServiceFactory > xMSF = utl::getProcessServiceFactory();
+            Reference< lang::XMultiServiceFactory > xMSF = comphelper::getProcessServiceFactory();
             try
             {
                 INetURLObject aTempObj(aTempFile.GetName());
@@ -679,15 +679,18 @@ void	SwGlossaryGroupTLB::Clear()
       Source Code Control System - Update
 
       $Log: not supported by cvs2svn $
+      Revision 1.1.1.1  2000/09/18 17:14:44  hr
+      initial import
+
       Revision 1.64  2000/09/18 16:05:56  willem.vandorp
       OpenOffice header added.
-    
+
       Revision 1.63  2000/07/20 15:24:32  jp
       Bug #77040#: don't create references with stack objects, must always created on the heap
-    
+
       Revision 1.62  2000/07/20 13:17:12  jp
       change old txtatr-character to the two new characters
-    
+
       Revision 1.61  2000/06/13 09:57:14  os
       using UCB
 
