@@ -2,9 +2,9 @@
  *
  *  $RCSfile: ndtbl.cxx,v $
  *
- *  $Revision: 1.14 $
+ *  $Revision: 1.15 $
  *
- *  last change: $Author: vg $ $Date: 2003-05-28 12:51:10 $
+ *  last change: $Author: obo $ $Date: 2003-09-04 11:46:37 $
  *
  *  The Contents of this file are made available subject to the terms of
  *  either of the following licenses
@@ -83,6 +83,10 @@
 #endif
 #ifndef _SVX_BOXITEM_HXX //autogen
 #include <svx/boxitem.hxx>
+#endif
+// OD 06.08.2003 #i17174#
+#ifndef _SVX_SHADITEM_HXX
+#include <svx/shaditem.hxx>
 #endif
 
 #ifndef _FMTFSIZE_HXX //autogen
@@ -257,7 +261,7 @@ class lcl_DelRedlines
 public:
     lcl_DelRedlines( const SwTableNode& rNd, BOOL bCheckForOwnRedline );
     lcl_DelRedlines( SwPaM& rPam );
-        
+
     ~lcl_DelRedlines() { pDoc->EndUndo(); }
 };
 
@@ -509,7 +513,7 @@ const SwTable* SwDoc::InsertTable( const SwPosition& rPos, USHORT nRows,
                                    USHORT nCols, SwHoriOrient eAdjust,
                                    USHORT nInsTblFlags,
                                    const SwTableAutoFmt* pTAFmt,
-                                   const SvUShorts* pColArr, 
+                                   const SvUShorts* pColArr,
                                    BOOL bCalledFromShell )
 {
     ASSERT( nRows, "Tabelle ohne Zeile?" );
@@ -566,7 +570,7 @@ const SwTable* SwDoc::InsertTable( const SwPosition& rPos, USHORT nRows,
         const SwAttrSet & aNdSet = pCntntNd->GetSwAttrSet();
         const SfxPoolItem *pItem = NULL;
 
-        if (SFX_ITEM_SET == aNdSet.GetItemState( RES_FRAMEDIR, TRUE, &pItem ) 
+        if (SFX_ITEM_SET == aNdSet.GetItemState( RES_FRAMEDIR, TRUE, &pItem )
             && pItem != NULL)
         {
             pTableFmt->SetAttr( *pItem );
@@ -750,18 +754,18 @@ SwTableNode* SwNodes::InsertTable( const SwNodeIndex& rNdIdx,
                  newly created context node in the new cell.
              */
             SwTxtNode * pTmpNd = new SwTxtNode( aIdx, pTxtColl );
-            
+
             const SfxPoolItem * pItem = NULL;
 
             if (! lcl_IsItemSet(*pTmpNd, RES_PARATR_ADJUST) &&
-                pAttrSet != NULL && 
+                pAttrSet != NULL &&
                 SFX_ITEM_SET == pAttrSet->GetItemState( RES_PARATR_ADJUST, TRUE,
                                                         &pItem)
                 )
             {
                 static_cast<SwCntntNode *>(pTmpNd)->SetAttr(*pItem);
             }
-            
+
             new SwEndNode( aIdx, *pSttNd );
         }
         pTxtColl = pCntntTxtColl;
@@ -867,11 +871,11 @@ const SwTable* SwDoc::TextToTable( const SwPaM& rRange, sal_Unicode cCh,
         const SwAttrSet & aNdSet = pSttCntntNd->GetSwAttrSet();
         const SfxPoolItem *pItem = NULL;
 
-        if (SFX_ITEM_SET == aNdSet.GetItemState( RES_FRAMEDIR, TRUE, &pItem ) 
+        if (SFX_ITEM_SET == aNdSet.GetItemState( RES_FRAMEDIR, TRUE, &pItem )
             && pItem != NULL)
         {
             pTableFmt->SetAttr( *pItem );
-        }		
+        }
     }
 
     SwTableNode* pTblNd = GetNodes().TextToTable( aRg, cCh, pTableFmt,
@@ -2307,12 +2311,16 @@ void SwDoc::SetTabCols( const SwTabCols &rNew, BOOL bCurRowOnly,
     // dann muss es jetzt auf absolute umgerechnet werden.
     SwTable& rTab = *pTab->GetTable();
     const SwFmtFrmSize& rTblFrmSz = rTab.GetFrmFmt()->GetFrmSize();
-#ifdef VERTICAL_LAYOUT
     SWRECTFN( pTab )
-    long nPrtWidth = (pTab->Prt().*fnRect->fnGetWidth)();
-#else
-    long nPrtWidth = pTab->Prt().Width();
-#endif
+    // OD 06.08.2003 #i17174# - With fix for #i9040# the shadow size is taken
+    // from the table width. Thus, add its left and right size to current table
+    // printing area width in order to get the correct table size attribute.
+    SwTwips nPrtWidth = (pTab->Prt().*fnRect->fnGetWidth)();
+    {
+        SvxShadowItem aShadow( rTab.GetFrmFmt()->GetShadow() );
+        nPrtWidth += aShadow.CalcShadowSpace( SHADOW_LEFT ) +
+                     aShadow.CalcShadowSpace( SHADOW_RIGHT );
+    }
     if( nPrtWidth != rTblFrmSz.GetWidth() )
     {
         SwFmtFrmSize aSz( rTblFrmSz );
