@@ -2,9 +2,9 @@
  *
  *  $RCSfile: glbltree.cxx,v $
  *
- *  $Revision: 1.25 $
+ *  $Revision: 1.26 $
  *
- *  last change: $Author: rt $ $Date: 2005-02-04 12:31:02 $
+ *  last change: $Author: vg $ $Date: 2005-02-16 17:49:00 $
  *
  *  The Contents of this file are made available subject to the terms of
  *  either of the following licenses
@@ -164,7 +164,7 @@
 #include <com/sun/star/uno/Sequence.hxx>
 #endif
 #include <globals.hrc> //CHINA001
-#include "swabstdlg.hxx" //CHINA001 
+#include "swabstdlg.hxx" //CHINA001
 
 using namespace ::com::sun::star::uno;
 using namespace ::rtl;
@@ -930,12 +930,12 @@ void SwGlobalTree::InsertRegion( const SwGlblDocContent* pCont,
         // after insertion of the first new content the 'pCont' parameter becomes invalid
         // find the index of the 'anchor' content to always use a current anchor content
         USHORT nAnchorContent = pSwGlblDocContents->Count() - 1;
-        if(!bMove) 
-        {        
-            for( USHORT nContent = 0; nContent < pSwGlblDocContents->Count(); ++nContent) 
-            {        
+        if(!bMove)
+        {
+            for( USHORT nContent = 0; nContent < pSwGlblDocContents->Count(); ++nContent)
+            {
                 if( *pCont == *pSwGlblDocContents->GetObject(nContent) )
-                {        
+                {
                     nAnchorContent = nContent;
                     break;
                 }
@@ -944,7 +944,7 @@ void SwGlobalTree::InsertRegion( const SwGlblDocContent* pCont,
         SwGlblDocContents aTempContents;
         for(sal_Int32 nFile = 0; nFile < nFiles; ++nFile)
         {
-            //update the global document content after each inserted document 
+            //update the global document content after each inserted document
             rSh.GetGlobalDocContent(aTempContents);
             SwGlblDocContent* pAnchorContent = 0;
             DBG_ASSERT(aTempContents.Count() > (nAnchorContent + nFile), "invalid anchor content -> last insertion failed")
@@ -955,7 +955,7 @@ void SwGlobalTree::InsertRegion( const SwGlblDocContent* pCont,
             String sFileName(pFileNames[nFile]);
             INetURLObject aFileUrl(sFileName);
             String sSectionName(String(aFileUrl.GetLastName(
-                INetURLObject::DECODE_UNAMBIGUOUS)).GetToken(0, 
+                INetURLObject::DECODE_UNAMBIGUOUS)).GetToken(0,
                 sfx2::cTokenSeperator));
             USHORT nSectCount = rSh.GetSectionFmtCount();
             String sTempSectionName(sSectionName);
@@ -1046,7 +1046,7 @@ IMPL_LINK( SwGlobalTree, PopupHdl, Menu* , pMenu)
 {
     ExcecuteContextMenuAction( pMenu->GetCurItemId());
     return TRUE;
-}        
+}
 /* -----------------26.08.2003 11:57-----------------
 
  --------------------------------------------------*/
@@ -1173,7 +1173,7 @@ void    SwGlobalTree::ExcecuteContextMenuAction( USHORT nSelectedPopupEntry )
                                                         0,
                                                         USHRT_MAX,
                                                         TRUE);
-                DBG_ASSERT(pDlg, "Dialogdiet fail!");//CHINA001			
+                DBG_ASSERT(pDlg, "Dialogdiet fail!");//CHINA001
                 if(RET_OK == pDlg->Execute())
                 {
                     SwTOXDescription&  rDesc = pDlg->GetTOXDescription(
@@ -1341,7 +1341,7 @@ void	SwGlobalTree::Hide()
 void 	SwGlobalTree::ExecCommand(USHORT nCmd)
 {
     SvLBoxEntry* pEntry = FirstSelected();
-    DBG_ASSERT(pEntry, "gleich knalltïs")
+    DBG_ASSERT(pEntry, "gleich knallt's")
     if(FN_GLOBAL_EDIT == nCmd)
     {
         const SwGlblDocContent* pCont = (const SwGlblDocContent*)
