@@ -2,9 +2,9 @@
  *
  *  $RCSfile: ww8par.hxx,v $
  *
- *  $Revision: 1.3 $
+ *  $Revision: 1.4 $
  *
- *  last change: $Author: khz $ $Date: 2000-10-16 10:54:58 $
+ *  last change: $Author: jp $ $Date: 2000-11-01 12:12:16 $
  *
  *  The Contents of this file are made available subject to the terms of
  *  either of the following licenses
@@ -458,8 +458,8 @@ public:
     BOOL InsertFormula( WW8FormulaControl &rFormula,
         com::sun::star::uno::Reference <
         com::sun::star::drawing::XShape> *pShapeRef=0 );
-    BOOL InsertControl(const com::sun::star::uno::Reference< 
-        com::sun::star::form::XFormComponent >& rFComp, 
+    BOOL InsertControl(const com::sun::star::uno::Reference<
+        com::sun::star::form::XFormComponent >& rFComp,
         const ::com::sun::star::awt::Size& rSize,
         com::sun::star::uno::Reference <
         com::sun::star::drawing::XShape > *pShape,BOOL bFloatingCtrl);
@@ -1073,13 +1073,13 @@ public:		// eigentlich private, geht aber leider nur public
     eF_ResT Read_F_OCX( WW8FieldDesc*, String& rStr );
     eF_ResT Read_F_Hyperlink( WW8FieldDesc*, String& rStr );
 
-    BOOL InsertControl(const com::sun::star::uno::Reference< 
+    BOOL InsertControl(const com::sun::star::uno::Reference<
         com::sun::star::form::XFormComponent>& rFComp,
         const ::com::sun::star::awt::Size& rSize,
         com::sun::star::uno::Reference<
         com::sun::star::drawing::XShape> *pShape=NULL,
         BOOL bFloatingCtrl = FALSE );
-    
+
     void BuildInputField( USHORT eType, const String& rParam );
     void DeleteFormImpl();
 
@@ -1095,6 +1095,8 @@ public:		// eigentlich private, geht aber leider nur public
     const USHORT StyleUsingLFO(      USHORT nLFOIndex ) const ;
     const SwFmt* GetStyleWithOrgWWName( String& rName    ) const ;
 
+    static BOOL GetPictGrafFromStream( Graphic& rGraphic, SvStream& rSrc,
+                                    ULONG nLen = ULONG_MAX );
 
 
     SwWW8ImplReader( BYTE nVersionPara, SvStorage* pStorage,
@@ -1114,50 +1116,53 @@ public:		// eigentlich private, geht aber leider nur public
 
     Source Code Control System - Header
 
-      $Header: /zpool/svn/migration/cvs_rep_09_09_08/code/sw/source/filter/ww8/ww8par.hxx,v 1.3 2000-10-16 10:54:58 khz Exp $
+      $Header: /zpool/svn/migration/cvs_rep_09_09_08/code/sw/source/filter/ww8/ww8par.hxx,v 1.4 2000-11-01 12:12:16 jp Exp $
 
       Source Code Control System - Update
 
       $Log: not supported by cvs2svn $
+      Revision 1.3  2000/10/16 10:54:58  khz
+      read extended WW9-Frame-Alignment (stored in Escher record 0xF122)
+
       Revision 1.2  2000/10/10 16:54:06  cmc
       MSOffice 97/2000 Controls {Im|Ex}port
-    
+
       Revision 1.1.1.1  2000/09/18 17:14:58  hr
       initial import
-    
+
       Revision 1.95  2000/09/18 16:05:00  willem.vandorp
       OpenOffice header added.
-    
+
       Revision 1.94  2000/08/22 17:40:57  cmc
       #77315# 95 Formulas, bad string read
-    
+
       Revision 1.93  2000/08/22 17:08:58  cmc
       #77743# OLE Import, bad seek & bad FilterOptions
-    
+
       Revision 1.92  2000/08/18 09:48:28  khz
       Import Line Numbering (restart on new section)
-    
+
       Revision 1.91  2000/08/18 06:47:26  khz
       Import Line Numbering
-    
+
       Revision 1.90  2000/07/28 15:37:19  khz
       #73796# don't delete NumRule from Attr but set it into pDoc
-    
+
       Revision 1.89  2000/07/27 10:21:26  khz
       #73796# stop ANList when opening next cell in a row and !pAktANLD->fNumberAcross
-    
+
       Revision 1.88  2000/07/25 15:16:25  khz
       #76811# read/write AutoHyphenation flag from/into Document Properties
-    
+
       Revision 1.87  2000/07/17 13:46:56  khz
       #73987# check if sprmSNfcPgn should cause section change or not
-    
+
       Revision 1.86  2000/07/11 11:39:10  khz
       #76673# prepare implementation of sprmTDelete and sprmTInsert
-    
+
       Revision 1.85  2000/07/07 12:48:54  jp
       must changes VCL
-    
+
       Revision 1.84  2000/06/28 08:07:39  khz
       #70915# Insert Section if end-note with flag 'on end of section' found
 
