@@ -2,9 +2,9 @@
  *
  *  $RCSfile: wrtww8.hxx,v $
  *
- *  $Revision: 1.63 $
+ *  $Revision: 1.64 $
  *
- *  last change: $Author: rt $ $Date: 2004-09-20 15:20:03 $
+ *  last change: $Author: rt $ $Date: 2005-01-11 12:35:05 $
  *
  *  The Contents of this file are made available subject to the terms of
  *  either of the following licenses
@@ -81,7 +81,7 @@
 #ifndef __SGI_STL_VECTOR
 #include <vector>
 #endif
- 
+
 #ifndef SHELLIO_HXX
 #include <shellio.hxx>
 #endif
@@ -205,7 +205,7 @@ enum FieldFlags // enums for InsertField- Method
 
 enum TxtTypes  //enums for TextTypes
 {
-    TXT_MAINTEXT = 0, /*TXT_FTNEDN = 1,*/ TXT_HDFT = 2, TXT_FTN = 3, 
+    TXT_MAINTEXT = 0, /*TXT_FTNEDN = 1,*/ TXT_HDFT = 2, TXT_FTN = 3,
     TXT_EDN = 4, TXT_ATN = 5, TXT_TXTBOX = 6, TXT_HFTXTBOX= 7
 };
 
@@ -225,12 +225,12 @@ struct WW8_SepInfo
 
     WW8_SepInfo()
         : pPageDesc(0), pSectionFmt(0), pPDNd(0), pNumNd(0), nLnNumRestartNo(0), nPgRestartNo(0)
-          
+
     {}
 
-    WW8_SepInfo( const SwPageDesc* pPD, const SwSectionFmt* pFmt, 
+    WW8_SepInfo( const SwPageDesc* pPD, const SwSectionFmt* pFmt,
         ULONG nLnRestart )
-        : pPageDesc(pPD), pSectionFmt(pFmt), pPDNd(0), pNumNd(0), 
+        : pPageDesc(pPD), pSectionFmt(pFmt), pPDNd(0), pNumNd(0),
         nLnNumRestartNo(nLnRestart), nPgRestartNo(0)
     {}
     bool IsProtected() const;
@@ -352,7 +352,7 @@ public:
                                 // msword hd/ft
 
     DrawObj(const sw::Frame &rCntnt, WW8_CP nCp, Point aParentPos, short nDir,
-            unsigned int nHdFtIndex) 
+            unsigned int nHdFtIndex)
         : mnCp(nCp), mnShapeId(0), maCntnt(rCntnt), maParentPos(aParentPos),
         mnThick(0), mnDirection(nDir), mnHdFtIndex(nHdFtIndex) {}
     void SetShapeDetails(UINT32 nId, INT32 nThick);
@@ -365,13 +365,13 @@ typedef DrawObjVector::const_iterator cDrawObjIter;
 
 typedef std::vector<DrawObj *> DrawObjPointerVector;
 typedef DrawObjPointerVector::iterator DrawObjPointerIter;
-    
+
 class PlcDrawObj // PC for DrawObjects and Text-/OLE-/GRF-Boxes
 {
 private:
     DrawObjVector maDrawObjs;  // vector of drawobjs
 protected:
-    virtual void RegisterWithFib(WW8Fib &rFib, sal_uInt32 nStart, 
+    virtual void RegisterWithFib(WW8Fib &rFib, sal_uInt32 nStart,
         sal_uInt32 nLen) const = 0;
     virtual WW8_CP GetCpOffset(const WW8Fib &rFib) const = 0;
 public:
@@ -388,12 +388,12 @@ private:
     PlcDrawObj& operator=(const PlcDrawObj&);
 };
 
-class MainTxtPlcDrawObj : public PlcDrawObj     
+class MainTxtPlcDrawObj : public PlcDrawObj
 {
 public:
     MainTxtPlcDrawObj() {}
 private:
-    virtual void RegisterWithFib(WW8Fib &rFib, sal_uInt32 nStart, 
+    virtual void RegisterWithFib(WW8Fib &rFib, sal_uInt32 nStart,
         sal_uInt32 nLen) const;
     virtual WW8_CP GetCpOffset(const WW8Fib &) const;
 private:
@@ -402,12 +402,12 @@ private:
     MainTxtPlcDrawObj& operator=(const MainTxtPlcDrawObj&);
 };
 
-class HdFtPlcDrawObj : public PlcDrawObj        
+class HdFtPlcDrawObj : public PlcDrawObj
 {
 public:
     HdFtPlcDrawObj() {}
 private:
-    virtual void RegisterWithFib(WW8Fib &rFib, sal_uInt32 nStart, 
+    virtual void RegisterWithFib(WW8Fib &rFib, sal_uInt32 nStart,
         sal_uInt32 nLen) const;
     virtual WW8_CP GetCpOffset(const WW8Fib &rFib) const;
 private:
@@ -417,13 +417,13 @@ private:
 };
 
 typedef ::std::pair<String, ULONG> aPair;
-typedef std::vector<aPair> SwImplBookmarks;    
-typedef std::vector<aPair>::iterator SwImplBookmarksIter;    
+typedef std::vector<aPair> SwImplBookmarks;
+typedef std::vector<aPair>::iterator SwImplBookmarksIter;
 
 class WW8_WrtRedlineAuthor : public sw::util::WrtRedlineAuthor
 {
     public:
-    virtual void Write(Writer &rWrt); 
+    virtual void Write(Writer &rWrt);
 };
 
 // der WW8-Writer
@@ -474,7 +474,7 @@ friend Writer& OutWW8_SwTxtNode( Writer& rWrt, SwCntntNode& rNode );
                           BYTE nSwLevel );
     void BuildAnlvBulletBase( WW8_ANLV& rAnlv, BYTE*& rpCh, USHORT& rCharLen,
                               const SwNumFmt& rFmt );
-    void SubstituteBullet(String& rNumStr, rtl_TextEncoding& rChrSet, 
+    void SubstituteBullet(String& rNumStr, rtl_TextEncoding& rChrSet,
         String& rFontName) const;
 
     static void BuildAnlvBase( WW8_ANLV& rAnlv, BYTE*& rpCh, USHORT& rCharLen,
@@ -614,7 +614,7 @@ public:
     void Out_SwFmt(const SwFmt& rFmt, bool bPapFmt, bool bChpFmt,
         bool bFlyFmt = false);
     bool GetNumberFmt(const SwField& rFld, String& rStr);
-    void OutField(const SwField* pFld, ww::eField eFldType, 
+    void OutField(const SwField* pFld, ww::eField eFldType,
         const String& rFldCmd, BYTE nMode = WRITEFIELD_ALL);
     void StartCommentOutput( const String& rName );
     void EndCommentOutput(   const String& rName );
@@ -635,7 +635,7 @@ public:
     void WriteChar( sal_Unicode c );
     void WriteCellEnd();
     void WriteRowEnd();
-    USHORT StartTableFromFrmFmt(WW8Bytes &rAt, const SwFrmFmt *pFmt, 
+    USHORT StartTableFromFrmFmt(WW8Bytes &rAt, const SwFrmFmt *pFmt,
         SwTwips &rPageSize);
 
     void OutSwString(const String&, xub_StrLen nStt, xub_StrLen nLen,
@@ -668,7 +668,7 @@ public:
     WW8_BRC TranslateBorderLine(const SvxBorderLine& pLine,
         USHORT nDist, bool bShadow);
 
-    void ExportOutlineNumbering(BYTE nLvl, const SwNumFmt &rNFmt, 
+    void ExportOutlineNumbering(BYTE nLvl, const SwNumFmt &rNFmt,
         const SwFmt &rFmt);
     void DisallowInheritingOutlineNumbering(const SwFmt &rFmt);
 
@@ -712,7 +712,7 @@ public:
     USHORT DupNumRuleWithLvlStart(const SwNumRule *pRule,BYTE nLvl,USHORT nVal);
 
     SwTwips CurrentPageWidth(SwTwips &rLeft, SwTwips &rRight) const;
-    bool MiserableRTLFrmFmtHack(long &rLeft, long &rRight, 
+    bool MiserableRTLFrmFmtHack(long &rLeft, long &rRight,
         const sw::Frame &rFrmFmt);
     void InsUInt16( UINT16 n )      { SwWW8Writer::InsUInt16( *pO, n ); }
     void InsUInt32( UINT32 n )      { SwWW8Writer::InsUInt32( *pO, n ); }
@@ -724,14 +724,14 @@ public:
 
             // nach aussen interessant
 
-    SwWW8Writer( const String& rFltName );
+    SwWW8Writer( const String& rFltName, const String& rBaseURL );
     virtual ~SwWW8Writer();
 
     // fuer WW8SaveData
     SwPaM* GetEndPaM()              { return pOrigPam; }
     void SetEndPaM( SwPaM* pPam )   { pOrigPam = pPam; }
 
-    void DoComboBox(const rtl::OUString &rName, const rtl::OUString &rSelected, 
+    void DoComboBox(const rtl::OUString &rName, const rtl::OUString &rSelected,
             com::sun::star::uno::Sequence<rtl::OUString> &rListItems);
 
     static bool NoPageBreakSection(const SfxItemSet *pSet);
@@ -766,7 +766,7 @@ protected:
     virtual ~WW8_WrPlcSubDoc();
 
     bool WriteGenericTxt(SwWW8Writer& rWrt, BYTE nTTyp, long& rCount);
-    void WriteGenericPlc( SwWW8Writer& rWrt, BYTE nTTyp, long& rTxtStt, 
+    void WriteGenericPlc( SwWW8Writer& rWrt, BYTE nTTyp, long& rTxtStt,
         long& rTxtCnt, long& rRefStt, long& rRefCnt ) const;
 
     virtual const SvULongs* GetShapeIdArr() const;
@@ -931,8 +931,8 @@ private:
     typedef std::vector<GraphicDetails>::iterator myiter;
     USHORT mnIdx;       // Index in File-Positionen
 
-    void WritePICFHeader(SvStream& rStrm, const sw::Frame &rFly, 
-            UINT16 mm, UINT16 nWidth, UINT16 nHeight, 
+    void WritePICFHeader(SvStream& rStrm, const sw::Frame &rFly,
+            UINT16 mm, UINT16 nWidth, UINT16 nHeight,
             const SwAttrSet* pAttrSet = 0);
     void WriteGraphicNode(SvStream& rStrm, const GraphicDetails &rItem);
     void WriteGrfFromGrfNode(SvStream& rStrm, const SwGrfNode &rNd,
@@ -945,7 +945,7 @@ public:
     SwWW8WrGrf(SwWW8Writer& rW) : rWrt(rW), mnIdx(0) {}
     void Insert(const sw::Frame &rFly);
     void Write();
-    ULONG GetFPos() 
+    ULONG GetFPos()
         { return (mnIdx < maDetails.size()) ? maDetails[mnIdx++].mnPos : 0; }
 };
 
@@ -979,7 +979,7 @@ class WW8WrtStyle
     USHORT nUsedSlots;
 
     void BuildStyleTab();
-    void BuildUpx(const SwFmt* pFmt, bool bPap, USHORT nPos, 
+    void BuildUpx(const SwFmt* pFmt, bool bPap, USHORT nPos,
         bool bInsDefCharSiz);
     USHORT Build_GetWWSlot( const SwFmt& rFmt );
     USHORT GetWWId( const SwFmt& rFmt ) const;
