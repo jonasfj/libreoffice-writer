@@ -2,9 +2,9 @@
  *
  *  $RCSfile: ww8par5.cxx,v $
  *
- *  $Revision: 1.8 $
+ *  $Revision: 1.9 $
  *
- *  last change: $Author: cmc $ $Date: 2001-01-31 14:32:46 $
+ *  last change: $Author: os $ $Date: 2001-02-21 12:45:25 $
  *
  *  The Contents of this file are made available subject to the terms of
  *  either of the following licenses
@@ -179,6 +179,9 @@
 #endif
 #ifndef _SHELLRES_HXX
 #include <shellres.hxx>
+#endif
+#ifndef _SWDBDATA_HXX
+#include <swdbdata.hxx>
 #endif
 
 #define WWF_INVISIBLE 86			// Bit-Nummer fuer Invisible ( IniFlags )
@@ -2060,7 +2063,7 @@ eF_ResT SwWW8ImplReader::Read_F_DBField( WW8FieldDesc*, String& rStr )
             break;
         }
     }
-    SwDBFieldType aD( &rDoc, aName, aEmptyStr );	// Datenbank: Nichts
+    SwDBFieldType aD( &rDoc, aName, SwDBData() );	// Datenbank: Nichts
     SwFieldType* pFT = rDoc.InsertFldType( aD );
     SwDBField aFld( (SwDBFieldType*)pFT );
     rDoc.Insert( *pPaM, SwFmtFld( aFld ) );
@@ -2073,7 +2076,7 @@ eF_ResT SwWW8ImplReader::Read_F_DBNext( WW8FieldDesc*, String& )
     SwDBNextSetFieldType aN;
     SwFieldType* pFT = rDoc.InsertFldType( aN );
     SwDBNextSetField aFld( (SwDBNextSetFieldType*)pFT, aEmptyStr, aEmptyStr,
-                            aEmptyStr );		// Datenbank: Nichts
+                            SwDBData() );		// Datenbank: Nichts
     rDoc.Insert( *pPaM, SwFmtFld( aFld ) );
     return F_OK;
 }
@@ -2084,7 +2087,7 @@ eF_ResT SwWW8ImplReader::Read_F_DBNum( WW8FieldDesc*, String& )
     SwDBSetNumberFieldType aN;
     SwFieldType* pFT = rDoc.InsertFldType( aN );
     SwDBSetNumberField aFld( (SwDBSetNumberFieldType*)pFT,
-                           aEmptyStr );			// Datenbank: Nichts
+                           SwDBData() );			// Datenbank: Nichts
     rDoc.Insert( *pPaM, SwFmtFld( aFld ) );
     return F_OK;
 }
@@ -2667,14 +2670,14 @@ eF_ResT SwWW8ImplReader::Read_F_Hyperlink( WW8FieldDesc* pF, String& rStr )
             pPaM->SetMark();
             pPaM->GetMark()->nContent += sDef.Len();
             /*#83156#
-            We need to know the length of this content field here, but we 
+            We need to know the length of this content field here, but we
             do not truly know the length of the final result as we may
-            have nested fields, but we have fundamental problems with 
-            nested fields both in OOo and in this filter, we cannot handle 
-            them properly. So for now we have to dump the raw content of the 
-            field, field commands and all, as the payload of the hyperlink. 
+            have nested fields, but we have fundamental problems with
+            nested fields both in OOo and in this filter, we cannot handle
+            them properly. So for now we have to dump the raw content of the
+            field, field commands and all, as the payload of the hyperlink.
 
-            We also know in advance that characters less that 0x20 will not 
+            We also know in advance that characters less that 0x20 will not
             be inserted in the document, as they will be stripped out, e.g
             the field codes themselves 0x13,0x14,0x15. So we must adjust our
             expected length by these.
@@ -2881,39 +2884,42 @@ void SwWW8ImplReader::Read_Invisible( USHORT, BYTE* pData, short nLen )
 
       Source Code Control System - Header
 
-      $Header: /zpool/svn/migration/cvs_rep_09_09_08/code/sw/source/filter/ww8/ww8par5.cxx,v 1.8 2001-01-31 14:32:46 cmc Exp $
+      $Header: /zpool/svn/migration/cvs_rep_09_09_08/code/sw/source/filter/ww8/ww8par5.cxx,v 1.9 2001-02-21 12:45:25 os Exp $
 
 
       Source Code Control System - Update
 
       $Log: not supported by cvs2svn $
+      Revision 1.8  2001/01/31 14:32:46  cmc
+      #83156# Hush ASSERT on nested hyperlink import
+
       Revision 1.7  2001/01/18 11:58:46  cmc
       #82900# Needed the more sophisticated relative url converter for hyperlinks
-    
+
       Revision 1.6  2000/12/04 14:08:08  khz
       #78930# Pictures in Hyperlinks will be imported as Graphics with Hyperlink
-    
+
       Revision 1.5  2000/11/24 11:04:38  khz
       WW field names use ANSI encoding - not plain 7-bit ASCII
-    
+
       Revision 1.4  2000/11/20 14:11:17  jp
       Read_FieldIniFlags removed
-    
+
       Revision 1.3  2000/10/25 14:19:04  khz
       code cleaned up
-    
+
       Revision 1.2  2000/10/06 13:11:18  jp
       should changes: don't use IniManager
-    
+
       Revision 1.1.1.1  2000/09/18 17:14:58  hr
       initial import
-    
+
       Revision 1.71  2000/09/18 16:05:01  willem.vandorp
       OpenOffice header added.
-    
+
       Revision 1.70  2000/08/31 06:29:28  jp
       use CharClass instead of international
-    
+
       Revision 1.69  2000/08/04 10:56:54  jp
       Soft-/HardHyphens & HardBlanks changed from attribute to unicode character
 
