@@ -2,9 +2,9 @@
  *
  *  $RCSfile: shellio.cxx,v $
  *
- *  $Revision: 1.37 $
+ *  $Revision: 1.38 $
  *
- *  last change: $Author: vg $ $Date: 2005-02-22 10:03:42 $
+ *  last change: $Author: vg $ $Date: 2005-03-10 17:47:04 $
  *
  *  The Contents of this file are made available subject to the terms of
  *  either of the following licenses
@@ -174,7 +174,7 @@ using namespace ::com::sun::star;
 /*
  * The writer can currently not handle multiple paragraph styles with outline numbering. Thus this method
  * tries to find "the" paragraph style used for outline numbering. In order to find "the" we try to eliminate
- * all paragraph styles with outline numbers which are not used. If one survives we found "the" paragraph. 
+ * all paragraph styles with outline numbers which are not used. If one survives we found "the" paragraph.
  * If not - you guess - we have a problem and must wait for the solution of #i31372#!
  */
 void adjustOutlineLevel(SwDoc &rDoc)
@@ -183,23 +183,23 @@ void adjustOutlineLevel(SwDoc &rDoc)
     int fmtsPerOutlineLevel[MAXLEVEL] = {};
     for( sal_uInt16 i = 0, nCnt = rTbl.Count(); i < nCnt; ++i )
     {
-        SwTxtFmtColl *pTxtFmtColl = rTbl[i];          
+        SwTxtFmtColl *pTxtFmtColl = rTbl[i];
         if (pTxtFmtColl->GetOutlineLevel()!=NO_NUMBERING)
         {
-            if (rDoc.IsUsed(*pTxtFmtColl)) 
+            if (rDoc.IsUsed(*pTxtFmtColl))
             {
                 ASSERT(pTxtFmtColl->GetOutlineLevel()<MAXLEVEL, "outline level too high!!!");
-                fmtsPerOutlineLevel[pTxtFmtColl->GetOutlineLevel()]++; 
+                fmtsPerOutlineLevel[pTxtFmtColl->GetOutlineLevel()]++;
                 const SwNumRuleItem* pRule;
-                if (SFX_ITEM_SET == pTxtFmtColl->GetAttrSet().GetItemState(RES_PARATR_NUMRULE, TRUE, reinterpret_cast<const SfxPoolItem **>(&pRule))) 
+                if (SFX_ITEM_SET == pTxtFmtColl->GetAttrSet().GetItemState(RES_PARATR_NUMRULE, TRUE, reinterpret_cast<const SfxPoolItem **>(&pRule)))
                 {
-                    if (SwNumRule* pNumRule = rDoc.FindNumRulePtr(pRule->GetValue())) 
+                    if (SwNumRule* pNumRule = rDoc.FindNumRulePtr(pRule->GetValue()))
                     {
                         rDoc.SetOutlineNumRule(*pNumRule);
                     }
                 }
-            }	
-            else 
+            }
+            else
             {
                 pTxtFmtColl->SetOutlineLevel(NO_NUMBERING);
             }
@@ -211,7 +211,7 @@ void adjustOutlineLevel(SwDoc &rDoc)
             if (!rDoc.IsUsed(*heading)) {
                 fmtsPerOutlineLevel[i]++; // just for the statistics
             }
-            else 
+            else
             {
                 heading->SetOutlineLevel(NO_NUMBERING);
             }
@@ -546,6 +546,15 @@ ULONG SwReader::Read( const Reader& rOptions )
 
     if( pCrsr )					// das Doc ist jetzt modifiziert
         pDoc->SetModified();
+    // --> OD 2005-02-11 #i38810# - If links have been updated, the document
+    // have to be modified. During update of links the OLE link at the document
+    // isn't set. Thus, the document's modified state has to be set again after
+    // the OLE link is restored - see above <pDoc->SetOle2Link( aOLELink )>.
+    if ( pDoc->LinksUpdated() )
+    {
+        pDoc->SetModified();
+    }
+    // <--
 
     if( po == ReadSw3 ) 		// am Sw3-Reader noch den pIo-Pointer "loeschen"
         ((Sw3Reader*)po)->SetSw3Io( 0 );
@@ -1096,8 +1105,14 @@ ULONG SwWriter::Write( WriterRef& rxWriter, const String* pRealFileName )
     {
         delete pPam;			// loesche den hier erzeugten Pam
         // Alles erfolgreich geschrieben? Sag' das dem Dokument!
-        if( !IsError( nError ) && !pDoc )
+        if ( !IsError( nError ) && !pDoc )
+        {
             rDoc.ResetModified();
+            // --> OD 2005-02-11 #i38810# - reset also flag, that indicates
+            // updated links
+            rDoc.SetLinksUpdated( sal_False );
+            // <-
+        }
     }
 
     if ( pDoc )
