@@ -2,9 +2,9 @@
  *
  *  $RCSfile: ww8graf2.cxx,v $
  *
- *  $Revision: 1.46 $
+ *  $Revision: 1.47 $
  *
- *  last change: $Author: hr $ $Date: 2003-03-27 15:42:11 $
+ *  last change: $Author: vg $ $Date: 2003-04-15 17:01:08 $
  *
  *  The Contents of this file are made available subject to the terms of
  *  either of the following licenses
@@ -172,17 +172,17 @@
 #include "ww8graf.hxx"
 #endif
 
-wwZOrderer::wwZOrderer(SdrPage* pDrawPg, 
+wwZOrderer::wwZOrderer(SdrPage* pDrawPg,
     const SvxMSDffShapeOrders *pShapeOrders, sal_Int8 nHeaven, sal_Int8 nHell)
-    : mnInlines(0), mpDrawPg(pDrawPg), mpShapeOrders(pShapeOrders), 
+    : mnInlines(0), mpDrawPg(pDrawPg), mpShapeOrders(pShapeOrders),
     mnHeaven(nHeaven), mnHell(nHell)
-{ 
+{
     mnNoInitialObjects = mpDrawPg->GetObjCount();
     ASSERT(mpDrawPg,"Missing draw page impossible!");
 }
 
 void wwZOrderer::InsideEscher(ULONG nSpId)
-{ 
+{
     maIndexes.push(GetEscherObjectIdx(nSpId));
 }
 
@@ -190,7 +190,7 @@ void wwZOrderer::OutsideEscher()
 {
     maIndexes.pop();
 }
- 
+
 void wwZOrderer::InsertEscherObject(SdrObject* pObject, ULONG nSpId)
 {
     ULONG nInsertPos = GetEscherObjectPos(nSpId);
@@ -229,7 +229,7 @@ USHORT wwZOrderer::GetEscherObjectIdx(ULONG nSpId)
 
 ULONG wwZOrderer::GetEscherObjectPos(ULONG nSpId)
 {
-    /* 
+    /*
     #97824# EscherObjects have their own ordering which needs to be matched to
     the actual ordering that should be used when inserting them into the
     document.
@@ -288,7 +288,7 @@ void wwZOrderer::InsertTextLayerObject(SdrObject* pObject)
             nInsertPos += aIter->mnNoInlines+1;
             ++aIter;
         }
-        
+
         aEnd->mnNoInlines++;
         nInsertPos += aEnd->mnNoInlines;
         InsertObject(pObject, mnNoInitialObjects + mnInlines + nInsertPos);
@@ -494,7 +494,7 @@ SwFlyFrmFmt* SwWW8ImplReader::MakeGrafNotInCntnt(const WW8PicDesc& rPD,
         &aFlySet, &rGrfSet);
 
     // Damit die Frames bei Einfuegen in existierendes Doc erzeugt werden:
-    if (rDoc.GetRootFrm() && 
+    if (rDoc.GetRootFrm() &&
         (FLY_AT_CNTNT == pFlyFmt->GetAnchor().GetAnchorId()))
     {
         pFlyFmt->MakeFrms();
@@ -504,7 +504,7 @@ SwFlyFrmFmt* SwWW8ImplReader::MakeGrafNotInCntnt(const WW8PicDesc& rPD,
 
 
 // MakeGrafInCntnt fuegt zeichengebundene Grafiken ein
-SwFrmFmt* SwWW8ImplReader::MakeGrafInCntnt(const WW8_PIC& rPic, 
+SwFrmFmt* SwWW8ImplReader::MakeGrafInCntnt(const WW8_PIC& rPic,
     const WW8PicDesc& rPD, const Graphic* pGraph, const String& rFileName,
     const SfxItemSet& rGrfSet)
 {
@@ -519,7 +519,7 @@ SwFrmFmt* SwWW8ImplReader::MakeGrafInCntnt(const WW8_PIC& rPic,
     {
 
         pFlyFmt = rDoc.Insert( *pPaM, rFileName, aEmptyStr, pGraph, &aFlySet,
-            &rGrfSet );			   
+            &rGrfSet );
     }
 
     // Grafik im Rahmen ? ok, Rahmen auf Bildgroesse vergroessern
@@ -529,7 +529,7 @@ SwFrmFmt* SwWW8ImplReader::MakeGrafInCntnt(const WW8_PIC& rPic,
     return pFlyFmt;
 }
 
-SwFrmFmt* SwWW8ImplReader::ImportGraf1(WW8_PIC& rPic, SvStream* pSt, 
+SwFrmFmt* SwWW8ImplReader::ImportGraf1(WW8_PIC& rPic, SvStream* pSt,
     ULONG nFilePos )
 {
     SwFrmFmt* pRet = 0;
@@ -622,7 +622,7 @@ bool SwWW8ImplReader::ImportURL(String &sURL,String &sMark,WW8_CP nStart)
 
     if((aPic.lcb > 0x44) && !pDataStream->GetError() )
     {
-#ifdef DEBUG
+#if OSL_DEBUG_LEVEL > 1
         pDataStream->SeekRel( 3 );
         const BYTE MAGIC_A[16] =
         {
@@ -714,7 +714,7 @@ SwFrmFmt* SwWW8ImplReader::ImportGraf(SdrTextObj* pTextObj,
 {
     SwFrmFmt* pRet = 0;
     if (
-        ((pStrm == pDataStream ) && !nPicLocFc) || 
+        ((pStrm == pDataStream ) && !nPicLocFc) ||
         (nIniFlags & WW8FL_NO_GRAF)
        )
     {
@@ -899,12 +899,12 @@ SwFrmFmt* SwWW8ImplReader::ImportGraf(SdrTextObj* pTextObj,
                                         Sdr-Text-Objekt einen Grafik- Link
                                         einbauen )
                                     */
-                                    ReplaceObjWithGraphicLink(*pTextObj, 
+                                    ReplaceObjWithGraphicLink(*pTextObj,
                                         aGrName);
                                 }
                                 else
                                 {
-                                    pRet = rDoc.Insert(*pPaM, aGrName, 
+                                    pRet = rDoc.Insert(*pPaM, aGrName,
                                         aEmptyStr, 0, &aAttrSet, &aGrSet);
                                 }
                                 bDone = true;
