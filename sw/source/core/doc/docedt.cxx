@@ -2,9 +2,9 @@
  *
  *  $RCSfile: docedt.cxx,v $
  *
- *  $Revision: 1.16 $
+ *  $Revision: 1.17 $
  *
- *  last change: $Author: rt $ $Date: 2004-03-30 16:04:55 $
+ *  last change: $Author: obo $ $Date: 2004-04-27 13:41:59 $
  *
  *  The Contents of this file are made available subject to the terms of
  *  either of the following licenses
@@ -58,7 +58,6 @@
  *
  *
  ************************************************************************/
-
 
 #pragma hdrstop
 
@@ -177,7 +176,7 @@
 #ifndef _BREAKIT_HXX
 #include <breakit.hxx>
 #endif
-#ifndef _SV_MSGBOX_HXX 
+#ifndef _SV_MSGBOX_HXX
 #include <vcl/msgbox.hxx>
 #endif
 #include "comcore.hrc"
@@ -320,7 +319,7 @@ void _SaveFlyInRange( const SwNodeRange& rRg, _SaveFlyArr& rArr )
             rRg.aStart <= pAPos->nNode && pAPos->nNode < rRg.aEnd )
         {
             ASSERT( pAnchor->GetAnchorId() != FLY_AUTO_CNTNT, "FLY-AUTO-Baustelle!" );
-            _SaveFly aSave( pAPos->nNode.GetIndex() - rRg.aStart.GetIndex(), 
+            _SaveFly aSave( pAPos->nNode.GetIndex() - rRg.aStart.GetIndex(),
                             pFmt, sal_False );
             rArr.Insert( aSave, rArr.Count());
             pFmt->DelFrms();
@@ -1080,7 +1079,7 @@ sal_Bool SwDoc::Move( SwPaM& rPaM, SwPosition& rPos, SwMoveFlags eMvFlags )
     else
         rPaM.DeleteMark();
 
-    ASSERT( *pSavePam->GetMark() == rPos || 
+    ASSERT( *pSavePam->GetMark() == rPos ||
             ( pSavePam->GetMark()->nNode.GetNode().GetCntntNode() == NULL ),
             "PaM wurde nicht verschoben, am Anfang/Ende keine ContentNodes?" );
     *pSavePam->GetMark() = rPos;
@@ -1438,9 +1437,9 @@ void lcl_JoinText( SwPaM& rPam, sal_Bool bJoinPrev )
             SwTxtNode* pDelNd = aIdx.GetNode().GetTxtNode();
             if( pTxtNd->Len() )
                 pDelNd->FmtToTxtAttr( pTxtNd );
-            else 
+            else
             {
-                /* #107318# This case was missed: 
+                /* #107318# This case was missed:
 
                    <something></something>   <-- pTxtNd
                    <other>ccc</other>        <-- pDelNd
@@ -1451,7 +1450,7 @@ void lcl_JoinText( SwPaM& rPam, sal_Bool bJoinPrev )
                    first resetting all character attributes in first
                    paragraph (pTxtNd).
                 */
-                SvUShorts * pShorts = 
+                SvUShorts * pShorts =
                     lcl_RangesToUShorts(aCharFmtSetRange);
                 pTxtNd->ResetAttr(*pShorts);
                 delete pShorts;
@@ -1703,7 +1702,7 @@ uno::Any SwDoc::Spell( SwPaM& rPaM,
     SwSpellArgs      *pSpellArgs = 0;
     SwConversionArgs *pConvArgs  = 0;
     if (bIsConversion)
-        pConvArgs =  new SwConversionArgs( 
+        pConvArgs =  new SwConversionArgs(
                             pSttPos->nNode.GetNode().GetTxtNode(), pSttPos->nContent,
                             pEndPos->nNode.GetNode().GetTxtNode(), pEndPos->nContent );
     else
@@ -1763,7 +1762,7 @@ uno::Any SwDoc::Spell( SwPaM& rPaM,
                         }
                         if( (!bIsConversion &&
                                 ((SwTxtNode*)pNd)->Spell( pSpellArgs )) ||
-                            ( bIsConversion && 
+                            ( bIsConversion &&
                                 ((SwTxtNode*)pNd)->Convert( *pConvArgs )))
                         {
                             // Abbrechen und Position merken
@@ -1805,7 +1804,7 @@ uno::Any SwDoc::Spell( SwPaM& rPaM,
             }
         }
     }
-    
+
     uno::Any aRes;
     if (bIsConversion)
         aRes <<= pConvArgs->aConvText;
@@ -1813,7 +1812,7 @@ uno::Any SwDoc::Spell( SwPaM& rPaM,
         aRes <<= pSpellArgs->xSpellAlt;
     delete pSpellArgs;
     delete pConvArgs;
-    
+
     return aRes;
 }
 
@@ -2255,7 +2254,7 @@ sal_Bool SwDoc::DelFullPara( SwPaM& rPam )
                         pNd->StartOfSectionIndex();
     sal_uInt32 nNodeDiff = rEnd.nNode.GetIndex() - rStt.nNode.GetIndex();
 
-    if ( nSectDiff-2 <= nNodeDiff || IsRedlineOn() || 
+    if ( nSectDiff-2 <= nNodeDiff || IsRedlineOn() ||
          /* #i9185# Prevent getting the node after the end node (see below) */
         rEnd.nNode.GetIndex() + 1 == aNodes.Count() )
         return sal_False;
@@ -2437,7 +2436,7 @@ void SwDoc::checkRedlining(SwRedlineMode& _rReadlineMode)
     const SwRedlineTbl& rRedlineTbl = GetRedlineTbl();
     SwEditShell* pEditShell = GetEditShell();
     Window* pParent = pEditShell ? pEditShell->GetWin() : NULL;
-    if ( pParent && !bReadlineChecked && rRedlineTbl.Count() > MAX_REDLINE_COUNT 
+    if ( pParent && !bReadlineChecked && rRedlineTbl.Count() > MAX_REDLINE_COUNT
         && !((_rReadlineMode & REDLINE_SHOW_DELETE) == REDLINE_SHOW_DELETE) )
     {
         WarningBox aWarning( pParent,SW_RES(MSG_DISABLE_READLINE_QUESTION));
@@ -2452,4 +2451,45 @@ void SwDoc::checkRedlining(SwRedlineMode& _rReadlineMode)
     }
 }
 // -----------------------------------------------------------------------------
+
+void SwDoc::CountWords( const SwPaM& rPaM, SwDocStat& rStat ) const
+{
+    // This is a modified version of SwDoc::TransliterateText
+    const SwPosition* pStt = rPaM.Start();
+    const SwPosition* pEnd = pStt == rPaM.GetPoint() ? rPaM.GetMark()
+                                                     : rPaM.GetPoint();
+
+    const ULONG nSttNd = pStt->nNode.GetIndex();
+    const ULONG nEndNd = pEnd->nNode.GetIndex();
+
+    const xub_StrLen nSttCnt = pStt->nContent.GetIndex();
+    const xub_StrLen nEndCnt = pEnd->nContent.GetIndex();
+
+    const SwTxtNode* pTNd = pStt->nNode.GetNode().GetTxtNode();
+    if( pStt == pEnd && pTNd )                  // no region ?
+    {
+        // do nothing
+        return;
+    }
+
+    if( nSttNd != nEndNd )
+    {
+        SwNodeIndex aIdx( pStt->nNode );
+        if( nSttCnt )
+        {
+            aIdx++;
+            if( pTNd )
+                pTNd->CountWords( rStat, nSttCnt, pTNd->GetTxt().Len() );
+        }
+
+        for( ; aIdx.GetIndex() < nEndNd; aIdx++ )
+            if( 0 != ( pTNd = aIdx.GetNode().GetTxtNode() ))
+                pTNd->CountWords( rStat, 0, pTNd->GetTxt().Len() );
+
+        if( nEndCnt && 0 != ( pTNd = pEnd->nNode.GetNode().GetTxtNode() ))
+            pTNd->CountWords( rStat, 0, nEndCnt );
+    }
+    else if( pTNd && nSttCnt < nEndCnt )
+        pTNd->CountWords( rStat, nSttCnt, nEndCnt );
+}
 
