@@ -2,9 +2,9 @@
  *
  *  $RCSfile: fltshell.cxx,v $
  *
- *  $Revision: 1.13 $
+ *  $Revision: 1.14 $
  *
- *  last change: $Author: obo $ $Date: 2004-04-27 14:09:55 $
+ *  last change: $Author: rt $ $Date: 2004-05-03 14:04:04 $
  *
  *  The Contents of this file are made available subject to the terms of
  *  either of the following licenses
@@ -249,7 +249,7 @@ BOOL SwFltStackEntry::MakeRegion(SwDoc* pDoc, SwPaM& rRegion, BOOL bCheck )
     // - ist kein Bereich, dann nicht returnen wenn am Anfang vom Absatz
     // - Felder aussortieren, koennen keinen Bereich haben !!
     if (
-         nMkNode.GetIndex() == nPtNode.GetIndex() && nMkCntnt == nPtCntnt && 
+         nMkNode.GetIndex() == nPtNode.GetIndex() && nMkCntnt == nPtCntnt &&
          nPtCntnt && RES_TXTATR_FIELD != pAttr->Which()
        )
     {
@@ -982,9 +982,9 @@ void SwFltEndStack::SetBookRef( const String& rName, BOOL bPgRef)
 //////////////////////////////////////////////////////////// SwFltShell
 SwFltShell::SwFltShell(SwDoc* pDoc, SwPaM& rPaM, BOOL bNew, ULONG nFieldFl)
     : pCurrentPageDesc(0), pSavedPos(0), eSubMode(None), nAktStyle(0),
-    aStack(pDoc, nFieldFl), aEndStack(pDoc, nFieldFl), 
-    pPaM(new SwPaM(*(rPaM.GetPoint()))), 
-    nPageDescOffset(GetDoc().GetPageDescCnt()), 
+    aStack(pDoc, nFieldFl), aEndStack(pDoc, nFieldFl),
+    pPaM(new SwPaM(*(rPaM.GetPoint()))),
+    nPageDescOffset(GetDoc().GetPageDescCnt()),
     eSrcCharSet(RTL_TEXTENCODING_MS_1252), bNewDoc(bNew), bStdPD(FALSE),
     bProtect(FALSE)
 {
@@ -1451,7 +1451,9 @@ BOOL SwFltOutDoc::BeginTable()
 // create table:
     ASSERT(pTabSavedPos == NULL, "SwFltOutDoc");
     pTabSavedPos = new SwPosition(*pPaM->GetPoint());
-    pTable = GetDoc().InsertTable(*pTabSavedPos, 1, 1, HORI_LEFT);
+    pTable = GetDoc().InsertTable(
+            SwInsertTableOptions( tabopts::HEADLINE_NO_BORDER, 1 ),
+            *pTabSavedPos, 1, 1, HORI_LEFT ); // TODO MULTIHEADER
     nTableWidth = 0;
     ((SwTable*)pTable)->LockModify();	// Nichts automatisch anpassen!
 // set pam in 1. table cell
