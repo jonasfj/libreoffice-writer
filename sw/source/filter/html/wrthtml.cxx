@@ -2,9 +2,9 @@
  *
  *  $RCSfile: wrthtml.cxx,v $
  *
- *  $Revision: 1.23 $
+ *  $Revision: 1.24 $
  *
- *  last change: $Author: vg $ $Date: 2003-04-17 14:58:07 $
+ *  last change: $Author: hr $ $Date: 2004-02-03 16:27:47 $
  *
  *  The Contents of this file are made available subject to the terms of
  *  either of the following licenses
@@ -80,12 +80,10 @@
 #ifndef _LINKMGR_HXX //autogen
 #include <so3/linkmgr.hxx>
 #endif
-#ifndef _OFA_HTMLCFG_HXX //autogen
-#include <offmgr/htmlcfg.hxx>
-#endif
-#ifndef _OFF_APP_HXX //autogen
-#include <offmgr/app.hxx>
-#endif
+
+#include <svx/htmlcfg.hxx>
+#include <vcl/svapp.hxx>
+
 #ifndef _URLOBJ_HXX //autogen
 #include <tools/urlobj.hxx>
 #endif
@@ -122,7 +120,7 @@
 #ifndef _SFXSTRITEM_HXX //autogen
 #include <svtools/stritem.hxx>
 #endif
-#ifndef _SVX_FRMDIRITEM_HXX 
+#ifndef _SVX_FRMDIRITEM_HXX
 #include <svx/frmdiritem.hxx>
 #endif
 
@@ -292,7 +290,7 @@ __EXPORT SwHTMLWriter::~SwHTMLWriter()
 sal_uInt32 SwHTMLWriter::WriteStream()
 {
     // neue Konfiguration setzen
-    OfaHtmlOptions* pHtmlOptions = OFF_APP()->GetHtmlOptions();
+    SvxHtmlOptions* pHtmlOptions = SvxHtmlOptions::Get();
 
     // die Fontgroessen 1-7
     aFontHeights[0] = pHtmlOptions->GetFontSize( 0 ) * 20;
@@ -423,7 +421,7 @@ sal_uInt32 SwHTMLWriter::WriteStream()
     nHeaderFooterSpace = 0;
     nTxtAttrsToIgnore = 0;
     nCSS1OutMode = 0;
-    sal_uInt16 nScript = SvtLanguageOptions::GetScriptTypeOfLanguage( 
+    sal_uInt16 nScript = SvtLanguageOptions::GetScriptTypeOfLanguage(
             static_cast< LanguageType >( GetAppLanguage() ) );
     switch( nScript )
     {
@@ -1093,8 +1091,8 @@ sal_uInt16 SwHTMLWriter::OutHeaderAttrs()
 const SwPageDesc *SwHTMLWriter::MakeHeader( sal_uInt16 &rHeaderAttrs )
 {
     ByteString sOut( sHTML_doctype );
-    (sOut += ' ') += 
-        (HTML_CFG_HTML32==nExportMode ? sHTML_doctype32	
+    (sOut += ' ') +=
+        (HTML_CFG_HTML32==nExportMode ? sHTML_doctype32
                                        : sHTML_doctype40);
     HTMLOutFuncs::Out_AsciiTag( Strm(), sOut.GetBuffer() );
 
@@ -1182,7 +1180,7 @@ const SwPageDesc *SwHTMLWriter::MakeHeader( sal_uInt16 &rHeaderAttrs )
     // Textfarbe ausgeben, wenn sie an der Standard-Vorlage gesetzt ist
     // und sich geaendert hat.
     OutBodyColor( sHTML_O_text,
-                  pDoc->GetTxtCollFromPoolSimple( RES_POOLCOLL_STANDARD, 
+                  pDoc->GetTxtCollFromPoolSimple( RES_POOLCOLL_STANDARD,
                                                   FALSE ),
                   *this );
 
@@ -1306,7 +1304,7 @@ void SwHTMLWriter::OutHyperlinkHRefValue( const String& rURL )
 
     sURL = INetURLObject::AbsToRel( sURL, INetURLObject::WAS_ENCODED,
                                     INetURLObject::DECODE_UNAMBIGUOUS);
-    HTMLOutFuncs::Out_String( Strm(), sURL, eDestEnc, 
+    HTMLOutFuncs::Out_String( Strm(), sURL, eDestEnc,
                               &aNonConvertableCharacters );
 }
 
@@ -1419,7 +1417,7 @@ void SwHTMLWriter::OutLanguage( LanguageType eLang )
 
 sal_uInt16 SwHTMLWriter::GetHTMLDirection( const SfxItemSet& rItemSet ) const
 {
-    return GetHTMLDirection( 
+    return GetHTMLDirection(
         static_cast < const SvxFrameDirectionItem& >( rItemSet.Get( RES_FRAMEDIR ) )
             .GetValue() );
 }
