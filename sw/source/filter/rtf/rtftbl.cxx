@@ -2,9 +2,9 @@
  *
  *  $RCSfile: rtftbl.cxx,v $
  *
- *  $Revision: 1.19 $
+ *  $Revision: 1.20 $
  *
- *  last change: $Author: rt $ $Date: 2003-12-01 17:27:43 $
+ *  last change: $Author: obo $ $Date: 2004-01-13 11:23:39 $
  *
  *  The Contents of this file are made available subject to the terms of
  *  either of the following licenses
@@ -129,6 +129,9 @@
 #endif
 #ifndef _FRMATR_HXX
 #include <frmatr.hxx>
+#endif
+#ifndef _FMTROWSPLT_HXX //autogen
+#include <fmtrowsplt.hxx>
 #endif
 
 typedef SwTableBoxFmt* SwTableBoxFmtPtr;
@@ -261,10 +264,10 @@ void SwRTFParser::ReadTable( int nToken )
     SwHoriOrient eAdjust = HORI_LEFT;		// default fuer Tabellen
     SwTwips nLSpace = 0;
     Row aRow;
-    
-    bool bUseLeftCellPad = false, bUseRightCellPad = false, 
+
+    bool bUseLeftCellPad = false, bUseRightCellPad = false,
         bUseTopCellPad = false, bUseBottomCellPad = false;
-    long nLeftCellPad = 0, nRightCellPad = 0, nTopCellPad = 0, 
+    long nLeftCellPad = 0, nRightCellPad = 0, nTopCellPad = 0,
         nBottomCellPad = 0;
 
     SwVertOrient eVerOrient = VERT_NONE;
@@ -274,6 +277,7 @@ void SwRTFParser::ReadTable( int nToken )
     SwTableBoxFmt* pBoxFmt = pDoc->MakeTableBoxFmt();
     BOOL bHeadlineRepeat = FALSE;
     SvxFrameDirection eDir = FRMDIR_HORI_LEFT_TOP;
+    bool bCantSplit = false;
 
     int bWeiter = TRUE;
     do {
@@ -328,7 +332,7 @@ void SwRTFParser::ReadTable( int nToken )
         case RTF_CLPADB:
             nBottomCellPad = nTokenValue;
             break;
-            
+
         case RTF_TRRH:
             nLineHeight = nTokenValue;
             break;
@@ -385,17 +389,17 @@ void SwRTFParser::ReadTable( int nToken )
                     aBox.SetDistance(nTopCellPad, BOX_LINE_LEFT);
 
 
-                /*#106415# The Cell Borders are now balanced on import to 
+                /*#106415# The Cell Borders are now balanced on import to
                 improve the layout of tables.
                 */
-               
+
                 if ( aBoxFmts.Count()>1)
                 {
-                        
+
                     SwTableBoxFmt* prevpFmt = aBoxFmts[ aBoxFmts.Count()-2 ];
                     SvxBoxItem prevaBox(prevpFmt->GetBox());
                     USHORT prevWidthRight=0;
-                    USHORT currWidthLeft=0;    
+                    USHORT currWidthLeft=0;
                     bool bDoubleLine=false;
                     const SvxBorderLine*   brdrline ;
                     if(prevaBox.GetRight())
@@ -410,9 +414,9 @@ void SwRTFParser::ReadTable( int nToken )
                         brdrline=aBox.GetLeft();
                         currWidthLeft = brdrline->GetOutWidth();
                         if(brdrline->GetInWidth())
-                            bDoubleLine=true;                          
+                            bDoubleLine=true;
                     }
-                    
+
                     if((currWidthLeft >0 || prevWidthRight >0) &&
                         !bDoubleLine)
                     {
@@ -424,10 +428,10 @@ void SwRTFParser::ReadTable( int nToken )
                         else if(newBorderWidth /2 >=(DEF_LINE_WIDTH_4-DEF_LINE_WIDTH_3))
                         {
                             newBorderWidth =DEF_LINE_WIDTH_4;
-                        }  
+                        }
                         else if(newBorderWidth /2 >=(DEF_LINE_WIDTH_3-DEF_LINE_WIDTH_2))
                         {
-                            newBorderWidth =DEF_LINE_WIDTH_3;       
+                            newBorderWidth =DEF_LINE_WIDTH_3;
                         }
                         else if(newBorderWidth /2>=(DEF_LINE_WIDTH_2-DEF_LINE_WIDTH_1))
                         {
@@ -437,7 +441,7 @@ void SwRTFParser::ReadTable( int nToken )
                         {
                             newBorderWidth =DEF_LINE_WIDTH_1;
                         }
-                        else 
+                        else
                         {
                             newBorderWidth =DEF_LINE_WIDTH_0;
                         }
@@ -446,16 +450,16 @@ void SwRTFParser::ReadTable( int nToken )
                         prevaBox.SetLine(&newbrdrline,BOX_LINE_RIGHT);
                         prevpFmt->SetAttr(prevaBox);
                     }
-                    
+
                 }
-                
+
 
                 pFmt->SetAttr(aBox);
 
                 bUseLeftCellPad = false;
                 bUseRightCellPad = false;
                 bUseTopCellPad = false;
-                bUseBottomCellPad = false;     
+                bUseBottomCellPad = false;
             }
             break;
 
@@ -504,7 +508,9 @@ void SwRTFParser::ReadTable( int nToken )
         case RTF_TRBRDRR:
         case RTF_TRBRDRT:
         case RTF_TRBRDRV:
+                break;
         case RTF_TRKEEP:
+                bCantSplit = true;
                 break;
 
         default:
@@ -607,16 +613,16 @@ void SwRTFParser::ReadTable( int nToken )
                 ((SfxItemSet&)pFmt->GetAttrSet()).Put( aL );
             }
         }
-        else if 
-            ( 
-              1 < pLns->Count() && 
-              ( 
-                rTblSz.GetWidth() != nTblSz || 
+        else if
+            (
+              1 < pLns->Count() &&
+              (
+                rTblSz.GetWidth() != nTblSz ||
                 rHoriz.GetHoriOrient() != eAdjust ||
-                ( 
+                (
                   HORI_LEFT_AND_WIDTH == eAdjust &&
-                  nLSpace != pFmt->GetLRSpace().GetLeft() 
-                ) || 
+                  nLSpace != pFmt->GetLRSpace().GetLeft()
+                ) ||
                 bHeadlineRepeat != pTableNode->GetTable().IsHeadlineRepeat() ||
                 pTableNode->GetTable().GetTabSortBoxes().Count() >= eMAXCELLS
               )
@@ -697,7 +703,7 @@ void SwRTFParser::ReadTable( int nToken )
                 const SwFmtFrmSize& rTblSz = pFmt->GetFrmSize();
                 const SwFmtHoriOrient& rHoriz = pFmt->GetHoriOrient();
                 if (
-                    rTblSz.GetWidth() != nTblSz || 
+                    rTblSz.GetWidth() != nTblSz ||
                     rHoriz.GetHoriOrient() != eAdjust ||
                     rTable.GetTabSortBoxes().Count() >= eMAXCELLS
                     )
@@ -739,7 +745,7 @@ void SwRTFParser::ReadTable( int nToken )
         }
         else
         {
-            const SwTable *pTable = 
+            const SwTable *pTable =
                 pDoc->InsertTable( *pPam->GetPoint(), 1, 1, eAdjust );
             pTableNode = pTable ? pTable->GetTableNode() : 0;
             if (pTableNode)
@@ -787,15 +793,17 @@ void SwRTFParser::ReadTable( int nToken )
             eSize = ATT_FIX_SIZE, nLineHeight = -nLineHeight;
         else
             eSize = ATT_MIN_SIZE;
-        pNewLine->ClaimFrmFmt()->SetAttr( SwFmtFrmSize( eSize, 0, nLineHeight ));
+        pNewLine->ClaimFrmFmt()->SetAttr(SwFmtFrmSize(eSize, 0, nLineHeight));
     }
+
+    pNewLine->ClaimFrmFmt()->SetAttr(SwFmtRowSplit(!bCantSplit));
 
     if( aBoxFmts.Count() )
     {
         // setze das default Style
         SwTxtFmtColl* pColl = aTxtCollTbl.Get( 0 );
         if( !pColl )
-            pColl = pDoc->GetTxtCollFromPoolSimple( RES_POOLCOLL_STANDARD, 
+            pColl = pDoc->GetTxtCollFromPoolSimple( RES_POOLCOLL_STANDARD,
                                                     FALSE );
 
         USHORT nStt = 0;
@@ -1005,7 +1013,7 @@ void SwRTFParser::NewTblLine()
     {
         SwTxtFmtColl* pColl = aTxtCollTbl.Get( 0 );
         if( !pColl )
-            pColl = pDoc->GetTxtCollFromPoolSimple( RES_POOLCOLL_STANDARD, 
+            pColl = pDoc->GetTxtCollFromPoolSimple( RES_POOLCOLL_STANDARD,
                                                     FALSE );
         pPam->SetMark();
 
