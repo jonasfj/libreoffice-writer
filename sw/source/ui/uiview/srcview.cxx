@@ -2,9 +2,9 @@
  *
  *  $RCSfile: srcview.cxx,v $
  *
- *  $Revision: 1.34 $
+ *  $Revision: 1.35 $
  *
- *  last change: $Author: rt $ $Date: 2003-12-01 11:30:19 $
+ *  last change: $Author: hr $ $Date: 2004-02-03 16:57:25 $
  *
  *  The Contents of this file are made available subject to the terms of
  *  either of the following licenses
@@ -137,12 +137,9 @@
 #include <svtools/transfer.hxx>
 #endif
 
-#ifndef _OFA_HTMLCFG_HXX //autogen
-#include <offmgr/htmlcfg.hxx>
-#endif
-#ifndef _OFF_APP_HXX //autogen
-#include <offmgr/app.hxx>
-#endif
+#include <svx/htmlcfg.hxx>
+#include <sfx2/app.hxx>
+
 #ifndef _SFX_DOCFILT_HACK_HXX //autogen
 #include <sfx2/docfilt.hxx>
 #endif
@@ -623,12 +620,12 @@ void SwSrcView::Execute(SfxRequest& rReq)
         {
             SvxSearchItem* pSrchItem = GetSearchItem();
             if(pSrchItem)
-            {        
+            {
                 StartSearchAndReplace( *pSrchItem, FALSE, rReq.IsAPI() );
                 if(aEditWin.IsModified())
                     GetDocShell()->GetDoc()->SetModified();
             }
-        }        
+        }
         break;
         case SID_PRINTDOC:
         case SID_PRINTDOCDIRECT:
@@ -767,7 +764,7 @@ void SwSrcView::GetState(SfxItemSet& rSet)
             case SID_MAIL_SENDDOC :
             case SID_EXPORTDOCASPDF:
             case SID_DIRECTEXPORTDOCASPDF:
-            case SID_EXPORTDOC:                
+            case SID_EXPORTDOC:
             case SID_REPEAT:
                 rSet.DisableItem(nWhich);
             break;
@@ -1064,7 +1061,7 @@ void SwSrcView::Notify( SfxBroadcaster& rBC, const SfxHint& rHint )
 --------------------------------------------------*/
 void SwSrcView::Load(SwDocShell* pDocShell)
 {
-    OfaHtmlOptions* pHtmlOptions = OFF_APP()->GetHtmlOptions();
+    SvxHtmlOptions* pHtmlOptions = SvxHtmlOptions::Get();
     const sal_Char *pCharSet =
         rtl_getBestMimeCharsetFromTextEncoding( pHtmlOptions->GetTextEncoding() );
     rtl_TextEncoding eDestEnc = rtl_getTextEncodingFromMimeCharset( pCharSet );
@@ -1081,7 +1078,7 @@ void SwSrcView::Load(SwDocShell* pDocShell)
         SvStream* pStream = pMedium->GetInStream();
         if(pStream && 0 == pStream->GetError() )
         {
-            rtl_TextEncoding eHeaderEnc = 
+            rtl_TextEncoding eHeaderEnc =
                 SfxHTMLParser::GetEncodingByHttpHeader(
                                             pDocShell->GetHeaderAttributes() );
             if( RTL_TEXTENCODING_DONTKNOW == eHeaderEnc )
