@@ -2,9 +2,9 @@
  *
  *  $RCSfile: parse.cxx,v $
  *
- *  $Revision: 1.8 $
+ *  $Revision: 1.9 $
  *
- *  last change: $Author: tl $ $Date: 2001-05-02 16:58:48 $
+ *  last change: $Author: jp $ $Date: 2001-05-11 16:40:35 $
  *
  *  The Contents of this file are made available subject to the terms of
  *  either of the following licenses
@@ -97,7 +97,7 @@
 #endif
 
 #include "node.hxx"
-    
+
 using namespace ::com::sun::star::i18n;
 
 ///////////////////////////////////////////////////////////////////////////
@@ -399,17 +399,21 @@ static const SmTokenTableEntry * GetTokenTableEntry( const String &rName )
                 break;
             }
         }
-            
+
     }
-        
+
     return pRes;
 }
 
 
 ///////////////////////////////////////////////////////////////////////////
 
-static CharClass aCharClass( SvxCreateLocale( 
+CharClass& GetCharClass()
+{
+    static CharClass aCharClass( SvxCreateLocale(
                         Application::GetAppInternational().GetLanguage() ) );
+    return aCharClass;
+}
 
 
 BOOL SmParser::IsDelimiter( const String &rTxt, xub_StrLen nPos )
@@ -429,7 +433,7 @@ BOOL SmParser::IsDelimiter( const String &rTxt, xub_StrLen nPos )
 
     BOOL bIsDelim = *pDelim != 0;
 
-    INT16 nTypJp = aCharClass.getType( rTxt, nPos );
+    INT16 nTypJp = ::GetCharClass().getType( rTxt, nPos );
     bIsDelim |= nTypJp == com::sun::star::i18n::UnicodeType::SPACE_SEPARATOR ||
                 nTypJp == com::sun::star::i18n::UnicodeType::CONTROL;
 
@@ -464,21 +468,22 @@ void SmParser::NextToken()
     ParseResult	aRes;
     xub_StrLen	nRealStart;
     BOOL		bCont;
+    CharClass& rCC = ::GetCharClass();
     do
-    {   
+    {
         //?? does parseAnyToken handles Japanese (CJK) spaces correct ??
         // seems not to be so...
-        while (UnicodeType::SPACE_SEPARATOR == 
-                         aCharClass.getType( BufferString, BufferIndex ))
+        while (UnicodeType::SPACE_SEPARATOR ==
+                         rCC.getType( BufferString, BufferIndex ))
             ++BufferIndex;
-        
-        aRes = aCharClass.parseAnyToken( BufferString, BufferIndex,
+
+        aRes = rCC.parseAnyToken( BufferString, BufferIndex,
                                             coStartFlags, aEmptyStr,
                                             coContFlags, aEmptyStr );
-    
+
         nRealStart = BufferIndex + (xub_StrLen) aRes.LeadingWhiteSpace;
 
-        bCont = FALSE;   
+        bCont = FALSE;
         if ( aRes.TokenType == 0  &&
                 nRealStart < nBufLen &&
                 '\n' == BufferString.GetChar( nRealStart ) )
@@ -495,7 +500,7 @@ void SmParser::NextToken()
             {
                 //SkipComment
                 BufferIndex = nRealStart + 2;
-                while (BufferIndex < nBufLen  && 
+                while (BufferIndex < nBufLen  &&
                     '\n' != BufferString.GetChar( BufferIndex ))
                     ++BufferIndex;
                 bCont = TRUE;
@@ -503,7 +508,7 @@ void SmParser::NextToken()
         }
 
     } while (bCont);
-    
+
     CurToken.nRow	= Row;
     CurToken.nCol	= nRealStart - ColOff + 1;
 
@@ -547,7 +552,7 @@ void SmParser::NextToken()
         DBG_ASSERT( n >= 0, "length < 0" );
         String aName( BufferString.Copy( nRealStart, (xub_StrLen) n ) );
         const SmTokenTableEntry *pEntry = GetTokenTableEntry( aName );
-        
+
         if (pEntry)
         {
             CurToken.eType      = pEntry->eType;
@@ -577,7 +582,7 @@ void SmParser::NextToken()
         CurToken.nGroup	   = TGPOWER;
         CurToken.nLevel	   = 0;
         CurToken.aText.AssignAscii( "_" );
-    
+
         aRes.EndPos = nRealStart + 1;
     }
     else if (aRes.TokenType & KParseType::BOOLEAN)
@@ -643,7 +648,7 @@ void SmParser::NextToken()
                             CurToken.nLevel	   = 0;
                             CurToken.aText.AssignAscii( "<" );
                         }
-                    }					   
+                    }
                     break;
                 case '>':
                     {
@@ -677,7 +682,7 @@ void SmParser::NextToken()
                             CurToken.nLevel	   = 0;
                             CurToken.aText.AssignAscii( ">" );
                         }
-                    }					   
+                    }
                     break;
                 default:
                     bHandled = FALSE;
@@ -688,7 +693,7 @@ void SmParser::NextToken()
     {
         long   &rnEndPos = aRes.EndPos;
         String	aName( BufferString.Copy( nRealStart, rnEndPos - nRealStart ) );
-        
+
         if (1 == aName.Len())
         {
             sal_Unicode ch = aName.GetChar( 0 );
@@ -697,20 +702,20 @@ void SmParser::NextToken()
                 case '%':
                     {
                         //! modifies aRes.EndPos
-                    
+
                         DBG_ASSERT( rnEndPos >= nBufLen  ||
                                     '%' != BufferString.GetChar( rnEndPos ),
                                 "unexpected comment start" );
 
                         // get identifier of user-defined character
-                        ParseResult aTmpRes = aCharClass.parseAnyToken( 
+                        ParseResult aTmpRes = rCC.parseAnyToken(
                                 BufferString, rnEndPos,
-                                KParseTokens::ANY_LETTER, 
+                                KParseTokens::ANY_LETTER,
                                 aEmptyStr,
-                                KParseTokens::ANY_LETTER | KParseTokens::ASC_DOT, 
+                                KParseTokens::ANY_LETTER | KParseTokens::ASC_DOT,
                                 aEmptyStr );
-    
-                        xub_StrLen nTmpStart = rnEndPos + 
+
+                        xub_StrLen nTmpStart = rnEndPos +
                                 (xub_StrLen) aRes.LeadingWhiteSpace;
 
                         INT32 n = aTmpRes.EndPos - nTmpStart;
@@ -721,7 +726,7 @@ void SmParser::NextToken()
                         CurToken.aText		= BufferString.Copy( nTmpStart, n );
                         CurToken.nRow		= Row;
                         CurToken.nCol		= nTmpStart - ColOff + 1;
-                        
+
                         if (aTmpRes.EndPos > rnEndPos)
                             rnEndPos = aTmpRes.EndPos;
                         else
@@ -956,7 +961,7 @@ void SmParser::NextToken()
         CurToken.nGroup     = 0;
         CurToken.nLevel     = 5;
         CurToken.aText      = BufferString.Copy( nRealStart, 1 );
-        
+
         aRes.EndPos = nRealStart + 1;
     }
 
@@ -1366,7 +1371,7 @@ void SmParser::Term()
             NextToken();
             break;
         case TIDENT :
-        case TCHARACTER :			
+        case TCHARACTER :
             NodeStack.Push(new SmTextNode(CurToken, FNT_VARIABLE));
             NextToken();
             break;
