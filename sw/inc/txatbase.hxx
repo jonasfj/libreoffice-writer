@@ -2,9 +2,9 @@
  *
  *  $RCSfile: txatbase.hxx,v $
  *
- *  $Revision: 1.11 $
+ *  $Revision: 1.12 $
  *
- *  last change: $Author: ama $ $Date: 2001-03-06 16:05:31 $
+ *  last change: $Author: ama $ $Date: 2001-03-12 09:54:12 $
  *
  *  The Contents of this file are made available subject to the terms of
  *  either of the following licenses
@@ -217,9 +217,9 @@ class SwTxtAttrEnd : public SwTxtAttr
 {
 protected:
     xub_StrLen nEnd;
-    SwTxtAttrEnd( const SfxPoolItem& rAttr, USHORT nStart, USHORT nEnd );
 
 public:
+    SwTxtAttrEnd( const SfxPoolItem& rAttr, USHORT nStart, USHORT nEnd );
     virtual xub_StrLen* GetEnd();
 };
 
@@ -471,9 +471,12 @@ inline const SvxCharReliefItem&	SwTxtAttr::GetCharRelief() const
 /*************************************************************************
 
       $Log: not supported by cvs2svn $
+      Revision 1.11  2001/03/06 16:05:31  ama
+      Chg by FME: Attribute handler
+
       Revision 1.10  2001/03/05 13:50:48  jp
       new: SvxCharReliefItem
-    
+
       Revision 1.9  2001/02/28 11:16:12  ama
       New: RedlineAttr-flag public
 
