@@ -2,9 +2,9 @@
  *
  *  $RCSfile: wrtrtf.cxx,v $
  *
- *  $Revision: 1.28 $
+ *  $Revision: 1.29 $
  *
- *  last change: $Author: rt $ $Date: 2004-10-28 13:05:42 $
+ *  last change: $Author: rt $ $Date: 2005-01-11 12:31:38 $
  *
  *  The Contents of this file are made available subject to the terms of
  *  either of the following licenses
@@ -234,8 +234,9 @@ SV_DECL_VARARR( RTFColorTbl, Color, 5, 8 )
 SV_IMPL_VARARR( RTFColorTbl, Color )
 
 
-SwRTFWriter::SwRTFWriter( const String& rFltName ) : eCurrentCharSet(DEF_ENCODING)
+SwRTFWriter::SwRTFWriter( const String& rFltName, const String& rBaseURL ) : eCurrentCharSet(DEF_ENCODING)
 {
+    SetBaseURL( rBaseURL );
     // schreibe Win-RTF-HelpFileFmt
     bWriteHelpFmt = 'W' == rFltName.GetChar( 0 );
     // schreibe nur Gliederungs Absaetze
@@ -243,7 +244,7 @@ SwRTFWriter::SwRTFWriter( const String& rFltName ) : eCurrentCharSet(DEF_ENCODIN
 }
 
 
-SwRTFWriter::~SwRTFWriter() 
+SwRTFWriter::~SwRTFWriter()
 {}
 
 
@@ -599,7 +600,7 @@ void SwRTFWriter::MakeHeader()
         }
 
         Strm() << sRTF_SECTD << sRTF_SBKNONE;
-        OutRTFPageDescription( rPageDesc, FALSE, TRUE );	// Changed bCheckForFirstPage to TRUE so headers 
+        OutRTFPageDescription( rPageDesc, FALSE, TRUE );	// Changed bCheckForFirstPage to TRUE so headers
                                                             // following title page are correctly added - i13107
         if( pSttPgDsc )
         {
@@ -702,24 +703,24 @@ void SwRTFWriter::OutInfoDateTime( const DateTime& rDT, const char* pStr )
 
 bool CharsetSufficient(const String &rString, rtl_TextEncoding eChrSet)
 {
-    const sal_uInt32 nFlags = 
-        RTL_UNICODETOTEXT_FLAGS_UNDEFINED_ERROR | 
+    const sal_uInt32 nFlags =
+        RTL_UNICODETOTEXT_FLAGS_UNDEFINED_ERROR |
         RTL_UNICODETOTEXT_FLAGS_INVALID_ERROR;
     rtl::OString sDummy;
     rtl::OUString sStr(rString);
     return sStr.convertToString(&sDummy, eChrSet, nFlags);
 }
 
-void SwRTFWriter::OutUnicodeSafeRecord(const sal_Char *pToken, 
+void SwRTFWriter::OutUnicodeSafeRecord(const sal_Char *pToken,
     const String &rContent)
 {
     if (rContent.Len())
-    {   
+    {
         bool bNeedUnicodeWrapper = !CharsetSufficient(rContent, DEF_ENCODING);
 
         if (bNeedUnicodeWrapper)
             Strm() << '{' << sRTF_UPR;
-            
+
         Strm() << '{' << pToken << ' ';
         OutRTF_AsByteString(*this, rContent);
         Strm() << '}';
@@ -899,7 +900,7 @@ void SwRTFWriter::OutRTFColorTab()
     Strm() << '}';
 }
 
-bool FontCharsetSufficient(const String &rFntNm, const String &rAltNm, 
+bool FontCharsetSufficient(const String &rFntNm, const String &rAltNm,
     rtl_TextEncoding eChrSet)
 {
     bool bRet = CharsetSufficient(rFntNm, eChrSet);
@@ -953,7 +954,7 @@ static void _OutFont( SwRTFWriter& rWrt, const SvxFontItem& rFont, USHORT nNo )
     sw::util::FontMapExport aRes(rFont.GetFamilyName());
 
     /*
-     #i10538# 
+     #i10538#
      In rtf the fontname is in the fontcharset, so if that isn't possible
      then bump the charset up to unicode
     */
@@ -1022,7 +1023,7 @@ void RTF_WrtRedlineAuthor::Write(Writer &rWrt)
     for(std::vector<String>::iterator aIter = maAuthors.begin(); aIter != maAuthors.end(); ++aIter)
     {
         rRTFWrt.Strm() << '{';
-        // rWrt.bWriteHelpFmt 
+        // rWrt.bWriteHelpFmt
         RTFOutFuncs::Out_String( rRTFWrt.Strm(), *aIter, DEF_ENCODING,	rRTFWrt.bWriteHelpFmt  ) << ";}";
     }
     rRTFWrt.Strm() << '}' << SwRTFWriter::sNewLine;
@@ -1040,7 +1041,7 @@ bool SwRTFWriter::OutRTFRevTab()
 
     if (nRevAuthors < 1)
         return false;
-    
+
     // pull out all the redlines and make a vector of all the author names
     for( int i = 0; i < pDoc->GetRedlineTbl().Count(); ++i )
     {
@@ -1048,7 +1049,7 @@ bool SwRTFWriter::OutRTFRevTab()
         const String sAuthor = SW_MOD()->GetRedlineAuthor( pRedl->GetAuthor() );
         pRedlAuthors->AddName(sAuthor);
     }
-    
+
     pRedlAuthors->Write(*this);
     return true;
 }
@@ -1295,15 +1296,15 @@ void SwRTFWriter::OutRedline( xub_StrLen nCntntPos )
                 const String& rStr = pCurPam->GetNode()->GetTxtNode()->GetTxt();
                 xub_StrLen nEnde = rStr.Len();
 
-                bool bSpanRedline = (nCurPam >= nStartIndex) && (nCurPam <= nEndIndex) && (nStartIndex != nEndIndex); 
+                bool bSpanRedline = (nCurPam >= nStartIndex) && (nCurPam <= nEndIndex) && (nStartIndex != nEndIndex);
 
-                if ((bSpanRedline && nCntntPos == 0) || 
+                if ((bSpanRedline && nCntntPos == 0) ||
                     (nStartIndex == nCurPam && nStart == nCntntPos))
                 {
                     // We are at the start of a redline just need to find out which type
                     Strm() << '{';
                     if(pCurRedline->GetType() == REDLINE_INSERT)
-                    {                      
+                    {
                         Strm() << sRTF_REVISED;
                         Strm() << sRTF_REVAUTH;
                         String sName = SW_MOD()->GetRedlineAuthor(pCurRedline->GetAuthor());
@@ -1313,7 +1314,7 @@ void SwRTFWriter::OutRedline( xub_StrLen nCntntPos )
                         Strm() << ' ';
                     }
                     else if(pCurRedline->GetType() == REDLINE_DELETE)
-                    { 
+                    {
                         Strm() << sRTF_DELETED;
                         Strm() << sRTF_REVAUTHDEL;
                         String sDelName = SW_MOD()->GetRedlineAuthor(pCurRedline->GetAuthor());
@@ -1363,7 +1364,7 @@ void SwRTFWriter::OutBookmarks( xub_StrLen nCntntPos )
         pStartPos = mPam.Start();
         pEndPos = mPam.End();
     }
-    else 							// this bookmark is a point 
+    else 							// this bookmark is a point
     {
         // so the start and endpoints are the same
         pStartPos = pEndPos = &pBookmark->GetPos();
@@ -1381,7 +1382,7 @@ void SwRTFWriter::OutBookmarks( xub_StrLen nCntntPos )
 
         // erst die SWG spezifischen Daten:
         if (
-             pBookmark->GetShortName().Len() || 
+             pBookmark->GetShortName().Len() ||
              pBookmark->GetKeyCode().GetCode()
            )
         {
@@ -1546,7 +1547,7 @@ void SwRTFWriter::OutPageDesc()
     OutComment( *this, sRTF_PGDSCTBL );
     for( USHORT n = 0; n < nSize; ++n )
     {
-        const SwPageDesc& rPageDesc = 
+        const SwPageDesc& rPageDesc =
             const_cast<const SwDoc*>(pDoc)->GetPageDesc( n );
 
         Strm() << SwRTFWriter::sNewLine << '{' << sRTF_PGDSC;
@@ -1558,7 +1559,7 @@ void SwRTFWriter::OutPageDesc()
         // suche den Folge-PageDescriptor:
         USHORT i = nSize;
         while( i  )
-            if( rPageDesc.GetFollow() == 
+            if( rPageDesc.GetFollow() ==
                 &const_cast<const SwDoc *>(pDoc)->GetPageDesc( --i ) )
                 break;
         Strm() << sRTF_PGDSCNXT;
@@ -1572,7 +1573,7 @@ void SwRTFWriter::OutPageDesc()
 
 void SwRTFWriter::OutRTFBorder(const SvxBorderLine* aLine, const USHORT nSpace )
 {
-    // M.M. This function writes out border lines in RTF similar to what 
+    // M.M. This function writes out border lines in RTF similar to what
     // WW8_BRC SwWW8Writer::TranslateBorderLine does in the winword filter
     // Eventually it would be nice if all this functionality was in the one place
     int nDistance = aLine->GetDistance();
@@ -1764,7 +1765,7 @@ BOOL SwRTFWriter::OutBreaks( const SfxItemSet& rSet )
                     default:
                         break;
                 }
-            }   
+            }
         }
     }
     bIgnoreNextPgBreak = false;
@@ -1860,9 +1861,9 @@ RTFSaveData::~RTFSaveData()
     rWrt.bOutSection = bOldOutSection;
 }
 
-void GetRTFWriter( const String& rFltName, WriterRef& xRet )
+void GetRTFWriter( const String& rFltName, const String& rBaseURL, WriterRef& xRet )
 {
-    xRet = new SwRTFWriter( rFltName );
+    xRet = new SwRTFWriter( rFltName, rBaseURL );
 }
 
 short SwRTFWriter::GetCurrentPageDirection() const
