@@ -2,9 +2,9 @@
  *
  *  $RCSfile: ww8par4.cxx,v $
  *
- *  $Revision: 1.40 $
+ *  $Revision: 1.41 $
  *
- *  last change: $Author: rt $ $Date: 2003-09-19 11:38:09 $
+ *  last change: $Author: rt $ $Date: 2003-09-25 07:45:30 $
  *
  *  The Contents of this file are made available subject to the terms of
  *  either of the following licenses
@@ -137,10 +137,10 @@
 #include <ndgrf.hxx>
 #endif
 #ifndef _DOCSH_HXX
-#include <docsh.hxx>			// fuer Ole-Node
+#include <docsh.hxx>            // fuer Ole-Node
 #endif
 #ifndef _MDIEXP_HXX
-#include <mdiexp.hxx>			// Progress
+#include <mdiexp.hxx>           // Progress
 #endif
 #ifndef _REDLINE_HXX
 #include <redline.hxx>
@@ -169,7 +169,7 @@
 #include "ww8par.hxx"
 #endif
 #ifndef _WW8PAR2_HXX
-#include "ww8par2.hxx"			// WWFlyPara::BoxUpWidth()
+#include "ww8par2.hxx"          // WWFlyPara::BoxUpWidth()
 #endif
 
 struct OLE_MFP
@@ -188,17 +188,17 @@ SV_IMPL_OP_PTRARR_SORT(WW8OleMaps, WW8OleMap_Ptr)
 static bool SwWw8ReadScaling(long& rX, long& rY, SvStorageRef& rSrc1)
 {
     // Skalierungsfaktoren holen:
-    //		Informationen in PIC-Stream ( durch ausprobieren )
-    //		0x0  (l)cb
-    //		0x08 .. 0x0a Flags ??
-    //		0x08 Inh: 1 / 0
-    //		0x09 Inh: 0,8,0x18
-    //		0x0a Inh: immer 8, MAP_ANISOTROPIC ???
-    //		0x0b Inh: immer 0
-    //		0x0c, 0x10 Originalgroesse x,y in 1/100 mm
-    //		0x14, 0x16 Originalgroesse x,y in tw
-    //		0x2c, 0x30 Skalierung x,y in Promille
-    //		0x34, 0x38, 0x3c, 0x40 Crop Left, Top, Right, Bot in tw
+    //      Informationen in PIC-Stream ( durch ausprobieren )
+    //      0x0  (l)cb
+    //      0x08 .. 0x0a Flags ??
+    //      0x08 Inh: 1 / 0
+    //      0x09 Inh: 0,8,0x18
+    //      0x0a Inh: immer 8, MAP_ANISOTROPIC ???
+    //      0x0b Inh: immer 0
+    //      0x0c, 0x10 Originalgroesse x,y in 1/100 mm
+    //      0x14, 0x16 Originalgroesse x,y in tw
+    //      0x2c, 0x30 Skalierung x,y in Promille
+    //      0x34, 0x38, 0x3c, 0x40 Crop Left, Top, Right, Bot in tw
 
     SvStorageStreamRef xSrc3 = rSrc1->OpenStream( CREATE_CONST_ASC( "\3PIC" ),
         STREAM_STD_READ | STREAM_NOCREATE);
@@ -217,12 +217,12 @@ static bool SwWw8ReadScaling(long& rX, long& rY, SvStorageRef& rSrc1)
           nCropRight,
           nCropBottom;
     pS->Seek( 0x14 );
-    *pS >> nOrgWidth	// Original Size in 1/100 mm
+    *pS >> nOrgWidth    // Original Size in 1/100 mm
         >> nOrgHeight;
     pS->Seek( 0x2c );
-    *pS >> nScaleX		// Scaling in Promille
+    *pS >> nScaleX      // Scaling in Promille
         >> nScaleY
-        >> nCropLeft	// Cropping in 1/100 mm
+        >> nCropLeft    // Cropping in 1/100 mm
         >> nCropTop
         >> nCropRight
         >> nCropBottom;
@@ -274,7 +274,7 @@ static bool SwWw6ReadMetaStream(GDIMetaFile& rWMF, OLE_MFP* pMfp,
         ASSERT( !pSt, "+OLE: Groesse von 0 ???" );
         return false;
     }
-    bool bOk = ReadWindowMetafile(*pSt, rWMF) ? true : false;	// WMF lesen
+    bool bOk = ReadWindowMetafile(*pSt, rWMF) ? true : false;   // WMF lesen
                     // *pSt >> aWMF  geht nicht ohne placable Header
     if (!bOk || pSt->GetError() || rWMF.GetActionCount() == 0)
     {
@@ -287,10 +287,10 @@ static bool SwWw6ReadMetaStream(GDIMetaFile& rWMF, OLE_MFP* pMfp,
 
     // MetaFile auf neue Groesse skalieren und
     // neue Groesse am MetaFile setzen
-    Size		aOldSiz( rWMF.GetPrefSize() );
-    Size		aNewSiz( pMfp->xExt, pMfp->yExt );
-    Fraction	aFracX( aNewSiz.Width(), aOldSiz.Width() );
-    Fraction	aFracY( aNewSiz.Height(), aOldSiz.Height() );
+    Size        aOldSiz( rWMF.GetPrefSize() );
+    Size        aNewSiz( pMfp->xExt, pMfp->yExt );
+    Fraction    aFracX( aNewSiz.Width(), aOldSiz.Width() );
+    Fraction    aFracY( aNewSiz.Height(), aOldSiz.Height() );
 
     rWMF.Scale( aFracX, aFracY );
     rWMF.SetPrefSize( aNewSiz );
@@ -304,7 +304,7 @@ static bool SwWw6ReadMacPICTStream(Graphic& rGraph, SvStorageRef& rSrc1)
     SvStorageStreamRef xSrc4 = rSrc1->OpenStream( CREATE_CONST_ASC( "\3PICT" ));
     SvStorageStream* pStp = xSrc4;
     pStp->SetNumberFormatInt( NUMBERFORMAT_INT_LITTLEENDIAN );
-    BYTE aTestA[10];		// Ist der 01Ole-Stream ueberhaupt vorhanden
+    BYTE aTestA[10];        // Ist der 01Ole-Stream ueberhaupt vorhanden
     ULONG nReadTst = pStp->Read( aTestA, sizeof( aTestA ) );
     if (nReadTst != sizeof(aTestA))
         return false;
@@ -377,7 +377,7 @@ SwFrmFmt* SwWW8ImplReader::ImportOle(const Graphic* pGrf,
 
             // Abstand/Umrandung raus
             if (!mbNewDoc)
-                Reader::ResetFrmFmtAttrs( *pTempSet );	
+                Reader::ResetFrmFmtAttrs( *pTempSet );  
 
             SwFmtAnchor aAnchor( FLY_IN_CNTNT );
             aAnchor.SetAnchor( pPaM->GetPoint() );
@@ -398,12 +398,12 @@ SwFrmFmt* SwWW8ImplReader::ImportOle(const Graphic* pGrf,
             }
         }
 
-        if (pRet)		// Ole-Object wurde eingefuegt
+        if (pRet)       // Ole-Object wurde eingefuegt
         {
             if (pRet->ISA(SdrOle2Obj))
             {
                 pFmt = InsertOle(*((SdrOle2Obj*)pRet),*pFlySet);
-                delete pRet;		// das brauchen wir nicht mehr
+                delete pRet;        // das brauchen wir nicht mehr
             }
             else
                 pFmt = rDoc.Insert(*pPaM, *pRet, pFlySet);
@@ -453,14 +453,14 @@ SdrObject* SwWW8ImplReader::ImportOleBase( Graphic& rGraph,
     {
         ASSERT( pStg, "ohne storage geht hier fast gar nichts!" );
 
-        ::SetProgressState( nProgress, rDoc.GetDocShell() );	 // Update
+        ::SetProgressState( nProgress, rDoc.GetDocShell() );     // Update
 
-        long nX=0, nY=0;				// nX, nY is graphic size
+        long nX=0, nY=0;                // nX, nY is graphic size
         bool bOleOk = true;
 
         String aSrcStgName = '_';
         // ergibt Name "_4711"
-        aSrcStgName += String::CreateFromInt32( nObjLocFc );		
+        aSrcStgName += String::CreateFromInt32( nObjLocFc );        
 
         SvStorageRef xSrc0 = pStg->OpenStorage(CREATE_CONST_ASC(
             SL::aObjectPool));
@@ -492,7 +492,7 @@ SdrObject* SwWW8ImplReader::ImportOleBase( Graphic& rGraph,
                 // PICT: kein WMF da -> Grafik statt OLE
                 bOleOk = false;
             }
-        }		// StorageStreams wieder zu
+        }       // StorageStreams wieder zu
 
 
         Rectangle aRect(0, 0, nX, nY);
@@ -526,7 +526,7 @@ SdrObject* SwWW8ImplReader::ImportOleBase( Graphic& rGraph,
         if (GRAPHIC_GDIMETAFILE == rGraph.GetType() ||
             GRAPHIC_BITMAP == rGraph.GetType())
         {
-            ::SetProgressState( nProgress, rDoc.GetDocShell() );	 // Update
+            ::SetProgressState( nProgress, rDoc.GetDocShell() );     // Update
 
             if (bOleOk)
             {
@@ -708,7 +708,7 @@ void SwWW8ImplReader::Read_CRevisionMark(SwRedlineType eType,
 {
     // there *must* be a SprmCIbstRMark[Del] and a SprmCDttmRMark[Del]
     // pointing to the very same char position as our SprmCFRMark[Del]
-    if (!pPlcxMan || bIgnoreText) 
+    if (!pPlcxMan)
         return;
     const BYTE* pSprmCIbstRMark;
     const BYTE* pSprmCDttmRMark;
