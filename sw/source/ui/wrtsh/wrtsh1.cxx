@@ -2,9 +2,9 @@
  *
  *  $RCSfile: wrtsh1.cxx,v $
  *
- *  $Revision: 1.23 $
+ *  $Revision: 1.24 $
  *
- *  last change: $Author: hjs $ $Date: 2003-08-19 12:29:15 $
+ *  last change: $Author: rt $ $Date: 2003-09-19 08:50:11 $
  *
  *  The Contents of this file are made available subject to the terms of
  *  either of the following licenses
@@ -125,12 +125,6 @@
 #endif
 #ifndef _SVX_BRKITEM_HXX //autogen
 #include <svx/brkitem.hxx>
-#endif
-#ifndef SMDLL0_HXX //autogen
-#include <starmath/smdll0.hxx>
-#endif
-#ifndef _SCHDLL0_HXX
-#include <sch/schdll0.hxx>
 #endif
 #ifndef _SCH_DLL_HXX
 #include <sch/schdll.hxx>
@@ -506,7 +500,7 @@ void SwWrtShell::Insert( const String &rPath, const String &rFilter,
 ------------------------------------------------------------------------*/
 
 
-void SwWrtShell::Insert( SvInPlaceObjectRef *pRef, SvGlobalName *pName, 
+void SwWrtShell::Insert( SvInPlaceObjectRef *pRef, SvGlobalName *pName,
                             BOOL bActivate, USHORT nSlotId, SfxRequest* pReq )
 {
     ResetCursorStack();
@@ -524,19 +518,7 @@ void SwWrtShell::Insert( SvInPlaceObjectRef *pRef, SvGlobalName *pName,
         BOOL bDoVerb = TRUE;
         if ( pName )
         {
-            const SotFactory* pFact = SvFactory::Find( *pName );
-            if ( pFact )
-            {
-                SvStorageRef aStor = new SvStorage( aEmptyStr );
-                xIPObj = &((SvFactory*)SvInPlaceObject::ClassFactory())->CreateAndInit( *pName,aStor );
-            }
-            else
-            {
-                SvStorageRef aStor = new SvStorage( FALSE, aEmptyStr );
-                String aFileName;
-                BOOL bOk;
-                xIPObj = SvOutPlaceObject::InsertObject( NULL, &aStor, bOk, *pName, aFileName );
-            }
+            xIPObj = SvInPlaceObject::CreateObject( *pName );
         }
         else
         {
@@ -568,7 +550,7 @@ void SwWrtShell::Insert( SvInPlaceObjectRef *pRef, SvGlobalName *pName,
                     xIPObj = aDlg.Execute( GetWin(), aStor);
                     bDoVerb = FALSE;
                     if(pReq)
-                    {        
+                    {
                         INetURLObject* pURL = aDlg.GetURL();
                         if(pURL)
                             pReq->AppendItem(SfxStringItem(FN_PARAM_2, pURL->GetMainURL(INetURLObject::NO_DECODE)));
@@ -583,7 +565,7 @@ void SwWrtShell::Insert( SvInPlaceObjectRef *pRef, SvGlobalName *pName,
                     aDlg.SetHelpId(nSlotId);
                     xIPObj = aDlg.Execute( GetWin(), aStor);
                     if(pReq)
-                    {        
+                    {
                         SvAppletObjectRef xApplet ( xIPObj );
                         if(xApplet.Is())
                             pReq->AppendItem(SfxStringItem(FN_PARAM_1 , xApplet->GetCodeBase()));
@@ -604,12 +586,12 @@ void SwWrtShell::Insert( SvInPlaceObjectRef *pRef, SvGlobalName *pName,
                         const SfxFrameDescriptor* pDescriptor = xFloatingFrame->GetFrameDescriptor();
                         pReq->AppendItem(SfxStringItem(FN_PARAM_1, pDescriptor->GetName()));
                         pReq->AppendItem(
-                                SfxStringItem( FN_PARAM_2, 
+                                SfxStringItem( FN_PARAM_2,
                                     pDescriptor->GetURL().GetMainURL(INetURLObject::NO_DECODE)));
                         pReq->AppendItem(SvxSizeItem(FN_PARAM_3, pDescriptor->GetMargin()));
                         pReq->AppendItem(SfxByteItem(FN_PARAM_4, pDescriptor->GetScrollingMode()));
                         pReq->AppendItem(SfxBoolItem(FN_PARAM_5, pDescriptor->HasFrameBorder()));
-                    }        
+                    }
                     bDoVerb = FALSE;
                 }
 
@@ -687,7 +669,7 @@ BOOL SwWrtShell::InsertOle( SvInPlaceObjectRef aRef )
         String aDummy;
         // determine source CLSID
         aRef->SvPseudoObject::FillClass( &aCLSID, &lDummy, &aDummy, &aDummy, &aDummy);
-        bStarMath = 0 != SmModuleDummy::HasID( *aRef->GetSvFactory() );
+        bStarMath = SotExchange::IsMath( *aRef->GetSvFactory() );
 
         if( IsSelection() )
         {
@@ -770,7 +752,7 @@ void SwWrtShell::LaunchOLEObj( long nVerb )
         {
             SvGlobalName aObjClsId( *xRef->GetSvFactory() );
             SchMemChart* pMemChart;
-            if( SchModuleDummy::HasID( aObjClsId ) &&
+            if( SotExchange::IsChart( aObjClsId ) &&
                 0 != (pMemChart = SchDLL::GetChartData( xRef ) ))
             {
                 pMemChart->SetSelectionHdl( LINK( this, SwWrtShell,
