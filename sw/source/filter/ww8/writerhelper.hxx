@@ -2,9 +2,9 @@
  *
  *  $RCSfile: writerhelper.hxx,v $
  *
- *  $Revision: 1.9 $
+ *  $Revision: 1.10 $
  *
- *  last change: $Author: obo $ $Date: 2004-04-27 14:10:42 $
+ *  last change: $Author: kz $ $Date: 2004-10-04 19:18:10 $
  *
  *  The Contents of this file are made available subject to the terms of
  *  either of the following licenses
@@ -69,6 +69,12 @@
 #include <vector>
 #include <map>
 
+#ifndef _COM_SUN_STAR_EMBED_XEMBEDDEDOBJECT_HPP_
+#include <com/sun/star/embed/XEmbeddedObject.hpp>
+#endif
+
+#include <sfx2/objsh.hxx>
+
 #ifndef WW_TYPES
 #   include "types.hxx"
 #endif
@@ -91,9 +97,6 @@
 #ifndef _PAM_HXX
 #   include <pam.hxx>                  //SwPaM
 #endif
-#ifndef _IPOBJ_HXX
-#   include <so3/ipobj.hxx>            //SvInPlaceObjectRef
-#endif
 #ifndef _TL_POLY_HXX
 #   include <tools/poly.hxx>           //Polygon, PolyPolygon
 #endif
@@ -108,19 +111,19 @@ class SwTxtFmtColl;
 class SwCharFmt;
 class SdrObject;
 class SdrOle2Obj;
-class SvPersist;
 class OutlinerParaObject;
 class SdrTextObj;
 class SwNumFmt;
 class SwTxtNode;
 class SwNoTxtNode;
 class SwFmtCharFmt;
+class Graphic;
 
 namespace sw
 {
     namespace util
     {
-        class ItemSort 
+        class ItemSort
             : public std::binary_function<sal_uInt16, sal_uInt16, bool>
         {
         public:
@@ -146,8 +149,8 @@ namespace sw
         In word all frames are effectively anchored to character or as
         character. This is nice and simple, writer is massively complex in this
         area, so this sw::Frame simplies matters by providing a single unified
-        view of the multitute of elements in writer and their differing quirks. 
-        
+        view of the multitute of elements in writer and their differing quirks.
+
         A sw::Frame wraps a writer frame and is guaranted to have a suitable
         anchor position available from it. It hides much of the needless
         complexity of the multitude of floating/inline elements in writer, it...
@@ -157,7 +160,7 @@ namespace sw
         Provides a simple way to flag what type of entity this frame describes.
         Provides the size of the element as drawn by writer.
 
-        @author 
+        @author
         <a href="mailto:cmc@openoffice.org">Caol&aacute;n McNamara</a>
     */
     class Frame
@@ -176,21 +179,21 @@ namespace sw
 
         /** Get the writer SwFrmFmt that this object describes
 
-            @return 
+            @return
             The wrapped SwFrmFmt
         */
         const SwFrmFmt &GetFrmFmt() const { return *mpFlyFrm; }
 
         /** Get the position this frame is anchored at
 
-            @return 
+            @return
             The anchor position of this frame
         */
         const SwPosition &GetPosition() const { return maPos; }
 
         /** Get the node this frame is anchored into
 
-            @return 
+            @return
             The SwTxtNode this frame is anchored inside
         */
         const SwCntntNode *GetCntntNode() const
@@ -198,21 +201,21 @@ namespace sw
 
         /** Get the type of frame that this wraps
 
-            @return 
+            @return
             a WriterSource which describes the source type of this wrapper
         */
         WriterSource GetWriterType() const { return meWriterType; }
 
         /** Is this frame inline (as character)
 
-            @return 
+            @return
             whether this is inline or not
         */
         bool IsInline() const;
 
 
         /** Even if the frame isn't an inline frame, force it to behave as one
-       
+
             There are a variety of circumstances where word cannot have
             anything except inline elements, e.g. inside frames. So its easier
             to force this sw::Frame into behaving as one, instead of special
@@ -222,7 +225,7 @@ namespace sw
         void ForceTreatAsInline();
 
         /** Get the first node of content in the frame
-         
+
          @return
          the first node of content in the frame, might not be any at all.
         */
@@ -230,7 +233,7 @@ namespace sw
 
 
         /** Does this sw::Frame refer to the same writer content as another
-         
+
          @return
          if the two sw::Frames are handling the same writer frame
         */
@@ -240,13 +243,13 @@ namespace sw
         }
 
         /** The Size of the contained element
-         
+
          @return
          the best size to use to export to word
         */
         const Size GetSize() const { return maSize; }
     };
-    
+
     /// STL container of Frames
     typedef std::vector<Frame> Frames;
     /// STL iterator for Frames
@@ -258,23 +261,23 @@ namespace sw
     namespace util
     {
         /** Provide a dynamic_cast style cast for SfxPoolItems
-         
+
             A SfxPoolItem generally need to be cast back to its original type
             to be useful, which is both tedious and errorprone. So item_cast is
             a helper template to aid the process and test if the cast is
             correct.
 
-            @param rItem 
+            @param rItem
             The SfxPoolItem which is to be casted
 
-            @tplparam T 
+            @tplparam T
             A SfxPoolItem derived class to cast rItem to
 
             @return A rItem upcasted back to a T
 
             @exception std::bad_cast Thrown if the rItem was not a T
 
-            @author 
+            @author
             <a href="mailto:cmc@openoffice.org">Caol&aacute;n McNamara</a>
         */
         template<class T> const T & item_cast(const SfxPoolItem &rItem)
@@ -286,21 +289,21 @@ namespace sw
         }
 
         /** Provide a dynamic_cast style cast for SfxPoolItems
-         
+
             A SfxPoolItem generally need to be cast back to its original type
             to be useful, which is both tedious and errorprone. So item_cast is
             a helper template to aid the process and test if the cast is
             correct.
 
-            @param pItem 
+            @param pItem
             The SfxPoolItem which is to be casted
 
-            @tplparam T 
+            @tplparam T
             A SfxPoolItem derived class to cast pItem to
 
             @return A pItem upcasted back to a T or 0 if pItem was not a T
 
-            @author 
+            @author
             <a href="mailto:cmc@openoffice.org">Caol&aacute;n McNamara</a>
         */
         template<class T> const T * item_cast(const SfxPoolItem *pItem)
@@ -319,23 +322,23 @@ namespace sw
             ItemGet uses item_cast () on the retrived reference to test that the
             retrived property is of the type that the developer thinks it is.
 
-            @param rNode 
+            @param rNode
             The SwCntntNode to retrieve the property from
 
-            @param eType 
+            @param eType
             The numeric identifier of the property to be retrieved
 
-            @tplparam T 
+            @tplparam T
             A SfxPoolItem derived class of the retrieved property
 
             @exception std::bad_cast Thrown if the property was not a T
 
             @return The T requested
 
-            @author 
+            @author
             <a href="mailto:cmc@openoffice.org">Caol&aacute;n McNamara</a>
         */
-        template<class T> const T & ItemGet(const SwCntntNode &rNode, 
+        template<class T> const T & ItemGet(const SwCntntNode &rNode,
             sal_uInt16 eType) throw(std::bad_cast)
         {
             return item_cast<T>(rNode.GetAttr(eType));
@@ -350,21 +353,21 @@ namespace sw
             ItemGet uses item_cast () on the retrived reference to test that the
             retrived property is of the type that the developer thinks it is.
 
-            @param rFmt 
+            @param rFmt
             The SwFmt to retrieve the property from
 
-            @param eType 
+            @param eType
             The numeric identifier of the property to be retrieved
 
-            @tplparam T 
+            @tplparam T
             A SfxPoolItem derived class of the retrieved property
 
             @exception std::bad_cast Thrown if the property was not a T
 
-            @author 
+            @author
             <a href="mailto:cmc@openoffice.org">Caol&aacute;n McNamara</a>
         */
-        template<class T> const T & ItemGet(const SwFmt &rFmt, 
+        template<class T> const T & ItemGet(const SwFmt &rFmt,
             sal_uInt16 eType) throw(std::bad_cast)
         {
             return item_cast<T>(rFmt.GetAttr(eType));
@@ -379,23 +382,23 @@ namespace sw
             ItemGet uses item_cast () on the retrived reference to test that the
             retrived property is of the type that the developer thinks it is.
 
-            @param rSet 
+            @param rSet
             The SfxItemSet to retrieve the property from
 
-            @param eType 
+            @param eType
             The numeric identifier of the property to be retrieved
 
-            @tplparam T 
+            @tplparam T
             A SfxPoolItem derived class of the retrieved property
 
             @exception std::bad_cast Thrown if the property was not a T
 
             @return The T requested
 
-            @author 
+            @author
             <a href="mailto:cmc@openoffice.org">Caol&aacute;n McNamara</a>
         */
-        template<class T> const T & ItemGet(const SfxItemSet &rSet, 
+        template<class T> const T & ItemGet(const SfxItemSet &rSet,
             sal_uInt16 eType) throw(std::bad_cast)
         {
             return item_cast<T>(rSet.Get(eType));
@@ -414,20 +417,20 @@ namespace sw
             that the retrived property is of the type that the developer thinks
             it is.
 
-            @param rPool 
+            @param rPool
             The SfxItemPool whose default property we want
 
-            @param eType 
+            @param eType
             The numeric identifier of the default property to be retrieved
 
-            @tplparam T 
+            @tplparam T
             A SfxPoolItem derived class of the retrieved property
 
             @exception std::bad_cast Thrown if the property was not a T
 
             @return The T requested
 
-            @author 
+            @author
             <a href="mailto:cmc@openoffice.org">Caol&aacute;n McNamara</a>
         */
         template<class T> const T & DefaultItemGet(const SfxItemPool &rPool,
@@ -450,23 +453,23 @@ namespace sw
             that the retrived property is of the type that the developer thinks
             it is.
 
-            @param rPool 
+            @param rPool
             The SfxItemPool whose default property we want
 
-            @param eType 
+            @param eType
             The numeric identifier of the default property to be retrieved
 
-            @tplparam T 
+            @tplparam T
             A SfxPoolItem derived class of the retrieved property
 
             @exception std::bad_cast Thrown if the property was not a T
 
             @return The T requested
 
-            @author 
+            @author
             <a href="mailto:cmc@openoffice.org">Caol&aacute;n McNamara</a>
         */
-        template<class T> const T & DefaultItemGet(const SwDoc &rDoc, 
+        template<class T> const T & DefaultItemGet(const SwDoc &rDoc,
             sal_uInt16 eType) throw(std::bad_cast)
         {
             return DefaultItemGet<T>(rDoc.GetAttrPool(), eType);
@@ -489,15 +492,15 @@ namespace sw
             @param rSet
             The SfxItemSet whose property we want
 
-            @param eType 
+            @param eType
             The numeric identifier of the default property to be retrieved
 
-            @tplparam T 
+            @tplparam T
             A SfxPoolItem derived class of the retrieved property
 
             @return The T requested or 0 if no T found with id eType
 
-            @author 
+            @author
             <a href="mailto:cmc@openoffice.org">Caol&aacute;n McNamara</a>
         */
         template<class T> const T* HasItem(const SfxItemSet &rSet,
@@ -522,15 +525,15 @@ namespace sw
             @param rSet
             The SwFmt whose property we want
 
-            @param eType 
+            @param eType
             The numeric identifier of the default property to be retrieved
 
-            @tplparam T 
+            @tplparam T
             A SfxPoolItem derived class of the retrieved property
 
             @return The T requested or 0 if no T found with id eType
 
-            @author 
+            @author
             <a href="mailto:cmc@openoffice.org">Caol&aacute;n McNamara</a>
         */
         template<class T> const T* HasItem(const SwFmt &rFmt,
@@ -540,17 +543,17 @@ namespace sw
         }
 
         /** Get the Paragraph Styles of a SwDoc
-        
+
             Writer's styles are in one of those dreaded macro based pre-STL
             containers. Give me an STL container of the paragraph styles
             instead.
 
-            @param rDoc 
+            @param rDoc
             The SwDoc document to get the styles from
 
             @return A ParaStyles containing the SwDoc's Paragraph Styles
 
-            @author 
+            @author
             <a href="mailto:cmc@openoffice.org">Caol&aacute;n McNamara</a>
         */
         ParaStyles GetParaStyles(const SwDoc &rDoc);
@@ -561,7 +564,7 @@ namespace sw
             Its surprisingly tricky to get a style when all you have is a name,
             but that's what this does
 
-            @param rDoc 
+            @param rDoc
             The SwDoc document to search in
 
             @param rName
@@ -569,7 +572,7 @@ namespace sw
 
             @return A Paragraph Style if one exists which matches the name
 
-            @author 
+            @author
             <a href="mailto:cmc@openoffice.org">Caol&aacute;n McNamara</a>
         */
         SwTxtFmtColl* GetParaStyle(SwDoc &rDoc, const String& rName);
@@ -579,7 +582,7 @@ namespace sw
             Its surprisingly tricky to get a style when all you have is a name,
             but that's what this does
 
-            @param rDoc 
+            @param rDoc
             The SwDoc document to search in
 
             @param rName
@@ -587,7 +590,7 @@ namespace sw
 
             @return A Character Style if one exists which matches the name
 
-            @author 
+            @author
             <a href="mailto:cmc@openoffice.org">Caol&aacute;n McNamara</a>
         */
         SwCharFmt* GetCharStyle(SwDoc &rDoc, const String& rName);
@@ -598,16 +601,16 @@ namespace sw
             Normal/Heading2/Heading1 at their default outline levels of body
             level/level 2/level 1 sorts them to Heading1/Heading2/Normal
 
-            @param rStyles 
+            @param rStyles
             The ParaStyles to sort
 
-            @author 
+            @author
             <a href="mailto:cmc@openoffice.org">Caol&aacute;n McNamara</a>
         */
         void SortByOutline(ParaStyles &rStyles);
 
         /** Get the SfxPoolItems of a SfxItemSet
-        
+
             Writer's SfxPoolItems (attributes) are in one of those dreaded
             macro based pre-STL containers. Give me an STL container of the
             items instead.
@@ -618,15 +621,15 @@ namespace sw
             @param rItems
             The sw::PoolItems to put the items into
 
-            @author 
+            @author
             <a href="mailto:cmc@openoffice.org">Caol&aacute;n McNamara</a>
         */
         void GetPoolItems(const SfxItemSet &rSet, PoolItems &rItems);
 
-        const SfxPoolItem *SearchPoolItems(const PoolItems &rItems, 
+        const SfxPoolItem *SearchPoolItems(const PoolItems &rItems,
             sal_uInt16 eType);
 
-        template<class T> const T* HasItem(const sw::PoolItems &rItems, 
+        template<class T> const T* HasItem(const sw::PoolItems &rItems,
             sal_uInt16 eType)
         {
             return item_cast<T>(SearchPoolItems(rItems, eType));
@@ -640,7 +643,7 @@ namespace sw
             contains attributes, and a SwFmtCharFmt is a "Character Style",
             so if the SfxItemSet contains bold and so does the character style
             then delete bold from the SfxItemSet
-          
+
             @param
             rFmt the SwFmtCharFmt which describes the Character Style
 
@@ -656,7 +659,7 @@ namespace sw
         void ClearOverridesFromSet(const SwFmtCharFmt &rFmt, SfxItemSet &rSet);
 
         /** Get the Floating elements in a SwDoc
-        
+
             Writer's FrmFmts may or may not be anchored to some text content,
             e.g. Page Anchored elements will not be. For the winword export we
             need them to have something to be anchored to. So this method
@@ -665,7 +668,7 @@ namespace sw
             This will include drawing objects, use GetNonDrawingFrames if
             you are not interested in the drawing objects.
 
-            @param rDoc 
+            @param rDoc
             The SwDoc document to get the styles from
 
             @param pPaM
@@ -674,13 +677,13 @@ namespace sw
 
             @return A Frames containing the selections Floating elements
 
-            @author 
+            @author
             <a href="mailto:cmc@openoffice.org">Caol&aacute;n McNamara</a>
         */
         Frames GetAllFrames(const SwDoc &rDoc, SwPaM *pPaM = 0);
 
         /** Get the Floating elements in a SwDoc
-        
+
             Writer's FrmFmts may or may not be anchored to some text content,
             e.g. Page Anchored elements will not be. For the winword export we
             need them to have something to be anchored to. So this method
@@ -689,7 +692,7 @@ namespace sw
             This will not include drawing objects, use GetAllFrames if you
             are interested in the drawing objects.
 
-            @param rDoc 
+            @param rDoc
             The SwDoc document to get the styles from
 
             @param pPaM
@@ -698,7 +701,7 @@ namespace sw
 
             @return A Frames containing the selections Floating elements
 
-            @author 
+            @author
             <a href="mailto:cmc@openoffice.org">Caol&aacute;n McNamara</a>
         */
         Frames GetNonDrawingFrames(const SwDoc &rDoc, SwPaM *pPaM = 0);
@@ -715,7 +718,7 @@ namespace sw
 
             @return the Frames in rFrames anchored to rNode
 
-            @author 
+            @author
             <a href="mailto:cmc@openoffice.org">Caol&aacute;n McNamara</a>
         */
         Frames GetFramesInNode(const Frames &rFrames, const SwNode &rNode);
@@ -740,7 +743,7 @@ namespace sw
             @author
             <a href="mailto:cmc@openoffice.org">Caol&aacute;n McNamara</a>
         */
-        Frames GetFramesBetweenNodes(const Frames &rFrames, 
+        Frames GetFramesBetweenNodes(const Frames &rFrames,
                 const SwNode &rStart, const SwNode &rEnd);
 
         /** Get the Numbering Format used on a paragraph
@@ -751,14 +754,14 @@ namespace sw
             numbering itself, just how you get it from the SwTxtNode. Needless
             to say the filter generally couldn't care less what type of
             numbering is in use.
-          
+
             @param rTxtNode
             The SwTxtNode that is the paragraph
 
             @return A SwNumFmt pointer that describes the numbering level
             on this paragraph, or 0 if there is none.
 
-            @author 
+            @author
             <a href="mailto:cmc@openoffice.org">Caol&aacute;n McNamara</a>
         */
         const SwNumFmt* GetNumFmtFromTxtNode(const SwTxtNode &rTxtNode);
@@ -776,20 +779,20 @@ namespace sw
             numbering itself, just how you get it from the SwTxtNode. Needless
             to say the filter generally couldn't care less what type of
             numbering is in use.
-          
+
             @param rFmt
             The SwFrmFmt that may describe a graphic
 
             @return A SwNoTxtNode pointer that describes the graphic of this
             frame if there is one, or 0 if there is none.
 
-            @author 
+            @author
             <a href="mailto:cmc@openoffice.org">Caol&aacute;n McNamara</a>
         */
         SwNoTxtNode *GetNoTxtNodeFromSwFrmFmt(const SwFrmFmt &rFmt);
 
         /** Does a node have a "page break before" applied
-        
+
             Both text nodes and tables in writer can have "page break before"
             This function gives a unified view to both entities
 
@@ -798,7 +801,7 @@ namespace sw
 
             @return true if there is a page break, false otherwise
 
-            @author 
+            @author
             <a href="mailto:cmc@openoffice.org">Caol&aacute;n McNamara</a>
         */
         bool HasPageBreak(const SwNode &rNode);
@@ -808,7 +811,7 @@ namespace sw
             For no good reason except to complicate my life writer tabs are
             relative to the left of the paragraph text body indent. More
             reasonably word's are absolute.
-            
+
             AdjustTabs converts the tabs in rTabs originally relative from
             nScrLeft to be relative to nDestLeft. For example nSrcLeft would be
             0 when converting from word to writer, and vice versa when
@@ -826,7 +829,7 @@ namespace sw
 
             @return true if there was any tabs changed, false otherwise
 
-            @author 
+            @author
             <a href="mailto:cmc@openoffice.org">Caol&aacute;n McNamara</a>
 
        */
@@ -834,7 +837,7 @@ namespace sw
 
 
         /** Make a best fit Polygon from a PolyPolygon
-        
+
             For custom contours in writer we use a PolyPolygon, while word uses
             a simple polygon, so we need to try and make the best polygon from
             a PolyPolygon
@@ -844,7 +847,7 @@ namespace sw
 
             @return best fit Polygon from rPolyPoly
 
-            @author 
+            @author
             <a href="mailto:cmc@openoffice.org">Caol&aacute;n McNamara</a>
         */
         Polygon PolygonFromPolyPolygon(const PolyPolygon &rPolyPoly);
@@ -872,7 +875,7 @@ namespace sw
             the bottom layer and SendObjectToHeaven for the top and we don't
             worry about the odd form layer design wrinkle.
 
-            @author 
+            @author
             <a href="mailto:cmc@openoffice.org">Caol&aacute;n McNamara</a>
         */
         class SetLayer
@@ -886,21 +889,21 @@ namespace sw
 
             /** Make Object live in the bottom drawing layer
 
-                @param rObject 
+                @param rObject
                 The object to be set to the bottom layer
             */
             void SendObjectToHell(SdrObject &rObject) const;
 
             /** Make Object lives in the top top layer
 
-                @param rObject 
+                @param rObject
                 The object to be set to the bottom layer
             */
             void SendObjectToHeaven(SdrObject &rObject) const;
 
             /** Normal constructor
 
-                @param rDoc 
+                @param rDoc
                 The Writer document whose drawing layers we will be inserting
                 objects into
             */
@@ -918,7 +921,7 @@ namespace sw
             Given a WhichId (the id that identifies a property e.g. bold) which
             is correct in a given SfxItemPool, get the equivalent whichId in
             another SfxItemPool
-            
+
             This arises because the drawing layer uses the same properties as
             writer e.g. SvxWeight, but for some reason uses different ids
             for the same properties as writer.
@@ -928,13 +931,13 @@ namespace sw
 
             @param rSrcPool
             The SfxItemPool in whose terms the Id is passed in
-        
+
             @param nWhich
             The Id to transform from source to dest
 
             @return 0 on failure, the correct property Id on success
 
-            @author 
+            @author
             <a href="mailto:cmc@openoffice.org">Caol&aacute;n McNamara</a>
         */
         USHORT TransformWhichBetweenPools(const SfxItemPool &rDestPool,
@@ -944,7 +947,7 @@ namespace sw
 
             Given a WhichId (the id that identifies a property e.g. bold) which
             is correct for a Writer document, get the equivalent whichId which
-            for a given SfxItemSet. 
+            for a given SfxItemSet.
 
             This arises because the drawing layer uses the same properties as
             writer e.g. SvxWeight, but for some reason uses different ids
@@ -958,18 +961,17 @@ namespace sw
 
             @param rDoc
             The SwDoc in whose terms the Id is passed in
-        
+
             @param nWhich
             The Id to transform from writer to the SfxItemSet's domain
 
             @return 0 on failure, the correct SfxItemSet Id on success
 
-            @author 
+            @author
             <a href="mailto:cmc@openoffice.org">Caol&aacute;n McNamara</a>
         */
-        USHORT GetSetWhichFromSwDocWhich(const SfxItemSet &rSet, 
+        USHORT GetSetWhichFromSwDocWhich(const SfxItemSet &rSet,
             const SwDoc &rDoc, USHORT nWhich);
-
 
 
         /** Make inserting an OLE object into a Writer document easy
@@ -977,8 +979,8 @@ namespace sw
             The rest of Office uses SdrOle2Obj for their OLE objects, Writer
             doesn't, which makes things a bit difficult as this is the type of
             object that the escher import code shared by the MSOffice filters
-            produces when it imports an OLE object. 
-            
+            produces when it imports an OLE object.
+
             This utility class takes ownership of the OLE object away from a
             SdrOle2Obj and can massage it into the condition best suited to
             insertion into Writer.
@@ -986,46 +988,47 @@ namespace sw
             If the object was not transferred into Writer then it is deleted
             during destruction.
 
-            @author 
+            @author
             <a href="mailto:cmc@openoffice.org">Caol&aacute;n McNamara</a>
         */
         class DrawingOLEAdaptor
         {
         private:
             String msOrigPersistName;
-            SvInPlaceObjectRef mxIPRef;
-            SvPersist &mrPers;
+            com::sun::star::uno::Reference < com::sun::star::embed::XEmbeddedObject > mxIPRef;
+            SfxObjectShell& mrPers;
+            Graphic* mpGraphic;
         public:
             /** Take ownership of a SdrOle2Objs OLE object
 
-                @param rObj 
+                @param rObj
                 The SdrOle2Obj whose OLE object we want to take control of
 
-                @param rPers 
+                @param rPers
                 The SvPersist of a SwDoc (SwDoc::GetPersist()) into which we
                 may want to move the object, or remove it from if unwanted.
             */
-            DrawingOLEAdaptor(SdrOle2Obj &rObj, SvPersist &rPers);
+            DrawingOLEAdaptor(SdrOle2Obj &rObj, SfxObjectShell &rPers);
 
             /// Destructor will destroy the owned OLE object if not transferred
             ~DrawingOLEAdaptor();
 
             /** Transfer ownership of the OLE object to a document's SvPersist
-           
+
                 TransferToDoc moves the object into the persist under the name
                 passed in. This name is then suitable to be used as an argument
-                to SwDoc::InsertOLE. 
+                to SwDoc::InsertOLE.
 
                 The object is no longer owned by the adaptor after this call,
                 subsequent calls are an error and return false.
 
-                @param rName 
-                The name to store the object under in the document.  
+                @param rName
+                The name to store the object under in the document.
 
                 @return On success true is returned, otherwise false. On
                 success rName is then suitable for user with SwDoc::InsertOLE
             */
-            bool TransferToDoc(const String &rName);
+            bool TransferToDoc(::rtl::OUString &rName);
         private:
             /// No assigning allowed
             DrawingOLEAdaptor& operator=(const DrawingOLEAdaptor&);
@@ -1043,7 +1046,7 @@ namespace sw
             from those that are not to return the currently being edited
             outliner if its exists, and the normal outliner if not. This method
             just gives me the text outliner that contains the visible text,
-            which is all anyone could really care about. 
+            which is all anyone could really care about.
 
             See OpenOffice.org issue 13885
             (http://www.openoffice.org/issues/show_bug.cgi?id=13885)
@@ -1069,7 +1072,7 @@ namespace sw
 
             @return a SvStream to dump data to
 
-            @author 
+            @author
             <a href="mailto:cmc@openoffice.org">Caol&aacute;n McNamara</a>
         */
         SvStream *CreateDebuggingStream(const String &rSuffix);
@@ -1089,7 +1092,7 @@ namespace sw
             @author
             <a href="mailto:cmc@openoffice.org">Caol&aacute;n McNamara</a>
         */
-        void DumpStream(const SvStream &rSrc, SvStream &rDest, 
+        void DumpStream(const SvStream &rSrc, SvStream &rDest,
             sal_uInt32 nLen = STREAM_SEEK_TO_END);
 #endif
     }
