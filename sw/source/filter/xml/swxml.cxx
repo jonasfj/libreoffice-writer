@@ -2,9 +2,9 @@
  *
  *  $RCSfile: swxml.cxx,v $
  *
- *  $Revision: 1.42 $
+ *  $Revision: 1.43 $
  *
- *  last change: $Author: dvo $ $Date: 2001-08-03 16:21:37 $
+ *  last change: $Author: jp $ $Date: 2001-11-14 16:28:24 $
  *
  *  The Contents of this file are made available subject to the terms of
  *  either of the following licenses
@@ -66,6 +66,9 @@
 
 #pragma hdrstop
 
+
+#define _SVSTDARR_STRINGS
+
 #ifndef _RSCSFX_HXX
 #include <rsc/rscsfx.hxx>
 #endif
@@ -95,14 +98,28 @@
 #include <com/sun/star/task/XStatusIndicatorFactory.hpp>
 #endif
 
+#include <svtools/svstdarr.hxx>
+
 #ifndef _SFXDOCFILE_HXX //autogen wg. SfxMedium
 #include <sfx2/docfile.hxx>
 #endif
-#ifndef _SFXECODE_HXX 
+#ifndef _SFXECODE_HXX
 #include <svtools/sfxecode.hxx>
 #endif
 #ifndef _UTL_STREAM_WRAPPER_HXX_
 #include <unotools/streamwrap.hxx>
+#endif
+#ifndef _XMLGRHLP_HXX
+#include <svx/xmlgrhlp.hxx>
+#endif
+#ifndef _XMLEOHLP_HXX
+#include <svx/xmleohlp.hxx>
+#endif
+#ifndef _COMPHELPER_GENERICPROPERTYSET_HXX_
+#include <comphelper/genericpropertyset.hxx>
+#endif
+#ifndef _RTL_LOGFILE_HXX_
+#include <rtl/logfile.hxx>
 #endif
 
 #ifndef _SWSWERROR_H
@@ -126,24 +143,15 @@
 #ifndef _SWMODULE_HXX
 #include <swmodule.hxx>
 #endif
-#ifndef _XMLGRHLP_HXX
-#include <svx/xmlgrhlp.hxx>
+#ifndef _SW_XMLSECTIONLIST_HXX
+#include <SwXMLSectionList.hxx>
 #endif
-#ifndef _XMLEOHLP_HXX
-#include <svx/xmleohlp.hxx>
-#endif
-#ifndef _COMPHELPER_GENERICPROPERTYSET_HXX_
-#include <comphelper/genericpropertyset.hxx>
-#endif
-#ifndef _STATSTR_HRC
-#include <statstr.hrc>
-#endif
-#ifndef _RTL_LOGFILE_HXX_
-#include <rtl/logfile.hxx>
+#ifndef _XMLIMP_HXX
+#include <xmlimp.hxx>
 #endif
 
-#ifndef _XMLIMP_HXX
-#include "xmlimp.hxx"
+#ifndef _STATSTR_HRC
+#include <statstr.hrc>
 #endif
 
 #define LOGFILE_AUTHOR "mb93740"
@@ -192,14 +200,14 @@ sal_Int32 ReadThroughComponent(
     DBG_ASSERT(NULL != pFilterName,"I need a service name for the component!");
 
     RTL_LOGFILE_CONTEXT_AUTHOR( aLog, "sw", LOGFILE_AUTHOR, "ReadThroughComponent" );
-    
+
     // prepare ParserInputSrouce
     xml::sax::InputSource aParserInput;
     aParserInput.sSystemId = rName;
-    aParserInput.aInputStream = xInputStream; 
+    aParserInput.aInputStream = xInputStream;
 
     // get parser
-    Reference< xml::sax::XParser > xParser( 
+    Reference< xml::sax::XParser > xParser(
         rFactory->createInstance(
             OUString::createFromAscii("com.sun.star.xml.sax.Parser") ),
         UNO_QUERY );
@@ -238,7 +246,7 @@ sal_Int32 ReadThroughComponent(
             {
                 // In formats only mode the reader's bInsertMode is set
                 if ( bFormatsOnly )
-                    pFilter->setStyleInsertMode( nStyleFamilyMask, 
+                    pFilter->setStyleInsertMode( nStyleFamilyMask,
                                                  !bMergeStyles );
                 if ( rInsertTextRange.is() )
                     pFilter->setTextInsertMode( rInsertTextRange );
@@ -255,7 +263,7 @@ sal_Int32 ReadThroughComponent(
 #ifdef TIMELOG
     // if we do profiling, we want to know the stream
     ByteString aString( (String)rStreamName, RTL_TEXTENCODING_ASCII_US );
-    RTL_LOGFILE_TRACE_AUTHOR1( "sw", LOGFILE_AUTHOR, 
+    RTL_LOGFILE_TRACE_AUTHOR1( "sw", LOGFILE_AUTHOR,
                                "ReadThroughComponent : parsing \"%s\"", aString.GetBuffer() );
 #endif
 
@@ -371,25 +379,25 @@ sal_Int32 ReadThroughComponent(
 
     // get input stream
     SvStorageStreamRef xEventsStream;
-    xEventsStream = pStorage->OpenStream( sStreamName, 
+    xEventsStream = pStorage->OpenStream( sStreamName,
                                           STREAM_READ | STREAM_NOCREATE );
     xEventsStream->SetBufferSize( 16*1024 );
 
     Any aAny;
-    sal_Bool bEncrypted = 
+    sal_Bool bEncrypted =
         xEventsStream->GetProperty(
                 OUString( RTL_CONSTASCII_USTRINGPARAM("Encrypted") ), aAny ) &&
         aAny.getValueType() == ::getBooleanCppuType() &&
         *(sal_Bool *)aAny.getValue();
 
-    Reference<io::XInputStream> xInputStream = 
+    Reference<io::XInputStream> xInputStream =
         new utl::OInputStreamWrapper( *xEventsStream );
 
     // read from the stream
     return ReadThroughComponent(
         xInputStream, xModelComponent, sStreamName, rFactory,
         pFilterName, rFilterArguments,
-        rName, bMustBeSuccessfull, bBlockMode, rInsertTextRange, bFormatsOnly, 
+        rName, bMustBeSuccessfull, bBlockMode, rInsertTextRange, bFormatsOnly,
         nStyleFamilyMask, bMergeStyles, bOrganizerMode, bEncrypted );
 }
 
@@ -500,10 +508,10 @@ sal_uInt32 XMLReader::Read( SwDoc &rDoc, SwPaM &rPaM, const String & rName )
     // create XPropertySet with three properties for status indicator
     comphelper::PropertyMapEntry aInfoMap[] =
     {
-        { "ProgressRange", sizeof("ProgressRange")-1, 0, 
-              &::getCppuType((sal_Int32*)0), 
+        { "ProgressRange", sizeof("ProgressRange")-1, 0,
+              &::getCppuType((sal_Int32*)0),
               beans::PropertyAttribute::MAYBEVOID, 0},
-        { "ProgressMax", sizeof("ProgressMax")-1, 0, 
+        { "ProgressMax", sizeof("ProgressMax")-1, 0,
               &::getCppuType((sal_Int32*)0),
               beans::PropertyAttribute::MAYBEVOID, 0},
         { "ProgressCurrent", sizeof("ProgressCurrent")-1, 0,
@@ -527,8 +535,8 @@ sal_uInt32 XMLReader::Read( SwDoc &rDoc, SwPaM &rPaM, const String & rName )
               beans::PropertyAttribute::MAYBEVOID, 0 },
         { NULL, 0, 0, NULL, 0, 0 }
     };
-    uno::Reference< beans::XPropertySet > xInfoSet( 
-                comphelper::GenericPropertySet_CreateInstance( 
+    uno::Reference< beans::XPropertySet > xInfoSet(
+                comphelper::GenericPropertySet_CreateInstance(
                             new comphelper::PropertySetInfo( aInfoMap ) ) );
 
     // try to get an XStatusIndicator from the Medium
@@ -587,7 +595,7 @@ sal_uInt32 XMLReader::Read( SwDoc &rDoc, SwPaM &rPaM, const String & rName )
     }
     else if( bInsertMode )
     {
-        xInsertTextRange = SwXTextRange::CreateTextRangeFromPosition( 
+        xInsertTextRange = SwXTextRange::CreateTextRangeFromPosition(
             &rDoc, *rPaM.GetPoint(), 0 );
     }
 
@@ -655,7 +663,7 @@ sal_uInt32 XMLReader::Read( SwDoc &rDoc, SwPaM &rPaM, const String & rName )
               aOpt.IsFmtsOnly() ) )
         {
             OUString sStreamName( RTL_CONSTASCII_USTRINGPARAM("layout-cache") );
-            SvStorageStreamRef xStrm = pStorage->OpenStream( sStreamName, 
+            SvStorageStreamRef xStrm = pStorage->OpenStream( sStreamName,
                                           STREAM_READ | STREAM_NOCREATE );
             if( xStrm.Is() && !xStrm->GetError() )
             {
@@ -674,11 +682,11 @@ sal_uInt32 XMLReader::Read( SwDoc &rDoc, SwPaM &rPaM, const String & rName )
     else
     {
         // read plain file
-        
-        // parse    
+
+        // parse
         if( xSource.is() )
         {
-            Reference< io::XActiveDataControl > xSourceControl( xSource, 
+            Reference< io::XActiveDataControl > xSourceControl( xSource,
                                                                 UNO_QUERY );
             xSourceControl->start();
         }
@@ -691,7 +699,7 @@ sal_uInt32 XMLReader::Read( SwDoc &rDoc, SwPaM &rPaM, const String & rName )
             IsOrganizerMode(), sal_False );
     }
 
-    aOpt.ResetAllFmtsOnly();	
+    aOpt.ResetAllFmtsOnly();
 
     // redline password
     aAny = xInfoSet->getPropertyValue( sRedlineProtectionKey );
@@ -732,3 +740,62 @@ sal_uInt32 XMLReader::Read( SwDoc &rDoc, SwPaM &rPaM, const String & rName )
 
     return nRet;
 }
+
+    // read the sections of the document, which is equal to the medium.
+    // returns the count of it
+USHORT XMLReader::GetSectionList( SfxMedium& rMedium,
+                                    SvStrings& rStrings ) const
+{
+    SvStorage* pStg;
+    Reference< lang::XMultiServiceFactory > xServiceFactory =
+            comphelper::getProcessServiceFactory();
+    ASSERT( xServiceFactory.is(),
+            "XMLReader::Read: got no service manager" );
+    if( xServiceFactory.is() && 0 != ( pStg = rMedium.GetStorage() ) )
+    {
+        xml::sax::InputSource aParserInput;
+        OUString sDocName( RTL_CONSTASCII_USTRINGPARAM( "content.xml" ) );
+        aParserInput.sSystemId = sDocName;
+        SvStorageStreamRef xDocStream = pStg->OpenStream( sDocName,
+            ( STREAM_READ | STREAM_SHARE_DENYWRITE | STREAM_NOCREATE ) );
+        xDocStream->Seek( 0L );
+        xDocStream->SetBufferSize( 16*1024 );
+        aParserInput.aInputStream = new utl::OInputStreamWrapper( *xDocStream );
+
+        // get parser
+        Reference< XInterface > xXMLParser = xServiceFactory->createInstance(
+            OUString::createFromAscii("com.sun.star.xml.sax.Parser") );
+        ASSERT( xXMLParser.is(),
+            "XMLReader::Read: com.sun.star.xml.sax.Parser service missing" );
+        if( xXMLParser.is() )
+        {
+            // get filter
+            Reference< xml::sax::XDocumentHandler > xFilter =
+                                        new SwXMLSectionList( rStrings );
+
+            // connect parser and filter
+            Reference< xml::sax::XParser > xParser( xXMLParser, UNO_QUERY );
+            xParser->setDocumentHandler( xFilter );
+
+            // parse
+            try
+            {
+                xParser->parseStream( aParserInput );
+            }
+            catch( xml::sax::SAXParseException&  )
+            {
+                // re throw ?
+            }
+            catch( xml::sax::SAXException&  )
+            {
+                // re throw ?
+            }
+            catch( io::IOException& )
+            {
+                // re throw ?
+            }
+        }
+    }
+    return rStrings.Count();
+}
+
