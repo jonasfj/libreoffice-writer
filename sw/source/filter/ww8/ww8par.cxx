@@ -2,9 +2,9 @@
  *
  *  $RCSfile: ww8par.cxx,v $
  *
- *  $Revision: 1.131 $
+ *  $Revision: 1.132 $
  *
- *  last change: $Author: hbrinkm $ $Date: 2004-03-11 12:49:38 $
+ *  last change: $Author: kz $ $Date: 2004-03-23 11:27:03 $
  *
  *  The Contents of this file are made available subject to the terms of
  *  either of the following licenses
@@ -233,7 +233,7 @@
 #ifndef _FCHRFMT_HXX
 #include <fchrfmt.hxx>
 #endif
-#ifndef _CHARFMT_HXX 
+#ifndef _CHARFMT_HXX
 #include <charfmt.hxx>
 #endif
 
@@ -1011,6 +1011,10 @@ void SwWW8ImplReader::ImportDop()
 
     rDoc.SetAddExtLeading(!pWDop->fNoLeading);
     rDoc.SetAddFlyOffsets( true );
+    rDoc.SetUseFormerLineSpacing( false );
+    // OD, MMAHER 2004-03-01 #i25901#- set new compatibility option
+    //      'Add paragraph and table spacing at bottom of table cells'
+    rDoc.SetAddParaSpacingToTableCells( true );
 
     if (!pWDop->fNoLeading)
         maTracer.Log(sw::log::eExtraLeading);
@@ -1178,7 +1182,7 @@ void WW8ReaderSave::Restore( SwWW8ImplReader* pRdr )
     pRdr->nAktColl = mnAktColl;
     pRdr->bHasBorder = mbHasBorder;
     pRdr->bFirstPara = mbFirstPara;
-    
+
     // schliesse alle Attribute, da sonst Attribute
     // entstehen koennen, die aus dem Fly rausragen
     pRdr->DeleteCtrlStk();
