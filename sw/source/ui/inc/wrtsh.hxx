@@ -2,9 +2,9 @@
  *
  *  $RCSfile: wrtsh.hxx,v $
  *
- *  $Revision: 1.24 $
+ *  $Revision: 1.25 $
  *
- *  last change: $Author: hr $ $Date: 2004-09-08 15:03:18 $
+ *  last change: $Author: hr $ $Date: 2004-09-08 16:56:41 $
  *
  *  The Contents of this file are made available subject to the terms of
  *  either of the following licenses
@@ -75,6 +75,7 @@
 #endif
 
 class Window;
+class OutputDevice;
 class SbxArray;
 class SwDoc;
 class SvInPlaceObjectRef;
@@ -150,7 +151,7 @@ public:
     BOOL	IsInSelect() const { return bInSelect; }
     void	SetInSelect(BOOL bSel = TRUE) { bInSelect = bSel; }
         // Liegt eine Text- oder Rahmenselektion vor?
-    BOOL    HasSelection() const { return SwCrsrShell::HasSelection() || 
+    BOOL    HasSelection() const { return SwCrsrShell::HasSelection() ||
                                         IsMultiSelection() || IsSelFrmMode() || IsObjSelected(); }
     FASTBOOL Pop( BOOL bOldCrsr = TRUE );
 
@@ -337,7 +338,7 @@ typedef FASTBOOL (SwWrtShell:: *FNSimpleMove)();
                           SvGlobalName *pName = 0,		// != 0 entspr. Object erzeugen.
                           BOOL bActivate = TRUE,
                           USHORT nSlotId = 0,       // SlotId fuer Dialog
-                          SfxRequest* pReq = 0 ); 
+                          SfxRequest* pReq = 0 );
 
     BOOL	InsertOle	( SvInPlaceObjectRef aRef  );	// In die Core einfuegen.
     void	LaunchOLEObj( long nVerb = 0 );				// Server starten
