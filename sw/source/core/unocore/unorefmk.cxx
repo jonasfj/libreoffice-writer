@@ -2,9 +2,9 @@
  *
  *  $RCSfile: unorefmk.cxx,v $
  *
- *  $Revision: 1.1.1.1 $
+ *  $Revision: 1.2 $
  *
- *  last change: $Author: hr $ $Date: 2000-09-19 00:08:28 $
+ *  last change: $Author: os $ $Date: 2001-01-12 16:12:45 $
  *
  *  The Contents of this file are made available subject to the terms of
  *  either of the following licenses
@@ -268,7 +268,7 @@ uno::Reference< text::XTextRange >  SwXReferenceMark::getAnchor(void) throw( uno
                                 new SwPaM(	rTxtNode, *pTxtMark->GetStart());
 
 
-                xRet = ::CreateTextRangeFromPosition(pDoc,
+                xRet = SwXTextRange::CreateTextRangeFromPosition(pDoc,
                         *pPam->Start(), pPam->End());
                 delete pPam;
             }
@@ -479,12 +479,15 @@ void SwXReferenceMark::removeVetoableChangeListener(
 /*------------------------------------------------------------------------
 
     $Log: not supported by cvs2svn $
+    Revision 1.1.1.1  2000/09/19 00:08:28  hr
+    initial import
+
     Revision 1.4  2000/09/18 16:04:34  willem.vandorp
     OpenOffice header added.
-    
+
     Revision 1.3  2000/09/12 11:42:59  os
     #78682# support of service TextContent
-    
+
     Revision 1.2  2000/09/11 09:57:06  os
     TYPEINFO
 

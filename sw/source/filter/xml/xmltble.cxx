@@ -2,9 +2,9 @@
  *
  *  $RCSfile: xmltble.cxx,v $
  *
- *  $Revision: 1.8 $
+ *  $Revision: 1.9 $
  *
- *  last change: $Author: dvo $ $Date: 2000-12-11 20:15:54 $
+ *  last change: $Author: os $ $Date: 2001-01-12 16:15:12 $
  *
  *  The Contents of this file are made available subject to the terms of
  *  either of the following licenses
@@ -67,7 +67,7 @@
 
 #include <hintids.hxx>
 
-#ifndef _RTL_USTRBUF_HXX_ 
+#ifndef _RTL_USTRBUF_HXX_
 #include <rtl/ustrbuf.hxx>
 #endif
 
@@ -95,39 +95,39 @@
 #include <xmloff/numehelp.hxx>
 #endif
 
-#ifndef _CNTRSRT_HXX 
+#ifndef _CNTRSRT_HXX
 #include <svtools/cntnrsrt.hxx>
 #endif
 #ifndef _ZFORLIST_HXX
 #include <svtools/zforlist.hxx>
 #endif
 
-#ifndef _SVX_BRSHITEM_HXX 
+#ifndef _SVX_BRSHITEM_HXX
 #include <svx/brshitem.hxx>
 #endif
-#ifndef _SVX_BOXITEM_HXX 
+#ifndef _SVX_BOXITEM_HXX
 #include <svx/boxitem.hxx>
 #endif
 
-#ifndef _SWTABLE_HXX 
+#ifndef _SWTABLE_HXX
 #include "swtable.hxx"
 #endif
-#ifndef _DOC_HXX 
+#ifndef _DOC_HXX
 #include "doc.hxx"
 #endif
-#ifndef _PAM_HXX 
+#ifndef _PAM_HXX
 #include "pam.hxx"
 #endif
-#ifndef _FRMFMT_HXX 
+#ifndef _FRMFMT_HXX
 #include "frmfmt.hxx"
 #endif
-#ifndef _WRTSWTBL_HXX 
+#ifndef _WRTSWTBL_HXX
 #include "wrtswtbl.hxx"
 #endif
-#ifndef _FMTFSIZE_HXX 
+#ifndef _FMTFSIZE_HXX
 #include "fmtfsize.hxx"
 #endif
-#ifndef _FMTORNT_HXX 
+#ifndef _FMTORNT_HXX
 #include "fmtornt.hxx"
 #endif
 #ifndef _CELLATR_HXX
@@ -174,9 +174,9 @@ Reference < XTextRange > lcl_xml_CreateTableBoxTextRange(
     aPaM.SetMark();
     aPaM.GetPoint()->nNode.Assign( rBoxSttNd );
     aPaM.Move( fnMoveForward, fnGoNode );
-                
+
     Reference < XTextRange > xTextRange =
-        CreateTextRangeFromPosition( aPaM.GetDoc(), *aPaM.GetPoint(),
+        SwXTextRange::CreateTextRangeFromPosition( aPaM.GetDoc(), *aPaM.GetPoint(),
                                      aPaM.GetMark() );
     return xTextRange;
 }
@@ -264,7 +264,7 @@ SwXMLTableLines_Impl::SwXMLTableLines_Impl( const SwTableLines& rLines ) :
             if( nBox < nBoxes-1U || nWidth==0UL )
             {
                 nCPos += (sal_uInt16)SwWriteTable::GetBoxWidth( pBox );
-                SwXMLTableColumn_Impl *pCol = 
+                SwXMLTableColumn_Impl *pCol =
                     new SwXMLTableColumn_Impl( nCPos );
 
                 if( !aCols.Insert( pCol ) )
@@ -456,7 +456,7 @@ sal_Bool SwXMLTableFrmFmtsSort_Impl::AddCell( SwFrmFmt& rFrmFmt,
     if( SFX_ITEM_SET == rItemSet.GetItemState( RES_BOX, sal_False, &pItem ) )
         pBox = (const SvxBoxItem *)pItem;
 
-    if ( SFX_ITEM_SET == rItemSet.GetItemState( RES_BOXATR_FORMAT, 
+    if ( SFX_ITEM_SET == rItemSet.GetItemState( RES_BOXATR_FORMAT,
                                                 sal_False, &pItem ) )
         nNumFormat = ((const SwTblBoxNumFormat *)pItem)->GetValue();
 
@@ -464,7 +464,7 @@ sal_Bool SwXMLTableFrmFmtsSort_Impl::AddCell( SwFrmFmt& rFrmFmt,
     if( !pVertOrient && !pBrush && !pBox )
         return sal_False;
 
-    // order is: -/-/box, -/brush/-, -/brush/box, 
+    // order is: -/-/box, -/brush/-, -/brush/box,
     // 			 vert/-/-, vert/-/box, vert/brush/-, vert/brush/box
     sal_uInt32 nCount = Count();
     sal_Bool bInsert = sal_True;
@@ -518,7 +518,7 @@ sal_Bool SwXMLTableFrmFmtsSort_Impl::AddCell( SwFrmFmt& rFrmFmt,
                 continue;
         }
 
-        if ( SFX_ITEM_SET == rTestSet.GetItemState( RES_BOXATR_FORMAT, 
+        if ( SFX_ITEM_SET == rTestSet.GetItemState( RES_BOXATR_FORMAT,
                                                 sal_False, &pItem ) )
             nTestNumFormat = ((const SwTblBoxNumFormat *)pItem)->GetValue();
 
@@ -606,7 +606,7 @@ void SwXMLExport::ExportTableLinesAutoStyles( const SwTableLines& rLines,
     if( !pTableLines )
         pTableLines = new SwXMLTableLinesCache_Impl( 5, 5 );
     pTableLines->Insert( pLines, pTableLines->Count() );
-    
+
     OUStringBuffer sBuffer( rNamePrefix.getLength() + 8L );
 
     // pass 2: export column styles
@@ -622,7 +622,7 @@ void SwXMLExport::ExportTableLinesAutoStyles( const SwTableLines& rLines,
             nCPos = pColumn->GetPos();
 
             sal_uInt32 nWidth = nCPos - nOldCPos;
-            
+
             // If a base width is given, the table has either an automatic
             // or margin alignment, or an percentage width. In either case,
             // relative widths should be exported.
@@ -638,7 +638,7 @@ void SwXMLExport::ExportTableLinesAutoStyles( const SwTableLines& rLines,
             if( nAbsWidth )
             {
                 sal_uInt32 nColAbsWidth = nWidth;
-                if( nBaseWidth )	
+                if( nBaseWidth )
                 {
                     nColAbsWidth *= nAbsWidth;
                     nColAbsWidth += (nBaseWidth/2UL);
@@ -670,7 +670,7 @@ void SwXMLExport::ExportTableLinesAutoStyles( const SwTableLines& rLines,
 
                 pColumn->SetStyleName( sBuffer.makeStringAndClear() );
                 ExportTableColumnStyle( *pColumn );
-                rExpCols.Insert( pColumn );		
+                rExpCols.Insert( pColumn );
             }
         }
     }
@@ -684,7 +684,7 @@ void SwXMLExport::ExportTableLinesAutoStyles( const SwTableLines& rLines,
         SwFrmFmt *pFrmFmt = pLine->GetFrmFmt();
         if( rExpRows.AddRow( *pFrmFmt, rNamePrefix, nLine ) )
             ExportFmt( *pFrmFmt, sXML_table_row );
-            
+
         const SwTableBoxes& rBoxes = pLine->GetTabBoxes();
         sal_uInt16 nBoxes = rBoxes.Count();
 
@@ -748,7 +748,7 @@ void SwXMLExport::ExportTableAutoStyles( const SwTableNode& rTblNd )
         sal_uInt32 nBaseWidth = 0UL;
         sal_Int8 nPrcWidth = rFrmSize.GetWidthPercent();
 
-        sal_Bool bFixAbsWidth = nPrcWidth != 0 || HORI_NONE == eTabHoriOri 
+        sal_Bool bFixAbsWidth = nPrcWidth != 0 || HORI_NONE == eTabHoriOri
                                            || HORI_FULL == eTabHoriOri;
         if( bFixAbsWidth )
         {
@@ -815,17 +815,17 @@ void SwXMLExport::ExportTableBox( const SwTableBox& rBox, sal_uInt16 nColSpan )
             {
                 OUString sCellFormula = xCell->getFormula();
 
-                // if this cell has a formula, export it 
+                // if this cell has a formula, export it
                 //     (with value and number format)
                 if (sCellFormula.getLength()>0)
                 {
                     // formula
-                    AddAttribute(XML_NAMESPACE_TABLE, sXML_formula, 
+                    AddAttribute(XML_NAMESPACE_TABLE, sXML_formula,
                                  sCellFormula);
                 }
 
                 // value and format (if NumberFormat != -1)
-                Reference<XPropertySet> xCellPropertySet(xCell, 
+                Reference<XPropertySet> xCellPropertySet(xCell,
                                                          UNO_QUERY);
                 if (xCellPropertySet.is())
                 {
@@ -836,7 +836,7 @@ void SwXMLExport::ExportTableBox( const SwTableBox& rBox, sal_uInt16 nColSpan )
                     if (NUMBERFORMAT_TEXT == nNumberFormat)
                     {
                         // text format
-                        AddAttributeASCII( XML_NAMESPACE_TABLE, 
+                        AddAttributeASCII( XML_NAMESPACE_TABLE,
                                            sXML_value_type, sXML_string );
                     }
                     else if (-1 != nNumberFormat)
@@ -944,11 +944,11 @@ void SwXMLExport::ExportTableLines( const SwTableLines& rLines,
     }
     ASSERT( pLines,
             "SwXMLExport::ExportTableLines: table columns info missing" );
-    ASSERT( 0==nInfoPos, 
+    ASSERT( 0==nInfoPos,
             "SwXMLExport::ExportTableLines: table columns infos are unsorted" );
     if( !pLines )
         return;
-    
+
     // pass 2: export columns
     const SwXMLTableColumns_Impl& rCols = pLines->GetColumns();
     sal_uInt16 nColumn = 0U;
@@ -958,7 +958,7 @@ void SwXMLExport::ExportTableLines( const SwTableLines& rLines,
     while( pColumn )
     {
         nColumn++;
-        SwXMLTableColumn_Impl *pNextColumn = 
+        SwXMLTableColumn_Impl *pNextColumn =
             (nColumn < nColumns) ? rCols[nColumn] : 0;
         if( pNextColumn &&
             pNextColumn->GetStyleName() == pColumn->GetStyleName() )
@@ -1060,31 +1060,31 @@ void SwXMLExport::ExportTable( const SwTableNode& rTblNd )
         if ( IS_TYPE(SwDDETable, &rTbl) )
         {
             // get DDE Field Type (contains the DDE connection)
-            const SwDDEFieldType* pDDEFldType = 
+            const SwDDEFieldType* pDDEFldType =
                 ((SwDDETable&)rTbl).GetDDEFldType();
 
             // connection name
-            AddAttribute( XML_NAMESPACE_OFFICE, sXML_name, 
+            AddAttribute( XML_NAMESPACE_OFFICE, sXML_name,
                           pDDEFldType->GetName() );
 
             // DDE command
             const String sCmd = pDDEFldType->GetCmd();
-            AddAttribute( XML_NAMESPACE_OFFICE, sXML_dde_application, 
+            AddAttribute( XML_NAMESPACE_OFFICE, sXML_dde_application,
                           sCmd.GetToken(0, cTokenSeperator) );
-            AddAttribute( XML_NAMESPACE_OFFICE, sXML_dde_item, 
+            AddAttribute( XML_NAMESPACE_OFFICE, sXML_dde_item,
                           sCmd.GetToken(1, cTokenSeperator) );
-            AddAttribute( XML_NAMESPACE_OFFICE, sXML_dde_topic, 
+            AddAttribute( XML_NAMESPACE_OFFICE, sXML_dde_topic,
                           sCmd.GetToken(2, cTokenSeperator) );
 
             // auto update
             if (pDDEFldType->GetType() == LINKUPDATE_ALWAYS)
             {
-                AddAttributeASCII( XML_NAMESPACE_OFFICE, 
+                AddAttributeASCII( XML_NAMESPACE_OFFICE,
                                    sXML_automatic_update, sXML_true );
             }
 
             // DDE source element (always empty)
-            SvXMLElementExport aSource(*this, XML_NAMESPACE_OFFICE, 
+            SvXMLElementExport aSource(*this, XML_NAMESPACE_OFFICE,
                                        sXML_dde_source, sal_True, sal_False);
         }
 
