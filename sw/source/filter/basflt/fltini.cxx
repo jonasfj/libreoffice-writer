@@ -2,9 +2,9 @@
  *
  *  $RCSfile: fltini.cxx,v $
  *
- *  $Revision: 1.24 $
+ *  $Revision: 1.25 $
  *
- *  last change: $Author: obo $ $Date: 2003-09-01 12:36:45 $
+ *  last change: $Author: rt $ $Date: 2003-09-19 08:44:45 $
  *
  *  The Contents of this file are made available subject to the terms of
  *  either of the following licenses
@@ -297,9 +297,9 @@ SwRead SwIoSystem::GetReader( const String& rFltName )
 
         // suche ueber den Filtertext den Filtereintrag
 const SfxFilter* SwIoSystem::GetFilterOfFilterTxt( const String& rFilterNm,
-                                const SfxFactoryFilterContainer* pCnt )
+                                const SfxFilterContainer* pCnt )
 {
-    const SfxFactoryFilterContainer* pFltCnt = pCnt ? pCnt :
+    const SfxFilterContainer* pFltCnt = pCnt ? pCnt :
         ( IsDocShellRegistered()
             ? SwDocShell::Factory().GetFilterContainer()
             : SwWebDocShell::Factory().GetFilterContainer() );
@@ -922,7 +922,7 @@ struct CharSetNameMap
 
 const CharSetNameMap *GetCharSetNameMap()
 {
-    static const CharSetNameMap aMapArr[] = 
+    static const CharSetNameMap aMapArr[] =
     {
 #   define IMPLENTRY(X) { RTL_TEXTENCODING_##X, "" #X "" }
         IMPLENTRY(DONTKNOW),
@@ -1044,7 +1044,7 @@ rtl_TextEncoding CharSetFromName(const String& rChrSetStr)
 
 
 /*
- Get the String name of an rtl_TextEncoding 
+ Get the String name of an rtl_TextEncoding
  */
 String NameFromCharSet(rtl_TextEncoding nChrSet)
 {
@@ -1061,7 +1061,7 @@ String NameFromCharSet(rtl_TextEncoding nChrSet)
     }
 
     ASSERT(pRet != pStart->pName, "TXT: That was an unknown language!");
-    
+
     return String::CreateFromAscii(pRet);
 }
 
@@ -1073,7 +1073,7 @@ struct LangNameMap
 
 const LangNameMap *GetLangNameMap()
 {
-    static const LangNameMap aMapArr[] = 
+    static const LangNameMap aMapArr[] =
     {
         {LANGUAGE_DONTKNOW,				    "DONTKNOW"				},
         {LANGUAGE_NONE,					    "NONE"					},
@@ -1271,7 +1271,7 @@ static LanguageType LanguageFromName(const String& rLngStr)
 {
     const LangNameMap *pStart = GetLangNameMap();
     LanguageType nRet = pStart->nId;
-    
+
     for (const LangNameMap *pMap = pStart; pMap->pLanguageNm; ++pMap)
     {
         if (rLngStr.EqualsIgnoreCaseAscii(pMap->pLanguageNm))
@@ -1282,7 +1282,7 @@ static LanguageType LanguageFromName(const String& rLngStr)
     }
 
     ASSERT(nRet != pStart->nId, "TXT: That was an unknown language!");
-    
+
     return nRet;
 }
 
@@ -1358,14 +1358,14 @@ void SwAsciiOptions::WriteUserData( String& rStr )
     // 2. LineEnd
     switch(eCRLF_Flag)
     {
-        case LINEEND_CRLF:	
-            rStr.AppendAscii( "CRLF" );		
+        case LINEEND_CRLF:
+            rStr.AppendAscii( "CRLF" );
             break;
-        case LINEEND_CR:	
-            rStr.AppendAscii(  "CR" );		
+        case LINEEND_CR:
+            rStr.AppendAscii(  "CR" );
             break;
-        case LINEEND_LF:	
-            rStr.AppendAscii(  "LF" );		
+        case LINEEND_LF:
+            rStr.AppendAscii(  "LF" );
             break;
     }
     rStr += ',';
