@@ -2,9 +2,9 @@
  *
  *  $RCSfile: unosect.cxx,v $
  *
- *  $Revision: 1.9 $
+ *  $Revision: 1.10 $
  *
- *  last change: $Author: dvo $ $Date: 2000-12-02 20:26:32 $
+ *  last change: $Author: os $ $Date: 2000-12-09 15:37:44 $
  *
  *  The Contents of this file are made available subject to the terms of
  *  either of the following licenses
@@ -213,7 +213,7 @@ SwXTextSection::SwXTextSection(SwSectionFmt* pFmt, BOOL bIndexHeader) :
 //  		_pMap(aSwMapProvider.getPropertyMap(PROPERTY_MAP_SECTION)),
         m_bIsDescriptor(pFmt == 0),
         m_bIndexHeader(bIndexHeader),
-        pProps(pFmt ? 0 : new SwTextSectionProperties_Impl)
+        pProps(pFmt ? 0 : new SwTextSectionProperties_Impl())
 {
 
 }
@@ -337,7 +337,7 @@ void SwXTextSection::attachToRange(const uno::Reference< text::XTextRange > & xT
                 sal_Bool bHeaderPresent = sal_False;
                 for(sal_uInt16 i = 0; i < nCount; i++)
                 {
-                    bHeaderPresent |= 
+                    bHeaderPresent |=
                         (aSectionsArr[i]->GetType() == TOX_HEADER_SECTION);
                 }
                 if (! bHeaderPresent)
@@ -770,8 +770,8 @@ uno::Any SwXTextSection::getPropertyValue(const OUString& rPropertyName)
                 {
                     // search enclosing index
                     SwSection* pEnclosingSection = pSect;
-                    while ( (pEnclosingSection != NULL) && 
-                            (TOX_CONTENT_SECTION != 
+                    while ( (pEnclosingSection != NULL) &&
+                            (TOX_CONTENT_SECTION !=
                              pEnclosingSection->GetType()) )
                     {
                         pEnclosingSection = pEnclosingSection->GetParent();
@@ -779,14 +779,19 @@ uno::Any SwXTextSection::getPropertyValue(const OUString& rPropertyName)
                     if (pEnclosingSection)
                     {
                         // convert section to TOXBase and get SwXDocumentIndex
-                        SwTOXBaseSection* pTOXBaseSect = 
+                        SwTOXBaseSection* pTOXBaseSect =
                             PTR_CAST(SwTOXBaseSection, pEnclosingSection);
-                        Reference<XDocumentIndex> xIndex = 
+                        Reference<XDocumentIndex> xIndex =
                             SwXDocumentIndexes::GetObject(pTOXBaseSect);
                         aRet <<= xIndex;
                     }
                     // else: no enclosing index found -> empty return value
                 }
+                break;
+                case  FN_UNO_ANCHOR_TYPES:
+                case  FN_UNO_TEXT_WRAP:
+                case  FN_UNO_ANCHOR_TYPE:
+                    SwXParagraph::getDefaultTextContentValue(aRet, OUString(), pMap->nWID);
                 break;
                 default:
                     if(pFmt)
