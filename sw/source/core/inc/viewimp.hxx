@@ -2,9 +2,9 @@
  *
  *  $RCSfile: viewimp.hxx,v $
  *
- *  $Revision: 1.14 $
+ *  $Revision: 1.15 $
  *
- *  last change: $Author: mib $ $Date: 2002-08-09 12:46:34 $
+ *  last change: $Author: od $ $Date: 2002-09-03 08:01:56 $
  *
  *  The Contents of this file are made available subject to the terms of
  *  either of the following licenses
@@ -218,7 +218,12 @@ public:
     const SdrPageView*GetPageView() const { return pSdrPageView; }
     void MakeDrawView();
 
-    void   PaintLayer  ( const BYTE nLayerID, const SwRect &rRect ) const;
+    /// OD 29.08.2002 #102450#
+    /// add 3rd parameter <const Color* pPageBackgrdColor> for setting this
+    /// color as the background color at the outliner of the draw view
+    /// for painting layers <hell> and <heaven>
+    void   PaintLayer  ( const BYTE nLayerID, const SwRect &rRect,
+                         const Color* pPageBackgrdColor = 0 ) const;
 
     //wird als Link an die DrawEngine uebergeben, entscheidet was wie
     //gepaintet wird oder nicht.
@@ -259,10 +264,10 @@ public:
     // Remove a frame from the accessible view
     void DisposeAccessible( const SwFrm *pFrm, const SdrObject *pObj,
                             sal_Bool bRecursive );
-    inline void DisposeAccessibleFrm( const SwFrm *pFrm, 
+    inline void DisposeAccessibleFrm( const SwFrm *pFrm,
                                sal_Bool bRecursive=sal_False );
     inline void DisposeAccessibleObj( const SdrObject *pObj );
-    
+
     // Move a frame's position in the accessible view
     void MoveAccessible( const SwFrm *pFrm, const SdrObject *pObj,
                          const SwRect& rOldFrm );
@@ -272,7 +277,7 @@ public:
     inline void AddAccessibleFrm( const SwFrm *pFrm );
 
     inline void AddAccessibleObj( const SdrObject *pObj );
-    
+
     // Invalidate accessible frame's frame's content
     void InvalidateAccessibleFrmContent( const SwFrm *pFrm );
 
@@ -291,10 +296,10 @@ public:
                                           const SwFlyFrm *pFollow );
 
     // update data for accessible preview
-    void UpdateAccessiblePreview( sal_uInt8 nRow, sal_uInt8 nColumn, 
+    void UpdateAccessiblePreview( sal_uInt8 nRow, sal_uInt8 nColumn,
                                   sal_Int16 nStartPage,
-                                  const Size& rPageSize, 
-                                  const Point& rFreePoint, 
+                                  const Size& rPageSize,
+                                  const Point& rFreePoint,
                                   const Fraction& rScale,
                                      USHORT nSelectedPage );
 
@@ -342,7 +347,7 @@ inline SwAccessibleMap& SwViewImp::GetAccessibleMap()
     return *pAccMap;
 }
 
-inline void SwViewImp::DisposeAccessibleFrm( const SwFrm *pFrm, 
+inline void SwViewImp::DisposeAccessibleFrm( const SwFrm *pFrm,
                                sal_Bool bRecursive )
 {
     DisposeAccessible( pFrm, 0, bRecursive );
