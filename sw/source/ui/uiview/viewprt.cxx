@@ -2,9 +2,9 @@
  *
  *  $RCSfile: viewprt.cxx,v $
  *
- *  $Revision: 1.25 $
+ *  $Revision: 1.26 $
  *
- *  last change: $Author: rt $ $Date: 2004-09-20 13:25:05 $
+ *  last change: $Author: vg $ $Date: 2005-03-23 11:56:57 $
  *
  *  The Contents of this file are made available subject to the terms of
  *  either of the following licenses
@@ -190,11 +190,11 @@
 #ifndef _SFXENUMITEM_HXX
 #include <svtools/eitem.hxx>
 #endif
-#include <swwrtshitem.hxx> //CHINA001 
-#include "swabstdlg.hxx" //CHINA001 
-#ifndef _SFXSLSTITM_HXX //CHINA001 
-#include <svtools/slstitm.hxx> //CHINA001 
-#endif //CHINA001 
+#include <swwrtshitem.hxx> //CHINA001
+#include "swabstdlg.hxx" //CHINA001
+#ifndef _SFXSLSTITM_HXX //CHINA001
+#include <svtools/slstitm.hxx> //CHINA001
+#endif //CHINA001
 #define C2U(cChar) ::rtl::OUString(RTL_CONSTASCII_USTRINGPARAM(cChar))
 
 /*--------------------------------------------------------------------
@@ -284,8 +284,8 @@ ErrCode	SwView::DoPrint( SfxPrinter *pPrinter, PrintDialog *pDlg,
 
     int bPrintSelection = -1;
     USHORT nMergeType = pMgr->GetMergeType();
-    if( DBMGR_MERGE_MAILMERGE != nMergeType && 
-        DBMGR_MERGE_DOCUMENTS != nMergeType && 
+    if( DBMGR_MERGE_MAILMERGE != nMergeType &&
+        DBMGR_MERGE_DOCUMENTS != nMergeType &&
             !pDlg && !bSilent
         && !bIsApi && ( pSh->IsSelection() || pSh->IsFrmSelected() ||
         pSh->IsObjSelected() ) )
@@ -428,7 +428,7 @@ ErrCode	SwView::DoPrint( SfxPrinter *pPrinter, PrintDialog *pDlg,
                         pSh->PrintProspect( aOpts, *pProgress );
                 }
                 else
-                    bStartJob = pSh->Prt( aOpts, *pProgress );
+                    bStartJob = pSh->Prt( aOpts, pProgress );
 
                 if ( bBrowse )
                 {
@@ -558,7 +558,7 @@ void __EXPORT SwView::ExecutePrint(SfxRequest& rReq)
                 rReq.RemoveItem(FN_QRY_MERGE);
             BOOL bFromMerge = pPrintFromMergeItem ? pPrintFromMergeItem->GetValue() : FALSE;
             SwMiscConfig aMiscConfig;
-            if(!bSilent && !bFromMerge && 
+            if(!bSilent && !bFromMerge &&
                     SW_MOD()->GetModuleConfig()->IsAskForMailMerge() && pSh->IsAnyDatabaseFieldInDoc())
             {
                 QueryBox aBox( &GetEditWin(), SW_RES( MSG_PRINT_AS_MERGE ));
@@ -566,8 +566,8 @@ void __EXPORT SwView::ExecutePrint(SfxRequest& rReq)
                 short nRet = aBox.Execute();
                 if(RET_CANCEL != nRet && aBox.GetCheckBoxState())
                 {
-                    SW_MOD()->GetModuleConfig()->SetAskForMailMerge(sal_False); 
-                }            
+                    SW_MOD()->GetModuleConfig()->SetAskForMailMerge(sal_False);
+                }
                 if(RET_YES == nRet)
                 {
                     SfxBoolItem aBool(FN_QRY_MERGE, TRUE);
@@ -601,12 +601,12 @@ void __EXPORT SwView::ExecutePrint(SfxRequest& rReq)
             //switch off display of hidden paragraphs if on and hidden paragraphs are in use
             bool bSwitchOff_HiddenParagraphs = pCurrentViewOptions->IsShowHiddenPara();
             if(bSwitchOff_HiddenParagraphs)
-            {        
+            {
                 const SwFieldType* pFldType = pSh->GetDoc()->GetSysFldType(RES_HIDDENPARAFLD);
                 if(!pFldType || !pFldType->GetDepends())
                     bSwitchOff_HiddenParagraphs = false;
             }
-                    
+
             bApplyViewOptions |= bSwitchOff_HiddenChar;
             bApplyViewOptions |= bSwitchOff_HiddenParagraphs;
             if(bApplyViewOptions)
@@ -615,12 +615,12 @@ void __EXPORT SwView::ExecutePrint(SfxRequest& rReq)
                 if(bSwitchOff_IsFldName)
                     pOrgViewOption->SetFldName(FALSE);
                 if(bSwitchOff_HiddenChar)
-                    pOrgViewOption->SetShowHiddenChar(FALSE);    
+                    pOrgViewOption->SetShowHiddenChar(FALSE);
                 if(bSwitchOff_HiddenParagraphs)
                     pOrgViewOption->SetShowHiddenPara(FALSE);
 
                 SW_MOD()->ApplyUsrPref(*pOrgViewOption, this, VIEWOPT_DEST_VIEW_ONLY );
-            }        
+            }
             bIsApi = rReq.IsAPI();
             SfxViewShell::ExecuteSlot( rReq, SfxViewShell::GetInterface() );
             if(pOrgViewOption)
@@ -628,7 +628,7 @@ void __EXPORT SwView::ExecutePrint(SfxRequest& rReq)
                 if(bSwitchOff_IsFldName)
                     pOrgViewOption->SetFldName(TRUE);
                 if(bSwitchOff_HiddenChar)
-                    pOrgViewOption->SetShowHiddenChar(TRUE);    
+                    pOrgViewOption->SetShowHiddenChar(TRUE);
                 if(bSwitchOff_HiddenParagraphs)
                     pOrgViewOption->SetShowHiddenPara(TRUE);
                 SW_MOD()->ApplyUsrPref(*pOrgViewOption, this, VIEWOPT_DEST_VIEW_ONLY );
@@ -659,7 +659,7 @@ SfxTabPage* CreatePrintOptionsPage( Window *pParent,
         ::CreateTabPage fnCreatePage = pFact->GetTabPageCreatorFunc( TP_OPTPRINT_PAGE );
         if ( fnCreatePage )
             pPage = (*fnCreatePage)( pParent, rOptions );
-    }	
+    }
     SfxAllItemSet aSet(*(rOptions.GetPool()));
     //CHINA001 pPage->SetPreview(bPreview);
     aSet.Put (SfxBoolItem(SID_PREVIEWFLAG_TYPE, bPreview));
