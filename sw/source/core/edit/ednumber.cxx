@@ -2,9 +2,9 @@
  *
  *  $RCSfile: ednumber.cxx,v $
  *
- *  $Revision: 1.11 $
+ *  $Revision: 1.12 $
  *
- *  last change: $Author: obo $ $Date: 2004-08-12 12:23:18 $
+ *  last change: $Author: vg $ $Date: 2005-02-21 16:05:25 $
  *
  *  The Contents of this file are made available subject to the terms of
  *  either of the following licenses
@@ -231,9 +231,9 @@ BOOL SwEditShell::HasNumber() const
 {
     BOOL bResult = FALSE;
 
-    const SwTxtNode * pTxtNd = 
+    const SwTxtNode * pTxtNd =
         GetCrsr()->GetPoint()->nNode.GetNode().GetTxtNode();
-    
+
     if (pTxtNd)
     {
         bResult = pTxtNd->HasNumber();
@@ -246,9 +246,9 @@ BOOL SwEditShell::HasBullet() const
 {
     BOOL bResult = FALSE;
 
-    const SwTxtNode * pTxtNd = 
+    const SwTxtNode * pTxtNd =
         GetCrsr()->GetPoint()->nNode.GetNode().GetTxtNode();
-    
+
     if (pTxtNd)
     {
         bResult = pTxtNd->HasBullet();
@@ -318,7 +318,7 @@ BOOL SwEditShell::IsFirstOfNumRule() const
     if (pCrsr->GetNext() == pCrsr)
     {
         bResult = IsFirstOfNumRule(*pCrsr);
-    }    
+    }
 
     return bResult;
 }
@@ -353,7 +353,7 @@ void SwEditShell::NumIndent(short nIndent, const SwPosition & rPos)
     StartAllAction();
 
     SwNumRule *pCurNumRule = GetDoc()->GetCurrNumRule(rPos);
-    
+
     if (pCurNumRule)
     {
         SwPaM aPaM(rPos);
@@ -361,14 +361,14 @@ void SwEditShell::NumIndent(short nIndent, const SwPosition & rPos)
 
         int nLevel = -1;
         int nReferenceLevel = pTxtNode->GetNum()->GetLevel();
-        
+
         if (! IsFirstOfNumRule(aPaM) && pTxtNode->GetNum())
             nLevel = nReferenceLevel;
-                
+
         SwNumRule aRule(*pCurNumRule);
         aRule.Indent(nIndent, nLevel, nReferenceLevel, FALSE);
-        
-        GetDoc()->SetNumRule(aPaM, aRule, sal_False, sal_True);
+
+        GetDoc()->SetNumRule(aPaM, aRule, sal_False );
     }
 
     EndAllAction();
@@ -586,7 +586,7 @@ BOOL SwEditShell::IsProtectedOutlinePara() const
     return bRet;
 }
 
-/** Test whether outline may be moved (bCopy == false) 
+/** Test whether outline may be moved (bCopy == false)
  *                           or copied (bCopy == true)
  * Verify these conditions:
  * 1) outline must be within main body (and not in redline)
@@ -750,13 +750,13 @@ void SwEditShell::SetCurNumRule( const SwNumRule& rRule )
         SwPaM aPam( *pCrsr->GetPoint() );
         for( USHORT n = 0; n < aRangeArr.Count(); ++n )
             /* #109308# adapt to new signature of SetNumRule */
-            GetDoc()->SetNumRule( aRangeArr.SetPam( n, aPam ), rRule, 
-                                  sal_False, sal_True );
+            GetDoc()->SetNumRule( aRangeArr.SetPam( n, aPam ), rRule,
+                                  sal_False );
         GetDoc()->EndUndo( UNDO_END );
     }
     else
         /* #109308# adapt to new signature of SetNumRule */
-        GetDoc()->SetNumRule( *pCrsr, rRule, sal_False, sal_True );
+        GetDoc()->SetNumRule( *pCrsr, rRule, sal_False );
 
     EndAllAction();
 }
