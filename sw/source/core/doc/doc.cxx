@@ -2,9 +2,9 @@
  *
  *  $RCSfile: doc.cxx,v $
  *
- *  $Revision: 1.28 $
+ *  $Revision: 1.29 $
  *
- *  last change: $Author: kz $ $Date: 2004-05-18 14:01:12 $
+ *  last change: $Author: kz $ $Date: 2004-06-29 08:08:09 $
  *
  *  The Contents of this file are made available subject to the terms of
  *  either of the following licenses
@@ -465,7 +465,7 @@ BOOL SwDoc::Insert( const SwPaM &rRg, const String &rStr, BOOL bHintExpand )
         bool bNewUndo = false;
         if( 0 == nUndoSize)
             bNewUndo = true;
-        else 
+        else
         {
             pUndo = (SwUndoInsert*)(*pUndos)[ --nUndoSize ];
 
@@ -474,9 +474,9 @@ BOOL SwDoc::Insert( const SwPaM &rRg, const String &rStr, BOOL bHintExpand )
             case UNDO_INSERT:
             case UNDO_TYPING:
                 bNewUndo = !pUndo->CanGrouping( *pPos );
-                
+
                 break;
-                
+
             default:
                 bNewUndo = true;
             }
@@ -1057,6 +1057,28 @@ BOOL SwDoc::RemoveInvisibleContent()
             }
     }
 
+    //
+    // Remove any hidden paragraph (hidden text attribute)
+    //
+    for( ULONG n = GetNodes().Count(); n; )
+    {
+        SwTxtNode* pTxtNd = GetNodes()[ --n ]->GetTxtNode();
+        if ( pTxtNd )
+        {
+            if ( pTxtNd->HasHiddenCharAttribute( true ) )
+            {
+                bRet = TRUE;
+                SwPaM aPam( *pTxtNd, 0, *pTxtNd, pTxtNd->GetTxt().Len() );
+                aPam.DeleteMark();
+                DelFullPara( aPam );
+            }
+            else if ( pTxtNd->HasHiddenCharAttribute( false ) )
+            {
+                SwScriptInfo::DeleteHiddenRanges( *pTxtNd );
+            }
+        }
+    }
+
     {
         // dann noch alle versteckten Bereiche loeschen/leeren
         SwSectionFmts aSectFmts;
@@ -1255,24 +1277,24 @@ void SwDoc::ChgFmt(SwFmt & rFmt, const SfxItemSet & rSet)
     if (DoesUndo())
     {
         SfxItemSet aSet(rSet);
-        
+
         aSet.Differentiate(rFmt.GetAttrSet());
-        
+
         SfxItemSet aOldSet(rFmt.GetAttrSet());
         aOldSet.Put(aSet);
-        
+
         SfxItemIter aIter(aSet);
-        
+
         const SfxPoolItem * pItem = aIter.FirstItem();
         while (pItem != NULL)
         {
             aOldSet.InvalidateItem(pItem->Which());
-            
+
             pItem = aIter.NextItem();
         }
-        
+
         SwUndo * pUndo = new SwUndoFmtAttr(aOldSet, rFmt);
-        
+
         AppendUndo(pUndo);
     }
 
@@ -1285,7 +1307,7 @@ void SwDoc::ChgFmt(SwFmt & rFmt, const SfxPoolItem & rItem)
     if (DoesUndo())
     {
         SwUndo * pUndo = new SwUndoFmtAttr(rFmt.GetAttr(rItem.Which()), rFmt);
-        
+
         AppendUndo(pUndo);
     }
 
@@ -1334,7 +1356,7 @@ String SwDoc::GetPaMDescr(const SwPaM & rPam) const
     {
         if (0 != rPam.GetNode(FALSE))
             aResult += String(SW_RES(STR_PARAGRAPHS));
-        
+
         bOK = true;
     }
 
@@ -1367,8 +1389,7 @@ xub_Unicode SwDoc::GetChar(const SwPosition & rPos)
 SwField * SwDoc::GetField(const SwPosition & rPos)
 {
     SwField * pResult = NULL;
-    xub_Unicode aChar;
-    
+
     SwTxtFld * pAttr = rPos.nNode.GetNode().GetTxtNode()->
         GetTxtFld(rPos.nContent);
 
@@ -1403,17 +1424,17 @@ bool SwDoc::ContainsHiddenChars() const
 
 // #111955#
 void SwDoc::SetOldNumbering(sal_Bool _bOldNumbering)
-{ 
+{
     if (bOldNumbering != _bOldNumbering)
     {
-        bOldNumbering = _bOldNumbering; 
-        
+        bOldNumbering = _bOldNumbering;
+
         SwNumRuleTbl& rNmTbl = GetNumRuleTbl();
         for( USHORT n = 0; n < rNmTbl.Count(); ++n )
             rNmTbl[n]->SetInvalidRule(TRUE);
-        
+
         UpdateNumRule();
- 
+
         if (bOldNumbering)
             GetNodes().UpdateOutlineNodes();
         else
