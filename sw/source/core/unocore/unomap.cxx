@@ -2,9 +2,9 @@
  *
  *  $RCSfile: unomap.cxx,v $
  *
- *  $Revision: 1.157 $
+ *  $Revision: 1.158 $
  *
- *  last change: $Author: kz $ $Date: 2004-02-26 15:35:18 $
+ *  last change: $Author: hr $ $Date: 2004-04-13 12:20:15 $
  *
  *  The Contents of this file are made available subject to the terms of
  *  either of the following licenses
@@ -302,7 +302,7 @@ void SwUnoPropertyMapProvider::Sort( sal_uInt16 nId )
         { SW_PROP_NMID(UNO_NAME_VISITED_CHAR_STYLE_NAME), RES_TXTATR_INETFMT,   CPPU_E2T(CPPUTYPE_OUSTRING), PropertyAttribute::MAYBEVOID ,MID_URL_VISITED_FMT  },
 
 // same as COMMON_CRSR_PARA_PROPERTIES_WITHOUT_FN_01 but without
-// UNO_NAME_BREAK_TYPE and UNO_NAME_PAGE_DESC_NAME which can not be used 
+// UNO_NAME_BREAK_TYPE and UNO_NAME_PAGE_DESC_NAME which can not be used
 // by the SwXTextTableCursor
 #define COMMON_CRSR_PARA_PROPERTIES_WITHOUT_FN_01 \
         { SW_PROP_NMID(UNO_NAME_PARA_IS_HYPHENATION), RES_PARATR_HYPHENZONE,        CPPU_E2T(CPPUTYPE_BOOLEAN),     PropertyAttribute::MAYBEVOID, MID_IS_HYPHEN         },                                        \
@@ -1443,7 +1443,7 @@ const SfxItemPropertyMap* SwUnoPropertyMapProvider::GetPropertyMap(sal_uInt16 nP
                 {
                     COMMON_CRSR_PARA_PROPERTIES_WITHOUT_FN_01
                     TABSTOPS_MAP_ENTRY
-           
+
                     // attributes from PROPERTY_MAP_TABLE_CELL:
                     { SW_PROP_NMID(UNO_NAME_BACK_COLOR), RES_BACKGROUND,    CPPU_E2T(CPPUTYPE_INT32),           PROPERTY_NONE , MID_BACK_COLOR       },
                     { SW_PROP_NMID(UNO_NAME_BACK_GRAPHIC_URL), RES_BACKGROUND,      CPPU_E2T(CPPUTYPE_OUSTRING), PROPERTY_NONE ,MID_GRAPHIC_URL    },
@@ -1451,7 +1451,7 @@ const SfxItemPropertyMap* SwUnoPropertyMapProvider::GetPropertyMap(sal_uInt16 nP
                     { SW_PROP_NMID(UNO_NAME_BACK_GRAPHIC_LOCATION), RES_BACKGROUND,         CPPU_E2T(CPPUTYPE_GRAPHICLOC), PROPERTY_NONE ,MID_GRAPHIC_POSITION},
                     { SW_PROP_NMID(UNO_NAME_NUMBER_FORMAT), RES_BOXATR_FORMAT,  CPPU_E2T(CPPUTYPE_INT32),           PropertyAttribute::MAYBEVOID ,0             },
                     { SW_PROP_NMID(UNO_NAME_BACK_TRANSPARENT), RES_BACKGROUND,  CPPU_E2T(CPPUTYPE_BOOLEAN),         PROPERTY_NONE , MID_GRAPHIC_TRANSPARENT      },
-                    // commented ones are already part of 
+                    // commented ones are already part of
                     // COMMON_CRSR_PARA_PROPERTIES_WITHOUT_FN_01:
 //                    { SW_PROP_NMID(UNO_NAME_LEFT_BORDER), RES_BOX,    CPPU_E2T(CPPUTYPE_BORDERLINE),    0, LEFT_BORDER  |CONVERT_TWIPS },
 //                    { SW_PROP_NMID(UNO_NAME_RIGHT_BORDER), RES_BOX,    CPPU_E2T(CPPUTYPE_BORDERLINE),   0, RIGHT_BORDER |CONVERT_TWIPS },
@@ -1549,6 +1549,7 @@ const SfxItemPropertyMap* SwUnoPropertyMapProvider::GetPropertyMap(sal_uInt16 nP
                     { SW_PROP_NMID(UNO_NAME_TWO_DIGIT_YEAR), WID_DOC_TWO_DIGIT_YEAR,	CPPU_E2T(CPPUTYPE_INT16),	PROPERTY_NONE,   0},
                     { SW_PROP_NMID(UNO_NAME_AUTOMATIC_CONTROL_FOCUS),		WID_DOC_AUTOMATIC_CONTROL_FOCUS,	CPPU_E2T(CPPUTYPE_BOOLEAN),	PROPERTY_NONE,   0},
                     { SW_PROP_NMID(UNO_NAME_APPLY_FORM_DESIGN_MODE),		WID_DOC_APPLY_FORM_DESIGN_MODE,		CPPU_E2T(CPPUTYPE_BOOLEAN),	PROPERTY_NONE,   0},
+                    { SW_PROP_NMID(UNO_NAME_RUNTIME_UID), WID_DOC_RUNTIME_UID,  CPPU_E2T(CPPUTYPE_OUSTRING), PropertyAttribute::READONLY, 0},
                     {0,0,0,0,0}
                 };
                 aMapArr[nPropertyId] = aDocMap_Impl;
