@@ -2,9 +2,9 @@
  *
  *  $RCSfile: wrtw8esh.cxx,v $
  *
- *  $Revision: 1.73 $
+ *  $Revision: 1.74 $
  *
- *  last change: $Author: kz $ $Date: 2004-02-26 15:39:29 $
+ *  last change: $Author: hr $ $Date: 2004-03-08 14:44:59 $
  *
  *  The Contents of this file are made available subject to the terms of
  *  either of the following licenses
@@ -242,7 +242,7 @@
 #ifndef _ERRHDL_HXX
 #include <errhdl.hxx>
 #endif
-#ifndef _PAGEDESC_HXX 
+#ifndef _PAGEDESC_HXX
 #include <pagedesc.hxx>
 #endif
 #ifndef _GRFMGR_HXX
@@ -329,7 +329,7 @@ void SwWW8Writer::DoComboBox(const rtl::OUString &rName, const rtl::OUString &rS
     ASSERT(bWrtWW8, "Not allowed");
     if (!bWrtWW8)
         return;
-    OutField(0, ww::eFORMDROPDOWN, FieldString(ww::eFORMDROPDOWN), 
+    OutField(0, ww::eFORMDROPDOWN, FieldString(ww::eFORMDROPDOWN),
         WRITEFIELD_START | WRITEFIELD_CMD_START);
     // write the refence to the "picture" structure
     ULONG nDataStt = pDataStrm->Tell();
@@ -337,7 +337,7 @@ void SwWW8Writer::DoComboBox(const rtl::OUString &rName, const rtl::OUString &rS
 
     WriteChar( 0x01 );
 
-    static BYTE aArr1[] = 
+    static BYTE aArr1[] =
     {
         0x03, 0x6a, 0,0,0,0,    // sprmCPicLocation
         0x06, 0x08, 0x01,       // sprmCFData
@@ -349,7 +349,7 @@ void SwWW8Writer::DoComboBox(const rtl::OUString &rName, const rtl::OUString &rS
 
     pChpPlc->AppendFkpEntry(Strm().Tell(), sizeof(aArr1), aArr1);
 
-    OutField(0, ww::eFORMDROPDOWN, FieldString(ww::eFORMDROPDOWN), 
+    OutField(0, ww::eFORMDROPDOWN, FieldString(ww::eFORMDROPDOWN),
         WRITEFIELD_CLOSE);
 
     static const sal_uInt8 aComboData1[] = 
@@ -403,8 +403,8 @@ void SwWW8Writer::DoComboBox(const rtl::OUString &rName, const rtl::OUString &rS
 
     static const sal_uInt8 aComboData3[] = 
     {
-        0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 
-        0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 
+        0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+        0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
         0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0xFF, 0xFF,
     };
 
@@ -430,7 +430,7 @@ void SwWW8Writer::DoComboBox(const rtl::OUString &rName, const rtl::OUString &rS
 
 void SwWW8Writer::DoCheckBox(uno::Reference<beans::XPropertySet> xPropSet)
 {
-    OutField(0, ww::eFORMCHECKBOX, FieldString(ww::eFORMCHECKBOX), 
+    OutField(0, ww::eFORMCHECKBOX, FieldString(ww::eFORMCHECKBOX),
         WRITEFIELD_START | WRITEFIELD_CMD_START);
     // write the refence to the "picture" structure
     ULONG nDataStt = pDataStrm->Tell();
@@ -671,7 +671,14 @@ void PlcDrawObj::WritePlc(SwWW8Writer& rWrt) const
                 aRect -= aIter->maParentPos;
                 aObjPos = aRect.TopLeft();
                 if (VERT_NONE == rVOr.GetVertOrient())
-                    aObjPos.Y() = rVOr.GetPos();
+                {
+                    // CMC, OD 24.11.2003 #i22673#
+                    SwRelationOrient eOri = rVOr.GetRelationOrient();
+                    if (eOri == REL_CHAR || eOri == REL_VERT_LINE)
+                        aObjPos.Y() = -rVOr.GetPos();
+                    else
+                        aObjPos.Y() = rVOr.GetPos();
+                }
                 if (HORI_NONE == rHOr.GetHoriOrient())
                     aObjPos.X() = rHOr.GetPos();
                 aRect.SetPos( aObjPos );
@@ -687,7 +694,7 @@ void PlcDrawObj::WritePlc(SwWW8Writer& rWrt) const
                 }
             }
 
-            //If we are being exported as an inline hack, set 
+            //If we are being exported as an inline hack, set
             //corner to 0
             if (rFrmFmt.IsInline())
                 aRect.SetPos(Point(0,0));
@@ -906,7 +913,7 @@ static bool lcl_IsFlyInFlyHere(const SwFrmFmt* pFmt, ULONG nStart, ULONG nEnd)
     return bRet;
 }
 
-void SwWW8Writer::AppendFlyInFlys(const sw::Frame& rFrmFmt, 
+void SwWW8Writer::AppendFlyInFlys(const sw::Frame& rFrmFmt,
     const Point& rNdTopLeft)
 {
     ASSERT(bWrtWW8, "this has gone horribly wrong");
@@ -1213,7 +1220,7 @@ bool WW8_SdrAttrIter::IsTxtAttr(xub_StrLen nSwPos)
 const SfxPoolItem* WW8_SdrAttrIter::HasTextItem(USHORT nWhich) const
 {
     const SfxPoolItem* pRet = 0;
-    nWhich = sw::hack::TransformWhichBetweenPools(*pEditPool, 
+    nWhich = sw::hack::TransformWhichBetweenPools(*pEditPool,
         rWrt.pDoc->GetAttrPool(), nWhich);
     if (nWhich)
     {
@@ -1221,8 +1228,8 @@ const SfxPoolItem* WW8_SdrAttrIter::HasTextItem(USHORT nWhich) const
         {
             const EECharAttrib& rHt = aTxtAtrArr[i];
             if (
-                 nWhich == rHt.pAttr->Which() && nTmpSwPos >= rHt.nStart && 
-                 nTmpSwPos < rHt.nEnd 
+                 nWhich == rHt.pAttr->Which() && nTmpSwPos >= rHt.nStart &&
+                 nTmpSwPos < rHt.nEnd
                )
             {
                 pRet = rHt.pAttr;   // Found
@@ -1297,7 +1304,7 @@ void SwWW8Writer::WriteSdrTextObj(const SdrObject& rObj, BYTE nTyp)
         return;
 
     bool bAnyWrite = false;
-    const OutlinerParaObject* pParaObj = 
+    const OutlinerParaObject* pParaObj =
         sw::hack::GetOutlinerParaObject(*pTxtObj);
     if (pParaObj)
     {
@@ -1402,7 +1409,7 @@ void WinwordAnchoring::WriteData( EscherEx& rEx ) const
 
 void SwWW8Writer::CreateEscher()
 {
-    SfxItemState eBackSet = 
+    SfxItemState eBackSet =
         pDoc->GetPageDesc(0).GetMaster().GetItemState(RES_BACKGROUND);
     if (pHFSdrObjs->size() || pSdrObjs->size() || SFX_ITEM_SET == eBackSet)
     {
@@ -1756,7 +1763,7 @@ void SwBasicEscherEx::WriteBrushAttr(const SvxBrushItem &rBrush,
     }
 }
 
-INT32 SwBasicEscherEx::WriteFlyFrameAttr(const SwFrmFmt& rFmt, 
+INT32 SwBasicEscherEx::WriteFlyFrameAttr(const SwFrmFmt& rFmt,
     MSO_SPT eShapeType, EscherPropertyContainer& rPropOpt)
 {
     INT32 nLineWidth=0;
@@ -1816,7 +1823,7 @@ INT32 SwBasicEscherEx::WriteFlyFrameAttr(const SwFrmFmt& rFmt,
                     ((SvxBoxItem*)pItem)->GetDistance( n ) ));
             }
             else
-                // MM If there is no line the distance should be set to 0 
+                // MM If there is no line the distance should be set to 0
                 rPropOpt.AddOpt( aExhperProp[ n ], DrawModelToEmu(0));
     }
     if( bFirstLine )                // no valid line found
@@ -1900,7 +1907,7 @@ INT32 SwEscherEx::WriteFlyFrameAttr(const SwFrmFmt& rFmt, MSO_SPT eShapeType,
                 aMoveHack *= Fraction(15, 1);
                 long nMove(aMoveHack);
 
-                Fraction aHackX(ww::nWrap100Percent + nMove, 
+                Fraction aHackX(ww::nWrap100Percent + nMove,
                         ww::nWrap100Percent);
                 Fraction aHackY(ww::nWrap100Percent - nMove,
                         ww::nWrap100Percent);
@@ -1925,7 +1932,7 @@ INT32 SwEscherEx::WriteFlyFrameAttr(const SwFrmFmt& rFmt, MSO_SPT eShapeType,
                 void *pArr = const_cast<void *>(aPolyDump.GetData());
                 //PropOpt wants to own the buffer
                 aPolyDump.ObjectOwnsMemory(false);
-                rPropOpt.AddOpt(DFF_Prop_pWrapPolygonVertices, false, 
+                rPropOpt.AddOpt(DFF_Prop_pWrapPolygonVertices, false,
                     nArrLen, static_cast<BYTE *>(pArr), nArrLen);
             }
         }
@@ -2108,7 +2115,7 @@ SwEscherEx::SwEscherEx(SvStream* pStrm, SwWW8Writer& rWW8Wrt)
             EscherPropertyContainer aPropOpt;
             const SwFrmFmt &rFmt = rWrt.pDoc->GetPageDesc(0).GetMaster();
             const SfxPoolItem* pItem = 0;
-            SfxItemState eState = rFmt.GetItemState(RES_BACKGROUND, true, 
+            SfxItemState eState = rFmt.GetItemState(RES_BACKGROUND, true,
                 &pItem);
             if (SFX_ITEM_SET == eState && pItem)
             {
@@ -2167,7 +2174,8 @@ void WinwordAnchoring::SetAnchoring(const SwFrmFmt& rFmt, bool bBROKEN)
     const SwFmtHoriOrient&  rHoriOri = rFmt.GetHoriOrient();
     const SwFmtVertOrient&  rVertOri = rFmt.GetVertOrient();
 
-    SwHoriOrient eHOri = rHoriOri.GetHoriOrient();
+    const SwHoriOrient eHOri = rHoriOri.GetHoriOrient();
+    // CMC, OD 24.11.2003 #i22673#
     SwVertOrient eVOri = rVertOri.GetVertOrient();
 
     SwRelationOrient eHRel = rHoriOri.GetRelationOrient();
@@ -2276,6 +2284,8 @@ void WinwordAnchoring::SetAnchoring(const SwFrmFmt& rFmt, bool bBROKEN)
             break;
     }
 
+    // CMC, OD 24.11.2003 #i22673#
+    bool bVertSwap = false;
     switch( eVRel )
     {
         case FRAME:
@@ -2285,13 +2295,47 @@ void WinwordAnchoring::SetAnchoring(const SwFrmFmt& rFmt, bool bBROKEN)
             nVIndex |= 0x00010000;
             break;
         case REL_CHAR:
+            bVertSwap = true;
             nVIndex |= 0x00020000;
+            break;
+        case REL_VERT_LINE:
+            bVertSwap = true;
+            nVIndex |= 0x00040000;
             break;
         default:
             nVIndex |= 0x00030000; // PRTAREA
             break;
     }
 
+    // CMC, OD 24.11.2003 #i22673#
+    // When anchored vertically relative to line, (or to char) bottom becomes top
+    // and vice versa
+    if (bVertSwap)
+    {
+        switch (eVOri)
+        {
+            case VERT_TOP:
+                eVOri = VERT_BOTTOM;
+                break;
+            case VERT_BOTTOM:
+                eVOri = VERT_TOP;
+                break;
+            case VERT_CHAR_TOP:
+                eVOri = VERT_CHAR_BOTTOM;
+                break;
+            case VERT_CHAR_BOTTOM:
+                eVOri = VERT_CHAR_TOP;
+                break;
+            case VERT_LINE_TOP:
+                eVOri = VERT_LINE_BOTTOM;
+                break;
+            case VERT_LINE_BOTTOM:
+                eVOri = VERT_LINE_TOP;
+                break;
+            default:
+                break;
+        }
+    }
     switch( eVOri )
     {
         case VERT_TOP:
@@ -2601,6 +2645,16 @@ void WinwordAnchoring::SetAnchoring(const SwFrmFmt& rFmt, bool bBROKEN)
                 0x12020223,  //               VERT_CENTER
                 0x12020302,  //               VERT_NONE
                 0x12020633,  //               VERT_CHAR_BOTTOM (value: 6)
+    // CMC, OD 24.11.2003 #i22673# - extending for vertical alignment at top of line
+    // SwRelationOrient: "Character" == REL_VERT_LINE: 4
+    //               |
+                0x12040013,  //               VERT_TOP
+                0x12040123,  //               VERT_BOTTOM
+                0x12040233,  //               VERT_CENTER
+                0x12040303,  //               VERT_NONE
+                0x12040713,  //               VERT_LINE_TOP
+                0x12040823,  //               VERT_LINE_BOTTOM
+                0x12040933,  //               VERT_LINE_CENTER
 
     // RndStdIds: "as character" == FLY_IN_CNTNT: 0x13
     //
@@ -2621,7 +2675,7 @@ void WinwordAnchoring::SetAnchoring(const SwFrmFmt& rFmt, bool bBROKEN)
         };
 
     // find horizontal values
-    UINT32* pFound = (UINT32*)bsearch( (const void*) &nHIndex, 
+    UINT32* pFound = (UINT32*)bsearch( (const void*) &nHIndex,
         (const void*) aHVMatcher, sizeof(aHVMatcher) / sizeof(aHVMatcher[0]),
         sizeof(aHVMatcher[0]), CompUINT32 );
     if( !pFound )
@@ -2794,7 +2848,7 @@ INT32 SwEscherEx::WriteTxtFlyFrame(const DrawObj &rObj, UINT32 nShapeId,
     return nBorderThick;
 }
 
-void SwBasicEscherEx::WritePicture(EscherPropertyContainer &rPropOpt, 
+void SwBasicEscherEx::WritePicture(EscherPropertyContainer &rPropOpt,
     const Graphic &rGraphic, const SdrObject &rObj, sal_uInt32 nShapeId)
 {
     AddShape( ESCHER_ShpInst_PictureFrame, 0xa10, nShapeId );
@@ -2826,7 +2880,7 @@ void SwEscherEx::WriteOCXControl( const SwFrmFmt& rFmt, UINT32 nShapeId )
         OutputDevice *pDevice = Application::GetDefaultDevice();
         ASSERT(pModel && pDevice, "no model or device");
         SdrExchangeView aExchange(pModel, pDevice);
-        Graphic aGraphic(aExchange.GetObjGraphic(pModel, 
+        Graphic aGraphic(aExchange.GetObjGraphic(pModel,
             const_cast<SdrObject*>(pSdrObj)));
 
         EscherPropertyContainer aPropOpt;
@@ -2936,7 +2990,7 @@ UINT32 SwEscherEx::GetFlyShapeId(const SwFrmFmt& rFmt,
     return nShapeId;
 }
 
-UINT32 SwEscherEx::QueryTextID( 
+UINT32 SwEscherEx::QueryTextID(
     const uno::Reference< drawing::XShape>& xXShapeRef, UINT32 nShapeId )
 {
     UINT32 nId = 0;
@@ -2973,7 +3027,7 @@ bool SwMSConvertControls::ExportControl(Writer &rWrt, const SdrObject *pObj)
 
     //Open the ObjectPool
     SvStorageRef xObjPool = rWW8Wrt.GetStorage().OpenStorage(
-        CREATE_CONST_ASC(SL::aObjectPool), STREAM_READWRITE | 
+        CREATE_CONST_ASC(SL::aObjectPool), STREAM_READWRITE |
         STREAM_SHARE_DENYALL);
 
     //Create a destination storage for the microsoft control
