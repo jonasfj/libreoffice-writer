@@ -2,9 +2,9 @@
  *
  *  $RCSfile: hhcwrp.cxx,v $
  *
- *  $Revision: 1.4 $
+ *  $Revision: 1.5 $
  *
- *  last change: $Author: vg $ $Date: 2003-06-25 10:34:50 $
+ *  last change: $Author: hr $ $Date: 2004-02-03 16:42:47 $
  *
  *  The Contents of this file are made available subject to the terms of
  *  either of the following licenses
@@ -87,9 +87,6 @@
 
 #ifndef _MSGBOX_HXX //autogen
 #include <vcl/msgbox.hxx>
-#endif
-#ifndef _OFF_APP_HXX //autogen
-#include <offmgr/app.hxx>
 #endif
 #ifndef _UNO_LINGU_HXX
 #include <svx/unolingu.hxx>
@@ -208,15 +205,15 @@ void SwHHCWrapper::SelectNewUnit_impl( sal_Int32 nUnitStart, sal_Int32 nUnitEnd 
     pCrsr->GetPoint()->nContent = nLastPos;
     pCrsr->DeleteMark();
 
-    rWrtShell.Right( CRSR_SKIP_CHARS, /*bExpand*/ sal_False, 
+    rWrtShell.Right( CRSR_SKIP_CHARS, /*bExpand*/ sal_False,
                   (USHORT) (nUnitOffset + nUnitStart), sal_True );
     pCrsr->SetMark();
-    rWrtShell.Right( CRSR_SKIP_CHARS, /*bExpand*/ sal_True, 
+    rWrtShell.Right( CRSR_SKIP_CHARS, /*bExpand*/ sal_True,
                   (USHORT) (nUnitEnd - nUnitStart), sal_True );
 }
 
 
-void SwHHCWrapper::HandleNewUnit( 
+void SwHHCWrapper::HandleNewUnit(
         const sal_Int32 nUnitStart, const sal_Int32 nUnitEnd )
 {
     DBG_ASSERT( nUnitStart >= 0 && nUnitEnd >= nUnitStart, "wrong arguments" );
@@ -236,7 +233,7 @@ void SwHHCWrapper::HandleNewUnit(
 
 void SwHHCWrapper::ReplaceUnit(
          const sal_Int32 nUnitStart, const sal_Int32 nUnitEnd,
-         const OUString& rReplaceWith, 
+         const OUString& rReplaceWith,
          ReplacementAction eAction )
 {
     static OUString aBracketedStart( C2U( "(" ) );
@@ -309,7 +306,7 @@ void SwHHCWrapper::ReplaceUnit(
         {
             rWrtShell.Delete();
             rWrtShell.Insert( aNewOrigText );
-            
+
             //!! since Delete, Insert do not set the WrtShells bInSelect flag
             //!! back to false we do it now manually in order for the selection
             //!! to be done properly in the following call to Left.
@@ -356,7 +353,7 @@ void SwHHCWrapper::Convert()
     }
 
     ConvertDocument();
-    
+
     ConvEnd_impl();
 }
 
@@ -395,7 +392,7 @@ sal_Bool SwHHCWrapper::ConvNext_impl( )
             ConvStart_impl( SVX_SPELL_OTHER );
             bIsOtherCntnt = bGoOn = sal_True;
         }
-        else 
+        else
             bInfoBox = sal_True;
     }
     else
@@ -433,7 +430,7 @@ sal_Bool SwHHCWrapper::FindConvText_impl()
     //! modified version of SvxSpellWrapper::FindSpellError
 
     //ShowLanguageErrors();
-    
+
     sal_Bool bFound = sal_False;
 
     pWin->EnterWait();
