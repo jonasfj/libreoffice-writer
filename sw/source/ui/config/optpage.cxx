@@ -2,9 +2,9 @@
  *
  *  $RCSfile: optpage.cxx,v $
  *
- *  $Revision: 1.43 $
+ *  $Revision: 1.44 $
  *
- *  last change: $Author: pjunck $ $Date: 2004-11-02 12:28:51 $
+ *  last change: $Author: vg $ $Date: 2005-02-16 17:48:16 $
  *
  *  The Contents of this file are made available subject to the terms of
  *  either of the following licenses
@@ -201,9 +201,9 @@
 #ifndef _SVX_STRARRAY_HXX
 #include <svx/strarray.hxx>
 #endif
-#ifndef _SFXSLSTITM_HXX //CHINA001 
-#include <svtools/slstitm.hxx> //CHINA001 
-#endif //CHINA001 
+#ifndef _SFXSLSTITM_HXX //CHINA001
+#include <svtools/slstitm.hxx> //CHINA001
+#endif //CHINA001
 #ifndef _SFXINTITEM_HXX
 #include <svtools/intitem.hxx>
 #endif
@@ -213,7 +213,7 @@
 #ifndef _SFXENUMITEM_HXX
 #include <svtools/eitem.hxx>
 #endif
-#include <swwrtshitem.hxx> //CHINA001 
+#include <swwrtshitem.hxx> //CHINA001
 #define C2S(cChar) String::CreateFromAscii(cChar)
 /*******************************************************
  ******************************************************/
@@ -650,7 +650,7 @@ IMPL_LINK_INLINE_START( SwAddPrinterTabPage, SelectHdl, ListBox *, EMPTYARG )
 }
 IMPL_LINK_INLINE_END( SwAddPrinterTabPage, SelectHdl, ListBox *, EMPTYARG )
 
-void SwAddPrinterTabPage::PageCreated (SfxAllItemSet aSet) //add CHINA001 
+void SwAddPrinterTabPage::PageCreated (SfxAllItemSet aSet) //add CHINA001
 {
     //SFX_ITEMSET_ARG (&aSet,pListItem,SfxStringListItem,SID_FAX_LIST,sal_False);
     SFX_ITEMSET_ARG (&aSet,pListItem,SfxBoolItem,SID_FAX_LIST,sal_False);
@@ -683,7 +683,7 @@ void SwAddPrinterTabPage::PageCreated (SfxAllItemSet aSet) //add CHINA001
         SetFax(aFaxList);
 */
     }
-} 
+}
 /*-----------------03.09.96 11.53-------------------
     Tabpage Standardfonts
 --------------------------------------------------*/
@@ -1026,7 +1026,7 @@ IMPL_LINK( SwStdFontTabPage, ModifyHdl, ComboBox*, pBox )
     return 0;
 }
 
-void SwStdFontTabPage::PageCreated (SfxAllItemSet aSet) //add CHINA001 
+void SwStdFontTabPage::PageCreated (SfxAllItemSet aSet) //add CHINA001
 {
     SFX_ITEMSET_ARG (&aSet,pFlagItem,SfxUInt16Item,SID_FONTMODE_TYPE,sal_False);
     if (pFlagItem)
@@ -1293,7 +1293,7 @@ IMPL_LINK(SwTableOptionsTabPage, CheckBoxHdl, CheckBox*, EMPTYARG)
     aRepeatHeaderCB.Enable(aHeaderCB.IsChecked());
     return 0;
 }
-void SwTableOptionsTabPage::PageCreated (SfxAllItemSet aSet) //add CHINA001 
+void SwTableOptionsTabPage::PageCreated (SfxAllItemSet aSet) //add CHINA001
 {
     SFX_ITEMSET_ARG (&aSet,pWrtSh,SwWrtShellItem,SID_WRT_SHELL,sal_False);
     if (pWrtSh)
@@ -2269,7 +2269,7 @@ SwTestTabPage::SwTestTabPage( Window* pParent,
     lcl_SetPosSize(aTest9CBox  , 	Point(116, 53),	Size(74 , 10));
     lcl_SetPosSize(aTest10CBox	, 	Point(116, 66),	Size(74 , 10));
 
-    aTestFL.SetText( String(ByteString("Einstellungen nur für Testzwecke" ), RTL_TEXTENCODING_MS_1252));
+    aTestFL.SetText( String(ByteString("Einstellungen nur f\xFCr Testzwecke" ), RTL_TEXTENCODING_MS_1252));
     aTest1CBox .SetText( C2S("unused"));
     aTest2CBox .SetText( C2S("dynamic"));
     aTest3CBox .SetText( C2S("No calm"               ));
