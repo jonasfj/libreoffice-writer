@@ -2,9 +2,9 @@
  *
  *  $RCSfile: fltini.cxx,v $
  *
- *  $Revision: 1.9 $
+ *  $Revision: 1.10 $
  *
- *  last change: $Author: jp $ $Date: 2001-04-06 19:32:17 $
+ *  last change: $Author: jp $ $Date: 2001-05-28 10:56:55 $
  *
  *  The Contents of this file are made available subject to the terms of
  *  either of the following licenses
@@ -741,17 +741,17 @@ void SwRelNumRuleSpaces::SetNumLSpace( SwTxtNode& rNd, const SwNumRule& rRule )
         aLR.SetTxtLeft( 0 );
     else
     {
-#if 0
         long nLeft = rFmt.GetAbsLSpace(), nParaLeft = rLR.GetTxtLeft();
         if( 0 < rLR.GetTxtFirstLineOfst() )
             nParaLeft += rLR.GetTxtFirstLineOfst();
-        else
+        else if( nParaLeft >= nLeft )
+            // #82963#/#82962#: set correct paragraph indent
             nParaLeft -= nLeft;
+        else
+            //#83154#, Don't think any of the older #80856# bugfix code is
+            //relevent anymore.
+            nParaLeft = rLR.GetTxtLeft()+rLR.GetTxtFirstLineOfst();
         aLR.SetTxtLeft( nParaLeft );
-#else	//#83154#, Don't think any of the older #80856# bugfix code is 
-        //relevent anymore.
-        aLR.SetTxtLeft(rLR.GetTxtLeft()+rLR.GetTxtFirstLineOfst());
-#endif
     }
 
     if( aLR.GetTxtLeft() != rLR.GetTxtLeft() )
@@ -1578,21 +1578,24 @@ Color ConvertBrushStyle(const Color& rCol, const Color& rFillCol, BYTE nStyle)
 /*************************************************************************
 
       $Log: not supported by cvs2svn $
+      Revision 1.9  2001/04/06 19:32:17  jp
+      Bug #85813#: no GPF and no ASSERT by reading/writing with the W4W filters
+
       Revision 1.8  2001/02/26 08:24:19  mib
       xml filters for templates and global docs
-    
+
       Revision 1.7  2001/02/05 16:31:12  cmc
       #83154# Negative Indent Number Style buglet
-    
+
       Revision 1.6  2000/12/12 15:35:03  khz
       #80856# take into account negative indentation in SetNumLSpace()
-    
+
       Revision 1.5  2000/12/02 11:03:48  mib
       #80795#: XML package filter
-    
+
       Revision 1.4  2000/11/20 14:17:21  jp
       ReadFilterFlags removed, use new class SwFilterOptions
-    
+
       Revision 1.3  2000/11/13 10:46:09  jp
       remove IniManager
 
