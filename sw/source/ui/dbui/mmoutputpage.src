@@ -2,9 +2,9 @@
  *
  *  $RCSfile: mmoutputpage.src,v $
  *
- *  $Revision: 1.2 $
+ *  $Revision: 1.3 $
  *
- *  last change: $Author: rt $ $Date: 2004-09-20 13:18:44 $
+ *  last change: $Author: kz $ $Date: 2004-12-09 16:41:18 $
  *
  *  The Contents of this file are made available subject to the terms of
  *  either of the following licenses
@@ -218,71 +218,71 @@ TabPage DLG_MM_OUTPUT_PAGE
         Text[ en-US ] = "Prin~t Documents";
     };
 
-    FixedText        FT_MAILTO      
+    FixedText        FT_MAILTO
     {
         Pos = MAP_APPFONT ( 12 , 103 ) ;
         Size = MAP_APPFONT ( 30 , 8 ) ;
         Text [ de ] = "An" ;
         Text[ en-US ] = "T~o";
     };
-    ListBox          LB_MAILTO      
+    ListBox          LB_MAILTO
     {
         Pos = MAP_APPFONT ( 45 , 101 ) ;
         Size = MAP_APPFONT ( 147 , 50 ) ;
         DropDown = TRUE;
         Border = TRUE;
     };
-    PushButton       PB_COPYTO      
+    PushButton       PB_COPYTO
     {
         Pos = MAP_APPFONT ( 198 , 100 ) ;
         Size = MAP_APPFONT ( 50 , 14 ) ;
         Text [ de ] = "Kopie an..." ;
         Text[ en-US ] = "~Copy to...";
     };
-    FixedText        FT_SUBJECT     
+    FixedText        FT_SUBJECT
     {
         Pos = MAP_APPFONT ( 12 , 119 ) ;
         Size = MAP_APPFONT ( 30 , 8 ) ;
         Text [ de ] = "Betreff" ;
         Text[ en-US ] = "S~ubject";
     };
-    Edit             ED_SUBJECT     
+    Edit             ED_SUBJECT
     {
         Pos = MAP_APPFONT ( 45 , 117 ) ;
         Size = MAP_APPFONT ( 147 , 12 ) ;
         Border = TRUE;
     };
-    FixedText        FT_SENDAS      
+    FixedText        FT_SENDAS
     {
         Pos = MAP_APPFONT ( 12 , 135 ) ;
         Size = MAP_APPFONT ( 30 , 8 ) ;
         Text [ de ] = "Senden als" ;
         Text[ en-US ] = "Sen~d as";
     };
-    ListBox          LB_SENDAS      
+    ListBox          LB_SENDAS
     {
         Pos = MAP_APPFONT ( 45 , 133 ) ;
         Size = MAP_APPFONT (147  , 70 ) ;
         DropDown = TRUE;
         Border = TRUE;
-        StringList =                
-        {                           
-            < "Open Office Textdokument" ;    MM_DOCTYPE_OOO ;> ;
-            < "Adobe PDF-Dokument" ;                      MM_DOCTYPE_PDF ;> ;
-            < "Microsoft Word Dokument" ;           MM_DOCTYPE_WORD;> ; 
-            < "HTML-Nachricht" ;                    MM_DOCTYPE_HTML;> ;       
-            < "Nur Text" ;                          MM_DOCTYPE_TEXT;> ;       
-        };                          
-        StringList [en-US]=    
-        {                           
-            < "Open Office Text Document" ;    MM_DOCTYPE_OOO ;> ;
-            < "Adobe PDF-Document" ;                      MM_DOCTYPE_PDF ;> ;
-            < "Microsoft Word Document" ;           MM_DOCTYPE_WORD;> ; 
-            < "HTML Message" ;                      MM_DOCTYPE_HTML;> ; 
-            < "Plain Text" ;                        MM_DOCTYPE_TEXT;> ; 
+        StringList =
+        {
+            < "OpenDocument Text" ;                 MM_DOCTYPE_OOO ;> ;
+            < "Adobe PDF-Dokument" ;                MM_DOCTYPE_PDF ;> ;
+            < "Microsoft Word Dokument" ;           MM_DOCTYPE_WORD;> ;
+            < "HTML-Nachricht" ;                    MM_DOCTYPE_HTML;> ;
+            < "Nur Text" ;                          MM_DOCTYPE_TEXT;> ;
+        };
+        StringList [en-US]=
+        {
+            < "OpenDocument Text" ;                 MM_DOCTYPE_OOO ;> ;
+            < "Adobe PDF-Document" ;                MM_DOCTYPE_PDF ;> ;
+            < "Microsoft Word Document" ;           MM_DOCTYPE_WORD;> ;
+            < "HTML Message" ;                      MM_DOCTYPE_HTML;> ;
+            < "Plain Text" ;                        MM_DOCTYPE_TEXT;> ;
         };
     };
-    PushButton       PB_SENDAS      
+    PushButton       PB_SENDAS
     {
         Pos = MAP_APPFONT ( 198 , 132 ) ;
         Size = MAP_APPFONT ( 50 , 14 ) ;
@@ -302,7 +302,7 @@ TabPage DLG_MM_OUTPUT_PAGE
         Size = MAP_APPFONT ( 147 , 12 ) ;
         Border = TRUE;
     };
-    RadioButton      RB_SENDALL     
+    RadioButton      RB_SENDALL
     {
         Pos = MAP_APPFONT ( 45 , 176 ) ;
         Size = MAP_APPFONT ( 153 , 10 ) ;
@@ -341,7 +341,7 @@ TabPage DLG_MM_OUTPUT_PAGE
         Text [ de ] = "Unbenannt" ;
         Text[ en-US ] = "Untitled";
     };
-    String ST_SUBJECTQUERY     
+    String ST_SUBJECTQUERY
     {
         Text [ de ] = "Sie haben kein Betreff für diese Nachricht angegeben. Wenn Sie einen angeben wollen, dann geben Sie ihn jetzt ein." ;
         Text[ en-US ] = "You did not specify a subject for this message. If you would like to provide one, please type it now.";
@@ -370,7 +370,7 @@ ModalDialog DLG_MM_COPYTO
     HelpID = HID_MM_COPYTO;
     Size = MAP_APPFONT ( 250 , 117 ) ;
     Moveable = TRUE ;
-    
+
     Text [ de ] = "Kopie an";
     Text [ en-US ] = "Copy To";
 
@@ -445,14 +445,14 @@ ModalDialog DLG_MM_SAVEWARNING
     HelpID = HID_MM_SAVEWARNING;
     Size = MAP_APPFONT ( 200 , 99 ) ;
     Moveable = TRUE ;
-    
+
     Text = "%PRODUCTNAME";
-    FixedImage IM_WARNING  
+    FixedImage IM_WARNING
     {
         Pos = MAP_APPFONT ( 6 , 3 ) ;
         Size = MAP_APPFONT ( 30 , 30 ) ;
     };
-    FixedText FI_WARNING  
+    FixedText FI_WARNING
     {
         Pos = MAP_APPFONT ( 40 , 3 ) ;
         Size = MAP_APPFONT ( 150 , 30 ) ;
@@ -460,14 +460,14 @@ ModalDialog DLG_MM_SAVEWARNING
         Text [ de ] = "Ein Dokument mit dem Namen '%1' existiert bereits. Bitte wählen Sie einen anderen Namen." ;
         Text[ en-US ] = "A document with the name '%1' already exists. Please save this document under a different name.";
     };
-    FixedText   FT_FILENAME 
+    FixedText   FT_FILENAME
     {
         Pos = MAP_APPFONT (  40, 39 ) ;
         Size = MAP_APPFONT (  154, 8 ) ;
         Text [ de ] = "Neuer Dokumentname" ;
         Text[ en-US ] = "New document name";
     };
-    Edit ED_FILENAME 
+    Edit ED_FILENAME
     {
         Pos = MAP_APPFONT ( 40 , 50 ) ;
         Size = MAP_APPFONT ( 154 , 12 ) ;
@@ -478,13 +478,13 @@ ModalDialog DLG_MM_SAVEWARNING
         Pos = MAP_APPFONT ( 0 , 68 ) ;
         Size = MAP_APPFONT ( 200 , 8 ) ;
     };
-    OKButton PB_OK       
+    OKButton PB_OK
     {
         Pos = MAP_APPFONT ( 40 ,  79) ;
         Size = MAP_APPFONT ( 50 , 14 ) ;
         DefButton = TRUE;
     };
-    CancelButton PB_CANCEL   
+    CancelButton PB_CANCEL
     {
         Pos = MAP_APPFONT ( 93 , 79 ) ;
         Size = MAP_APPFONT ( 50 , 14 ) ;
@@ -497,9 +497,9 @@ ModalDialog DLG_MM_QUERY
     HelpID = HID_MM_QUERY;
     Size = MAP_APPFONT ( 240 , 88 ) ;
     Moveable = TRUE ;
-    
+
     Text = "%PRODUCTNAME";
-    FixedImage IM_QUERY  
+    FixedImage IM_QUERY
     {
         Pos = MAP_APPFONT ( 6 , 3 ) ;
         Size = MAP_APPFONT ( 30 , 30 ) ;
@@ -510,7 +510,7 @@ ModalDialog DLG_MM_QUERY
         Size = MAP_APPFONT ( 190 , 30 ) ;
         WordBreak = TRUE;
     };
-    Edit ED_TEXT 
+    Edit ED_TEXT
     {
         Pos = MAP_APPFONT ( 40 , 39 ) ;
         Size = MAP_APPFONT ( 194 , 12 ) ;
@@ -521,13 +521,13 @@ ModalDialog DLG_MM_QUERY
         Pos = MAP_APPFONT ( 0 , 57 ) ;
         Size = MAP_APPFONT ( 240 , 8 ) ;
     };
-    OKButton PB_OK       
+    OKButton PB_OK
     {
         Pos = MAP_APPFONT ( 69 ,  68) ;
         Size = MAP_APPFONT ( 50 , 14 ) ;
         DefButton = TRUE;
     };
-    CancelButton PB_CANCEL   
+    CancelButton PB_CANCEL
     {
         Pos = MAP_APPFONT ( 122 , 68 ) ;
         Size = MAP_APPFONT ( 50 , 14 ) ;
