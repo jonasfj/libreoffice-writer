@@ -2,9 +2,9 @@
  *
  *  $RCSfile: txtattr.cxx,v $
  *
- *  $Revision: 1.11 $
+ *  $Revision: 1.12 $
  *
- *  last change: $Author: os $ $Date: 2002-12-05 12:56:53 $
+ *  last change: $Author: hr $ $Date: 2003-03-27 15:44:23 $
  *
  *  The Contents of this file are made available subject to the terms of
  *  either of the following licenses
@@ -80,6 +80,9 @@
 #endif
 #ifndef _SFXITEMITER_HXX
 #include <svtools/itemiter.hxx>
+#endif
+#ifndef _SVTOOLS_LANGUAGEOPTIONS_HXX
+#include <svtools/languageoptions.hxx>
 #endif
 #ifndef _SFX_BINDINGS_HXX //autogen
 #include <sfx2/bindings.hxx>
@@ -517,7 +520,7 @@ SET_LINESPACE:
 // toggling of the slots not used anymore
 
            if(!bSet)
-                nSlot = SID_ATTR_PARA_LEFT_TO_RIGHT == nSlot ? 
+                nSlot = SID_ATTR_PARA_LEFT_TO_RIGHT == nSlot ?
                     SID_ATTR_PARA_RIGHT_TO_LEFT :
                     SID_ATTR_PARA_LEFT_TO_RIGHT;
 */
@@ -527,7 +530,7 @@ SET_LINESPACE:
             BOOL bChgAdjust = FALSE;
             if (aAdjustSet.GetItemState(RES_PARATR_ADJUST, FALSE)  >= SFX_ITEM_DEFAULT)
             {
-                int eAdjust = (int)(( const SvxAdjustItem& ) 
+                int eAdjust = (int)(( const SvxAdjustItem& )
                         aAdjustSet.Get(RES_PARATR_ADJUST)).GetAdjust();
 //                bChgAdjust = SVX_ADJUST_CENTER  != eAdjust  &&  SVX_ADJUST_BLOCK != eAdjust;
                 bChgAdjust = (SVX_ADJUST_LEFT  == eAdjust  &&  SID_ATTR_PARA_RIGHT_TO_LEFT == nSlot) ||
@@ -603,7 +606,7 @@ void SwTextShell::ExecParaAttrArgs(SfxRequest &rReq)
             else
             {
                 SfxItemSet aSet(GetPool(), RES_PARATR_DROP, RES_PARATR_DROP,
-                                           HINT_END, HINT_END);
+                                           HINT_END, HINT_END, 0);
                 rSh.GetAttr(aSet);
                 SwDropCapsDlg *pDlg = new SwDropCapsDlg(GetView().GetWindow(), aSet);
                 if (pDlg->Execute() == RET_OK)
@@ -796,25 +799,35 @@ void SwTextShell::GetAttrState(SfxItemSet &rSet)
             case SID_ATTR_PARA_LEFT_TO_RIGHT :
             case SID_ATTR_PARA_RIGHT_TO_LEFT :
             {
-                // is the item set?
-                if(aCoreSet.GetItemState( RES_FRAMEDIR, FALSE ) >= SFX_ITEM_DEFAULT)
+                if ( !SvtLanguageOptions().IsCTLFontEnabled() )
                 {
-                    SvxFrameDirection eFrmDir = (SvxFrameDirection)
-                            ((const SvxFrameDirectionItem& )aCoreSet.Get(RES_FRAMEDIR)).GetValue();
-                    if (FRMDIR_ENVIRONMENT == eFrmDir)
-                    {
-                        eFrmDir = rSh.IsInRightToLeftText() ?
-                                FRMDIR_HORI_RIGHT_TOP : FRMDIR_HORI_LEFT_TOP;
-                    }
-                    bFlag = (SID_ATTR_PARA_LEFT_TO_RIGHT == nSlot &&
-                                        FRMDIR_HORI_LEFT_TOP == eFrmDir) ||
-                            (SID_ATTR_PARA_RIGHT_TO_LEFT == nSlot &&
-                                        FRMDIR_HORI_RIGHT_TOP == eFrmDir);
+                    rSet.DisableItem( nSlot );
+                    nSlot = 0;
                 }
                 else
                 {
-                    rSet.InvalidateItem(nSlot);
-                    nSlot = 0;
+                    // is the item set?
+                    USHORT nHtmlMode = GetHtmlMode(rSh.GetView().GetDocShell());
+                    if((!(nHtmlMode & HTMLMODE_ON) || (0 != (nHtmlMode & HTMLMODE_SOME_STYLES))) &&
+                    aCoreSet.GetItemState( RES_FRAMEDIR, FALSE ) >= SFX_ITEM_DEFAULT)
+                    {
+                        SvxFrameDirection eFrmDir = (SvxFrameDirection)
+                                ((const SvxFrameDirectionItem& )aCoreSet.Get(RES_FRAMEDIR)).GetValue();
+                        if (FRMDIR_ENVIRONMENT == eFrmDir)
+                        {
+                            eFrmDir = rSh.IsInRightToLeftText() ?
+                                    FRMDIR_HORI_RIGHT_TOP : FRMDIR_HORI_LEFT_TOP;
+                        }
+                        bFlag = (SID_ATTR_PARA_LEFT_TO_RIGHT == nSlot &&
+                                            FRMDIR_HORI_LEFT_TOP == eFrmDir) ||
+                                (SID_ATTR_PARA_RIGHT_TO_LEFT == nSlot &&
+                                            FRMDIR_HORI_RIGHT_TOP == eFrmDir);
+                    }
+                    else
+                    {
+                        rSet.InvalidateItem(nSlot);
+                        nSlot = 0;
+                    }
                 }
             }
             break;

@@ -2,9 +2,9 @@
  *
  *  $RCSfile: vprint.cxx,v $
  *
- *  $Revision: 1.19 $
+ *  $Revision: 1.20 $
  *
- *  last change: $Author: tl $ $Date: 2002-11-14 10:34:44 $
+ *  last change: $Author: hr $ $Date: 2003-03-27 15:41:39 $
  *
  *  The Contents of this file are made available subject to the terms of
  *  either of the following licenses
@@ -81,7 +81,7 @@
 #ifndef _SFXAPP_HXX //autogen
 #include <sfx2/app.hxx>
 #endif
-#ifndef _SFX_PRNMON_HXX 
+#ifndef _SFX_PRNMON_HXX
 #include <sfx2/prnmon.hxx>
 #endif
 #ifndef _SVX_PAPERINF_HXX //autogen
@@ -810,13 +810,13 @@ void ViewShell::CalcPagesForPrint( USHORT nMax, SfxProgress* pProgress,
         // HACK, damit die Anzeige sich nicht verschluckt.
         const XubString aTmp( SW_RES( STR_STATSTR_PRINT ) );
         pProgress->SetText( aTmp );
-        lcl_SetState( *pProgress, 1, nStatMax, pStr, nMergeAct, nMergeCnt, 0, 
+        lcl_SetState( *pProgress, 1, nStatMax, pStr, nMergeAct, nMergeCnt, 0,
                       1 );
         pProgress->Reschedule(); //Mag der Anwender noch oder hat er genug?
-        
+
         aAction.SetProgress(pProgress);
     }
-    
+
     pLayout->StartAllAction();
     for ( USHORT i = 1; pPage && i <= nMax; pPage = pPage->GetNext(), ++i )
     {
@@ -862,7 +862,7 @@ void ViewShell::CalcPagesForPrint( USHORT nMax, SfxProgress* pProgress,
 /******************************************************************************/
 
 SwDoc * ViewShell::CreatePrtDoc( SfxPrinter* pPrt, SvEmbeddedObjectRef &rDocShellRef)
-{   
+{
     ASSERT( this->IsA( TYPE(SwFEShell) ),"ViewShell::Prt for FEShell only");
     SwFEShell* pFESh = (SwFEShell*)this;
     // Wir bauen uns ein neues Dokument
@@ -948,7 +948,7 @@ SwDoc * ViewShell::CreatePrtDoc( SfxPrinter* pPrt, SvEmbeddedObjectRef &rDocShel
     return pPrtDoc;
 }
 SwDoc * ViewShell::FillPrtDoc( SwDoc *pPrtDoc, const SfxPrinter* pPrt)
-{   
+{
     ASSERT( this->IsA( TYPE(SwFEShell) ),"ViewShell::Prt for FEShell only");
     SwFEShell* pFESh = (SwFEShell*)this;
     // Wir bauen uns ein neues Dokument
@@ -1056,7 +1056,7 @@ BOOL ViewShell::Prt( SwPrtOptions& rOptions, SfxProgress& rProgress,
 
     //! Note: Since for PDF export of (multi-)selection a temporary
     //! document is created that contains only the selects parts,
-    //! and thus that document is to printed in whole the, 
+    //! and thus that document is to printed in whole the,
     //! rOptions.bPrintSelection parameter will be false.
     BOOL bSelection = rOptions.bPrintSelection;
 
@@ -1101,7 +1101,7 @@ BOOL ViewShell::Prt( SwPrtOptions& rOptions, SfxProgress& rProgress,
     // eine neue Shell fuer den Printer erzeugen
     ViewShell *pShell;
     SwDoc *pPrtDoc;
-    
+
     //!! muss warum auch immer hier in diesem scope existieren !!
     //!! (hängt mit OLE Objekten im Dokument zusammen.)
     SvEmbeddedObjectRef aDocShellRef;
@@ -1188,6 +1188,11 @@ BOOL ViewShell::Prt( SwPrtOptions& rOptions, SfxProgress& rProgress,
     // Seiten fuers Drucken formatieren
     pShell->CalcPagesForPrint( (USHORT)aPages.Max(), &rProgress, pStr,
                                 nMergeAct, nMergeCnt );
+
+    // Some field types, can require a valid layout
+    // (expression fields in tables). For these we do an UpdateFlds
+    // here after calculation of the pages.
+    pShell->UpdateFlds(TRUE);
 
     if( !  pShell->Imp()->IsStopPrt() &&
         (pPDFOut || rOptions.GetJobName().Len() || pPrt->IsJobActive()) )
@@ -1385,39 +1390,54 @@ BOOL ViewShell::Prt( SwPrtOptions& rOptions, SfxProgress& rProgress,
                         ( (bRightPg && rOptions.bPrintRightPage) ||
                             (!bRightPg && rOptions.bPrintLeftPage) ) )
                     {
-                        if ( bSetPrt && pLastPageDesc != pStPage->GetPageDesc() )
+                        if ( bSetPrt )
                         {
-                            pLastPageDesc = pStPage->GetPageDesc();
-                            BOOL bLandScp = pLastPageDesc->GetLandscape();
+                            // check for empty page
+                            const SwPageFrm* pFormatPage = NULL;
 
-                            if(bSetPaperBin )      // Schacht einstellen.
-                                pPrt->SetPaperBin( pStPage->GetFmt()->
-                                                    GetPaperBin().GetValue() );
-                            if (bSetPaperSz )
+                            // for empty pages, take the format of the partner
+                            // page
+                            if ( pStPage->IsEmptyPage() )
                             {
-                                Size aSize = pStPage->Frm().SSize();
-                                if ( bLandScp && bSetOrient )
-                                {
-                                    long nWidth = aSize.Width();
-                                    aSize.Width() = aSize.Height();
-                                    aSize.Height() = nWidth;
-                                }
-                                Paper ePaper = SvxPaperInfo::GetSvPaper(aSize,MAP_TWIP,TRUE);
-                                if ( PAPER_USER == ePaper )
-                                    pPrt->SetPaperSizeUser( aSize );
+                                if ( bRightPg )
+                                    pFormatPage = (SwPageFrm*)pStPage->GetNext();
                                 else
-                                    pPrt->SetPaper( ePaper );
+                                    pFormatPage = (SwPageFrm*)pStPage->GetPrev();
                             }
-                            if (bSetOrient )
+
+                            if ( ! pFormatPage )
+                                pFormatPage = pStPage;
+
+                            if ( pLastPageDesc != pFormatPage->GetPageDesc() )
                             {
-                                // Orientation einstellen: Breiter als Hoch
-                                //	-> Landscape, sonst -> Portrait.
-                                if( bLandScp )
-                                    pPrt->SetOrientation(ORIENTATION_LANDSCAPE);
-                                else
-                                    pPrt->SetOrientation(ORIENTATION_PORTRAIT);
+                                pLastPageDesc = pFormatPage->GetPageDesc();
+                                
+                                const BOOL bLandScp =
+                                        pFormatPage->GetPageDesc()->GetLandscape();
+
+                                if( bSetPaperBin )      // Schacht einstellen.
+                                    pPrt->SetPaperBin( pFormatPage->GetFmt()->
+                                                       GetPaperBin().GetValue() );
+
+                                if (bSetOrient )
+                                 {
+                                        // Orientation einstellen: Breiter als Hoch
+                                        //	-> Landscape, sonst -> Portrait.
+                                        if( bLandScp )
+                                            pPrt->SetOrientation(ORIENTATION_LANDSCAPE);
+                                        else
+                                            pPrt->SetOrientation(ORIENTATION_PORTRAIT);
+                                 }
+                                 if (bSetPaperSz )
+                                 {
+                                        Size aSize = pStPage->Frm().SSize();
+                                    
+                                        // Let VCL decide which printer paper should be used for printing
+                                        pPrt->SetPaperSizeUser( aSize );
+                                 }
                             }
                         }
+
                         // Wenn PostIts nach Seite gedruckt werden sollen,
                         // jedoch Reverse eingestellt ist ...
                         if( rOptions.bPrintReverse &&
@@ -1623,10 +1643,10 @@ BOOL ViewShell::Prt( SwPrtOptions& rOptions, SfxProgress& rProgress,
 
 
 
-void ViewShell::PrtOle2( SwDoc *pDoc, const SwViewOption *pOpt,
+void ViewShell::PrtOle2( SwDoc *pDoc, const SwViewOption *pOpt, SwPrtOptions& rOptions, 
                          OutputDevice* pOleOut, const Rectangle& rRect )
 {
-    //Wir brauchen eine Shell fuer das Drucken. Entweder hat das Doc schon
+  //Wir brauchen eine Shell fuer das Drucken. Entweder hat das Doc schon
     //eine, dann legen wir uns eine neue Sicht an, oder das Doc hat noch
     //keine, dann erzeugen wir die erste Sicht.
     ViewShell *pSh;
@@ -1637,6 +1657,7 @@ void ViewShell::PrtOle2( SwDoc *pDoc, const SwViewOption *pOpt,
 
     {
         SET_CURR_SHELL( pSh );
+        pSh->PrepareForPrint( rOptions );
         pSh->SetPrtFormatOption( TRUE );
 
         SwRect aSwRect( rRect );
@@ -1765,7 +1786,7 @@ SwDrawViewSave::~SwDrawViewSave()
 }
 
 
-
+// OD 09.01.2003 #i6467# - method also called for page preview
 void ViewShell::PrepareForPrint(  const SwPrtOptions &rOptions )
 {
     // Viewoptions fuer den Drucker setzen
@@ -1780,15 +1801,32 @@ void ViewShell::PrepareForPrint(  const SwPrtOptions &rOptions )
     {
         SdrView *pDrawView = GetDrawView();
         FASTBOOL bDraw = rOptions.bPrintDraw;
-        pDrawView->SetLineDraftPrn( !bDraw );
-        pDrawView->SetFillDraftPrn( !bDraw );
-        pDrawView->SetGrafDraftPrn( !bDraw );
-        pDrawView->SetTextDraftPrn( !bDraw );
+        // OD 09.01.2003 #i6467# - consider, if view shell belongs to page preview
+        if ( !IsPreView() )
+        {
+            pDrawView->SetLineDraftPrn( !bDraw );
+            pDrawView->SetFillDraftPrn( !bDraw );
+            pDrawView->SetGrafDraftPrn( !bDraw );
+            pDrawView->SetTextDraftPrn( !bDraw );
+        }
+        else
+        {
+            pDrawView->SetLineDraft( !bDraw );
+            pDrawView->SetFillDraft( !bDraw );
+            pDrawView->SetGrafDraft( !bDraw );
+            pDrawView->SetTextDraft( !bDraw );
+        }
 
         String sLayerNm;
         sLayerNm.AssignAscii(RTL_CONSTASCII_STRINGPARAM("Controls" ));
-        pDrawView->SetLayerPrintable( sLayerNm, rOptions.bPrintControl );
+        // OD 09.01.2003 #i6467# - consider, if view shell belongs to page preview
+        if ( !IsPreView() )
+        {
+            pDrawView->SetLayerPrintable( sLayerNm, rOptions.bPrintControl );
+        }
+        else
+        {
+            pDrawView->SetLayerVisible( sLayerNm, rOptions.bPrintControl );
+        }
     }
 }
-
-

@@ -2,9 +2,9 @@
  *
  *  $RCSfile: crsrsh.cxx,v $
  *
- *  $Revision: 1.24 $
+ *  $Revision: 1.25 $
  *
- *  last change: $Author: hbrinkm $ $Date: 2002-12-03 14:13:46 $
+ *  last change: $Author: hr $ $Date: 2003-03-27 15:39:31 $
  *
  *  The Contents of this file are made available subject to the terms of
  *  either of the following licenses
@@ -142,6 +142,9 @@
 #endif
 #ifndef _DOCSH_HXX
 #include <docsh.hxx>
+#endif
+#ifndef _DRAWFONT_HXX
+#include <drawfont.hxx>
 #endif
 #ifndef _SWGLOBDOCSH_HXX //autogen
 #include <globdoc.hxx>
@@ -437,7 +440,8 @@ FASTBOOL SwCrsrShell::LeftRight( BOOL bLeft, USHORT nCnt, USHORT nMode,
         return bLeft ? GoPrevCell() : GoNextCell();
 
     SwCallLink aLk( *this );        // Crsr-Moves ueberwachen, evt. Link callen
-    FASTBOOL bRet = pCurCrsr->LeftRight( bLeft, nCnt, nMode, bVisualAllowed );
+    FASTBOOL bRet = pCurCrsr->LeftRight( bLeft, nCnt, nMode, bVisualAllowed,
+                                         ! IsOverwriteCrsr() );
     if( bRet )
         UpdateCrsr();
     return bRet;
@@ -2344,6 +2348,8 @@ SwCrsrShell::SwCrsrShell( SwCrsrShell& rShell, Window *pWin )
     eMvState = MV_NONE;		// Status fuers Crsr-Travelling - GetCrsrOfst
     pVisCrsr = new SwVisCrsr( this );
 //	UpdateCrsr( 0 );
+    // OD 11.02.2003 #100556#
+    mbMacroExecAllowed = rShell.IsMacroExecAllowed();
 }
 
 
@@ -2392,6 +2398,8 @@ SwCrsrShell::SwCrsrShell( SwDoc& rDoc, Window *pWin, SwRootFrm *pRoot,
 
     pVisCrsr = new SwVisCrsr( this );
 //	UpdateCrsr( 0 );
+    // OD 11.02.2003 #100556#
+    mbMacroExecAllowed = true;
 }
 
 
@@ -2785,7 +2793,9 @@ FASTBOOL SwCrsrShell::IsInVerticalText( const Point* pPt ) const
 FASTBOOL SwCrsrShell::IsInRightToLeftText( const Point* pPt ) const
 {
     const short nDir = GetTextDirection( pPt );
-    return FRMDIR_HORI_RIGHT_TOP == nDir;
+    // GetTextDirection uses FRMDIR_VERT_TOP_LEFT to indicate RTL in
+    // vertical environment
+    return FRMDIR_VERT_TOP_LEFT == nDir || FRMDIR_HORI_RIGHT_TOP == nDir;
 }
 
 #else
@@ -2972,7 +2982,7 @@ static bool lcl_PosOk(SwPosition & aPos)
     SwPosition aTmpPos(aPos);
     aTmpPos.nContent.Assign(0, 0);
 
-    if (aPos.nNode.GetNode().GetCntntNode() == NULL || 
+    if (aPos.nNode.GetNode().GetCntntNode() == NULL ||
         aPos.nContent.GetIdxReg() == aTmpPos.nContent.GetIdxReg())
         bResult = false;
 
@@ -2987,20 +2997,20 @@ static bool lcl_PosOk(SwPosition & aPos)
 */
 static bool lcl_CrsrOk(SwPaM & aPam)
 {
-    return lcl_PosOk(*aPam.GetPoint()) && (! aPam.HasMark() 
-        || lcl_PosOk(*aPam.GetMark())); 
+    return lcl_PosOk(*aPam.GetPoint()) && (! aPam.HasMark()
+        || lcl_PosOk(*aPam.GetMark()));
 }
 
-void SwCrsrShell::ClearUpCrsrs() 
+void SwCrsrShell::ClearUpCrsrs()
 {
     // start of the ring
-    SwPaM * pStartCrsr = GetCrsr(); 
+    SwPaM * pStartCrsr = GetCrsr();
     // start loop with second entry of the ring
-    SwPaM * pCrsr = (SwPaM *) pStartCrsr->GetNext(); 
+    SwPaM * pCrsr = (SwPaM *) pStartCrsr->GetNext();
     SwPaM * pTmpCrsr;
     bool bChanged = false;
-    
-    /* 
+
+    /*
        For all entries in the ring except the start entry delete the
        entry if it is invalid.
     */
@@ -3021,7 +3031,7 @@ void SwCrsrShell::ClearUpCrsrs()
     /*
       If the start entry of the ring is invalid replace it with a
       cursor pointing to the beginning of the first content node in
-      the document.  
+      the document.
     */
     if (! lcl_CrsrOk(*pStartCrsr))
     {
@@ -3044,8 +3054,8 @@ void SwCrsrShell::ClearUpCrsrs()
 
     /*
       If at least one of the cursors in the ring have been deleted or
-      replaced, remove the table cursor.  
+      replaced, remove the table cursor.
     */
     if (pTblCrsr != NULL && bChanged)
-        TblCrsrToCursor();        
+        TblCrsrToCursor();
 }

@@ -2,9 +2,9 @@
  *
  *  $RCSfile: accmap.hxx,v $
  *
- *  $Revision: 1.21 $
+ *  $Revision: 1.22 $
  *
- *  last change: $Author: fs $ $Date: 2002-09-23 09:27:14 $
+ *  last change: $Author: hr $ $Date: 2003-03-27 15:38:30 $
  *
  *  The Contents of this file are made available subject to the terms of
  *  either of the following licenses
@@ -65,7 +65,7 @@
 #include <drafts/com/sun/star/accessibility/XAccessible.hpp>
 #endif
 
-#ifndef _SAL_TYPES_H_ 
+#ifndef _SAL_TYPES_H_
 #include <sal/types.h>
 #endif
 #ifndef _CPPUHELPER_WEAKREF_HXX_
@@ -113,13 +113,17 @@ class SwRect;
 class ViewShell;
 class SwFrmOrObj;
 class SwAccPreviewData;
+// OD 14.01.2003 #103492#
+#ifndef _PREVWPAGE_HXX
+#include <prevwpage.hxx>
+#endif
 
 // real states for events
 #define ACC_STATE_EDITABLE 0x01
-#define ACC_STATE_OPAQUE 0x02 
+#define ACC_STATE_OPAQUE 0x02
 
 // pseudo states for events
-#define ACC_STATE_CARET 0x80 
+#define ACC_STATE_CARET 0x80
 #define ACC_STATE_RELATION_FROM 0x40
 #define ACC_STATE_RELATION_TO 0x20
 
@@ -155,7 +159,7 @@ class SwAccessibleMap : public accessibility::IAccessibleViewForwarder,
 
     void AppendEvent( const SwAccessibleEvent_Impl& rEvent );
 
-    void InvalidateCursorPosition( 
+    void InvalidateCursorPosition(
         const ::com::sun::star::uno::Reference<
             ::drafts::com::sun::star::accessibility::XAccessible>& rAcc );
     void DoInvalidateShapeSelection();
@@ -165,7 +169,7 @@ class SwAccessibleMap : public accessibility::IAccessibleViewForwarder,
     void _InvalidateRelationSet( const SwFrm* pFrm, sal_Bool bFrom );
 
     ::com::sun::star::uno::Reference<
-        ::drafts::com::sun::star::accessibility::XAccessible> 
+        ::drafts::com::sun::star::accessibility::XAccessible>
             _GetDocumentView( sal_Bool bPagePreview );
 
 public:
@@ -176,11 +180,14 @@ public:
     ::com::sun::star::uno::Reference<
         ::drafts::com::sun::star::accessibility::XAccessible> GetDocumentView();
 
+    // OD 15.01.2003 #103492# - complete re-factoring of method due to new
+    // page/print preview functionality.
     ::com::sun::star::uno::Reference<
-        ::drafts::com::sun::star::accessibility::XAccessible> GetDocumentPreview( 
-                sal_uInt8 nRow, sal_uInt8 nColumn, sal_Int16 nStartPage,
-                const Size& rPageSize, const Point& rFreePoint, 
-                const Fraction& rScale, sal_uInt16 nSelectedPage  );
+        ::drafts::com::sun::star::accessibility::XAccessible> GetDocumentPreview(
+                            const std::vector<PrevwPage*>& _rPrevwPages,
+                            const Fraction&  _rScale,
+                            const SwPageFrm* _pSelectedPageFrm,
+                            const Size&      _rPrevwWinSize );
 
     ::vos::ORef < SwAccessibleContext > GetContextImpl(
                                                  const SwFrm *pFrm,
@@ -202,13 +209,27 @@ public:
 
     ViewShell *GetShell() const { return mpVSh; }
     inline const SwRect& GetVisArea() const;
-    inline const Size& GetPreViewPageSize() const;
+
+    /** get size of a dedicated preview page
+
+        OD 15.01.2003 #103492#
+        complete re-factoring of previous method due to new page/print preview
+        functionality.
+
+        @author OD
+
+        @param _nPrevwPageNum
+        input parameter - physical page number of page visible in the page preview
+
+        @return an object of class <Size>
+    */
+    Size GetPreViewPageSize( sal_uInt16 _nPrevwPageNum ) const;
 
     void RemoveContext( const SwFrm *pFrm );
     void RemoveContext( const SdrObject *pObj );
 
     // Dispose frame and its children if bRecursive is set
-    void Dispose( const SwFrm *pFrm, const SdrObject *pObj, 
+    void Dispose( const SwFrm *pFrm, const SdrObject *pObj,
                   sal_Bool bRecursive=sal_False );
 
     void InvalidatePosOrSize( const SwFrm *pFrm, const SdrObject *pObj,
@@ -229,10 +250,13 @@ public:
     void InvalidateRelationSet( const SwFrm* pMaster, const SwFrm* pFollow );
 
     // update preview data (and fire events if necessary)
-    void UpdatePreview( sal_uInt8 nRow, sal_uInt8 nColumn, 
-                        sal_Int16 nStartPage,
-                        const Size& rPageSize, const Point& rFreePoint, 
-                        const Fraction& rScale, sal_uInt16 nSelectedPage );
+    // OD 15.01.2003 #103492# - complete re-factoring of method due to new
+    // page/print preview functionality.
+    void UpdatePreview( const std::vector<PrevwPage*>& _rPrevwPages,
+                        const Fraction&  _rScale,
+                        const SwPageFrm* _pSelectedPageFrm,
+                        const Size&      _rPrevwWinSize );
+
     void InvalidatePreViewSelection( sal_uInt16 nSelPage );
     sal_Bool IsPageSelected( const SwPageFrm *pPageFrm ) const;
 
@@ -258,13 +282,33 @@ public:
 
     // additional Core/Pixel conversions for internal use; also works
     // for preview
-    Point CoreToPixel (const Point& rPoint) const;
     Point PixelToCore (const Point& rPoint) const;
     Rectangle CoreToPixel (const Rectangle& rRect) const;
     Rectangle PixelToCore (const Rectangle& rRect) const;
 
 private:
-    inline void PreviewAdjust(const Point& rPoint, sal_Bool bFromPreview) const;
+    /** get mapping mode for LogicToPixel and PixelToLogic conversions
+
+        OD 15.01.2003 #103492#
+        Replacement method <PreviewAdjust(..)> by new method <GetMapMode>.
+        Method returns mapping mode of current output device and adjusts it,
+        if the shell is in page/print preview.
+        Necessary, because <PreviewAdjust(..)> changes mapping mode at current
+        output device for mapping logic document positions to page preview window
+        positions and vice versa and doesn't take care to recover its changes.
+
+        @author OD
+
+        @param _rPoint
+        input parameter - constant reference to point to determine the mapping
+        mode adjustments for page/print preview.
+
+        @param _orMapMode
+        output parameter - reference to the mapping mode, which is determined
+        by the method
+    */
+    void GetMapMode( const Point& _rPoint,
+                     MapMode&     _orMapMode ) const;
 };
 
 
@@ -278,30 +322,47 @@ class SwAccPreviewData
 
     SwRect maVisArea;
     Fraction maScale;
-    Size maPageSize;
 
-    const SwPageFrm *mpStartPage;
     const SwPageFrm *mpSelPage;
 
-    sal_uInt16 mnStartPage;
+    /** adjust logic page retangle to its visible part
+
+        OD 17.01.2003 #103492#
+
+        @author OD
+
+        @param _iorLogicPgSwRect
+        input/output parameter - reference to the logic page rectangle, which
+        has to be adjusted.
+
+        @param _rPrevwPgSwRect
+        input parameter - constant reference to the corresponding preview page
+        rectangle; needed to determine the visible part of the logic page rectangle.
+
+        @param _rPrevwWinSize
+        input paramter - constant reference to the preview window size in TWIP;
+        needed to determine the visible part of the logic page rectangle
+    */
+    void AdjustLogicPgRectToVisibleArea( SwRect&         _iorLogicPgSwRect,
+                                         const SwRect&   _rPrevwPgSwRect,
+                                         const Size&     _rPrevwWinSize );
 
 public:
     SwAccPreviewData();
     ~SwAccPreviewData();
 
-    void Update( sal_uInt8 nRow,        // # rows in preview
-                 sal_uInt8 nCol,        // # columns in preview
-                 sal_uInt16 nStartPage, // start page (0 is before first page)
-                 const Size& rPageSize, // size of an empty page
-                 const Point& rFreePoint, // free space between pages (x,y)
-                 const Fraction& rScale,// scale factor for preview
-                 ViewShell* pShell,
-                 sal_uInt16 nSelPage );
-    void InvalidateSelection( sal_uInt16 nSelPage );
+    // OD 14.01.2003 #103492# - complete re-factoring of method due to new
+    // page/print preview functionality.
+    void Update( const std::vector<PrevwPage*>& _rPrevwPages,
+                 const Fraction&  _rScale,
+                 const SwPageFrm* _pSelectedPageFrm,
+                 const Size&      _rPrevwWinSize );
+
+    // OD 14.01.2003 #103492# - complete re-factoring of method due to new
+    // page/print preview functionality.
+    void InvalidateSelection( const SwPageFrm* _pSelectedPageFrm );
 
     const SwRect& GetVisArea() const;
-    Point PreviewToLogic(const Point& rPoint) const;
-    Point LogicToPreview(const Point& rPoint) const;
 
     MapMode GetMapModeForPreview( ) const;
 
@@ -309,31 +370,21 @@ public:
      * proper position. rPoint identifies the page for which the
      * MapMode should be adjusted. If bFromPreview is true, rPoint is
      * a preview coordinate; else it's a document coordinate. */
+    // OD 17.01.2003 #103492# - delete unused 3rd parameter.
     void AdjustMapMode( MapMode& rMapMode,
-                        const Point& rPoint,
-                        sal_Bool bFromPreview ) const;
+                        const Point& rPoint ) const;
 
-    void AdjustMapMode( MapMode& rMapMode ) const;
+    inline const SwPageFrm *GetSelPage() const { return mpSelPage; }
 
-    const SwPageFrm *GetSelPage() const { return mpSelPage; }
     void DisposePage(const SwPageFrm *pPageFrm );
-    const Size& GetPageSize() const { return maPageSize; }
 };
 
 
 
 inline const SwRect& SwAccessibleMap::GetVisArea() const
-{ 
+{
     DBG_ASSERT( !mpVSh->IsPreView() || (mpPreview != NULL),
                 "preview without preview data?" );
     return mpVSh->IsPreView() ? mpPreview->GetVisArea() : mpVSh->VisArea();
 }
-
-inline const Size& SwAccessibleMap::GetPreViewPageSize() const
-{
-    DBG_ASSERT( mpPreview != NULL,
-                "preview without preview data?" );
-    return mpPreview->GetPageSize();
-}
-
 #endif

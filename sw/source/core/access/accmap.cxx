@@ -2,9 +2,9 @@
  *
  *  $RCSfile: accmap.cxx,v $
  *
- *  $Revision: 1.39 $
+ *  $Revision: 1.40 $
  *
- *  last change: $Author: mib $ $Date: 2002-09-27 11:44:18 $
+ *  last change: $Author: hr $ $Date: 2003-03-27 15:39:19 $
  *
  *  The Contents of this file are made available subject to the terms of
  *  either of the following licenses
@@ -71,7 +71,7 @@
 #ifndef _CPPUHELPER_WEAKREF_HXX_
 #include <cppuhelper/weakref.hxx>
 #endif
-#ifndef _SV_WINDOW_HXX 
+#ifndef _SV_WINDOW_HXX
 #include <vcl/window.hxx>
 #endif
 #ifndef _SVDMODEL_HXX
@@ -80,7 +80,7 @@
 #ifndef SVX_UNOMOD_HXX
 #include <svx/unomod.hxx>
 #endif
-#ifndef _TOOLS_DEBUG_HXX 
+#ifndef _TOOLS_DEBUG_HXX
 #include <tools/debug.hxx>
 #endif
 
@@ -184,7 +184,10 @@
 #ifndef _CPPUHELPER_IMPLBASE1_HXX_
 #include <cppuhelper/implbase1.hxx>
 #endif
-
+// OD 15.01.2003 #103492#
+#ifndef _PAGEPREVIEWLAYOUT_HXX
+#include <pagepreviewlayout.hxx>
+#endif
 
 using namespace ::com::sun::star::uno;
 using namespace ::drafts::com::sun::star::accessibility;
@@ -206,7 +209,7 @@ typedef ::std::map < const SwFrm *, WeakReference < XAccessible >, SwFrmFunc > _
 class SwAccessibleContextMap_Impl: public _SwAccessibleContextMap_Impl
 {
 public:
-    
+
 #ifndef PRODUCT
     sal_Bool mbLocked;
 #endif
@@ -219,7 +222,7 @@ public:
 
 };
 
-//------------------------------------------------------------------------------ 
+//------------------------------------------------------------------------------
 class SwDrawModellListener_Impl : public SfxListener,
     public ::cppu::WeakImplHelper1< XEventBroadcaster >
 {
@@ -229,8 +232,8 @@ class SwDrawModellListener_Impl : public SfxListener,
 
 public:
 
-    SwDrawModellListener_Impl( SdrModel *pDrawModel ); 
-    virtual ~SwDrawModellListener_Impl(); 
+    SwDrawModellListener_Impl( SdrModel *pDrawModel );
+    virtual ~SwDrawModellListener_Impl();
 
     virtual void SAL_CALL addEventListener( const Reference< XEventListener >& xListener ) throw (::com::sun::star::uno::RuntimeException);
     virtual void SAL_CALL removeEventListener( const Reference< XEventListener >& xListener ) throw (::com::sun::star::uno::RuntimeException);
@@ -246,7 +249,7 @@ SwDrawModellListener_Impl::SwDrawModellListener_Impl( SdrModel *pDrawModel ) :
     StartListening( *mpDrawModel );
 }
 
-SwDrawModellListener_Impl::~SwDrawModellListener_Impl() 
+SwDrawModellListener_Impl::~SwDrawModellListener_Impl()
 {
     EndListening( *mpDrawModel );
 }
@@ -267,14 +270,14 @@ void SwDrawModellListener_Impl::Notify( SfxBroadcaster& rBC,
     // do not broadcast notifications for writer fly frames, because there
     // are no shapes that need to know about them.
     const SdrHint *pSdrHint = PTR_CAST( SdrHint, &rHint );
-    if( !pSdrHint || 
+    if( !pSdrHint ||
         (pSdrHint->GetObject() && pSdrHint->GetObject()->IsWriterFlyFrame()) )
         return;
 
     ASSERT( mpDrawModel, "draw model listener is disposed" );
     if( !mpDrawModel )
         return;
-        
+
     EventObject aEvent;
     if( !SvxUnoDrawMSFactory::createEvent( mpDrawModel, pSdrHint, aEvent ) )
         return;
@@ -304,7 +307,7 @@ void SwDrawModellListener_Impl::Dispose()
     mpDrawModel = 0;
 }
 
-//------------------------------------------------------------------------------ 
+//------------------------------------------------------------------------------
 struct SwShapeFunc
 {
     sal_Bool operator()( const SdrObject * p1,
@@ -317,12 +320,12 @@ typedef ::std::map < const SdrObject *, WeakReference < XAccessible >, SwShapeFu
 typedef ::std::pair < const SdrObject *, ::vos::ORef < accessibility::AccessibleShape > > SwAccessibleObjShape_Impl;
 
 class SwAccessibleShapeMap_Impl: public _SwAccessibleShapeMap_Impl
-                                 
+
 {
     accessibility::AccessibleShapeTreeInfo maInfo;
 
 public:
-    
+
 #ifndef PRODUCT
     sal_Bool mbLocked;
 #endif
@@ -335,7 +338,7 @@ public:
         maInfo.SetWindow( pMap->GetShell()->GetWin() );
         maInfo.SetViewForwarder( pMap );
         Reference < XEventBroadcaster > xModelBroadcaster =
-            new SwDrawModellListener_Impl( 
+            new SwDrawModellListener_Impl(
                     pMap->GetShell()->GetDoc()->MakeDrawModel() );
         maInfo.SetControllerBroadcaster( xModelBroadcaster );
     }
@@ -344,7 +347,7 @@ public:
 
     const accessibility::AccessibleShapeTreeInfo& GetInfo() const { return maInfo; }
 
-    SwAccessibleObjShape_Impl *Copy( size_t& rSize, 
+    SwAccessibleObjShape_Impl *Copy( size_t& rSize,
         const SwFEShell *pFESh = 0,
         SwAccessibleObjShape_Impl  **pSelShape = 0 ) const;
 };
@@ -357,7 +360,7 @@ SwAccessibleShapeMap_Impl::~SwAccessibleShapeMap_Impl()
 }
 
 SwAccessibleObjShape_Impl
-    *SwAccessibleShapeMap_Impl::Copy( 
+    *SwAccessibleShapeMap_Impl::Copy(
             size_t& rSize, const SwFEShell *pFESh,
             SwAccessibleObjShape_Impl **pSelStart ) const
 {
@@ -369,7 +372,7 @@ SwAccessibleObjShape_Impl
 
     if( rSize > 0 )
     {
-        pShapes = 
+        pShapes =
             new SwAccessibleObjShape_Impl[rSize];
 
         const_iterator aIter = begin();
@@ -410,7 +413,7 @@ SwAccessibleObjShape_Impl
     return pShapes;
 }
 
-//------------------------------------------------------------------------------ 
+//------------------------------------------------------------------------------
 struct SwAccessibleEvent_Impl
 {
 public:
@@ -435,31 +438,31 @@ public:
         meType( eT ), mxAcc( pA ), maFrmOrObj( rFrmOrObj ), mnStates( 0 )
     {}
     SwAccessibleEvent_Impl( EventType eT, const SwFrmOrObj& rFrmOrObj ) :
-        meType( eT ), maFrmOrObj( rFrmOrObj ), mnStates( 0 ) 
+        meType( eT ), maFrmOrObj( rFrmOrObj ), mnStates( 0 )
     {
-        ASSERT( SwAccessibleEvent_Impl::DISPOSE == meType, 
+        ASSERT( SwAccessibleEvent_Impl::DISPOSE == meType,
                 "wrong event constructor, DISPOSE only" );
     }
     SwAccessibleEvent_Impl( EventType eT ) :
-        meType( eT ), mnStates( 0 ) 
+        meType( eT ), mnStates( 0 )
     {
-        ASSERT( SwAccessibleEvent_Impl::SHAPE_SELECTION == meType, 
+        ASSERT( SwAccessibleEvent_Impl::SHAPE_SELECTION == meType,
                 "wrong event constructor, SHAPE_SELECTION only" );
     }
     SwAccessibleEvent_Impl( EventType eT, SwAccessibleContext *pA,
                             const SwFrmOrObj& rFrmOrObj, const SwRect& rR ) :
-        meType( eT ), mxAcc( pA ), maFrmOrObj( rFrmOrObj ), maOldBox( rR ), 
-        mnStates( 0 ) 
+        meType( eT ), mxAcc( pA ), maFrmOrObj( rFrmOrObj ), maOldBox( rR ),
+        mnStates( 0 )
     {
         ASSERT( SwAccessibleEvent_Impl::CHILD_POS_CHANGED == meType ||
-                SwAccessibleEvent_Impl::POS_CHANGED == meType, 
+                SwAccessibleEvent_Impl::POS_CHANGED == meType,
                 "wrong event constructor, (CHILD_)POS_CHANGED only" );
     }
     SwAccessibleEvent_Impl( EventType eT, SwAccessibleContext *pA,
                             const SwFrmOrObj& rFrmOrObj, sal_uInt8 nSt  ) :
         meType( eT ), mxAcc( pA ), maFrmOrObj( rFrmOrObj ), mnStates( nSt )
     {
-        ASSERT( SwAccessibleEvent_Impl::CARET_OR_STATES == meType, 
+        ASSERT( SwAccessibleEvent_Impl::CARET_OR_STATES == meType,
                 "wrong event constructor, CARET_OR_STATES only" );
     }
 
@@ -481,7 +484,7 @@ public:
     inline sal_uInt8 GetAllStates() const { return mnStates; }
 };
 
-inline ::vos::ORef < SwAccessibleContext > 
+inline ::vos::ORef < SwAccessibleContext >
     SwAccessibleEvent_Impl::GetContext() const
 {
     Reference < XAccessible > xTmp( mxAcc );
@@ -491,7 +494,7 @@ inline ::vos::ORef < SwAccessibleContext >
     return xAccImpl;
 }
 
-//------------------------------------------------------------------------------ 
+//------------------------------------------------------------------------------
 typedef ::std::list < SwAccessibleEvent_Impl > _SwAccessibleEventList_Impl;
 
 class SwAccessibleEventList_Impl: public _SwAccessibleEventList_Impl
@@ -506,7 +509,7 @@ public:
     inline sal_Bool IsFiring() const { return mbFiring; }
 };
 
-//------------------------------------------------------------------------------ 
+//------------------------------------------------------------------------------
 // The shape list is filled if an accessible shape is destroyed. It
 // simply keeps a reference to the accessible shape's XShape. These
 // references are destroyed within the EndAction when firing events,
@@ -528,17 +531,17 @@ public:
 };
 
 
-//------------------------------------------------------------------------------ 
+//------------------------------------------------------------------------------
 struct SwFrmOrObjFunc
 {
     sal_Bool operator()( const SwFrmOrObj& r1,
                          const SwFrmOrObj& r2 ) const
     {
         const void *p1 = r1.GetSwFrm()
-                ? static_cast < const void * >( r1.GetSwFrm()) 
+                ? static_cast < const void * >( r1.GetSwFrm())
                 : static_cast < const void * >( r1.GetSdrObject() );
         const void *p2 = r2.GetSwFrm()
-                ? static_cast < const void * >( r2.GetSwFrm()) 
+                ? static_cast < const void * >( r2.GetSwFrm())
                 : static_cast < const void * >( r2.GetSdrObject() );
         return p1 < p2;
     }
@@ -550,7 +553,7 @@ class SwAccessibleEventMap_Impl: public _SwAccessibleEventMap_Impl
 {
 };
 
-//------------------------------------------------------------------------------ 
+//------------------------------------------------------------------------------
 static sal_Bool AreInSameTable( const Reference< XAccessible >& rAcc,
                                  const SwFrm *pFrm )
 {
@@ -614,7 +617,7 @@ void SwAccessibleMap::FireEvent( const SwAccessibleEvent_Impl& rEvent )
             if( rEvent.IsInvalidateStates() )
                 xAccImpl->InvalidateStates( rEvent.GetStates() );
             if( rEvent.IsInvalidateRelation() )
-                xAccImpl->InvalidateRelation( 
+                xAccImpl->InvalidateRelation(
                     (rEvent.GetAllStates() & ACC_STATE_RELATION_FROM) != 0 ?
                     AccessibleEventId::CONTENT_FLOWS_FROM_EVENT :
                     AccessibleEventId::CONTENT_FLOWS_TO_EVENT );
@@ -653,7 +656,7 @@ void SwAccessibleMap::AppendEvent( const SwAccessibleEvent_Impl& rEvent )
             switch( rEvent.GetType() )
             {
             case SwAccessibleEvent_Impl::CARET_OR_STATES:
-                // A CARET_OR_STATES event is added to any other 
+                // A CARET_OR_STATES event is added to any other
                 // event only. It is broadcasted after any other event, so the
                 // event should be put to the back.
                 ASSERT( aEvent.GetType() !=
@@ -728,7 +731,7 @@ void SwAccessibleMap::AppendEvent( const SwAccessibleEvent_Impl& rEvent )
     }
 }
 
-void SwAccessibleMap::InvalidateCursorPosition( 
+void SwAccessibleMap::InvalidateCursorPosition(
         const Reference< XAccessible >& rAcc )
 {
     SwAccessibleContext *pAccImpl =
@@ -778,7 +781,7 @@ void SwAccessibleMap::DoInvalidateShapeSelection()
         if( mpShapeMap )
             pShapes = mpShapeMap->Copy( nShapes, pFESh, &pSelShape );
     }
-    
+
     if( pShapes )
     {
         ::std::list< const SwFrm * > aParents;
@@ -793,7 +796,7 @@ void SwAccessibleMap::DoInvalidateShapeSelection()
                 sal_Bool bChanged;
                 if( pShape >= pSelShape )
                 {
-                    bChanged = 
+                    bChanged =
                         pShape->second->SetState( AccessibleStateType::SELECTED );
                     if( bFocused && 1 == nSelShapes )
                         pShape->second->SetState( AccessibleStateType::FOCUSED );
@@ -802,17 +805,17 @@ void SwAccessibleMap::DoInvalidateShapeSelection()
                 }
                 else
                 {
-                    bChanged = 
+                    bChanged =
                         pShape->second->ResetState( AccessibleStateType::SELECTED );
                     pShape->second->ResetState( AccessibleStateType::FOCUSED );
                 }
                 if( bChanged )
                 {
                     SwFrmOrObj aFrmOrObj( pShape->first );
-                    SwFrmOrObj aParent = 
-                        SwAccessibleFrame::GetParent( aFrmOrObj, 
+                    SwFrmOrObj aParent =
+                        SwAccessibleFrame::GetParent( aFrmOrObj,
                                                       GetShell()->IsPreView() );
-                    aParents.push_back( aParent.GetSwFrm() );			
+                    aParents.push_back( aParent.GetSwFrm() );
                 }
             }
 
@@ -1015,7 +1018,7 @@ SwAccessibleMap::~SwAccessibleMap()
     mpVSh->GetLayout()->RemoveAccessibleShell();
 }
 
-Reference< XAccessible > SwAccessibleMap::_GetDocumentView( 
+Reference< XAccessible > SwAccessibleMap::_GetDocumentView(
     sal_Bool bPagePreview )
 {
     Reference < XAccessible > xAcc;
@@ -1084,26 +1087,22 @@ Reference< XAccessible > SwAccessibleMap::GetDocumentView( )
     return _GetDocumentView( sal_False );
 }
 
-Reference<XAccessible> SwAccessibleMap::GetDocumentPreview( 
-    sal_uInt8 nRow, 
-    sal_uInt8 nColumn, 
-    sal_Int16 nStartPage,
-    const Size& rPageSize,
-    const Point& rFreePoint,
-    const Fraction& rScale,
-    sal_uInt16 nSelectedPage )
+// OD 14.01.2003 #103492# - complete re-factoring of method due to new page/print
+// preview functionality.
+Reference<XAccessible> SwAccessibleMap::GetDocumentPreview(
+                                    const std::vector<PrevwPage*>& _rPrevwPages,
+                                    const Fraction&  _rScale,
+                                    const SwPageFrm* _pSelectedPageFrm,
+                                    const Size&      _rPrevwWinSize )
 {
     // create & update preview data object
     if( mpPreview == NULL )
         mpPreview = new SwAccPreviewData();
-    mpPreview->Update( nRow, nColumn, nStartPage, 
-                       rPageSize, rFreePoint, rScale, GetShell(),
-                       nSelectedPage );
+    mpPreview->Update( _rPrevwPages, _rScale, _pSelectedPageFrm, _rPrevwWinSize );
 
     Reference<XAccessible> xAcc = _GetDocumentView( sal_True );
     return xAcc;
 }
-
 
 Reference< XAccessible> SwAccessibleMap::GetContext( const SwFrm *pFrm,
                                                      sal_Bool bCreate )
@@ -1129,15 +1128,15 @@ Reference< XAccessible> SwAccessibleMap::GetContext( const SwFrm *pFrm,
                 switch( pFrm->GetType() )
                 {
                 case FRM_TXT:
-                    pAcc = new SwAccessibleParagraph( this, mnPara++, 
+                    pAcc = new SwAccessibleParagraph( this, mnPara++,
                                     static_cast< const SwTxtFrm * >( pFrm ) );
                     break;
                 case FRM_HEADER:
-                    pAcc = new SwAccessibleHeaderFooter( this, 
+                    pAcc = new SwAccessibleHeaderFooter( this,
                                     static_cast< const SwHeaderFrm *>( pFrm ) );
                     break;
                 case FRM_FOOTER:
-                    pAcc = new SwAccessibleHeaderFooter( this, 
+                    pAcc = new SwAccessibleHeaderFooter( this,
                                     static_cast< const SwFooterFrm *>( pFrm ) );
                     break;
                 case FRM_FTN:
@@ -1170,15 +1169,15 @@ Reference< XAccessible> SwAccessibleMap::GetContext( const SwFrm *pFrm,
                     }
                     break;
                 case FRM_CELL:
-                    pAcc = new SwAccessibleCell( this, 
+                    pAcc = new SwAccessibleCell( this,
                                     static_cast< const SwCellFrm *>( pFrm ) );
                     break;
                 case FRM_TAB:
-                    pAcc = new SwAccessibleTable( this, 
+                    pAcc = new SwAccessibleTable( this,
                                     static_cast< const SwTabFrm *>( pFrm ) );
                     break;
                 case FRM_PAGE:
-                    DBG_ASSERT( GetShell()->IsPreView(), 
+                    DBG_ASSERT( GetShell()->IsPreView(),
                                 "accessible page frames only in PagePreview" );
                     pAcc = new SwAccessiblePage( this, pFrm );
                     break;
@@ -1198,21 +1197,21 @@ Reference< XAccessible> SwAccessibleMap::GetContext( const SwFrm *pFrm,
                         mpFrmMap->insert( aEntry );
                     }
 
-                    if( pAcc->HasCursor() && 
+                    if( pAcc->HasCursor() &&
                         !AreInSameTable( mxCursorContext, pFrm ) )
                     {
                         // If the new context has the focus, and if we know
                         // another context that had the focus, then the focus
                         // just moves from the old context to the new one. We
-                        // have to send a focus event and a caret event for 
-                        // the old context then. We have to to that know, 
+                        // have to send a focus event and a caret event for
+                        // the old context then. We have to to that know,
                         // because after we have left this method, anyone might
                         // call getStates for the new context and will get a
                         // focused state then. Sending the focus changes event
                         // after that seems to be strange. However, we cannot
                         // send a focus event fo the new context now, because
-                        // noone except us knows it. In any case, we remeber 
-                        // the new context as the one that has the focus 
+                        // noone except us knows it. In any case, we remeber
+                        // the new context as the one that has the focus
                         // currently.
 
                         xOldCursorAcc = mxCursorContext;
@@ -1270,7 +1269,7 @@ Reference< XAccessible> SwAccessibleMap::GetContext(
             if( !xAcc.is() && bCreate )
             {
                 accessibility::AccessibleShape *pAcc = 0;
-                Reference < XShape > xShape( 
+                Reference < XShape > xShape(
                     const_cast< SdrObject * >( pObj )->getUnoShape(),
                     UNO_QUERY );
                 if( xShape.is() )
@@ -1281,7 +1280,7 @@ Reference< XAccessible> SwAccessibleMap::GetContext(
                     ::accessibility::AccessibleShapeInfo aShapeInfo(
                             xShape, xParent, this );
 
-                    pAcc = rShapeTypeHandler.CreateAccessibleObject( 
+                    pAcc = rShapeTypeHandler.CreateAccessibleObject(
                                 aShapeInfo, mpShapeMap->GetInfo() );
                 }
                 xAcc = pAcc;
@@ -1442,7 +1441,7 @@ void SwAccessibleMap::Dispose( const SwFrm *pFrm, const SdrObject *pObj,
                     }
                 }
             }
-            if( !xParentAccImpl.isValid() && !aFrmOrObj.GetSwFrm() && 
+            if( !xParentAccImpl.isValid() && !aFrmOrObj.GetSwFrm() &&
                 mpShapeMap )
             {
                 SwAccessibleShapeMap_Impl::iterator aIter =
@@ -1459,7 +1458,7 @@ void SwAccessibleMap::Dispose( const SwFrm *pFrm, const SdrObject *pObj,
             {
                 // Keep a reference to the XShape to avoid that it
                 // is deleted with a SwFrmFmt::Modify.
-                Reference < XShape > xShape( 
+                Reference < XShape > xShape(
                     const_cast< SdrObject * >( pObj )->getUnoShape(),
                     UNO_QUERY );
                 if( xShape.is() )
@@ -1486,7 +1485,7 @@ void SwAccessibleMap::Dispose( const SwFrm *pFrm, const SdrObject *pObj,
                 }
             }
         }
-    
+
         // If the frame is accessible and there is a context for it, dispose
         // the frame. If the frame is no context for it but disposing should
         // take place recursive, the frame's children have to be disposed
@@ -1516,7 +1515,7 @@ void SwAccessibleMap::Dispose( const SwFrm *pFrm, const SdrObject *pObj,
 }
 
 void SwAccessibleMap::InvalidatePosOrSize( const SwFrm *pFrm,
-                                           const SdrObject *pObj, 
+                                           const SdrObject *pObj,
                                            const SwRect& rOldBox )
 {
     SwFrmOrObj aFrmOrObj( pFrm, pObj );
@@ -1666,7 +1665,7 @@ void SwAccessibleMap::InvalidateCursorPosition( const SwFrm *pFrm )
         }
     }
 
-    ASSERT( bShapeSelected || aFrmOrObj.IsAccessible(GetShell()->IsPreView()), 
+    ASSERT( bShapeSelected || aFrmOrObj.IsAccessible(GetShell()->IsPreView()),
             "frame is not accessible" );
 
     Reference < XAccessible > xOldAcc;
@@ -1709,8 +1708,8 @@ void SwAccessibleMap::InvalidateCursorPosition( const SwFrm *pFrm )
                 {
                     if( xAcc.is() )
                         xOldAcc = xAcc;	// avoid extra invalidation
-                    else 
-                        xAcc = xOldAcc;	// make sure ate least one	
+                    else
+                        xAcc = xOldAcc;	// make sure ate least one
                 }
                 if( !xAcc.is() )
                     xAcc = GetContext( aFrmOrObj.GetSwFrm(), sal_True );
@@ -1761,7 +1760,7 @@ void SwAccessibleMap::InvalidateStates( sal_uInt8 nStates, const SwFrm *pFrm )
 {
     // Start with the frame or the first upper that is accessible
     SwFrmOrObj aFrmOrObj( pFrm );
-    while( aFrmOrObj.GetSwFrm() && 
+    while( aFrmOrObj.GetSwFrm() &&
             !aFrmOrObj.IsAccessible( GetShell()->IsPreView() ) )
         aFrmOrObj = aFrmOrObj.GetSwFrm()->GetUpper();
     if( !aFrmOrObj.GetSwFrm() )
@@ -1783,10 +1782,10 @@ void SwAccessibleMap::InvalidateStates( sal_uInt8 nStates, const SwFrm *pFrm )
     }
 }
 
-void SwAccessibleMap::_InvalidateRelationSet( const SwFrm* pFrm, 
+void SwAccessibleMap::_InvalidateRelationSet( const SwFrm* pFrm,
                                               sal_Bool bFrom )
 {
-    // first, see if this frame is accessible, and if so, get the respective 
+    // first, see if this frame is accessible, and if so, get the respective
     SwFrmOrObj aFrmOrObj( pFrm );
     if( aFrmOrObj.IsAccessible( GetShell()->IsPreView() ) )
     {
@@ -1815,7 +1814,7 @@ void SwAccessibleMap::_InvalidateRelationSet( const SwFrm* pFrm,
             {
                 SwAccessibleEvent_Impl aEvent(
                     SwAccessibleEvent_Impl::CARET_OR_STATES, pAccImpl,
-                        pFrm, bFrom ? ACC_STATE_RELATION_FROM 
+                        pFrm, bFrom ? ACC_STATE_RELATION_FROM
                                     : ACC_STATE_RELATION_TO );
                 AppendEvent( aEvent );
             }
@@ -1829,31 +1828,30 @@ void SwAccessibleMap::_InvalidateRelationSet( const SwFrm* pFrm,
     }
 }
 
-void SwAccessibleMap::InvalidateRelationSet( const SwFrm* pMaster, 
+void SwAccessibleMap::InvalidateRelationSet( const SwFrm* pMaster,
                                              const SwFrm* pFollow )
 {
     _InvalidateRelationSet( pMaster, sal_False );
     _InvalidateRelationSet( pFollow, sal_True );
 }
 
-void SwAccessibleMap::UpdatePreview( sal_uInt8 nRow, sal_uInt8 nColumn, 
-                                     sal_Int16 nStartPage,
-                                     const Size& rPageSize, 
-                                     const Point& rFreePoint, 
-                                     const Fraction& rScale,
-                                       sal_uInt16 nSelectedPage )
+// OD 15.01.2003 #103492# - complete re-factoring of method due to new page/print
+// preview functionality.
+void SwAccessibleMap::UpdatePreview( const std::vector<PrevwPage*>& _rPrevwPages,
+                                     const Fraction&  _rScale,
+                                     const SwPageFrm* _pSelectedPageFrm,
+                                     const Size&      _rPrevwWinSize )
 {
     DBG_ASSERT( GetShell()->IsPreView(), "no preview?" );
     DBG_ASSERT( mpPreview != NULL, "no preview data?" );
- 
-    mpPreview->Update( nRow, nColumn, nStartPage, 
-                       rPageSize, rFreePoint, rScale, GetShell(), 
-                       nSelectedPage );
+
+    // OD 15.01.2003 #103492# - adjustments for changed method signature
+    mpPreview->Update( _rPrevwPages, _rScale, _pSelectedPageFrm, _rPrevwWinSize );
 
     // propagate change of VisArea through the document's
     // accessibility tree; this will also send appropriate scroll
     // events
-    SwAccessibleContext* pDoc = 
+    SwAccessibleContext* pDoc =
         GetContextImpl( GetShell()->GetLayout() ).getBodyPtr();
     static_cast<SwAccessibleDocumentBase*>( pDoc )->SetVisArea();
 
@@ -1884,8 +1882,9 @@ void SwAccessibleMap::InvalidatePreViewSelection( sal_uInt16 nSelPage )
 {
     DBG_ASSERT( GetShell()->IsPreView(), "no preview?" );
     DBG_ASSERT( mpPreview != NULL, "no preview data?" );
- 
-    mpPreview->InvalidateSelection( nSelPage );
+
+    // OD 16.01.2003 #103492# - changed metthod call due to method signature change.
+    mpPreview->InvalidateSelection( GetShell()->GetLayout()->GetPageByPageNum( nSelPage ) );
 
     Reference < XAccessible > xOldAcc;
     Reference < XAccessible > xAcc;
@@ -1974,7 +1973,10 @@ Point SwAccessibleMap::LogicToPixel( const Point& rPoint ) const
     Window *pWin = GetShell()->GetWin();
     if( pWin )
     {
-        aPoint = pWin->LogicToPixel( aPoint );
+        // OD 16.01.2003 #103492# - get mapping mode for LogicToPixel conversion
+        MapMode aMapMode;
+        GetMapMode( aPoint, aMapMode );
+        aPoint = pWin->LogicToPixel( aPoint, aMapMode );
         aPoint = pWin->OutputToAbsoluteScreenPixel( aPoint );
     }
 
@@ -1988,7 +1990,10 @@ Size SwAccessibleMap::LogicToPixel( const Size& rSize ) const
     Size aSize( OutputDevice::LogicToLogic( rSize, aSrc, aDest ) );
     if( GetShell()->GetWin() )
     {
-        aSize = GetShell()->GetWin()->LogicToPixel( aSize );
+        // OD 16.01.2003 #103492# - get mapping mode for LogicToPixel conversion
+        MapMode aMapMode;
+        GetMapMode( Point(0,0), aMapMode );
+        aSize = GetShell()->GetWin()->LogicToPixel( aSize, aMapMode );
     }
 
     return aSize;
@@ -2001,7 +2006,10 @@ Point SwAccessibleMap::PixelToLogic( const Point& rPoint ) const
     if( pWin )
     {
         aPoint = pWin->ScreenToOutputPixel( rPoint );
-        aPoint = pWin->PixelToLogic( aPoint );
+        // OD 16.01.2003 #103492# - get mapping mode for PixelToLogic conversion
+        MapMode aMapMode;
+        GetMapMode( aPoint, aMapMode );
+        aPoint = pWin->PixelToLogic( aPoint, aMapMode );
         MapMode aSrc( MAP_TWIP );
         MapMode aDest( MAP_100TH_MM );
         aPoint = OutputDevice::LogicToLogic( aPoint, aSrc, aDest );
@@ -2015,7 +2023,10 @@ Size SwAccessibleMap::PixelToLogic( const Size& rSize ) const
     Size aSize;
     if( GetShell()->GetWin() )
     {
-        aSize = GetShell()->GetWin()->PixelToLogic( rSize );
+        // OD 16.01.2003 #103492# - get mapping mode for PixelToLogic conversion
+        MapMode aMapMode;
+        GetMapMode( Point(0,0), aMapMode );
+        aSize = GetShell()->GetWin()->PixelToLogic( rSize, aMapMode );
         MapMode aSrc( MAP_TWIP );
         MapMode aDest( MAP_100TH_MM );
         aSize = OutputDevice::LogicToLogic( aSize, aSrc, aDest );
@@ -2041,7 +2052,7 @@ sal_Bool SwAccessibleMap::ReplaceChild (
             while( aIter != aEndIter && !pObj )
             {
                 Reference < XAccessible > xAcc( (*aIter).second );
-                ::accessibility::AccessibleShape *pAccShape = 
+                ::accessibility::AccessibleShape *pAccShape =
                     static_cast < accessibility::AccessibleShape* >( xAcc.get() );
                 if( pAccShape == pCurrentChild )
                 {
@@ -2073,8 +2084,8 @@ sal_Bool SwAccessibleMap::ReplaceChild (
                         accessibility::ShapeTypeHandler::Instance();
         ::accessibility::AccessibleShapeInfo aShapeInfo(
                                             xShape, xParent, this );
-        ::accessibility::AccessibleShape* pReplacement = 
-            rShapeTypeHandler.CreateAccessibleObject ( 
+        ::accessibility::AccessibleShape* pReplacement =
+            rShapeTypeHandler.CreateAccessibleObject (
                 aShapeInfo, mpShapeMap->GetInfo() );
 
         Reference < XAccessible > xAcc( pReplacement );
@@ -2102,24 +2113,15 @@ sal_Bool SwAccessibleMap::ReplaceChild (
     return sal_True;
 }
 
-Point SwAccessibleMap::CoreToPixel( const Point& rPoint ) const
-{
-    Point aPoint;
-    if( GetShell()->GetWin() )
-    {
-        PreviewAdjust( rPoint, sal_False );
-        aPoint = GetShell()->GetWin()->LogicToPixel( rPoint );
-    }
-    return aPoint;
-}
-
 Point SwAccessibleMap::PixelToCore( const Point& rPoint ) const
 {
     Point aPoint;
     if( GetShell()->GetWin() )
     {
-        PreviewAdjust( rPoint, sal_True );
-        aPoint = GetShell()->GetWin()->PixelToLogic( rPoint );
+        // OD 15.01.2003 #103492# - replace <PreviewAdjust(..)> by <GetMapMode(..)>
+        MapMode aMapMode;
+        GetMapMode( rPoint, aMapMode );
+        aPoint = GetShell()->GetWin()->PixelToLogic( rPoint, aMapMode );
     }
     return aPoint;
 }
@@ -2139,7 +2141,7 @@ static inline long lcl_CorrectCoarseValue(long aCoarseValue, long aFineValue,
         if (aFineValue > aRefValue)
             aResult += 1;
     }
-    
+
     return aResult;
 }
 
@@ -2151,7 +2153,7 @@ static inline void lcl_CorrectRectangle(Rectangle & rRect,
                                          rInGrid.nLeft, false);
     rRect.nTop = lcl_CorrectCoarseValue(rRect.nTop, rSource.nTop,
                                         rInGrid.nTop, false);
-    rRect.nRight = lcl_CorrectCoarseValue(rRect.nRight, rSource.nRight, 
+    rRect.nRight = lcl_CorrectCoarseValue(rRect.nRight, rSource.nRight,
                                           rInGrid.nRight, true);
     rRect.nBottom = lcl_CorrectCoarseValue(rRect.nBottom, rSource.nBottom,
                                            rInGrid.nBottom, true);
@@ -2162,10 +2164,12 @@ Rectangle SwAccessibleMap::CoreToPixel( const Rectangle& rRect ) const
     Rectangle aRect;
     if( GetShell()->GetWin() )
     {
-        PreviewAdjust( rRect.TopLeft(), sal_False );
-        aRect = GetShell()->GetWin()->LogicToPixel( rRect );
+        // OD 15.01.2003 #103492# - replace <PreviewAdjust(..)> by <GetMapMode(..)>
+        MapMode aMapMode;
+        GetMapMode( rRect.TopLeft(), aMapMode );
+        aRect = GetShell()->GetWin()->LogicToPixel( rRect, aMapMode );
 
-        Rectangle aTmpRect = GetShell()->GetWin()->PixelToLogic( aRect );
+        Rectangle aTmpRect = GetShell()->GetWin()->PixelToLogic( aRect, aMapMode );
         lcl_CorrectRectangle(aRect, rRect, aTmpRect);
     }
 
@@ -2177,178 +2181,131 @@ Rectangle SwAccessibleMap::PixelToCore( const Rectangle& rRect ) const
     Rectangle aRect;
     if( GetShell()->GetWin() )
     {
-        PreviewAdjust( rRect.TopLeft(), sal_True );
-        aRect = GetShell()->GetWin()->PixelToLogic( rRect );
-        
-        Rectangle aTmpRect = GetShell()->GetWin()->LogicToPixel( aRect );
+        // OD 15.01.2003 #103492# - replace <PreviewAdjust(..)> by <GetMapMode(..)>
+        MapMode aMapMode;
+        GetMapMode( rRect.TopLeft(), aMapMode );
+        aRect = GetShell()->GetWin()->PixelToLogic( rRect, aMapMode );
+
+        Rectangle aTmpRect = GetShell()->GetWin()->LogicToPixel( aRect, aMapMode );
         lcl_CorrectRectangle(aRect, rRect, aTmpRect);
     }
     return aRect;
 }
 
-inline void SwAccessibleMap::PreviewAdjust( const Point& rPoint, 
-                                            sal_Bool bFromPreview ) const
+/** get mapping mode for LogicToPixel and PixelToLogic conversions
+
+    OD 15.01.2003 #103492#
+    Replacement method <PreviewAdjust(..)> by new method <GetMapMode>.
+    Method returns mapping mode of current output device and adjusts it,
+    if the shell is in page/print preview.
+    Necessary, because <PreviewAdjust(..)> changes mapping mode at current
+    output device for mapping logic document positions to page preview window
+    positions and vice versa and doesn't take care to recover its changes.
+
+    @author OD
+*/
+void SwAccessibleMap::GetMapMode( const Point& _rPoint,
+                                  MapMode&     _orMapMode ) const
 {
+    MapMode aMapMode = GetShell()->GetWin()->GetMapMode();
     if( GetShell()->IsPreView() )
     {
         DBG_ASSERT( mpPreview != NULL, "need preview data" );
 
-        Window* pWin = GetShell()->GetWin();
-        MapMode aMode = pWin->GetMapMode();
-        mpPreview->AdjustMapMode( aMode, rPoint, sal_True );
-        pWin->SetMapMode( aMode );
+        mpPreview->AdjustMapMode( aMapMode, _rPoint );
+    }
+    _orMapMode = aMapMode;
+}
+
+/** get size of a dedicated preview page
+
+    OD 15.01.2003 #103492#
+
+    @author OD
+*/
+Size SwAccessibleMap::GetPreViewPageSize( sal_uInt16 _nPrevwPageNum ) const
+{
+    DBG_ASSERT( mpVSh->IsPreView(), "no page preview accessible." );
+    DBG_ASSERT( mpVSh->IsPreView() && ( mpPreview != NULL ),
+                "missing accessible preview data at page preview" );
+    if ( mpVSh->IsPreView() && ( mpPreview != NULL ) )
+    {
+        return mpVSh->PagePreviewLayout()->GetPrevwPageSizeByPageNum( _nPrevwPageNum );
+    }
+    else
+    {
+        return Size( 0, 0 );
     }
 }
 
-
 //
-// SwAccPreviewData 
+// SwAccPreviewData
 //
 
 SwAccPreviewData::SwAccPreviewData() :
-    mpStartPage( 0 ),
-    mpSelPage( 0 ),
-    mnStartPage( 0 )
+    mpSelPage( 0 )
 {
 }
 
 SwAccPreviewData::~SwAccPreviewData()
 {
 }
-  
-void SwAccPreviewData::Update( sal_uInt8 nRow,
-                               sal_uInt8 nColumn,
-                               sal_uInt16 nStartPage,
-                               const Size& rPageSize,
-                               const Point& rFreePixel,
-                               const Fraction& rScale,
-                               ViewShell* pShell,
-                               sal_uInt16 nSelPage )
+
+// OD 13.01.2003 #103492# - complete re-factoring of method due to new page/print
+// preview functionality.
+void SwAccPreviewData::Update( const std::vector<PrevwPage*>& _rPrevwPages,
+                               const Fraction&  _rScale,
+                               const SwPageFrm* _pSelectedPageFrm,
+                               const Size&      _rPrevwWinSize )
 {
-    DBG_ASSERT( nRow > 0, "invalid row value" );
-    DBG_ASSERT( nColumn > 0, "invalid column value" );
-    DBG_ASSERT( nStartPage >= 0, "invalid start page" );
-    DBG_ASSERT( pShell != NULL, "need view shell" );
-    DBG_ASSERT( pShell->IsPreView(), "not inpreview?" );
+    // store preview scaling, maximal preview page size and selected page
+    maScale = _rScale;
+    mpSelPage = _pSelectedPageFrm;
 
-    // store the rScale (for AdjustMapMode; will be called from here, too)
-    maScale = rScale;
-    maPageSize = rPageSize;
+    // prepare loop on preview pages
+    maPreviewRects.clear();
+    maLogicRects.clear();
+    SwFrmOrObj aPage;
+    maVisArea.Clear();
 
-    // get first page frame from layout, and iterate to page nSttPage
-    SwRootFrm* pRoot = pShell->GetLayout();
-    DBG_ASSERT( pRoot != NULL, "No layout?" );
-    
-    SwPageFrm* pPage = static_cast<SwPageFrm*>( pRoot->Lower() );
-    DBG_ASSERT( pPage != NULL, "No page?" );
-
-    // adjust for the first page (which is always a right page) if
-    // there is more than one column
-    sal_Bool bSkipFirstPage = (nStartPage == 0) && (nColumn != 1);
-
-    // get offset of selected page
-    mnStartPage = nStartPage;
-    nSelPage -= nStartPage;
-
-    // we'll count on nStartPage, so it should be zero-based
-    if( nStartPage > 0 )
-        nStartPage--;
-
-    // iterate until nStartPage is found
-    sal_Int32 nPage = 0; 
-    while( (nStartPage > 0) && (pPage != NULL) )
+    // loop on preview pages to calculate <maPreviewRects>, <maLogicRects> and
+    // <maVisArea>
+    for ( std::vector<PrevwPage*>::const_iterator aPageIter = _rPrevwPages.begin();
+          aPageIter != _rPrevwPages.end();
+          ++aPageIter )
     {
-        pPage = static_cast<SwPageFrm*>( pPage->GetNext() );
-        nStartPage--;
+        aPage = (*aPageIter)->pPage;
 
-        // if pPage isn't valid, thethe parameter checking allowed an
-        // invalid index
-        DBG_ASSERT( pPage != NULL, "non-existing start page" );
-    }
+        // add preview page rectangle to <maPreviewRects>
+        Rectangle aPrevwPgRect( (*aPageIter)->aPrevwWinPos, (*aPageIter)->aPageSize );
+        maPreviewRects.push_back( aPrevwPgRect );
 
-    // iterate over pages and collect data
-    // 1) VisArea as union of visible pages
-    // 2) areas of visible pages for preview/logic mapping
-    mpStartPage = pPage;
-    mpSelPage = 0;
-    if( pPage != NULL )
-    {
-        // first page: use to initialize VisArea
-        SwFrmOrObj aPage( pPage );
-        maVisArea = aPage.GetBox();
-        maPreviewRects.clear();
-        maLogicRects.clear();
-
-        // compute free point
-        MapMode aMapMode( MAP_TWIP );
-        AdjustMapMode( aMapMode );
-        Point aFreePoint = pShell->GetWin()->PixelToLogic( rFreePixel, 
-                                                           aMapMode );
-
-        // loop over col*row pages, and advance aCurrentPoint to start
-        // of this page's previeww
-        Point aCurrentPoint = aFreePoint;
-        for( sal_uInt8 nR = 0; (pPage != NULL) && (nR < nRow); nR++ )
+        // add logic page rectangle to <maLogicRects>
+        SwRect aLogicPgSwRect( aPage.GetBox() );
+        Rectangle aLogicPgRect( aLogicPgSwRect.SVRect() );
+        maLogicRects.push_back( aLogicPgRect );
+        // union visible area with visible part of logic page rectangle
+        if ( (*aPageIter)->bVisible )
         {
-            aCurrentPoint.X() = aFreePoint.X();
-
-            for( sal_uInt8 nC = 0; (pPage != NULL) && (nC < nColumn); nC++ )
+            if ( !(*aPageIter)->pPage->IsEmptyPage() )
             {
-                if( bSkipFirstPage )
-                {
-                    aCurrentPoint.X() += rPageSize.Width();
-                    bSkipFirstPage = sal_False;
-                    // DON'T proceed to next page!
-                }
-                else
-                {
-                    // collect data
-                    aPage = pPage;
-                    SwRect aSwRect = aPage.GetBox();
-                    maVisArea.Union( aSwRect );
-
-                    Rectangle aRect = aSwRect.SVRect();
-                    maLogicRects.push_back( aRect );
-                    aRect.SetPos( aCurrentPoint );
-                    maPreviewRects.push_back( aRect );
-
-                    aCurrentPoint.X() += pPage->IsEmptyPage() 
-                                            ? rPageSize.Width()
-                                            : aSwRect.Width();
-                    if( 0 == nSelPage )
-                        mpSelPage = pPage;
-
-                    pPage = static_cast<SwPageFrm*>( pPage->GetNext() );
-                }
-                aCurrentPoint.X() += aFreePoint.X() +1;
-                nSelPage--;
+                AdjustLogicPgRectToVisibleArea( aLogicPgSwRect,
+                                                SwRect( aPrevwPgRect ),
+                                                _rPrevwWinSize );
             }
-            aCurrentPoint.Y() += rPageSize.Height() + 1 + aFreePoint.Y();
+            if ( maVisArea.IsEmpty() )
+                maVisArea = aLogicPgSwRect;
+            else
+                maVisArea.Union( aLogicPgSwRect );
         }
     }
 }
 
-void SwAccPreviewData::InvalidateSelection( sal_uInt16 nSelPage )
+// OD 16.01.2003 #103492# - complete re-factoring of method due to new page/print
+// preview functionality.
+void SwAccPreviewData::InvalidateSelection( const SwPageFrm* _pSelectedPageFrm )
 {
-    mpSelPage = 0;
-    nSelPage -= mnStartPage;
-    ASSERT( nSelPage >= 0, "invalid selected page" );
-    ASSERT( mpStartPage, "no start page" );
-    if( mpStartPage != NULL )
-    {
-        const SwPageFrm *pPage = mpStartPage;
-
-        // loop over col*row pages, and advance aCurrentPoint to start
-        // of this page's preview
-        while( mpSelPage == 0 && pPage != 0 )
-        {
-            if( 0 == nSelPage )
-                mpSelPage = pPage;
-
-            pPage = static_cast<const SwPageFrm*>( pPage->GetNext() );
-            nSelPage--;
-        }
-    }
+    mpSelPage = _pSelectedPageFrm;
     ASSERT( mpSelPage, "selected page not found" );
 }
 
@@ -2367,67 +2324,16 @@ const SwRect& SwAccPreviewData::GetVisArea() const
     return maVisArea;
 }
 
-Point SwAccPreviewData::PreviewToLogic(const Point& rPoint) const
-{
-    Rectangles::const_iterator aIter = find_if( maPreviewRects.begin(), 
-                                                maPreviewRects.end(), 
-                                                ContainsPredicate( rPoint ) );
-    if( aIter != maPreviewRects.end() )
-    {
-        Point aPoint = rPoint;
-        aPoint -= aIter->TopLeft();
-        aPoint += (maLogicRects.begin() + ( aIter - maPreviewRects.begin() ))
-                      ->TopLeft();
-        return aPoint;
-    }
-    else
-        return Point(0,0);
-}
-
-Point SwAccPreviewData::LogicToPreview(const Point& rPoint) const
-{
-    Rectangles::const_iterator aIter = find_if( maLogicRects.begin(), 
-                                                maLogicRects.end(),
-                                                ContainsPredicate( rPoint ) );
-    if( aIter != maLogicRects.end() )
-    {
-        Point aPoint = rPoint;
-        aPoint -= aIter->TopLeft();
-        aPoint += (maPreviewRects.begin() + ( aIter - maLogicRects.begin() ))
-                      ->TopLeft();
-        return aPoint;
-    }
-    else
-        return Point(0,0);
-}
-
-void SwAccPreviewData::AdjustMapMode( MapMode& rMapMode ) const
+void SwAccPreviewData::AdjustMapMode( MapMode& rMapMode,
+                                      const Point& rPoint ) const
 {
     // adjust scale
     rMapMode.SetScaleX( maScale );
     rMapMode.SetScaleY( maScale );
-}
-
-void SwAccPreviewData::DisposePage(const SwPageFrm *pPageFrm )
-{
-    if( mpStartPage == pPageFrm )
-        mpStartPage = 0;
-    if( mpSelPage == pPageFrm )
-        mpSelPage = 0;
-}
-    
-
-void SwAccPreviewData::AdjustMapMode( MapMode& rMapMode,
-                                      const Point& rPoint,
-                                      sal_Bool bFromPreview ) const
-{
-    // adjust scale
-    AdjustMapMode( rMapMode );
 
     // find proper rectangle
-    const Rectangles& rRects = bFromPreview ? maLogicRects : maPreviewRects;
-    Rectangles::const_iterator aBegin = rRects.begin();
-    Rectangles::const_iterator aEnd = rRects.end();
+    Rectangles::const_iterator aBegin = maLogicRects.begin();
+    Rectangles::const_iterator aEnd = maLogicRects.end();
     Rectangles::const_iterator aFound = find_if( aBegin, aEnd,
                                                  ContainsPredicate( rPoint ) );
 
@@ -2439,4 +2345,46 @@ void SwAccPreviewData::AdjustMapMode( MapMode& rMapMode,
         rMapMode.SetOrigin( aPoint );
     }
     // else: don't adjust MapMode
+}
+
+void SwAccPreviewData::DisposePage(const SwPageFrm *pPageFrm )
+{
+    if( mpSelPage == pPageFrm )
+        mpSelPage = 0;
+}
+
+/** adjust logic page retangle to its visible part
+
+    OD 17.01.2003 #103492#
+
+    @author OD
+*/
+void SwAccPreviewData::AdjustLogicPgRectToVisibleArea(
+                            SwRect&         _iorLogicPgSwRect,
+                            const SwRect&   _rPrevwPgSwRect,
+                            const Size&     _rPrevwWinSize )
+{
+    // determine preview window rectangle
+    const SwRect aPrevwWinSwRect( Point( 0, 0 ), _rPrevwWinSize );
+    // calculate visible preview page rectangle
+    SwRect aVisPrevwPgSwRect( _rPrevwPgSwRect );
+    aVisPrevwPgSwRect.Intersection( aPrevwWinSwRect );
+    // adjust logic page rectangle
+    SwTwips nTmpDiff;
+    // left
+    nTmpDiff = aVisPrevwPgSwRect.Left() - _rPrevwPgSwRect.Left();
+    if ( nTmpDiff > 0 )
+        _iorLogicPgSwRect.Left( _iorLogicPgSwRect.Left() + nTmpDiff );
+    // top
+    nTmpDiff = aVisPrevwPgSwRect.Top() - _rPrevwPgSwRect.Top();
+    if ( nTmpDiff > 0 )
+        _iorLogicPgSwRect.Top( _iorLogicPgSwRect.Top() + nTmpDiff );
+    // right
+    nTmpDiff = _rPrevwPgSwRect.Right() - aVisPrevwPgSwRect.Right();
+    if ( nTmpDiff > 0 )
+        _iorLogicPgSwRect.Right( _iorLogicPgSwRect.Right() - nTmpDiff );
+    // bottom
+    nTmpDiff = _rPrevwPgSwRect.Bottom() - aVisPrevwPgSwRect.Bottom();
+    if ( nTmpDiff > 0 )
+        _iorLogicPgSwRect.Bottom( _iorLogicPgSwRect.Bottom() - nTmpDiff );
 }

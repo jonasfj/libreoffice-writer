@@ -2,9 +2,9 @@
  *
  *  $RCSfile: xmliteme.cxx,v $
  *
- *  $Revision: 1.8 $
+ *  $Revision: 1.9 $
  *
- *  last change: $Author: dvo $ $Date: 2001-10-26 12:02:47 $
+ *  last change: $Author: hr $ $Date: 2003-03-27 15:42:25 $
  *
  *  The Contents of this file are made available subject to the terms of
  *  either of the following licenses
@@ -70,7 +70,7 @@
 #ifndef _RTL_USTRING_HXX_
 #include <rtl/ustring.hxx>
 #endif
-#ifndef _RTL_USTRBUF_HXX_ 
+#ifndef _RTL_USTRBUF_HXX_
 #include <rtl/ustrbuf.hxx>
 #endif
 
@@ -114,19 +114,19 @@
 #ifndef _DOC_HXX //autogen wg. SwDoc
 #include <doc.hxx>
 #endif
-#ifndef _FMTORNT_HXX 
+#ifndef _FMTORNT_HXX
 #include "fmtornt.hxx"
 #endif
 #ifndef _UNOMID_H
 #include <unomid.h>
 #endif
-#ifndef _FRMFMT_HXX 
+#ifndef _FRMFMT_HXX
 #include "frmfmt.hxx"
 #endif
-#ifndef _FMTFSIZE_HXX 
+#ifndef _FMTFSIZE_HXX
 #include "fmtfsize.hxx"
 #endif
-#ifndef _SWRECT_HXX 
+#ifndef _SWRECT_HXX
 #include "swrect.hxx"
 #endif
 
@@ -146,7 +146,6 @@ extern SvXMLItemMapEntry aXMLTableCellItemMap[];
 
 class SwXMLTableItemMapper_Impl: public SvXMLExportItemMapper
 {
-    const OUString sCDATA;
     SwXMLBrushItemExport aBrushItemExport;
 
 protected:
@@ -173,7 +172,7 @@ public:
                                     const SvXMLNamespaceMap& rNamespaceMap,
                                     const SfxItemSet *pSet = NULL ) const;
 
-    virtual void handleElementItem( 
+    virtual void handleElementItem(
             SvXMLExport& rExport,
             const SvXMLItemMapEntry& rEntry,
             const SfxPoolItem& rItem,
@@ -188,7 +187,6 @@ SwXMLTableItemMapper_Impl::SwXMLTableItemMapper_Impl(
         SvXMLItemMapEntriesRef rMapEntries,
         SwXMLExport& rExp ) :
     SvXMLExportItemMapper( rMapEntries ),
-    sCDATA( GetXMLToken( XML_CDATA ) ),
     aBrushItemExport( rExp ),
     nAbsWidth( USHRT_MAX )
 {
@@ -204,9 +202,9 @@ void SwXMLTableItemMapper_Impl::AddAttribute( sal_uInt16 nPrefix,
         const SvXMLNamespaceMap& rNamespaceMap,
         SvXMLAttributeList& rAttrList ) const
 {
-    OUString sName( rNamespaceMap.GetQNameByKey( nPrefix, 
+    OUString sName( rNamespaceMap.GetQNameByKey( nPrefix,
                                                  GetXMLToken(eLName) ) );
-    rAttrList.AddAttribute( sName, sCDATA, rValue );
+    rAttrList.AddAttribute( sName, rValue );
 }
 
 void SwXMLTableItemMapper_Impl::handleSpecialItem(
@@ -241,7 +239,7 @@ void SwXMLTableItemMapper_Impl::handleSpecialItem(
                     break;
                 }
                 OUString sValue;
-                if( bExport && SvXMLExportItemMapper::QueryXMLValue( 
+                if( bExport && SvXMLExportItemMapper::QueryXMLValue(
                     rItem, sValue, nMemberId, rUnitConverter ) )
                 {
                     AddAttribute( rEntry.nNameSpace, rEntry.eLocalName, sValue,
@@ -269,7 +267,7 @@ void SwXMLTableItemMapper_Impl::handleSpecialItem(
             case MID_FRMSIZE_REL_WIDTH:
                 {
                     OUString sValue;
-                    if( SvXMLExportItemMapper::QueryXMLValue( 
+                    if( SvXMLExportItemMapper::QueryXMLValue(
                         rItem, sValue, nMemberId, rUnitConverter ) )
                     {
                         AddAttribute( rEntry.nNameSpace, rEntry.eLocalName,
@@ -285,7 +283,7 @@ void SwXMLTableItemMapper_Impl::handleSpecialItem(
 
 /** this method is called for every item that has the
     MID_FLAG_ELEMENT_EXPORT flag set */
-void SwXMLTableItemMapper_Impl::handleElementItem( 
+void SwXMLTableItemMapper_Impl::handleElementItem(
         SvXMLExport& rExport,
         const SvXMLItemMapEntry& rEntry,
         const SfxPoolItem& rItem,

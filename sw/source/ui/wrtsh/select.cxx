@@ -2,9 +2,9 @@
  *
  *  $RCSfile: select.cxx,v $
  *
- *  $Revision: 1.15 $
+ *  $Revision: 1.16 $
  *
- *  last change: $Author: os $ $Date: 2002-10-24 11:05:45 $
+ *  last change: $Author: hr $ $Date: 2003-03-27 15:45:16 $
  *
  *  The Contents of this file are made available subject to the terms of
  *  either of the following licenses
@@ -220,6 +220,9 @@ void SwWrtShell::SelLine(const Point *pPt, BOOL )
 
 long SwWrtShell::SelAll()
 {
+    const BOOL bLockedView = IsViewLocked();
+    LockView( TRUE );
+
     {
         MV_KONTEXT(this);
         BOOL bMoveTable = FALSE;
@@ -243,6 +246,9 @@ long SwWrtShell::SelAll()
         GoEnd(TRUE, &bMoveTable);
     }
     EndSelect();
+
+    LockView( bLockedView );
+
     return 1;
 }
 
@@ -600,9 +606,9 @@ void SwWrtShell::EnterStdMode()
     }
     else
     {
-        /*  ACT_KONTEXT() opens and action which has to be 
-            closed prior to the call of 
-            GetChgLnk().Call() 
+        /*  ACT_KONTEXT() opens and action which has to be
+            closed prior to the call of
+            GetChgLnk().Call()
         */
         {
             ACT_KONTEXT(this);

@@ -2,9 +2,9 @@
  *
  *  $RCSfile: xmlexpit.cxx,v $
  *
- *  $Revision: 1.5 $
+ *  $Revision: 1.6 $
  *
- *  last change: $Author: dvo $ $Date: 2002-06-19 13:07:54 $
+ *  last change: $Author: hr $ $Date: 2003-03-27 15:42:25 $
  *
  *  The Contents of this file are made available subject to the terms of
  *  either of the following licenses
@@ -218,7 +218,7 @@ void SvXMLExportItemMapper::exportXML( SvXMLAttributeList& rAttrList,
                     if( pIndexArray )
                         pIndexArray->Insert( nIndex, pIndexArray->Count() );
 
-                }		
+                }
                 else
                 {
                     exportXML( rAttrList, *pItem, *pEntry, rUnitConverter,
@@ -232,7 +232,7 @@ void SvXMLExportItemMapper::exportXML( SvXMLAttributeList& rAttrList,
                           rSet );
         }
         nIndex++;
-    }	
+    }
 }
 
 void SvXMLExportItemMapper::exportXML( SvXMLAttributeList& rAttrList,
@@ -243,15 +243,13 @@ void SvXMLExportItemMapper::exportXML( SvXMLAttributeList& rAttrList,
                                  sal_uInt16 nFlags,
                                  const SfxItemSet *pSet ) const
 {
-    OUString sCDATA( GetXMLToken(XML_CDATA) );
-
     if( 0 != (rEntry.nMemberId & MID_FLAG_SPECIAL_ITEM_EXPORT) )
     {
         if( rItem.ISA( SvXMLAttrContainerItem ) )
         {
             SvXMLNamespaceMap *pNewNamespaceMap = 0;
             const SvXMLNamespaceMap *pNamespaceMap = &rNamespaceMap;
-            
+
             const SvXMLAttrContainerItem *pUnknown =
                 PTR_CAST( SvXMLAttrContainerItem, &rItem );
 
@@ -281,7 +279,7 @@ void SvXMLExportItemMapper::exportXML( SvXMLAttributeList& rAttrList,
                         sName.append( GetXMLToken(XML_XMLNS) );
                         sName.append( sal_Unicode(':') );
                         sName.append( sPrefix );
-                        rAttrList.AddAttribute( sName.makeStringAndClear(), sCDATA,
+                        rAttrList.AddAttribute( sName.makeStringAndClear(),
                                                 sNamespace );
                     }
 
@@ -290,7 +288,7 @@ void SvXMLExportItemMapper::exportXML( SvXMLAttributeList& rAttrList,
                 }
 
                 sName.append( pUnknown->GetAttrLName( i ) );
-                rAttrList.AddAttribute( sName.makeStringAndClear(), sCDATA,
+                rAttrList.AddAttribute( sName.makeStringAndClear(),
                                         pUnknown->GetAttrValue(i) );
             }
 
@@ -302,7 +300,7 @@ void SvXMLExportItemMapper::exportXML( SvXMLAttributeList& rAttrList,
                                   rNamespaceMap, pSet );
         }
     }
-    else if( 0 == (rEntry.nMemberId & MID_FLAG_ELEMENT_ITEM_EXPORT) ) 
+    else if( 0 == (rEntry.nMemberId & MID_FLAG_ELEMENT_ITEM_EXPORT) )
     {
         OUString aValue;
         if( QueryXMLValue(rItem, aValue, rEntry.nMemberId & MID_FLAG_MASK,
@@ -311,7 +309,7 @@ void SvXMLExportItemMapper::exportXML( SvXMLAttributeList& rAttrList,
             OUString sName(
                 rNamespaceMap.GetQNameByKey( rEntry.nNameSpace,
                                              GetXMLToken(rEntry.eLocalName)));
-            rAttrList.AddAttribute( sName, sCDATA, aValue );
+            rAttrList.AddAttribute( sName, aValue );
         }
     }
 }
@@ -343,7 +341,7 @@ void SvXMLExportItemMapper::exportElementItems(
             bItemsExported = sal_True;
         }
     }
-    
+
     if( bItemsExported )
         rExport.IgnorableWhitespace();
 }
@@ -421,7 +419,7 @@ void SvXMLExportItemMapper::exportXML( SvXMLAttributeList& rAttrList,
                        rUnitConverter, rNamespaceMap, nFlags, 0 );
 
         nIndex++;
-    }		
+    }
 }
 
 void SvXMLExportItemMapper::exportXML( SvXMLExport& rExport,
@@ -431,7 +429,7 @@ void SvXMLExportItemMapper::exportXML( SvXMLExport& rExport,
 {
     SvUShorts aIndexArray;
 
-    exportXML( rExport.GetAttrList(), rSet, rUnitConverter, 
+    exportXML( rExport.GetAttrList(), rSet, rUnitConverter,
                rExport.GetNamespaceMap(), nFlags, &aIndexArray );
 
     if( rExport.GetAttrList().getLength() > 0L ||
@@ -445,7 +443,7 @@ void SvXMLExportItemMapper::exportXML( SvXMLExport& rExport,
 
         SvXMLElementExport aElem( rExport, XML_NAMESPACE_STYLE, XML_PROPERTIES,
                                   sal_False, sal_False );
-        exportElementItems( rExport, rUnitConverter, 
+        exportElementItems( rExport, rUnitConverter,
                             rSet, nFlags, aIndexArray );
     }
 }
@@ -475,7 +473,7 @@ void SvXMLExportItemMapper::handleNoItem( SvXMLAttributeList& rAttrList,
 
 /** this method is called for every item that has the
     MID_FLAG_ELEMENT_EXPORT flag set */
-void SvXMLExportItemMapper::handleElementItem( 
+void SvXMLExportItemMapper::handleElementItem(
                         SvXMLExport& rExport,
                         const SvXMLItemMapEntry& rEntry,
                         const SfxPoolItem& rItem,
@@ -487,9 +485,9 @@ void SvXMLExportItemMapper::handleElementItem(
 }
 
 
-sal_Bool SvXMLExportItemMapper::QueryXMLValue( 
-    const SfxPoolItem& rItem, 
-    OUString& rValue, 
+sal_Bool SvXMLExportItemMapper::QueryXMLValue(
+    const SfxPoolItem& rItem,
+    OUString& rValue,
     sal_uInt16 nMemberId,
     const SvXMLUnitConverter& rUnitConverter )
 {
@@ -498,12 +496,12 @@ sal_Bool SvXMLExportItemMapper::QueryXMLValue(
 
     switch ( rItem.Which() )
     {
-            
+
         case ITEMID_LRSPACE:
         {
             const SvxLRSpaceItem* pLRSpace = PTR_CAST(SvxLRSpaceItem, &rItem);
             DBG_ASSERT( pLRSpace != NULL, "Wrong Which-ID!" );
-            
+
             bOk = sal_True;
             switch( nMemberId )
             {
@@ -526,13 +524,13 @@ sal_Bool SvXMLExportItemMapper::QueryXMLValue(
                         rUnitConverter.convertBool( aOut, pLRSpace->IsAutoFirst() );
                     else
                         bOk = sal_False;
-                    break;  
+                    break;
 
                 case  MID_FIRST_LINE_INDENT:
                     if( !pLRSpace->IsAutoFirst() )
-                    {   
+                    {
                         if(pLRSpace->GetPropTxtFirstLineOfst() != 100)
-                            rUnitConverter.convertPercent( 
+                            rUnitConverter.convertPercent(
                                 aOut, pLRSpace->GetPropTxtFirstLineOfst() );
                         else
                             rUnitConverter.convertMeasure( aOut, pLRSpace->GetTxtFirstLineOfst() );
@@ -731,22 +729,22 @@ sal_Bool SvXMLExportItemMapper::QueryXMLValue(
                                 return sal_False;
                             break;
                         case LEFT_BORDER_LINE_WIDTH:
-                            if( bEqual || NULL == pLeft || 
+                            if( bEqual || NULL == pLeft ||
                                 0 == pLeft->GetDistance() )
                                 return sal_False;
                             break;
                         case RIGHT_BORDER_LINE_WIDTH:
-                            if( bEqual || NULL == pRight || 
+                            if( bEqual || NULL == pRight ||
                                 0 == pRight->GetDistance() )
                                 return sal_False;
                             break;
                         case TOP_BORDER_LINE_WIDTH:
-                            if( bEqual || NULL == pTop || 
+                            if( bEqual || NULL == pTop ||
                                 0 == pTop->GetDistance() )
                                 return sal_False;
                             break;
                         case BOTTOM_BORDER_LINE_WIDTH:
-                            if( bEqual || NULL == pBottom || 
+                            if( bEqual || NULL == pBottom ||
                                 0 == pBottom->GetDistance() )
                                 return sal_False;
                             break;
@@ -772,7 +770,7 @@ sal_Bool SvXMLExportItemMapper::QueryXMLValue(
                 case BOTTOM_BORDER_PADDING:
                     rUnitConverter.convertMeasure( aOut, nBottomDist );
                     break;
-                    
+
                     // border
                 case ALL_BORDER:
                 case LEFT_BORDER:
@@ -811,7 +809,7 @@ sal_Bool SvXMLExportItemMapper::QueryXMLValue(
                             nWidth += pLine->GetInWidth();
                         }
 
-                        enum XMLTokenEnum eStyle = 
+                        enum XMLTokenEnum eStyle =
                             (0 == nDistance) ? XML_SOLID : XML_DOUBLE;
 
                         rUnitConverter.convertMeasure( aOut, nWidth );
@@ -916,7 +914,7 @@ sal_Bool SvXMLExportItemMapper::QueryXMLValue(
         {
             SvxFmtKeepItem* pFmtKeep = PTR_CAST(SvxFmtKeepItem, &rItem);
             DBG_ASSERT( pFmtKeep != NULL, "Wrong Which-ID" );
-        
+
             rUnitConverter.convertBool( aOut, pFmtKeep->GetValue() );
             bOk = sal_True;
         }
@@ -927,7 +925,7 @@ sal_Bool SvXMLExportItemMapper::QueryXMLValue(
             SvxBrushItem* pBrush = PTR_CAST(SvxBrushItem, &rItem);
             DBG_ASSERT( pBrush != NULL, "Wrong Which-ID" );
 
-            // note: the graphic is only exported if nMemberId equals 
+            // note: the graphic is only exported if nMemberId equals
             //       MID_GRAPHIC..
             //       If not, only the color or transparency is exported
 
@@ -1018,7 +1016,7 @@ sal_Bool SvXMLExportItemMapper::QueryXMLValue(
                 break;
 
                 case MID_GRAPHIC_FILTER:
-                    if( pBrush->GetGraphicPos() != GPOS_NONE && 
+                    if( pBrush->GetGraphicPos() != GPOS_NONE &&
                         pBrush->GetGraphicFilter() )
                     {
                         aOut.append( pBrush->GetGraphicFilter()->GetBuffer() );
@@ -1028,7 +1026,7 @@ sal_Bool SvXMLExportItemMapper::QueryXMLValue(
             }
         }
         break;
-            
+
         case RES_PAGEDESC:
         {
             const SwFmtPageDesc* pPageDesc = PTR_CAST(SwFmtPageDesc, &rItem);
@@ -1037,7 +1035,7 @@ sal_Bool SvXMLExportItemMapper::QueryXMLValue(
             if( MID_PAGEDESC_PAGENUMOFFSET==nMemberId )
             {
 
-                rUnitConverter.convertNumber( 
+                rUnitConverter.convertNumber(
                     aOut, (sal_Int32)pPageDesc->GetNumOffset() );
                 bOk = sal_True;
             }
@@ -1059,7 +1057,7 @@ sal_Bool SvXMLExportItemMapper::QueryXMLValue(
             SwFmtHoriOrient* pHoriOrient = PTR_CAST(SwFmtHoriOrient, &rItem);
             DBG_ASSERT( pHoriOrient != NULL, "Wrong Which-ID" );
 
-            rUnitConverter.convertEnum( aOut, pHoriOrient->GetHoriOrient(), 
+            rUnitConverter.convertEnum( aOut, pHoriOrient->GetHoriOrient(),
                                         aXMLTableAlignMap );
             bOk = sal_True;
         }
@@ -1070,7 +1068,7 @@ sal_Bool SvXMLExportItemMapper::QueryXMLValue(
             SwFmtVertOrient* pVertOrient = PTR_CAST(SwFmtVertOrient, &rItem);
             DBG_ASSERT( pVertOrient != NULL, "Wrong Which-ID" );
 
-            rUnitConverter.convertEnum( aOut, pVertOrient->GetVertOrient(), 
+            rUnitConverter.convertEnum( aOut, pVertOrient->GetVertOrient(),
                                         aXMLTableVAlignMap );
             bOk = sal_True;
         }
@@ -1115,11 +1113,11 @@ sal_Bool SvXMLExportItemMapper::QueryXMLValue(
             bOk = rItem.QueryValue( aAny );
             if( bOk )
             {
-                const XMLPropertyHandler* pWritingModeHandler = 
-                    XMLPropertyHandlerFactory::CreatePropertyHandler( 
+                const XMLPropertyHandler* pWritingModeHandler =
+                    XMLPropertyHandlerFactory::CreatePropertyHandler(
                         XML_TYPE_TEXT_WRITING_MODE_WITH_DEFAULT );
                 OUString sValue;
-                bOk = pWritingModeHandler->exportXML( sValue, aAny, 
+                bOk = pWritingModeHandler->exportXML( sValue, aAny,
                                                       rUnitConverter );
                 if( bOk )
                     aOut.append( sValue );
