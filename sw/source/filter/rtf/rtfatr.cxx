@@ -2,9 +2,9 @@
  *
  *  $RCSfile: rtfatr.cxx,v $
  *
- *  $Revision: 1.42 $
+ *  $Revision: 1.43 $
  *
- *  last change: $Author: obo $ $Date: 2004-01-13 16:49:02 $
+ *  last change: $Author: hr $ $Date: 2004-02-02 18:34:15 $
  *
  *  The Contents of this file are made available subject to the terms of
  *  either of the following licenses
@@ -589,7 +589,7 @@ void OutRTF_SfxItemSet( SwRTFWriter& rWrt, const SfxItemSet& rSet,
                 {
                     if (bOutLTOR)
                     {
-                        rWrt.Strm() << sRTF_LTRCH; 
+                        rWrt.Strm() << sRTF_LTRCH;
                         bOutLTOR = false;
                     }
 
@@ -918,7 +918,7 @@ void SttEndPos::AddAttr( const SfxPoolItem& rAttr )
 #endif
 }
 
-RTFEndPosLst::RTFEndPosLst(SwRTFWriter& rWriter, const SwTxtNode& rNd, 
+RTFEndPosLst::RTFEndPosLst(SwRTFWriter& rWriter, const SwTxtNode& rNd,
     xub_StrLen nStart)
     : rNode(rNd), rWrt(rWriter), nCurPos(STRING_NOTFOUND)
 {
@@ -2243,7 +2243,7 @@ static Writer& OutRTF_SwPosture( Writer& rWrt, const SfxPoolItem& rHt )
             */
             return rWrt;
         }
-        
+
         const FontItalic nPosture = ((const SvxPostureItem&)rHt).GetPosture();
         int bTxtOut = rRTFWrt.bTxtAttr && ITALIC_NONE == nPosture;
         if( ITALIC_NORMAL == nPosture || bTxtOut )
@@ -2276,7 +2276,7 @@ static Writer& OutRTF_SwWeight( Writer& rWrt, const SfxPoolItem& rHt )
             */
             return rWrt;
         }
-        
+
         const FontWeight nBold = ((const SvxWeightItem&)rHt).GetWeight();
         int bTxtOut = rRTFWrt.bTxtAttr && WEIGHT_NORMAL == nBold;
         if( WEIGHT_BOLD == nBold || bTxtOut )
@@ -2649,7 +2649,7 @@ static Writer& OutRTF_SwSize( Writer& rWrt, const SfxPoolItem& rHt )
         rRTFWrt.GetEndPosLst()->MatchScriptToId( rHt.Which() ) ))
     {
         if (
-             rRTFWrt.IsAssociatedFlag() && 
+             rRTFWrt.IsAssociatedFlag() &&
              rHt.Which() == RES_CHRATR_CJK_FONTSIZE
            )
         {
@@ -2661,7 +2661,7 @@ static Writer& OutRTF_SwSize( Writer& rWrt, const SfxPoolItem& rHt )
             */
             return rWrt;
         }
-        
+
         rRTFWrt.bOutFmtAttr = TRUE;
 
         const sal_Char* pCmd = rRTFWrt.IsAssociatedFlag() ? sRTF_AFS : sRTF_FS;
@@ -3813,7 +3813,7 @@ RTF kennt keine Rahmen Umrandung!
             {
                 if (const SvxBorderLine* pLn = rBox.GetLine(*pBrd))
                 {
-                    OutBorderLine(rRTFWrt, pLn, *pBrdNms, 
+                    OutBorderLine(rRTFWrt, pLn, *pBrdNms,
                         rBox.GetDistance(*pBrd));
                 }
             }
@@ -3979,7 +3979,7 @@ static Writer& OutRTF_SwLineSpacing( Writer& rWrt, const SfxPoolItem& rHt )
             sal_Char cMult = '0';
             switch (rLs.GetInterLineSpaceRule())
             {
-                case SVX_INTER_LINE_SPACE_FIX:		
+                case SVX_INTER_LINE_SPACE_FIX:
                     // unser Durchschuss gibt es aber nicht in WW - also wie
                     // kommt man an die MaxLineHeight heran?
                     rWrt.OutLong((short)rLs.GetInterLineSpace());
@@ -4318,9 +4318,15 @@ SwAttrFnTab aRTFAttrFnTab = {
 /* RES_FRMATR_DUMMY4 */        	    0, // Dummy:
 /* RES_FRMATR_DUMMY5 */        	    0, // Dummy:
 /* RES_FRMATR_DUMMY6 */        	    0, // Dummy:
-/* RES_FRAMEDIR*/        	    	OutRTF_SvxFrmDir, 
+/* RES_FRAMEDIR*/        	    	OutRTF_SvxFrmDir,
 /* RES_FRMATR_DUMMY8 */        	    0, // Dummy:
 /* RES_FRMATR_DUMMY9 */        	    0, // Dummy:
+/* RES_FOLLOW_TEXT_FLOW */          0,
+/* RES_FRMATR_DUMMY1 */             0, // Dummy:
+/* RES_FRMATR_DUMMY2 */             0, // Dummy:
+/* RES_FRMATR_DUMMY3 */             0, // Dummy:
+/* RES_FRMATR_DUMMY4 */             0, // Dummy:
+/* RES_FRMATR_DUMMY5 */             0, // Dummy:
 
 /* RES_GRFATR_MIRRORGRF	*/			OutRTF_SwMirrorGrf,
 /* RES_GRFATR_CROPGRF	*/			OutRTF_SwCropGrf,
