@@ -2,9 +2,9 @@
  *
  *  $RCSfile: unomailmerge.cxx,v $
  *
- *  $Revision: 1.14 $
+ *  $Revision: 1.15 $
  *
- *  last change: $Author: rt $ $Date: 2005-01-28 15:33:13 $
+ *  last change: $Author: vg $ $Date: 2005-03-08 13:48:53 $
  *
  *  The Contents of this file are made available subject to the terms of
  *  either of the following licenses
@@ -574,10 +574,10 @@ SwXMailMerge::SwXMailMerge() :
     aEvtListeners   ( GetMailMergeMutex() ),
     aMergeListeners ( GetMailMergeMutex() ),
     aPropListeners  ( GetMailMergeMutex() ),
-    bSendAsHTML(sal_False),     
+    bSendAsHTML(sal_False),
     bSendAsAttachment(sal_False),
     bSaveAsSingleFile(sal_False)
-                                     
+
 {
     // create empty document
     // like in: SwModule::InsertEnv (appenv.cxx)
@@ -694,7 +694,7 @@ uno::Any SAL_CALL SwXMailMerge::execute(
         else if (rName.equalsAscii( GetPropName( UNO_NAME_MAIL_BODY ) ))
             bOK = rValue >>= sMailBody;
         else if (rName.equalsAscii( GetPropName( UNO_NAME_ATTACHMENT_NAME ) ))
-            bOK = rValue >>= sAttachmentName;    
+            bOK = rValue >>= sAttachmentName;
         else if (rName.equalsAscii( GetPropName( UNO_NAME_ATTACHMENT_FILTER ) ))
             bOK = rValue >>= sAttachmentFilter;
         else if (rName.equalsAscii( GetPropName( UNO_NAME_COPIES_TO ) ))
@@ -709,6 +709,10 @@ uno::Any SAL_CALL SwXMailMerge::execute(
             bOK = rValue >>= bSaveAsSingleFile;
         else if (rName.equalsAscii( GetPropName( UNO_NAME_SAVE_FILTER ) ))
             bOK = rValue >>= sSaveFilter;
+        else if (rName.equalsAscii( GetPropName( UNO_NAME_SAVE_FILTER_OPTIONS ) ))
+            bOK = rValue >>= sSaveFilterOptions;
+        else if (rName.equalsAscii( GetPropName( UNO_NAME_SAVE_FILTER_DATA ) ))
+            bOK = rValue >>= aSaveFilterData;
         else if (rName.equalsAscii( GetPropName( UNO_NAME_IN_SERVER_PASSWORD ) ))
             bOK = rValue >>= sInServerPassword;
         else if (rName.equalsAscii( GetPropName( UNO_NAME_OUT_SERVER_PASSWORD ) ))
@@ -844,9 +848,9 @@ uno::Any SAL_CALL SwXMailMerge::execute(
     //force layout creation
     rSh.CalcLayout();
     DBG_ASSERT( pMgr, "database manager missing" );
-    
+
     SwMergeDescriptor aMergeDesc( nMergeType, rSh, aDescriptor );
-    
+
     std::auto_ptr< SwMailMergeConfigItem > pMMConfigItem;
     uno::Reference< mail::XMailService > xInService;
     if (MailMergeType::PRINTER == nCurOutputType)
@@ -857,7 +861,7 @@ uno::Any SAL_CALL SwXMailMerge::execute(
             aPrtData = *pShellPrintData;
         aPrtData.SetPrintSingleJobs( bCurSinglePrintJobs );
         rSh.SetPrintData( aPrtData );
-        // #i25686# printing should not be done asynchronously to prevent dangling offices 
+        // #i25686# printing should not be done asynchronously to prevent dangling offices
         // when mail merge is called as command line macro
         aMergeDesc.bPrintAsync = sal_False;
         aMergeDesc.aPrintOptions = aPrintSettings;
@@ -903,38 +907,40 @@ uno::Any SAL_CALL SwXMailMerge::execute(
         }
         pMgr->SetSubject( aPath );
         if(MailMergeType::FILE == nCurOutputType)
-        {        
+        {
             aMergeDesc.sSaveToFilter = sSaveFilter;
+            aMergeDesc.sSaveToFilterOptions = sSaveFilterOptions;
+            aMergeDesc.aSaveToFilterData = aSaveFilterData;
             aMergeDesc.bCreateSingleFile = bSaveAsSingleFile;
         }
         else /*if(MailMergeType::MAIL == nCurOutputType)*/
         {
             pMgr->SetEMailColumn( sAddressFromColumn );
             if(!sAddressFromColumn.getLength())
-                throw RuntimeException( OUString ( RTL_CONSTASCII_USTRINGPARAM ( 
+                throw RuntimeException( OUString ( RTL_CONSTASCII_USTRINGPARAM (
                         "Mail address column not set." ) ), static_cast < cppu::OWeakObject * > ( this ) );
             aMergeDesc.sSaveToFilter     = sAttachmentFilter;
             aMergeDesc.sSubject          = sSubject;
-            aMergeDesc.sMailBody         = sMailBody;          
-            aMergeDesc.sAttachmentName   = sAttachmentName;    
-            aMergeDesc.aCopiesTo         = aCopiesTo;          
-            aMergeDesc.aBlindCopiesTo    = aBlindCopiesTo;     
-            aMergeDesc.bSendAsHTML       = bSendAsHTML;        
-            aMergeDesc.bSendAsAttachment = bSendAsAttachment;   
+            aMergeDesc.sMailBody         = sMailBody;
+            aMergeDesc.sAttachmentName   = sAttachmentName;
+            aMergeDesc.aCopiesTo         = aCopiesTo;
+            aMergeDesc.aBlindCopiesTo    = aBlindCopiesTo;
+            aMergeDesc.bSendAsHTML       = bSendAsHTML;
+            aMergeDesc.bSendAsAttachment = bSendAsAttachment;
 
             aMergeDesc.bCreateSingleFile = sal_False;
             pMMConfigItem = std::auto_ptr< SwMailMergeConfigItem >(new SwMailMergeConfigItem);
             aMergeDesc.pMailMergeConfigItem = pMMConfigItem.get();
-            aMergeDesc.xSmtpServer = SwMailMergeHelper::ConnectToSmtpServer( 
+            aMergeDesc.xSmtpServer = SwMailMergeHelper::ConnectToSmtpServer(
                     *pMMConfigItem,
                     xInService,
                     sInServerPassword, sOutServerPassword );
             if( !aMergeDesc.xSmtpServer.is() || !aMergeDesc.xSmtpServer->isConnected())
-                throw RuntimeException( OUString ( RTL_CONSTASCII_USTRINGPARAM ( 
+                throw RuntimeException( OUString ( RTL_CONSTASCII_USTRINGPARAM (
                         "Failed to connect to mail server." ) ), static_cast < cppu::OWeakObject * > ( this ) );
         }
     }
-                
+
 
     // save document with temporary filename
     const SfxFilter *pSfxFlt = SwIoSystem::GetFilterOfFormat(
@@ -1057,7 +1063,7 @@ void SAL_CALL SwXMailMerge::setPropertyValue(
             case WID_FILE_NAME_FROM_COLUMN :    pData = &bFileNameFromColumn;  break;
             case WID_FILE_NAME_PREFIX :         pData = &aFileNamePrefix;  break;
             case WID_MAIL_SUBJECT:              pData = &sSubject; break;
-            case WID_ADDRESS_FROM_COLUMN:       pData = &sAddressFromColumn; break; 
+            case WID_ADDRESS_FROM_COLUMN:       pData = &sAddressFromColumn; break;
             case WID_SEND_AS_HTML:              pData = &bSendAsHTML; break;
             case WID_SEND_AS_ATTACHMENT:        pData = &bSendAsAttachment; break;
             case WID_MAIL_BODY:                 pData = &sMailBody; break;
@@ -1066,6 +1072,8 @@ void SAL_CALL SwXMailMerge::setPropertyValue(
             case WID_PRINT_OPTIONS:             pData = &aPrintSettings; break;
             case WID_SAVE_AS_SINGLE_FILE:       pData = &bSaveAsSingleFile; break;
             case WID_SAVE_FILTER:               pData = &sSaveFilter; break;
+            case WID_SAVE_FILTER_OPTIONS:       pData = &sSaveFilterOptions; break;
+            case WID_SAVE_FILTER_DATA:          pData = &aSaveFilterData; break;
             case WID_COPIES_TO:                 pData = &aCopiesTo; break;
             case WID_BLIND_COPIES_TO:           pData = &aBlindCopiesTo;break;
             case WID_IN_SERVER_PASSWORD:        pData = &sInServerPassword; break;
@@ -1127,34 +1135,38 @@ void SAL_CALL SwXMailMerge::setPropertyValue(
                 bOK = rValue >>= bFileNameFromColumn;
             else if (pData == &aFileNamePrefix)
                 bOK = rValue >>= aFileNamePrefix;
-            else if (pData == &sSubject) 
+            else if (pData == &sSubject)
                 bOK = rValue >>= sSubject;
-            else if (pData == &sAddressFromColumn) 
-                bOK = rValue >>= sAddressFromColumn;    
+            else if (pData == &sAddressFromColumn)
+                bOK = rValue >>= sAddressFromColumn;
             else if (pData == &bSendAsHTML)
-                bOK = rValue >>= bSendAsHTML;           
-            else if (pData == &bSendAsAttachment) 
-                bOK = rValue >>= bSendAsAttachment;     
-            else if (pData == &sMailBody) 
-                bOK = rValue >>= sMailBody;             
-            else if (pData == &sAttachmentName) 
-                bOK = rValue >>= sAttachmentName;       
+                bOK = rValue >>= bSendAsHTML;
+            else if (pData == &bSendAsAttachment)
+                bOK = rValue >>= bSendAsAttachment;
+            else if (pData == &sMailBody)
+                bOK = rValue >>= sMailBody;
+            else if (pData == &sAttachmentName)
+                bOK = rValue >>= sAttachmentName;
             else if (pData == &sAttachmentFilter)
-                bOK = rValue >>= sAttachmentFilter;      
-            else if (pData == &aPrintSettings) 
-                bOK = rValue >>= aPrintSettings;        
-            else if (pData == &bSaveAsSingleFile) 
-                bOK = rValue >>= bSaveAsSingleFile;     
-            else if (pData == &sSaveFilter) 
-                bOK = rValue >>= sSaveFilter;           
-            else if (pData == &aCopiesTo) 
-                bOK = rValue >>= aCopiesTo;             
+                bOK = rValue >>= sAttachmentFilter;
+            else if (pData == &aPrintSettings)
+                bOK = rValue >>= aPrintSettings;
+            else if (pData == &bSaveAsSingleFile)
+                bOK = rValue >>= bSaveAsSingleFile;
+            else if (pData == &sSaveFilter)
+                bOK = rValue >>= sSaveFilter;
+            else if (pData == &sSaveFilterOptions)
+                bOK = rValue >>= sSaveFilterOptions;
+            else if (pData == &aSaveFilterData)
+                bOK = rValue >>= aSaveFilterData;
+            else if (pData == &aCopiesTo)
+                bOK = rValue >>= aCopiesTo;
             else if (pData == &aBlindCopiesTo)
-                bOK = rValue >>= aBlindCopiesTo;         
+                bOK = rValue >>= aBlindCopiesTo;
             else if(pData == &sInServerPassword)
-                bOK = rValue >>= sInServerPassword;         
+                bOK = rValue >>= sInServerPassword;
             else if(pData == &sOutServerPassword)
-                bOK = rValue >>= sInServerPassword;         
+                bOK = rValue >>= sInServerPassword;
             else
                 DBG_ERROR( "invalid pointer" );
             DBG_ASSERT( bOK, "set value failed" );
@@ -1203,7 +1215,7 @@ uno::Any SAL_CALL SwXMailMerge::getPropertyValue(
             case WID_FILE_NAME_FROM_COLUMN :    aRet <<= bFileNameFromColumn;  break;
             case WID_FILE_NAME_PREFIX :         aRet <<= aFileNamePrefix;  break;
             case WID_MAIL_SUBJECT:              aRet <<= sSubject; break;
-            case WID_ADDRESS_FROM_COLUMN:       aRet <<= sAddressFromColumn; break; 
+            case WID_ADDRESS_FROM_COLUMN:       aRet <<= sAddressFromColumn; break;
             case WID_SEND_AS_HTML:              aRet <<= bSendAsHTML; break;
             case WID_SEND_AS_ATTACHMENT:        aRet <<= bSendAsAttachment; break;
             case WID_MAIL_BODY:                 aRet <<= sMailBody; break;
@@ -1212,6 +1224,8 @@ uno::Any SAL_CALL SwXMailMerge::getPropertyValue(
             case WID_PRINT_OPTIONS:             aRet <<= aPrintSettings; break;
             case WID_SAVE_AS_SINGLE_FILE:       aRet <<= bSaveAsSingleFile; break;
             case WID_SAVE_FILTER:               aRet <<= sSaveFilter; break;
+            case WID_SAVE_FILTER_OPTIONS:       aRet <<= sSaveFilterOptions; break;
+            case WID_SAVE_FILTER_DATA:          aRet <<= aSaveFilterData; break;
             case WID_COPIES_TO:                 aRet <<= aCopiesTo; break;
             case WID_BLIND_COPIES_TO:           aRet <<= aBlindCopiesTo;break;
             case WID_IN_SERVER_PASSWORD:        aRet <<= sInServerPassword; break;
