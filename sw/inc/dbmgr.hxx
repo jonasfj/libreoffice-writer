@@ -2,9 +2,9 @@
  *
  *  $RCSfile: dbmgr.hxx,v $
  *
- *  $Revision: 1.27 $
+ *  $Revision: 1.28 $
  *
- *  last change: $Author: rt $ $Date: 2005-01-28 15:25:21 $
+ *  last change: $Author: vg $ $Date: 2005-03-08 13:41:43 $
  *
  *  The Contents of this file are made available subject to the terms of
  *  either of the following licenses
@@ -211,19 +211,21 @@ struct SwMergeDescriptor
     SwWrtShell&                                         rSh;
     const ::svx::ODataAccessDescriptor&                 rDescriptor;
     String                                              sSaveToFilter; //export filter to save resulting files
-            
-    String                                              sSubject;           
-    String                                              sAddressFromColumn; 
-    String                                              sMailBody;          
-    String                                              sAttachmentName;    
-    ::com::sun::star::uno::Sequence< ::rtl::OUString >  aCopiesTo;          
-    ::com::sun::star::uno::Sequence< ::rtl::OUString >  aBlindCopiesTo;     
-    
+    String                                              sSaveToFilterOptions; //
+    com::sun::star::uno::Sequence< ::com::sun::star::beans::PropertyValue > aSaveToFilterData;
+
+    String                                              sSubject;
+    String                                              sAddressFromColumn;
+    String                                              sMailBody;
+    String                                              sAttachmentName;
+    ::com::sun::star::uno::Sequence< ::rtl::OUString >  aCopiesTo;
+    ::com::sun::star::uno::Sequence< ::rtl::OUString >  aBlindCopiesTo;
+
     ::com::sun::star::uno::Reference< com::sun::star::mail::XSmtpService > xSmtpServer;
-    
-    sal_Bool                                            bSendAsHTML;        
-    sal_Bool                                            bSendAsAttachment;      
-    
+
+    sal_Bool                                            bSendAsHTML;
+    sal_Bool                                            bSendAsAttachment;
+
     sal_Bool                                            bPrintAsync;
     sal_Bool                                            bCreateSingleFile;
 
@@ -250,7 +252,7 @@ class AbstractMailMergeDlg;
 class SW_DLLPUBLIC SwNewDBMgr
 {
 friend class SwConnectionDisposedListener_Impl;
-    
+
     static SwDbtoolsClient* pDbtoolsClient;
 
     String              sEMailAddrFld;  // Mailing: Spaltenname der E-Mail Adresse
@@ -263,7 +265,7 @@ friend class SwConnectionDisposedListener_Impl;
 
     BOOL 				bInMerge	: 1;	//merge process active
     BOOL                bMergeSilent : 1;   // suppress display of dialogs/boxes (used when called over API)
-    BOOL                bMergeLock : 1;     // prevent update of database fields while document is 
+    BOOL                bMergeLock : 1;     // prevent update of database fields while document is
                                             // actually printed at the ViewShell
     SwDSParamArr		aDataSourceParams;
     SwNewDBMgr_Impl*    pImpl;
@@ -286,7 +288,7 @@ friend class SwConnectionDisposedListener_Impl;
     SW_DLLPRIVATE void ImportDBEntry(SwWrtShell* pSh);
 
     // merge to file _and_ merge to e-Mail
-    SW_DLLPRIVATE BOOL          MergeMailFiles(SwWrtShell* pSh, 
+    SW_DLLPRIVATE BOOL          MergeMailFiles(SwWrtShell* pSh,
                                         const SwMergeDescriptor& rMergeDescriptor );
     SW_DLLPRIVATE BOOL          ToNextRecord(SwDSParam* pParam);
 
@@ -297,7 +299,7 @@ public:
     // Art des aktellen Mergens. Siehe DBMgrOptions-enum
     inline USHORT	GetMergeType() const			{ return nMergeType; }
     inline void 	SetMergeType( USHORT nTyp ) 	{ nMergeType = nTyp; }
-    
+
     // MailMergeEvent source
     const SwXMailMerge *    GetMailMergeEvtSrc() const  { return pMergeEvtSrc; }
     void SetMailMergeEvtSrc( const SwXMailMerge *pSrc ) { pMergeEvtSrc = pSrc; }
@@ -314,7 +316,7 @@ public:
     // printing parts of a merge result document
     BOOL            MergePrintDocuments( SwView& rView,
                                 SwPrtOptions& rOpt, SfxProgress& rProgress );
-    
+
     // Datenbankfelder mit fehlendem Datenbankname initialisieren
     inline BOOL 	IsInitDBFields() const 	{ return bInitDBFields;	}
     inline void 	SetInitDBFields(BOOL b)	{ bInitDBFields = b;	}
@@ -418,12 +420,12 @@ public:
                                     BYTE	eTableOrQuery = SW_DB_SELECT_UNKNOWN);
 
     static ::com::sun::star::uno::Sequence<rtl::OUString> GetExistingDatabaseNames();
-    
+
     /**
      Loads a data source from file and registers it. Returns the registered name.
      */
     static String               LoadAndRegisterDataSource();
-    
+
     static SwDbtoolsClient&    GetDbtoolsClient();
     // has to be called from _FinitUI()
     static void                RemoveDbtoolsClient();
