@@ -2,9 +2,9 @@
  *
  *  $RCSfile: gloshdl.cxx,v $
  *
- *  $Revision: 1.20 $
+ *  $Revision: 1.21 $
  *
- *  last change: $Author: rt $ $Date: 2005-01-11 12:40:34 $
+ *  last change: $Author: obo $ $Date: 2005-01-25 14:43:58 $
  *
  *  The Contents of this file are made available subject to the terms of
  *  either of the following licenses
@@ -173,8 +173,8 @@
 #endif
 
 #include <svx/acorrcfg.hxx>
-#include "swabstdlg.hxx" //CHINA001 
-#include <misc.hrc> //CHINA001 
+#include "swabstdlg.hxx" //CHINA001
+#include <misc.hrc> //CHINA001
 const short RET_EDIT = 100; //CHINA001 copy from glossary.hxx
 
 // PUBLIC METHODES -------------------------------------------------------
@@ -575,7 +575,7 @@ BOOL SwGlossaryHdl::ExpandGlossary(BOOL bUseStandard, BOOL bApi)
         ::GlossaryGetCurrGroup fnGetCurrGroup = pFact->GetGlossaryCurrGroupFunc( DLG_RENAME_GLOS );
         DBG_ASSERT(fnGetCurrGroup, "Dialogdiet fail!");//CHINA001
         String sGroupName( (*fnGetCurrGroup)() );
-        //CHINA001 end					
+        //CHINA001 end
         if(STRING_NOTFOUND == sGroupName.Search(GLOS_DELIM))
             FindGroupName(sGroupName);
         pGlossary = rStatGlossaries.GetGroupDoc(sGroupName);
@@ -661,7 +661,7 @@ BOOL SwGlossaryHdl::Expand( const String& rShortName,
                     //CHINA001 new SwSelGlossaryDlg(0, aShortName);
                 SwAbstractDialogFactory* pFact = SwAbstractDialogFactory::Create();//CHINA001
                 DBG_ASSERT(pFact, "SwAbstractDialogFactory fail!");//CHINA001
-                        
+
                 AbstarctSwSelGlossaryDlg* pDlg = pFact->CreateSwSelGlossaryDlg( 0, aShortName,ResId( DLG_SEL_GLOS ));
                 DBG_ASSERT(pDlg, "Dialogdiet fail!");//CHINA001
                 for(USHORT i = 0; i < aFoundArr.Count(); ++i)
@@ -718,7 +718,7 @@ BOOL SwGlossaryHdl::Expand( const String& rShortName,
                     SwTxtFmtColl* pColl = pWrtShell->GetTxtCollFromPool ( RES_POOLCOLL_LABEL_ABB );
                     SwFieldType* pType = pWrtShell->GetDoc()->GetFldType( RES_SETEXPFLD, pColl->GetName() );
                     sal_uInt16 nId = pWrtShell->GetDoc()->GetFldTypes()->GetPos( pType );
-                    pWrtShell->InsertLabel( LTYPE_OBJECT, aEmptyStr, FALSE, nId, aEmptyStr );
+                    pWrtShell->InsertLabel( LTYPE_OBJECT, aEmptyStr, aEmptyStr, FALSE, nId, aEmptyStr );
                     pWrtShell->SwFEShell::SetFlyName( sTeamCredits );
                     pWrtShell->SwFEShell::SelectObj ( Point ( ULONG_MAX, ULONG_MAX ) );
                     pWrtShell->EnterStdMode();
