@@ -2,9 +2,9 @@
  *
  *  $RCSfile: swdtflvr.cxx,v $
  *
- *  $Revision: 1.56 $
+ *  $Revision: 1.57 $
  *
- *  last change: $Author: dvo $ $Date: 2002-05-30 12:56:04 $
+ *  last change: $Author: mba $ $Date: 2002-07-01 13:04:13 $
  *
  *  The Contents of this file are made available subject to the terms of
  *  either of the following licenses
@@ -2681,7 +2681,7 @@ int SwTransferable::_TestAllowedFormat( const TransferableDataHelper& rData,
  * the list of formats which will be offered to the user in the 'Paste
  * Special...' dialog and the paste button menu
  */
-static USHORT aPasteSpecialIds[] = 
+static USHORT aPasteSpecialIds[] =
 {
     SOT_FORMATSTR_ID_HTML,
     SOT_FORMATSTR_ID_HTML_SIMPLE,
@@ -2698,8 +2698,7 @@ static USHORT aPasteSpecialIds[] =
     0
 };
 
-int SwTransferable::PasteSpecial( SwWrtShell& rSh,
-                                    TransferableDataHelper& rData )
+int SwTransferable::PasteSpecial( SwWrtShell& rSh, TransferableDataHelper& rData, ULONG& rFormatUsed )
 {
     int nRet = 0;
     SvPasteObjectDialog* pDlg = new SvPasteObjectDialog;
@@ -2766,6 +2765,9 @@ int SwTransferable::PasteSpecial( SwWrtShell& rSh,
 
     if( nFormat )
         nRet = SwTransferable::PasteFormat( rSh, rData, nFormat );
+
+    if ( nRet )
+        rFormatUsed = nFormat;
 
     delete pDlg;
     return nRet;
