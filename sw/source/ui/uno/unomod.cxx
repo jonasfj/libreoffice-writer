@@ -2,9 +2,9 @@
  *
  *  $RCSfile: unomod.cxx,v $
  *
- *  $Revision: 1.13 $
+ *  $Revision: 1.14 $
  *
- *  last change: $Author: mtg $ $Date: 2001-09-13 11:46:25 $
+ *  last change: $Author: os $ $Date: 2001-09-20 12:49:29 $
  *
  *  The Contents of this file are made available subject to the terms of
  *  either of the following licenses
@@ -138,7 +138,7 @@ using namespace ::comphelper;
 using namespace ::rtl;
 
 enum SwViewSettingsPropertyHandles
-{ 	
+{
     HANDLE_VIEWSET_ANNOTATIONS,
     HANDLE_VIEWSET_BREAKS,
     HANDLE_VIEWSET_DRAWINGS,
@@ -165,10 +165,11 @@ enum SwViewSettingsPropertyHandles
     HANDLE_VIEWSET_SMOOTH_SCROLLING,
     HANDLE_VIEWSET_SOLID_MARK_HANDLES,
     HANDLE_VIEWSET_ZOOM_TYPE,
-    HANDLE_VIEWSET_ZOOM
+    HANDLE_VIEWSET_ZOOM,
+    HANDLE_VIEWSET_PREVENT_TIPS
 };
 enum SwPrintSettingsPropertyHandles
-{ 	
+{
     HANDLE_PRINTSET_ANNOTATION_MODE,
     HANDLE_PRINTSET_BLACK_FONTS,
     HANDLE_PRINTSET_CONTROLS,
@@ -189,7 +190,8 @@ static ChainablePropertySetInfo * lcl_createViewSettingsInfo()
 {
     static PropertyInfo aViewSettingsMap_Impl[] =
     {
-        { RTL_CONSTASCII_STRINGPARAM ( "ShowAnnotations" ),		HANDLE_VIEWSET_ANNOTATIONS          , CPPUTYPE_BOOLEAN,	PROPERTY_NONE,	0},
+        { RTL_CONSTASCII_STRINGPARAM ( "PreventHelpTips" ),     HANDLE_VIEWSET_PREVENT_TIPS         , CPPUTYPE_BOOLEAN, PROPERTY_NONE, 0},
+        { RTL_CONSTASCII_STRINGPARAM ( "ShowAnnotations" ),     HANDLE_VIEWSET_ANNOTATIONS          , CPPUTYPE_BOOLEAN, PROPERTY_NONE, 0},
         { RTL_CONSTASCII_STRINGPARAM ( "ShowBreaks"),			HANDLE_VIEWSET_BREAKS               , CPPUTYPE_BOOLEAN,	PROPERTY_NONE,	0},
         { RTL_CONSTASCII_STRINGPARAM ( "ShowDrawings"),			HANDLE_VIEWSET_DRAWINGS             , CPPUTYPE_BOOLEAN,	PROPERTY_NONE,	0},
         { RTL_CONSTASCII_STRINGPARAM ( "ShowFieldCommands"),	HANDLE_VIEWSET_FIELD_COMMANDS       , CPPUTYPE_BOOLEAN,	PROPERTY_NONE,	0},
@@ -214,7 +216,7 @@ static ChainablePropertySetInfo * lcl_createViewSettingsInfo()
         { RTL_CONSTASCII_STRINGPARAM ( "ShowVertScrollBar"),	HANDLE_VIEWSET_VSCROLL				, CPPUTYPE_BOOLEAN,	PROPERTY_NONE,	0},
         { RTL_CONSTASCII_STRINGPARAM ( "SmoothScrolling"),		HANDLE_VIEWSET_SMOOTH_SCROLLING     , CPPUTYPE_BOOLEAN,	PROPERTY_NONE,	0},
         { RTL_CONSTASCII_STRINGPARAM ( "SolidMarkHandles"), 	HANDLE_VIEWSET_SOLID_MARK_HANDLES	, CPPUTYPE_BOOLEAN,	PROPERTY_NONE, 0},
-        { RTL_CONSTASCII_STRINGPARAM ( "ZoomType"), 			HANDLE_VIEWSET_ZOOM_TYPE			, CPPUTYPE_INT16,  	PROPERTY_NONE, 0}, 
+        { RTL_CONSTASCII_STRINGPARAM ( "ZoomType"), 			HANDLE_VIEWSET_ZOOM_TYPE			, CPPUTYPE_INT16,  	PROPERTY_NONE, 0},
         { RTL_CONSTASCII_STRINGPARAM ( "ZoomValue"), 			HANDLE_VIEWSET_ZOOM				 	, CPPUTYPE_INT16, 	PROPERTY_NONE, 0},
         { 0, 0, 0, CPPUTYPE_UNKNOWN, 0, 0 }
     };
@@ -415,7 +417,7 @@ void SwXPrintSettings::_preSetValues ()
     }
 }
 
-void SwXPrintSettings::_setSingleValue( const comphelper::PropertyInfo & rInfo, const ::com::sun::star::uno::Any &rValue ) 
+void SwXPrintSettings::_setSingleValue( const comphelper::PropertyInfo & rInfo, const ::com::sun::star::uno::Any &rValue )
     throw(UnknownPropertyException, PropertyVetoException, IllegalArgumentException, WrappedTargetException )
 {
     sal_Bool bVal;
@@ -425,73 +427,73 @@ void SwXPrintSettings::_setSingleValue( const comphelper::PropertyInfo & rInfo, 
 
     switch( rInfo.mnHandle )
     {
-        case HANDLE_PRINTSET_LEFT_PAGES: 
+        case HANDLE_PRINTSET_LEFT_PAGES:
         {
             bVal = *(sal_Bool*)rValue.getValue();
             mpPrtOpt->SetPrintLeftPage(bVal);
         }
         break;
-        case HANDLE_PRINTSET_RIGHT_PAGES: 
+        case HANDLE_PRINTSET_RIGHT_PAGES:
         {
             bVal = *(sal_Bool*)rValue.getValue();
             mpPrtOpt->SetPrintRightPage(bVal);
         }
         break;
-        case HANDLE_PRINTSET_REVERSED: 
+        case HANDLE_PRINTSET_REVERSED:
         {
             bVal = *(sal_Bool*)rValue.getValue();
             mpPrtOpt->SetPrintReverse(bVal);
         }
         break;
-        case HANDLE_PRINTSET_PROSPECT: 
+        case HANDLE_PRINTSET_PROSPECT:
         {
             bVal = *(sal_Bool*)rValue.getValue();
             mpPrtOpt->SetPrintProspect(bVal);
         }
         break;
-        case HANDLE_PRINTSET_GRAPHICS: 
+        case HANDLE_PRINTSET_GRAPHICS:
         {
             bVal = *(sal_Bool*)rValue.getValue();
             mpPrtOpt->SetPrintGraphic(bVal);
         }
         break;
-        case HANDLE_PRINTSET_TABLES: 
+        case HANDLE_PRINTSET_TABLES:
         {
             bVal = *(sal_Bool*)rValue.getValue();
             mpPrtOpt->SetPrintTable(bVal);
         }
         break;
-        case HANDLE_PRINTSET_DRAWINGS: 
+        case HANDLE_PRINTSET_DRAWINGS:
         {
             bVal = *(sal_Bool*)rValue.getValue();
             mpPrtOpt->SetPrintDraw(bVal);
         }
         break;
-        case HANDLE_PRINTSET_CONTROLS: 
+        case HANDLE_PRINTSET_CONTROLS:
         {
             bVal = *(sal_Bool*)rValue.getValue();
             mpPrtOpt->SetPrintControl(bVal);
         }
         break;
-        case HANDLE_PRINTSET_PAGE_BACKGROUND: 
+        case HANDLE_PRINTSET_PAGE_BACKGROUND:
         {
             bVal = *(sal_Bool*)rValue.getValue();
             mpPrtOpt->SetPrintPageBackground(bVal);
         }
         break;
-        case HANDLE_PRINTSET_BLACK_FONTS: 
+        case HANDLE_PRINTSET_BLACK_FONTS:
         {
             bVal = *(sal_Bool*)rValue.getValue();
             mpPrtOpt->SetPrintBlackFont(bVal);
         }
         break;
-        case HANDLE_PRINTSET_SINGLE_JOBS: 
+        case HANDLE_PRINTSET_SINGLE_JOBS:
         {
             bVal = *(sal_Bool*)rValue.getValue();
             mpPrtOpt->SetPrintSingleJobs(bVal);
         }
         break;
-        case HANDLE_PRINTSET_PAPER_FROM_SETUP: 
+        case HANDLE_PRINTSET_PAPER_FROM_SETUP:
         {
             bVal = *(sal_Bool*)rValue.getValue();
             mpPrtOpt->SetPaperFromSetup(bVal);
@@ -516,7 +518,7 @@ void SwXPrintSettings::_setSingleValue( const comphelper::PropertyInfo & rInfo, 
                 throw lang::IllegalArgumentException();
         }
         break;
-        default: 
+        default:
             throw UnknownPropertyException();
     }
 }
@@ -552,52 +554,52 @@ void SwXPrintSettings::_preGetValues ()
         break;
     }
 }
-void SwXPrintSettings::_getSingleValue( const comphelper::PropertyInfo & rInfo, ::com::sun::star::uno::Any & rValue ) 
+void SwXPrintSettings::_getSingleValue( const comphelper::PropertyInfo & rInfo, ::com::sun::star::uno::Any & rValue )
     throw(UnknownPropertyException, WrappedTargetException )
 {
     sal_Bool bBool = TRUE;
     sal_Bool bBoolVal;
     switch( rInfo.mnHandle )
     {
-        case HANDLE_PRINTSET_LEFT_PAGES: 
-            bBoolVal = mpPrtOpt->IsPrintLeftPage();	
+        case HANDLE_PRINTSET_LEFT_PAGES:
+            bBoolVal = mpPrtOpt->IsPrintLeftPage();
         break;
-        case HANDLE_PRINTSET_RIGHT_PAGES: 
+        case HANDLE_PRINTSET_RIGHT_PAGES:
             bBoolVal = mpPrtOpt->IsPrintRightPage();
         break;
-        case HANDLE_PRINTSET_REVERSED: 
+        case HANDLE_PRINTSET_REVERSED:
             bBoolVal = mpPrtOpt->IsPrintReverse();
         break;
-        case HANDLE_PRINTSET_PROSPECT: 
-            bBoolVal = mpPrtOpt->IsPrintProspect(); 
+        case HANDLE_PRINTSET_PROSPECT:
+            bBoolVal = mpPrtOpt->IsPrintProspect();
         break;
-        case HANDLE_PRINTSET_GRAPHICS: 
-            bBoolVal = mpPrtOpt->IsPrintGraphic(); 
+        case HANDLE_PRINTSET_GRAPHICS:
+            bBoolVal = mpPrtOpt->IsPrintGraphic();
         break;
-        case HANDLE_PRINTSET_TABLES: 
-            bBoolVal = mpPrtOpt->IsPrintTable(); 
+        case HANDLE_PRINTSET_TABLES:
+            bBoolVal = mpPrtOpt->IsPrintTable();
         break;
-        case HANDLE_PRINTSET_DRAWINGS: 
-            bBoolVal = mpPrtOpt->IsPrintDraw(); 
+        case HANDLE_PRINTSET_DRAWINGS:
+            bBoolVal = mpPrtOpt->IsPrintDraw();
         break;
-        case HANDLE_PRINTSET_CONTROLS: 
-            bBoolVal = mpPrtOpt->IsPrintControl(); 
+        case HANDLE_PRINTSET_CONTROLS:
+            bBoolVal = mpPrtOpt->IsPrintControl();
         break;
-        case HANDLE_PRINTSET_PAGE_BACKGROUND: 
-            bBoolVal = mpPrtOpt->IsPrintPageBackground(); 
+        case HANDLE_PRINTSET_PAGE_BACKGROUND:
+            bBoolVal = mpPrtOpt->IsPrintPageBackground();
         break;
-        case HANDLE_PRINTSET_BLACK_FONTS: 
-            bBoolVal = mpPrtOpt->IsPrintBlackFont(); 
+        case HANDLE_PRINTSET_BLACK_FONTS:
+            bBoolVal = mpPrtOpt->IsPrintBlackFont();
         break;
-        case HANDLE_PRINTSET_SINGLE_JOBS: 
-            bBoolVal = mpPrtOpt->IsPrintSingleJobs(); 
+        case HANDLE_PRINTSET_SINGLE_JOBS:
+            bBoolVal = mpPrtOpt->IsPrintSingleJobs();
         break;
-        case HANDLE_PRINTSET_PAPER_FROM_SETUP: 
-            bBoolVal = mpPrtOpt->IsPaperFromSetup(); 
+        case HANDLE_PRINTSET_PAPER_FROM_SETUP:
+            bBoolVal = mpPrtOpt->IsPaperFromSetup();
         break;
-        case HANDLE_PRINTSET_ANNOTATION_MODE: 
+        case HANDLE_PRINTSET_ANNOTATION_MODE:
         {
-            bBool = FALSE; 
+            bBool = FALSE;
             rValue <<= static_cast < sal_Int16 > ( mpPrtOpt->GetPrintPostIts() );
         }
         break;
@@ -711,7 +713,7 @@ void SwXViewSettings::_preSetValues ()
     if(pView)
         mpViewOption->SetStarOneSetting(sal_True);
 }
-void SwXViewSettings::_setSingleValue( const comphelper::PropertyInfo & rInfo, const ::com::sun::star::uno::Any &rValue ) 
+void SwXViewSettings::_setSingleValue( const comphelper::PropertyInfo & rInfo, const ::com::sun::star::uno::Any &rValue )
     throw(UnknownPropertyException, PropertyVetoException, IllegalArgumentException, WrappedTargetException )
 {
     sal_Bool bVal = HANDLE_VIEWSET_ZOOM != rInfo.mnHandle ?
@@ -743,7 +745,9 @@ void SwXViewSettings::_setSingleValue( const comphelper::PropertyInfo & rInfo, c
         case  HANDLE_VIEWSET_TEXT_BOUNDARIES       :   mpViewOption->SetSubsLines(bVal);	break;
         case  HANDLE_VIEWSET_SMOOTH_SCROLLING      :   mpViewOption->SetSmoothScroll(bVal);	break;
         case  HANDLE_VIEWSET_SOLID_MARK_HANDLES    :   mpViewOption->SetSolidMarkHdl(bVal);	break;
-        case  HANDLE_VIEWSET_ZOOM 					:
+        case  HANDLE_VIEWSET_PREVENT_TIPS :            mpViewOption->SetPreventTips(bVal); break;
+        break;
+        case  HANDLE_VIEWSET_ZOOM                   :
         {
             sal_Int16 nZoom = *(sal_Int16*)rValue.getValue();
             if(nZoom > 1000 || nZoom < 5)
@@ -770,15 +774,9 @@ void SwXViewSettings::_setSingleValue( const comphelper::PropertyInfo & rInfo, c
                 case /*DocumentZoomType_BY_VALUE	*/  3:
                     eZoom = SVX_ZOOM_PERCENT;
                 break;
-#if SUPD<631
-                case 4:
-                    eZoom = (SvxZoomType)4;
-                break;
-#else
                 case /*DocumentZoomType_PAGE_WIDTH_EXACT */ 4:
                     eZoom = SVX_ZOOM_PAGEWIDTH_NOBORDER;
                 break;
-#endif
             }
             if(eZoom < USHRT_MAX)
             {
@@ -824,7 +822,7 @@ void SwXViewSettings::_preGetValues ()
     else
         mpConstViewOption = SW_MOD()->GetViewOption(bWeb);
 }
-void SwXViewSettings::_getSingleValue( const comphelper::PropertyInfo & rInfo, ::com::sun::star::uno::Any & rValue ) 
+void SwXViewSettings::_getSingleValue( const comphelper::PropertyInfo & rInfo, ::com::sun::star::uno::Any & rValue )
     throw(UnknownPropertyException, WrappedTargetException )
 {
     sal_Bool bBool = TRUE;
@@ -855,7 +853,8 @@ void SwXViewSettings::_getSingleValue( const comphelper::PropertyInfo & rInfo, :
         case  HANDLE_VIEWSET_TEXT_BOUNDARIES       :   bBoolVal = mpConstViewOption->IsSubsLines();	break;
         case  HANDLE_VIEWSET_SMOOTH_SCROLLING      :   bBoolVal = mpConstViewOption->IsSmoothScroll();	break;
         case  HANDLE_VIEWSET_SOLID_MARK_HANDLES    :   bBoolVal = mpConstViewOption->IsSolidMarkHdl();	break;
-        case  HANDLE_VIEWSET_ZOOM 					:
+        case  HANDLE_VIEWSET_PREVENT_TIPS :            bBoolVal = mpConstViewOption->IsPreventTips(); break;
+        case  HANDLE_VIEWSET_ZOOM                   :
                 bBool = FALSE;
                 rValue <<= (sal_Int16)mpConstViewOption->GetZoom();
         break;
