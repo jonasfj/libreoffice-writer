@@ -2,9 +2,9 @@
  *
  *  $RCSfile: convert.cxx,v $
  *
- *  $Revision: 1.5 $
+ *  $Revision: 1.6 $
  *
- *  last change: $Author: rt $ $Date: 2003-12-01 09:47:19 $
+ *  last change: $Author: rt $ $Date: 2004-05-03 13:55:10 $
  *
  *  The Contents of this file are made available subject to the terms of
  *  either of the following licenses
@@ -96,54 +96,58 @@
 //keep the state of the buttons on runtime
 static int nSaveButtonState = -1; // 0: tab, 1: semicolon, 2: paragraph, 3: other, -1: not yet used
 static sal_Bool bIsKeepColumn = sal_True;
-static sal_Unicode uOther = ','; 
+static sal_Unicode uOther = ',';
 
 void SwConvertTableDlg::GetValues(  sal_Unicode& rDelim,
-                                    USHORT& rInsTblFlags,
+                                    SwInsertTableOptions& rInsTblOpts,
                                     SwTableAutoFmt *& prTAFmt )
 {
     if( aTabBtn.IsChecked() )
-    {        
+    {
         //0x0b mustn't be set when re-converting table into text
         bIsKeepColumn = !aKeepColumn.IsVisible() || aKeepColumn.IsChecked();
         rDelim = bIsKeepColumn ? 0x09 : 0x0b;
         nSaveButtonState = 0;
     }
     else if( aSemiBtn.IsChecked() )
-    {        
+    {
         rDelim = ';';
         nSaveButtonState = 1;
     }
     else if( aOtherBtn.IsChecked() && aOtherEd.GetText().Len() )
-    {        
+    {
         uOther = aOtherEd.GetText().GetChar( 0 );
         rDelim = uOther;
         nSaveButtonState = 3;
     }
     else
-    {        
+    {
         nSaveButtonState = 2;
         rDelim = cParaDelim;
         if(aOtherBtn.IsChecked())
-        {        
+        {
             nSaveButtonState = 3;
             uOther = 0;
         }
     }
-    
 
-    rInsTblFlags = 0;
+
+    USHORT nInsMode = 0;
     if (aBorderCB.IsChecked())
-        rInsTblFlags |= DEFAULT_BORDER;
+        nInsMode |= tabopts::DEFAULT_BORDER;
     if (aHeaderCB.IsChecked())
-        rInsTblFlags |= HEADLINE;
+        nInsMode |= tabopts::HEADLINE;
     if (aRepeatHeaderCB.IsEnabled() && aRepeatHeaderCB.IsChecked())
-        rInsTblFlags |= REPEAT;
+        rInsTblOpts.mnRowsToRepeat = USHORT( aRepeatHeaderNF.GetValue() );
+    else
+        rInsTblOpts.mnRowsToRepeat = 0;
     if (!aDontSplitCB.IsChecked())
-        rInsTblFlags |= SPLIT_LAYOUT;
+        nInsMode |= tabopts::SPLIT_LAYOUT;
 
     if( pTAutoFmt )
         prTAFmt = new SwTableAutoFmt( *pTAutoFmt );
+
+    rInsTblOpts.mnInsMode = nInsMode;
 }
 
 
@@ -160,6 +164,8 @@ SwConvertTableDlg::SwConvertTableDlg( SwView& rView )
     aKeepColumn		(this, SW_RES(CB_KEEPCOLUMN)),
     aHeaderCB		(this, SW_RES(CB_HEADER)),
     aRepeatHeaderCB	(this, SW_RES(CB_REPEAT_HEADER)),
+    aRepeatHeaderFT	(this, SW_RES(FT_REPEAT_HEADER)),
+    aRepeatHeaderNF	(this, SW_RES(NF_REPEAT_HEADER)),
     aDontSplitCB	(this, SW_RES(CB_DONT_SPLIT)),
     aBorderCB		(this, SW_RES(CB_BORDER)),
     aOptionsFL      (this, SW_RES(FL_OPTIONS)),
@@ -178,20 +184,20 @@ SwConvertTableDlg::SwConvertTableDlg( SwView& rView )
     {
         switch (nSaveButtonState)
         {
-            case 0: 
-                aTabBtn.Check(); 
+            case 0:
+                aTabBtn.Check();
                 aKeepColumn.Check(bIsKeepColumn);
             break;
             case 1: aSemiBtn.Check();break;
             case 2: aParaBtn.Check();break;
-            case 3: 
+            case 3:
                 aOtherBtn.Check();
                 if(uOther)
                     aOtherEd.SetText(uOther);
             break;
         }
 
-    }        
+    }
     if( 0 == pShell->GetTableFmt() )
     {
         SetText( sConvertTextTable );
@@ -226,14 +232,18 @@ SwConvertTableDlg::SwConvertTableDlg( SwView& rView )
     const SwModuleOptions* pModOpt = SW_MOD()->GetModuleConfig();
 
     BOOL bHTMLMode = 0 != (::GetHtmlMode(rView.GetDocShell())&HTMLMODE_ON);
-    USHORT nInsTblFlags = pModOpt->GetInsTblFlags(bHTMLMode);
 
-    aHeaderCB.Check(nInsTblFlags & HEADLINE);
-    aRepeatHeaderCB.Check(nInsTblFlags & REPEAT);
-    aDontSplitCB.Check(!(nInsTblFlags & SPLIT_LAYOUT));
-    aBorderCB.Check(nInsTblFlags & DEFAULT_BORDER);
+    SwInsertTableOptions aInsOpts = pModOpt->GetInsTblFlags(bHTMLMode);
+    USHORT nInsTblFlags = aInsOpts.mnInsMode;
+
+    aHeaderCB.Check(nInsTblFlags & tabopts::HEADLINE);
+    aRepeatHeaderCB.Check(aInsOpts.mnRowsToRepeat > 0);
+    aDontSplitCB.Check(!(nInsTblFlags & tabopts::SPLIT_LAYOUT));
+    aBorderCB.Check(nInsTblFlags & tabopts::DEFAULT_BORDER);
 
     aHeaderCB.SetClickHdl(LINK(this, SwConvertTableDlg, CheckBoxHdl));
+    aRepeatHeaderCB.SetClickHdl(LINK(this, SwConvertTableDlg, ReapeatHeaderCheckBoxHdl));
+    ReapeatHeaderCheckBoxHdl();
     CheckBoxHdl();
 }
 
@@ -272,8 +282,15 @@ IMPL_LINK( SwConvertTableDlg, BtnHdl, Button*, pButton )
 IMPL_LINK(SwConvertTableDlg, CheckBoxHdl, CheckBox*, EMPTYARG)
 {
     aRepeatHeaderCB.Enable(aHeaderCB.IsChecked());
+    ReapeatHeaderCheckBoxHdl();
 
     return 0;
 }
 
+IMPL_LINK(SwConvertTableDlg, ReapeatHeaderCheckBoxHdl, void*, EMPTYARG)
+{
+    aRepeatHeaderFT.Enable(aHeaderCB.IsChecked() && aRepeatHeaderCB.IsChecked());
+    aRepeatHeaderNF.Enable(aHeaderCB.IsChecked() && aRepeatHeaderCB.IsChecked());
 
+    return 0;
+}
