@@ -2,9 +2,9 @@
  *
  *  $RCSfile: edtdd.cxx,v $
  *
- *  $Revision: 1.18 $
+ *  $Revision: 1.19 $
  *
- *  last change: $Author: hr $ $Date: 2004-02-03 16:39:11 $
+ *  last change: $Author: svesik $ $Date: 2004-04-21 12:26:46 $
  *
  *  The Contents of this file are made available subject to the terms of
  *  either of the following licenses
@@ -300,10 +300,10 @@ sal_Int8 SwEditWin::ExecuteDrop( const ExecuteDropEvent& rEvt )
 
 
     // dvo 2002-05-27, #99027#: There's a special treatment for file lists with a single
-    //                          element, that depends on the actual content of the 
+    //                          element, that depends on the actual content of the
     //                          Transferable to be accessible. Since the transferable
     //                          may only be accessed after the drop has been accepted
-    //                          (according to KA due to Java D&D), we'll have to 
+    //                          (according to KA due to Java D&D), we'll have to
     //                          reevaluate the drop action once more _with_ the
     //                          Transferable.
     USHORT nEventAction;
@@ -581,8 +581,7 @@ IMPL_LINK( SwEditWin, DDHandler, Timer *, EMPTYARG )
     ReleaseMouse();
     bFrmDrag = FALSE;
 
-    if ( rView.GetViewFrame() && rView.GetViewFrame()->GetFrame()  &&
-         !rView.GetViewFrame()->GetFrame()->TransferForReplaceInProgress() )
+    if ( rView.GetViewFrame() && rView.GetViewFrame()->GetFrame() )
     {
         bExecuteDrag = TRUE;
         StartExecuteDrag();
