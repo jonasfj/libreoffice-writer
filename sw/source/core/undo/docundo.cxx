@@ -2,9 +2,9 @@
  *
  *  $RCSfile: docundo.cxx,v $
  *
- *  $Revision: 1.11 $
+ *  $Revision: 1.12 $
  *
- *  last change: $Author: hr $ $Date: 2004-09-08 14:58:12 $
+ *  last change: $Author: rt $ $Date: 2004-09-20 15:15:15 $
  *
  *  The Contents of this file are made available subject to the terms of
  *  either of the following licenses
@@ -447,9 +447,9 @@ USHORT SwDoc::StartUndo( USHORT nUndoId, const SwRewriter * pRewriter )
 
     if (pRewriter)
         pUndo->SetRewriter(*pRewriter);
-    
+
     AppendUndo(pUndo);
-    
+
     return nUndoId;
 }
 // schliesst Klammerung der nUndoId, nicht vom UI benutzt
@@ -567,46 +567,50 @@ USHORT SwDoc::EndUndo(USHORT nUndoId, const SwRewriter * pRewriter)
             else if( !nEndCnt )
                 break;
         }
-        ASSERT( nCnt == pUndos->Count() - nSize, 
+        ASSERT( nCnt == pUndos->Count() - nSize,
                 "Start-Ende falsch geklammert" );
     }
 #endif
 
     if (pRewriter)
-    {        
+    {
         ((SwUndoStart *) pUndo)->SetRewriter(*pRewriter);
         pUndoEnd->SetRewriter(*pRewriter);
     }
     else
         pUndoEnd->SetRewriter(((SwUndoStart *) pUndo)->GetRewriter());
- 
+
     AppendUndo( pUndoEnd );
     return nUndoId;
 }
 
-// liefert die Id der letzten Undofaehigen Aktion zurueck oder 0
-// fuellt ggf. VARARR mit User-UndoIds
-
 String SwDoc::GetUndoIdsStr( String* pStr, SwUndoIds *pUndoIds) const
 {
     String aTmpStr;
-    USHORT nId;
-    
+
     if (pStr != NULL)
     {
         GetUndoIds( pStr, pUndoIds);
         aTmpStr = *pStr;
     }
     else
-        GetUndoIds( &aTmpStr, pUndoIds);        
+        GetUndoIds( &aTmpStr, pUndoIds);
+
+    // --> FME 2004-08-11 #i30716# Correct initialization for nId
+    const USHORT nId = 0 < nUndoPos ?
+                       (*pUndos)[ nUndoPos - 1 ]->GetId() :
+                       UNDO_END;
+    // <--
 
     if (nId <= UNDO_END)
         return String();
-    
+
     return aTmpStr;
 }
 
 
+// liefert die Id der letzten Undofaehigen Aktion zurueck oder 0
+// fuellt ggf. VARARR mit User-UndoIds
 USHORT SwDoc::GetUndoIds( String* pStr, SwUndoIds *pUndoIds) const
 {
     int nSize = nUndoPos;
@@ -642,7 +646,7 @@ USHORT SwDoc::GetUndoIds( String* pStr, SwUndoIds *pUndoIds) const
                 {
                     SwUndo * pTmpUndo = (*pUndos)[nSize];
                     if (pTmpUndo->GetId() != UNDO_END ||
-                        ((SwUndoEnd *) pTmpUndo)->GetUserId() 
+                        ((SwUndoEnd *) pTmpUndo)->GetUserId()
                         != UNDO_END)
                     {
                         nId = pTmpUndo->GetId();
@@ -838,7 +842,7 @@ String SwDoc::GetRedoIdsStr( String* pStr, SwUndoIds *pRedoIds ) const
     }
     else
         nId = GetRedoIds( &aTmpStr, pRedoIds );
-       
+
 
     if (nId <= UNDO_END)
         return String();
@@ -872,7 +876,7 @@ USHORT SwDoc::GetRedoIds( String* pStr, SwUndoIds *pRedoIds ) const
         {
             if( UNDO_REDLINE == nId )
                 nId = ((SwUndoRedline*)pUndo)->GetUserId();
-            
+
             if( pStr )
                 *pStr = sTmp;
         }
