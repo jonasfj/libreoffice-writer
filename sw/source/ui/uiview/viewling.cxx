@@ -2,9 +2,9 @@
  *
  *  $RCSfile: viewling.cxx,v $
  *
- *  $Revision: 1.13 $
+ *  $Revision: 1.14 $
  *
- *  last change: $Author: vg $ $Date: 2003-04-17 17:51:30 $
+ *  last change: $Author: vg $ $Date: 2003-07-21 10:31:24 $
  *
  *  The Contents of this file are made available subject to the terms of
  *  either of the following licenses
@@ -288,7 +288,7 @@ void SwView::_SpellDocument( const String* pStr, sal_Bool bAllRight )
     //
     // see _ConvertDocument also
     //
-  
+
     sal_Bool bSelection = ((SwCrsrShell*)pWrtShell)->HasSelection() ||
         pWrtShell->GetCrsr() != pWrtShell->GetCrsr()->GetNext();
 
@@ -362,7 +362,7 @@ void SwView::ConvertDocument( const String* pStr )
         ErrorHandler::HandleError( ERRCODE_SVX_LINGU_LINGUNOTEXISTS );
         return;
     }
-*/    
+*/
     SpellKontext(sal_True);
 
     SwViewOption* pVOpt = (SwViewOption*)pWrtShell->GetViewOptions();
@@ -425,7 +425,7 @@ void SwView::_ConvertDocument( const String* pStr )
                     comphelper::getProcessServiceFactory() );
         INT16 nLang = LANGUAGE_KOREAN;
         lang::Locale aLocale( SvxCreateLocale( nLang ) );
-        SwHHCWrapper aWrap( this, xMgr, aLocale, 
+        SwHHCWrapper aWrap( this, xMgr, aLocale,
                             bStart, bOther, bSelection );
 
         aWrap.Convert();
@@ -436,12 +436,12 @@ void SwView::_ConvertDocument( const String* pStr )
      spellcheck and text conversion related stuff
  --------------------------------------------------------------------*/
 
-void SwView::SpellStart( SvxSpellArea eWhich, 
+void SwView::SpellStart( SvxSpellArea eWhich,
         sal_Bool bStartDone, sal_Bool bEndDone,
         sal_Bool bIsConversion )
 {
     Reference< beans::XPropertySet >  xProp( ::GetLinguPropertySet() );
-    sal_Bool bIsWrapReverse = (bIsConversion && xProp.is()) ?
+    sal_Bool bIsWrapReverse = (!bIsConversion && xProp.is()) ?
             *(sal_Bool*)xProp->getPropertyValue( C2U(UPN_IS_WRAP_REVERSE) ).getValue() : sal_False;
 
     SwDocPositions eStart = DOCPOS_START;
