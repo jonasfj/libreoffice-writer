@@ -2,9 +2,9 @@
  *
  *  $RCSfile: textfld.cxx,v $
  *
- *  $Revision: 1.21 $
+ *  $Revision: 1.22 $
  *
- *  last change: $Author: hjs $ $Date: 2003-09-25 10:51:18 $
+ *  last change: $Author: hr $ $Date: 2004-02-03 16:52:55 $
  *
  *  The Contents of this file are made available subject to the terms of
  *  either of the following licenses
@@ -117,9 +117,6 @@
 #ifndef _SVX_ADRITEM_HXX //autogen
 #include <svx/adritem.hxx>
 #endif
-#ifndef _OFF_APP_HXX //autogen
-#include <offmgr/app.hxx>
-#endif
 #ifndef _UNOTOOLS_LOCALEDATAWRAPPER_HXX
 #include <unotools/localedatawrapper.hxx>
 #endif
@@ -186,6 +183,7 @@
 #include <shells.hrc>
 #endif
 
+#include <sfx2/app.hxx>
 
 extern BOOL bNoInterrupt;		// in mainwn.cxx
 
@@ -210,7 +208,7 @@ String& lcl_AppendRedlineStr( String& rStr, USHORT nRedlId )
 void SwTextShell::ExecField(SfxRequest &rReq)
 {
     SwWrtShell& rSh = GetShell();
-    OfficeApplication* pOffApp = OFF_APP();
+    SfxApplication* pOffApp = OFF_APP();
     const SfxPoolItem* pItem = 0;
 
     USHORT nSlot = rReq.GetSlot();
@@ -239,7 +237,7 @@ void SwTextShell::ExecField(SfxRequest &rReq)
 #if !defined(DDE_AVAILABLE)
                         return;
 #endif
-                        
+
                         ::so3::SvBaseLink& rLink = ((SwDDEFieldType*)pFld->GetTyp())->
                                                 GetBaseLink();
                         if(rLink.IsVisible())
@@ -248,7 +246,7 @@ void SwTextShell::ExecField(SfxRequest &rReq)
                                             &rSh.GetLinkManager() );
                             aDlg.SetActLink( &rLink );
                             aDlg.Execute();
-                        }    
+                        }
                         break;
                     }
                     default:
@@ -387,7 +385,7 @@ void SwTextShell::ExecField(SfxRequest &rReq)
                     SwInsertFld_Data aData(nType, nSubType, aPar1, aPar2, nFormat, GetShellPtr(), cSeparator );
                     bRes = aFldMgr.InsertFld( aData );
                 }
-                else                 
+                else
                         //#i5788# prevent closing of the field dialog while a modal dialog ( Input field dialog ) is active
                         if(!GetView().GetViewFrame()->IsInModalMode())
                 {
@@ -722,7 +720,7 @@ void SwTextShell::StateField( SfxItemSet &rSet )
         {
             case FN_EDIT_FIELD:
             {
-                /* #108536# Fields can be selected, too now. Removed  			
+                /* #108536# Fields can be selected, too now. Removed
 
                 if( rSh.HasSelection() )
                      rSet.DisableItem(nWhich);
@@ -734,19 +732,19 @@ void SwTextShell::StateField( SfxItemSet &rSet )
                     pField = rSh.GetCurFld();
                     bGetField = TRUE;
                 }
-                
+
                 USHORT nTempWhich = pField ? pField->GetTyp()->Which() : USHRT_MAX;
                 if(	USHRT_MAX == nTempWhich ||
                     RES_POSTITFLD == nTempWhich ||
                     RES_SCRIPTFLD == nTempWhich ||
                     RES_AUTHORITY == nTempWhich )
                     rSet.DisableItem( nWhich );
-                else if( RES_DDEFLD == nTempWhich && 
+                else if( RES_DDEFLD == nTempWhich &&
                         !((SwDDEFieldType*)pField->GetTyp())->GetBaseLink().IsVisible())
                 {
                     // nested links cannot be edited
                     rSet.DisableItem( nWhich );
-                }            
+                }
             }
             break;
             case FN_EXECUTE_MACROFIELD:
@@ -765,7 +763,7 @@ void SwTextShell::StateField( SfxItemSet &rSet )
             {
                 SfxViewFrame* pVFrame = GetView().GetViewFrame();
                 //#i5788# prevent closing of the field dialog while a modal dialog ( Input field dialog ) is active
-                if(!pVFrame->IsInModalMode() && 
+                if(!pVFrame->IsInModalMode() &&
                         pVFrame->KnowsChildWindow(FN_INSERT_FIELD) && !pVFrame->HasChildWindow(FN_INSERT_FIELD_DATA_ONLY) )
                     rSet.Put(SfxBoolItem( FN_INSERT_FIELD, pVFrame->HasChildWindow(nWhich)));
                 else
@@ -861,7 +859,7 @@ void SwTextShell::InsertHyperlink(const SvxHyperlinkItem& rHlnkItem)
         case HLINK_BUTTON:
             BOOL bSel = rSh.HasSelection();
             if(bSel)
-                rSh.DelRight();                    
+                rSh.DelRight();
             InsertURLButton( rURL, rTarget, rName );
             rSh.EnterStdMode();
             break;
