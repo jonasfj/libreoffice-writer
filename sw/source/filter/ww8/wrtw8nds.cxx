@@ -2,9 +2,9 @@
  *
  *  $RCSfile: wrtw8nds.cxx,v $
  *
- *  $Revision: 1.67 $
+ *  $Revision: 1.68 $
  *
- *  last change: $Author: rt $ $Date: 2004-05-03 13:51:28 $
+ *  last change: $Author: kz $ $Date: 2004-05-18 15:51:07 $
  *
  *  The Contents of this file are made available subject to the terms of
  *  either of the following licenses
@@ -75,7 +75,7 @@
 #include <hintids.hxx>
 #endif
 
-#ifndef _URLOBJ_HXX 
+#ifndef _URLOBJ_HXX
 #include <tools/urlobj.hxx>
 #endif
 #ifndef _SVX_BOXITEM_HXX
@@ -375,7 +375,7 @@ WW8_SwAttrIter::WW8_SwAttrIter(SwWW8Writer& rWr, const SwTxtNode& rTxtNd)
     rNd(rTxtNd), pCurRedline(0), nAktSwPos(0), nCurRedlinePos(USHRT_MAX),
     mrSwFmtDrop(rTxtNd.GetSwAttrSet().GetDrop())
 {
-    
+
     SwPosition aPos(rTxtNd);
     if (FRMDIR_HORI_RIGHT_TOP == rWr.pDoc->GetTextDirection(aPos))
         mbParaIsRTL = true;
@@ -557,7 +557,7 @@ void WW8_SwAttrIter::OutAttr(xub_StrLen nSwPos)
         (const SwTxtFmtColl&)rNd.GetAnyFmtColl(), nFontId);
     const SvxFontItem *pFont = &rParentFont;
 
-    SfxItemSet aExportSet(*rNd.GetSwAttrSet().GetPool(), 
+    SfxItemSet aExportSet(*rNd.GetSwAttrSet().GetPool(),
         RES_CHRATR_BEGIN, RES_TXTATR_END - 1);
 
     //The hard formatting properties that affect the entire paragraph
@@ -598,7 +598,7 @@ void WW8_SwAttrIter::OutAttr(xub_StrLen nSwPos)
      aExportSet which a SwCharFmt would override, we can't rely on word doing
      this for us like writer does
     */
-    const SwFmtCharFmt *pCharFmtItem = 
+    const SwFmtCharFmt *pCharFmtItem =
         HasItem<SwFmtCharFmt>(aRangeItems, RES_TXTATR_CHARFMT);
     if (pCharFmtItem)
         ClearOverridesFromSet(*pCharFmtItem, aExportSet);
@@ -1620,7 +1620,7 @@ Writer& OutWW8_SwTxtNode( Writer& rWrt, SwCntntNode& rNode )
             {
                 rWW8Wrt.pO->Insert( 29, rWW8Wrt.pO->Count() );    // Alignment (sprmPPc)
                 rWW8Wrt.pO->Insert( 0x20, rWW8Wrt.pO->Count() );
-    
+
                 rWW8Wrt.pO->Insert( 37, rWW8Wrt.pO->Count() );    // Wrapping (sprmPWr)
                 rWW8Wrt.pO->Insert( 0x02, rWW8Wrt.pO->Count() );
 
@@ -1654,8 +1654,8 @@ Writer& OutWW8_SwTxtNode( Writer& rWrt, SwCntntNode& rNode )
                     {
                         rWW8Wrt.InsUInt16( 0x4A30 );
                         rWW8Wrt.InsUInt16( rWW8Wrt.GetId( *pSwCharFmt ) );
-                    }   
-                    
+                    }
+
                     rWW8Wrt.InsUInt16( 0x4845 );            // Lower the chars
                     rWW8Wrt.InsUInt16(-((nDropLines - 1)*rDropDescent) / 10 );
 
@@ -1669,7 +1669,7 @@ Writer& OutWW8_SwTxtNode( Writer& rWrt, SwCntntNode& rNode )
                     {
                         rWW8Wrt.InsUInt16( 80 );
                         rWW8Wrt.InsUInt16( rWW8Wrt.GetId( *pSwCharFmt ) );
-                    }   
+                    }
 
                     rWW8Wrt.pO->Insert(101, rWW8Wrt.pO->Count() );      // Lower the chars
                     rWW8Wrt.InsUInt16(-((nDropLines - 1)*rDropDescent) / 10 );
@@ -2207,8 +2207,8 @@ Writer& OutWW8_SwTblNode( Writer& rWrt, SwTableNode & rNode )
         else
         {
             const SwFmtFrmSize& rLSz = pLineFmt->GetFrmSize();
-            if( ATT_VAR_SIZE != rLSz.GetSizeType() && rLSz.GetHeight() )
-                nHeight = ATT_MIN_SIZE == rLSz.GetSizeType()
+            if( ATT_VAR_SIZE != rLSz.GetHeightSizeType() && rLSz.GetHeight() )
+                nHeight = ATT_MIN_SIZE == rLSz.GetHeightSizeType()
                                                 ? rLSz.GetHeight()
                                                 : -rLSz.GetHeight();
         }
