@@ -2,9 +2,9 @@
  *
  *  $RCSfile: poolfmt.cxx,v $
  *
- *  $Revision: 1.29 $
+ *  $Revision: 1.30 $
  *
- *  last change: $Author: rt $ $Date: 2004-05-25 14:59:40 $
+ *  last change: $Author: rt $ $Date: 2004-07-12 13:32:14 $
  *
  *  The Contents of this file are made available subject to the terms of
  *  either of the following licenses
@@ -562,7 +562,7 @@ SwTxtFmtColl* SwDoc::GetTxtCollFromPool
         if (bRegardLanguage)
         {
             ULONG nAppLanguage = GetAppLanguage();
-            if (GetDefaultFrameDirection(nAppLanguage) == 
+            if (GetDefaultFrameDirection(nAppLanguage) ==
                 FRMDIR_HORI_RIGHT_TOP)
             {
                 SvxAdjustItem aAdjust(SVX_ADJUST_RIGHT);
@@ -2549,7 +2549,7 @@ void SwDoc::RemoveAllFmtLanguageDependencies()
     GetAttrPool().ResetPoolDefaultItem( RES_PARATR_ADJUST );
 
     SwTxtFmtColl * pTxtFmtColl = GetTxtCollFromPool( RES_POOLCOLL_STANDARD );
-    
+
     pTxtFmtColl->ResetAttr( RES_PARATR_ADJUST );
     /* #111214# koreans do not like SvxScriptItem(TRUE) */
     pTxtFmtColl->ResetAttr( RES_PARATR_SCRIPTSPACE );
