@@ -2,9 +2,9 @@
  *
  *  $RCSfile: dflyobj.cxx,v $
  *
- *  $Revision: 1.2 $
+ *  $Revision: 1.3 $
  *
- *  last change: $Author: aw $ $Date: 2000-11-25 18:59:54 $
+ *  last change: $Author: ama $ $Date: 2001-03-02 10:12:03 $
  *
  *  The Contents of this file are made available subject to the terms of
  *  either of the following licenses
@@ -146,7 +146,7 @@ const SfxItemSet& SwFlyDrawObj::GetItemSet() const
 {
     if(!mpLocalItemSet)
     {
-        ((SwFlyDrawObj*)this)->mpLocalItemSet = 
+        ((SwFlyDrawObj*)this)->mpLocalItemSet =
         ((SwFlyDrawObj*)this)->CreateNewItemSet((SfxItemPool&)(*GetItemPool()));
         DBG_ASSERT(mpLocalItemSet, "Could not create an SfxItemSet(!)");
     }
@@ -491,7 +491,7 @@ void __EXPORT SwVirtFlyDrawObj::NbcMove(const Size& rSiz)
         const SwFmtHoriOrient &rHori = pFmt->GetHoriOrient();
         long lXDiff = aNewPos.X() - aOldPos.X();
         if( rHori.IsPosToggle() && HORI_NONE == eHori &&
-            !(GetFlyFrm()->FindPageFrm()->GetVirtPageNum() % 2) )
+            !GetFlyFrm()->FindPageFrm()->OnRightPage() )
             lXDiff = -lXDiff;
         const long lYDiff = aNewPos.Y() - aOldPos.Y();
         const Point aTmp( rHori.GetPos() + lXDiff,
