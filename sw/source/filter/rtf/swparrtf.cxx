@@ -2,9 +2,9 @@
  *
  *  $RCSfile: swparrtf.cxx,v $
  *
- *  $Revision: 1.41 $
+ *  $Revision: 1.42 $
  *
- *  last change: $Author: rt $ $Date: 2004-05-25 15:09:01 $
+ *  last change: $Author: kz $ $Date: 2004-08-02 14:20:24 $
  *
  *  The Contents of this file are made available subject to the terms of
  *  either of the following licenses
@@ -305,11 +305,11 @@ SwRTFParser::SwRTFParser(SwDoc* pD, const SwPaM& rCrsr, SvStream& rIn,
     int bReadNewDoc)
     : SvxRTFParser(pD->GetAttrPool(), rIn, bReadNewDoc),
     maParaStyleMapper(*pD), maCharStyleMapper(*pD), maSegments(*this),
-    maInsertedTables(*pD), 
+    maInsertedTables(*pD),
     aMergeBoxes(0, 5), aTblFmts(0, 10), mpBookmarkStart(0), pGrfAttrSet(0),
-    pTableNode(0), pOldTblNd(0), pSttNdIdx(0), pRegionEndIdx(0), pDoc(pD), 
-    pRelNumRule(new SwRelNumRuleSpaces(*pD, bReadNewDoc)), nAktPageDesc(0), 
-    nAktFirstPageDesc(0), nAktBox(0), nInsTblRow(USHRT_MAX), 
+    pTableNode(0), pOldTblNd(0), pSttNdIdx(0), pRegionEndIdx(0), pDoc(pD),
+    pRelNumRule(new SwRelNumRuleSpaces(*pD, bReadNewDoc)), nAktPageDesc(0),
+    nAktFirstPageDesc(0), nAktBox(0), nInsTblRow(USHRT_MAX),
     nNewNumSectDef(USHRT_MAX), nRowsToRepeat(0)
 {
     mbIsFootnote = mbReadNoTbl = bReadSwFly = bSwPageDesc = bStyleTabValid =
@@ -379,6 +379,9 @@ void SwRTFParser::Continue( int nToken )
             pDoc->SetAddParaSpacingToTableCells( true );
             pDoc->SetUseFormerObjectPositioning( false );
             pDoc->SetUseFormerTextWrapping( false );
+            // --> OD 2004-06-24 #i27767# - set new compatibility option
+            //      'Conder Wrapping mode when positioning object' to <TRUE>
+            pDoc->SetConsiderWrapOnObjPos( true );
 
             //
             // COMPATIBILITY FLAGS END
@@ -1138,8 +1141,8 @@ void rtfSections::InsertSegments(bool bNewDoc)
 
 namespace sw{
     namespace util{
-InsertedTablesManager::InsertedTablesManager(const SwDoc &rDoc) 
-    : mbHasRoot(rDoc.GetRootFrm()) 
+InsertedTablesManager::InsertedTablesManager(const SwDoc &rDoc)
+    : mbHasRoot(rDoc.GetRootFrm())
 {
 }
 
@@ -3438,7 +3441,7 @@ SwTxtFmtColl* SwRTFParser::MakeColl(const String& rName, USHORT nPos,
     }
 
     ww::sti eSti = ww::GetCanonicalStiFromEnglishName(rName);
-    sw::util::ParaStyleMapper::StyleResult aResult = 
+    sw::util::ParaStyleMapper::StyleResult aResult =
         maParaStyleMapper.GetStyle(rName, eSti);
     pColl = aResult.first;
     rbCollExist = aResult.second;
@@ -3468,7 +3471,7 @@ SwCharFmt* SwRTFParser::MakeCharFmt(const String& rName, USHORT nPos,
     }
 
     ww::sti eSti = ww::GetCanonicalStiFromEnglishName(rName);
-    sw::util::CharStyleMapper::StyleResult aResult = 
+    sw::util::CharStyleMapper::StyleResult aResult =
         maCharStyleMapper.GetStyle(rName, eSti);
     pFmt = aResult.first;
     rbCollExist = aResult.second;
@@ -3824,11 +3827,11 @@ void SwRTFParser::RestoreState()
 /**/
 
 BookmarkPosition::BookmarkPosition(const SwPaM &rPaM)
-    : maMkNode(rPaM.GetMark()->nNode), 
+    : maMkNode(rPaM.GetMark()->nNode),
     mnMkCntnt(rPaM.GetMark()->nContent.GetIndex())
 {
 }
- 
+
 BookmarkPosition::BookmarkPosition(const BookmarkPosition &rEntry)
     : maMkNode(rEntry.maMkNode), mnMkCntnt(rEntry.mnMkCntnt)
 {
