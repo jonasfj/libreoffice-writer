@@ -2,9 +2,9 @@
  *
  *  $RCSfile: unotbl.cxx,v $
  *
- *  $Revision: 1.77 $
+ *  $Revision: 1.78 $
  *
- *  last change: $Author: hr $ $Date: 2003-04-28 15:17:45 $
+ *  last change: $Author: hr $ $Date: 2003-06-30 14:59:50 $
  *
  *  The Contents of this file are made available subject to the terms of
  *  either of the following licenses
@@ -3993,24 +3993,24 @@ void SwXCellRange::setPropertyValue(const OUString& rPropertyName,
                     aBoxInfo.SetValid(0xff, FALSE);
                     BYTE nValid = 0;
                     switch(pMap->nMemberId & ~CONVERT_TWIPS)
-                    {        
-                        case  LEFT_BORDER :             nValid = VALID_LEFT; break;             
+                    {
+                        case  LEFT_BORDER :             nValid = VALID_LEFT; break;
                         case  RIGHT_BORDER:             nValid = VALID_RIGHT; break;
                         case  TOP_BORDER  :             nValid = VALID_TOP; break;
                         case  BOTTOM_BORDER:            nValid = VALID_BOTTOM; break;
-                        case  LEFT_BORDER_DISTANCE :    
-                        case  RIGHT_BORDER_DISTANCE:    
-                        case  TOP_BORDER_DISTANCE  :    
-                        case  BOTTOM_BORDER_DISTANCE:   
-                            nValid = VALID_DISTANCE; 
+                        case  LEFT_BORDER_DISTANCE :
+                        case  RIGHT_BORDER_DISTANCE:
+                        case  TOP_BORDER_DISTANCE  :
+                        case  BOTTOM_BORDER_DISTANCE:
+                            nValid = VALID_DISTANCE;
                         break;
                     }
                     aBoxInfo.SetValid(nValid, TRUE);
-                    
-                    
+
+
                     aSet.Put(aBoxInfo);
                     pDoc->GetTabBorders(*pCrsr, aSet);
-                    
+
                     aSet.Put(aBoxInfo);
                     SvxBoxItem aBoxItem((const SvxBoxItem&)aSet.Get(RES_BOX));
                     ((SfxPoolItem&)aBoxItem).PutValue(aValue, pMap->nMemberId);
@@ -4090,7 +4090,7 @@ uno::Any SwXCellRange::getPropertyValue(const OUString& rPropertyName) throw( be
                 }
                 break;
                 case RES_BOX :
-                {    
+                {
                     SwDoc* pDoc = pTblCrsr->GetDoc();
                     SfxItemSet aSet(pDoc->GetAttrPool(),
                                     RES_BOX, RES_BOX,
@@ -4793,6 +4793,12 @@ void SwXTableRows::insertByIndex(sal_Int32 nIndex, sal_Int32 nCount) throw( uno:
                 UnoActionContext aAction(pFrmFmt->GetDoc());
                 SwUnoCrsr* pUnoCrsr = pFrmFmt->GetDoc()->CreateUnoCrsr(aPos, sal_True);
                 pUnoCrsr->Move( fnMoveForward, fnGoNode );
+
+                {
+                    // remove actions
+                    UnoActionRemoveContext aRemoveContext(pUnoCrsr->GetDoc());
+                }
+
                 pFrmFmt->GetDoc()->InsertRow(*pUnoCrsr, (sal_uInt16)nCount, bAppend);
                 delete pUnoCrsr;
             }
@@ -5009,7 +5015,7 @@ void SwXTableColumns::insertByIndex(sal_Int32 nIndex, sal_Int32 nCount) throw( u
                 pUnoCrsr->Move( fnMoveForward, fnGoNode );
 
                 {
-                    // hier muessen die Actions aufgehoben werden
+                    // remove actions
                     UnoActionRemoveContext aRemoveContext(pUnoCrsr->GetDoc());
                 }
 
