@@ -2,9 +2,9 @@
  *
  *  $RCSfile: pam.hxx,v $
  *
- *  $Revision: 1.10 $
+ *  $Revision: 1.11 $
  *
- *  last change: $Author: rt $ $Date: 2004-08-23 08:37:38 $
+ *  last change: $Author: obo $ $Date: 2004-11-16 10:19:14 $
  *
  *  The Contents of this file are made available subject to the terms of
  *  either of the following licenses
@@ -272,9 +272,9 @@ public:
     /**
        Normalizes PaM, i.e. sort point and mark.
 
-       @param bPointFirst TRUE: If the point is behind the mark then swap. 
+       @param bPointFirst TRUE: If the point is behind the mark then swap.
                           FALSE: If the mark is behind the point then swap.
-    */       
+    */
     SwPaM & Normalize(BOOL bPointFirst = TRUE);
 
     // erfrage vom SwPaM das Dokument, in dem er angemeldet ist
@@ -289,7 +289,7 @@ public:
 
     // steht in etwas geschuetztem oder in die Selektion umspannt
     // etwas geschuetztes.
-    FASTBOOL HasReadonlySel() const;
+    FASTBOOL HasReadonlySel( bool bFormView ) const;
 
     DECL_FIXEDMEMPOOL_NEWDEL(SwPaM);
 
