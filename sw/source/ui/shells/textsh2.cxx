@@ -2,9 +2,9 @@
  *
  *  $RCSfile: textsh2.cxx,v $
  *
- *  $Revision: 1.17 $
+ *  $Revision: 1.18 $
  *
- *  last change: $Author: kz $ $Date: 2003-09-11 09:41:12 $
+ *  last change: $Author: hr $ $Date: 2004-02-03 16:55:57 $
  *
  *  The Contents of this file are made available subject to the terms of
  *  either of the following licenses
@@ -67,9 +67,6 @@
 #endif
 
 #include <svtools/svmedit.hxx>
-#ifndef _SBASLTID_HRC //autogen
-#include <offmgr/sbasltid.hrc>
-#endif
 #ifndef _SFXENUMITEM_HXX //autogen
 #include <svtools/eitem.hxx>
 #endif
@@ -90,9 +87,6 @@
 #endif
 #ifndef _SFXSTRITEM_HXX //autogen
 #include <svtools/stritem.hxx>
-#endif
-#ifndef _OFF_APP_HXX //autogen
-#include <offmgr/app.hxx>
 #endif
 #ifndef _SFXITEMSET_HXX
 #include <svtools/itemset.hxx>
@@ -353,8 +347,8 @@ IMPL_STATIC_LINK( SwBaseShell, InsertDBTextHdl, DBTextStruct_Impl*, pDBStruct )
         Reference<XDataSource> xSource = SwNewDBMgr::getDataSourceAsParent(xConnection,pDBStruct->aDBData.sDataSource);
         // #111987# the connection is disposed an so no parent has been found
         if(xConnection.is() && !xSource.is())
-            return 0;                
-        
+            return 0;
+
         if ( !xConnection.is()  )
         {
             xConnection = SwNewDBMgr::GetConnection(pDBStruct->aDBData.sDataSource, xSource);
