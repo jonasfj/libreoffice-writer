@@ -2,9 +2,9 @@
  *
  *  $RCSfile: accframe.cxx,v $
  *
- *  $Revision: 1.14 $
+ *  $Revision: 1.15 $
  *
- *  last change: $Author: mib $ $Date: 2002-05-27 15:05:22 $
+ *  last change: $Author: os $ $Date: 2002-06-20 09:21:18 $
  *
  *  The Contents of this file are made available subject to the terms of
  *  either of the following licenses
@@ -159,7 +159,7 @@ sal_Int32 SwAccessibleFrame::GetChildCount( const SwRect& rVisArea,
         else if( rLower.GetSwFrm() )
         {
             // There are no unaccessible SdrObjects that count
-            nCount += GetChildCount( rVisArea, rLower.GetSwFrm(), 
+            nCount += GetChildCount( rVisArea, rLower.GetSwFrm(),
                                      bInPagePreview );
         }
         ++aIter;
@@ -257,7 +257,7 @@ sal_Bool SwAccessibleFrame::GetChildIndex( const SwRect& rVisArea,
             else if( rLower.GetSwFrm() )
             {
                 // There are no unaccessible SdrObjects that count
-                bFound = GetChildIndex( rVisArea, rLower.GetSwFrm(), rChild, 
+                bFound = GetChildIndex( rVisArea, rLower.GetSwFrm(), rChild,
                                         rPos, bInPagePreview );
             }
             ++aIter;
@@ -282,7 +282,7 @@ sal_Bool SwAccessibleFrame::GetChildIndex( const SwRect& rVisArea,
             else if( rLower.GetSwFrm() )
             {
                 // There are no unaccessible SdrObjects that count
-                bFound = GetChildIndex( rVisArea, rLower.GetSwFrm(), rChild, 
+                bFound = GetChildIndex( rVisArea, rLower.GetSwFrm(), rChild,
                                         rPos, bInPagePreview );
             }
             ++aIter;
@@ -373,7 +373,7 @@ void SwAccessibleFrame::GetChildren( const SwRect& rVisArea, const SwFrm *pFrm,
             else if( rLower.GetSwFrm() )
             {
                 // There are no unaccessible SdrObjects that count
-                GetChildren( rVisArea, rLower.GetSwFrm(), rChildren, 
+                GetChildren( rVisArea, rLower.GetSwFrm(), rChildren,
                              bInPagePreview );
             }
             ++aIter;
@@ -482,6 +482,7 @@ sal_Bool SwAccessibleFrame::IsOpaque( ViewShell *pVSh ) const
             const SwSection* pSection = ((SwSectionFrm*)pFrm)->GetSection();
             if( pSection && ( TOX_HEADER_SECTION == pSection->GetType() ||
                 TOX_CONTENT_SECTION == pSection->GetType() ) &&
+                !pVOpt->IsReadonly() &&
                 SwViewOption::IsIndexShadings() )
                 return sal_True;
         }
@@ -544,8 +545,8 @@ const SwFrm *SwAccessibleFrame::GetParent( const SwFrmOrObj& rFrmOrObj,
     }
     else if( rFrmOrObj.GetSdrObject() )
     {
-        const SwDrawContact *pContact = 
-            static_cast< const SwDrawContact* >( 
+        const SwDrawContact *pContact =
+            static_cast< const SwDrawContact* >(
                     GetUserCall( rFrmOrObj.GetSdrObject() ) );
         ASSERT( pContact, "sdr contact is missing" );
         if( pContact )
