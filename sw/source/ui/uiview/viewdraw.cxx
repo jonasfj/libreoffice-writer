@@ -2,9 +2,9 @@
  *
  *  $RCSfile: viewdraw.cxx,v $
  *
- *  $Revision: 1.16 $
+ *  $Revision: 1.17 $
  *
- *  last change: $Author: od $ $Date: 2002-12-10 14:14:34 $
+ *  last change: $Author: vg $ $Date: 2003-04-01 10:13:49 $
  *
  *  The Contents of this file are made available subject to the terms of
  *  either of the following licenses
@@ -376,14 +376,14 @@ void SwView::ExecDraw(SfxRequest& rReq)
                 SdrView *pSdrView = pWrtShell->GetDrawView();
                 const SdrMarkList& rMarkList = pSdrView->GetMarkList();
                 sal_uInt32 nCount = rMarkList.GetMarkCount();
-                if(rMarkList.GetMarkCount() == 1 && 
+                if(rMarkList.GetMarkCount() == 1 &&
                         (SID_DRAW_TEXT == nSlotId || SID_DRAW_TEXT_VERTICAL == nSlotId ||
                             SID_DRAW_TEXT_MARQUEE == nSlotId ))
                 {
                     SdrObject* pObj = rMarkList.GetMark(0)->GetObj();
                     BeginTextEdit(pObj);
                     bEndTextEdit = FALSE;
-                }            
+                }
             }
         }
     }
