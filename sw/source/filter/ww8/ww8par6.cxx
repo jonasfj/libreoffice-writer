@@ -2,9 +2,9 @@
  *
  *  $RCSfile: ww8par6.cxx,v $
  *
- *  $Revision: 1.56 $
+ *  $Revision: 1.57 $
  *
- *  last change: $Author: cmc $ $Date: 2002-01-15 17:45:03 $
+ *  last change: $Author: jp $ $Date: 2002-01-17 16:45:42 $
  *
  *  The Contents of this file are made available subject to the terms of
  *  either of the following licenses
@@ -725,7 +725,7 @@ void SwWW8ImplReader::SetPageULSpaceItems( SwFrmFmt &rFmt, WW8ULSpaceData& rData
     rFmt.SetAttr( aUL );
 }
 
-void SwWW8ImplReader::SetPageBorder(SwPageDesc *pPageDesc0, 
+void SwWW8ImplReader::SetPageBorder(SwPageDesc *pPageDesc0,
     SwPageDesc *pPageDesc1, const WW8PLCFx_SEPX* pSep, USHORT nLIdx )
 {
     WW8_BRC brc[4]={0};
@@ -916,7 +916,7 @@ void SwWW8ImplReader::SetUseOn( SwPageDesc* pPageDesc0, SwPageDesc* pPageDesc1,
     else                // 2 Pagedescs noetig
     {
         // 1. Seite
-        pPageDesc0->WriteUseOn( (UseOnPage)	
+        pPageDesc0->WriteUseOn( (UseOnPage)
             ( eUseBase | PD_HEADERSHARE | PD_FOOTERSHARE ) );
         pPageDesc1->WriteUseOn( eUse );		// Folgeseiten
     }
@@ -1148,7 +1148,7 @@ void SwWW8ImplReader::CreateSep(const long nTxtPos,BOOL bMustHaveBreak)
                     do
                     {
                         --nOldSectionNo;
-                        pHdFt->GetTextPosExact( nI + (nOldSectionNo+1)*6, 
+                        pHdFt->GetTextPosExact( nI + (nOldSectionNo+1)*6,
                             nOldStart, nOldLen);
 
                         if( nOldLen )
@@ -1164,7 +1164,7 @@ void SwWW8ImplReader::CreateSep(const long nTxtPos,BOOL bMustHaveBreak)
                 {
                     if( nActSectionNo )
                     {
-                        if( nLen <=2 || 
+                        if( nLen <=2 ||
                             ((nOldStart == nStart) && (nOldLen == nLen)) )
                         {
                             // same Hd/Ft as in previous Section or NO Hd/Ft
@@ -1523,7 +1523,7 @@ void SwWW8ImplReader::CreateSep(const long nTxtPos,BOOL bMustHaveBreak)
                         nActSectionNo =   aOldSectionNo[ 4 ]
                                         ? aOldSectionNo[ 4 ]	// Hd 1st
                                         : aOldSectionNo[ 5 ];	// Ft 1st
-                    SetHdFt(pPageDesc, pPageDesc1, 
+                    SetHdFt(pPageDesc, pPageDesc1,
                         nSameHdFt & (WW8_HEADER_FIRST | WW8_FOOTER_FIRST));
                     nActSectionNo = nSaveSectionNo;
                 }
@@ -1555,9 +1555,9 @@ void SwWW8ImplReader::CreateSep(const long nTxtPos,BOOL bMustHaveBreak)
 
         WW8ULSpaceData aULData0, aULData1;
         // Vertikale Formatierung
-        GetPageULData( pSep, nLIdx, TRUE,  aULData0 ); 
+        GetPageULData( pSep, nLIdx, TRUE,  aULData0 );
         // einzeln, da KF evtl. verschieden
-        GetPageULData( pSep, nLIdx, FALSE, aULData1 ); 
+        GetPageULData( pSep, nLIdx, FALSE, aULData1 );
 
         // dann Header / Footer lesen, falls noch noetig
         if( nIPara )
@@ -1565,9 +1565,9 @@ void SwWW8ImplReader::CreateSep(const long nTxtPos,BOOL bMustHaveBreak)
 
         // und uebrige Einstellungen updaten
         // Vertikale Formatierung
-        SetPageULSpaceItems( rFmt0, aULData0 );	
+        SetPageULSpaceItems( rFmt0, aULData0 );
         // einzeln, da KF evtl. verschieden
-        SetPageULSpaceItems( rFmt1, aULData1 );	
+        SetPageULSpaceItems( rFmt1, aULData1 );
         SetPageBorder( pPageDesc, pPageDesc1, pSep, nLIdx );
     }
 
@@ -1594,7 +1594,7 @@ void SwWW8ImplReader::CreateSep(const long nTxtPos,BOOL bMustHaveBreak)
     if( pSprmSDmBinOther && (17 > *pSprmSDmBinOther) )
     {
         SvxPaperBinItem aItem(ITEMID_PAPERBIN, aPaperBinIds[*pSprmSDmBinOther]);
-        SwFrmFmt &rFmtOther = pPageDesc1 ? pPageDesc1->GetMaster() : 
+        SwFrmFmt &rFmtOther = pPageDesc1 ? pPageDesc1->GetMaster() :
             pPageDesc->GetLeft();
         rFmtOther.SetAttr( aItem );
     }
@@ -1602,7 +1602,7 @@ void SwWW8ImplReader::CreateSep(const long nTxtPos,BOOL bMustHaveBreak)
     // Kopf / Fuss - Index Updaten
     // Damit der Index auch spaeter noch stimmt
     if( pHdFt )
-        pHdFt->UpdateIndex( nCorrIhdt );	
+        pHdFt->UpdateIndex( nCorrIhdt );
 
     // Die Attribute OLST
     // werden weiterhin ueber die WWSprmTab abgehandelt
@@ -2095,7 +2095,7 @@ void WW8FlyPara::ApplyTabPos(WW8_TablePos *pTabPos, const BYTE *pSprm29)
         if (!pSprm29)
         {
             //Assume that there are to be set in the absense of an override
-            nSp29 = pTabPos->nSp29; 
+            nSp29 = pTabPos->nSp29;
             nSp37 = pTabPos->nSp37;
         }
     }
@@ -2345,45 +2345,45 @@ WW8SwFlyPara::WW8SwFlyPara( SwPaM& rPaM, SwWW8ImplReader& rIo, WW8FlyPara& rWW,
 
     switch( rWW.nSp27 )				// besondere Y-Positionen ?
     {
-        case -4:  
-            eVAlign = VERT_TOP; 		
-            nUpMgn = 0;	
+        case -4:
+            eVAlign = VERT_TOP;
+            nUpMgn = 0;
             break;	// oben
-        case -8:  
-            eVAlign = VERT_CENTER; 				
+        case -8:
+            eVAlign = VERT_CENTER;
             break;	// zentriert
-        case -12: 
-            eVAlign = VERT_BOTTOM; 	
-            nLoMgn = 0;	
+        case -12:
+            eVAlign = VERT_BOTTOM;
+            nLoMgn = 0;
             break;	// unten
-        default:  
-            nYPos = rWW.nSp27 + (short)nIniFlyDy; 
+        default:
+            nYPos = rWW.nSp27 + (short)nIniFlyDy;
             break;	// Korrekturen per Ini-Datei
     }
 
     switch( rWW.nSp26 )					// besondere X-Positionen ?
     {
-        case 0:		
+        case 0:
             eHAlign = HORI_LEFT;
-            nLeMgn = 0;	
+            nLeMgn = 0;
             break;  // links
-        case -4:	
-            eHAlign = HORI_CENTER;					
+        case -4:
+            eHAlign = HORI_CENTER;
             break; 	// zentriert
-        case -8:	
-            eHAlign = HORI_RIGHT;		
-            nRiMgn = 0;	
+        case -8:
+            eHAlign = HORI_RIGHT;
+            nRiMgn = 0;
             break;	// rechts
-        case -12:	
-            eHAlign = HORI_LEFT; 
-            bToggelPos = TRUE; 
+        case -12:
+            eHAlign = HORI_LEFT;
+            bToggelPos = TRUE;
             break;	// innen
-        case -16:	
-            eHAlign = HORI_RIGHT; 
+        case -16:
+            eHAlign = HORI_RIGHT;
             bToggelPos = TRUE;
             break;  // aussen
-        default:  
-            nXPos = rWW.nSp26 + (short)nIniFlyDx; 	
+        default:
+            nXPos = rWW.nSp26 + (short)nIniFlyDx;
             break;	// Korrekturen per Ini-Datei
     }
 
@@ -2391,11 +2391,11 @@ WW8SwFlyPara::WW8SwFlyPara( SwPaM& rPaM, SwWW8ImplReader& rIo, WW8FlyPara& rWW,
     nYBind = (( rWW.nSp29 & 0x30 ) >> 4);
     switch ( nYBind )
     {										// Y - Bindung bestimmt Sw-Bindung
-        case 0: 
+        case 0:
             eAnchor = FLY_PAGE;				// Vert Margin
             eVRel = REL_PG_PRTAREA;
             break;
-        case 1: 
+        case 1:
             eAnchor = FLY_PAGE;				// Vert Page
             eVRel = REL_PG_FRAME;
             break;							// 2=Vert. Paragraph, 3=Use Default
@@ -2447,7 +2447,7 @@ WW8SwFlyPara::WW8SwFlyPara( SwPaM& rPaM, SwWW8ImplReader& rIo, WW8FlyPara& rWW,
         INT16 nTemp = rWW.brc[WW8_LEFT].DetermineBorderProperties(rWW.bVer67,
             &nLeLMgn);
         nLeLMgn += nTemp;
-                    
+
         if (nLeLMgn)
         {
             if (eHAlign == HORI_LEFT)
@@ -2541,7 +2541,7 @@ WW8FlySet::WW8FlySet( SwWW8ImplReader& rReader, const WW8FlyPara* pFW,
         //types of frames, the left right thickness and space makes
         //it wider, but the top bottom spacing and border thickness
         //is placed inside.
-        Put( SwFmtFrmSize( pFS->eHeightFix, pFS->nWidth + 
+        Put( SwFmtFrmSize( pFS->eHeightFix, pFS->nWidth +
             aSizeArray[WW8_LEFT] + aSizeArray[WW8_RIGHT],
             pFS->nHeight));
     }
@@ -2634,7 +2634,7 @@ void WW8DupProperties::Insert(const SwPosition &rPos)
     }
 }
 
-void WW8AnchoringProperties::Remove(SwWW8ImplReader &rR, 
+void WW8AnchoringProperties::Remove(SwWW8ImplReader &rR,
     SwFltControlStack *pCtrlStck)
 {
     //Remove anchors from stack so they will not be closed inside textboxes
@@ -2667,10 +2667,10 @@ void WW8AnchoringProperties::Insert(SwFltControlStack *pCtrlStck)
     }
 }
 
-BOOL SwWW8ImplReader::StartApo( const BYTE* pSprm29, BOOL bNowStyleApo, 
+BOOL SwWW8ImplReader::StartApo( const BYTE* pSprm29, BOOL bNowStyleApo,
     WW8_TablePos *pTabPos)
 {
-    ASSERT(pSprm29 || pTabPos || bNowStyleApo, 
+    ASSERT(pSprm29 || pTabPos || bNowStyleApo,
         "If no frame found, *MUST* be in a table");
 
     pWFlyPara = new WW8FlyPara ( bVer67, bNowStyleApo  ?
@@ -2770,7 +2770,7 @@ BOOL SwWW8ImplReader::JoinNode( SwPaM* pPam, BOOL bStealAttr )
 void SwWW8ImplReader::StopApo()
 {
     if( pWFlyPara->bGrafApo )
-    {  
+    {
         // Grafik-Rahmen, der *nicht* eingefuegt wurde leeren Absatz incl.
         // Attributen entfernen
         JoinNode( pPaM, TRUE );
@@ -2892,7 +2892,7 @@ BOOL SwWW8ImplReader::TestSameApo( const BYTE* pSprm29, BOOL bNowStyleApo,
     // die harten Attrs angewendet, und dann verglichen
 
     // Zum Vergleich
-    WW8FlyPara aF( bVer67, bNowStyleApo ? pCollA[nAktColl].pWWFly : 0 ); 
+    WW8FlyPara aF( bVer67, bNowStyleApo ? pCollA[nAktColl].pWWFly : 0 );
     // WWPara fuer akt. Para
     if (pSprm29 || bNowStyleApo)
         aF.Read( pSprm29, pPlcxMan->GetPapPLCF() );
@@ -2908,7 +2908,7 @@ BOOL SwWW8ImplReader::TestSameApo( const BYTE* pSprm29, BOOL bNowStyleApo,
 void SwWW8ImplReader::NewAttr( const SfxPoolItem& rAttr )
 {
     if( !bNoAttrImport ) // zum Ignorieren von Styles beim Doc-Einfuegen
-    {	
+    {
         if (pAktColl)
             pAktColl->SetAttr(rAttr);
         else if (pAktItemSet)
@@ -3008,7 +3008,7 @@ void SwWW8ImplReader::Read_Symbol(USHORT, const BYTE* pData, short nLen )
         {
             // Make new Font-Atribut
             // (will be closed in SwWW8ImplReader::ReadChars() )
-   
+
             //Will not be added to the charencoding stack, for styles the real
             //font setting will be put in as the styles charset, and for plain
             //text encoding for symbols is moot.
@@ -3164,17 +3164,17 @@ void SwWW8ImplReader::Read_SubSuper( USHORT, const BYTE* pData, short nLen )
     BYTE nProp;
     switch( *pData )
     {
-        case 1:  
-            nEs = DFLT_ESC_AUTO_SUPER; 
-            nProp = DFLT_ESC_PROP; 
+        case 1:
+            nEs = DFLT_ESC_AUTO_SUPER;
+            nProp = DFLT_ESC_PROP;
             break;
-        case 2:  
-            nEs = DFLT_ESC_AUTO_SUB; 
-            nProp = DFLT_ESC_PROP; 
+        case 2:
+            nEs = DFLT_ESC_AUTO_SUB;
+            nProp = DFLT_ESC_PROP;
             break;
-        default: 
-            nEs = 0; 
-            nProp = 100; 
+        default:
+            nEs = 0;
+            nProp = 100;
             break;
     }
     NewAttr( SvxEscapementItem( nEs, nProp ) );
@@ -3195,43 +3195,28 @@ BOOL SwWW8ImplReader::ConvertSubToGraphicPlacement()
     if (pCtrlStck->GetFmtStackAttr(RES_CHRATR_ESCAPEMENT, &nPos))
     {
         SwFltStackEntry* pEntry = (*pCtrlStck)[nPos];
-        SwNodeIndex aBegin( pEntry->nMkNode, 1 );
-        SwNodeIndex aEnd(pPaM->GetPoint()->nNode );
-        xub_StrLen nBegin = pEntry->nMkCntnt;
-        xub_StrLen nEnd = pPaM->GetPoint()->nContent.GetIndex();
-
-        if ( (aBegin == aEnd) && (nBegin == nEnd-1) )
+        const SwNodeIndex* pNodeIndex = &pEntry->nMkNode;
+        if( pNodeIndex )
         {
-            const SwpHints *pAttrs = ((SwTxtNode *)pPaM->GetNode())->
-                GetpSwpHints();
-            if( pAttrs )
+            SwNodeIndex aBegin( *pNodeIndex, 1 );
+            xub_StrLen nBegin = pEntry->nMkCntnt;
+            const SwTxtNode* pTNd;
+            const SwTxtAttr* pTFlyAttr;
+            if( aBegin == pPaM->GetPoint()->nNode &&
+                nBegin == pPaM->GetPoint()->nContent.GetIndex() - 1 &&
+                0 != ( pTNd = aBegin.GetNode().GetTxtNode() ) &&
+                0 != ( pTFlyAttr =
+                            pTNd->GetTxtAttr( nBegin, RES_TXTATR_FLYCNT )) )
             {
-                register xub_StrLen i;
-                for( i = 0; i < pAttrs->Count(); i++ )
+                const SwFmtFlyCnt& rFly = pTFlyAttr->GetFlyCnt();
+                SwFrmFmt *pFlyFmt = rFly.GetFrmFmt();
+                if( pFlyFmt &&
+                    FLY_IN_CNTNT == pFlyFmt->GetAnchor().GetAnchorId() )
                 {
-                    const SwTxtAttr* pHt = (*pAttrs)[i];
-                    const xub_StrLen* pEnd = pHt->GetEnd();
-                    
-                    if( pEnd ? ( nBegin >= *pHt->GetStart() && 
-                        nBegin < *pEnd ) : nBegin == *pHt->GetStart() )
-                    {
-                        if (pHt->GetAttr().Which() == RES_TXTATR_FLYCNT)
-                        {
-                            const SwFmtFlyCnt& rFly = (const SwFmtFlyCnt &)
-                                pHt->GetAttr();
-                            SwFrmFmt *pFlyFmt = rFly.GetFrmFmt();
-                            SwFmtAnchor aAnchor = pFlyFmt->GetAnchor();
-                            if (FLY_IN_CNTNT == aAnchor.GetAnchorId())
-                            {
-                                pCtrlStck->DeleteAndDestroy( nPos );
-                                bIsGraphicPlacementHack=TRUE;
-                                pFlyFmt->SetAttr(SwFmtVertOrient(0,
-                                    VERT_CHAR_CENTER,REL_CHAR));
-                            }
-                        }
-                    }
-                    else if( nBegin < *pHt->GetStart() )
-                        break;
+                    pCtrlStck->DeleteAndDestroy( nPos );
+                    bIsGraphicPlacementHack=TRUE;
+                    pFlyFmt->SetAttr( SwFmtVertOrient( 0,
+                                                VERT_CHAR_CENTER,REL_CHAR));
                 }
             }
         }
@@ -3534,7 +3519,7 @@ BOOL SwWW8ImplReader::SetNewFontAttr( USHORT nFCode, BOOL bSetEnums,
     {
         if( pAktColl ) // StyleDef
         {
-            if (RES_CHRATR_CJK_FONT != nWhich ) 			
+            if (RES_CHRATR_CJK_FONT != nWhich )
                 pCollA[nAktColl].eFontSrcCharSet = eSrcCharSet;
         }
         else if (!pAktItemSet)
@@ -3568,10 +3553,10 @@ void SwWW8ImplReader::Read_FontCode( USHORT nId, const BYTE* pData, short nLen )
         case 0x4a51:
 //			nId = RES_CHRATR_CTL_FONT; 	break;
         case 93:
-        case 0x4a4f:	
+        case 0x4a4f:
             nId = RES_CHRATR_FONT;
             break;
-        case 0x4a50:	
+        case 0x4a50:
             nId = RES_CHRATR_CJK_FONT;
             break;
         default:
@@ -3660,10 +3645,10 @@ void SwWW8ImplReader::Read_Language( USHORT nId, const BYTE* pData, short nLen )
         case 97:
         case 0x486D:
         case 0x4873: //Methinks, uncertain
-            nId = RES_CHRATR_LANGUAGE;		
+            nId = RES_CHRATR_LANGUAGE;
             break;
         case 0x486E:
-            nId = RES_CHRATR_CJK_LANGUAGE;	
+            nId = RES_CHRATR_CJK_LANGUAGE;
             break;
         default:
             return ;
