@@ -2,9 +2,9 @@
  *
  *  $RCSfile: edtwin.cxx,v $
  *
- *  $Revision: 1.103 $
+ *  $Revision: 1.104 $
  *
- *  last change: $Author: obo $ $Date: 2005-01-05 13:34:50 $
+ *  last change: $Author: obo $ $Date: 2005-01-05 14:34:38 $
  *
  *  The Contents of this file are made available subject to the terms of
  *  either of the following licenses
@@ -1182,7 +1182,7 @@ void SwEditWin::ChangeDrawing( BYTE nDir )
 
 void SwEditWin::KeyInput(const KeyEvent &rKEvt)
 {
-    if( rKEvt.GetKeyCode().GetCode() == KEY_ESCAPE && 
+    if( rKEvt.GetKeyCode().GetCode() == KEY_ESCAPE &&
         pApplyTempl && pApplyTempl->pFormatClipboard )
     {
         pApplyTempl->pFormatClipboard->Erase();
@@ -4721,7 +4721,7 @@ BOOL SwEditWin::SelectMenuPosition(SwWrtShell& rSh, const Point& rMousePos )
     {
         if ( rView.GetDrawFuncPtr() )
         {
-            
+
             rView.GetDrawFuncPtr()->Deactivate();
             rView.SetDrawFuncPtr(NULL);
             rView.LeaveDrawCreate();
@@ -4729,7 +4729,7 @@ BOOL SwEditWin::SelectMenuPosition(SwWrtShell& rSh, const Point& rMousePos )
             rBind.Invalidate( SID_ATTR_SIZE );
             rBind.Invalidate( SID_TABLE_CELL );
         }
-        
+
         // if draw text is active and there's a text selection
         // at the mouse position then do nothing
         if(rSh.GetSelectionType() & SwWrtShell::SEL_DRW_TXT)
