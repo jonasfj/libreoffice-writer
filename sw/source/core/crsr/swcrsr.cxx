@@ -2,9 +2,9 @@
  *
  *  $RCSfile: swcrsr.cxx,v $
  *
- *  $Revision: 1.35 $
+ *  $Revision: 1.36 $
  *
- *  last change: $Author: obo $ $Date: 2004-06-01 07:40:25 $
+ *  last change: $Author: obo $ $Date: 2004-06-04 08:49:49 $
  *
  *  The Contents of this file are made available subject to the terms of
  *  either of the following licenses
@@ -1387,7 +1387,7 @@ FASTBOOL SwCursor::GoSentence( SentenceMoveType eMoveType )
                                         aTxt,
                                         nPtPos, pBreakIt->GetLocale(
                                                     pTxtNd->GetLang( nPtPos ) ));
-                while (nPtPos != (USHORT) -1 && ++nPtPos < aTxt.Len() 
+                while (nPtPos != (USHORT) -1 && ++nPtPos < aTxt.Len()
                        && aTxt.GetChar(nPtPos)== ' ' /*isWhiteSpace( aTxt.GetChar(nPtPos)*/ )
                     ;
                 break;
@@ -1550,7 +1550,7 @@ FASTBOOL SwCursor::UpDown( BOOL bUp, USHORT nCnt,
             SwRect aTmpRect;
             pFrm->GetCharRect( aTmpRect, *GetPoint() );
             aPt = aTmpRect.Pos();
-            
+
             nUpDownX = pFrm->IsVertical() ?
                 aPt.Y() - pFrm->Frm().Top() :
                 aPt.X() - pFrm->Frm().Left();
@@ -1689,7 +1689,7 @@ FASTBOOL SwCursor::LeftRightMargin( BOOL bLeft, BOOL bAPI )
         else
         {
             bRet = pFrm->RightMargin( this, bAPI );
-            
+
             if (! bAPI )
                 SetInFrontOfLabel(FALSE);
         }
