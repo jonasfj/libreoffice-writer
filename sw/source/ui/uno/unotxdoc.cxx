@@ -2,9 +2,9 @@
  *
  *  $RCSfile: unotxdoc.cxx,v $
  *
- *  $Revision: 1.31 $
+ *  $Revision: 1.32 $
  *
- *  last change: $Author: mtg $ $Date: 2001-04-06 12:44:18 $
+ *  last change: $Author: os $ $Date: 2001-04-09 08:35:05 $
  *
  *  The Contents of this file are made available subject to the terms of
  *  either of the following licenses
@@ -2000,7 +2000,7 @@ void SwXTextDocument::setPropertyValue(const OUString& rPropertyName,
                 case AUTOMATIC:
                 case GLOBALSETTING:
                     break;
-                default: 
+                default:
                     throw IllegalArgumentException();
             }
             pDocShell->GetDoc()->SetLinkUpdMode(nMode);
@@ -2010,8 +2010,8 @@ void SwXTextDocument::setPropertyValue(const OUString& rPropertyName,
         {
             sal_Bool bUpdateField = *(sal_Bool*)aValue.getValue();
             sal_Int16 nFlag = pDocShell->GetDoc()->GetFldUpdateFlags();
-            pDocShell->GetDoc()->SetFldUpdateFlags( bUpdateField ? 
-                    nFlag == AUTOUPD_FIELD_AND_CHARTS ? AUTOUPD_FIELD_AND_CHARTS 
+            pDocShell->GetDoc()->SetFldUpdateFlags( bUpdateField ?
+                    nFlag == AUTOUPD_FIELD_AND_CHARTS ? AUTOUPD_FIELD_AND_CHARTS
                     : AUTOUPD_FIELD_ONLY : AUTOUPD_OFF );
         }
         break;
@@ -2059,7 +2059,11 @@ void SwXTextDocument::setPropertyValue(const OUString& rPropertyName,
         case WID_DOC_IS_KERN_ASIAN_PUNCTUATION:
         {
             sal_Bool bIsKern = *(sal_Bool*)aValue.getValue();
-            pDocShell->GetDoc()->SetKernAsianPunctuation( bIsKern );
+            SwDoc* pDoc = pDocShell->GetDoc();
+            pDoc->SetKernAsianPunctuation( bIsKern );
+            SwEditShell* pEditSh = pDoc->GetEditShell();
+            if(pEditSh)
+                pEditSh->ChgHyphenation();
         }
         break;
         case WID_DOC_CHARACTER_COMPRESSION_TYPE:
@@ -2072,10 +2076,14 @@ void SwXTextDocument::setPropertyValue(const OUString& rPropertyName,
                 case CHARCOMPRESS_PUNCTUATION:
                 case CHARCOMPRESS_PUNCTUATION_KANA:
                     break;
-                default: 
+                default:
                     throw IllegalArgumentException();
             }
-            pDocShell->GetDoc()->SetCharCompressType(static_cast < SwCharCompressType > (nMode) );
+            SwDoc* pDoc = pDocShell->GetDoc();
+            pDoc->SetCharCompressType(static_cast < SwCharCompressType > (nMode) );
+            SwEditShell* pEditSh = pDoc->GetEditShell();
+            if(pEditSh)
+                pEditSh->ChgHyphenation();
         }
         break;
         case WID_DOC_TWO_DIGIT_YEAR:
