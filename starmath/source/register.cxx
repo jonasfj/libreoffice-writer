@@ -2,9 +2,9 @@
  *
  *  $RCSfile: register.cxx,v $
  *
- *  $Revision: 1.7 $
+ *  $Revision: 1.8 $
  *
- *  last change: $Author: hr $ $Date: 2003-06-30 14:56:50 $
+ *  last change: $Author: rt $ $Date: 2003-09-19 08:52:54 $
  *
  *  The Contents of this file are made available subject to the terms of
  *  either of the following licenses
@@ -74,6 +74,7 @@
 
 #include "smdll.hxx"
 #include "document.hxx"
+#include "unomodel.hxx"
 
 using namespace ::rtl;
 using namespace ::com::sun::star;
@@ -81,56 +82,56 @@ using namespace ::com::sun::star::uno;
 using namespace ::com::sun::star::lang;
 
 //Math document
-extern Sequence< OUString > SAL_CALL    
+extern Sequence< OUString > SAL_CALL
         SmDocument_getSupportedServiceNames() throw();
-extern OUString SAL_CALL 
+extern OUString SAL_CALL
         SmDocument_getImplementationName() throw();
-extern Reference< XInterface >SAL_CALL 
+extern Reference< XInterface >SAL_CALL
         SmDocument_createInstance(const Reference< XMultiServiceFactory > & rSMgr) throw( Exception );
 
 //MathML import
 extern Sequence< OUString > SAL_CALL
         SmXMLImport_getSupportedServiceNames() throw();
-extern OUString SAL_CALL 
+extern OUString SAL_CALL
         SmXMLImport_getImplementationName() throw();
-extern Reference< XInterface > SAL_CALL 
+extern Reference< XInterface > SAL_CALL
         SmXMLImport_createInstance(const Reference< XMultiServiceFactory > & rSMgr) throw( Exception );
 extern Sequence< OUString > SAL_CALL
         SmXMLImportMeta_getSupportedServiceNames() throw();
-extern OUString SAL_CALL 
+extern OUString SAL_CALL
         SmXMLImportMeta_getImplementationName() throw();
-extern Reference< XInterface > SAL_CALL 
+extern Reference< XInterface > SAL_CALL
         SmXMLImportMeta_createInstance(const Reference< XMultiServiceFactory > & rSMgr) throw( Exception );
 extern Sequence< OUString > SAL_CALL
         SmXMLImportSettings_getSupportedServiceNames() throw();
 extern OUString SAL_CALL SmXMLImportSettings_getImplementationName() throw();
-extern Reference< XInterface > SAL_CALL 
+extern Reference< XInterface > SAL_CALL
         SmXMLImportSettings_createInstance(const Reference< XMultiServiceFactory > & rSMgr) throw( Exception );
 
 //MathML export
 extern Sequence< OUString > SAL_CALL
         SmXMLExport_getSupportedServiceNames() throw();
-extern OUString SAL_CALL 
+extern OUString SAL_CALL
         SmXMLExport_getImplementationName() throw();
-extern Reference< XInterface > SAL_CALL 
+extern Reference< XInterface > SAL_CALL
         SmXMLExport_createInstance(const Reference< XMultiServiceFactory > & rSMgr) throw( Exception );
 extern Sequence< OUString > SAL_CALL
         SmXMLExportMeta_getSupportedServiceNames() throw();
-extern OUString SAL_CALL 
+extern OUString SAL_CALL
         SmXMLExportMeta_getImplementationName() throw();
-extern Reference< XInterface > SAL_CALL 
+extern Reference< XInterface > SAL_CALL
         SmXMLExportMeta_createInstance(const Reference< XMultiServiceFactory > & rSMgr) throw( Exception );
 extern Sequence< OUString > SAL_CALL
         SmXMLExportSettings_getSupportedServiceNames() throw();
-extern OUString SAL_CALL 
+extern OUString SAL_CALL
         SmXMLExportSettings_getImplementationName() throw();
-extern Reference< XInterface > SAL_CALL 
+extern Reference< XInterface > SAL_CALL
         SmXMLExportSettings_createInstance(const Reference< XMultiServiceFactory > & rSMgr) throw( Exception );
 extern Sequence< OUString > SAL_CALL
         SmXMLExportContent_getSupportedServiceNames() throw();
-extern OUString SAL_CALL 
+extern OUString SAL_CALL
         SmXMLExportContent_getImplementationName() throw();
-extern Reference< XInterface > SAL_CALL 
+extern Reference< XInterface > SAL_CALL
         SmXMLExportContent_createInstance(const Reference< XMultiServiceFactory > & rSMgr) throw( Exception );
 
 
@@ -184,28 +185,28 @@ sal_Bool SAL_CALL component_writeInfo(	void*	pServiceManager	,
     for(i = 0; i < aServices.getLength(); i++ )
         xNewKey->createKey( aServices.getConstArray()[i] );
 
-    xNewKey = xKey->createKey( aDelimiter + SmXMLImportSettings_getImplementationName() + 
+    xNewKey = xKey->createKey( aDelimiter + SmXMLImportSettings_getImplementationName() +
                                aUnoServices );
 
     aServices = SmXMLImportSettings_getSupportedServiceNames();
     for(i = 0; i < aServices.getLength(); i++ )
         xNewKey->createKey( aServices.getConstArray()[i] );
 
-    xNewKey = xKey->createKey( aDelimiter + SmXMLExportSettings_getImplementationName() + 
+    xNewKey = xKey->createKey( aDelimiter + SmXMLExportSettings_getImplementationName() +
                                aUnoServices );
 
     aServices = SmXMLExportSettings_getSupportedServiceNames();
     for(i = 0; i < aServices.getLength(); i++ )
         xNewKey->createKey( aServices.getConstArray()[i] );
 
-    xNewKey = xKey->createKey( aDelimiter + SmXMLExportContent_getImplementationName() + 
+    xNewKey = xKey->createKey( aDelimiter + SmXMLExportContent_getImplementationName() +
                                aUnoServices );
 
     aServices = SmXMLExportContent_getSupportedServiceNames();
     for(i = 0; i < aServices.getLength(); i++ )
         xNewKey->createKey( aServices.getConstArray()[i] );
 
-    xNewKey = xKey->createKey( aDelimiter + SmDocument_getImplementationName() + 
+    xNewKey = xKey->createKey( aDelimiter + SmDocument_getImplementationName() +
                                aUnoServices );
 
     aServices = SmDocument_getSupportedServiceNames();
@@ -263,36 +264,36 @@ void* SAL_CALL component_getFactory( const sal_Char* pImplementationName,
             SmXMLExportMeta_createInstance,
             SmXMLExportMeta_getSupportedServiceNames() );
         }
-        else if( SmXMLImportSettings_getImplementationName().equalsAsciiL( 
+        else if( SmXMLImportSettings_getImplementationName().equalsAsciiL(
             pImplementationName, strlen(pImplementationName)) )
         {
             xFactory = ::cppu::createSingleFactory( xServiceManager,
             SmXMLImportSettings_getImplementationName(),
-            SmXMLImportSettings_createInstance, 
+            SmXMLImportSettings_createInstance,
             SmXMLImportSettings_getSupportedServiceNames() );
         }
-        else if( SmXMLExportSettings_getImplementationName().equalsAsciiL( 
+        else if( SmXMLExportSettings_getImplementationName().equalsAsciiL(
             pImplementationName, strlen(pImplementationName)) )
         {
             xFactory = ::cppu::createSingleFactory( xServiceManager,
             SmXMLExportSettings_getImplementationName(),
-            SmXMLExportSettings_createInstance, 
+            SmXMLExportSettings_createInstance,
             SmXMLExportSettings_getSupportedServiceNames() );
         }
-        else if( SmXMLExportContent_getImplementationName().equalsAsciiL( 
+        else if( SmXMLExportContent_getImplementationName().equalsAsciiL(
             pImplementationName, strlen(pImplementationName)) )
         {
             xFactory = ::cppu::createSingleFactory( xServiceManager,
             SmXMLExportContent_getImplementationName(),
-            SmXMLExportContent_createInstance, 
+            SmXMLExportContent_createInstance,
             SmXMLExportContent_getSupportedServiceNames() );
         }
-        else if( SmDocument_getImplementationName().equalsAsciiL( 
+        else if( SmDocument_getImplementationName().equalsAsciiL(
             pImplementationName, strlen(pImplementationName)) )
         {
             xFactory = ::cppu::createSingleFactory( xServiceManager,
             SmDocument_getImplementationName(),
-            SmDocument_createInstance, 
+            SmDocument_createInstance,
             SmDocument_getSupportedServiceNames() );
         }
 
