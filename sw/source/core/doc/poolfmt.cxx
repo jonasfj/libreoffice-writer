@@ -2,9 +2,9 @@
  *
  *  $RCSfile: poolfmt.cxx,v $
  *
- *  $Revision: 1.27 $
+ *  $Revision: 1.28 $
  *
- *  last change: $Author: rt $ $Date: 2003-12-01 16:36:40 $
+ *  last change: $Author: hr $ $Date: 2004-02-02 18:17:20 $
  *
  *  The Contents of this file are made available subject to the terms of
  *  either of the following licenses
@@ -464,7 +464,7 @@ SvxFrameDirection GetDefaultFrameDirection(ULONG nLanguage)
     case LANGUAGE_HEBREW:
     case LANGUAGE_URDU:
         eResult = FRMDIR_HORI_RIGHT_TOP;
-        
+
         break;
 
     default:
@@ -475,7 +475,7 @@ SvxFrameDirection GetDefaultFrameDirection(ULONG nLanguage)
 }
 
 SwTxtFmtColl* SwDoc::GetTxtCollFromPool
-( USHORT nId, String* pDesc, SfxItemPresentation ePres, 
+( USHORT nId, String* pDesc, SfxItemPresentation ePres,
   SfxMapUnit eCoreMetric, SfxMapUnit ePresMetric, BOOL bRegardLanguage)
 {
     ASSERT(
@@ -2562,4 +2562,8 @@ void SwDoc::RemoveAllFmtLanguageDependencies()
         rDesc.GetMaster().SetAttr( aFrameDir );
         rDesc.GetLeft().SetAttr( aFrameDir );
     }
+
+    // OD 09.10.2003 #i18732# - restore static pool default for item
+    // RES_FOLLOW_TEXT_FLOW.
+    GetAttrPool().ResetPoolDefaultItem( RES_FOLLOW_TEXT_FLOW );
 }
