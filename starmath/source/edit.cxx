@@ -2,9 +2,9 @@
  *
  *  $RCSfile: edit.cxx,v $
  *
- *  $Revision: 1.24 $
+ *  $Revision: 1.25 $
  *
- *  last change: $Author: tl $ $Date: 2002-12-12 15:39:52 $
+ *  last change: $Author: hr $ $Date: 2003-03-27 11:58:18 $
  *
  *  The Contents of this file are made available subject to the terms of
  *  either of the following licenses
@@ -257,23 +257,23 @@ SfxItemPool * SmEditWindow::GetEditEngineItemPool()
     return pDoc ? &pDoc->GetEditEngineItemPool() : 0;
 }
 
-void SmEditWindow::ApplyColorConfigValues( const svx::ColorConfig &rColorCfg )
+void SmEditWindow::ApplyColorConfigValues( const svtools::ColorConfig &rColorCfg )
 {
     // Note: SetBackground still done in SmEditWindow::DataChanged
 #ifdef DEBUG
-    ColorData nVal = rColorCfg.GetColorValue(svx::FONTCOLOR).nColor;
+    ColorData nVal = rColorCfg.GetColorValue(svtools::FONTCOLOR).nColor;
 #endif
-    SetTextColor( rColorCfg.GetColorValue(svx::FONTCOLOR).nColor );
+    SetTextColor( rColorCfg.GetColorValue(svtools::FONTCOLOR).nColor );
     Invalidate();
 }
 
 void SmEditWindow::DataChanged( const DataChangedEvent& )
 {
     const StyleSettings aSettings( GetSettings().GetStyleSettings() );
-    
+
     ApplyColorConfigValues( SM_MOD1()->GetColorConfig() );
     SetBackground( aSettings.GetWindowColor() );
-    
+
     // edit fields in other Applications use this font instead of
     // the application font thus we use this one too
     SetPointFont( aSettings.GetFieldFont() /*aSettings.GetAppFont()*/ );

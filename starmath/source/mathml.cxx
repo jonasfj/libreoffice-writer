@@ -2,9 +2,9 @@
  *
  *  $RCSfile: mathml.cxx,v $
  *
- *  $Revision: 1.61 $
+ *  $Revision: 1.62 $
  *
- *  last change: $Author: cmc $ $Date: 2002-11-25 10:36:14 $
+ *  last change: $Author: hr $ $Date: 2003-03-27 11:58:18 $
  *
  *  The Contents of this file are made available subject to the terms of
  *  either of the following licenses
@@ -73,8 +73,8 @@ one go*/
 #ifndef _TOOLS_DEBUG_H
 #include <tools/debug.hxx>
 #endif
-#ifndef _TOOLS_SOLMATH_H
-#include <tools/solmath.hxx>
+#ifndef INCLUDED_RTL_MATH_HXX
+#include <rtl/math.hxx>
 #endif
 #ifndef _SFXECODE_HXX
 #include <svtools/sfxecode.hxx>
@@ -144,6 +144,9 @@ one go*/
 #include <com/sun/star/io/XActiveDataSource.hpp>
 #include <com/sun/star/io/XActiveDataControl.hpp>
 
+#ifndef _COM_SUN_STAR_PACKAGES_ZIP_ZIPIOEXCEPTION_HPP_
+#include <com/sun/star/packages/zip/ZipIOException.hpp>
+#endif
 #ifndef _COM_SUN_STAR_TASK_XSTATUSINDICATORFACTORY_HPP_
 #include <com/sun/star/task/XStatusIndicatorFactory.hpp>
 #endif
@@ -251,6 +254,10 @@ ULONG SmXMLWrapper::ReadThroughComponent(
         if( bEncrypted )
             nError = ERRCODE_SFX_WRONGPASSWORD;
     }
+    catch( packages::zip::ZipIOException& )
+    {
+        nError = ERRCODE_IO_BROKENPACKAGE;
+    }
     catch( io::IOException& )
     {
     }
@@ -292,7 +299,7 @@ ULONG SmXMLWrapper::ReadThroughComponent(
 
     // determine if stream is encrypted or not
     Any aAny;
-    sal_Bool bEncrypted = 
+    sal_Bool bEncrypted =
         xEventsStream->GetProperty(
                 OUString( RTL_CONSTASCII_USTRINGPARAM("Encrypted") ), aAny ) &&
         aAny.getValueType() == ::getBooleanCppuType() &&
@@ -307,7 +314,7 @@ ULONG SmXMLWrapper::ReadThroughComponent(
 ULONG SmXMLWrapper::Import(SfxMedium &rMedium)
 {
     ULONG nError = ERRCODE_SFX_DOLOADFAILED;
-        
+
     uno::Reference<lang::XMultiServiceFactory> xServiceFactory(
         utl::getProcessServiceFactory());
     DBG_ASSERT(xServiceFactory.is(), "XMLReader::Read: got no service manager");
@@ -328,7 +335,7 @@ ULONG SmXMLWrapper::Import(SfxMedium &rMedium)
 
     if (pModel)
     {
-        SmDocShell *pDocShell = 
+        SmDocShell *pDocShell =
             static_cast<SmDocShell*>(pModel->GetObjectShell());
 
         if (pDocShell->GetMedium())
@@ -364,33 +371,43 @@ ULONG SmXMLWrapper::Import(SfxMedium &rMedium)
         if (xStatusIndicator.is())
             xStatusIndicator->setValue(nSteps++);
 
-        ReadThroughComponent(
+        ULONG nWarn = ReadThroughComponent(
             rMedium.GetStorage(), xModelComp, "meta.xml", "Meta.xml", 
             xServiceFactory, "com.sun.star.comp.Math.XMLMetaImporter" );
 
-        if (xStatusIndicator.is())
-            xStatusIndicator->setValue(nSteps++);
+        if ( nWarn != ERRCODE_IO_BROKENPACKAGE )
+        {
+            if (xStatusIndicator.is())
+                xStatusIndicator->setValue(nSteps++);
+    
+            nWarn = ReadThroughComponent(
+                rMedium.GetStorage(), xModelComp, "settings.xml", 0, 
+                xServiceFactory, "com.sun.star.comp.Math.XMLSettingsImporter" );
 
-        ReadThroughComponent(
-            rMedium.GetStorage(), xModelComp, "settings.xml", 0, 
-            xServiceFactory, "com.sun.star.comp.Math.XMLSettingsImporter" );
+            if ( nWarn != ERRCODE_IO_BROKENPACKAGE )
+            {
+                if (xStatusIndicator.is())
+                    xStatusIndicator->setValue(nSteps++);
 
-        if (xStatusIndicator.is())
-            xStatusIndicator->setValue(nSteps++);
-
-        nError = ReadThroughComponent(
-           rMedium.GetStorage(), xModelComp, "content.xml", "Content.xml", 
-           xServiceFactory, "com.sun.star.comp.Math.XMLImporter" );
+                nError = ReadThroughComponent(
+                    rMedium.GetStorage(), xModelComp, "content.xml", "Content.xml", 
+                    xServiceFactory, "com.sun.star.comp.Math.XMLImporter" );
+            }
+            else
+                nError = ERRCODE_IO_BROKENPACKAGE;
+        }
+        else
+            nError = ERRCODE_IO_BROKENPACKAGE;
     }
     else
     {
-        Reference<io::XInputStream> xInputStream = 
+        Reference<io::XInputStream> xInputStream =
             new utl::OInputStreamWrapper(rMedium.GetInStream());
-        
+
         if (xStatusIndicator.is())
             xStatusIndicator->setValue(nSteps++);
 
-        nError = ReadThroughComponent( xInputStream, xModelComp, 
+        nError = ReadThroughComponent( xInputStream, xModelComp,
             xServiceFactory, "com.sun.star.comp.Math.XMLImporter", FALSE );
     }
 
@@ -656,7 +673,7 @@ void SmXMLImport::endDocument(void)
             SmDocShell *pDocShell =
                 static_cast<SmDocShell*>(pModel->GetObjectShell());
             pDocShell->SetFormulaTree(pTree);
-            if (0 == aText.Len())  //If we picked up no annotation text 
+            if (0 == aText.Len())  //If we picked up no annotation text
             {
                 //Make up some editable text
                 aText = pDocShell->GetText();
@@ -837,14 +854,14 @@ sal_Bool SmXMLWrapper::Export(SfxMedium &rMedium)
     uno::Reference<task::XStatusIndicator> xStatusIndicator;
     if (!bEmbedded)
     {
-        uno::Reference<frame::XController> xController( 
+        uno::Reference<frame::XController> xController(
             xModel->getCurrentController());
         if( xController.is())
         {
             uno::Reference<frame::XFrame> xFrame( xController->getFrame());
             if( xFrame.is())
             {
-                uno::Reference<task::XStatusIndicatorFactory> xFactory( xFrame, 
+                uno::Reference<task::XStatusIndicatorFactory> xFactory( xFrame,
                     uno::UNO_QUERY );
             if( xFactory.is())
                 xStatusIndicator = xFactory->createStatusIndicator();
@@ -891,7 +908,7 @@ sal_Bool SmXMLWrapper::Export(SfxMedium &rMedium)
     if (!bFlat) //Storage (Package) of Stream
     {
         SvStorage *pStg = rMedium.GetOutputStorage(sal_True);
-        
+
         if( !bEmbedded )
         {
             if (xStatusIndicator.is())
@@ -924,7 +941,7 @@ sal_Bool SmXMLWrapper::Export(SfxMedium &rMedium)
     else
     {
         SvStream *pStream = rMedium.GetOutStream();
-        uno::Reference<io::XOutputStream> xOut( 
+        uno::Reference<io::XOutputStream> xOut(
             new utl::OOutputStreamWrapper(*pStream) );
 
         if (xStatusIndicator.is())
@@ -979,7 +996,7 @@ sal_uInt32 SmXMLExport::exportDoc(enum XMLTokenEnum eClass)
         /*Add xmlns line*/
         SvXMLAttributeList &rList = GetAttrList();
         rList.AddAttribute(GetNamespaceMap().GetAttrNameByKey(
-            XML_NAMESPACE_MATH_IDX),sCDATA,GetNamespaceMap().GetNameByKey(
+            XML_NAMESPACE_MATH_IDX),GetNamespaceMap().GetNameByKey(
             XML_NAMESPACE_MATH_IDX));
 
         //I think we need something like ImplExportEntities();
@@ -1614,7 +1631,7 @@ class SmXMLNumberContext_Impl : public SmXMLImportContext
 public:
     SmXMLNumberContext_Impl(SmXMLImport &rImport,sal_uInt16 nPrefix,
         const OUString& rLName)
-        : SmXMLImportContext(rImport,nPrefix,rLName) 
+        : SmXMLImportContext(rImport,nPrefix,rLName)
     {
         aToken.cMathChar = '\0';
         aToken.nGroup = 0;
@@ -1687,7 +1704,7 @@ class SmXMLTextContext_Impl : public SmXMLImportContext
 public:
     SmXMLTextContext_Impl(SmXMLImport &rImport,sal_uInt16 nPrefix,
         const OUString& rLName)
-        : SmXMLImportContext(rImport,nPrefix,rLName) 
+        : SmXMLImportContext(rImport,nPrefix,rLName)
     {
         aToken.cMathChar = '\0';
         aToken.nGroup = 0;
@@ -1715,7 +1732,7 @@ class SmXMLStringContext_Impl : public SmXMLImportContext
 public:
     SmXMLStringContext_Impl(SmXMLImport &rImport,sal_uInt16 nPrefix,
         const OUString& rLName)
-        : SmXMLImportContext(rImport,nPrefix,rLName) 
+        : SmXMLImportContext(rImport,nPrefix,rLName)
     {
         aToken.cMathChar = '\0';
         aToken.nGroup = 0;
@@ -1815,7 +1832,7 @@ class SmXMLOperatorContext_Impl : public SmXMLImportContext
 public:
     SmXMLOperatorContext_Impl(SmXMLImport &rImport,sal_uInt16 nPrefix,
         const OUString& rLName)
-        : SmXMLImportContext(rImport,nPrefix,rLName), bIsStretchy(sal_False) 
+        : SmXMLImportContext(rImport,nPrefix,rLName), bIsStretchy(sal_False)
     {
         aToken.nGroup = 0;
         aToken.eType = TSPECIAL;
@@ -3395,7 +3412,7 @@ void SmXMLExport::_ExportContent()
             delete pTree;
             rParser.SetExportSymbolNames( bVal );
         }
-        
+
         AddAttribute(XML_NAMESPACE_MATH,sXML_encoding,
             OUString(RTL_CONSTASCII_USTRINGPARAM("StarMath 5.0")));
         SvXMLElementExport aAnnotation(*this,XML_NAMESPACE_MATH,
@@ -3997,7 +4014,7 @@ void SmXMLExport::ExportFont(const SmNode *pNode, int nLevel)
 
                         double mytest = static_cast<double>(aTemp);
 
-                        mytest = SolarMath::Round(mytest,1);
+                        mytest = ::rtl::math::round(mytest,1);
                         SvXMLUnitConverter::convertDouble(sStrBuf,mytest);
                         sStrBuf.append(OUString(
                             RTL_CONSTASCII_USTRINGPARAM(sXML_unit_pt)));
@@ -4124,7 +4141,7 @@ void SmXMLExport::ExportNodes(const SmNode *pNode, int nLevel)
             for( sal_Int16 i = 0; i < nLength; i++ )
             {
                 OUString sLocalName;
-                sal_uInt16 nPrefix = GetNamespaceMap().GetKeyByAttrName( 
+                sal_uInt16 nPrefix = GetNamespaceMap().GetKeyByAttrName(
                     GetAttrList().getNameByIndex(i), &sLocalName );
 
                 if ( ( XML_NAMESPACE_MATH == nPrefix ) &&

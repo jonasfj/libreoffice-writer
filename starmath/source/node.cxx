@@ -2,9 +2,9 @@
  *
  *  $RCSfile: node.cxx,v $
  *
- *  $Revision: 1.26 $
+ *  $Revision: 1.27 $
  *
- *  last change: $Author: tl $ $Date: 2002-12-12 15:40:33 $
+ *  last change: $Author: hr $ $Date: 2003-03-27 11:58:19 $
  *
  *  The Contents of this file are made available subject to the terms of
  *  either of the following licenses
@@ -68,8 +68,8 @@
 #ifndef _FRACT_HXX //autogen
 #include <tools/fract.hxx>
 #endif
-#ifndef _TOOLS_SOLMATH_H
-#include <tools/solmath.hxx>
+#ifndef INCLUDED_RTL_MATH_HXX
+#include <rtl/math.hxx>
 #endif
 #ifndef _SV_COLOR_HXX //autogen
 #include <vcl/color.hxx>
@@ -176,7 +176,7 @@ Color SmTmpDevice::Impl_GetColor( const Color& rColor )
             if (OUTDEV_WINDOW == rOutDev.GetOutDevType())
                 aBgCol = ((Window &) rOutDev).GetDisplayBackground().GetColor();
 
-            nNewCol = SM_MOD1()->GetColorConfig().GetColorValue(svx::FONTCOLOR).nColor;
+            nNewCol = SM_MOD1()->GetColorConfig().GetColorValue(svtools::FONTCOLOR).nColor;
 
             Color aTmpColor( nNewCol );
             if (aBgCol.IsDark() && aTmpColor.IsDark())
@@ -319,7 +319,7 @@ void SmNode::SetFontSize(const Fraction &rSize, USHORT nType)
     {
         Fraction  aVal (SmPtsTo100th_mm(rSize.GetNumerator()),
                         rSize.GetDenominator());
-        //long	  nHeight = SolarMath::Round(aVal);
+        //long	  nHeight = ::rtl::math::round(aVal);
         long	  nHeight = (long)aVal;
 
         aSize = GetFont().GetSize();
@@ -1021,7 +1021,7 @@ void SmRootNode::Arrange(const OutputDevice &rDev, const SmFormat &rFormat)
     GetHeightVerOffset(*pBody, nHeight, nVerOffset);
     nHeight += rFormat.GetDistance(DIS_ROOT)
                * GetFont().GetSize().Height() / 100L;
-    
+
     // font specialist advised to change the width first
     pRootSym->AdaptToY(rDev, nHeight);
     pRootSym->AdaptToX(rDev, pBody->GetItalicWidth());
@@ -2056,10 +2056,10 @@ void SmFontNode::CreateTextFromNode(String &rText)
                     default:
                         break;
                 }
-                String sResult;
-                SolarMath::DoubleToString(sResult,
-                    static_cast<double>(aFontSize),'A',INT_MAX,'.',sal_True);
-                rText.Append(sResult);
+                rText += String( ::rtl::math::doubleToUString(
+                            static_cast<double>(aFontSize),
+                            rtl_math_StringFormat_Automatic,
+                            rtl_math_DecimalPlaces_Max, '.', sal_True));
                 rText.Append(' ');
             }
             break;
