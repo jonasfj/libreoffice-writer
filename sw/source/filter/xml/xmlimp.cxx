@@ -2,9 +2,9 @@
  *
  *  $RCSfile: xmlimp.cxx,v $
  *
- *  $Revision: 1.64 $
+ *  $Revision: 1.65 $
  *
- *  last change: $Author: vg $ $Date: 2003-04-01 15:59:21 $
+ *  last change: $Author: obo $ $Date: 2003-04-02 15:31:19 $
  *
  *  The Contents of this file are made available subject to the terms of
  *  either of the following licenses
@@ -160,7 +160,7 @@
 #ifndef _XMLEOHLP_HXX
 #include <svx/xmleohlp.hxx>
 #endif
-#ifndef _SFX_PRINTER_HXX 
+#ifndef _SFX_PRINTER_HXX
 #include <sfx2/printer.hxx>
 #endif
 
@@ -1180,7 +1180,7 @@ void main()
         }
         pValues++;
     }
-<<<<<<< xmlimp.cxx
+//<<<<<<< xmlimp.cxx
 
     // finally, treat the non-default cases
     if( ! bPrinterIndependentLayout )
@@ -1188,7 +1188,7 @@ void main()
         Any aAny;
         sal_Int16 nTmp = document::PrinterIndependentLayout::DISABLED;
         aAny <<= nTmp;
-        xProps->setPropertyValue( 
+        xProps->setPropertyValue(
             OUString( RTL_CONSTASCII_USTRINGPARAM("PrinterIndependentLayout") ),
             aAny );
     }
@@ -1209,7 +1209,7 @@ void main()
             {
                 // If the printer is known, then the OLE objects will
                 // already have correct sizes, and we don't have to call
-                // PrtOLENotify again. Otherwise we have to call it. 
+                // PrtOLENotify again. Otherwise we have to call it.
                 // The flag might be set from setting the printer, so it
                 // it is required to clear it.
                 SfxPrinter *pPrinter = pDoc->GetPrt( sal_False );
