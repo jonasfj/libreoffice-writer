@@ -2,9 +2,9 @@
  *
  *  $RCSfile: mathml.cxx,v $
  *
- *  $Revision: 1.30 $
+ *  $Revision: 1.31 $
  *
- *  last change: $Author: cmc $ $Date: 2001-06-19 13:41:49 $
+ *  last change: $Author: cmc $ $Date: 2001-06-19 13:46:30 $
  *
  *  The Contents of this file are made available subject to the terms of
  *  either of the following licenses
@@ -536,10 +536,10 @@ void SmXMLImport::endDocument(void)
             SmDocShell *pDocShell =
                 static_cast<SmDocShell*>(pModel->GetObjectShell());
             pDocShell->SetFormulaTree(pTree);
-            if (aText.Len()) //If we picked up our annotation text then use it
-            {
-                pDocShell->GetText() = aText;
-                pDocShell->Parse();
+            if (aText.Len())  //If we picked up our annotation text then use it
+            { 
+                pDocShell->GetText() = aText; 
+                pDocShell->Parse(); 
             }
             else    //Make up some editable text
             {
