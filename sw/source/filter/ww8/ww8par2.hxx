@@ -2,9 +2,9 @@
  *
  *  $RCSfile: ww8par2.hxx,v $
  *
- *  $Revision: 1.32 $
+ *  $Revision: 1.33 $
  *
- *  last change: $Author: obo $ $Date: 2003-09-01 12:43:44 $
+ *  last change: $Author: rt $ $Date: 2003-09-25 07:45:00 $
  *
  *  The Contents of this file are made available subject to the terms of
  *  either of the following licenses
@@ -65,23 +65,26 @@
 #define _WW8PAR2_HXX
 
 #ifndef SWTYPES_HXX
-#include <swtypes.hxx>	// enum RndStdIds
+#include <swtypes.hxx>  // enum RndStdIds
 #endif
-#ifndef _FMTFSIZE_HXX //autogen
+#ifndef _FMTFSIZE_HXX
 #include <fmtfsize.hxx>
 #endif
-#ifndef _FMTORNT_HXX //autogen
+#ifndef _FMTORNT_HXX
 #include <fmtornt.hxx>
 #endif
-#ifndef _FMTSRND_HXX //autogen
+#ifndef _FMTSRND_HXX
 #include <fmtsrnd.hxx>
+#endif
+#ifndef _SVX_LRSPITEM_HXX
+#include <svx/lrspitem.hxx>
 #endif
 
 #ifndef WW8SCAN_HXX
-#include "ww8scan.hxx"	// class WW8Style
+#include "ww8scan.hxx"  // class WW8Style
 #endif
 #ifndef WW8PAR_HXX
-#include "ww8par.hxx"	// WW8_BRC5
+#include "ww8par.hxx"   // WW8_BRC5
 #endif
 
 class SwCharFmt;
@@ -101,18 +104,18 @@ private:
 };
 
 struct WW8FlyPara
-{						// WinWord-Attribute
+{                       // WinWord-Attribute
                         // Achtung: *Nicht* umsortieren, da Teile mit
                         // memcmp verglichen werden
     bool bVer67;
-    INT16 nSp26, nSp27;			// rohe Position
-    INT16 nSp45, nSp28;			// Breite / Hoehe
-    INT16 nLeMgn, nRiMgn, nUpMgn, nLoMgn;			// Raender
-    BYTE nSp29;					// rohe Bindung + Alignment
-    BYTE nSp37;					// Wrap-Mode ( 1 / 2; 0 = no Apo ? )
-    WW8_BRC5 brc;				// Umrandung Top, Left, Bottom, Right, Between
-    bool bBorderLines;	 		// Umrandungslinien
-    bool bGrafApo;				// true: Dieser Rahmen dient allein dazu, die
+    INT16 nSp26, nSp27;         // rohe Position
+    INT16 nSp45, nSp28;         // Breite / Hoehe
+    INT16 nLeMgn, nRiMgn, nUpMgn, nLoMgn;           // Raender
+    BYTE nSp29;                 // rohe Bindung + Alignment
+    BYTE nSp37;                 // Wrap-Mode ( 1 / 2; 0 = no Apo ? )
+    WW8_BRC5 brc;               // Umrandung Top, Left, Bottom, Right, Between
+    bool bBorderLines;          // Umrandungslinien
+    bool bGrafApo;              // true: Dieser Rahmen dient allein dazu, die
                                 // enthaltene Grafik anders als zeichengebunden
                                 // zu positionieren
     bool mbVertSet;             // true if vertical positioning has been set
@@ -131,26 +134,26 @@ struct WW8SwFlyPara
     SwFlyFrmFmt* pFlyFmt;
 
                 // 1. Teil: daraus abgeleitete Sw-Attribute
-    INT16 nXPos, nYPos;			// Position
-    INT16 nLeMgn, nRiMgn;		// Raender
-    INT16 nUpMgn, nLoMgn;		// Raender
-    INT16 nWidth, nHeight;		// Groesse
+    INT16 nXPos, nYPos;         // Position
+    INT16 nLeMgn, nRiMgn;       // Raender
+    INT16 nUpMgn, nLoMgn;       // Raender
+    INT16 nWidth, nHeight;      // Groesse
     INT16 nNettoWidth;
 
-    SwFrmSize eHeightFix;		// Hoehe Fix oder Min
-    RndStdIds eAnchor;			// Bindung
-    SwRelationOrient eHRel;		// Seite oder Seitenrand
-    SwRelationOrient eVRel;		// Seite oder Seitenrand
-    SwVertOrient eVAlign;		// Oben, unten, mittig
-    SwHoriOrient eHAlign;		// links, rechts, mittig
-    SwSurround eSurround;		// Wrap-Mode
+    SwFrmSize eHeightFix;       // Hoehe Fix oder Min
+    RndStdIds eAnchor;          // Bindung
+    SwRelationOrient eHRel;     // Seite oder Seitenrand
+    SwRelationOrient eVRel;     // Seite oder Seitenrand
+    SwVertOrient eVAlign;       // Oben, unten, mittig
+    SwHoriOrient eHAlign;       // links, rechts, mittig
+    SwSurround eSurround;       // Wrap-Mode
 
-    BYTE nXBind, nYBind;		// relativ zu was gebunden
+    BYTE nXBind, nYBind;        // relativ zu was gebunden
 
                 // 2.Teil: sich waehrend des Einlesens ergebende AEnderungen
     long nNewNettoWidth;
-    SwPosition* pMainTextPos;	// um nach Apo in Haupttext zurueckzukehren
-    USHORT nLineSpace;			// LineSpace in tw fuer Graf-Apos
+    SwPosition* pMainTextPos;   // um nach Apo in Haupttext zurueckzukehren
+    USHORT nLineSpace;          // LineSpace in tw fuer Graf-Apos
     bool bAutoWidth;
     bool bToggelPos;
 
@@ -163,37 +166,38 @@ struct WW8SwFlyPara
 
 class SwWW8StyInf
 {
-    String		sWWStyleName;
-    USHORT		nWWStyleId;
+    String      sWWStyleName;
+    USHORT      nWWStyleId;
 public:
-    rtl_TextEncoding eLTRFontSrcCharSet;	// rtl_TextEncoding fuer den Font
-    rtl_TextEncoding eRTLFontSrcCharSet;	// rtl_TextEncoding fuer den Font
-    rtl_TextEncoding eCJKFontSrcCharSet;	// rtl_TextEncoding fuer den Font
-    SwFmt*		pFmt;
+    rtl_TextEncoding eLTRFontSrcCharSet;    // rtl_TextEncoding fuer den Font
+    rtl_TextEncoding eRTLFontSrcCharSet;    // rtl_TextEncoding fuer den Font
+    rtl_TextEncoding eCJKFontSrcCharSet;    // rtl_TextEncoding fuer den Font
+    SwFmt*      pFmt;
     WW8FlyPara* pWWFly;
-    SwNumRule*	pOutlineNumrule;
-    long		nFilePos;
-    short		nLeftParaMgn;
-    short		nTxtFirstLineOfst;
-    USHORT		nBase;
-    USHORT		nFollow;
-    USHORT		nLFOIndex;
-    BYTE		nListLevel;
-    BYTE		nOutlineLevel;		// falls Gliederungs-Style
-    BYTE		n81Flags;			// Fuer Bold, Italic, ...
-    BYTE		n81BiDiFlags;		// Fuer Bold, Italic, ...
-    bool bInvisFlag;		// For invisibile
+    SwNumRule*  pOutlineNumrule;
+    long        nFilePos;
+    USHORT      nBase;
+    USHORT      nFollow;
+    USHORT      nLFOIndex;
+    BYTE        nListLevel;
+    BYTE        nOutlineLevel;      // falls Gliederungs-Style
+    BYTE        n81Flags;           // Fuer Bold, Italic, ...
+    BYTE        n81BiDiFlags;       // Fuer Bold, Italic, ...
+    SvxLRSpaceItem maWordLR;
+    bool bInvisFlag;        // For invisibile
     bool bValid;            // leer oder Valid
-    bool bImported;	        // fuers rekursive Importieren
-    bool bColl;	            // true-> pFmt ist SwTxtFmtColl
-    bool bImportSkipped;	// nur true bei !bNewDoc && vorh. Style
-    bool bHasStyNumRule;	// true-> Benannter NumRule in Style
+    bool bImported;         // fuers rekursive Importieren
+    bool bColl;             // true-> pFmt ist SwTxtFmtColl
+    bool bImportSkipped;    // nur true bei !bNewDoc && vorh. Style
+    bool bHasStyNumRule;    // true-> Benannter NumRule in Style
     bool bHasBrokenWW6List; // true-> WW8+ style has a WW7- list
     bool bListReleventIndentSet; //true if this style's indent has 
                                  //been explicitly set, it's set to the value
                                  //of pFmt->GetItemState(RES_LR_SPACE, false)
                                  //if it was possible to get the ItemState
                                  //for L of the LR space independantly
+    bool bParaAutoBefore;   // For Auto spacing before a paragraph
+    bool bParaAutoAfter;    // For Auto Spacing after a paragraph
 
     SwWW8StyInf() :
         sWWStyleName( aEmptyStr ),
@@ -205,8 +209,6 @@ public:
         pWWFly( 0 ),
         pOutlineNumrule( 0 ),
         nFilePos( 0 ),
-        nLeftParaMgn( 0 ),
-        nTxtFirstLineOfst( 0 ),
         nBase( 0 ),
         nFollow( 0 ),
         nLFOIndex( USHRT_MAX ),
@@ -221,7 +223,10 @@ public:
         bImportSkipped(false),
         bHasStyNumRule(false),
         bHasBrokenWW6List(false),
-        bListReleventIndentSet(false)
+        bListReleventIndentSet(false),
+        bParaAutoBefore(false),
+        bParaAutoAfter(false)    
+
     {}
 
     ~SwWW8StyInf()
@@ -241,33 +246,36 @@ public:
     }
     bool IsOutline() const
     {
-        return ((MAXLEVEL > nOutlineLevel) && pOutlineNumrule && pFmt);
+        return (pFmt && (MAXLEVEL > nOutlineLevel));
+    }
+    bool IsOutlineNumbered() const
+    {
+        return pOutlineNumrule && IsOutline();
     }
     CharSet GetCharSet() const;
 };
-
 
 class WW8RStyle: public WW8Style
 {
 friend class SwWW8ImplReader;
     wwSprmParser maSprmParser;
-    SwWW8ImplReader* pIo;	// Parser-Klasse
-    SvStream* pStStrm;		// Input-File
+    SwWW8ImplReader* pIo;   // Parser-Klasse
+    SvStream* pStStrm;      // Input-File
 
-    SwNumRule* pStyRule;	// Bullets und Aufzaehlungen in Styles
+    SwNumRule* pStyRule;    // Bullets und Aufzaehlungen in Styles
 
-    BYTE* pParaSprms;			// alle ParaSprms des UPX falls UPX.Papx
-    USHORT nSprmsLen;			// Laenge davon
+    BYTE* pParaSprms;           // alle ParaSprms des UPX falls UPX.Papx
+    USHORT nSprmsLen;           // Laenge davon
 
-    BYTE nWwNumLevel;			// fuer Bullets und Aufzaehlungen in Styles
+    BYTE nWwNumLevel;           // fuer Bullets und Aufzaehlungen in Styles
 
     bool bTxtColChanged;
-    bool bFontChanged;	    // For Simulating Default-Font
-    bool bCJKFontChanged;	// For Simulating Default-CJK Font
-    bool bCTLFontChanged;	// For Simulating Default-CTL Font
-    bool bFSizeChanged;	    // For Simulating Default-FontSize
-    bool bFCTLSizeChanged;	// For Simulating Default-CTL FontSize
-    bool bWidowsChanged;	// For Simulating Default-Widows / Orphans
+    bool bFontChanged;      // For Simulating Default-Font
+    bool bCJKFontChanged;   // For Simulating Default-CJK Font
+    bool bCTLFontChanged;   // For Simulating Default-CTL Font
+    bool bFSizeChanged;     // For Simulating Default-FontSize
+    bool bFCTLSizeChanged;  // For Simulating Default-CTL FontSize
+    bool bWidowsChanged;    // For Simulating Default-Widows / Orphans
 
     void ImportSprms(long nPosFc, short nLen, bool bPap);
     void ImportGrupx(short nLen, bool bPara, bool bOdd);
