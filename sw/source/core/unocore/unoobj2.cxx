@@ -2,9 +2,9 @@
  *
  *  $RCSfile: unoobj2.cxx,v $
  *
- *  $Revision: 1.41 $
+ *  $Revision: 1.42 $
  *
- *  last change: $Author: rt $ $Date: 2003-11-25 10:47:31 $
+ *  last change: $Author: kz $ $Date: 2004-02-26 15:35:46 $
  *
  *  The Contents of this file are made available subject to the terms of
  *  either of the following licenses
@@ -919,7 +919,7 @@ Sequence< OUString > SAL_CALL SwXTextCursor::getAvailableServiceNames(void) thro
 
   -----------------------------------------------------------------------*/
 
-IMPL_STATIC_LINK( SwXTextCursor, RemoveCursor_Impl, 
+IMPL_STATIC_LINK( SwXTextCursor, RemoveCursor_Impl,
                   Reference<XInterface>*, pArg )
 {
     ASSERT( pThis != NULL, "no reference?" );
@@ -946,9 +946,9 @@ void 	SwXTextCursor::Modify( SfxPoolItem *pOld, SfxPoolItem *pNew)
         // create reference to this object to prevent deletion before
         // the STATIC_LINK is executed. The link will delete the
         // reference.
-        Reference<XInterface>* pRef = 
+        Reference<XInterface>* pRef =
             new Reference<XInterface>( static_cast<XServiceInfo*>( this ) );
-        Application::PostUserEvent( 
+        Application::PostUserEvent(
             STATIC_LINK( this, SwXTextCursor, RemoveCursor_Impl ), pRef );
     }
 
@@ -1172,7 +1172,7 @@ sal_Bool SwXParagraphEnumeration::hasMoreElements(void) throw( uno::RuntimeExcep
 /*-- 14.08.03 13:10:14---------------------------------------------------
 
   -----------------------------------------------------------------------*/
-uno::Reference< XTextContent > SAL_CALL SwXParagraphEnumeration::NextElement_Impl(void) 
+uno::Reference< XTextContent > SAL_CALL SwXParagraphEnumeration::NextElement_Impl(void)
     throw( container::NoSuchElementException, lang::WrappedTargetException, uno::RuntimeException )
 {
     uno::Reference< XTextContent >  aRef;
@@ -1502,7 +1502,7 @@ void 	SwXTextRange::DeleteAndInsert(const String& rText) throw( uno::RuntimeExce
             while (nIdx != STRING_NOTFOUND)
             {
                 DBG_ASSERT( nIdx - nStartIdx >= 0, "index negative!" );
-                aTxt = rText.Copy( nStartIdx, nIdx - nStartIdx );	
+                aTxt = rText.Copy( nStartIdx, nIdx - nStartIdx );
                 if (aTxt.getLength() && !pDoc->Insert( aNewCrsr, aTxt ))
                     DBG_ERROR( "Doc->Insert(Str) failed." );
                 if (!pDoc->SplitNode( *aNewCrsr.GetPoint() ))
@@ -1515,7 +1515,7 @@ void 	SwXTextRange::DeleteAndInsert(const String& rText) throw( uno::RuntimeExce
                 DBG_ERROR( "Doc->Insert(Str) failed." );
 
             SwXTextCursor::SelectPam(aNewCrsr, sal_True);
-            aNewCrsr.Left(rText.Len(), CRSR_SKIP_CHARS);
+            aNewCrsr.Left(rText.Len(), CRSR_SKIP_CHARS, FALSE, FALSE);
         }
         _CreateNewBookmark(aNewCrsr);
         pDoc->EndUndo(UNDO_INSERT);
@@ -1784,7 +1784,7 @@ sal_Bool 		SwXTextRange::XTextRangeToSwPaM( SwUnoInternalPaM& rToFill,
                 {
                     // set selection to the whole paragraph
                     rToFill.SetMark();
-                    rToFill.GetMark()->nContent = 
+                    rToFill.GetMark()->nContent =
                         pUnoCrsr->GetNode()->GetTxtNode()->GetTxt().Len();
                 }
                 else if(pUnoCrsr->HasMark())
@@ -2480,7 +2480,7 @@ void SwXTextCursor::SetString(SwCursor& rCrsr, const OUString& rString)
             ASSERT( sal_False, "Doc->Insert(Str) failed." )
         }
         SwXTextCursor::SelectPam(rCrsr, sal_True);
-        rCrsr.Left(nTxtLen, CRSR_SKIP_CHARS);
+        rCrsr.Left(nTxtLen, CRSR_SKIP_CHARS, FALSE, FALSE);
     }
     pDoc->EndUndo(UNDO_INSERT);
 }
@@ -2561,7 +2561,7 @@ SwXParaFrameEnumeration::SwXParaFrameEnumeration(const SwUnoCrsr& rUnoCrsr,
                 do
                 {
                     FillFrame(*pUnoCrsr);
-                    pUnoCrsr->Right(1, CRSR_SKIP_CHARS);
+                    pUnoCrsr->Right(1, CRSR_SKIP_CHARS, FALSE, FALSE);
                 }
                 while(*pUnoCrsr->GetPoint() < *pUnoCrsr->GetMark());
             }
