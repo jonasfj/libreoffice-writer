@@ -2,9 +2,9 @@
  *
  *  $RCSfile: cnttab.cxx,v $
  *
- *  $Revision: 1.38 $
+ *  $Revision: 1.39 $
  *
- *  last change: $Author: oj $ $Date: 2002-04-09 07:39:46 $
+ *  last change: $Author: ama $ $Date: 2002-05-08 13:31:18 $
  *
  *  The Contents of this file are made available subject to the terms of
  *  either of the following licenses
@@ -317,7 +317,7 @@ class SwEntryBrowseBox : public SwEntryBrowseBox_Base
     long 	nCurrentRow;
     sal_Bool	bModified;
 
-    
+
     void						SetModified() {bModified = sal_True;}
 
 protected:
@@ -1085,7 +1085,8 @@ SwTOXSelectTabPage::SwTOXSelectTabPage(Window* pParent, const SfxItemSet& rAttrS
     pColRes(0)
 {
     FreeResource();
-    aLanguageLB.SetLanguageList( LANG_LIST_ALL, FALSE, FALSE, FALSE );
+    aLanguageLB.SetLanguageList( LANG_LIST_ALL | LANG_LIST_ONLY_KNOWN,
+                                 FALSE, FALSE, FALSE );
 
     sAddStyleContent = aAddStylesCB.GetText();
 
