@@ -2,9 +2,9 @@
  *
  *  $RCSfile: edtwin.cxx,v $
  *
- *  $Revision: 1.73 $
+ *  $Revision: 1.74 $
  *
- *  last change: $Author: rt $ $Date: 2003-12-01 09:44:33 $
+ *  last change: $Author: hr $ $Date: 2004-02-02 18:38:47 $
  *
  *  The Contents of this file are made available subject to the terms of
  *  either of the following licenses
@@ -133,11 +133,11 @@
 #ifndef _SFXDISPATCH_HXX //autogen
 #include <sfx2/dispatch.hxx>
 #endif
-#ifndef _SFXPTITEM_HXX 
+#ifndef _SFXPTITEM_HXX
 #include <svtools/ptitem.hxx>
 #endif
 #define ITEMID_SIZE SID_ATTR_SIZE
-#ifndef _SVX_SIZEITEM_HXX 
+#ifndef _SVX_SIZEITEM_HXX
 #include <svx/sizeitem.hxx>
 #endif
 #ifndef _SVX_HTMLMODE_HXX //autogen
@@ -320,6 +320,11 @@
 #endif
 #ifndef _UITOOL_HXX
 #include <uitool.hxx>
+#endif
+
+// OD 18.09.2003 #i18732#
+#ifndef _FMTFOLLOWTEXTFLOW_HXX
+#include <fmtfollowtextflow.hxx>
 #endif
 
 #include <charfmt.hxx>
@@ -854,11 +859,13 @@ void SwEditWin::ChangeFly( BYTE nDir, BOOL bWeb )
     SwRect aTmp = rSh.GetFlyRect();
     if( aTmp.HasArea() )
     {
+        // OD 18.09.2003 #i18732# - add item <RES_FOLLOW_TEXT_FLOW>
         SfxItemSet aSet(rSh.GetAttrPool(),
                         RES_FRM_SIZE, RES_FRM_SIZE,
                         RES_VERT_ORIENT, RES_ANCHOR,
                         RES_COL, RES_COL,
-                        RES_PROTECT, RES_PROTECT, 0);
+                        RES_PROTECT, RES_PROTECT,
+                        RES_FOLLOW_TEXT_FLOW, RES_FOLLOW_TEXT_FLOW, 0);
         rSh.GetFlyFrmAttr( aSet );
         const SvxProtectItem& rProtect = ((SvxProtectItem&)aSet.Get(RES_PROTECT));
         if( rProtect.IsSizeProtected() ||
@@ -886,7 +893,16 @@ void SwEditWin::ChangeFly( BYTE nDir, BOOL bWeb )
 
         SwRect aBoundRect;
         Point aRefPoint;
-        rSh.CalcBoundRect( aBoundRect, eAnchorId, FRAME, FALSE, &aRefPoint );
+        // OD 18.09.2003 #i18732# - adjustment for allowing vertical position
+        //      aligned to page for fly frame anchored to paragraph or to character.
+        {
+            SwFmtVertOrient aVert( (SwFmtVertOrient&)aSet.Get(RES_VERT_ORIENT) );
+            const bool bFollowTextFlow =
+                    static_cast<const SwFmtFollowTextFlow&>(aSet.Get(RES_FOLLOW_TEXT_FLOW)).GetValue();
+            rSh.CalcBoundRect( aBoundRect, eAnchorId, FRAME,
+                               aVert.GetRelationOrient(), bFollowTextFlow,
+                               false, &aRefPoint );
+        }
         long nLeft = Min( aTmp.Left() - aBoundRect.Left(), aSnap.Width() );
         long nRight = Min( aBoundRect.Right() - aTmp.Right(), aSnap.Width() );
         long nUp = Min( aTmp.Top() - aBoundRect.Top(), aSnap.Height() );
@@ -2423,7 +2439,7 @@ void SwEditWin::MouseButtonDown(const MouseEvent& rMEvt)
                             // #107513#
                             // Test if there is a draw object at that position and if it should be selected.
                             sal_Bool bShould = rSh.ShouldObjectBeSelected(aDocPos);
-                            
+
                             if(bShould)
                             {
                                 rView.NoRotate();
@@ -2494,8 +2510,8 @@ void SwEditWin::MouseButtonDown(const MouseEvent& rMEvt)
                                     rSh.UnSelectFrm();
                                     rSh.LeaveSelFrmMode();
                                     rView.AttrChangedNotify(&rSh);
-                                }                                
-                                
+                                }
+
                                 BOOL bSelObj = rSh.SelectObj( aDocPos, nFlag );
                                 if( bUnLockView )
                                     rSh.LockView( FALSE );
@@ -2542,7 +2558,7 @@ void SwEditWin::MouseButtonDown(const MouseEvent& rMEvt)
                             case SwWrtShell::SEL_GRF:
                                 RstMBDownFlags();
                                 GetView().GetViewFrame()->GetBindings().Execute(
-                                    FN_FORMAT_GRAFIC_DLG, 0, 0, 
+                                    FN_FORMAT_GRAFIC_DLG, 0, 0,
                                     SFX_CALLMODE_RECORD|SFX_CALLMODE_SLOT);
                                 return;
 
@@ -2969,7 +2985,7 @@ void SwEditWin::MouseMove(const MouseEvent& rMEvt)
     }
 
     if(rView.GetDrawFuncPtr())
-    {        
+    {
         if( bInsDraw  )
         {
             rView.GetDrawFuncPtr()->MouseMove( rMEvt );
@@ -2988,21 +3004,21 @@ void SwEditWin::MouseMove(const MouseEvent& rMEvt)
             SfxBindings &rBnd = rSh.GetView().GetViewFrame()->GetBindings();
             Point aRelPos = rSh.GetRelativePagePosition(aDocPt);
             if(aRelPos.X() >= 0)
-            {        
+            {
                 FieldUnit eMetric = ::GetDfltMetric(0 != PTR_CAST(SwWebView, &GetView()));
                 SW_MOD()->PutItem(SfxUInt16Item(SID_ATTR_METRIC, eMetric));
                 const SfxPointItem aTmp1( SID_ATTR_POSITION, aRelPos );
                 rBnd.SetState( aTmp1 );
             }
-            else 
+            else
             {
                 rBnd.Invalidate(SID_ATTR_POSITION);
-            }            
+            }
             rBnd.Invalidate(SID_ATTR_SIZE);
             const SfxStringItem aCell( SID_TABLE_CELL, aEmptyStr );
             rBnd.SetState( aCell );
-        }            
-    }    
+        }
+    }
 
     BYTE nMouseTabCol;
     if( !bIsDocReadOnly && bInsWin && !pApplyTempl && !rSh.IsInSelect() &&
@@ -3036,7 +3052,7 @@ void SwEditWin::MouseMove(const MouseEvent& rMEvt)
                 if( (0!=( pHdl = pSdrView->HitHandle( aOld, *(rSh.GetOut())) )||
                     0 !=(pHdl = pSdrView->HitHandle( pAnchorMarker->GetHdlPos(),
                     *(rSh.GetOut())) ) ) &&
-                        ( pHdl->GetKind() == HDL_ANCHOR || 
+                        ( pHdl->GetKind() == HDL_ANCHOR ||
                           pHdl->GetKind() == HDL_ANCHOR_TR ) )
                 {
                     pAnchorMarker->ChgHdl( pHdl );
@@ -3373,7 +3389,7 @@ void SwEditWin::MouseButtonUp(const MouseEvent& rMEvt)
                 rView.GetDrawFuncPtr()->Deactivate();
 
                 if (!rView.IsDrawMode())
-                {        
+                {
                     rView.SetDrawFuncPtr(NULL);
                     SfxBindings& rBind = rView.GetViewFrame()->GetBindings();
                     rBind.Invalidate( SID_ATTR_SIZE );
@@ -4162,7 +4178,7 @@ void SwEditWin::Command( const CommandEvent& rCEvt )
                         const SfxPoolItem* aArgs[2];
                         aArgs[0] = pItem;
                         aArgs[1] = 0;
-                        GetView().GetViewFrame()->GetBindings().Execute( 
+                        GetView().GetViewFrame()->GetBindings().Execute(
                                     nSlotId, aArgs, 0, SFX_CALLMODE_STANDARD );
                         delete pItem;
                     }
@@ -4327,7 +4343,7 @@ void SwEditWin::Command( const CommandEvent& rCEvt )
         }
         break;
         case COMMAND_MODKEYCHANGE :
-        {    
+        {
             const CommandModKeyData* pCommandData = (const CommandModKeyData*)rCEvt.GetData();
             if(pCommandData->IsMod1() && !pCommandData->IsMod2())
             {
@@ -4338,7 +4354,7 @@ void SwEditWin::Command( const CommandEvent& rCEvt )
                     nSlot = SID_ATTR_PARA_RIGHT_TO_LEFT;
                 if(nSlot && SW_MOD()->GetCTLOptions().IsCTLFontEnabled())
                     GetView().GetViewFrame()->GetDispatcher()->Execute(nSlot);
-            }        
+            }
         }
         break;
         case COMMAND_HANGUL_HANJA_CONVERSION :
@@ -4399,14 +4415,14 @@ void SwEditWin::_FinitStaticData()
     delete pQuickHlpData;
 }
 /* -----------------23.01.2003 12:15-----------------
- * #i3370# remove quick help to prevent saving 
+ * #i3370# remove quick help to prevent saving
  * of autocorrection suggestions
  * --------------------------------------------------*/
 void SwEditWin::StopQuickHelp()
 {
     if( HasFocus() && pQuickHlpData && pQuickHlpData->bClear  )
         pQuickHlpData->Stop( rView.GetWrtShell() );
-}        
+}
 
 /*-----------------23.02.97 18:39-------------------
 
@@ -4595,7 +4611,7 @@ void QuickHelpData::FillStrArr( SwWrtShell& rSh, const String& rWord )
     }
 }
 /* -----------------06.11.2002 12:01-----------------
- * 
+ *
  * --------------------------------------------------*/
 void SwEditWin::ShowAutoTextCorrectQuickHelp(
         const String& rWord, OfaAutoCorrCfg* pACfg, SvxAutoCorrect* pACorr )
@@ -4624,5 +4640,5 @@ void SwEditWin::ShowAutoTextCorrectQuickHelp(
 
     if( pQuickHlpData->aArr.Count() )
         pQuickHlpData->Start( rSh, rWord.Len() );
-}        
+}
 
