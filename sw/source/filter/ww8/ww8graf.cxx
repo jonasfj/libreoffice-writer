@@ -2,9 +2,9 @@
  *
  *  $RCSfile: ww8graf.cxx,v $
  *
- *  $Revision: 1.78 $
+ *  $Revision: 1.79 $
  *
- *  last change: $Author: cmc $ $Date: 2002-08-29 11:21:48 $
+ *  last change: $Author: od $ $Date: 2002-09-04 11:35:29 $
  *
  *  The Contents of this file are made available subject to the terms of
  *  either of the following licenses
@@ -317,7 +317,7 @@ void wwFrameNamer::SetUniqueGraphName(SwFrmFmt *pFrmFmt, const String &rFixed)
 }
 
 // ReadGrafStart liest die ObjektDaten ein und erzeugt falls noetig einen Anker
-bool SwWW8ImplReader::ReadGrafStart(void* pData, short nDataSiz, 
+bool SwWW8ImplReader::ReadGrafStart(void* pData, short nDataSiz,
     WW8_DPHEAD* pHd, const WW8_DO* pDo, SfxAllItemSet &rSet)
 {
     if (SVBT16ToShort(pHd->cb) < sizeof(WW8_DPHEAD) + nDataSiz)
@@ -690,7 +690,7 @@ void SwWW8ImplReader::InsertTxbxAttrs(long nStartCp, long nEndCp,
         //with textboxes.
 
         //There is a set of methods which has word 6 and 97 mixed up
-        //with eachother and they need to refactored out seperately. 
+        //with eachother and they need to refactored out seperately.
         //And adjusts removed from places like here where they have no
         //place being.
         //These additional two lines should work perfectly correctly but the
@@ -760,7 +760,7 @@ void SwWW8ImplReader::InsertTxbxAttrs(long nStartCp, long nEndCp,
                         String sTemp;
                         sTemp.Fill(nTxtStart-nStartReplace,cReplaceSymbol);
                         pDrawEditEngine->QuickInsertText(sTemp,
-                            GetESelection(nStartReplace - nStartCp, 
+                            GetESelection(nStartReplace - nStartCp,
                             nTxtStart - nStartCp ) );
                     }
                 }
@@ -1363,7 +1363,7 @@ SdrObject* SwWW8ImplReader::ReadCaptionBox( WW8_DPHEAD* pHd, const WW8_DO* pDo,
 }
 
 
-SdrObject *SwWW8ImplReader::ReadGroup( WW8_DPHEAD* pHd, const WW8_DO* pDo, 
+SdrObject *SwWW8ImplReader::ReadGroup( WW8_DPHEAD* pHd, const WW8_DO* pDo,
     SfxAllItemSet &rSet)
 {
     INT16 nGrouped;
@@ -1411,28 +1411,28 @@ SdrObject* SwWW8ImplReader::ReadGrafPrimitive( short& rLeft, const WW8_DO* pDo,
         rSet.Put(SwFmtSurround(SURROUND_THROUGHT));
         switch (SVBT16ToShort(aHd.dpk) & 0xff )
         {
-            case 0:	 
+            case 0:
                 pRet = ReadGroup( &aHd, pDo, rSet );
                 break;
-            case 1:  
+            case 1:
                 pRet = ReadLine( &aHd, pDo, rSet );
                 break;
-            case 2:  
+            case 2:
                 pRet = ReadTxtBox( &aHd, pDo, rSet );
                 break;
-            case 3:  
+            case 3:
                 pRet = ReadRect( &aHd, pDo, rSet );
                 break;
-            case 4:  
+            case 4:
                 pRet = ReadElipse( &aHd, pDo, rSet );
                 break;
-            case 5:  
+            case 5:
                 pRet = ReadArc( &aHd, pDo, rSet );
                 break;
-            case 6:  
+            case 6:
                 pRet = ReadPolyLine( &aHd, pDo, rSet );
                 break;
-            case 7:  
+            case 7:
                 pRet = ReadCaptionBox( &aHd, pDo, rSet );
                 break;
             default:    // unbekannt
@@ -1540,7 +1540,7 @@ const WW8_BordersSO &WW8_BordersSO::Get0x01LineMatch(eBorderCode eCode)
     #define DEF_DOUBLE_LINE10_DIST	DEF_LINE_WIDTH_2
     */
     // Deklarationen gemaess BOXITEM.HXX
-    static const WW8_BordersSO aLineTabVer8[] =	
+    static const WW8_BordersSO aLineTabVer8[] =
     {
 /* 0*/	{ DEF_LINE_WIDTH_0, 0, 0 },
 /* 1*/	{ DEF_LINE_WIDTH_1, 0, 0 },
@@ -1557,7 +1557,7 @@ const WW8_BordersSO &WW8_BordersSO::Get0x01LineMatch(eBorderCode eCode)
 /*12*/	{ DEF_DOUBLE_LINE7_OUT, DEF_DOUBLE_LINE7_IN, DEF_DOUBLE_LINE7_DIST },
 /*13*/	{ DEF_DOUBLE_LINE8_OUT, DEF_DOUBLE_LINE8_IN, DEF_DOUBLE_LINE8_DIST },
 /*14*/	{ DEF_DOUBLE_LINE9_OUT, DEF_DOUBLE_LINE9_IN, DEF_DOUBLE_LINE9_DIST },
-/*15*/	{ DEF_DOUBLE_LINE10_OUT,DEF_DOUBLE_LINE10_IN,DEF_DOUBLE_LINE10_DIST} 
+/*15*/	{ DEF_DOUBLE_LINE10_OUT,DEF_DOUBLE_LINE10_IN,DEF_DOUBLE_LINE10_DIST}
     };
     ASSERT(eCode < sizeof(aLineTabVer8), "Impossible");
     if (eCode >= sizeof(aLineTabVer8))
@@ -1845,7 +1845,7 @@ void SwWW8ImplReader::MatchSdrItemsIntoFlySet( SdrObject* pSdrObj,
     if( 0 < rInnerDist.Bottom() )
         aBox.SetDistance( (USHORT)rInnerDist.Bottom(), BOX_LINE_BOTTOM );
 
-    bool bFixSize = !(WW8ITEMVALUE(rOldSet, SDRATTR_TEXT_AUTOGROWHEIGHT, 
+    bool bFixSize = !(WW8ITEMVALUE(rOldSet, SDRATTR_TEXT_AUTOGROWHEIGHT,
         SdrTextAutoGrowHeightItem));
 
     // Size: SwFmtFrmSize
@@ -1940,8 +1940,10 @@ void SwWW8ImplReader::MatchSdrItemsIntoFlySet( SdrObject* pSdrObj,
         switch (eFill)
         {
             case XFILL_NONE:
-//                aBrushItem.SetColor(Color(COL_TRANSPARENT));
-                aBrushItem.GetColor().SetTransparency(0xFE);
+                /// OD 04.09.2002 #99657#
+                /// color "no fill" is still COL_TRANSPARENT
+                aBrushItem.SetColor(Color(COL_TRANSPARENT));
+                //aBrushItem.GetColor().SetTransparency(0xFE);
                 bBrushItemOk = true;
             break;
             case XFILL_SOLID:
@@ -1974,7 +1976,7 @@ void SwWW8ImplReader::MatchSdrItemsIntoFlySet( SdrObject* pSdrObj,
     eState = rOldSet.GetItemState(XATTR_FILLTRANSPARENCE, true, &pItem);
     if (eState == SFX_ITEM_SET)
     {
-        sal_uInt16 nTrans = WW8ITEMVALUE(rOldSet, XATTR_FILLTRANSPARENCE, 
+        sal_uInt16 nTrans = WW8ITEMVALUE(rOldSet, XATTR_FILLTRANSPARENCE,
             XFillTransparenceItem);
         aBrushItem.GetColor().SetTransparency(sal_uInt8((nTrans * 0xFE) / 100));
         bBrushItemOk = true;
@@ -1984,25 +1986,25 @@ void SwWW8ImplReader::MatchSdrItemsIntoFlySet( SdrObject* pSdrObj,
         rFlySet.Put(aBrushItem, RES_BACKGROUND);
 }
 
-void SwWW8ImplReader::AdjustLRWrapForWordMargins(SvxMSDffImportRec* pRecord, 
+void SwWW8ImplReader::AdjustLRWrapForWordMargins(SvxMSDffImportRec* pRecord,
     SvxLRSpaceItem* pLR)
 {
-    // Left adjustments - if horizontally aligned to left of 
+    // Left adjustments - if horizontally aligned to left of
     // margin or column then remove the left wrapping
-    if (pRecord->nXAlign == 1) 
+    if (pRecord->nXAlign == 1)
     {
         if ((pRecord->nXRelTo == 0) || (pRecord->nXRelTo == 2))
             pLR->SetLeft((USHORT)0);
     }
 
-    // Right adjustments - if horizontally aligned to right of 
+    // Right adjustments - if horizontally aligned to right of
     // margin or column then remove the right wrapping
     if (pRecord->nXAlign == 3)
     {
         if ((pRecord->nXRelTo == 0) || (pRecord->nXRelTo == 2))
             pLR->SetRight((USHORT)0);
     }
-    
+
     //Inside margin, remove left wrapping
     if ((pRecord->nXAlign == 4) && (pRecord->nXRelTo == 0))
     {
@@ -2017,18 +2019,18 @@ void SwWW8ImplReader::AdjustLRWrapForWordMargins(SvxMSDffImportRec* pRecord,
 }
 
 
-void SwWW8ImplReader::AdjustULWrapForWordMargins(SvxMSDffImportRec* pRecord, 
+void SwWW8ImplReader::AdjustULWrapForWordMargins(SvxMSDffImportRec* pRecord,
     SvxULSpaceItem* pUL)
 {
-    // Top adjustment - remove upper wrapping if aligned to page 
+    // Top adjustment - remove upper wrapping if aligned to page
     // printable area or to page
-    if (pRecord->nYAlign == 1) 
+    if (pRecord->nYAlign == 1)
     {
         if ((pRecord->nYRelTo == 0) || (pRecord->nYRelTo == 1))
             pUL->SetUpper((USHORT)0);
     }
 
-    // Bottom adjustment - remove bottom wrapping if aligned to page or 
+    // Bottom adjustment - remove bottom wrapping if aligned to page or
     // printable area or to page
     if (pRecord->nYAlign == 3)
     {
@@ -2067,7 +2069,7 @@ void SwWW8ImplReader::MatchWrapDistancesIntoFlyFmt(SvxMSDffImportRec* pRecord,
         SvxULSpaceItem aUL;
         aUL.SetUpper(	(USHORT)pRecord->nDyWrapDistTop );
         aUL.SetLower(	(USHORT)pRecord->nDyWrapDistBottom );
-        AdjustULWrapForWordMargins( pRecord, &aUL); 
+        AdjustULWrapForWordMargins( pRecord, &aUL);
         pFlyFmt->SetAttr( aUL );
     }
 }
@@ -2164,7 +2166,7 @@ SdrObject* SwWW8ImplReader::CreateContactObject(SwFrmFmt* pFlyFmt)
         if (!pNewObject && pFlyFmt->ISA(SwFlyFrmFmt))
         {
             SwFlyDrawContact* pContactObject
-                = new SwFlyDrawContact(static_cast<SwFlyFrmFmt*>(pFlyFmt), 
+                = new SwFlyDrawContact(static_cast<SwFlyFrmFmt*>(pFlyFmt),
                 pDrawModel);
             pNewObject = pContactObject->GetMaster();
         }
