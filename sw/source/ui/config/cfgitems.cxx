@@ -2,9 +2,9 @@
  *
  *  $RCSfile: cfgitems.cxx,v $
  *
- *  $Revision: 1.6 $
+ *  $Revision: 1.7 $
  *
- *  last change: $Author: mba $ $Date: 2002-05-27 14:35:24 $
+ *  last change: $Author: os $ $Date: 2002-09-20 12:09:49 $
  *
  *  The Contents of this file are made available subject to the terms of
  *  either of the following licenses
@@ -205,7 +205,8 @@ SwElemItem::SwElemItem( USHORT nWhich ) :
 {
     bHorzScrollbar =
     bVertScrollbar =
-    bHorzRuler	   =
+    bAnyRuler =
+    bHorzRuler     =
     bVertRuler	   =
     bVertRulerRight=
     bCrosshair	   =
@@ -236,8 +237,9 @@ SwElemItem::SwElemItem(const SwViewOption& rVOpt, USHORT nWhich) :
 {
     bHorzScrollbar	= rVOpt.IsViewHScrollBar();
     bVertScrollbar	= rVOpt.IsViewVScrollBar();
-    bHorzRuler		= rVOpt.IsViewTabwin();
-    bVertRuler		= rVOpt.IsViewVLin();
+    bAnyRuler       = rVOpt.IsViewAnyRuler();
+    bHorzRuler      = rVOpt.IsViewHRuler(TRUE);
+    bVertRuler      = rVOpt.IsViewVRuler(TRUE);
     bVertRulerRight = rVOpt.IsVRulerRight();
     bCrosshair		= rVOpt.IsCrossHair();
     bHandles		= rVOpt.IsSolidMarkHdl();
@@ -272,7 +274,8 @@ int SwElemItem::operator==( const SfxPoolItem& rAttr ) const
 
     return (	bHorzScrollbar	== rItem.bHorzScrollbar &&
                 bVertScrollbar	== rItem.bVertScrollbar &&
-                bHorzRuler		== rItem.bHorzRuler		&&
+                bAnyRuler       == rItem.bAnyRuler &&
+                bHorzRuler      == rItem.bHorzRuler     &&
                 bVertRuler		== rItem.bVertRuler		&&
                 bVertRulerRight == rItem.bVertRulerRight&&
                 bCrosshair		== rItem.bCrosshair		&&
@@ -295,7 +298,8 @@ void  SwElemItem::operator=( const SwElemItem& rElemItem)
 {
     bHorzScrollbar	= rElemItem.  bHorzScrollbar	;
     bVertScrollbar	= rElemItem.  bVertScrollbar	;
-    bHorzRuler		= rElemItem.  bHorzRuler		;
+    bAnyRuler       = rElemItem.  bAnyRuler;
+    bHorzRuler      = rElemItem.  bHorzRuler        ;
     bVertRuler		= rElemItem.  bVertRuler		;
     bVertRulerRight = rElemItem.  bVertRulerRight   ;
     bCrosshair		= rElemItem.  bCrosshair		;
@@ -317,8 +321,9 @@ void SwElemItem::FillViewOptions( SwViewOption& rVOpt) const
 {
     rVOpt.SetViewHScrollBar(bHorzScrollbar );
     rVOpt.SetViewVScrollBar(bVertScrollbar );
-    rVOpt.SetViewTabwin(bHorzRuler	  );
-    rVOpt.SetViewVLin(bVertRuler	  );
+    rVOpt.SetViewAnyRuler(bAnyRuler);
+    rVOpt.SetViewHRuler(bHorzRuler    );
+    rVOpt.SetViewVRuler(bVertRuler    );
     rVOpt.SetVRulerRight(bVertRulerRight );
     rVOpt.SetCrossHair(bCrosshair	  );
     rVOpt.SetSolidMarkHdl(bHandles	  );
@@ -486,6 +491,9 @@ int SwTestItem::operator==( const SfxPoolItem& rAttr ) const
 
 /*------------------------------------------------------------------------
     $Log: not supported by cvs2svn $
+    Revision 1.6  2002/05/27 14:35:24  mba
+    #98405#: Put/QueryValue implemented
+
     Revision 1.5  2002/04/25 13:57:39  os
     #97695# color configuration entries added/moved/removed
 
