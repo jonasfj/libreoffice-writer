@@ -2,9 +2,9 @@
  *
  *  $RCSfile: changedb.hxx,v $
  *
- *  $Revision: 1.3 $
+ *  $Revision: 1.4 $
  *
- *  last change: $Author: fme $ $Date: 2001-05-21 12:25:10 $
+ *  last change: $Author: os $ $Date: 2002-05-31 07:19:24 $
  *
  *  The Contents of this file are made available subject to the terms of
  *  either of the following licenses
@@ -110,12 +110,11 @@ class SwChangeDBDlg: public SvxStandardDialog
     CancelButton 	aCancelBT;
     HelpButton 		aHelpBT;
 //	PushButton		aChangeBT;
-    Bitmap			aRootOpened;
-    Bitmap 			aRootClosed;
-    Image			aDBBMP;
-    Image			aTableBMP;
 
-    SwWrtShell		*pSh;
+    ImageList       aImageList;
+    ImageList       aImageListHC;
+
+    SwWrtShell      *pSh;
     SwFldMgr		*pMgr;
 
     DECL_LINK(TreeSelectHdl, SvTreeListBox* pBox = 0);
