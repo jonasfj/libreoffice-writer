@@ -2,9 +2,9 @@
  *
  *  $RCSfile: wrtrtf.hxx,v $
  *
- *  $Revision: 1.10 $
+ *  $Revision: 1.11 $
  *
- *  last change: $Author: rt $ $Date: 2004-10-28 13:05:56 $
+ *  last change: $Author: rt $ $Date: 2005-01-11 12:31:53 $
  *
  *  The Contents of this file are made available subject to the terms of
  *  either of the following licenses
@@ -102,7 +102,7 @@ extern SwNodeFnTab aRTFNodeFnTab;
 class RTF_WrtRedlineAuthor : public sw::util::WrtRedlineAuthor
 {
     public:
-    virtual void Write(Writer &rWrt); 
+    virtual void Write(Writer &rWrt);
 };
 
 // der RTF-Writer
@@ -110,7 +110,7 @@ class RTF_WrtRedlineAuthor : public sw::util::WrtRedlineAuthor
 class SwRTFWriter : public Writer
 {
     friend class RTFEndPosLst;
-    
+
     SvPtrarr* pFontRemoveLst;
     RTFColorTbl* pColTbl;
     SwPosFlyFrms* pFlyPos;			// Pointer auf die aktuelle "FlyFrmTabelle"
@@ -130,7 +130,7 @@ class SwRTFWriter : public Writer
     bool OutRTFRevTab();
 
     void MakeHeader();
-    void OutUnicodeSafeRecord(const sal_Char *pToken, 
+    void OutUnicodeSafeRecord(const sal_Char *pToken,
         const String &rContent);
     void OutDocInfoStat();
     void OutInfoDateTime( const DateTime&, const sal_Char* );
@@ -138,13 +138,13 @@ class SwRTFWriter : public Writer
 
     void BuildNumRuleTbl();
 
-    
+
 
 public:
     // --- public Member --------------------------------------------------
 
     USHORT nCurRedline;
-    
+
 
     const SwFlyFrmFmt* pFlyFmt;	// liegt der Node in einem FlyFrame,
                                         // ist das Format gesetzt, sonst 0
@@ -184,7 +184,7 @@ public:
 
     // --- public Methoden ------------------------------------------------
 
-    SwRTFWriter( const String& rFilterName );
+    SwRTFWriter( const String& rFilterName, const String& rBaseURL );
     virtual ~SwRTFWriter();
     virtual ULONG WriteStream();
 
