@@ -2,9 +2,9 @@
  *
  *  $RCSfile: dbmgr.cxx,v $
  *
- *  $Revision: 1.67 $
+ *  $Revision: 1.68 $
  *
- *  last change: $Author: vg $ $Date: 2003-05-26 08:14:51 $
+ *  last change: $Author: vg $ $Date: 2003-06-10 09:15:14 $
  *
  *  The Contents of this file are made available subject to the terms of
  *  either of the following licenses
@@ -68,6 +68,8 @@
 #endif
 
 #include <stdio.h>
+
+#include <com/sun/star/text/NotePrintMode.hpp>
 
 #ifndef _COM_SUN_STAR_SDB_COMMANDTYPE_HPP_
 #include <com/sun/star/sdb/CommandType.hpp>
@@ -294,9 +296,9 @@
 #include <svx/dataaccessdescriptor.hxx>
 #endif
 #ifndef _CPPUHELPER_IMPLBASE1_HXX_
-#include <cppuhelper/implbase1.hxx> 
+#include <cppuhelper/implbase1.hxx>
 #endif
-#ifndef _VOS_MUTEX_HXX_ 
+#ifndef _VOS_MUTEX_HXX_
 #include <vos/mutex.hxx>
 #endif
 
@@ -338,19 +340,19 @@ namespace
 
 }
 /* -----------------09.12.2002 12:35-----------------
- * 
+ *
  * --------------------------------------------------*/
 
 class SwConnectionDisposedListener_Impl : public cppu::WeakImplHelper1
-< com::sun::star::lang::XEventListener >        
+< com::sun::star::lang::XEventListener >
 {
     SwNewDBMgr&     rDBMgr;
 
     virtual void SAL_CALL disposing( const EventObject& Source ) throw (RuntimeException);
-public:    
+public:
     SwConnectionDisposedListener_Impl(SwNewDBMgr& rMgr);
     ~SwConnectionDisposedListener_Impl();
-    
+
 };
 // -----------------------------------------------------------------------------
 struct SwNewDBMgr_Impl
@@ -358,7 +360,7 @@ struct SwNewDBMgr_Impl
     SwDSParam*          pMergeData;
     SwMailMergeDlg*     pMergeDialog;
     Reference<XEventListener> xDisposeListener;
-    
+
     SwNewDBMgr_Impl(SwNewDBMgr& rDBMgr)
        :pMergeData(0)
        ,pMergeDialog(0)
@@ -460,18 +462,18 @@ BOOL SwNewDBMgr::MergeNew(USHORT nOpt, SwWrtShell& rSh,
         if(pTemp)
             *pTemp = *pImpl->pMergeData;
         else
-        {        
+        {
             SwDSParam* pInsert = new SwDSParam(*pImpl->pMergeData);
             aDataSourceParams.Insert(pInsert, aDataSourceParams.Count());
             try
-            {        
+            {
                 Reference<XComponent> xComponent(pInsert->xConnection, UNO_QUERY);
                 if(xComponent.is())
                     xComponent->addEventListener(pImpl->xDisposeListener);
             }
             catch(Exception&)
             {
-            }            
+            }
         }
     }
     if(!pImpl->pMergeData->xConnection.is())
@@ -557,15 +559,15 @@ BOOL SwNewDBMgr::MergeNew(USHORT nOpt, SwWrtShell& rSh,
         {
             SfxDispatcher *pDis = rSh.GetView().GetViewFrame()->GetDispatcher();
             SfxBoolItem aMerge(FN_QRY_MERGE, TRUE);
-            
+
             // !! Currently (Jan-2003) silent is defined by supplying *any*
-            // !! item!!  (Thus according to OS it would be silent even when 
+            // !! item!!  (Thus according to OS it would be silent even when
             // !! other items then SID_SILENT would be supplied!)
             // !! Therefore it has to be the 0 pointer when not silent.
             SfxBoolItem aMergeSilent(SID_SILENT, TRUE);
             SfxBoolItem *pMergeSilent = IsMergeSilent() ? &aMergeSilent : 0;
-            
-            pDis->Execute(SID_PRINTDOC, 
+
+            pDis->Execute(SID_PRINTDOC,
                     SFX_CALLMODE_SYNCHRON|SFX_CALLMODE_RECORD, &aMerge, pMergeSilent, 0L);
         }
         break;
@@ -774,7 +776,7 @@ BOOL SwNewDBMgr::GetTableNames(ListBox* pListBox, const String& rDBName)
     if(pParam && pParam->xConnection.is())
         xConnection = pParam->xConnection;
     else
-    {        
+    {
         rtl::OUString sDBName(rDBName);
         xConnection = RegisterConnection( sDBName );
     }
@@ -824,7 +826,7 @@ BOOL SwNewDBMgr::GetColumnNames(ListBox* pListBox,
     if(pParam && pParam->xConnection.is())
         xConnection = pParam->xConnection;
     else
-    {        
+    {
         rtl::OUString sDBName(rDBName);
         xConnection = RegisterConnection( sDBName );
     }
@@ -925,12 +927,12 @@ BOOL SwNewDBMgr::MergePrint( SwView& rView,
             if(xPrSet.is())
             {
                 try
-                {        
+                {
                     sal_Bool bFinal;
                     Any aFinal = xPrSet->getPropertyValue(C2U("IsRowCountFinal"));
                     aFinal >>= bFinal;
                     if(!bFinal)
-                    {        
+                    {
                         pImpl->pMergeData->xResultSet->last();
                         pImpl->pMergeData->xResultSet->first();
                     }
@@ -939,10 +941,10 @@ BOOL SwNewDBMgr::MergePrint( SwView& rView,
                     aCount >>= nCount;
                     rOpt.nMergeCnt = (ULONG)nCount;
                 }
-                catch(Exception&)    
+                catch(Exception&)
                 {
-                }            
-            }        
+                }
+            }
         }
     }
 
@@ -959,17 +961,47 @@ BOOL SwNewDBMgr::MergePrint( SwView& rView,
          bRet = FALSE;
     long nStartRow, nEndRow;
     //calculate number of data sets to be printed
-    Sequence<PropertyValue> aViewProperties(1);
+
+    Sequence<PropertyValue> aViewProperties(15);
     PropertyValue* pViewProperties =  aViewProperties.getArray();
     pViewProperties[0].Name = C2U("MailMergeCount");
     pViewProperties[0].Value <<= (sal_Int32)rOpt.nMergeCnt;
+    pViewProperties[1].Name = C2U("PrintGraphics");
+    pViewProperties[1].Value <<= (sal_Bool)rOpt.IsPrintGraphic();
+    pViewProperties[2].Name = C2U("PrintTables");
+    pViewProperties[2].Value <<= (sal_Bool)rOpt.IsPrintTable();
+    pViewProperties[3].Name = C2U("PrintDrawings");
+    pViewProperties[3].Value <<= (sal_Bool)rOpt.IsPrintDraw();
+    pViewProperties[4].Name = C2U("PrintLeftPages");
+    pViewProperties[4].Value <<= (sal_Bool)rOpt.IsPrintLeftPage();
+    pViewProperties[5].Name = C2U("PrintRightPages");
+    pViewProperties[5].Value <<= (sal_Bool)rOpt.IsPrintRightPage();
+    pViewProperties[6].Name = C2U("PrintControls");
+    pViewProperties[6].Value <<= (sal_Bool)rOpt.IsPrintControl();
+    pViewProperties[7].Name = C2U("PrintReversed");
+    pViewProperties[7].Value <<= (sal_Bool)rOpt.IsPrintReverse();
+    pViewProperties[8].Name = C2U("PrintPaperFromSetup");
+    pViewProperties[8].Value <<= (sal_Bool)rOpt.IsPaperFromSetup();
+    pViewProperties[9].Name = C2U("PrintFaxName");
+    pViewProperties[9].Value <<= rOpt.GetFaxName();
+    pViewProperties[10].Name = C2U("PrintAnnotationMode");
+    pViewProperties[10].Value <<= (com::sun::star::text::NotePrintMode) rOpt.GetPrintPostIts();
+    pViewProperties[11].Name = C2U("PrintProspect");
+    pViewProperties[11].Value <<= (sal_Bool)rOpt.IsPrintProspect();
+    pViewProperties[12].Name = C2U("PrintPageBackground");
+    pViewProperties[12].Value <<= (sal_Bool)rOpt.IsPrintPageBackground();
+    pViewProperties[13].Name = C2U("PrintBlackFonts");
+    pViewProperties[13].Value <<= (sal_Bool)rOpt.IsPrintBlackFont();
+    pViewProperties[14].Name = C2U("IsSinglePrintJob");
+    pViewProperties[14].Value <<= (sal_Bool)rOpt.IsPrintSingleJobs();
+
     rView.SetAdditionalPrintOptions(aViewProperties);
     do {
         nStartRow = pImpl->pMergeData ? pImpl->pMergeData->xResultSet->getRow() : 0;
         {
             pSh->ViewShell::UpdateFlds();
             ++rOpt.nMergeAct;
-            
+
             // launch MailMergeEvent if required
             const SwXMailMerge *pEvtSrc = GetMailMergeEvtSrc();
             if (pEvtSrc)
@@ -1170,7 +1202,7 @@ BOOL SwNewDBMgr::MergeMailing(SwWrtShell* pSh)
                     if ( bBreak )
                         break; // das Verschicken wurde unterbrochen
                     nEndRow = pImpl->pMergeData ? pImpl->pMergeData->xResultSet->getRow() : 0;
-                } while( !bCancel && 
+                } while( !bCancel &&
                         (bSynchronizedDoc && (nStartRow != nEndRow) ? ExistsNextRecord() : ToNextMergeRecord()));
                 pDoc->SetNewDBMgr( pOldDBMgr );
                 pView->GetDocShell()->OwnerLock( FALSE );
@@ -1248,7 +1280,7 @@ BOOL SwNewDBMgr::MergeMailFiles(SwWrtShell* pSh)
             sExt.InsertAscii(".", 0);
 
             long nStartRow, nEndRow;
-            do 
+            do
             {
                 nStartRow = pImpl->pMergeData ? pImpl->pMergeData->xResultSet->getRow() : 0;
                 {
@@ -1337,7 +1369,7 @@ BOOL SwNewDBMgr::MergeMailFiles(SwWrtShell* pSh)
                     }
                 }
                 nEndRow = pImpl->pMergeData ? pImpl->pMergeData->xResultSet->getRow() : 0;
-            } while( !bCancel && 
+            } while( !bCancel &&
                 (bSynchronizedDoc && (nStartRow != nEndRow)? ExistsNextRecord() : ToNextMergeRecord()));
             // Alle Dispatcher freigeben
             pViewFrm = SfxViewFrame::GetFirst(pDocSh);
@@ -1399,7 +1431,7 @@ ULONG SwNewDBMgr::GetColumnFmt( const String& rDBName,
             if(pParam && pParam->xConnection.is())
                 xConnection = pParam->xConnection;
             else
-            {        
+            {
                 rtl::OUString sDBName(rDBName);
                 xConnection = RegisterConnection( sDBName );
             }
@@ -1522,7 +1554,7 @@ sal_Int32 SwNewDBMgr::GetColumnType( const String& rDBName,
     if(pParam && pParam->xConnection.is())
         xConnection = pParam->xConnection;
     else
-    {        
+    {
         rtl::OUString sDBName(rDBName);
         xConnection = RegisterConnection( sDBName );
     }
@@ -1719,7 +1751,7 @@ BOOL    SwNewDBMgr::IsDataSourceOpen(const String& rDataSource,
 {
     if(pImpl->pMergeData)
     {
-        return !bMergeLock && 
+        return !bMergeLock &&
                 rDataSource == (String)pImpl->pMergeData->sDataSource &&
                     rTableOrQuery == (String)pImpl->pMergeData->sCommand &&
                     pImpl->pMergeData->xResultSet.is();
@@ -1763,7 +1795,7 @@ BOOL SwNewDBMgr::GetColumnCnt(const String& rSourceName, const String& rTableNam
     //check validity of supplied record Id
     if(pFound->aSelection.getLength())
     {
-        //the destination has to be an element of the selection 
+        //the destination has to be an element of the selection
         const Any* pSelection = pFound->aSelection.getConstArray();
         sal_Bool bFound = sal_False;
         for(sal_Int32 nPos = 0; !bFound && nPos < pFound->aSelection.getLength(); nPos++)
@@ -1775,7 +1807,7 @@ BOOL SwNewDBMgr::GetColumnCnt(const String& rSourceName, const String& rTableNam
         }
         if(!bFound)
             return FALSE;
-    }        
+    }
     if(pFound && pFound->xResultSet.is() && !pFound->bAfterSelection)
     {
         sal_Int32 nOldRow = 0;
@@ -1960,7 +1992,7 @@ BOOL SwNewDBMgr::OpenDataSource(const String& rDataSource, const String& rTableO
     if(pParam && pParam->xConnection.is())
         pFound->xConnection = pParam->xConnection;
     else
-    {        
+    {
         rtl::OUString sDataSource(rDataSource);
         pFound->xConnection = RegisterConnection( sDataSource );
     }
@@ -2014,14 +2046,14 @@ Reference< XConnection> SwNewDBMgr::RegisterConnection(rtl::OUString& rDataSourc
     {
         pFound->xConnection = SwNewDBMgr::GetConnection(rDataSource, xSource );
         try
-        {        
+        {
             Reference<XComponent> xComponent(pFound->xConnection, UNO_QUERY);
             if(xComponent.is())
                 xComponent->addEventListener(pImpl->xDisposeListener);
         }
         catch(Exception&)
         {
-        }            
+        }
     }
     return pFound->xConnection;
 }
@@ -2052,7 +2084,7 @@ sal_uInt32      SwNewDBMgr::GetSelectedRecordId(
                 if(pFound->aSelection.getLength())
                 {
                     sal_Int32 nSelIndex = pFound->nSelectionIndex;
-                    if(nSelIndex > pFound->aSelection.getLength()) 
+                    if(nSelIndex > pFound->aSelection.getLength())
                         nSelIndex = pFound->aSelection.getLength() -1;
                     pFound->aSelection.getConstArray()[nSelIndex] >>= nRet;
 
@@ -2113,14 +2145,14 @@ SwDSParam* SwNewDBMgr::FindDSData(const SwDBData& rData, BOOL bCreate)
             pFound = new SwDSParam(rData);
             aDataSourceParams.Insert(pFound, aDataSourceParams.Count());
             try
-            {        
+            {
                 Reference<XComponent> xComponent(pFound->xConnection, UNO_QUERY);
                 if(xComponent.is())
                     xComponent->addEventListener(pImpl->xDisposeListener);
             }
             catch(Exception&)
             {
-            }            
+            }
         }
     }
     return pFound;
@@ -2147,14 +2179,14 @@ SwDSParam*  SwNewDBMgr::FindDSConnection(const rtl::OUString& rDataSource, BOOL 
         pFound = new SwDSParam(aData);
         aDataSourceParams.Insert(pFound, aDataSourceParams.Count());
         try
-        {        
+        {
             Reference<XComponent> xComponent(pFound->xConnection, UNO_QUERY);
             if(xComponent.is())
                 xComponent->addEventListener(pImpl->xDisposeListener);
         }
         catch(Exception&)
         {
-        }            
+        }
     }
     return pFound;
 }
@@ -2430,20 +2462,20 @@ Reference<XResultSet> SwNewDBMgr::createCursor(const ::rtl::OUString& _sDataSour
     return xResultSet;
 }
 /* -----------------09.12.2002 12:38-----------------
- * 
+ *
  * --------------------------------------------------*/
 SwConnectionDisposedListener_Impl::SwConnectionDisposedListener_Impl(SwNewDBMgr& rMgr) :
     rDBMgr(rMgr)
 {};
 /* -----------------09.12.2002 12:39-----------------
- * 
+ *
  * --------------------------------------------------*/
 SwConnectionDisposedListener_Impl::~SwConnectionDisposedListener_Impl()
 {};
 /* -----------------09.12.2002 12:39-----------------
- * 
+ *
  * --------------------------------------------------*/
-void SwConnectionDisposedListener_Impl::disposing( const EventObject& rSource ) 
+void SwConnectionDisposedListener_Impl::disposing( const EventObject& rSource )
         throw (RuntimeException)
 {
     ::vos::OGuard aGuard(Application::GetSolarMutex());
@@ -2451,11 +2483,11 @@ void SwConnectionDisposedListener_Impl::disposing( const EventObject& rSource )
     for(USHORT nPos = rDBMgr.aDataSourceParams.Count(); nPos; nPos--)
     {
         SwDSParam* pParam = rDBMgr.aDataSourceParams[nPos - 1];
-        if(pParam->xConnection.is() && 
+        if(pParam->xConnection.is() &&
                 (xSource == pParam->xConnection))
         {
             rDBMgr.aDataSourceParams.DeleteAndDestroy(nPos - 1);
-        }            
+        }
     }
 }
 
