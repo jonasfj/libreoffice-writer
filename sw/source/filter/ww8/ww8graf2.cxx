@@ -2,9 +2,9 @@
  *
  *  $RCSfile: ww8graf2.cxx,v $
  *
- *  $Revision: 1.58 $
+ *  $Revision: 1.59 $
  *
- *  last change: $Author: obo $ $Date: 2004-04-27 14:13:39 $
+ *  last change: $Author: kz $ $Date: 2004-10-04 19:19:25 $
  *
  *  The Contents of this file are made available subject to the terms of
  *  either of the following licenses
@@ -110,10 +110,6 @@
 #include <sfx2/fcontnr.hxx>
 #endif
 
-#ifndef _IPOBJ_HXX //autogen
-#include <so3/ipobj.hxx>
-#endif
-
 #ifndef _SV_SVAPP_HXX //autogen
 #include <vcl/svapp.hxx>
 #endif
@@ -153,7 +149,7 @@
 #ifndef SW_WRITERWORDGLUE
 #include "writerwordglue.hxx"
 #endif
- 
+
 #ifndef _WW8STRUC_HXX
 #include "ww8struc.hxx"
 #endif
@@ -174,7 +170,7 @@ using namespace sw::types;
 
 wwZOrderer::wwZOrderer(const sw::util::SetLayer &rSetLayer, SdrPage* pDrawPg,
     const SvxMSDffShapeOrders *pShapeOrders)
-    : maSetLayer(rSetLayer), mnInlines(0), mpDrawPg(pDrawPg), 
+    : maSetLayer(rSetLayer), mnInlines(0), mpDrawPg(pDrawPg),
     mpShapeOrders(pShapeOrders)
 {
     mnNoInitialObjects = mpDrawPg->GetObjCount();
