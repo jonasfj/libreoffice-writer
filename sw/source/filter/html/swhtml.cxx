@@ -2,9 +2,9 @@
  *
  *  $RCSfile: swhtml.cxx,v $
  *
- *  $Revision: 1.12 $
+ *  $Revision: 1.13 $
  *
- *  last change: $Author: mib $ $Date: 2002-05-16 11:34:44 $
+ *  last change: $Author: mba $ $Date: 2002-05-29 14:27:59 $
  *
  *  The Contents of this file are made available subject to the terms of
  *  either of the following licenses
@@ -688,13 +688,7 @@ SvParserState __EXPORT SwHTMLParser::CallParser()
 
     if( GetMedium() )
     {
-        const SfxPoolItem* pItem;
-        if( SFX_ITEM_SET == GetMedium()->GetItemSet()->GetItemState(
-                SID_LOADENVIRONMENT, FALSE, &pItem ))
-        {
-            aLoadEnv = &((SfxRefItem*)pItem)->GetValue();
-        }
-
+        aLoadEnv = GetMedium()->GetLoadEnvironment();
         if( !bViewCreated && aLoadEnv.Is() )
         {
             ((SfxLoadEnvironment*)&aLoadEnv)->
@@ -720,7 +714,6 @@ SvParserState __EXPORT SwHTMLParser::CallParser()
     rDesc.Add( this );
 
     SvParserState eRet = HTMLParser::CallParser();
-
     return eRet;
 }
 
@@ -1865,7 +1858,7 @@ void __EXPORT SwHTMLParser::NextToken( int nToken )
             SvxWeightItem aWeight( WEIGHT_BOLD );
             SvxWeightItem aWeightCJK( WEIGHT_BOLD, RES_CHRATR_CJK_WEIGHT );
             SvxWeightItem aWeightCTL( WEIGHT_BOLD, RES_CHRATR_CTL_WEIGHT );
-            NewStdAttr( HTML_BOLD_ON, 
+            NewStdAttr( HTML_BOLD_ON,
                         &aAttrTab.pBold, aWeight,
                         &aAttrTab.pBoldCJK, &aWeightCJK,
                         &aAttrTab.pBoldCTL, &aWeightCTL );
@@ -2037,7 +2030,7 @@ void __EXPORT SwHTMLParser::NextToken( int nToken )
             // als Post-It einfuegen
             // MIB 8.12.2000: If there are no space characters right behind
             // the <!-- and on front of the -->, leave the comment untouched.
-            if( ' ' == aToken.GetChar( 3 ) && 
+            if( ' ' == aToken.GetChar( 3 ) &&
                 ' ' == aToken.GetChar( aToken.Len()-3 ) )
             {
                 String aComment( aToken.Copy( 3, aToken.Len()-5 ) );
@@ -2271,7 +2264,7 @@ BOOL SwHTMLParser::AppendTxtNode( SwHTMLAppendMode eMode, BOOL bUpdateNum )
                         {
                             const String& rText = pTxtNd->GetTxt();
                             sal_uInt16 nScriptTxt =
-                                pBreakIt->xBreak->getScriptType( 
+                                pBreakIt->xBreak->getScriptType(
                                             rText, pAttr->GetSttCnt() );
                             xub_StrLen nScriptEnd = (xub_StrLen)pBreakIt->xBreak
                                     ->endOfScript( rText, nStt, nScriptTxt );
@@ -2293,7 +2286,7 @@ BOOL SwHTMLParser::AppendTxtNode( SwHTMLAppendMode eMode, BOOL bUpdateNum )
                                         pNext->InsertPrev( pSetAttr );
                                 }
                                 nStt = nScriptEnd;
-                                nScriptTxt = pBreakIt->xBreak->getScriptType( 
+                                nScriptTxt = pBreakIt->xBreak->getScriptType(
                                                 rText, nStt );
                                 nScriptEnd = (xub_StrLen)pBreakIt->xBreak
                                     ->endOfScript( rText, nStt, nScriptTxt );
@@ -2369,7 +2362,7 @@ BOOL SwHTMLParser::AppendTxtNode( SwHTMLAppendMode eMode, BOOL bUpdateNum )
         // If we find a hint that starts before the current end position,
         // we have to set it. If we finf a hint that start behind or at
         // that position, we have to take the hint's value into account.
-        // If it is equal to the style, or in fact the paragarph's value 
+        // If it is equal to the style, or in fact the paragarph's value
         // for that hint, the hint is removed. Otherwise it's end position
         // is remembered.
         xub_StrLen aEndPos[15] =
@@ -2399,7 +2392,7 @@ BOOL SwHTMLParser::AppendTxtNode( SwHTMLAppendMode eMode, BOOL bUpdateNum )
                 if( nStt >= aEndPos[nIdx] )
                 {
                     sal_Bool bFont = (nIdx % 5) == 0;
-                    const SfxPoolItem& rItem = 
+                    const SfxPoolItem& rItem =
                         ((const SwCntntNode *)pTxtNd)->GetAttr( nWhich );
                     if( bFont ? lcl_css1atr_equalFontItems(rItem,pHt->GetAttr())
                               : rItem == pHt->GetAttr() )
@@ -3093,7 +3086,7 @@ void SwHTMLParser::EndAttr( _HTMLAttr* pAttr, _HTMLAttr **ppDepAttr,
                                             .GetTxtNode();
         ASSERT( pTxtNd, "No text node" );
         const String& rText = pTxtNd->GetTxt();
-        sal_uInt16 nScriptTxt = pBreakIt->xBreak->getScriptType( 
+        sal_uInt16 nScriptTxt = pBreakIt->xBreak->getScriptType(
                         rText, pAttr->GetSttCnt() );
         xub_StrLen nScriptEnd = (xub_StrLen)pBreakIt->xBreak
                     ->endOfScript( rText, pAttr->GetSttCnt(), nScriptTxt );
@@ -3113,7 +3106,7 @@ void SwHTMLParser::EndAttr( _HTMLAttr* pAttr, _HTMLAttr **ppDepAttr,
                 }
             }
             pAttr->nSttCntnt = nScriptEnd;
-            nScriptTxt = pBreakIt->xBreak->getScriptType( 
+            nScriptTxt = pBreakIt->xBreak->getScriptType(
                             rText, nScriptEnd );
             nScriptEnd = (xub_StrLen)pBreakIt->xBreak
                     ->endOfScript( rText, nScriptEnd, nScriptTxt );
