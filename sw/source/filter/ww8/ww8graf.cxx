@@ -2,9 +2,9 @@
  *
  *  $RCSfile: ww8graf.cxx,v $
  *
- *  $Revision: 1.44 $
+ *  $Revision: 1.45 $
  *
- *  last change: $Author: cmc $ $Date: 2002-01-10 14:02:34 $
+ *  last change: $Author: jp $ $Date: 2002-01-11 14:54:29 $
  *
  *  The Contents of this file are made available subject to the terms of
  *  either of the following licenses
@@ -1038,7 +1038,7 @@ SwFrmFmt* SwWW8ImplReader::InsertTxbxText(SdrTextObj* pTextObj,
     String aString;
     long nStartCp, nEndCp, nNewStartCp;
     BOOL bContainsGraphics=FALSE;
-    BOOL bTextWasRead = GetTxbxTextSttEndCp( nStartCp, nEndCp, nTxBxS, 
+    BOOL bTextWasRead = GetTxbxTextSttEndCp( nStartCp, nEndCp, nTxBxS,
         nSequence ) && GetTxbxText( aString, nStartCp, nEndCp );
 
     nNewStartCp = nStartCp;
@@ -1195,7 +1195,7 @@ SwFrmFmt* SwWW8ImplReader::InsertTxbxText(SdrTextObj* pTextObj,
                         {
                             InsertTxbxAttrs(nNewStartCp,nNewStartCp+1,TRUE);
                             pFlyFmt = ImportGraf(bMakeSdrGrafObj ? pTextObj : 0,
-                                pOldFlyFmt, 
+                                pOldFlyFmt,
                                 pTextObj ?  (nDrawHell == pTextObj->GetLayer())
                                 : FALSE );
                         }
@@ -1216,7 +1216,7 @@ SwFrmFmt* SwWW8ImplReader::InsertTxbxText(SdrTextObj* pTextObj,
                 {
                     if( pRecord )
                     {
-                        SfxItemSet aFlySet( rDoc.GetAttrPool(), 
+                        SfxItemSet aFlySet( rDoc.GetAttrPool(),
                             RES_FRMATR_BEGIN, RES_FRMATR_END-1 );
 
                         Rectangle aInnerDist(	pRecord->nDxTextLeft,
@@ -1388,7 +1388,7 @@ void SwWW8ImplReader::ReadTxtBox( WW8_DPHEAD* pHd, WW8_DO* pDo )
         delete pObj;
 
         SdrObject* pOurNewObject = CreateContactObject( pRetFrmFmt );
-        if( pOurNewObject )
+        if( pOurNewObject && !pOurNewObject->IsInserted() )
             pDrawPg->InsertObject( pOurNewObject );
     }
 }
@@ -2066,7 +2066,10 @@ SdrObject* SwWW8ImplReader::CreateContactObject( SwFlyFrmFmt* pFlyFmt )
 {
     if( pFlyFmt )
     {
-        SdrObject* pNewObject = pFlyFmt->FindSdrObject();
+        //JP 11.1.2002: task 96329
+        SdrObject* pNewObject = bNew ? 0 : pFlyFmt->FindRealSdrObject();
+        if( !pNewObject )
+            pNewObject = pFlyFmt->FindSdrObject();
         if( !pNewObject )
         {
             SwFlyDrawContact* pContactObject
@@ -2405,7 +2408,7 @@ SwFrmFmt* SwWW8ImplReader::Read_GrafLayer( long nGrafAnchorCp )
         {
             if( bIsHeader || bIsFooter)
             {
-#if 0 
+#if 0
                 //Not sure what this wants to achieve, its certainly wrong for
                 //94418
 
@@ -2639,7 +2642,7 @@ SwFrmFmt * SwWW8ImplReader::ConvertDrawTextToFly(SdrObject* &rpObject,
         Rectangle aInnerDist(pRecord->nDxTextLeft, pRecord->nDyTextTop,
             pRecord->nDxTextRight, pRecord->nDyTextBottom);
 
-        rFlySet.Put( 
+        rFlySet.Put(
             SwFmtFrmSize(pRecord->bLastBoxInChain ? ATT_MIN_SIZE : ATT_FIX_SIZE,
                 pF->nXaRight - pF->nXaLeft, pF->nYaBottom - pF->nYaTop));
 
@@ -2687,7 +2690,8 @@ SwFrmFmt * SwWW8ImplReader::ConvertDrawTextToFly(SdrObject* &rpObject,
             // Das Kontakt-Objekt MUSS in die Draw-Page gesetzt werden, damit
             // in SwWW8ImplReader::LoadDoc1() die Z-Order festgelegt werden
             // kann !!!
-            pDrawPg->InsertObject( rpOurNewObject );
+            if( !rpOurNewObject->IsInserted() )
+                pDrawPg->InsertObject( rpOurNewObject );
         }
 
         // Damit die Frames bei Einfuegen in existierendes Doc erzeugt werden,
@@ -2848,7 +2852,8 @@ SwFrmFmt* SwWW8ImplReader::ImportReplaceableDrawables( SdrObject* &rpObject,
 
         // Das Kontakt-Objekt MUSS in die Draw-Page gesetzt werden, damit in
         // SwWW8ImplReader::LoadDoc1() die Z-Order festgelegt werden kann !!!
-        pDrawPg->InsertObject( rpOurNewObject );
+        if( !rpOurNewObject->IsInserted() )
+            pDrawPg->InsertObject( rpOurNewObject );
     }
     return pRetFrmFmt;
 }
