@@ -2,9 +2,9 @@
  *
  *  $RCSfile: thints.cxx,v $
  *
- *  $Revision: 1.27 $
+ *  $Revision: 1.28 $
  *
- *  last change: $Author: fme $ $Date: 2002-09-11 15:12:48 $
+ *  last change: $Author: fme $ $Date: 2002-12-12 14:55:03 $
  *
  *  The Contents of this file are made available subject to the terms of
  *  either of the following licenses
@@ -1491,6 +1491,9 @@ BOOL SwpHints::Merge( SwTxtNode &rNode, SwTxtAttr* pAttr )
             {
                 if( pNext )
                 {
+                    if ( pPrev == pNext )
+                        pPrev = NULL;
+
                     if( pHistory )
                     {
                         pHistory->Add( pAttr );
@@ -1622,7 +1625,7 @@ BOOL SwpHints::Forget( const std::vector< const SwTxtAttr* >* pExcludes,
         // which are not included in rExclude.
         if ( pEnd && *pEnd == nEnd &&
              ( nWhch == nWhich ||
-             ( pHt->IsCharFmtAttr() && lcl_Included( nWhich, pHt ) ) ) && 
+             ( pHt->IsCharFmtAttr() && lcl_Included( nWhich, pHt ) ) ) &&
              ( ! pExcludes ||
                pExcludes->end() == std::find( pExcludes->begin(), pExcludes->end(), pHt ) ) )
         {
