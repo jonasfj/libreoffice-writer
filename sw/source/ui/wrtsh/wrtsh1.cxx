@@ -2,9 +2,9 @@
  *
  *  $RCSfile: wrtsh1.cxx,v $
  *
- *  $Revision: 1.36 $
+ *  $Revision: 1.37 $
  *
- *  last change: $Author: hr $ $Date: 2004-09-08 15:05:11 $
+ *  last change: $Author: hr $ $Date: 2004-09-08 16:57:38 $
  *
  *  The Contents of this file are made available subject to the terms of
  *  either of the following licenses
@@ -147,7 +147,6 @@
 #ifndef _UNOTOOLS_CHARCLASS_HXX
 #include <unotools/charclass.hxx>
 #endif
-
 #ifndef _FMTFTN_HXX //autogen
 #include <fmtftn.hxx>
 #endif
@@ -375,7 +374,7 @@ void SwWrtShell::Insert( const String &rStr )
             // nur hier klammern, da das normale Insert schon an der
             // Editshell geklammert ist
         StartAllAction();
-        
+
         // #111827#
         SwRewriter aRewriter;
 
@@ -694,7 +693,7 @@ BOOL SwWrtShell::InsertOle( SvInPlaceObjectRef aRef )
         String aDummy;
         // determine source CLSID
         aRef->SvPseudoObject::FillClass( &aCLSID, &lDummy, &aDummy, &aDummy, &aDummy);
-        bStarMath = SotExchange::IsMath( *aRef->GetSvFactory() );
+        bStarMath = 0 != SotExchange::IsMath( *aRef->GetSvFactory() );
 
         if( IsSelection() )
         {
@@ -1116,10 +1115,10 @@ void SwWrtShell::NumOrBulletOn(BOOL bNum)
     const SwNumRule* pCurRule = GetCurNumRule();
     if( !pCurRule || !pCurRule->IsOutlineRule())
     {
-        const SwNumRule * pNumRule = 
+        const SwNumRule * pNumRule =
             GetDoc()->SearchNumRule(*GetCrsr()->GetPoint(), FALSE, bNum, FALSE,
-                                    0); 
-            
+                                    0);
+
         if (pNumRule)
             SetCurNumRule(*pNumRule);
         else
@@ -1129,7 +1128,7 @@ void SwWrtShell::NumOrBulletOn(BOOL bNum)
             SwCharFmt* pChrFmt;
             SwDocShell* pDocSh = GetView().GetDocShell();
             const Font* pFnt = &SwNumRule::GetDefBulletFont();
-            
+
             if (bNum)
             {
                 pChrFmt = GetCharFmtFromPool( RES_POOLCHR_NUM_LEVEL );
@@ -1167,7 +1166,7 @@ void SwWrtShell::NumOrBulletOn(BOOL bNum)
     {
         SwNumRule aNumRule(*pCurRule);
 
-        SwTxtNode * pTxtNode = 
+        SwTxtNode * pTxtNode =
             GetCrsr()->GetPoint()->nNode.GetNode().GetTxtNode();
 
         if (pTxtNode)
@@ -1188,11 +1187,11 @@ void SwWrtShell::NumOrBulletOn(BOOL bNum)
                     aFmt.SetNumberingType(SVX_NUM_CHAR_SPECIAL);
                 }
                 aNumRule.Set(pNum->GetRealLevel(), aFmt);
-                
+
                 SetCurNumRule(aNumRule);
             }
         }
-    }        
+    }
 }
 
 void SwWrtShell::NumOn()
