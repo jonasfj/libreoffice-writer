@@ -2,9 +2,9 @@
  *
  *  $RCSfile: xmlitemm.cxx,v $
  *
- *  $Revision: 1.8 $
+ *  $Revision: 1.9 $
  *
- *  last change: $Author: vg $ $Date: 2003-04-17 15:08:27 $
+ *  last change: $Author: obo $ $Date: 2004-01-13 11:25:36 $
  *
  *  The Contents of this file are made available subject to the terms of
  *  either of the following licenses
@@ -90,7 +90,7 @@ using namespace ::xmloff::token;
     { XML_NAMESPACE_##p, XML_##l, w, MID_FLAG_SPECIAL_ITEM_IMPORT|m }
 #define M_E_SE( p, l, w, m ) \
     { XML_NAMESPACE_##p, XML_##l, w, MID_FLAG_SPECIAL_ITEM_EXPORT|m }
-                                                
+
 #define M_END { 0, XML_TOKEN_INVALID, 0, 0 }
 
 SvXMLItemMapEntry aXMLTableItemMap[] =
@@ -154,7 +154,7 @@ SvXMLItemMapEntry aXMLTableItemMap[] =
     M_E( STYLE,	MAY_BREAK_BETWEEN_ROWS,	RES_LAYOUT_SPLIT, 0 ),
     // RES_CHAIN
     // not required
-    // RES_LINENUMBER	
+    // RES_LINENUMBER
     // not required
     // RES_FTN_AT_TXTEND
     // not required
@@ -232,10 +232,10 @@ SvXMLItemMapEntry aXMLTableRowItemMap[] =
     // RES_EDIT_IN_READONLY
     // not required
     // RES_LAYOUT_SPLIT
-    // not required
+    M_E( STYLE, KEEP_TOGETHER, RES_ROW_SPLIT, 0 ),
     // RES_CHAIN
     // not required
-    // RES_LINENUMBER	
+    // RES_LINENUMBER
     // not required
     // RES_FTN_AT_TXTEND
     // not required
@@ -259,9 +259,9 @@ SvXMLItemMapEntry aXMLTableCellItemMap[] =
     // RES_UL_SPACE
     // not required
     // RES_PAGEDESC
-    // not required 
+    // not required
     // RES_BREAK
-    // not required 
+    // not required
     // RES_CNTNT
     // not required
     // RES_HEADER
@@ -317,7 +317,7 @@ SvXMLItemMapEntry aXMLTableCellItemMap[] =
     // not required
     // RES_CHAIN
     // not required
-    // RES_LINENUMBER	
+    // RES_LINENUMBER
     // not required
     // RES_FTN_AT_TXTEND
     // not required
