@@ -2,9 +2,9 @@
  *
  *  $RCSfile: accpara.cxx,v $
  *
- *  $Revision: 1.39 $
+ *  $Revision: 1.40 $
  *
- *  last change: $Author: mib $ $Date: 2002-07-10 16:53:34 $
+ *  last change: $Author: dvo $ $Date: 2002-07-24 14:51:49 $
  *
  *  The Contents of this file are made available subject to the terms of
  *  either of the following licenses
@@ -329,53 +329,95 @@ sal_Bool SwAccessibleParagraph::GetSelection(
             {
                 // check whether nHere is 'inside' pCrsr
                 SwPosition* pStart = pCrsr->Start();
+                ULONG nStartIndex = pStart->nNode.GetIndex();
                 SwPosition* pEnd = pCrsr->End();
-                if( ( nHere >= pStart->nNode.GetIndex() ) &&
-                    ( nHere <= pEnd->nNode.GetIndex() )      )
+                ULONG nEndIndex = pEnd->nNode.GetIndex();
+                if( ( nHere >= nStartIndex ) &&
+                    ( nHere <= nEndIndex )      )
                 {
-                    // #100298# furthermore check it the selection is in our
-                    // part of a paragraph
-                    USHORT nCoreStart = pStart->nContent.GetIndex();
-                    USHORT nCoreEnd = pEnd->nContent.GetIndex();
-                    sal_Bool bStartOK = 
-                        GetPortionData().IsValidCorePosition( nCoreStart );
-                    sal_Bool bEndOK = 
-                        GetPortionData().IsValidCorePosition( nCoreEnd );
-                    if( bStartOK || bEndOK )
+                    // translate start and end positions
+
+                    // start position
+                    sal_Int32 nLocalStart = -1;
+                    if( nHere > nStartIndex )
                     {
-                        // Yup, we are selected! 
+                        // selection starts in previous node:
+                        // then our local selection starts with the paragraph
+                        nLocalStart = 0;
+                    }
+                    else
+                    {
+                        DBG_ASSERT( nHere == nStartIndex, 
+                                    "miscalculated index" );
 
-                        // We may have to 'cut' one position in case of a
-                        // selection across two paragraphs.
-
-                        bRet = sal_True;
-                        if( bStartOK && ( nHere <= pStart->nNode.GetIndex() ) )
+                        // selection starts in this node:
+                        // then check whether it's before or inside our part of
+                        // the paragraph, and if so, get the proper position
+                        USHORT nCoreStart = pStart->nContent.GetIndex();
+                        if( nCoreStart < 
+                            GetPortionData().GetFirstValidCorePosition() )
                         {
-                            nStart = GetPortionData().GetAccessiblePosition( 
-                                         nCoreStart );
+                            nLocalStart = 0;
                         }
-                        else
+                        else if( nCoreStart <= 
+                                 GetPortionData().GetLastValidCorePosition() )
                         {
-                            // cut start of selection if it starts before this
-                            // paragraph, or before our part of this paragraph
-                            nStart = 0;
-                        }
-
-                        if( bEndOK && ( nHere >= pEnd->nNode.GetIndex() ) )
-                        {
-                            nEnd = GetPortionData().GetAccessiblePosition( 
-                                       nCoreEnd );
-                        }
-                        else
-                        {
-                            // cut end of selection if it extends beyond 'our'
-                            // part of the paragraph or beyond even the entire
-                            // paragraph
-                            nEnd = GetPortionData().GetAccessibleString().
-                                                                   getLength();
+                            DBG_ASSERT(
+                                GetPortionData().IsValidCorePosition(
+                                                                  nCoreStart ),
+                                 "problem determining valid core position" );
+                         
+                            nLocalStart = 
+                                GetPortionData().GetAccessiblePosition( 
+                                                                  nCoreStart );
                         }
                     }
-                }
+
+                    // end position
+                    sal_Int32 nLocalEnd = -1;
+                    if( nHere < nEndIndex )
+                    {
+                        // selection ends in following node: 
+                        // then our local selection extends to the end
+                        nLocalEnd = GetPortionData().GetAccessibleString().
+                                                                   getLength();
+                    }
+                    else
+                    {
+                        DBG_ASSERT( nHere == nStartIndex, 
+                                    "miscalculated index" );
+
+                        // selection ends in this node: then select everything
+                        // before our part of the node
+                        USHORT nCoreEnd = pEnd->nContent.GetIndex();
+                        if( nCoreEnd >
+                                GetPortionData().GetLastValidCorePosition() )
+                        {
+                            // selection extends beyond out part of this para
+                            nLocalEnd = GetPortionData().GetAccessibleString().
+                                                                   getLength();
+                        }
+                        else if( nCoreEnd >= 
+                                 GetPortionData().GetFirstValidCorePosition() )
+                        {
+                            // selection is inside our part of this para
+                            DBG_ASSERT(
+                                GetPortionData().IsValidCorePosition(
+                                                                  nCoreEnd ),
+                                 "problem determining valid core position" );
+
+                            nLocalEnd = GetPortionData().GetAccessiblePosition(
+                                                                   nCoreEnd );
+                        }
+                    }
+
+                    if( ( nLocalStart != -1 ) && ( nLocalEnd != -1 ) )
+                    {
+                        nStart = nLocalStart;
+                        nEnd = nLocalEnd;
+                        bRet = sal_True;
+                    }
+                }   
                 // else: this PaM doesn't point to this paragraph
             }
             // else: this PaM is collapsed and doesn't select anything
