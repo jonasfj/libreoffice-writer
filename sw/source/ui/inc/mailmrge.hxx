@@ -2,9 +2,9 @@
  *
  *  $RCSfile: mailmrge.hxx,v $
  *
- *  $Revision: 1.5 $
+ *  $Revision: 1.6 $
  *
- *  last change: $Author: fme $ $Date: 2001-06-01 10:20:44 $
+ *  last change: $Author: os $ $Date: 2001-06-06 06:20:21 $
  *
  *  The Contents of this file are made available subject to the terms of
  *  either of the following licenses
@@ -92,11 +92,20 @@
 
 class SwWrtShell;
 class SwModuleOptions;
-namespace com{namespace sun{namespace star{namespace frame{
+class SwXSelChgLstnr_Impl;
+struct SwMailMergeDlg_Impl;
+namespace com{namespace sun{namespace star{
+    namespace frame{
         class XFrame;
-    }}}}
+    }
+    namespace sdbc{
+        class XResultSet;
+    }
+}}}
 class SwMailMergeDlg : public SvxStandardDialog
 {
+    friend class SwXSelChgLstnr_Impl;
+
     Window*          pBeamerWin;
 
     RadioButton     aAllRB;
@@ -107,7 +116,9 @@ class SwMailMergeDlg : public SvxStandardDialog
     NumericField	aToNF;
     FixedLine       aRecordFL;
 
-    RadioButton		aPrinterRB;
+    FixedLine       aSeparatorFL;
+
+    RadioButton     aPrinterRB;
     RadioButton		aMailingRB;
     RadioButton		aFileRB;
 
@@ -139,7 +150,9 @@ class SwMailMergeDlg : public SvxStandardDialog
     CancelButton	aCancelBTN;
     HelpButton		aHelpBTN;
 
-    SwWrtShell&		rSh;
+    SwMailMergeDlg_Impl* pImpl;
+
+    SwWrtShell&     rSh;
     SwModuleOptions* pModOpt;
     const String&	rDBName;
     const String&	rTableName;
@@ -170,6 +183,8 @@ public:
 
     inline USHORT	GetMergeType() { return nMergeType; }
     const ::com::sun::star::uno::Sequence< sal_Int32 > GetSelection() const{return aSelection;}
+    ::com::sun::star::uno::Reference<::com::sun::star::sdbc::XResultSet> GetResultSet();
+
 };
 
 #endif
