@@ -2,9 +2,9 @@
  *
  *  $RCSfile: ww8glsy.cxx,v $
  *
- *  $Revision: 1.18 $
+ *  $Revision: 1.19 $
  *
- *  last change: $Author: obo $ $Date: 2004-01-13 17:10:45 $
+ *  last change: $Author: kz $ $Date: 2004-10-04 19:18:59 $
  *
  *  The Contents of this file are made available subject to the terms of
  *  either of the following licenses
@@ -60,11 +60,11 @@
  ************************************************************************/
 
 /* -*- Mode: C; tab-width: 4; indent-tabs-mode: nil -*- */
- 
+
 #ifndef _URLOBJ_HXX
 #include <tools/urlobj.hxx>
 #endif
- 
+
 #ifndef SVTOOLS_URIHELPER_HXX
 #include <svtools/urihelper.hxx>
 #endif
@@ -107,7 +107,7 @@
 #endif
 
 WW8Glossary::WW8Glossary(SvStorageStreamRef &refStrm, BYTE nVersion,
-    SvStorage *pStg) 
+    SvStorage *pStg)
     : pGlossary(0), rStrm(refStrm), xStg(pStg), nStrings(0)
 {
     refStrm->SetNumberFormatInt(NUMBERFORMAT_INT_LITTLEENDIAN);
@@ -115,13 +115,13 @@ WW8Glossary::WW8Glossary(SvStorageStreamRef &refStrm, BYTE nVersion,
 
     if (aWwFib.nFibBack >= 0x6A)   //Word97
     {
-        xTableStream = pStg->OpenStream(String::CreateFromAscii(
+        xTableStream = pStg->OpenSotStream(String::CreateFromAscii(
             aWwFib.fWhichTblStm ? SL::a1Table : SL::a0Table), STREAM_STD_READ);
 
         if (xTableStream.Is() && SVSTREAM_OK == xTableStream->GetError())
         {
             xTableStream->SetNumberFormatInt(NUMBERFORMAT_INT_LITTLEENDIAN);
-            pGlossary = 
+            pGlossary =
                 new WW8GlossaryFib(*refStrm, nVersion, *xTableStream, aWwFib);
         }
     }
@@ -150,8 +150,8 @@ bool WW8Glossary::HasBareGraphicEnd(SwDoc *pDoc,SwNodeIndex &rIdx)
     return bRet;
 }
 
-bool WW8Glossary::MakeEntries(SwDoc *pD, SwTextBlocks &rBlocks, 
-    bool bSaveRelFile, const std::vector<String>& rStrings, 
+bool WW8Glossary::MakeEntries(SwDoc *pD, SwTextBlocks &rBlocks,
+    bool bSaveRelFile, const std::vector<String>& rStrings,
     const std::vector<ww::bytes>& rExtra)
 {
     // this code will be called after reading all text into the
@@ -224,7 +224,7 @@ bool WW8Glossary::MakeEntries(SwDoc *pD, SwTextBlocks &rBlocks,
                 rBlocks.ClearDoc();
                 const String &rLNm = rStrings[nGlosEntry];
 
-                String sShortcut = rLNm;        
+                String sShortcut = rLNm;
 
                 // Need to check make sure the shortcut is not already being used
                 xub_StrLen nStart = 0;
@@ -273,10 +273,10 @@ bool WW8Glossary::Load( SwTextBlocks &rBlocks, bool bSaveRelFile )
         std::vector<String> aStrings;
         std::vector<ww::bytes> aData;
 
-        rtl_TextEncoding eStructCharSet = 
+        rtl_TextEncoding eStructCharSet =
             WW8Fib::GetFIBCharset(pGlossary->chseTables);
 
-        WW8ReadSTTBF(true, *xTableStream, pGlossary->fcSttbfglsy, 
+        WW8ReadSTTBF(true, *xTableStream, pGlossary->fcSttbfglsy,
             pGlossary->lcbSttbfglsy, 0, eStructCharSet, aStrings, &aData );
 
         rStrm->Seek(0);
