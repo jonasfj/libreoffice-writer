@@ -2,9 +2,9 @@
  *
  *  $RCSfile: ndtbl.cxx,v $
  *
- *  $Revision: 1.23 $
+ *  $Revision: 1.24 $
  *
- *  last change: $Author: kz $ $Date: 2004-10-04 19:04:47 $
+ *  last change: $Author: hr $ $Date: 2004-11-09 13:44:51 $
  *
  *  The Contents of this file are made available subject to the terms of
  *  either of the following licenses
@@ -561,7 +561,7 @@ const SwTable* SwDoc::InsertTable( const SwInsertTableOptions& rInsTblOpts,
         pCntntNd (aka the node the table is inserted at) thus causing
         SwNodes::InsertTable to propagate an adjust item if
         necessary. */
-    SwTableNode *pTblNd = GetNodes().InsertTable( 
+    SwTableNode *pTblNd = GetNodes().InsertTable(
         rPos.nNode,
         nCols,
         pBodyColl,
@@ -1250,6 +1250,14 @@ BOOL SwDoc::TableToText( const SwTableNode* pTblNd, sal_Unicode cCh )
 {
     if( !pTblNd )
         return FALSE;
+
+    // --> FME 2004-09-28 #i34471#
+    // If this is trigged by SwUndoTblToTxt::Repeat() nobody ever deleted
+    // the table cursor.
+    SwEditShell* pESh = GetEditShell();
+    if( pESh && pESh->IsTableMode() )
+        pESh->ClearMark();
+    // <--
 
     lcl_DelRedlines aDelRedl( *pTblNd, FALSE );
 
@@ -2030,7 +2038,10 @@ USHORT SwDoc::MergeTbl( SwPaM& rPam )
 
     nRet = TBLMERGE_NOSELECTION;
 
-    StartUndo();
+    // --> FME 2004-10-08 #i33394#
+    StartUndo( UNDO_TABLE_MERGE );
+    // <--
+
     if( !IsIgnoreRedline() && GetRedlineTbl().Count() )
         DeleteRedline( *pTblNd );
     SwRedlineMode eOld = GetRedlineMode();
@@ -2105,7 +2116,7 @@ USHORT SwDoc::MergeTbl( SwPaM& rPam )
         ::ClearFEShellTabCols();
         SetRedlineMode_intern( eOld );
     }
-    EndUndo();
+    EndUndo( UNDO_TABLE_MERGE );
     return nRet;
 }
 
