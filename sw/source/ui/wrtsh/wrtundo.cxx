@@ -2,9 +2,9 @@
  *
  *  $RCSfile: wrtundo.cxx,v $
  *
- *  $Revision: 1.2 $
+ *  $Revision: 1.3 $
  *
- *  last change: $Author: tl $ $Date: 2001-04-09 07:28:55 $
+ *  last change: $Author: jp $ $Date: 2001-09-11 14:57:42 $
  *
  *  The Contents of this file are made available subject to the terms of
  *  either of the following licenses
@@ -83,6 +83,9 @@
 #ifndef _SWUNDO_HXX
 #include <swundo.hxx>               	// fuer Undo-Ids
 #endif
+#ifndef _SWDTFLVR_HXX
+#include <swdtflvr.hxx>
+#endif
 
 #ifndef _WRTSH_HRC
 #include <wrtsh.hrc>
@@ -115,6 +118,7 @@ void SwWrtShell::Do( DoType eDoType, USHORT nCnt )
     }
     EndAllAction();
 
+    BOOL bCreateXSelection = FALSE;
     const FASTBOOL bFrmSelected = IsFrmSelected() || IsObjSelected();
     if ( IsSelection() )
     {
@@ -125,14 +129,22 @@ void SwWrtShell::Do( DoType eDoType, USHORT nCnt )
         // bei Cursor setzen
         fnKillSel = &SwWrtShell::ResetSelect;
         fnSetCrsr = &SwWrtShell::SetCrsrKillSel;
+        bCreateXSelection = TRUE;
     }
     else if ( bFrmSelected )
+    {
         EnterSelFrmMode();
+        bCreateXSelection = TRUE;
+    }
     else if( (CNT_GRF | CNT_OLE ) & GetCntType() )
     {
         SelectObj( GetCharRect().Pos() );
         EnterSelFrmMode();
+        bCreateXSelection = TRUE;
     }
+
+    if( bCreateXSelection )
+        SwTransferable::CreateSelection( *this );
 
     // Bug 32918: nach loeschen der Numerierung bleibt die Obj. Leiste stehen
     //			Warum wird hier nicht immer ein CallChgLink gerufen?
@@ -213,15 +225,18 @@ String SwWrtShell::GetRepeatString() const
 /*************************************************************************
 
       $Log: not supported by cvs2svn $
+      Revision 1.2  2001/04/09 07:28:55  tl
+      Undo/Redo controller modifications
+
       Revision 1.1.1.1  2000/09/18 17:14:53  hr
       initial import
-    
+
       Revision 1.53  2000/09/18 16:06:27  willem.vandorp
       OpenOffice header added.
-    
+
       Revision 1.52  2000/07/27 21:01:41  jp
       Bug #76923#: Do - clamp the enterstdmode and Undo/Redo/Repeat call
-    
+
       Revision 1.51  2000/03/03 15:17:06  os
       StarView remainders removed
 
