@@ -2,9 +2,9 @@
  *
  *  $RCSfile: htmlfly.cxx,v $
  *
- *  $Revision: 1.9 $
+ *  $Revision: 1.10 $
  *
- *  last change: $Author: mib $ $Date: 2002-05-16 13:08:57 $
+ *  last change: $Author: od $ $Date: 2002-09-03 14:57:39 $
  *
  *  The Contents of this file are made available subject to the terms of
  *  either of the following licenses
@@ -370,8 +370,11 @@ USHORT SwHTMLWriter::GuessFrmType( const SwFrmFmt& rFrmFmt,
                 if( bEmpty )
                 {
                     const SvxBrushItem& rBrush = rFrmFmt.GetBackground();
+                    /// OD 02.09.2002 #99657#
+                    /// background is not empty, if it has a background graphic
+                    /// or its background color is not "no fill"/"auto fill".
                     if( GPOS_NONE != rBrush.GetGraphicPos() ||
-                        0 == rBrush.GetColor().GetTransparency() )
+                        rBrush.GetColor() != COL_TRANSPARENT )
                         bEmpty = FALSE;
                 }
                 if( bEmpty )
@@ -1814,7 +1817,7 @@ void SwHTMLWriter::AddLinkTarget( const String& rURL )
 
     // There might be a '|' as delimiter (if the link has been inserted
     // freshly) or a '%7c' or a '%7C' if the document has been saved and
-    // loaded already. 
+    // loaded already.
     xub_StrLen nPos = rURL.Len();
     sal_Bool bFound = sal_False, bEncoded = sal_False;
     while( !bFound && nPos > 0 )

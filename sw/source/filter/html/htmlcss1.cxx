@@ -2,9 +2,9 @@
  *
  *  $RCSfile: htmlcss1.cxx,v $
  *
- *  $Revision: 1.5 $
+ *  $Revision: 1.6 $
  *
- *  last change: $Author: mib $ $Date: 2002-01-31 09:15:38 $
+ *  last change: $Author: od $ $Date: 2002-09-03 14:55:49 $
  *
  *  The Contents of this file are made available subject to the terms of
  *  either of the following licenses
@@ -651,13 +651,13 @@ const SvxBrushItem& SwCSS1Parser::GetPageDescBackground() const
                ->GetMaster().GetBackground();
 }
 
-sal_uInt16 SwCSS1Parser::GetScriptFromClass( String& rClass, 
+sal_uInt16 SwCSS1Parser::GetScriptFromClass( String& rClass,
                                       sal_Bool bSubClassOnly )
 {
     sal_uInt16 nScriptFlags = CSS1_SCRIPT_ALL;
     xub_StrLen nLen = rClass.Len();
     xub_StrLen nPos = nLen > 4 ? rClass.SearchBackward( '-' ) : STRING_NOTFOUND;
-    
+
     if( STRING_NOTFOUND == nPos )
     {
         if( bSubClassOnly )
@@ -669,7 +669,7 @@ sal_uInt16 SwCSS1Parser::GetScriptFromClass( String& rClass,
         nPos++;
         nLen -= nPos;
     }
-        
+
     switch( nLen )
     {
     case 3:
@@ -705,7 +705,7 @@ sal_uInt16 SwCSS1Parser::GetScriptFromClass( String& rClass,
 }
 
 static CSS1SelectorType GetTokenAndClass( const CSS1Selector *pSelector,
-                              String& rToken, String& rClass, 
+                              String& rToken, String& rClass,
                               sal_uInt16& rScriptFlags )
 {
     rToken = pSelector->GetString();
@@ -746,7 +746,7 @@ static void RemoveScriptItems( SfxItemSet& rItemSet, sal_uInt16 nScript,
         { RES_CHRATR_CTL_FONT, RES_CHRATR_CTL_FONTSIZE, RES_CHRATR_CTL_LANGUAGE,
             RES_CHRATR_CTL_POSTURE, RES_CHRATR_CTL_WEIGHT }
     };
-    
+
     sal_uInt16 aClearItems[3] = { sal_False, sal_False, sal_False };
     switch( nScript )
     {
@@ -910,7 +910,9 @@ BOOL SwCSS1Parser::StyleParsed( const CSS1Selector *pSelector,
                     const SvxBrushItem *pBrushItem =
                         (const SvxBrushItem *)pItem;
 
-                    if( !pBrushItem->GetColor().GetTransparency() )
+                    /// OD 02.09.2002 #99657#
+                    /// Body has a background color, if it is not "no fill"/"auto fill"
+                    if( pBrushItem->GetColor() != COL_TRANSPARENT )
                         bBodyBGColorSet = TRUE;
                     if( GPOS_NONE != pBrushItem->GetGraphicPos() )
                         bBodyBackgroundSet = TRUE;
@@ -2570,7 +2572,7 @@ void SwCSS1Parser::SetDfltEncoding( rtl_TextEncoding eEnc )
                                    eEnc, aWhichIds[i] );
                 pDoc->SetDefault( aFont );
             }
-            
+
             // Change all paragraph styles that do specify a font.
             USHORT nArrLen = pDoc->GetTxtFmtColls()->Count();
             for( i=1; i<nArrLen; i++ )

@@ -2,9 +2,9 @@
  *
  *  $RCSfile: css1atr.cxx,v $
  *
- *  $Revision: 1.16 $
+ *  $Revision: 1.17 $
  *
- *  last change: $Author: mib $ $Date: 2002-05-24 12:38:53 $
+ *  last change: $Author: od $ $Date: 2002-09-03 15:00:49 $
  *
  *  The Contents of this file are made available subject to the terms of
  *  either of the following licenses
@@ -1484,7 +1484,7 @@ void SwHTMLWriter::PrepareFontList( const SvxFontItem& rFontItem,
 sal_Bool SwHTMLWriter::HasScriptDependentItems( const SfxItemSet& rItemSet,
                                                  sal_Bool bCheckDropCap )
 {
-    static sal_uInt16 aWhichIds[] = 
+    static sal_uInt16 aWhichIds[] =
     {
         RES_CHRATR_FONT,		RES_CHRATR_CJK_FONT,		RES_CHRATR_CTL_FONT,
         RES_CHRATR_FONTSIZE,	RES_CHRATR_CJK_FONTSIZE,	RES_CHRATR_CTL_FONTSIZE,
@@ -1677,7 +1677,7 @@ static sal_Bool OutCSS1Rule( SwHTMLWriter& rHTMLWrt, const String& rSelector,
         // exported in one step. For hyperlinks only, a script information
         // must be there, because these two chr formats don't support
         // script dependencies by now.
-        SwCSS1OutMode aMode( rHTMLWrt, 
+        SwCSS1OutMode aMode( rHTMLWrt,
                 rHTMLWrt.nCSS1Script|CSS1_OUTMODE_RULE|CSS1_OUTMODE_TEMPLATE,
                              TRUE, &rSelector );
         rHTMLWrt.OutCSS1_SfxItemSet( rItemSet, FALSE );
@@ -1791,7 +1791,7 @@ static void OutCSS1DropCapRule(
         // exported in one step. For hyperlinks only, a script information
         // must be there, because these two chr formats don't support
         // script dependencies by now.
-        SwCSS1OutMode aMode( rHTMLWrt, 
+        SwCSS1OutMode aMode( rHTMLWrt,
                 rHTMLWrt.nCSS1Script|CSS1_OUTMODE_RULE|CSS1_OUTMODE_DROPCAP,
                              TRUE, &rSelector );
                 OutCSS1_SwFmtDropAttrs( rHTMLWrt, rDrop );
@@ -1851,7 +1851,7 @@ static Writer& OutCSS1_SwFmt( Writer& rWrt, const SwFmt& rFmt,
     SfxItemSet aItemSet( *rFmtItemSet.GetPool(), rFmtItemSet.GetRanges() );
     aItemSet.Set( rFmtItemSet, TRUE ); // Was nDeep!=1 that is not working
                                        // for script dependent items buts should
-                                       // not make a deifference for any other 
+                                       // not make a deifference for any other
 
     BOOL bSetDefaults = TRUE, bClearSame = TRUE;
     const SwFmt *pRefFmt = 0;
@@ -1961,7 +1961,7 @@ static Writer& OutCSS1_SwFmt( Writer& rWrt, const SwFmt& rFmt,
         else
         {
             if( nPoolFmtId==RES_POOLCOLL_TEXT )
-                rHTMLWrt.aScriptParaStyles.Insert( 
+                rHTMLWrt.aScriptParaStyles.Insert(
                         new String( pDoc->GetTxtCollFromPool( RES_POOLCOLL_STANDARD )->GetName() ) );
             rHTMLWrt.aScriptParaStyles.Insert( new String( rFmt.GetName() ) );
         }
@@ -2517,7 +2517,10 @@ static BOOL OutCSS1_FrmFmtBrush( SwHTMLWriter& rWrt,
                                  const SvxBrushItem& rBrushItem )
 {
     BOOL bWritten = FALSE;
-    if( 0 == rBrushItem.GetColor().GetTransparency() ||
+    /// OD 02.09.2002 #99657#
+    /// output brush of frame format, if its background color is not "no fill"/"auto fill"
+    /// or it has a background graphic.
+    if( rBrushItem.GetColor() != COL_TRANSPARENT ||
         0 != rBrushItem.GetGraphicLink() ||
         0 != rBrushItem.GetGraphicPos() )
     {
@@ -3506,7 +3509,9 @@ static Writer& OutCSS1_SvxBrush( Writer& rWrt, const SfxPoolItem& rHt,
 
     // Erstmal die Farbe holen
     BOOL bColor = FALSE;
-    BOOL bTransparent = rColor.GetTransparency() > 0;
+    /// OD 02.09.2002 #99657#
+    /// set <bTransparent> to TRUE, if color is "no fill"/"auto fill"
+    BOOL bTransparent = (rColor.GetColor() == COL_TRANSPARENT);
     Color aColor;
     if( !bTransparent )
     {
@@ -3929,36 +3934,39 @@ SwAttrFnTab aCSS1AttrFnTab = {
 /*************************************************************************
 
       $Log: not supported by cvs2svn $
+      Revision 1.16  2002/05/24 12:38:53  mib
+      #97826#: Export default style correctly
+
       Revision 1.15  2002/05/16 13:08:57  mib
       #97334#: Process non positive margin correctly in HTML export
-    
+
       Revision 1.14  2002/03/13 14:20:19  mib
       #97558#: Don't store LANGUAGE_DEFAULT
-    
+
       Revision 1.13  2001/12/03 09:52:53  mib
       #95462#: Export COL_AUTO as black instead of white
-    
+
       Revision 1.12  2001/10/24 14:16:17  mib
       #91961#: Support of language
-    
+
       Revision 1.11  2001/10/11 12:53:49  vg
       #65293# added type vvoid
-    
+
       Revision 1.10  2001/10/09 14:57:36  mib
       #90476#: Support for CJK/CTL font attributes
-    
+
       Revision 1.9  2001/07/30 14:36:19  mib
       #90539#: Don't export table paragarph styles as P
-    
+
       Revision 1.8  2001/07/11 11:33:26  mib
       #89534#: Export faont-family and some other properties again
-    
+
       Revision 1.7  2001/07/03 07:49:47  mib
       #88156#: warning for unconvertable chars
-    
+
       Revision 1.6  2000/12/21 16:21:48  jp
       writegraphic optional in original format and not general as JPG
-    
+
       Revision 1.5  2000/12/12 09:39:59  mib
       #70821#: Don't export empty frames as spacer if they have a background
 
