@@ -2,9 +2,9 @@
  *
  *  $RCSfile: unostyle.cxx,v $
  *
- *  $Revision: 1.44 $
+ *  $Revision: 1.45 $
  *
- *  last change: $Author: mib $ $Date: 2002-08-05 14:32:35 $
+ *  last change: $Author: tl $ $Date: 2002-08-14 09:44:20 $
  *
  *  The Contents of this file are made available subject to the terms of
  *  either of the following licenses
@@ -2176,7 +2176,7 @@ void SwXStyle::setPropertyValues(
         if(!pMap)
             throw UnknownPropertyException(OUString ( RTL_CONSTASCII_USTRINGPARAM ( "Unknown property: " ) ) + pNames[nProp], static_cast < cppu::OWeakObject * > ( this ) );
         if ( pMap->nFlags & PropertyAttribute::READONLY)
-            throw IllegalArgumentException ( OUString ( RTL_CONSTASCII_USTRINGPARAM ( "Property is read-only: " ) ) + pNames[nProp], static_cast < cppu::OWeakObject * > ( this ), nProp );
+            throw PropertyVetoException ( OUString ( RTL_CONSTASCII_USTRINGPARAM ( "Property is read-only: " ) ) + pNames[nProp], static_cast < cppu::OWeakObject * > ( this ) );
         if(aBaseImpl.pNewBase)
         {
             lcl_SetStyleProperty(pMap, aPropSet, pValues[nProp], aBaseImpl,
@@ -2566,7 +2566,7 @@ Sequence< PropertyState > SwXStyle::getPropertyStates(
             for(sal_Int32 i = 0; i < rPropertyNames.getLength(); i++)
             {
                 const String& rPropName = pNames[i];
-                const SfxItemPropertyMap*   pMap = 
+                const SfxItemPropertyMap*   pMap =
                     SfxItemPropertyMap::GetByName(
                             rStylePropSet.getPropertyMap(), rPropName);
                 if(!pMap)
@@ -2604,12 +2604,12 @@ Sequence< PropertyState > SwXStyle::getPropertyStates(
                         SID_ATTR_PAGE_SIZE == pMap->nWID &&
                         PropertyState_DIRECT_VALUE == pStates[i] )
                     {
-                        const SvxSizeItem& rSize = 
-                            static_cast < const SvxSizeItem& >( 
+                        const SvxSizeItem& rSize =
+                            static_cast < const SvxSizeItem& >(
                                     aSet.Get(SID_ATTR_PAGE_SIZE) );
                         sal_uInt8 nMemberId = pMap->nMemberId & 0x7f;
                         if( ( LONG_MAX == rSize.GetSize().Width() &&
-                              (MID_SIZE_WIDTH == nMemberId || 
+                              (MID_SIZE_WIDTH == nMemberId ||
                                MID_SIZE_SIZE == nMemberId ) ) ||
                             ( LONG_MAX == rSize.GetSize().Height() &&
                               MID_SIZE_HEIGHT == nMemberId ) )
@@ -2692,7 +2692,7 @@ void SAL_CALL SwXStyle::setPropertiesToDefault( const Sequence< OUString >& aPro
             if ( pMap->nWID == FN_UNO_FOLLOW_STYLE || pMap->nWID == FN_UNO_NUM_RULES )
                 throw RuntimeException ( OUString ( RTL_CONSTASCII_USTRINGPARAM ( "Cannot reset: " ) ) + pNames[nProp], static_cast < cppu::OWeakObject * > ( this ) );
             if ( pMap->nFlags & PropertyAttribute::READONLY )
-                throw RuntimeException ( OUString ( RTL_CONSTASCII_USTRINGPARAM ( "Property is read-only: " ) ) + pNames[nProp], static_cast < cppu::OWeakObject * > ( this ) );
+                throw PropertyVetoException ( OUString ( RTL_CONSTASCII_USTRINGPARAM ( "Property is read-only: " ) ) + pNames[nProp], static_cast < cppu::OWeakObject * > ( this ) );
 
             pTargetFmt->ResetAttr ( pMap->nWID );
         }
@@ -2768,7 +2768,7 @@ void SAL_CALL SwXStyle::setAllPropertiesToDefault(  )
                     {
                         if( m_pDoc->GetPrt() )
                         {
-                            const Size aPhysSize( SvxPaperInfo::GetPaperSize( 
+                            const Size aPhysSize( SvxPaperInfo::GetPaperSize(
                                         static_cast<Printer*>( m_pDoc->GetPrt() )) );
                             aFrmSz.SetSize( aPhysSize );
                         }
@@ -2845,7 +2845,7 @@ Sequence< Any > SAL_CALL SwXStyle::getPropertyDefaults( const Sequence< OUString
                     if ( !pMap )
                         throw UnknownPropertyException ( OUString ( RTL_CONSTASCII_USTRINGPARAM ( "Unknown property: " ) ) + pNames[i], static_cast < cppu::OWeakObject * > ( this ) );
                     if ( pMap->nFlags & PropertyAttribute::READONLY )
-                        throw RuntimeException ( OUString ( RTL_CONSTASCII_USTRINGPARAM ( "Property is read-only: " ) ) + pNames[i], static_cast < cppu::OWeakObject * > ( this ) );
+                        throw PropertyVetoException ( OUString ( RTL_CONSTASCII_USTRINGPARAM ( "Property is read-only: " ) ) + pNames[i], static_cast < cppu::OWeakObject * > ( this ) );
 
                     if( pParentSet )
                         pRet[i] = aSwMapProvider.GetPropertySet(nPropSetId).getPropertyValue(pNames[i], *pParentSet);
@@ -2980,7 +2980,7 @@ void SwXPageStyle::setPropertyValues(
         if (!pMap)
             throw UnknownPropertyException(OUString ( RTL_CONSTASCII_USTRINGPARAM ( "Unknown property: " ) ) + pNames[nProp], static_cast < cppu::OWeakObject * > ( this ) );
         if ( pMap->nFlags & PropertyAttribute::READONLY)
-            throw IllegalArgumentException ( OUString ( RTL_CONSTASCII_USTRINGPARAM ( "Property is read-only: " ) ) + pNames[nProp], static_cast < cppu::OWeakObject * > ( this ), nProp );
+            throw PropertyVetoException ( OUString ( RTL_CONSTASCII_USTRINGPARAM ( "Property is read-only: " ) ) + pNames[nProp], static_cast < cppu::OWeakObject * > ( this ) );
 
         if(GetBasePool())
         {
