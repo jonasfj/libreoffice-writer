@@ -2,9 +2,9 @@
  *
  *  $RCSfile: ww8par.hxx,v $
  *
- *  $Revision: 1.131 $
+ *  $Revision: 1.132 $
  *
- *  last change: $Author: rt $ $Date: 2004-09-20 15:20:31 $
+ *  last change: $Author: kz $ $Date: 2004-10-04 19:19:52 $
  *
  *  The Contents of this file are made available subject to the terms of
  *  either of the following licenses
@@ -102,8 +102,8 @@
 #include "tracer.hxx"
 #endif
 #ifndef _WW8STRUC_HXX
-#include "ww8struc.hxx"     // WW8_BRC 
-#endif                      
+#include "ww8struc.hxx"     // WW8_BRC
+#endif
 #ifndef _WW8SCAN_HXX
 #include "ww8scan.hxx"  // WW8Fib
 #endif
@@ -193,7 +193,7 @@ namespace com{namespace sun {namespace star{
 // falls gestetzt, werden fuer Writer-Def-Styles neue Styles mit den
 // WW8-Def-Style-Eigenschaften erzeugt, statt die Writer-Standards zu
 // ueberschreiben
-#define WW8FL_NO_DEFSTYLES        0x400 
+#define WW8FL_NO_DEFSTYLES        0x400
 
 #define WW8FL_NO_OUTLINE         0x1000
 #define WW8FL_NO_IMPLPASP        0x4000  // no implicit para space
@@ -221,10 +221,10 @@ struct WW8OleMap
     sal_uInt32 mnWWid;
     String msStorageName;
 
-    WW8OleMap(sal_uInt32 nWWid) 
+    WW8OleMap(sal_uInt32 nWWid)
         : mnWWid(nWWid) {}
 
-     WW8OleMap(sal_uInt32 nWWid, String sStorageName) 
+     WW8OleMap(sal_uInt32 nWWid, String sStorageName)
         : mnWWid(nWWid), msStorageName(sStorageName) {}
 
     bool operator==(const WW8OleMap & rEntry) const
@@ -273,9 +273,9 @@ private:
     typedef SfxItemSet* WW8aISet[nMaxLevel];
     // Zeichen Style Pointer
     typedef SwCharFmt* WW8aCFmt[nMaxLevel];
-    
+
     void AdjustLVL(BYTE nLevel, SwNumRule& rNumRule, WW8aISet& rListItemSet,
-        WW8aCFmt& aCharFmt, bool& bNewCharFmtCreated, 
+        WW8aCFmt& aCharFmt, bool& bNewCharFmtCreated,
         String aPrefix = aEmptyStr);
 
     //No copying
@@ -295,14 +295,14 @@ private:
     //No copying
     SwWW8FltControlStack(const SwWW8FltControlStack&);
     SwWW8FltControlStack& operator=(const SwWW8FltControlStack&);
-    const SwNumFmt* GetNumFmtFromStack(const SwPosition &rPos, 
+    const SwNumFmt* GetNumFmtFromStack(const SwPosition &rPos,
         const SwTxtNode &rTxtNode);
 protected:
-    virtual void SetAttrInDoc(const SwPosition& rTmpPos, 
+    virtual void SetAttrInDoc(const SwPosition& rTmpPos,
         SwFltStackEntry* pEntry);
 public:
     SwWW8FltControlStack(SwDoc* pDo, ULONG nFieldFl, SwWW8ImplReader& rReader_ )
-        : SwFltControlStack( pDo, nFieldFl ), rReader( rReader_ ), 
+        : SwFltControlStack( pDo, nFieldFl ), rReader( rReader_ ),
         nToggleAttrFlags(0), nToggleBiDiAttrFlags(0)
     {}
 
@@ -338,7 +338,7 @@ public:
 class SwWW8FltAnchorStack : public SwFltControlStack
 {
 public:
-    SwWW8FltAnchorStack(SwDoc* pDo, ULONG nFieldFl) 
+    SwWW8FltAnchorStack(SwDoc* pDo, ULONG nFieldFl)
         : SwFltControlStack( pDo, nFieldFl ) {}
     void AddAnchor(const SwPosition& rPos,SwFrmFmt *pFmt);
     void Flush();
@@ -385,7 +385,7 @@ public:
     std::map<String, String, ltstr> aFieldVarNames;
 protected:
     SwFltStackEntry *RefToVar(const SwField* pFld,SwFltStackEntry *pEntry);
-    virtual void SetAttrInDoc(const SwPosition& rTmpPos, 
+    virtual void SetAttrInDoc(const SwPosition& rTmpPos,
         SwFltStackEntry* pEntry);
 private:
     //No copying
@@ -493,7 +493,7 @@ protected:
     SwWW8ImplReader &rRdr;
 public:
     WW8FormulaControl(const String& rN, SwWW8ImplReader &rR)
-        : OCX_Control(rN), rRdr(rR), fUnknown(0), fDropdownIndex(0), 
+        : OCX_Control(rN), rRdr(rR), fUnknown(0), fDropdownIndex(0),
         fToolTip(0), fNoMark(0), fUseSize(0), fNumbersOnly(0), fDateOnly(0),
         fUnused(0), nSize(0), hpsCheckBox(20), nChecked(0)
     {
@@ -597,7 +597,7 @@ private:
     List *pOldEscherBlipCache;
 
     virtual BOOL GetOLEStorageName( long nOLEId, String& rStorageName,
-        SvStorageRef& rSrcStorage, SvStorageRef& rDestStorage ) const;
+        SvStorageRef& rSrcStorage, com::sun::star::uno::Reference < com::sun::star::embed::XStorage >& rDestStorage ) const;
     virtual BOOL ShapeHasText( ULONG nShapeId, ULONG nFilePos ) const;
     virtual SdrObject* ImportOLE( long nOLEId, const Graphic& rGrf,
         const Rectangle& rBoundRect ) const;
