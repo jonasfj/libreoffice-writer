@@ -2,9 +2,9 @@
  *
  *  $RCSfile: srtdlg.cxx,v $
  *
- *  $Revision: 1.1.1.1 $
+ *  $Revision: 1.2 $
  *
- *  last change: $Author: hr $ $Date: 2000-09-18 17:14:45 $
+ *  last change: $Author: jp $ $Date: 2000-11-30 11:47:50 $
  *
  *  The Contents of this file are made available subject to the terms of
  *  either of the following licenses
@@ -311,14 +311,17 @@ void SwSortDlg::Apply()
     aOptions.nDeli		=  nDeli;
     aOptions.bTable 	=  rSh.IsTableMode();
 
-    SwWait aWait( *rSh.GetView().GetDocShell(), TRUE );
-    rSh.StartAllAction();
-    BOOL bRet = rSh.Sort(aOptions);
-    rSh.EndAllAction();
-    if(bRet)
-        InfoBox(this->GetParent(), SW_RES(MSG_SRTERR)).Execute();
-    else
-        rSh.SetModified();
+    BOOL bRet;
+    {
+        SwWait aWait( *rSh.GetView().GetDocShell(), TRUE );
+        rSh.StartAllAction();
+        if( 0 != (bRet = rSh.Sort( aOptions )))
+            rSh.SetModified();
+        rSh.EndAllAction();
+    }
+
+    if( !bRet )
+        InfoBox( this->GetParent(), SW_RES(MSG_SRTERR)).Execute();
 
     // Alte Einstellung speichern
     //
@@ -376,12 +379,15 @@ IMPL_LINK( SwSortDlg, CheckHdl, CheckBox *, pCheck )
 /*------------------------------------------------------------------------
 
     $Log: not supported by cvs2svn $
+    Revision 1.1.1.1  2000/09/18 17:14:45  hr
+    initial import
+
     Revision 1.58  2000/09/18 16:06:00  willem.vandorp
     OpenOffice header added.
-    
+
     Revision 1.57  2000/05/26 07:21:31  os
     old SW Basic API Slots removed
-    
+
     Revision 1.56  2000/02/11 14:56:48  hr
     #70473# changes for unicode ( patched by automated patchtool )
 
