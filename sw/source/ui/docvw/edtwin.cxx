@@ -2,9 +2,9 @@
  *
  *  $RCSfile: edtwin.cxx,v $
  *
- *  $Revision: 1.94 $
+ *  $Revision: 1.95 $
  *
- *  last change: $Author: kz $ $Date: 2004-08-31 13:53:34 $
+ *  last change: $Author: obo $ $Date: 2004-09-09 09:14:42 $
  *
  *  The Contents of this file are made available subject to the terms of
  *  either of the following licenses
@@ -861,16 +861,16 @@ void SwEditWin::FlushInBuffer()
         sal_Bool bLang = true;
         SwWrtShell& rSh = rView.GetWrtShell();
         if(eBufferLanguage != LANGUAGE_DONTKNOW)
-        {        
+        {
             USHORT nWhich = 0;
             switch( GetI18NScriptTypeOfLanguage( eBufferLanguage ))
             {
                 case  ::com::sun::star::i18n::ScriptType::ASIAN:     nWhich = RES_CHRATR_CJK_LANGUAGE; break;
                 case  ::com::sun::star::i18n::ScriptType::COMPLEX:   nWhich = RES_CHRATR_CTL_LANGUAGE; break;
                 default: bLang = sal_False;
-            }            
+            }
             if(bLang)
-            {        
+            {
                 SfxItemSet aLangSet(rView.GetPool(), nWhich, nWhich);
                 rSh.GetAttr(aLangSet);
                 if(SFX_ITEM_DEFAULT <= aLangSet.GetItemState(nWhich, TRUE))
@@ -878,7 +878,7 @@ void SwEditWin::FlushInBuffer()
                     bLang = static_cast<const SvxLanguageItem&>(aLangSet.Get(nWhich)).GetLanguage() != eBufferLanguage;
                 }
                 if(bLang)
-                {        
+                {
                     SvxLanguageItem aLangItem( eBufferLanguage, nWhich );
                     rSh.SetAttr( aLangItem );
                 }
@@ -1212,9 +1212,9 @@ void SwEditWin::KeyInput(const KeyEvent &rKEvt)
     if(!bIsDocReadOnly && eBufferLanguage != eNewLanguage && aInBuffer.Len())
     {
         FlushInBuffer();
-    }            
+    }
     eBufferLanguage = eNewLanguage;
-    
+
     QuickHelpData aTmpQHD;
     if( pQuickHlpData->bClear )
     {
@@ -1754,12 +1754,12 @@ KEYINPUT_CHECKTABLE_INSDEL:
                 case KEY_RIGHT:
                     {
                         SwPaM * pCrsr = rSh.GetCrsr(); // #i27615#
-                        if( rSh.IsEndPara() && rSh.DontExpandFmt() && 
+                        if( rSh.IsEndPara() && rSh.DontExpandFmt() &&
                                  !rSh.HasReadonlySel())
                             eKeyState = KS_DontExpand;
                         else
                         {
-                            BOOL bMod1 = 0 != 
+                            BOOL bMod1 = 0 !=
                                 (rKeyCode.GetModifier() & KEY_MOD1);
                             eFlyState = KS_Fly_Change;
                             nDir = MOVE_RIGHT_BIG;
@@ -2438,13 +2438,23 @@ void SwEditWin::MouseButtonDown(const MouseEvent& _rMEvt)
          rMEvt.GetClicks() == 1 && MOUSE_LEFT == rMEvt.GetButtons() &&
         !rSh.IsTableMode();
     if (  bTmp &&
-         0 != (nMouseTabCol = rSh.WhichMouseTabCol( aDocPos ) ))
+         0 != (nMouseTabCol = rSh.WhichMouseTabCol( aDocPos ) ) &&
+         !rSh.IsObjSelectable( aDocPos ) )
     {
+        // --> FME 2004-07-30 #i32329# Enhanced table selection
+        if ( SW_TABSEL_HORI <= nMouseTabCol && SW_TABCOLSEL_VERT >= nMouseTabCol )
+        {
+            rSh.SelectTableRowCol( aDocPos );
+            return;
+        }
+        // <--
+
         //Zuppeln von Tabellenspalten aus dem Dokument heraus.
         if(SW_TABCOL_VERT == nMouseTabCol || SW_TABCOL_HORI == nMouseTabCol)
             rView.SetTabColFromDoc( TRUE );
         else
             rView.SetTabRowFromDoc( TRUE );
+
         rView.SetTabColFromDocPos( aDocPos );
         rView.InvalidateRulerPos();
         SfxBindings& rBind = rView.GetViewFrame()->GetBindings();
@@ -2572,12 +2582,18 @@ void SwEditWin::MouseButtonDown(const MouseEvent& _rMEvt)
         BOOL bExecHyperlinks = rSh.GetViewOptions()->IsExecHyperlinks()^
                             (rMEvt.GetModifier() == KEY_MOD2 ? TRUE : FALSE);
 
+        // --> FME 2004-07-30 #i32329# Enhanced selection
+        BYTE nNumberOfClicks = rMEvt.GetClicks() % 4;
+        if ( 0 == nNumberOfClicks && 0 < rMEvt.GetClicks() )
+            nNumberOfClicks = 4;
+        // <--
+
         switch ( rMEvt.GetModifier() + rMEvt.GetButtons() )
         {
             case MOUSE_LEFT:
             case MOUSE_LEFT + KEY_MOD1:
             case MOUSE_LEFT + KEY_MOD2:
-                switch ( rMEvt.GetClicks() )
+                switch ( nNumberOfClicks )
                 {
                     case 1:
                     {
@@ -2814,6 +2830,8 @@ void SwEditWin::MouseButtonDown(const MouseEvent& _rMEvt)
                         return;
                     }
                     case 3:
+                    case 4:
+                    {
                         bFrmDrag = FALSE;
                         //im Extended Mode hat Doppel- und
                         //Dreifachklick keine Auswirkungen.
@@ -2827,16 +2845,25 @@ void SwEditWin::MouseButtonDown(const MouseEvent& _rMEvt)
                             return;
 
                         //Zeile selektieren, gfs. Additional Mode
-                        if ( KEY_MOD1 == rMEvt.GetModifier() && !rSh.IsAddMode())
-                        {
+                        const bool bMod = KEY_MOD1 == rMEvt.GetModifier() &&
+                                         !rSh.IsAddMode();
+
+                        if ( bMod )
                             rSh.EnterAddMode();
-                            rSh.SelLine( &aDocPos );
-                            rSh.LeaveAddMode();
-                        }
+
+                        // --> FME 2004-07-30 #i32329# Enhanced selection
+                        if ( 3 == nNumberOfClicks )
+                            rSh.SelSentence( &aDocPos );
                         else
-                            rSh.SelLine( &aDocPos );
+                            rSh.SelPara( &aDocPos );
+                        // <--
+
+                        if ( bMod )
+                            rSh.LeaveAddMode();
+
                         bHoldSelection = TRUE;
                         return;
+                    }
 
                     default:
                         return;
@@ -3203,12 +3230,45 @@ void SwEditWin::MouseMove(const MouseEvent& _rMEvt)
     if( !bIsDocReadOnly && bInsWin && !pApplyTempl && !rSh.IsInSelect() &&
         !rSh.IsTableMode())
     {
-        if (0 != (nMouseTabCol = rSh.WhichMouseTabCol( aDocPt )))
+        if ( SW_TABCOL_NONE != (nMouseTabCol = rSh.WhichMouseTabCol( aDocPt ) ) &&
+             !rSh.IsObjSelectable( aDocPt ) )
         {
-            //Zuppeln von Tabellenspalten aus dem Dokument heraus.
+            USHORT nPointer = USHRT_MAX;
+            switch ( nMouseTabCol )
+            {
+                case SW_TABCOL_VERT :
+                case SW_TABROW_HORI :
+                    nPointer = POINTER_VSIZEBAR;
+                    break;
+                case SW_TABROW_VERT :
+                case SW_TABCOL_HORI :
+                    nPointer = POINTER_HSIZEBAR;
+                    break;
+                // --> FME 2004-07-30 #i20126# Enhanced table selection
+                case SW_TABSEL_HORI :
+                    nPointer = POINTER_TAB_SELECT_SE;
+                    break;
+                case SW_TABSEL_HORI_RTL :
+                case SW_TABSEL_VERT :
+                    nPointer = POINTER_TAB_SELECT_SW;
+                    break;
+                case SW_TABCOLSEL_HORI :
+                case SW_TABROWSEL_VERT :
+                    nPointer = POINTER_TAB_SELECT_S;
+                    break;
+                case SW_TABROWSEL_HORI :
+                    nPointer = POINTER_TAB_SELECT_E;
+                    break;
+                case SW_TABROWSEL_HORI_RTL :
+                case SW_TABCOLSEL_VERT :
+                    nPointer = POINTER_TAB_SELECT_W;
+                    break;
+                // <--
+            }
 
-            SetPointer( SW_TABCOL_VERT == nMouseTabCol || SW_TABROW_HORI == nMouseTabCol ?
-                    POINTER_VSIZEBAR : POINTER_HSIZEBAR );
+            if ( USHRT_MAX != nPointer )
+                SetPointer( nPointer );
+
             return;
         }
         // #i23726#
@@ -4307,13 +4367,13 @@ void SwEditWin::Command( const CommandEvent& rCEvt )
                         if(SelectMenuPosition(rSh, rCEvt.GetMousePosPixel()))
                             rView.StopShellTimer();
 
-                    }        
+                    }
                     const Point aPixPos = LogicToPixel( aDocPos );
 
                     if ( rView.GetDocShell()->IsReadOnly() )
-                    {        
+                    {
                         SwReadOnlyPopup* pROPopup = new SwReadOnlyPopup( aDocPos, rView );
-                    
+
                         ::com::sun::star::ui::ContextMenuExecuteEvent aEvent;
                         aEvent.SourceWindow = VCLUnoHelper::GetInterface( this );
                         aEvent.ExecutePosition.X = aPixPos.X();
@@ -4623,7 +4683,7 @@ void SwEditWin::Command( const CommandEvent& rCEvt )
 }
 
 /* -----------------25.08.2003 10:12-----------------
-    #i18686#: select the object/cursor at the mouse 
+    #i18686#: select the object/cursor at the mouse
     position of the context menu request
  --------------------------------------------------*/
 BOOL SwEditWin::SelectMenuPosition(SwWrtShell& rSh, const Point& rMousePos )
@@ -4635,14 +4695,14 @@ BOOL SwEditWin::SelectMenuPosition(SwWrtShell& rSh, const Point& rMousePos )
     SdrView *pSdrView = rSh.GetDrawView();
     if ( pSdrView )
     {
-        // if draw text is active and there's a text selection 
+        // if draw text is active and there's a text selection
         // at the mouse position then do nothing
         if(rSh.GetSelectionType() & SwWrtShell::SEL_DRW_TXT)
-        {        
+        {
             OutlinerView* pOLV = pSdrView->GetTextEditOutlinerView();
             ESelection aSelection = pOLV->GetSelection();
             if(!aSelection.IsZero())
-            {        
+            {
                 SdrOutliner* pOutliner = pSdrView->GetTextEditOutliner();
                 BOOL bVertical = pOutliner->IsVertical();
                 const EditEngine& rEditEng = pOutliner->GetEditEngine();
@@ -4650,7 +4710,7 @@ BOOL SwEditWin::SelectMenuPosition(SwWrtShell& rSh, const Point& rMousePos )
                 const Rectangle& rOutputArea = pOLV->GetOutputArea();
                 // regard vertical mode
                 if(bVertical)
-                {        
+                {
                     aEEPos -= rOutputArea.TopRight();
                     //invert the horizontal direction and exchange X and Y
                     long nTemp = -aEEPos.X();
@@ -4659,19 +4719,19 @@ BOOL SwEditWin::SelectMenuPosition(SwWrtShell& rSh, const Point& rMousePos )
                 }
                 else
                     aEEPos -= rOutputArea.TopLeft();
-                
+
                 EPosition aDocPosition = rEditEng.FindDocPosition(aEEPos);
                 ESelection aCompare(aDocPosition.nPara, aDocPosition.nIndex);
                 // make it a forward selection - otherwise the IsLess/IsGreater do not work :-(
                 aSelection.Adjust();
                 if(!aCompare.IsLess(aSelection)  && !aCompare.IsGreater(aSelection))
                 {
-                    return FALSE; 
-                }            
+                    return FALSE;
+                }
             }
-                
+
         }
-        
+
         if (pSdrView->MouseButtonDown( aMEvt, this ) )
         {
             pSdrView->MouseButtonUp( aMEvt, this );
@@ -4705,7 +4765,7 @@ BOOL SwEditWin::SelectMenuPosition(SwWrtShell& rSh, const Point& rMousePos )
         // #107513#
         // Test if there is a draw object at that position and if it should be selected.
         sal_Bool bShould = rSh.ShouldObjectBeSelected(aDocPos);
-                            
+
         if(bShould)
         {
             rView.NoRotate();
@@ -4761,8 +4821,8 @@ BOOL SwEditWin::SelectMenuPosition(SwWrtShell& rSh, const Point& rMousePos )
             rSh.LeaveSelFrmMode();
             rView.AttrChangedNotify(&rSh);
             bRet = TRUE;
-        }                                
-                                
+        }
+
         BOOL bSelObj = rSh.SelectObj( aDocPos, nFlag );
         if( bUnLockView )
             rSh.LockView( FALSE );
@@ -4853,7 +4913,7 @@ BOOL SwEditWin::SelectMenuPosition(SwWrtShell& rSh, const Point& rMousePos )
         }
     }
     return bRet;
-}            
+}
 
 SfxShell* lcl_GetShellFromDispatcher( SwView& rView, TypeId nType )
 {
