@@ -2,9 +2,9 @@
  *
  *  $RCSfile: ww8par.cxx,v $
  *
- *  $Revision: 1.20 $
+ *  $Revision: 1.21 $
  *
- *  last change: $Author: cmc $ $Date: 2001-04-26 12:00:32 $
+ *  last change: $Author: fme $ $Date: 2001-05-03 09:58:00 $
  *
  *  The Contents of this file are made available subject to the terms of
  *  either of the following licenses
@@ -1717,17 +1717,17 @@ BOOL SwWW8ImplReader::ReadChar( long nPosCp, long nCpOfs )
                 pCtrlStck->KillUnlockedAttrs( *pPaM->GetPoint() );
                 break;
 
-    case 0x1e: 	
+    case 0x1e:
                 rDoc.Insert( *pPaM, CHAR_HARDHYPHEN);	// Non-breaking hyphen
                 break;
-    case 0x1f: 	
+    case 0x1f:
                 rDoc.Insert( *pPaM, CHAR_SOFTHYPHEN);	// Non-required hyphens
                 break;
-    case 0xa0: 	
+    case 0xa0:
                 rDoc.Insert( *pPaM, CHAR_HARDBLANK);	// Non-breaking spaces
                 break;
 
-    case 0x1:	
+    case 0x1:
                 if( bObj )
                     pFmtOfJustInsertedGraphicOrOLE = ImportOle();
                 else if( bEmbeddObj )
@@ -1746,7 +1746,7 @@ BOOL SwWW8ImplReader::ReadChar( long nPosCp, long nCpOfs )
                 //has ended with this paragraph unclosed
                 nLastFlyNode = (*pPaM->GetPoint()).nNode.GetIndex();
                 break;
-    case 0x8:	
+    case 0x8:
                 if( !bObj )
                 {
                     Read_GrafLayer( nPosCp );
@@ -1843,7 +1843,7 @@ long SwWW8ImplReader::ReadTextAttr( long& rTxtPos, BOOL& rbStartLine )
     long nOld = pStrm->Tell();
     long nSkipChars = 0;
     WW8PLCFManResult aRes;
-    
+
     BOOL bStartAttr = pPlcxMan->Get( &aRes ); // hole Attribut-Pos
     aRes.nAktCp = rTxtPos;				// Akt. Cp-Pos
 
@@ -2056,12 +2056,12 @@ void SwWW8ImplReader::ReadText( long nStartCp, long nTextLen, short nType )
             }
         }
 
-        // If we have encountered a 0x0c which indicates either section of 
+        // If we have encountered a 0x0c which indicates either section of
         // pagebreak then look it up to see if it is a section break, and
         // if it is not then insert a page break. If it is a section break
         // it will be handled as such in the ReadAttrs of the next loop
         if( bPgSecBreak)
-        {			
+        {
             // We need only to see if a section is ending at this cp,
             // the plcf will already be sitting on the correct location
             // if it is there.
@@ -2071,7 +2071,7 @@ void SwWW8ImplReader::ReadText( long nStartCp, long nTextLen, short nType )
                 pPlcxMan->GetSepPLCF()->GetSprms(&aTemp);
             if ((aTemp.nStartPos != l) && (aTemp.nEndPos != l))
             {
-                /* 
+                /*
                 #74468#, ##515##
                 Insert additional node only WHEN the Pagebreak is contained in
                 a NODE that is NOT EMPTY. Word can have empty paragraphs with
@@ -2345,8 +2345,14 @@ ULONG SwWW8ImplReader::LoadDoc1( SwPaM& rPaM ,WW8Glossary *pGloss)
             ::StartProgress( STR_STATSTR_W4WREAD, 0, 100, rDoc.GetDocShell() );
 
 
-            rDoc.SetParaSpaceMax( TRUE, TRUE );	// Abstand zwischen zwei Absaetzen ist
-            // die SUMME von unterem Abst. des ersten und oberem Abst. des zweiten
+            if ( bNew )
+            {
+                // Abstand zwischen zwei Absaetzen ist
+                // die SUMME von unterem Abst. des ersten und oberem Abst. des zweiten
+                rDoc.SetParaSpaceMax( TRUE, TRUE );
+                // move tabs on alignment
+                rDoc.SetTabCompat( TRUE );
+            }
 
 
             // read Font Table
@@ -3112,11 +3118,14 @@ void SwMSDffManager::ProcessClientAnchor2( SvStream& rSt, DffRecordHeader& rHd, 
 
       Source Code Control System - Header
 
-      $Header: /zpool/svn/migration/cvs_rep_09_09_08/code/sw/source/filter/ww8/ww8par.cxx,v 1.20 2001-04-26 12:00:32 cmc Exp $
+      $Header: /zpool/svn/migration/cvs_rep_09_09_08/code/sw/source/filter/ww8/ww8par.cxx,v 1.21 2001-05-03 09:58:00 fme Exp $
 
       Source Code Control System - Update
 
       $Log: not supported by cvs2svn $
+      Revision 1.20  2001/04/26 12:00:32  cmc
+      ##777## bInTableApo not saved/restored
+    
       Revision 1.19  2001/04/20 14:54:47  cmc
       base table handling on logical character positions and by using new property finding algorithm
     
