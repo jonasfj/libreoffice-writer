@@ -2,9 +2,9 @@
  *
  *  $RCSfile: doclay.cxx,v $
  *
- *  $Revision: 1.26 $
+ *  $Revision: 1.27 $
  *
- *  last change: $Author: kz $ $Date: 2004-10-04 19:03:14 $
+ *  last change: $Author: pjunck $ $Date: 2004-10-27 12:30:39 $
  *
  *  The Contents of this file are made available subject to the terms of
  *  either of the following licenses
@@ -497,7 +497,7 @@ void SwDoc::DelLayoutFmt( SwFrmFmt *pFmt )
                     {
                         SwFrmFmt* pTmpFmt = aToDeleteFrmFmts.back();
                         pFmt->GetDoc()->DelLayoutFmt( pTmpFmt );
-        
+
                         aToDeleteFrmFmts.pop_back();
                     }
                 }
@@ -671,6 +671,10 @@ SwFrmFmt *SwDoc::CopyLayoutFmt( const SwFrmFmt& rSource,
         ASSERT( RES_DRAWFRMFMT == rSource.Which(), "Weder Fly noch Draw." );
         SwDrawContact *pContact = (SwDrawContact *)rSource.FindContactObj();
 
+        // --> OD 2004-10-25 #i36010# - set layout direction of the position
+        pDest->SetPositionLayoutDir(
+            com::sun::star::text::PositionLayoutDir::PositionInLayoutDirOfAnchor );
+        // <--
         pContact = new SwDrawContact( (SwDrawFrmFmt*)pDest,
                                 CloneSdrObj( *pContact->GetMaster(),
                                         bCopyIsMove && this == pSrcDoc ) );
@@ -1336,7 +1340,7 @@ void lcl_CpyAttr( SfxItemSet &rNewSet, const SfxItemSet &rOldSet, sal_uInt16 nWh
 
 SwFlyFrmFmt* SwDoc::InsertLabel( const SwLabelType eType, const String &rTxt,
             const sal_Bool bBefore, const sal_uInt16 nId, const sal_uInt32 nNdIdx,
-            const String& rCharacterStyle, 
+            const String& rCharacterStyle,
             const sal_Bool bCpyBrd )
 {
     sal_Bool bWasUndo = DoesUndo();
@@ -1568,7 +1572,7 @@ SwFlyFrmFmt* SwDoc::InsertLabel( const SwLabelType eType, const String &rTxt,
         //String aufbereiten
         String aTxt;
         if(pType)
-        {        
+        {
             aTxt += pType->GetName();
             aTxt += ' ';
         }
@@ -1582,14 +1586,14 @@ SwFlyFrmFmt* SwDoc::InsertLabel( const SwLabelType eType, const String &rTxt,
         //
         //Feld einfuegen
         if(pType)
-        {        
+        {
             SwSetExpField aFld( (SwSetExpFieldType*)pType, aEmptyStr, SVX_NUM_ARABIC);
             pNew->Insert( SwFmtFld( aFld ), nIdx, nIdx );
             if(rCharacterStyle.Len())
-            {        
+            {
                 SwCharFmt* pCharFmt = FindCharFmtByName( rCharacterStyle );
                 if( !pCharFmt )
-                {        
+                {
                     const USHORT nId = SwStyleNameMapper::GetPoolIdFromUIName(rCharacterStyle, GET_POOLID_CHRFMT);
                     pCharFmt = GetCharFmtFromPool( nId );
                 }
