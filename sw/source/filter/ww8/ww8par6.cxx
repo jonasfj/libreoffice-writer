@@ -2,9 +2,9 @@
  *
  *  $RCSfile: ww8par6.cxx,v $
  *
- *  $Revision: 1.37 $
+ *  $Revision: 1.38 $
  *
- *  last change: $Author: cmc $ $Date: 2001-09-21 15:40:50 $
+ *  last change: $Author: os $ $Date: 2001-09-28 08:14:50 $
  *
  *  The Contents of this file are made available subject to the terms of
  *  either of the following licenses
@@ -468,7 +468,7 @@ BOOL SwWW8ImplReader::SetCols( SwFrmFmt* pFmt, const WW8PLCFx_SEPX* pSep,
             if( i < nCols-1 )
             {
                 //sprmSDxaColSpacing
-                const BYTE* pSD = 
+                const BYTE* pSD =
                     pSep->HasSprm( (bVer67 ? 137 : 0xF204), BYTE( i ) );
 
                 ASSERT( pSD, "+Sprm 137 (bzw. 0xF204) (Colspacing) fehlt" );
@@ -484,7 +484,7 @@ BOOL SwWW8ImplReader::SetCols( SwFrmFmt* pFmt, const WW8PLCFx_SEPX* pSep,
                 nRightDist = 0; // letzte Spalte hat keinen Zwischenraum mehr
 
             //sprmSDxaColWidth
-            const BYTE* pSW = 
+            const BYTE* pSW =
                 pSep->HasSprm( (bVer67 ? 136 : 0xF203), BYTE( i ) );
 
             ASSERT( pSW, "+Sprm 136 (bzw. 0xF203) (ColWidth) fehlt" );
@@ -820,7 +820,7 @@ void SwWW8ImplReader::SetPageBorder( SwPageDesc*    pPageDesc0,
                         }
                         else
                         {
-                            aBox.SetDistance( (USHORT)aLR.GetLeft(), 
+                            aBox.SetDistance( (USHORT)aLR.GetLeft(),
                                 BOX_LINE_LEFT );
                             aLR.SetLeft( 0 );
                         }
@@ -834,7 +834,7 @@ void SwWW8ImplReader::SetPageBorder( SwPageDesc*    pPageDesc0,
                         }
                         else
                         {
-                            aBox.SetDistance( (USHORT)aLR.GetRight(), 
+                            aBox.SetDistance( (USHORT)aLR.GetRight(),
                                 BOX_LINE_RIGHT );
                             aLR.SetRight( 0 );
                         }
@@ -939,7 +939,7 @@ void SwWW8ImplReader::SetUseOn( SwPageDesc* pPageDesc0, SwPageDesc* pPageDesc1,
 }
 
 
-void SwWW8ImplReader::InsertSectionWithWithoutCols( SwPaM& rMyPaM, 
+void SwWW8ImplReader::InsertSectionWithWithoutCols( SwPaM& rMyPaM,
     const SwFmtCol* pCol )
 {
     // if this Node is not empty create a new Node befor inserting the Section
@@ -1038,7 +1038,7 @@ void SwWW8ImplReader::CreateSep(const long nTxtPos,BOOL bMustHaveBreak)
 
 
     // check if Line Numbering must be activated or resetted
-    const BYTE* pSprmSNLnnMod = bNew ? 
+    const BYTE* pSprmSNLnnMod = bNew ?
         pSep->HasSprm( bVer67 ? 154 : 0x5015 ) : 0;
     if( pSprmSNLnnMod && *pSprmSNLnnMod )
     {
@@ -1311,21 +1311,21 @@ void SwWW8ImplReader::CreateSep(const long nTxtPos,BOOL bMustHaveBreak)
                         SwTwips nWidth = rSz.GetWidth();
                         long nLeft  = rLR.GetTxtLeft();
                         long nRight = rLR.GetRight();
-                        SetCols( pNewSection->GetFmt(), pSep, 
+                        SetCols( pNewSection->GetFmt(), pSep,
                             (USHORT)(nWidth - nLeft - nRight) );
                     }
                     break;
-                case 1: 
+                case 1:
                     if( bNew )
                     {
-                        rDoc.Insert(*pPaM, SvxFmtBreakItem( 
+                        rDoc.Insert(*pPaM, SvxFmtBreakItem(
                             SVX_BREAK_COLUMN_BEFORE ));
                     }
                     break;
                 //case 2:
                 //case 3: 	// alle drei Faelle -> PgDesc-Format-Einfuegung
                 //case 4:
-                default: 
+                default:
                     /*
                         Wir koennen den aktuellen PgDesk einsetzen, da dies
                         immer der 1st-Page Deskriptor ist, nie der Follow!
@@ -1342,7 +1342,7 @@ void SwWW8ImplReader::CreateSep(const long nTxtPos,BOOL bMustHaveBreak)
                             rDoc.Insert(*pPaM, SwFmtPageDesc( pPageDesc ));
                         else
                             // kein voriger PgDesc vorhanden?
-                            rDoc.Insert(*pPaM, 
+                            rDoc.Insert(*pPaM,
                                 SvxFmtBreakItem( SVX_BREAK_PAGE_BEFORE ));
                         SetLastPgDeskIdx();
                     }
@@ -1783,7 +1783,7 @@ BYTE lcl_ReadBorders( BOOL bVer67, WW8_BRC* brc,
     return nBorder;
 }
 
-void Set1Border( BOOL bVer67, SvxBoxItem &rBox, const WW8_BRC& rBor, 
+void Set1Border( BOOL bVer67, SvxBoxItem &rBox, const WW8_BRC& rBor,
     USHORT nOOIndex, USHORT nWWIndex, short *pSize=0 )
 {
     // Declaration in accordance with svx/boxitem.hxx
@@ -1820,7 +1820,7 @@ void Set1Border( BOOL bVer67, SvxBoxItem &rBox, const WW8_BRC& rBor,
     }
 
     // Map to our border types, we should use of one equal line
-    // thickness, or one of smaller thickness. If too small we 
+    // thickness, or one of smaller thickness. If too small we
     // can make the defecit up in additional white space or
     // object size
     switch( nIdx )
@@ -1837,114 +1837,114 @@ void Set1Border( BOOL bVer67, SvxBoxItem &rBox, const WW8_BRC& rBor,
         case 22:
         // or if in necessary by a double line
         case 24:
-        case 25:		
-            if( nLineThickness < 20) 
+        case 25:
+            if( nLineThickness < 20)
                 nIdx = 0;//   1 Twip for us
-            else if( nLineThickness < 50) 
+            else if( nLineThickness < 50)
                 nIdx = 1;//  20 Twips
-            else if( nLineThickness < 80) 
+            else if( nLineThickness < 80)
                 nIdx = 2;//  50
-            else if( nLineThickness < 100) 
+            else if( nLineThickness < 100)
                 nIdx = 3;//  80
-            else if( nLineThickness < 150) 
+            else if( nLineThickness < 150)
                 nIdx = 4;// 100
             // Hack: for the quite thick lines we must paint double lines,
             // because our singles lines don't come thicker than 5 points.
-            else if( nLineThickness < 180) 
+            else if( nLineThickness < 180)
                 nIdx = WW8_DECL_LINETAB_OFS_DOUBLE+2;// 150
-            else                         
+            else
                 nIdx = WW8_DECL_LINETAB_OFS_DOUBLE+5;// 180
         break;
         // then the shading beams which we represent by a double line
-        case 23:	
+        case 23:
             nIdx =  6;
         break;
         // then the double lines, for which we have good matches
         case  3:
-        case 10: //Don't have tripple so use double		 
-            if( nLineThickness <  60) 
+        case 10: //Don't have tripple so use double
+            if( nLineThickness <  60)
                 nIdx = WW8_DECL_LINETAB_OFS_DOUBLE+ 0;// 22 Twips for us
-            else if( nLineThickness < 135) 
-                nIdx = WW8_DECL_LINETAB_OFS_DOUBLE+ 7;// some more space 
-            else if( nLineThickness < 180) 
+            else if( nLineThickness < 135)
+                nIdx = WW8_DECL_LINETAB_OFS_DOUBLE+ 7;// some more space
+            else if( nLineThickness < 180)
                 nIdx = WW8_DECL_LINETAB_OFS_DOUBLE+ 1;// 60
-            else                          
+            else
                 nIdx = WW8_DECL_LINETAB_OFS_DOUBLE+ 2;// 150
             break;
-        case 11:		 
+        case 11:
             nIdx = WW8_DECL_LINETAB_OFS_DOUBLE+ 4;//  90 Twips for us
             break;
-        case 12:	
+        case 12:
         case 13: //Don't have thin thick thin, so use thick thin
-            if( nLineThickness <  87) 
+            if( nLineThickness <  87)
                 nIdx = WW8_DECL_LINETAB_OFS_DOUBLE+ 8;//  71 Twips for us
-            else if( nLineThickness < 117) 
+            else if( nLineThickness < 117)
                 nIdx = WW8_DECL_LINETAB_OFS_DOUBLE+ 9;// 101
-            else if( nLineThickness < 166) 
+            else if( nLineThickness < 166)
                 nIdx = WW8_DECL_LINETAB_OFS_DOUBLE+10;// 131
             else
                 nIdx = WW8_DECL_LINETAB_OFS_DOUBLE+ 5;// 180
             break;
-        case 14:		 
-            if( nLineThickness <  46) 
+        case 14:
+            if( nLineThickness <  46)
                 nIdx = WW8_DECL_LINETAB_OFS_DOUBLE+ 0;//  22 Twips for us
-            else if( nLineThickness <  76) 
+            else if( nLineThickness <  76)
                 nIdx = WW8_DECL_LINETAB_OFS_DOUBLE+ 1;//  60
-            else if( nLineThickness < 121) 
+            else if( nLineThickness < 121)
                 nIdx = WW8_DECL_LINETAB_OFS_DOUBLE+ 4;//  90
-            else if( nLineThickness < 166) 
+            else if( nLineThickness < 166)
                 nIdx = WW8_DECL_LINETAB_OFS_DOUBLE+ 2;// 150
             else
                 nIdx = WW8_DECL_LINETAB_OFS_DOUBLE+ 6;// 180
             break;
-        case 15:		 
+        case 15:
         case 16: //Don't have thin thick thin, so use thick thin
-            if( nLineThickness <  46) 
+            if( nLineThickness <  46)
                 nIdx = WW8_DECL_LINETAB_OFS_DOUBLE+ 0;//  22 Twips for us
-            else if( nLineThickness <  76) 
+            else if( nLineThickness <  76)
                 nIdx = WW8_DECL_LINETAB_OFS_DOUBLE+ 1;//  60
-            else if( nLineThickness < 121) 
+            else if( nLineThickness < 121)
                 nIdx = WW8_DECL_LINETAB_OFS_DOUBLE+ 3;//  90
-            else if( nLineThickness < 166) 
+            else if( nLineThickness < 166)
                 nIdx = WW8_DECL_LINETAB_OFS_DOUBLE+ 2;// 150
             else
                 nIdx = WW8_DECL_LINETAB_OFS_DOUBLE+ 5;// 180
             break;
-        case 17:		 
-            if( nLineThickness <  46) 
+        case 17:
+            if( nLineThickness <  46)
                 nIdx = WW8_DECL_LINETAB_OFS_DOUBLE+ 0;//  22 Twips for us
-            else if( nLineThickness <  72) 
+            else if( nLineThickness <  72)
                 nIdx = WW8_DECL_LINETAB_OFS_DOUBLE+ 7;//  52
-            else if( nLineThickness < 137) 
+            else if( nLineThickness < 137)
                 nIdx = WW8_DECL_LINETAB_OFS_DOUBLE+ 4;//  90
             else
                 nIdx = WW8_DECL_LINETAB_OFS_DOUBLE+ 6;// 180
         break;
-        case 18:	
+        case 18:
         case 19: //Don't have thin thick thin, so use thick thin
-            if( nLineThickness <  46) 
+            if( nLineThickness <  46)
                 nIdx = WW8_DECL_LINETAB_OFS_DOUBLE+ 0;//  22 Twips for us
-            else if( nLineThickness <  62) 
+            else if( nLineThickness <  62)
                 nIdx = WW8_DECL_LINETAB_OFS_DOUBLE+ 7;//  52
-            else if( nLineThickness <  87) 
+            else if( nLineThickness <  87)
                 nIdx = WW8_DECL_LINETAB_OFS_DOUBLE+ 8;//  71
-            else if( nLineThickness < 117) 
+            else if( nLineThickness < 117)
                 nIdx = WW8_DECL_LINETAB_OFS_DOUBLE+ 9;// 101
-            else if( nLineThickness < 156) 
+            else if( nLineThickness < 156)
                 nIdx = WW8_DECL_LINETAB_OFS_DOUBLE+10;// 131
             else
                 nIdx = WW8_DECL_LINETAB_OFS_DOUBLE+ 5;// 180
             break;
         case 20:
-            if( nLineThickness <  46) 
+            if( nLineThickness <  46)
                 nIdx = 1; //  20 Twips for us
             else
                 nIdx = WW8_DECL_LINETAB_OFS_DOUBLE+ 1;//  60
             break;
-        case 21:		        
+        case 21:
             nIdx = WW8_DECL_LINETAB_OFS_DOUBLE+ 1;//  60 Twips for us
             break;
-        default: 
+        default:
             nIdx = 0;
             break;
     }
@@ -1999,7 +1999,7 @@ BOOL SwWW8ImplReader::IsBorder( const WW8_BRC* pbrc, BOOL bChkBtwn )
     return lcl_IsBorder( bVer67, pbrc, bChkBtwn );
 }
 
-BOOL SwWW8ImplReader::SetBorder( SvxBoxItem& rBox, const WW8_BRC* pbrc, 
+BOOL SwWW8ImplReader::SetBorder( SvxBoxItem& rBox, const WW8_BRC* pbrc,
     short *pSizeArray, BYTE nSetBorders, BOOL bChkBtwn )
 {
     BOOL bChange = FALSE;
@@ -2027,7 +2027,7 @@ BOOL SwWW8ImplReader::SetBorder( SvxBoxItem& rBox, const WW8_BRC* pbrc,
         {
             /*
             ##826##, ##653##
-            
+
             If a style has borders set,and the para attributes attempt remove
             the borders, then this is perfectably acceptable, so we shouldn't
             ignore this blank entry
@@ -2379,7 +2379,7 @@ BOOL WW8FlyPara::Read( const BYTE* pSprm29, WW8RStyle* pStyle )
 
 
 WW8SwFlyPara::WW8SwFlyPara( SwPaM& rPaM, SwWW8ImplReader& rIo, WW8FlyPara& rWW,
-    short nPgTop, short nPgLeft, short nPgWidth, INT32 nIniFlyDx, 
+    short nPgTop, short nPgLeft, short nPgWidth, INT32 nIniFlyDx,
     INT32 nIniFlyDy )
 {
     memset( this, 0, sizeof( WW8SwFlyPara ) );	// Initialisieren
@@ -2563,9 +2563,9 @@ WW8SwFlyPara::WW8SwFlyPara( SwPaM& rPaM, SwWW8ImplReader& rIo, WW8FlyPara& rWW,
                                             // Raender ausserhalb der Umrandung
     nWidth += nLeLMgn + nRiLMgn;
     /*
-    ##582## 
+    ##582##
     Word has a curious bug where the offset stored do not take into account
-    the internal distance from the corner both 
+    the internal distance from the corner both
     */
     nXPos -= nLeLMgn;
 
@@ -2656,7 +2656,7 @@ WW8FlySet::WW8FlySet( SwWW8ImplReader& rReader, /*const*/ WW8FlyPara* pFW,
     Put( aSur );
 
     short aSizeArray[5]={0};
-    rReader.SetFlyBordersShadow( *this, (WW8_BRC*)pFW->brc, pFS->nInnerMgn, 
+    rReader.SetFlyBordersShadow( *this, (WW8_BRC*)pFW->brc, pFS->nInnerMgn,
         &aSizeArray[0] );
             // der 5. Parameter ist immer 0, daher geht beim Cast nix verloren
 
@@ -2664,8 +2664,8 @@ WW8FlySet::WW8FlySet( SwWW8ImplReader& rReader, /*const*/ WW8FlyPara* pFW,
     {
         Put( SwFmtAnchor(pFS->eAnchor) );
         // Groesse einstellen
-        Put( SwFmtFrmSize( pFS->eHeightFix, 
-            pFS->nWidth+aSizeArray[WW8_LEFT]+aSizeArray[WW8_RIGHT], 
+        Put( SwFmtFrmSize( pFS->eHeightFix,
+            pFS->nWidth+aSizeArray[WW8_LEFT]+aSizeArray[WW8_RIGHT],
             pFS->nHeight+aSizeArray[WW8_TOP]+aSizeArray[WW8_BOT] ));
     }
 }
@@ -2684,7 +2684,7 @@ WW8FlySet::WW8FlySet( SwWW8ImplReader& rReader, const SwPaM* pPaM,
     Put( aAnchor );
 
     Put( SwFmtVertOrient( 0, VERT_TOP, FRAME ));
-        
+
     short aSizeArray[5]={0};
     /*
     If we have set borders then in word the graphic is displaced from the left
@@ -2702,13 +2702,13 @@ WW8FlySet::WW8FlySet( SwWW8ImplReader& rReader, const SwPaM* pPaM,
         aSizeArray[WW8_RIGHT]*=2;
         aSizeArray[WW8_BOT]*=2;
     }
-    
+
     Put( SwFmtFrmSize( ATT_FIX_SIZE, nWidth+aSizeArray[WW8_LEFT]+
         aSizeArray[WW8_RIGHT], nHeight+aSizeArray[WW8_TOP]+
         aSizeArray[WW8_BOT] ) );
 }
 
-WW8DupProperties::WW8DupProperties(SwDoc &rDoc, 
+WW8DupProperties::WW8DupProperties(SwDoc &rDoc,
     SwWW8FltControlStack *pStk) :
     aChrSet(rDoc.GetAttrPool(), RES_CHRATR_BEGIN, RES_CHRATR_END - 1 ),
     aParSet(rDoc.GetAttrPool(), RES_PARATR_BEGIN, RES_PARATR_END - 1 ),
@@ -2722,13 +2722,13 @@ WW8DupProperties::WW8DupProperties(SwDoc &rDoc,
         const SwFltStackEntry* pEntry = (*pCtrlStck)[ i ];
         if(pEntry->bLocked)
         {
-            if (pEntry->pAttr->Which() > RES_CHRATR_BEGIN && 
+            if (pEntry->pAttr->Which() > RES_CHRATR_BEGIN &&
                 pEntry->pAttr->Which() < RES_CHRATR_END)
             {
                 aChrSet.Put( *pEntry->pAttr );
 
             }
-            else if (pEntry->pAttr->Which() > RES_PARATR_BEGIN && 
+            else if (pEntry->pAttr->Which() > RES_PARATR_BEGIN &&
                 pEntry->pAttr->Which() < RES_PARATR_END)
             {
                 aParSet.Put( *pEntry->pAttr );
@@ -2758,7 +2758,7 @@ void WW8DupProperties::Insert(const SwPosition &rPos)
 }
 
 void WW8AnchoringProperties::Remove(const SwPosition &rPos,SwWW8ImplReader &rR,
-    SwFltControlStack *pCtrlStck) 
+    SwFltControlStack *pCtrlStck)
 {
     //Remove anchors from stack so they will not be closed inside textboxes
     //will be reinserted after textbox has ended.
@@ -2779,7 +2779,7 @@ void WW8AnchoringProperties::Remove(const SwPosition &rPos,SwWW8ImplReader &rR,
     }
 }
 
-void WW8AnchoringProperties::Insert(SwFltControlStack *pCtrlStck) 
+void WW8AnchoringProperties::Insert(SwFltControlStack *pCtrlStck)
 {
     //reinsert anchors at their original position
     for (USHORT nI = pStack ? pStack->Count() : 0; nI > 0; nI--)
@@ -2792,7 +2792,7 @@ void WW8AnchoringProperties::Insert(SwFltControlStack *pCtrlStck)
 
 BOOL SwWW8ImplReader::StartApo( const BYTE* pSprm29, BOOL bNowStyleApo )
 {
-    pWFlyPara = new WW8FlyPara ( bVer67, bNowStyleApo  ?  
+    pWFlyPara = new WW8FlyPara ( bVer67, bNowStyleApo  ?
         pCollA[nAktColl].pWWFly : 0 );
 
     // APO-Parameter ermitteln und Test auf bGrafApo
@@ -2823,7 +2823,7 @@ BOOL SwWW8ImplReader::StartApo( const BYTE* pSprm29, BOOL bNowStyleApo )
 
         if( FLY_IN_CNTNT != pSFlyPara->eAnchor )
         {
-            pCtrlStck->NewAttr( *pPaM->GetPoint(), 
+            pCtrlStck->NewAttr( *pPaM->GetPoint(),
                 SwFltAnchor( pSFlyPara->pFlyFmt ) );
         }
 
@@ -2832,7 +2832,7 @@ BOOL SwWW8ImplReader::StartApo( const BYTE* pSprm29, BOOL bNowStyleApo )
         nLastFlyNode = pSFlyPara->pMainTextPos->nNode.GetIndex();
 
         //remove fltanchors, otherwise they will be closed inside the
-        //frame, which makes no sense, restore them after the frame is 
+        //frame, which makes no sense, restore them after the frame is
         //closed
         pSFlyPara->aAnchoring.Remove(*pPaM->GetPoint(),*this,pCtrlStck);
         WW8DupProperties aDup(rDoc,pCtrlStck);
@@ -3183,12 +3183,12 @@ void SwWW8ImplReader::Read_BoldUsw( USHORT nId, const BYTE* pData, short nLen )
     SwWW8StyInf* pSI = &pCollA[nAktColl];
     if (pPlcxMan)
     {
-        const BYTE *pCharIstd = 
+        const BYTE *pCharIstd =
             pPlcxMan->GetChpPLCF()->HasSprm(bVer67 ? 80 : 0x4A30);
         if (pCharIstd)
             pSI = &pCollA[SVBT16ToShort( pCharIstd )];
     }
-        
+
     if( pAktColl )							// StyleDef -> Flags merken
     {
         if( pSI->nBase < nColls 			// Style Based on
@@ -3202,8 +3202,8 @@ void SwWW8ImplReader::Read_BoldUsw( USHORT nId, const BYTE* pData, short nLen )
             pSI->n81Flags &= ~nMask;		// Flag loeschen
     }
     else
-    {	
-        
+    {
+
         // im Text -> Flags abfragen
         if( *pData & 0x80 )					// Bit 7 gesetzt ?
         {
@@ -3373,7 +3373,7 @@ NoBracket 	78 CA 06 -	02 00 00 02 34 52
 <>			78 CA 06 -	02 03 00 02 34 52
 {}			78 CA 06 -	02 04 00 02 34 52
 */
-void SwWW8ImplReader::Read_DoubleLine_Rotate( USHORT, const BYTE* pData, 
+void SwWW8ImplReader::Read_DoubleLine_Rotate( USHORT, const BYTE* pData,
     short nLen )
 {
     if( nLen < 0 ) // close the tag
@@ -3427,12 +3427,12 @@ void SwWW8ImplReader::Read_TxtColor( USHORT, const BYTE* pData, short nLen )
         BYTE b = *pData;			// Parameter: 0 = Auto, 1..16 Farben
 
         if( b > 16 )				// unbekannt -> Black
-            b = 0;					
+            b = 0;
 
         NewAttr( SvxColorItem( Color( eSwWW8ColA[b] ) ) );
         bTxtCol = TRUE;							// SHD darf nicht Farbe einschalten
-        if( pAktColl && pStyles )	 		
-            pStyles->bTxtColChanged = TRUE;	
+        if( pAktColl && pStyles )
+            pStyles->bTxtColChanged = TRUE;
     }
 }
 
@@ -4154,14 +4154,14 @@ void SwWW8ImplReader::Read_Emphasis( USHORT, const BYTE* pData, short nLen )
             nLang = ((const SvxLanguageItem *)
                 GetFmtAttr(RES_CHRATR_CJK_LANGUAGE))->GetLanguage();
         }
-            
+
         sal_uInt16 nVal;
         switch( *pData )
         {
-        case 0:		
+        case 0:
             nVal = EMPHASISMARK_NONE;
             break;
-        case 2:		
+        case 2:
             if ((nLang == LANGUAGE_CHINESE_HONGKONG) ||
                 (nLang == LANGUAGE_CHINESE_MACAU) ||
                 (nLang == LANGUAGE_CHINESE_TRADITIONAL) ||
@@ -4172,20 +4172,20 @@ void SwWW8ImplReader::Read_Emphasis( USHORT, const BYTE* pData, short nLen )
             else
                 nVal = EMPHASISMARK_DOTS_BELOW;
             break;
-        case 3:		
+        case 3:
             nVal = EMPHASISMARK_CIRCLE_ABOVE;
             break;
-        case 4:     
-            nVal = EMPHASISMARK_DOTS_BELOW;		
+        case 4:
+            nVal = EMPHASISMARK_DOTS_BELOW;
             break;
-        case 1:     
+        case 1:
             if ((nLang == LANGUAGE_CHINESE_SIMPLIFIED) ||
                 (nLang == LANGUAGE_CHINESE_SINGAPORE))
                 nVal = EMPHASISMARK_DOTS_BELOW;
             else
-                nVal = EMPHASISMARK_DOTS_ABOVE;		
+                nVal = EMPHASISMARK_DOTS_ABOVE;
             break;
-        default:    
+        default:
             nVal = EMPHASISMARK_DOTS_ABOVE;
             break;
         }
@@ -4318,14 +4318,14 @@ static ULONG __READONLY_DATA eMSGrayScale[] = {
     if (b == 0)
         b = 1;
     nFore = eSwWW8ColA[b];
-                                        
+
     b = rSHD.GetBack();
     if( b >=  17 )
         b = 0;
 
     //NO auto for shading so background: Auto = Weiss
     if( b == 0 )
-        b = 8;							
+        b = 8;
     nBack = eSwWW8ColA[b];
 
     b = rSHD.GetStyle( bVer67 );
@@ -4538,10 +4538,10 @@ void SwWW8ImplReader::Read_AlignFont( USHORT, const BYTE* pData, short nLen )
                 ASSERT(!this,"Unknown paragraph vertical align");
                 break;
         }
-        NewAttr( SvxParaVertAlignItem( nVal ) );		
+        NewAttr( SvxParaVertAlignItem( nVal ) );
     }
 }
-    
+
 
 void SwWW8ImplReader::Read_KeepLines( USHORT, const BYTE* pData, short nLen )
 {
@@ -5140,31 +5140,31 @@ SprmReadInfo aSprmReadTab[] = {
     0xD62B, (FNReadRecord)0, //"sprmTVertMerge" // tap.rgtc[].vertMerge;complex (see below);variable length always recorded as 2 bytes;
     0xD62C, (FNReadRecord)0, //"sprmTVertAlign" // tap.rgtc[].vertAlign;complex (see below);variable length always recorded as 3 byte;
     0xCA78, &SwWW8ImplReader::Read_DoubleLine_Rotate,
-    0x6649, (FNReadRecord)0, //undocumented 
-    0x6649, (FNReadRecord)0, //undocumented 
-    0xF614, (FNReadRecord)0, //undocumented 
-    0xD612, (FNReadRecord)0, //undocumented 
-    0xD613, (FNReadRecord)0, //undocumented 
-    0xD61A, (FNReadRecord)0, //undocumented 
-    0xD61B, (FNReadRecord)0, //undocumented 
-    0xD61C, (FNReadRecord)0, //undocumented 
-    0xD61D, (FNReadRecord)0, //undocumented 
-    0xD634, (FNReadRecord)0, //undocumented 
+    0x6649, (FNReadRecord)0, //undocumented
+    0x6649, (FNReadRecord)0, //undocumented
+    0xF614, (FNReadRecord)0, //undocumented
+    0xD612, (FNReadRecord)0, //undocumented
+    0xD613, (FNReadRecord)0, //undocumented
+    0xD61A, (FNReadRecord)0, //undocumented
+    0xD61B, (FNReadRecord)0, //undocumented
+    0xD61C, (FNReadRecord)0, //undocumented
+    0xD61D, (FNReadRecord)0, //undocumented
+    0xD634, (FNReadRecord)0, //undocumented
     0xD238, (FNReadRecord)0, //undocumented sep
-    0xC64E, (FNReadRecord)0, //undocumented 
-    0xC64F, (FNReadRecord)0, //undocumented 
-    0xC650, (FNReadRecord)0, //undocumented 
-    0xC651, (FNReadRecord)0, //undocumented 
-    0xF661, (FNReadRecord)0, //undocumented 
-    0x4873, (FNReadRecord)0, //undocumented 
-    0x4874, (FNReadRecord)0, //undocumented 
-    0x6463, (FNReadRecord)0, //undocumented 
-    0x6870, (FNReadRecord)0, //undocumented 
+    0xC64E, (FNReadRecord)0, //undocumented
+    0xC64F, (FNReadRecord)0, //undocumented
+    0xC650, (FNReadRecord)0, //undocumented
+    0xC651, (FNReadRecord)0, //undocumented
+    0xF661, (FNReadRecord)0, //undocumented
+    0x4873, (FNReadRecord)0, //undocumented
+    0x4874, (FNReadRecord)0, //undocumented
+    0x6463, (FNReadRecord)0, //undocumented
+    0x6870, (FNReadRecord)0, //undocumented
     0x2461, (FNReadRecord)0, //undoc, must be asian version of "sprmPJc"
-    0x845E, (FNReadRecord)0, //undoc, must be asian version of "sprmPDxaLeft" 
+    0x845E, (FNReadRecord)0, //undoc, must be asian version of "sprmPDxaLeft"
     0x8460, (FNReadRecord)0, //undoc, must be asian version of "sprmPDxaLeft1"
     0x845D, (FNReadRecord)0, //undoc, must be asian version of "sprmPDxaRight"
-    0x3615, (FNReadRecord)0 //undocumented 
+    0x3615, (FNReadRecord)0 //undocumented
 };
 
 //-----------------------------------------
@@ -5262,250 +5262,3 @@ short SwWW8ImplReader::ImportSprm( const BYTE* pPos, short nSprmsLen, USHORT nId
 
 
 
-/*************************************************************************
-
-      Source Code Control System - Header
-
-      $Header: /zpool/svn/migration/cvs_rep_09_09_08/code/sw/source/filter/ww8/ww8par6.cxx,v 1.37 2001-09-21 15:40:50 cmc Exp $
-
-
-      Source Code Control System - Update
-
-      $Log: not supported by cvs2svn $
-      Revision 1.36  2001/09/10 15:51:44  cmc
-      #92059# Consider border widths in {im|ex}port of floating elements
-    
-      Revision 1.35  2001/09/05 10:16:19  cmc
-      #91916# Improve size calculation of inline graphics to consider borders,shadows and spacing as word does
-    
-      Revision 1.34  2001/08/28 15:24:29  cmc
-      #91622 Properties open at begin and end of tables and frames need to be cunningly duplicated outside and inside element
-    
-      Revision 1.33  2001/07/30 09:18:10  cmc
-      #i1353# Import Vertical Cell Alignment
-    
-      Revision 1.32  2001/07/17 13:28:26  cmc
-      #89808# ##1192## Retain blank pages before explicit section breaks
-    
-      Revision 1.31  2001/07/13 14:08:12  cmc
-      #89125# WW6 Redline authorname table import fix ( + new undocumented sprms)
-    
-      Revision 1.30  2001/06/06 12:46:32  cmc
-      #76673# ##1005## Fastsave table Insert/Delete Cell implementation, const reworking required
-    
-      Revision 1.29  2001/05/14 13:36:48  cmc
-      ##887## Attribute toggling for bold etc must change character style settings if in use
-    
-      Revision 1.28  2001/05/10 13:13:03  cmc
-      ##766## Another missing special case for simplified chinese
-    
-      Revision 1.27  2001/05/04 09:19:37  cmc
-      ##766## chinese emphasis mark is comma not dot
-    
-      Revision 1.26  2001/04/30 08:52:17  cmc
-      ##766## Emphasis mark import needs to consider CJK language to determine correct mark displayed
-    
-      Revision 1.25  2001/04/27 12:10:54  cmc
-      ##826## Allow borders set in styles to be removed by sprms with empty line descriptions
-    
-      Revision 1.24  2001/04/27 11:17:02  cmc
-      ##826## Allow borders set in styles to be removed by sprms with empty line descriptions
-    
-      Revision 1.23  2001/04/24 16:17:10  cmc
-      ##761## workaround. No automatic colour for table borders, cells or sdrtextobjs
-    
-      Revision 1.22  2001/04/24 10:26:11  cmc
-      CJK Vertical Text Alignment {im|ex}port
-    
-      Revision 1.21  2001/04/23 11:16:23  cmc
-      Enable automatic text foreground color {im|ex}port
-    
-      Revision 1.20  2001/04/20 14:49:03  cmc
-      Missing sprms and bad WW6 fontselection sprm id
-    
-      Revision 1.19  2001/04/05 16:54:15  cmc
-      ##573## Take first line indent into account before removing tabstops during readjustment
-    
-      Revision 1.18  2001/04/05 13:52:03  cmc
-      ##582## Subtle textbox layout and background colour issues
-    
-      Revision 1.17  2001/03/16 17:15:59  jp
-      new: im-/export emboss / engrave attribute
-    
-      Revision 1.16  2001/03/16 14:19:41  cmc
-      Add some undocumented sprms
-    
-      Revision 1.15  2001/03/13 16:21:22  cmc
-      ##503##, #84126#. Incorrect endnote setting, and duplicate code
-    
-      Revision 1.14  2001/02/23 12:45:26  os
-      Complete use of DefaultNumbering component
-
-      Revision 1.13  2001/02/20 10:34:57  cmc
-      #83546# Don't create a tab stop description without any tab stops
-
-      Revision 1.12  2001/02/15 20:08:10  jp
-      im-/export the Rotate-/ScaleWidth-Character attribut
-
-      Revision 1.11  2001/02/07 16:15:13  cmc
-      #83307# Change automatic width handling for frames, with special care for header/footer problems
-
-      Revision 1.10  2001/02/07 11:12:31  cmc
-      #83308# Allow negative frame positions
-
-      Revision 1.9  2001/02/06 17:28:21  cmc
-      #83581# CJK Two Lines in One {Im|Ex}port for Word
-
-      Revision 1.8  2001/02/06 13:13:07  cmc
-      #83356# Support Explicit Page Start Number for WW6/7
-
-      Revision 1.7  2001/01/26 10:57:04  cmc
-      ##158## Table relief Border width hack modified
-
-      Revision 1.6  2000/12/01 11:22:52  jp
-      Task #81077#: im-/export of CJK documents
-
-      Revision 1.5  2000/11/28 15:22:49  khz
-      #79657# avoid accessing NULL pointer when reading LVL properties
-
-      Revision 1.4  2000/10/26 12:23:38  khz
-      add paragraph's left border to TabStops (as WW does)
-
-      Revision 1.3  2000/10/25 14:10:36  khz
-      Now supporting negative horizontal indentation of paragrahps and tables
-
-      Revision 1.2  2000/10/17 15:06:36  khz
-      Bug #79439# WW border ordering is different than StarWriter's
-
-      Revision 1.1.1.1  2000/09/18 17:14:59  hr
-      initial import
-
-      Revision 1.104  2000/09/18 16:05:01  willem.vandorp
-      OpenOffice header added.
-
-      Revision 1.103  2000/08/24 13:20:54  kz
-      Max (long, long)
-
-      Revision 1.102  2000/08/21 15:03:09  khz
-      #77692# import page orientation
-
-      Revision 1.101  2000/08/18 09:48:33  khz
-      Import Line Numbering (restart on new section)
-
-      Revision 1.100  2000/08/18 06:47:29  khz
-      Import Line Numbering
-
-      Revision 1.99  2000/07/25 15:16:29  khz
-      #76811# read/write AutoHyphenation flag from/into Document Properties
-
-      Revision 1.98  2000/07/17 13:47:04  khz
-      #73987# check if sprmSNfcPgn should cause section change or not
-
-      Revision 1.97  2000/07/11 11:30:59  khz
-      #76673# prepare implementation of sprmTDelete and sprmTInsert
-
-      Revision 1.96  2000/06/28 08:07:48  khz
-      #70915# Insert Section if end-note with flag 'on end of section' found
-
-      Revision 1.95  2000/05/25 08:06:57  khz
-      Piece Table optimization, Unicode changes, Bugfixes
-
-      Revision 1.94  2000/05/16 12:03:50  jp
-      Changes for unicode
-
-      Revision 1.93  2000/05/16 11:23:49  khz
-      Unicode code-conversion
-
-      Revision 1.92  2000/03/21 10:37:08  khz
-      Task #74319# - do NOT close just inserted (still empty!) section in CreateSep()
-                   - closing of old section may cause the creation of a new one
-      Task #66529# improve Header/Footer import
-
-      Revision 1.91  2000/03/10 14:27:15  khz
-      Task #65529# improve detection if Section is identical with previous
-
-      Revision 1.90  2000/03/03 15:20:02  os
-      StarView remainders removed
-
-      Revision 1.89  2000/02/23 17:43:03  cmc
-      #68832# Consider endnotes for header footer code
-
-      Revision 1.88  2000/02/22 14:55:19  khz
-      partial fix of #66832#
-
-      Revision 1.87  2000/02/21 13:08:30  jp
-      #70473# changes for unicode
-
-      Revision 1.86  2000/02/15 16:09:28  jp
-      #70473# changes for unicode
-
-      Revision 1.85  2000/02/09 11:43:31  khz
-      no Task Id: code cleaned for of annoying warning
-
-      Revision 1.84  2000/01/21 16:42:44  khz
-      Task #69155# set pPaM when inserting section with/without columns
-
-      Revision 1.83  2000/01/19 17:08:51  khz
-      Task #69178# never insert Fontattribute when skipping text content
-
-      Revision 1.82  2000/01/14 11:27:59  khz
-      Task #68832# -- CORRECTION: Task Number of rev below should have been: 68832 !
-
-      Revision 1.81  2000/01/14 11:11:34  khz
-      Task #71343# look for Sprm 37 (not 5) to recognize APO
-
-      Revision 1.80  2000/01/06 15:23:49  khz
-      Task #71411# Let last Section be unbalanced
-
-      Revision 1.79  1999/12/23 15:10:46  jp
-      Task #70915#: set Ftn-/End-TxtAtEnd attributes at sections
-
-      Revision 1.78  1999/12/23 14:03:42  khz
-      Task #68143# avoid attributes atached solely to Cell-End marks
-
-      Revision 1.77  1999/12/23 10:24:53  khz
-      Task #71209# avoid accessing pPageDesk if it's 0 ;-)
-
-      Revision 1.76  1999/12/22 18:03:35  khz
-      Task #70919# look if ParaStyle is different behind filed than it was before
-
-      Revision 1.75  1999/12/09 16:46:36  khz
-      Task #69180# allow Tabs if right of 1st-line-start OR right of paragraph margin
-
-      Revision 1.74  1999/12/07 14:28:56  khz
-      Task #69508# import sprmPHugePapx by reading DATA stream
-
-      Revision 1.73  1999/12/01 14:35:52  khz
-      Task #68488# Graphics in Sections with more than one Column
-
-      Revision 1.72  1999/11/25 12:28:37  khz
-      Task #68482# Store data in member *after* memset(this,0,...) in WW8FlyPara()
-
-      Revision 1.71  1999/11/24 12:33:15  khz
-      Task #66194# don't consider Sect-Properties to be unequal when one is protected
-
-      Revision 1.70  1999/11/12 15:29:25  khz
-      Task #69204#: prevent from inserting '?' when ConvertFromUnicode() fails
-
-      Revision 1.69  1999/11/12 13:05:03  jp
-      new: read sprmCHighlight
-
-      Revision 1.68  1999/11/02 15:59:49  khz
-      import new TOX_CONTENT and TOX_INDEX features (2)
-
-      Revision 1.67  1999/10/13 21:06:12  khz
-      Import Redlining (3)
-
-      Revision 1.66  1999/10/08 09:26:23  khz
-      Import Redlining
-
-      Revision 1.65  1999/09/10 15:36:35  khz
-      CharSet matching made by TENCINFO.H::rtl_getTextEncodingFromWindowsCharset()
-
-      Revision 1.64  1999/09/09 18:16:25  khz
-      CharSet matching now done in central methode WW8SCAN.HXX::WW8GetCharSet()
-
-      Revision 1.63  1999/08/10 13:16:26  KHZ
-      Task #66019# corrction of Font Family by analyzing Font Name
-
-*************************************************************************/

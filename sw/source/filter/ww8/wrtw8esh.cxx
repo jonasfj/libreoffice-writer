@@ -2,9 +2,9 @@
  *
  *  $RCSfile: wrtw8esh.cxx,v $
  *
- *  $Revision: 1.21 $
+ *  $Revision: 1.22 $
  *
- *  last change: $Author: cmc $ $Date: 2001-09-26 10:49:38 $
+ *  last change: $Author: os $ $Date: 2001-09-28 08:14:49 $
  *
  *  The Contents of this file are made available subject to the terms of
  *  either of the following licenses
@@ -323,23 +323,23 @@ void WW8_WrPlcDrawObj::WritePlc( SwWW8Writer& rWrt ) const
             USHORT nContour = rSurr.IsContour() ? 0x80 : 0x40;
             switch( rSurr.GetSurround() )
             {
-                case SURROUND_NONE:     	
-                    nFlags |= 0x020;	
+                case SURROUND_NONE:
+                    nFlags |= 0x020;
                     break;
-                case SURROUND_THROUGHT:		
-                    nFlags |= 0x060;	
+                case SURROUND_THROUGHT:
+                    nFlags |= 0x060;
                     break;
-                case SURROUND_PARALLEL:		
-                    nFlags |= 0x000 | nContour;	
+                case SURROUND_PARALLEL:
+                    nFlags |= 0x000 | nContour;
                     break;
-                case SURROUND_IDEAL:        
-                    nFlags |= 0x600 | nContour;	
+                case SURROUND_IDEAL:
+                    nFlags |= 0x600 | nContour;
                     break;
-                case SURROUND_LEFT:			
-                    nFlags |= 0x200 | nContour;	
+                case SURROUND_LEFT:
+                    nFlags |= 0x200 | nContour;
                     break;
-                case SURROUND_RIGHT:        
-                    nFlags |= 0x400 | nContour;	
+                case SURROUND_RIGHT:
+                    nFlags |= 0x400 | nContour;
                     break;
             }
             if( pObj && pObj->GetLayer() == rWrt.pDoc->GetHellId() )
@@ -397,7 +397,7 @@ BOOL WW8_WrPlcDrawObj::Append( SwWW8Writer& rWrt, WW8_CP nCp,
     return bRet;
 }
 
-void WW8_WrPlcDrawObj::SetShapeDetails( const SwFrmFmt& rFmt, UINT32 nId, 
+void WW8_WrPlcDrawObj::SetShapeDetails( const SwFrmFmt& rFmt, UINT32 nId,
     USHORT nThick )
 {
     const VoidPtr p = (void*)&rFmt;
@@ -509,7 +509,7 @@ void SwWW8Writer::AppendFlyInFlys( WW8_CP& rCP, const SwFrmFmt& rFrmFmt,
     }
 
     if (bExportAsTable)
-    { 
+    {
         SwTwips nTblSz = rFrmFmt.GetFrmSize().GetWidth();
         SwTwips nPageSize = nTblSz;
         SwTwips nTblOffset=0;
@@ -530,7 +530,7 @@ void SwWW8Writer::AppendFlyInFlys( WW8_CP& rCP, const SwFrmFmt& rFrmFmt,
         long nHeight=0;
         const SwFmtFrmSize& rLSz = rFrmFmt.GetFrmSize();
         if( ATT_VAR_SIZE != rLSz.GetSizeType() && rLSz.GetHeight() )
-            nHeight = ATT_MIN_SIZE == rLSz.GetSizeType() 
+            nHeight = ATT_MIN_SIZE == rLSz.GetSizeType()
                 ? rLSz.GetHeight() : -rLSz.GetHeight();
 
         if( nHeight )
@@ -563,13 +563,13 @@ void SwWW8Writer::AppendFlyInFlys( WW8_CP& rCP, const SwFrmFmt& rFrmFmt,
             SwWW8Writer::InsUInt16( aAt, 0xD608 );
             SwWW8Writer::InsUInt16( aAt, 2 + ( nWWColMax + 1 ) * 2 +
                 ( nWWColMax * 20 ));
-            aAt.Insert( nWWColMax, aAt.Count() );           
+            aAt.Insert( nWWColMax, aAt.Count() );
         }
         else
         {
             aAt.Insert( 190, aAt.Count() );
-            SwWW8Writer::InsUInt16( aAt, nWWColMax * 12 + 4 );  
-            aAt.Insert( nWWColMax, aAt.Count() );       
+            SwWW8Writer::InsUInt16( aAt, nWWColMax * 12 + 4 );
+            aAt.Insert( nWWColMax, aAt.Count() );
         }
         nTblOffset = -8;
         SwWW8Writer::InsUInt16( aAt, (USHORT)nTblOffset );
@@ -1056,7 +1056,7 @@ class SwEscherEx : public  EscherEx
     void WriteOCXControl( const SwFrmFmt& rFmt, UINT32 nShapeId );
     USHORT WriteFlyFrameAttr( const SwFrmFmt& rFmt, MSO_SPT eShapeType,
         EscherPropertyContainer& rPropOpt );
-    void WriteGrfAttr( const SwNoTxtNode& rNd, 
+    void WriteGrfAttr( const SwNoTxtNode& rNd,
         EscherPropertyContainer& rPropOpt );
 
     USHORT WriteFlyFrm( const SwFrmFmt& rFmt, UINT32 &rShapeId );
@@ -1151,7 +1151,7 @@ SwEscherEx::SwEscherEx( SvStream* pStrm, SwWW8Writer& rWW8Wrt )
     pTxtBxs = rWrt.pHFTxtBxs;
 
     // if no header/footer -> skip over
-    if( !pSdrObjs->GetCntntArr().Count() )		
+    if( !pSdrObjs->GetCntntArr().Count() )
     {
         --i;
         pSdrObjs = rWrt.pSdrObjs;
@@ -1356,7 +1356,7 @@ void WinwordAnchoring::SetAnchoring( const SwFrmFmt& rFmt, BOOL bBROKEN )
 
     //There must be a problem with page anchoring and draw objects in writer
     //must be a problem somewhere.
-    if (bBROKEN) 
+    if (bBROKEN)
     {
         if (eHRel = PRTAREA)
             eHRel = FRAME;
@@ -1956,19 +1956,19 @@ USHORT SwEscherEx::WriteGrfFlyFrame( const SwFrmFmt& rFmt, UINT32 nShapeId )
 
             if ( MAP_PIXEL == aGraphic.GetPrefMapMode().GetMapUnit() )
             {
-                aSize = Application::GetDefaultDevice()->PixelToLogic( 
+                aSize = Application::GetDefaultDevice()->PixelToLogic(
                     aSize, aMap100mm );
             }
             else
             {
-                aSize = OutputDevice::LogicToLogic( aSize, 
+                aSize = OutputDevice::LogicToLogic( aSize,
                     aGraphic.GetPrefMapMode(), aMap100mm );
             }
 
             Point aEmptyPoint = Point();
             Rectangle aRect( aEmptyPoint, aSize );
 
-            sal_uInt32 nBlibId = GetBlibID( *QueryPicStream(), aUniqueId, 
+            sal_uInt32 nBlibId = GetBlibID( *QueryPicStream(), aUniqueId,
                 aRect, NULL );
             if ( nBlibId )
             {
@@ -2053,7 +2053,7 @@ USHORT SwEscherEx::WriteOLEFlyFrame( const SwFrmFmt& rFmt, UINT32 nShapeId )
             aSz.Height() = DrawModelToEmu( aSz.Height() );
             Rectangle aRect( Point(0,0), aSz );
 
-            sal_uInt32 nBlibId = GetBlibID( *QueryPicStream(), aUniqueId, 
+            sal_uInt32 nBlibId = GetBlibID( *QueryPicStream(), aUniqueId,
                 aRect, NULL );
             if ( nBlibId )
             {
@@ -2085,7 +2085,7 @@ USHORT SwEscherEx::WriteOLEFlyFrame( const SwFrmFmt& rFmt, UINT32 nShapeId )
 }
 
 
-void SwEscherEx::WriteGrfAttr( const SwNoTxtNode& rNd, 
+void SwEscherEx::WriteGrfAttr( const SwNoTxtNode& rNd,
     EscherPropertyContainer& rPropOpt )
 {
     const SfxPoolItem* pItem;
@@ -2093,20 +2093,20 @@ void SwEscherEx::WriteGrfAttr( const SwNoTxtNode& rNd,
     sal_Int32 nContrast = 0;
     sal_Int16 nBrightness = 0;
 
-    if( SFX_ITEM_SET == rNd.GetSwAttrSet().GetItemState( RES_GRFATR_CONTRAST, 
+    if( SFX_ITEM_SET == rNd.GetSwAttrSet().GetItemState( RES_GRFATR_CONTRAST,
                                                         TRUE, &pItem ) )
     {
         nContrast = ((SfxInt16Item*)pItem)->GetValue();
     }
 
-    if( SFX_ITEM_SET == rNd.GetSwAttrSet().GetItemState( RES_GRFATR_LUMINANCE, 
+    if( SFX_ITEM_SET == rNd.GetSwAttrSet().GetItemState( RES_GRFATR_LUMINANCE,
                                                         TRUE, &pItem ) )
     {
         nBrightness = ((SfxInt16Item*)pItem)->GetValue();
     }
 
 
-    if( SFX_ITEM_SET == rNd.GetSwAttrSet().GetItemState( RES_GRFATR_DRAWMODE, 
+    if( SFX_ITEM_SET == rNd.GetSwAttrSet().GetItemState( RES_GRFATR_DRAWMODE,
                                                         TRUE, &pItem ) )
     {
         nMode = ((SfxEnumItem*)pItem)->GetValue();
@@ -2136,7 +2136,7 @@ void SwEscherEx::WriteGrfAttr( const SwNoTxtNode& rNd,
     else
         nMode = 0;
     rPropOpt.AddOpt( ESCHER_Prop_pictureActive, nMode );
-    
+
     if (nContrast != 0)
     {
         nContrast+=100;
@@ -2159,11 +2159,11 @@ void SwEscherEx::WriteGrfAttr( const SwNoTxtNode& rNd,
 
 #if 0
     //gamma not seen
-    if( SFX_ITEM_SET == rNd.GetSwAttrSet().GetItemState( RES_GRFATR_GAMMA, 
+    if( SFX_ITEM_SET == rNd.GetSwAttrSet().GetItemState( RES_GRFATR_GAMMA,
                                                         TRUE, &pItem ) )
     {
         double fGamma = ((SwGammaGrf*)pItem)->GetValue();
-        rPropOpt.AddOpt( ESCHER_Prop_pictureGamma, 
+        rPropOpt.AddOpt( ESCHER_Prop_pictureGamma,
             static_cast<sal_uInt32>(fGamma * 655) );
     }
 #endif
@@ -2206,14 +2206,14 @@ USHORT SwEscherEx::WriteFlyFrameAttr( const SwFrmFmt& rFmt, MSO_SPT eShapeType,
                 {
                     UINT32 nLineColor = GetColor( pLine->GetColor(), FALSE );
                     rPropOpt.AddOpt( ESCHER_Prop_lineColor, nLineColor );
-                    rPropOpt.AddOpt( ESCHER_Prop_lineBackColor, 
+                    rPropOpt.AddOpt( ESCHER_Prop_lineBackColor,
                         nLineColor ^ 0xffffff );
 
                     MSO_LineStyle eStyle;
                     if( pLine->GetInWidth() )
                     {
                         // double line
-                        nLineWidth = pLine->GetInWidth() + pLine->GetOutWidth() 
+                        nLineWidth = pLine->GetInWidth() + pLine->GetOutWidth()
                             + pLine->GetDistance();
                         if( pLine->GetInWidth() == pLine->GetOutWidth() )
                             eStyle = mso_lineDouble;
@@ -2230,7 +2230,7 @@ USHORT SwEscherEx::WriteFlyFrameAttr( const SwFrmFmt& rFmt, MSO_SPT eShapeType,
                     }
 
                     rPropOpt.AddOpt( ESCHER_Prop_lineStyle, eStyle );
-                    rPropOpt.AddOpt( ESCHER_Prop_lineWidth, 
+                    rPropOpt.AddOpt( ESCHER_Prop_lineWidth,
                         DrawModelToEmu( nLineWidth ));
                     rPropOpt.AddOpt( ESCHER_Prop_fNoLineDrawDash, 0x8000E );
 
@@ -2269,19 +2269,19 @@ USHORT SwEscherEx::WriteFlyFrameAttr( const SwFrmFmt& rFmt, MSO_SPT eShapeType,
 
                     if ( MAP_PIXEL == aGraphic.GetPrefMapMode().GetMapUnit() )
                     {
-                        aSize = Application::GetDefaultDevice()->PixelToLogic( 
+                        aSize = Application::GetDefaultDevice()->PixelToLogic(
                             aSize, aMap100mm );
                     }
                     else
                     {
-                        aSize = OutputDevice::LogicToLogic( aSize, 
+                        aSize = OutputDevice::LogicToLogic( aSize,
                             aGraphic.GetPrefMapMode(), aMap100mm );
                     }
 
                     Point aEmptyPoint = Point();
                     Rectangle aRect( aEmptyPoint, aSize );
 
-                    sal_uInt32 nBlibId = GetBlibID( *QueryPicStream(), 
+                    sal_uInt32 nBlibId = GetBlibID( *QueryPicStream(),
                         aUniqueId, aRect, NULL );
                     if ( nBlibId )
                         rPropOpt.AddOpt(ESCHER_Prop_fillBlip,nBlibId,sal_True);
@@ -2476,149 +2476,4 @@ BOOL SwMSConvertControls::ExportControl(Writer &rWrt, const SdrObject *pObj)
 }
 
 
-
-
-/*************************************************************************
-
-      Source Code Control System - Header
-
-      $Header: /zpool/svn/migration/cvs_rep_09_09_08/code/sw/source/filter/ww8/wrtw8esh.cxx,v 1.21 2001-09-26 10:49:38 cmc Exp $
-
-      Source Code Control System - Update
-
-      $Log: not supported by cvs2svn $
-      Revision 1.20  2001/09/18 09:51:53  cmc
-      #92104# displaced escher groups fixes
-    
-      Revision 1.19  2001/09/10 15:51:44  cmc
-      #92059# Consider border widths in {im|ex}port of floating elements
-    
-      Revision 1.18  2001/09/05 10:16:19  cmc
-      #91916# Improve size calculation of inline graphics to consider borders,shadows and spacing as word does
-    
-      Revision 1.17  2001/06/02 16:06:13  cmc
-      #68662# ##989## parent frame of a fly in fly exported as a table
-    
-      Revision 1.16  2001/05/21 15:45:50  cmc
-      ##897## #87014# #75277# Better inline (FLY_IN_CNTNT) graphics and ole2 object exporting (sideeffects add ole2 support to WW6 export)
-    
-      Revision 1.15  2001/04/20 10:51:44  cmc
-      escher graphic mode is 32bit not 16
-    
-      Revision 1.14  2001/03/29 13:24:44  cmc
-      set hiword and loword bits in escher graphic drawmode
-    
-      Revision 1.13  2001/03/27 12:01:49  cmc
-      brightness, contrast, drawmode {im|ex}port, merge 0x01 and 0x08 graphics systems for escher to replace hack
-    
-      Revision 1.12  2001/03/20 17:03:58  jp
-      use stdarr
-    
-      Revision 1.11  2001/03/14 15:54:34  jp
-      remove hard mapping of EditEngine- and Writer WhichIds
-
-      Revision 1.10  2001/03/09 13:50:44  jp
-      use instead of SvData the GetGDIMetaFile from the SvInPlaceObject
-
-      Revision 1.9  2001/02/07 17:28:25  jp
-      Bug #73759#: WriteFrmExtraData - set right values
-
-      Revision 1.8  2001/01/18 10:59:22  cmc
-      #82587# Slightly Bizarre word late binding problem solved
-
-      Revision 1.7  2001/01/16 13:01:59  obo
-      #65293# parse error linux compiler
-
-      Revision 1.6  2000/12/13 14:13:35  sj
-      AddWmf, AddGraphic had been removed from EscherEx, UniqueId from GraphicObject is now used to get the GraphicId
-
-      Revision 1.5  2000/12/11 14:31:03  sj
-      now using EscherPropertyContainer to create the ESCHER_OPT atom
-
-      Revision 1.4  2000/11/13 10:11:28  khz
-      export extended WW9-Frame-Alignment (write Escher record 0xF122)
-
-      Revision 1.3  2000/10/10 16:54:06  cmc
-      MSOffice 97/2000 Controls {Im|Ex}port
-
-      Revision 1.2  2000/09/21 12:18:55  khz
-      #78753# Avoid dividing by zero.
-
-      Revision 1.1.1.1  2000/09/18 17:14:58  hr
-      initial import
-
-      Revision 1.23  2000/09/18 16:04:57  willem.vandorp
-      OpenOffice header added.
-
-      Revision 1.22  2000/08/25 12:27:31  jp
-      Graphic Crop-Attribut exported to SVX
-
-      Revision 1.21  2000/07/17 20:28:23  jp
-      WriteGrfFlyFrame: alloc buffer for the linked graphics
-
-      Revision 1.20  2000/05/16 17:39:17  jp
-      Changes for Unicode
-
-      Revision 1.19  2000/05/12 16:13:51  jp
-      Changes for Unicode
-
-      Revision 1.18  2000/04/11 17:35:37  jp
-      Bug #74724#: CTOR SwEscherEx - call the end outproc for the SdrPage
-
-      Revision 1.17  2000/03/24 13:55:29  jp
-      Bug #74452#: after writing the escher delete the escher object
-
-      Revision 1.16  2000/03/21 15:04:57  os
-      UNOIII
-
-      Revision 1.15  2000/03/03 15:20:01  os
-      StarView remainders removed
-
-      Revision 1.14  2000/02/23 18:40:03  jp
-      Task #73176#: AddWmf will have EMU values
-
-      Revision 1.13  2000/02/11 14:39:51  hr
-      #70473# changes for unicode ( patched by automated patchtool )
-
-      Revision 1.12  1999/11/24 14:55:55  hr
-      #65293#: added header
-
-      Revision 1.11  1999/10/14 21:05:57  jp
-      Bug #68617#,#68705# and other little things
-
-      Revision 1.10  1999/10/13 09:08:41  jp
-      write character attributs of SdrObjects
-
-      Revision 1.9  1999/10/11 10:57:30  jp
-      some bugfixes #68745#/#69033#/#68681#
-
-      Revision 1.8  1999/09/10 16:27:59  jp
-      write FlyFrms too if no SdrObject exist
-
-      Revision 1.7  1999/09/08 16:29:18  jp
-      Bug #68618#: recognize the write of escher stream
-
-      Revision 1.6  1999/09/01 17:32:38  JP
-      new: write the text of SdrTextObjects
-
-
-      Rev 1.5   01 Sep 1999 19:32:38   JP
-   new: write the text of SdrTextObjects
-
-      Rev 1.4   31 Aug 1999 09:51:36   JP
-   set NumberFormatInt at streams to littleendian
-
-      Rev 1.3   24 Aug 1999 20:15:48   JP
-   Escher Export
-
-      Rev 1.2   16 Aug 1999 17:16:30   JP
-   W97 Export: experimental escher export (1)
-
-      Rev 1.1   16 Aug 1999 13:05:42   JP
-   write EscherObjects - only a testversion!
-
-      Rev 1.0   21 Jul 1999 18:28:56   JP
-   W97 Export: experimental escher export
-
-*************************************************************************/
 

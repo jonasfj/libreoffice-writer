@@ -2,9 +2,9 @@
  *
  *  $RCSfile: ww8graf.cxx,v $
  *
- *  $Revision: 1.36 $
+ *  $Revision: 1.37 $
  *
- *  last change: $Author: cmc $ $Date: 2001-09-21 15:40:50 $
+ *  last change: $Author: os $ $Date: 2001-09-28 08:14:50 $
  *
  *  The Contents of this file are made available subject to the terms of
  *  either of the following licenses
@@ -1543,7 +1543,7 @@ void SwWW8ImplReader::ReadGrafLayer1( WW8PLCFspecial* pPF, long nGrafAnchorCp )
     }
 }
 
-USHORT SwMSDffManager::GetEscherLineMatch(MSO_LineStyle eStyle, 
+USHORT SwMSDffManager::GetEscherLineMatch(MSO_LineStyle eStyle,
     MSO_SPT eShapeType, USHORT &rThick)
 {
     USHORT nOutsideThick = 0;
@@ -1560,11 +1560,11 @@ USHORT SwMSDffManager::GetEscherLineMatch(MSO_LineStyle eStyle,
     */
     switch( eStyle )
     {
-    case mso_lineTriple:     
-    case mso_lineSimple:     
+    case mso_lineTriple:
+    case mso_lineSimple:
         nOutsideThick = eShapeType != mso_sptTextBox ? rThick : rThick/2;
         break;
-    case mso_lineDouble:     
+    case mso_lineDouble:
         if (eShapeType == mso_sptTextBox)
         {
             nOutsideThick = rThick/6;
@@ -1573,7 +1573,7 @@ USHORT SwMSDffManager::GetEscherLineMatch(MSO_LineStyle eStyle,
         else
             nOutsideThick = rThick*2/3;
         break;
-    case mso_lineThickThin:  
+    case mso_lineThickThin:
         if (eShapeType == mso_sptTextBox)
         {
             nOutsideThick = rThick*3/10;
@@ -1582,7 +1582,7 @@ USHORT SwMSDffManager::GetEscherLineMatch(MSO_LineStyle eStyle,
         else
             nOutsideThick = rThick*4/5;
         break;
-    case mso_lineThinThick:  
+    case mso_lineThinThick:
         {
         if (eShapeType == mso_sptTextBox)
         {
@@ -1593,7 +1593,7 @@ USHORT SwMSDffManager::GetEscherLineMatch(MSO_LineStyle eStyle,
             nOutsideThick = rThick*3/5;
         }
         break;
-    default: 
+    default:
         break;
     }
     return nOutsideThick;
@@ -1603,9 +1603,9 @@ USHORT SwMSDffManager::GetEscherLineMatch(MSO_LineStyle eStyle,
 //words positioning of borders around floating objects is that of a
 //disturbed mind.
 USHORT SwWW8ImplReader::MatchSdrBoxIntoFlyBoxItem(const Color& rLineColor,
-    MSO_LineStyle eLineStyle, MSO_SPT eShapeType, USHORT &rLineThick, 
+    MSO_LineStyle eLineStyle, MSO_SPT eShapeType, USHORT &rLineThick,
     SvxBoxItem& rBox )
-{	
+{
     USHORT nOutsideThick = 0;
     if( !rLineThick )
         return nOutsideThick;
@@ -1633,57 +1633,57 @@ USHORT SwWW8ImplReader::MatchSdrBoxIntoFlyBoxItem(const Color& rLineColor,
     switch( eLineStyle )
     {
     // zuerst die Einzel-Linien
-    case mso_lineSimple:     
-        if( nLineThick < 11) 
+    case mso_lineSimple:
+        if( nLineThick < 11)
             nIdx =            0;//   1 Twip bei uns
-        else if( nLineThick < 46) 
+        else if( nLineThick < 46)
             nIdx =            1;//  20 Twips
-        else if( nLineThick < 66) 
+        else if( nLineThick < 66)
             nIdx =            2;//  50
-        else if( nLineThick < 91) 
+        else if( nLineThick < 91)
             nIdx =            3;//  80
-        else if( nLineThick <126) 
+        else if( nLineThick <126)
             nIdx =            4;// 100
         // Pfusch: fuer die ganz dicken Linien muessen wir doppelte Linien
         // malen, weil unsere Einfach-Linie nicht dicker als 5 Punkt wird
-        else if( nLineThick <166) 
+        else if( nLineThick <166)
             nIdx = WW8_DECL_LINETAB_OFS_DOUBLE+2;// 150
-        else                      
+        else
             nIdx = WW8_DECL_LINETAB_OFS_DOUBLE+5;// 180
     break;
     // dann die Doppel-Linien, fuer die wir feine Entsprechungen haben :-)))
-    case mso_lineDouble:     
-        if( nLineThick <  46) 
+    case mso_lineDouble:
+        if( nLineThick <  46)
             nIdx = WW8_DECL_LINETAB_OFS_DOUBLE+ 0;//  22 Twips bei uns
-        else if( nLineThick < 106) 
+        else if( nLineThick < 106)
             nIdx = WW8_DECL_LINETAB_OFS_DOUBLE+ 1;//  60
         else
             nIdx = WW8_DECL_LINETAB_OFS_DOUBLE+ 2;// 150
     break;
-    case mso_lineThickThin:  
-        if( nLineThick <  87) 
+    case mso_lineThickThin:
+        if( nLineThick <  87)
             nIdx = WW8_DECL_LINETAB_OFS_DOUBLE+ 8;//  71 Twips bei uns
-        else if( nLineThick < 117) 
+        else if( nLineThick < 117)
             nIdx = WW8_DECL_LINETAB_OFS_DOUBLE+ 9;// 101
-        else if( nLineThick < 166) 
+        else if( nLineThick < 166)
             nIdx = WW8_DECL_LINETAB_OFS_DOUBLE+10;// 131
         else
             nIdx = WW8_DECL_LINETAB_OFS_DOUBLE+ 5;// 180
     break;
-    case mso_lineThinThick:  
-        if( nLineThick < 137) 
+    case mso_lineThinThick:
+        if( nLineThick < 137)
             nIdx = WW8_DECL_LINETAB_OFS_DOUBLE+ 4;//  90 Twips bei uns
         else
             nIdx = WW8_DECL_LINETAB_OFS_DOUBLE+ 6;// 180
     break;
     // zu guter Letzt die Dreifach-Linien, an deren Stelle wir eine
     // Doppel-Linie setzen
-    case mso_lineTriple:     
-        if( nLineThick <  46) 
+    case mso_lineTriple:
+        if( nLineThick <  46)
             nIdx = WW8_DECL_LINETAB_OFS_DOUBLE+ 0;//  22 Twips bei uns
-        else if( nLineThick < 106) 
+        else if( nLineThick < 106)
             nIdx = WW8_DECL_LINETAB_OFS_DOUBLE+ 1;//  60
-        else if( nLineThick < 166) 
+        else if( nLineThick < 166)
             nIdx = WW8_DECL_LINETAB_OFS_DOUBLE+ 2;// 150
         else
             nIdx = WW8_DECL_LINETAB_OFS_DOUBLE+ 5;// 180
@@ -1692,7 +1692,7 @@ USHORT SwWW8ImplReader::MatchSdrBoxIntoFlyBoxItem(const Color& rLineColor,
     case (MSO_LineStyle)USHRT_MAX:
         break;
     // erroneously not implemented line style is set
-    default: 
+    default:
         ASSERT( !this, "eLineStyle is not (yet) implemented!" );
         break;
     }
@@ -1718,9 +1718,9 @@ USHORT SwWW8ImplReader::MatchSdrBoxIntoFlyBoxItem(const Color& rLineColor,
 #define WW8ITEMVALUE(ItemSet,Id,Cast)  ((const Cast&)(ItemSet).Get(Id)).GetValue()
 
 void SwWW8ImplReader::MatchSdrItemsIntoFlySet( SdrObject* pSdrObj,
-    SfxItemSet& rFlySet, MSO_LineStyle eLineStyle, MSO_SPT eShapeType, 
+    SfxItemSet& rFlySet, MSO_LineStyle eLineStyle, MSO_SPT eShapeType,
     Rectangle& rInnerDist, BOOL bFixSize )
-{	
+{
 /*
     am Rahmen zu setzende Frame-Attribute
     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -1775,15 +1775,15 @@ void SwWW8ImplReader::MatchSdrItemsIntoFlySet( SdrObject* pSdrObj,
     {
         // Now, that we know there is a line style we will make use the
         // parameter given to us when calling the method...  :-)
-        const Color aLineColor = WW8ITEMVALUE(rOldSet, XATTR_LINECOLOR, 
+        const Color aLineColor = WW8ITEMVALUE(rOldSet, XATTR_LINECOLOR,
             XLineColorItem);
-        nLineThick = (USHORT)(WW8ITEMVALUE(rOldSet, XATTR_LINEWIDTH, 
+        nLineThick = (USHORT)(WW8ITEMVALUE(rOldSet, XATTR_LINEWIDTH,
             XLineWidthItem));
 
         if( !nLineThick )
             nLineThick = 15; // WW-default: 0.75 pt
 
-        nOutside = MatchSdrBoxIntoFlyBoxItem(aLineColor, eLineStyle, 
+        nOutside = MatchSdrBoxIntoFlyBoxItem(aLineColor, eLineStyle,
             eShapeType, nLineThick, aBox);
     }
 
@@ -1795,25 +1795,25 @@ void SwWW8ImplReader::MatchSdrItemsIntoFlySet( SdrObject* pSdrObj,
     const SvxBorderLine *pLine;
     if (pLine = aBox.GetLine(BOX_LINE_LEFT))
     {
-        rInnerDist.Left() -= (pLine->GetOutWidth() + pLine->GetInWidth() + 
+        rInnerDist.Left() -= (pLine->GetOutWidth() + pLine->GetInWidth() +
             pLine->GetDistance());
     }
 
     if (pLine = aBox.GetLine(BOX_LINE_TOP))
     {
-        rInnerDist.Top() -= (pLine->GetOutWidth() + pLine->GetInWidth() + 
+        rInnerDist.Top() -= (pLine->GetOutWidth() + pLine->GetInWidth() +
             pLine->GetDistance());
     }
 
     if (pLine = aBox.GetLine(BOX_LINE_RIGHT))
     {
-        rInnerDist.Right() -= (pLine->GetOutWidth() + pLine->GetInWidth() + 
+        rInnerDist.Right() -= (pLine->GetOutWidth() + pLine->GetInWidth() +
             pLine->GetDistance());
     }
 
     if (pLine = aBox.GetLine(BOX_LINE_BOTTOM))
     {
-        rInnerDist.Bottom() -= (pLine->GetOutWidth() + pLine->GetInWidth() + 
+        rInnerDist.Bottom() -= (pLine->GetOutWidth() + pLine->GetInWidth() +
             pLine->GetDistance());
     }
 
@@ -1848,7 +1848,7 @@ void SwWW8ImplReader::MatchSdrItemsIntoFlySet( SdrObject* pSdrObj,
     //Sadly word puts escher borders outside the graphic, but orients the
     //graphic in relation to the top left inside the border. We don't
     if (nOutside)
-    { 
+    {
         SwFmtHoriOrient aHori = (const SwFmtHoriOrient &)(rFlySet.Get(
             RES_HORI_ORIENT));
         aHori.SetPos(aHori.GetPos()-nOutside);
@@ -1874,7 +1874,7 @@ void SwWW8ImplReader::MatchSdrItemsIntoFlySet( SdrObject* pSdrObj,
             SdrShadowXDistItem);
         const INT32 nShdDistY = WW8ITEMVALUE(rOldSet, SDRATTR_SHADOWYDIST,
             SdrShadowYDistItem);
-        const USHORT nShdTrans= WW8ITEMVALUE(rOldSet, 
+        const USHORT nShdTrans= WW8ITEMVALUE(rOldSet,
             SDRATTR_SHADOWTRANSPARENCE, SdrShadowTransparenceItem);
 
         // diese gibt es im Writer nicht  :-(
@@ -1928,8 +1928,8 @@ void SwWW8ImplReader::MatchSdrItemsIntoFlySet( SdrObject* pSdrObj,
                 break;
                 case XFILL_SOLID:
                     {
-                        const Color aColor = 
-                            WW8ITEMVALUE(rOldSet, XATTR_FILLCOLOR, 
+                        const Color aColor =
+                            WW8ITEMVALUE(rOldSet, XATTR_FILLCOLOR,
                             XFillColorItem);
                         aBrushItem.SetColor( aColor );
                         bBrushItemOk = TRUE;
@@ -1941,12 +1941,12 @@ void SwWW8ImplReader::MatchSdrItemsIntoFlySet( SdrObject* pSdrObj,
                 break;
                 case XFILL_BITMAP:
                     {
-                        const Graphic aGraphic(WW8ITEMVALUE(rOldSet, 
+                        const Graphic aGraphic(WW8ITEMVALUE(rOldSet,
                             XATTR_FILLBITMAP, XFillBitmapItem).GetBitmap());
-                        BOOL bTile = WW8ITEMVALUE(rOldSet, XATTR_FILLBMP_TILE, 
+                        BOOL bTile = WW8ITEMVALUE(rOldSet, XATTR_FILLBMP_TILE,
                             SfxBoolItem);
                         aBrushItem.SetGraphic( aGraphic );
-                        aBrushItem.SetGraphicPos( bTile ? GPOS_TILED 
+                        aBrushItem.SetGraphicPos( bTile ? GPOS_TILED
                             : GPOS_AREA );
                         bBrushItemOk = TRUE;
                     }
@@ -2172,7 +2172,7 @@ void SwWW8ImplReader::ProcessEscherAlign( SvxMSDffImportRec* pRecord,
         //this is going to be in the headerfooter and
         //cannot be replaced by a fly then anchor it
         //to the current page.
-        if ((bIsHeader || bIsFooter) && !bOrgObjectWasReplace && 
+        if ((bIsHeader || bIsFooter) && !bOrgObjectWasReplace &&
             !pRecord->bReplaceByFly)
         {
             eAnchor=FLY_PAGE;
@@ -2238,7 +2238,7 @@ SwFrmFmt* SwWW8ImplReader::Read_GrafLayer( long nGrafAnchorCp )
                 + pWwFib->ccpHdr  + pWwFib->ccpMcr
                 + pWwFib->ccpAtn  + pWwFib->ccpEdn;
 
-    if( pPlcxMan->GetManType() == MAN_HDFT ) 
+    if( pPlcxMan->GetManType() == MAN_HDFT )
         nDrawCpO += pWwFib->ccpTxbx;
 
     if( !pDrawModel )// 1. GrafikObjekt des Docs
@@ -2334,13 +2334,13 @@ SwFrmFmt* SwWW8ImplReader::Read_GrafLayer( long nGrafAnchorCp )
     {
         case 0: //0 like 2, but doesn't require absolute object
         case 2: //2 wrap around absolute object
-            eSurround = SURROUND_PARALLEL;	
+            eSurround = SURROUND_PARALLEL;
             break;
         case 1: //1 no text next to shape
-            eSurround = SURROUND_NONE;		
+            eSurround = SURROUND_NONE;
             break;
         case 3: //3 wrap as if no object present
-            eSurround = SURROUND_THROUGHT;	
+            eSurround = SURROUND_THROUGHT;
             break;
         case 4: //4 wrap tightly around object
         case 5: //5 wrap tightly, but allow holes
@@ -2417,7 +2417,7 @@ SwFrmFmt* SwWW8ImplReader::Read_GrafLayer( long nGrafAnchorCp )
         ProcessEscherAlign( pRecord, pF, aFlySet, bReplaceable );
 
         // Should we, and is it possible to make this into a writer textbox
-        if( (!(nIniFlags1 & WW8FL_NO_FLY_FOR_TXBX)) && 
+        if( (!(nIniFlags1 & WW8FL_NO_FLY_FOR_TXBX)) &&
             (pRecord && pRecord->bReplaceByFly) )
         {
             pRetFrmFmt = ConvertDrawTextToFly(pObject, pOurNewObject, pRecord,
@@ -2427,8 +2427,8 @@ SwFrmFmt* SwWW8ImplReader::Read_GrafLayer( long nGrafAnchorCp )
         }
         else if ((pObject) && FmFormInventor == pObject->GetObjInventor())
         {
-            /* 
-            #79055# 
+            /*
+            #79055#
             This was a FormControl. This means that the msdffimp ole import
             has already converted it to the SdrObject that we have in pObject
             here, *and* has already inserted it as a StarWriter FlyFrm,
@@ -2470,7 +2470,7 @@ SwFrmFmt* SwWW8ImplReader::Read_GrafLayer( long nGrafAnchorCp )
             pRecord = aData.GetRecord( nTxbx );
             if( pRecord && pRecord->pObj )
             {
-                SdrObject* pTrueObject = 
+                SdrObject* pTrueObject =
                     (bReplaceable && (pOrgShapeObject == pRecord->pObj))
                     ? pOurNewObject : pRecord->pObj;
 
@@ -2549,7 +2549,7 @@ void SwWW8ImplReader::MungeTextIntoDrawBox(SdrObject* pTrueObject,
 
     if( pSdrTextObj )
     {
-        Size aObjSize(pSdrTextObj->GetSnapRect().GetWidth(), 
+        Size aObjSize(pSdrTextObj->GetSnapRect().GetWidth(),
             pSdrTextObj->GetSnapRect().GetHeight());
 
         // Objekt ist Bestandteil einer Gruppe?
@@ -2557,8 +2557,8 @@ void SwWW8ImplReader::MungeTextIntoDrawBox(SdrObject* pTrueObject,
 
         UINT32 nOrdNum = pSdrTextObj->GetOrdNum();
         BOOL bEraseThisObject;
-        InsertTxbxText( pSdrTextObj, &aObjSize, pRecord->aTextId.nTxBxS, 
-            pRecord->aTextId.nSequence, nGrafAnchorCp, pRetFrmFmt, 
+        InsertTxbxText( pSdrTextObj, &aObjSize, pRecord->aTextId.nTxBxS,
+            pRecord->aTextId.nSequence, nGrafAnchorCp, pRetFrmFmt,
             (pSdrTextObj != pTrueObject) || (0 != pGroupObject),
             bEraseThisObject, FALSE, 0, 0, pRecord);
 
@@ -2608,7 +2608,7 @@ void SwWW8ImplReader::MungeTextIntoDrawBox(SdrObject* pTrueObject,
 }
 
 SwFrmFmt * SwWW8ImplReader::ConvertDrawTextToFly(SdrObject* &rpObject,
-    SdrObject* &rpOurNewObject, SvxMSDffImportRec* pRecord, RndStdIds eAnchor, 
+    SdrObject* &rpOurNewObject, SvxMSDffImportRec* pRecord, RndStdIds eAnchor,
     WW8_FSPA *pF, SfxItemSet &rFlySet)
 {
     SwFrmFmt* pRetFrmFmt = 0;
@@ -2688,7 +2688,7 @@ SwFrmFmt * SwWW8ImplReader::ConvertDrawTextToFly(SdrObject* &rpObject,
             // lies den Text ein
             bTxbxFlySection = TRUE;
             ReadText( nStartCp, (nEndCp-nStartCp),
-                MAN_MAINTEXT == pPlcxMan->GetManType() ? 
+                MAN_MAINTEXT == pPlcxMan->GetManType() ?
                 MAN_TXBX : MAN_TXBX_HDFT );
 
             /*
@@ -2707,16 +2707,16 @@ SwFrmFmt * SwWW8ImplReader::ConvertDrawTextToFly(SdrObject* &rpObject,
     return pRetFrmFmt;
 }
 
-SwFrmFmt* SwWW8ImplReader::ImportReplaceableDrawables( SdrObject* &rpObject, 
-    SdrObject* &rpOurNewObject, SvxMSDffImportRec* pRecord, WW8_FSPA *pF, 
+SwFrmFmt* SwWW8ImplReader::ImportReplaceableDrawables( SdrObject* &rpObject,
+    SdrObject* &rpOurNewObject, SvxMSDffImportRec* pRecord, WW8_FSPA *pF,
     SfxItemSet &rFlySet )
 {
     SwFrmFmt* pRetFrmFmt = 0;
     long nWidthTw  = pF->nXaRight - pF->nXaLeft;
-    if (0 > nWidthTw) 
+    if (0 > nWidthTw)
         nWidthTw = 0;
     long nHeightTw = pF->nYaBottom - pF->nYaTop;
-    if (0 > nHeightTw) 
+    if (0 > nHeightTw)
         nHeightTw = 0;
 
     /*
@@ -2740,7 +2740,7 @@ SwFrmFmt* SwWW8ImplReader::ImportReplaceableDrawables( SdrObject* &rpObject,
         //word for textboxes, not for graphics and ole objects.
         Rectangle aInnerDist(0,0,0,0);
 
-        MatchSdrItemsIntoFlySet( rpObject, rFlySet, pRecord->eLineStyle, 
+        MatchSdrItemsIntoFlySet( rpObject, rFlySet, pRecord->eLineStyle,
             pRecord->eShapeType, aInnerDist, !pRecord->bLastBoxInChain );
     }
 
@@ -2770,14 +2770,14 @@ SwFrmFmt* SwWW8ImplReader::ImportReplaceableDrawables( SdrObject* &rpObject,
             if ( GRAPHIC_NONE == rGraph.GetType() ||
                 FStatHelper::IsDocument( aGrfName ) )
             {
-                pRetFrmFmt = rDoc.Insert( *pPaM, aGrfName, aEmptyStr, 
+                pRetFrmFmt = rDoc.Insert( *pPaM, aGrfName, aEmptyStr,
                     0 /*Graphic*/, &rFlySet, 0 /*SwFrmFmt*/);
                 bDone = TRUE;
             }
         }
         if( !bDone )
         {
-            pRetFrmFmt = rDoc.Insert( *pPaM, aEmptyStr, aEmptyStr, &rGraph, 
+            pRetFrmFmt = rDoc.Insert( *pPaM, aEmptyStr, aEmptyStr, &rGraph,
                 &rFlySet, 0 /* SwFrmFmt*/ );
         }
     }
@@ -2819,7 +2819,7 @@ SwFrmFmt* SwWW8ImplReader::ImportReplaceableDrawables( SdrObject* &rpObject,
     {
         if( !bHdFtFtnEdn )
             pMSDffManager->StoreShapeOrder(pF->nSpId, 0, rpOurNewObject, 0 );
-        
+
         // Das Kontakt-Objekt MUSS in die Draw-Page gesetzt werden, damit in
         // SwWW8ImplReader::LoadDoc1() die Z-Order festgelegt werden kann !!!
         pDrawPg->InsertObject( rpOurNewObject );
@@ -2886,402 +2886,5 @@ void SwWW8ImplReader::EmbeddedFlyFrameSizeLock(SwNodeIndex &rStart,
         }
     }
 }
-
-/*************************************************************************
-
-      Source Code Control System - Header
-
-      $Header: /zpool/svn/migration/cvs_rep_09_09_08/code/sw/source/filter/ww8/ww8graf.cxx,v 1.36 2001-09-21 15:40:50 cmc Exp $
-
-      Source Code Control System - Update
-
-      $Log: not supported by cvs2svn $
-      Revision 1.35  2001/09/18 09:51:53  cmc
-      #92104# displaced escher groups fixes
-    
-      Revision 1.34  2001/09/10 15:51:44  cmc
-      #92059# Consider border widths in {im|ex}port of floating elements
-    
-      Revision 1.32  2001/08/28 15:24:29  cmc
-      #91622 Properties open at begin and end of tables and frames need to be cunningly duplicated outside and inside element
-    
-      Revision 1.31  2001/08/16 09:27:08  fme
-      Fix #90760#: Removed VCL defines
-    
-      Revision 1.30  2001/08/03 15:39:16  cmc
-      #90098# Drawing objects in headers must be anchored to page as a hackaround for lack of true drawing in header support
-
-      Revision 1.29  2001/07/31 18:38:30  jp
-      Bug #90443#: don't call GetSlotId with our filter items
-
-      Revision 1.28  2001/06/12 09:24:43  cmc
-      #87558# #87591# ##976## ##980## Implement draw textbox attributes by using normal writer import and mapping to draw attributes using slotids
-
-      Revision 1.27  2001/06/06 12:46:32  cmc
-      #76673# ##1005## Fastsave table Insert/Delete Cell implementation, const reworking required
-
-      Revision 1.26  2001/06/02 16:06:14  cmc
-      #68662# ##989## parent frame of a fly in fly exported as a table
-
-      Revision 1.25  2001/05/29 13:52:03  cmc
-      #87557# ##974## CJK FontHeight in drawing layer
-
-      Revision 1.24  2001/04/25 18:27:07  jp
-      Bug #83181#: don't insert in GroupObjects SW-OLE-Objects
-
-      Revision 1.23  2001/04/25 12:55:01  cmc
-      ##761## reenable auto for draw layer, keep auto for table borders and shadings disabled
-
-      Revision 1.22  2001/04/24 16:17:10  cmc
-      ##761## workaround. No automatic colour for table borders, cells or sdrtextobjs
-
-      Revision 1.21  2001/04/11 15:08:01  jp
-      Bug #85614#: SdrOleObject - set InPlaceObject pointer to zero if the object is insert as SW-OleObject
-
-      Revision 1.20  2001/04/11 14:34:22  cmc
-      Minor merge error fixes
-
-      Revision 1.19  2001/04/05 14:03:48  cmc
-      ##640## Draw objects inside textbox import layout tweaks
-
-      Revision 1.18  2001/04/03 17:21:04  cmc
-      ##505## Test for special case of textbox that contains only another textbox whose size is greater than container so as to disable autogrow
-
-      Revision 1.17  2001/03/30 11:21:05  cmc
-      ##575## Convert WW6/95 TextBox to FlyFrame when we are in a header/footer
-
-      Revision 1.16  2001/03/27 12:01:49  cmc
-      brightness, contrast, drawmode {im|ex}port, merge 0x01 and 0x08 graphics systems for escher to replace hack
-
-      Revision 1.15  2001/03/20 15:26:15  cmc
-      ##572## accumulate escher text correctly, and clear on insertion
-
-      Revision 1.14  2001/03/20 12:44:03  cmc
-      ##572## stop Escher Text attribute cascade and silence some warnings
-
-      Revision 1.13  2001/03/08 10:09:29  cmc
-      Reformat unreadable code
-
-      Revision 1.12  2001/02/27 12:38:09  cmc
-      #74920# enable SdrTextObj to FlyFrame conversion for WW6
-
-      Revision 1.11  2001/02/19 18:00:38  cmc
-      #74188# Documented FSPA anchor values should override escher attributes when different
-
-      Revision 1.10  2001/02/16 15:26:50  cmc
-      ##444## Background graphics/objects always infront of text
-
-      Revision 1.9  2001/02/07 10:13:02  cmc
-      #80372# Paragraph border instead of Paragraph text border == WW edge align
-
-      Revision 1.8  2001/01/18 11:47:19  cmc
-      #82894# ocx controls 79055 related oversight
-
-      Revision 1.7  2000/12/20 16:22:42  khz
-      #79453# set Outliner Mode at new OutlinerParaObject (and khz says BYE !)
-
-      Revision 1.6  2000/12/15 15:33:06  cmc
-      #79055# OCX FormControls changes
-
-      Revision 1.5  2000/11/23 16:18:18  sj
-      #78880# the SdrTextObjects needs to know the model
-
-      Revision 1.4  2000/11/03 09:35:25  khz
-      fault tolerant Winword parameter reading
-
-      Revision 1.3  2000/10/30 12:07:14  aw
-      change SdrObjects to use SfxItemSet instead of SfxSetItems.
-      Removed TakeAttributes() and SetAttributes(), new ItemSet
-      modification methods (GetItem[Set], SetItem[Set], ClearItem,...)
-
-      Revision 1.2  2000/10/16 10:35:05  khz
-      read extended WW9-Frame-Alignment (stored in Escher record 0xF122)
-
-      Revision 1.1.1.1  2000/09/18 17:14:58  hr
-      initial import
-
-      Revision 1.93  2000/09/18 16:04:59  willem.vandorp
-      OpenOffice header added.
-
-      Revision 1.92  2000/08/28 14:55:42  khz
-      #64941# store Hd./Ft./Section info to prevent prohibited TxBx linkage
-
-      Revision 1.91  2000/08/24 14:39:04  khz
-      #78052# don't store SwFlyDrawContact in ShapeOrder array if bHdFtFtnEdn set
-
-      Revision 1.90  2000/08/24 12:32:54  os
-      Outliner/EditEngine changes
-
-      Revision 1.89  2000/08/24 10:48:52  jp
-      crop export to svx
-
-      Revision 1.88  2000/06/26 12:59:11  os
-      INetURLObject::SmartRelToAbs removed
-
-      Revision 1.87  2000/06/15 15:23:38  cmc
-      #75669# 97Controls Import fixes
-
-      Revision 1.86  2000/06/13 08:24:46  os
-      using UCB
-
-      Revision 1.85  2000/05/16 12:12:53  jp
-      ASS_FALSE define removed
-
-      Revision 1.84  2000/05/16 11:14:00  khz
-      Unicode code-conversion
-
-      Revision 1.83  2000/03/08 10:20:26  khz
-      Task #73362# WW6: restore stream position after readind content of textbox
-
-      Revision 1.82  2000/03/03 15:20:01  os
-      StarView remainders removed
-
-      Revision 1.81  2000/02/22 16:00:02  khz
-      Task #72647# Import attributes of winword 6 TEXT OBJECTS
-
-      Revision 1.80  2000/02/22 13:54:32  khz
-      Task #73096# look for OLE- or Graphic-Indicator-Sprms
-
-      Revision 1.79  2000/02/22 11:59:02  khz
-      Task #73096# erase TextObj only when OLE or Graphic propperly imported
-
-      Revision 1.78  2000/02/18 09:35:05  cmc
-      #69372# Improved Hyperlink Importing for WW97
-
-
-      Revision 1.77  2000/02/14 14:36:32  jp
-      #70473# changes for unicode
-
-      Revision 1.76  2000/02/14 08:25:21  cmc
-      #72579 TxtBox NULL test crash fix, revealed by glossary addition
-
-      Revision 1.74  2000/02/09 08:57:16  khz
-      Task #72647# Read SPRMs that are stored in piece table grpprls (2)
-
-      Revision 1.73  2000/01/14 11:28:03  khz
-      Task #68832# -- CORRECTION: Task Number of rev below should have been: 68832 !
-
-      Revision 1.72  2000/01/14 11:11:38  khz
-      Task #71343# look for Sprm 37 (not 5) to recognize APO
-
-      Revision 1.71  2000/01/07 12:29:46  khz
-      Task #64574# believe Layerflag in Winword Struct rather than the one in Escher Data (2)
-
-      Revision 1.70  2000/01/07 12:27:19  khz
-      Task #64574# believe Layerflag in Winword Struct rather than the one in Escher Data
-
-      Revision 1.69  1999/12/14 14:22:45  khz
-      Task #70815# Avoid typecast when calling MatchSdrItemsIntoFlySet()
-
-      Revision 1.68  1999/12/06 16:38:08  khz
-      Task #67435# Import FillStyle on OLE and Graphic viaSdrAttrObj::GetFillAttrSetItem()
-
-      Revision 1.67  1999/12/01 10:18:36  khz
-      Task #67435# Use GetItemState() to find border of graphic
-
-      Revision 1.66  1999/11/23 18:56:17  khz
-      Task #67963# New method SvxMSDffManager::ImportObj() used by Draw, Writer, Calc
-
-      Revision 1.65  1999/11/19 15:02:42  khz
-      Special Task! Use new method to import Shapes: SvxMSDffManager::ImportObj()
-
-      Revision 1.64  1999/09/20 14:24:27  khz
-      Mussaenderung wg. TH apichange 10.09.1999
-
-      Revision 1.63  1999/08/30 19:53:00  JP
-      Bug #68219#: no static members - be reentrant
-
-
-      Rev 1.62   30 Aug 1999 21:53:00   JP
-   Bug #68219#: no static members - be reentrant
-
-      Rev 1.61   09 Aug 1999 14:16:02   JP
-   read W95 format from stream
-
-      Rev 1.60   27 Jul 1999 14:41:56   KHZ
-   Task #67886# Import Textboxes without #14 in it's field code
-
-      Rev 1.59   15 Jul 1999 10:56:00   KHZ
-   Task #67659# Do *not* set FillStyle on box with Default fill style
-
-      Rev 1.58   06 Jul 1999 16:38:14   KHZ
-   Task #67435# Borderattributes of graphics that are connected to a #1 char
-
-      Rev 1.57   22 Jun 1999 17:40:22   KHZ
-   Task #64574# adjust z-order for grouped objects2
-
-      Rev 1.56   09 Jun 1999 18:25:04   KHZ
-   use FOUR different inner distances with SvxBoxItem
-
-      Rev 1.55   02 Jun 1999 09:32:24   KHZ
-   Task #66227# a) kein Unicode bei Ver67 ;-)  b) Grafik in grupp. Textbox
-
-      Rev 1.54   29 Apr 1999 12:45:40   KHZ
-   Task #65561# (versehentlich war Zuweisung von pRecord auskommentiert)
-
-      Rev 1.53   26 Apr 1999 17:40:22   KHZ
-   Task #61381# Attribute von Textboxen in denen NUR EINE Grafik steht
-
-      Rev 1.52   10 Mar 1999 18:23:12   KHZ
-   Task #63093# Bei FLY_IN_CNTNT nach MakeFlySection *kein* Ankerattribut setzen!
-
-      Rev 1.51   10 Mar 1999 15:11:18   KHZ
-   Task #62521# Einlesen von Sonderzeichen
-
-      Rev 1.50   18 Feb 1999 20:43:48   KHZ
-   Task #61681# in InsertObjekt() immer SURROUND_TROUGH setzen
-
-      Rev 1.49   18 Feb 1999 20:24:38   KHZ
-   Task #61659# Umlauf im Hintergrund
-
-      Rev 1.48   18 Feb 1999 18:52:38   JP
-   Bug #61659#/#61660#: Objecte in einer Gruppe NIE im LayoutConnecten
-
-      Rev 1.47   17 Feb 1999 17:34:26   KHZ
-   Task #61982# Zugriff auf freigegebenen Speicher nach ReplaceObject
-
-      Rev 1.46   17 Feb 1999 15:24:16   KHZ
-   Task #61382# jetzt auch Textbox-Grafiken im Hintergrund ( SvxOpaqItem(FALSE) )
-
-      Rev 1.45   16 Feb 1999 13:03:24   KHZ
-   Task #60326# nur das erste von mehreren PicLoc-Attributen einer Char-Pos ist ok
-
-      Rev 1.44   15 Feb 1999 21:40:04   KHZ
-   Task #61381# jetzt include von boxitem.hxx fuer WW8_DECL_LINETAB_ARRAY
-
-      Rev 1.43   12 Feb 1999 16:51:06   KHZ
-   Task #61381# Ersetzen von Sdr-Text-Objekten im Writer durch Rahmen (3)
-
-      Rev 1.42   05 Feb 1999 19:37:02   KHZ
-   Task #61381# Ersetzen von Sdr-Text-Objekten im Writer durch Rahmen (2)
-
-      Rev 1.41   05 Feb 1999 10:33:48   KHZ
-   Task #61381# Ersetzen von Sdr-Text-Objekten im Writer durch Rahmen
-
-      Rev 1.40   28 Jan 1999 17:10:46   KHZ
-   Task #60715# in SdrTextObj verankerte Grafiken und OLEs (4)
-
-      Rev 1.39   27 Jan 1999 10:58:02   KHZ
-   Task #60715# in SdrTextObj verankerte Grafiken und OLEs (2)
-
-      Rev 1.38   25 Jan 1999 10:25:46   KHZ
-   Task #60715# in Textobjekt verankerte Grafik als Grafik importieren
-
-      Rev 1.37   19 Jan 1999 10:53:06   KHZ
-   Task #60715# in Textbox verankerte Grafiken und OLEs (1)
-
-      Rev 1.36   06 Jan 1999 10:51:52   KHZ
-   Task #59858# Testreihenfolge der While-Schleifen geaendert
-
-      Rev 1.35   22 Dec 1998 09:08:38   KHZ
-   Task #60395# (4) StoreShapeOrder wieder angeklemmt
-
-      Rev 1.34   21 Dec 1998 16:00:42   KHZ
-   StoreShapeOrder voruebergehend abgeklemmt
-
-      Rev 1.33   18 Dec 1998 12:27:22   KHZ
-   Task #60395# (3) jetzt DOCH Layer und Z-Order fuer Grafik oder OLE-Objekt  :-)
-
-      Rev 1.32   17 Dec 1998 10:41:26   KHZ
-   Task #60395# (2) KEINE Positionierung bei geloeschten Objekten (Grafik, OLE)
-
-      Rev 1.31   15 Dec 1998 19:54:06   KHZ
-   Task #60395# Positionierung vor/hinter dem Text je nach pRecord->bDrawHell
-
-      Rev 1.30   07 Dec 1998 16:29:38   JP
-   Bug #58766#/#59640#: Zeichenobjecte nach WW97 Import richtig positionieren
-
-      Rev 1.29   05 Dec 1998 17:11:26   KHZ
-   Task #59580# Unicode (3)
-
-      Rev 1.28   04 Dec 1998 20:19:46   KHZ
-   Task #58766# Textboxen mit Unicode-Inhalt
-
-      Rev 1.27   30 Nov 1998 17:46:52   JP
-   Task #59822#: OLE-Objecte importieren
-
-      Rev 1.26   27 Nov 1998 09:45:22   JP
-   Task #59822#: OLE-Objecte importieren - Namen korrekt ermitteln
-
-      Rev 1.25   25 Nov 1998 18:45:40   JP
-   Compilerfehler unter UNX
-
-      Rev 1.24   24 Nov 1998 20:45:04   JP
-   Task #59822#: OLE-Objecte einlesen
-
-      Rev 1.23   20 Nov 1998 22:04:52   JP
-   Task #59476#: Crop-Werte bei Grafiken setzen
-
-      Rev 1.22   20 Nov 1998 16:35:30   KHZ
-   Task #59640# Hilfsattribute SwFmtVertOrient und SwFmtHoriOrient (2)
-
-      Rev 1.21   20 Nov 1998 16:18:10   KHZ
-   Task #59735# Innen- und Aussenabstaende zwischen Text und Shape (bzw. Grafik)
-
-      Rev 1.20   20 Nov 1998 09:44:54   KHZ
-   Task #59640# Hilfsattribute SwFmtVertOrient und SwFmtHoriOrient eingesetzt
-
-      Rev 1.19   29 Oct 1998 15:28:54   KHZ
-   Task #58199# gedrehter Text in Shapes und Text in Gruppen jetzt moeglich
-
-      Rev 1.18   28 Oct 1998 10:49:30   KHZ
-   Task #55189# Text jetzt auch bei Group-Autoformen (Doppelklammer...) moeglich
-
-      Rev 1.17   21 Oct 1998 13:55:52   KHZ
-   Task #55189# Abstand des Textbereich vom Shape-Rand ist jetzt WW8 Default
-
-      Rev 1.16   20 Oct 1998 17:21:56   KHZ
-   Task #57704# Text-Umlauf um Grafiken und Escher-Objekte
-
-      Rev 1.15   03 Sep 1998 22:14:22   KHZ
-   Task #55189# Textboxen
-
-      Rev 1.14   27 Aug 1998 10:12:30   KHZ
-   Task #55189# Escher-Import fuer Draw, Calc und Writer
-
-      Rev 1.13   05 Aug 1998 17:16:24   KHZ
-   Task #53614# komprimierte WMF, Enh.Metafile und PICT Grafiken
-
-      Rev 1.12   31 Jul 1998 20:43:06   KHZ
-   Task #52607# Fehler wg. Compiler-Optimierung!
-
-      Rev 1.11   30 Jul 1998 23:15:02   KHZ
-   Task #53614# Grafiken in Data und Dokumentstream gemischt
-
-      Rev 1.10   30 Jul 1998 20:52:36   KHZ
-   Task #52607# GPF unter Unix behoben
-
-      Rev 1.9   28 Jul 1998 23:48:20   KHZ
-   Task #52607# Grafik-Textboxen und Absatzformatierung verbessert
-
-      Rev 1.8   28 Jul 1998 11:01:48   KHZ
-   Task #52607# nummerierte Listen (Teil 1)
-
-      Rev 1.7   22 Jul 1998 15:36:18   KHZ
-   Task #52607#
-
-      Rev 1.6   21 Jul 1998 14:51:50   KHZ
-   Task #52607# (WW 97 Import)
-
-      Rev 1.5   21 Jul 1998 12:33:38   KHZ
-   als MSDrawingObject eingebettete Grafik (Teil 1)
-
-      Rev 1.4   13 Jul 1998 15:29:16   KHZ
-   Task #52607# embeded Grafiken (NICHT UEBER den Text gelegte)
-
-      Rev 1.3   30 Jun 1998 21:33:24   KHZ
-   Header/Footer/Footnotes weitgehend ok
-
-      Rev 1.2   23 Jun 1998 11:24:26   KHZ
-   Zwischenstand: die meisten Zeichenattribute Ok!
-
-      Rev 1.1   18 Jun 1998 09:47:14   KHZ
-   Zwischenstand fur 396c
-
-      Rev 1.0   16 Jun 1998 11:06:34   KHZ
-   Initial revision.
-
-*************************************************************************/
-
 
 
