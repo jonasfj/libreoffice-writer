@@ -2,9 +2,9 @@
  *
  *  $RCSfile: unoobj2.cxx,v $
  *
- *  $Revision: 1.34 $
+ *  $Revision: 1.35 $
  *
- *  last change: $Author: vg $ $Date: 2003-04-01 15:35:14 $
+ *  last change: $Author: vg $ $Date: 2003-04-15 16:58:31 $
  *
  *  The Contents of this file are made available subject to the terms of
  *  either of the following licenses
@@ -548,7 +548,8 @@ uno::Sequence< beans::PropertyValue > SwXTextCursor::createSortDescriptor(sal_Bo
     OUString aCollAlg;
     if (nLen > 0)
         aCollAlg = aSeq.getConstArray()[0];
-#ifdef DEBUG
+
+#if OSL_DEBUG_LEVEL > 1
     const OUString *pTxt = aSeq.getConstArray();
 #endif
 
@@ -717,7 +718,7 @@ sal_Bool SwXTextCursor::convertSortProperties(
             else
                 bRet = sal_False;
         }
-        else if(0 == rPropName.indexOf(C2U("IsSortAscending")) && 
+        else if(0 == rPropName.indexOf(C2U("IsSortAscending")) &&
             rPropName.getLength() == 16 &&
             (rPropName.getStr()[15] >= '0' && rPropName.getStr()[15] <= '9'))
         {
@@ -1851,7 +1852,7 @@ uno::Reference< XTextRange >  SwXTextRange::CreateTextRangeFromPosition(SwDoc* p
                 pTxtFtn = pDoc->GetFtnIdxs()[ n ];
                 const SwFmtFtn& rFtn = pTxtFtn->GetFtn();
                 const SwTxtFtn* pTxtFtn = rFtn.GetTxtFtn();
-#ifdef DEBUG
+#if OSL_DEBUG_LEVEL > 1
                 const SwStartNode* pTmpSttNode = pTxtFtn->GetStartNode()->GetNode().
                                 FindSttNodeByType(SwFootnoteStartNode);
 #endif
