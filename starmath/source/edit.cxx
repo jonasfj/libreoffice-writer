@@ -2,9 +2,9 @@
  *
  *  $RCSfile: edit.cxx,v $
  *
- *  $Revision: 1.9 $
+ *  $Revision: 1.10 $
  *
- *  last change: $Author: tl $ $Date: 2001-06-19 11:56:13 $
+ *  last change: $Author: jp $ $Date: 2001-07-05 10:58:51 $
  *
  *  The Contents of this file are made available subject to the terms of
  *  either of the following licenses
@@ -148,13 +148,13 @@ void SmGetLeftSelectionPart(const ESelection aSel,
 
 SmEditWindow::SmEditWindow( Window* pParent ) :
     Window				(pParent),
+    DropTargetHelper( this ),
     pEditView			(0),
     pHScrollBar			(0),
     pVScrollBar			(0),
     pScrollBox			(0)
 {
     SetHelpId(HID_SMA_COMMAND_WIN_EDIT);
-    EnableDrop();
     SetMapMode(MAP_PIXEL);
 
     SetBackground( GetSettings().GetStyleSettings().GetWindowColor() );
@@ -216,7 +216,7 @@ SfxItemPool * SmEditWindow::GetEditEngineItemPool()
     return pDoc ? &pDoc->GetEditEngineItemPool() : 0;
 }
 
-    
+
 void SmEditWindow::DataChanged( const DataChangedEvent& )
 {
     SetBackground( GetSettings().GetStyleSettings().GetWindowColor() );
@@ -234,18 +234,18 @@ void SmEditWindow::DataChanged( const DataChangedEvent& )
 
         long nFntHeight = aFont.GetSize().Height();
 
-        pEditEngineItemPool->SetPoolDefaultItem( 
+        pEditEngineItemPool->SetPoolDefaultItem(
                 SvxFontItem( aFont.GetFamily(), aFont.GetName(),
                     aFont.GetStyleName(), aFont.GetPitch(), aFont.GetCharSet(),
                     EE_CHAR_FONTINFO ) );
-        pEditEngineItemPool->SetPoolDefaultItem( 
+        pEditEngineItemPool->SetPoolDefaultItem(
                 SvxFontHeightItem( nFntHeight, 100, EE_CHAR_FONTHEIGHT ) );
-        pEditEngineItemPool->SetPoolDefaultItem( 
+        pEditEngineItemPool->SetPoolDefaultItem(
                 SvxFontHeightItem( nFntHeight, 100, EE_CHAR_FONTHEIGHT_CJK ) );
-        pEditEngineItemPool->SetPoolDefaultItem( 
+        pEditEngineItemPool->SetPoolDefaultItem(
                 SvxFontHeightItem( nFntHeight, 100, EE_CHAR_FONTHEIGHT_CTL ) );
-    
-        // forces new settings to be used		   
+
+        // forces new settings to be used
         pEditEngine->Clear();	//#77957 incorrect font size
     }
 
@@ -588,8 +588,8 @@ void SmEditWindow::SetText(const XubString& rText)
         pEditView->SetSelection(eSelection);
     }
 }
-    
-    
+
+
 void SmEditWindow::GetFocus()
 {
     Window::GetFocus();
@@ -609,7 +609,7 @@ void SmEditWindow::LoseFocus()
         aActiveSelection = pEditView->GetSelection();
     if (pEditEngine)
         pEditEngine->SetStatusEventHdl( Link() );
-    
+
     Window::LoseFocus();
 }
 
@@ -774,14 +774,14 @@ void SmEditWindow::MouseMove(const MouseEvent &rEvt)
         pEditView->MouseMove(rEvt);
 }
 
-BOOL SmEditWindow::Drop(const DropEvent& rEvt)
+sal_Int8 SmEditWindow::AcceptDrop( const AcceptDropEvent& rEvt )
 {
-    return pEditView ? pEditView->Drop( rEvt ) : FALSE;
+    return pEditView ? /*pEditView->QueryDrop( rEvt )*/DND_ACTION_NONE: DND_ACTION_NONE;
 }
 
-BOOL SmEditWindow::QueryDrop(DropEvent& rEvt)
+sal_Int8 SmEditWindow::ExecuteDrop( const ExecuteDropEvent& rEvt )
 {
-    return pEditView ? pEditView->QueryDrop( rEvt ) : FALSE;
+    return pEditView ? /*pEditView->Drop( rEvt )*/DND_ACTION_NONE : DND_ACTION_NONE;
 }
 
 ESelection SmEditWindow::GetSelection() const

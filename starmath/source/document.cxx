@@ -2,9 +2,9 @@
  *
  *  $RCSfile: document.cxx,v $
  *
- *  $Revision: 1.32 $
+ *  $Revision: 1.33 $
  *
- *  last change: $Author: cmc $ $Date: 2001-06-26 14:49:07 $
+ *  last change: $Author: jp $ $Date: 2001-07-05 10:58:51 $
  *
  *  The Contents of this file are made available subject to the terms of
  *  either of the following licenses
@@ -603,7 +603,6 @@ void SmDocShell::Resize()
     if ( bIsEnabled )
         EnableSetModified( FALSE );
 
-    SetUpdateTimeout( 0L );
     SetVisAreaSize( aVisSize );
     SmViewShell *pViewSh = SmGetActiveView();
     if (pViewSh)
@@ -883,10 +882,10 @@ BOOL SmDocShell::Save()
         return TRUE;
     }
 #endif
-    
+
     //! apply latest changes if necessary
     UpdateText();
-    
+
     if ( SfxInPlaceObject::Save() )
     {
         if( !pTree )
@@ -934,10 +933,10 @@ void SmDocShell::UpdateText()
 BOOL SmDocShell::SaveAs(SvStorage * pNewStor)
 {
     BOOL bRet = FALSE;
-    
+
     //! apply latest changes if necessary
     UpdateText();
-    
+
     if ( SfxInPlaceObject::SaveAs( pNewStor ) )
     {
         if( !pTree )
@@ -1355,7 +1354,7 @@ void SmDocShell::Execute(SfxRequest& rReq)
                     Insert( xStore );
                     break;
                 default:
-                    DBG_ERROR( "unexpected format ID" );                        
+                    DBG_ERROR( "unexpected format ID" );
                 }
                 UpdateText();
             }
@@ -1427,21 +1426,6 @@ void SmDocShell::GetState(SfxItemSet &rSet)
         }
     }
 }
-
-
-
-void SmDocShell::FillRegInfo(SvEmbeddedRegistryInfo * pInfo)
-{
-    SfxInPlaceObject::FillRegInfo(pInfo);
-    pInfo->aObjName.AssignAscii( RTL_CONSTASCII_STRINGPARAM(pStarMathDoc));
-    pInfo->nMajorVers = 5;
-    pInfo->nMinorVers = 0;
-    pInfo->aHumanShortTypeName = String(SmResId(RID_DOCUMENTSTR));
-    pInfo->nShell = REG_SHELL_OPEN | REG_SHELL_PRINT | REG_SHELL_PRINTTO;
-    pInfo->aExt.AssignAscii( RTL_CONSTASCII_STRINGPARAM(".SMF"));
-    pInfo->nIconResId = REG_ICON_RESID_MATH;
-}
-
 
 
 SfxUndoManager *SmDocShell::GetUndoManager()
