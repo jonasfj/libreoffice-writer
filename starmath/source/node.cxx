@@ -2,9 +2,9 @@
  *
  *  $RCSfile: node.cxx,v $
  *
- *  $Revision: 1.18 $
+ *  $Revision: 1.19 $
  *
- *  last change: $Author: tl $ $Date: 2002-04-18 11:50:14 $
+ *  last change: $Author: tl $ $Date: 2002-05-24 07:48:49 $
  *
  *  The Contents of this file are made available subject to the terms of
  *  either of the following licenses
@@ -133,7 +133,7 @@
 
 ////////////////////////////////////////
 // SmTmpDevice
-// Allows for font and color changes. The original settings will be restored 
+// Allows for font and color changes. The original settings will be restored
 // in the destructor.
 // It's main purpose is to allow for the "const" in the 'OutputDevice'
 // argument in the 'Arrange' functions and restore changes made in the 'Draw'
@@ -156,11 +156,11 @@ public:
     ~SmTmpDevice()  { rOutDev.Pop(); }
 
     void SetFont(const Font &rNewFont);
-    
+
     void SetLineColor( const Color& rColor )    { rOutDev.SetLineColor( Impl_GetColor(rColor) ); }
     void SetFillColor( const Color& rColor )    { rOutDev.SetFillColor( Impl_GetColor(rColor) ); }
     void SetTextColor( const Color& rColor )    { rOutDev.SetTextColor( Impl_GetColor(rColor) ); }
-    
+
     operator OutputDevice & () { return rOutDev; }
 };
 
@@ -176,8 +176,8 @@ SmTmpDevice::SmTmpDevice(OutputDevice &rTheDev, BOOL bUseMap100th_mm) :
         rOutDev.SetMapMode( MAP_100TH_MM );     //Immer fuer 100% fomatieren
     }
 }
-    
-#define DARK_COL    154    
+
+#define DARK_COL    154
 
 Color SmTmpDevice::Impl_GetColor( const Color& rColor )
 {
@@ -189,7 +189,7 @@ Color SmTmpDevice::Impl_GetColor( const Color& rColor )
         SmViewShell *pViewSh = SmGetActiveView();
         if (pViewSh  &&  OUTDEV_PRINTER != rOutDev.GetOutDevType())
         {
-            const StyleSettings& rS = 
+            const StyleSettings& rS =
                     pViewSh->GetGraphicWindow().GetSettings().GetStyleSettings();
             nNewCol = /*bIsDarkBg ? COL_WHITE :*/ rS.GetWindowTextColor().GetColor();
         }
@@ -428,7 +428,7 @@ void SmNode::Prepare(const SmFormat &rFormat, const SmDocShell &rDocShell)
 
     GetFont() = rFormat.GetFont(FNT_MATH);
     //GetFont().SetCharSet(RTL_TEXTENCODING_SYMBOL);
-    DBG_ASSERT( GetFont().GetCharSet() == RTL_TEXTENCODING_UNICODE, 
+    DBG_ASSERT( GetFont().GetCharSet() == RTL_TEXTENCODING_UNICODE,
             "unexpected CharSet" );
     GetFont().SetWeight(WEIGHT_NORMAL);
     GetFont().SetItalic(ITALIC_NONE);
@@ -503,7 +503,7 @@ void SmNode::CreateTextFromNode(String &rText)
     {
         rText.EraseTrailingChars();
         APPEND(rText,"} ");
-    }	
+    }
 }
 
 
@@ -604,6 +604,12 @@ const SmNode * SmNode::FindRectClosestTo(const Point &rPoint) const
     return pResult;
 }
 
+String SmNode::GetAccessibleText() const
+{
+    DBG_ERROR( "SmNode: GetAccessibleText not overloaded" );
+    return String();
+}
+
 
 ///////////////////////////////////////////////////////////////////////////
 
@@ -614,7 +620,7 @@ SmStructureNode::SmStructureNode( const SmStructureNode &rNode ) :
     for (i = 0;  i < aSubNodes.GetSize();  i++)
         delete aSubNodes.Get(i);
     aSubNodes.Clear();
-    
+
     ULONG nSize = rNode.aSubNodes.GetSize();
     aSubNodes.SetSize( nSize );
     for (i = 0;  i < nSize;  ++i)
@@ -643,7 +649,7 @@ SmStructureNode & SmStructureNode::operator = ( const SmStructureNode &rNode )
     for (i = 0;  i < aSubNodes.GetSize();  i++)
         delete aSubNodes.Get(i);
     aSubNodes.Clear();
-    
+
     ULONG nSize = rNode.aSubNodes.GetSize();
     aSubNodes.SetSize( nSize );
     for (i = 0;  i < nSize;  ++i)
@@ -691,6 +697,23 @@ SmNode * SmStructureNode::GetSubNode(USHORT nIndex)
 }
 
 
+String SmStructureNode::GetAccessibleText() const
+{
+    String aTxt;
+    USHORT nNodes = GetNumSubNodes();
+    for (USHORT i = 0;  i < nNodes;  ++i)
+    {
+        const SmNode *pNode = ((SmStructureNode *) this)->GetSubNode(i);
+        if (pNode)
+        {
+            aTxt += pNode->GetAccessibleText();
+            if (aTxt.Len()  &&  ' ' != aTxt.GetChar( aTxt.Len() - 1 ))
+                aTxt += String::CreateFromAscii( " " );
+        }
+    }
+    return aTxt;
+}
+
 ///////////////////////////////////////////////////////////////////////////
 
 
@@ -714,6 +737,13 @@ SmNode * SmVisibleNode::GetSubNode(USHORT nIndex)
 
 ///////////////////////////////////////////////////////////////////////////
 
+String SmGraphicNode::GetAccessibleText() const
+{
+    return String::CreateFromAscii( " " );
+}
+
+///////////////////////////////////////////////////////////////////////////
+
 
 void SmExpressionNode::CreateTextFromNode(String &rText)
 {
@@ -726,7 +756,7 @@ void SmExpressionNode::CreateTextFromNode(String &rText)
         {
             pNode->CreateTextFromNode(rText);
             //Just a bit of foo to make unary +asd -asd +-asd -+asd look nice
-            if (pNode->GetType() == NMATH) 
+            if (pNode->GetType() == NMATH)
                 if ((nSize != 2) || ((rText.GetChar(rText.Len()-1) != '+') &&
                     (rText.GetChar(rText.Len()-1) != '-')))
                     rText.Append(' ');
@@ -736,7 +766,7 @@ void SmExpressionNode::CreateTextFromNode(String &rText)
     {
         rText.EraseTrailingChars();
         APPEND(rText,"} ");
-    }	
+    }
 }
 
 
@@ -789,7 +819,7 @@ void SmTableNode::Arrange(const OutputDevice &rDev, const SmFormat &rFormat)
     }
 }
 
-    
+
 SmNode * SmTableNode::GetLeftMost()
 {
     return this;
@@ -1222,7 +1252,7 @@ void SmBinDiagonalNode::GetOperPosSize(Point &rPos, Size &rSize,
             nRectBottom = GetBottom();
     Point  	aRightHdg	  (100, 0),
             aDownHdg	  (0, 100),
-            aDiagHdg	  ( (long)(100.0 * cos(fAngleRad)), 
+            aDiagHdg	  ( (long)(100.0 * cos(fAngleRad)),
                             (long)(-100.0 * sin(fAngleRad)) );
 
     long  nLeft, nRight, nTop, nBottom;		// Ränder des Rechtecks für die
@@ -1965,7 +1995,7 @@ void SmAttributNode::Arrange(const OutputDevice &rDev, const SmFormat &rFormat)
 void SmFontNode::CreateTextFromNode(String &rText)
 {
     switch (GetToken().eType)
-    {	
+    {
         case TBOLD:
             APPEND(rText,"bold ");
             break;
@@ -2021,16 +2051,16 @@ void SmFontNode::CreateTextFromNode(String &rText)
         case TGREEN:
             APPEND(rText,"color green ");
             break;
-        case TBLUE:	
+        case TBLUE:
             APPEND(rText,"color blue ");
             break;
-        case TCYAN:	
+        case TCYAN:
             APPEND(rText,"color cyan ");
             break;
         case TMAGENTA:
             APPEND(rText,"color magenta ");
             break;
-        case TYELLOW:	
+        case TYELLOW:
             APPEND(rText,"color yellow ");
             break;
         case TSANS:
@@ -2202,7 +2232,7 @@ void SmPolyLineNode::Draw(OutputDevice &rDev, const Point &rPosition) const
 
     SmTmpDevice  aTmpDev ((OutputDevice &) rDev, FALSE);
     aTmpDev.SetLineColor( GetFont().GetColor() );
-    
+
     rDev.DrawPolyLine(aPoly, aInfo);
 
 #ifdef SM_RECT_DEBUG
@@ -2412,7 +2442,7 @@ void SmRectangleNode::Draw(OutputDevice &rDev, const Point &rPosition) const
     aTmpDev.SetFillColor(GetFont().GetColor());
     rDev.SetLineColor();
     aTmpDev.SetFont(GetFont());
-    
+
     ULONG  nBorderWidth = GetFont().GetBorderWidth();
 
     // get rectangle and remove borderspace
@@ -2456,7 +2486,7 @@ void SmTextNode::Prepare(const SmFormat &rFormat, const SmDocShell &rDocShell)
     // override the settings made by an SmAlignNode before)
     if (TTEXT == GetToken().eType)
         SetRectHorAlign( RHA_LEFT );
-    
+
     aText = GetToken().aText;
     GetFont() = rFormat.GetFont(GetFontDesc());
 
@@ -2490,7 +2520,7 @@ void SmTextNode::CreateTextFromNode(String &rText)
         rText.Append('\"');
         bQuoted=TRUE;
     }
-    else 
+    else
     {
         SmParser aParseTest;
         SmNode *pTable = aParseTest.Parse(GetToken().aText);
@@ -2498,11 +2528,11 @@ void SmTextNode::CreateTextFromNode(String &rText)
         if ( (pTable->GetType() == NTABLE) && (pTable->GetNumSubNodes() == 1) )
         {
             SmNode *pResult = pTable->GetSubNode(0);
-            if ( (pResult->GetType() == NLINE) && 
+            if ( (pResult->GetType() == NLINE) &&
                 (pResult->GetNumSubNodes() == 1) )
             {
                 pResult = pResult->GetSubNode(0);
-                if ( (pResult->GetType() == NEXPRESSION) && 
+                if ( (pResult->GetType() == NEXPRESSION) &&
                     (pResult->GetNumSubNodes() == 1) )
                 {
                     pResult = pResult->GetSubNode(0);
@@ -2540,7 +2570,7 @@ void SmTextNode::Draw(OutputDevice &rDev, const Point& rPosition) const
 
     SmTmpDevice  aTmpDev ((OutputDevice &) rDev, FALSE);
     aTmpDev.SetFont(GetFont());
-    
+
     Point  aPos (rPosition);
     aPos.Y() += GetBaselineOffset();
     // auf Pixelkoordinaten runden
@@ -2557,6 +2587,10 @@ void SmTextNode::Draw(OutputDevice &rDev, const Point& rPosition) const
 #endif
 }
 
+String SmTextNode::GetAccessibleText() const
+{
+    return aText;
+}
 
 /**************************************************************************/
 
@@ -2564,9 +2598,9 @@ void SmMatrixNode::CreateTextFromNode(String &rText)
 {
     APPEND(rText,"matrix {");
     for (int i = 0;  i < nNumRows;	i++)
-    {	
+    {
         for (int j = 0;  j < nNumCols;	j++)
-        {	
+        {
             SmNode *pNode = GetSubNode(i * nNumCols + j);
             pNode->CreateTextFromNode(rText);
             if (j != nNumCols-1)
@@ -2685,7 +2719,7 @@ void SmMatrixNode::SetRowCol(USHORT nMatrixRows, USHORT nMatrixCols)
     nNumCols = nMatrixCols;
 }
 
-    
+
 SmNode * SmMatrixNode::GetLeftMost()
 {
     return this;

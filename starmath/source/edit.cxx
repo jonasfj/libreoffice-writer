@@ -2,9 +2,9 @@
  *
  *  $RCSfile: edit.cxx,v $
  *
- *  $Revision: 1.20 $
+ *  $Revision: 1.21 $
  *
- *  last change: $Author: tl $ $Date: 2002-05-15 13:47:26 $
+ *  last change: $Author: tl $ $Date: 2002-05-24 07:48:49 $
  *
  *  The Contents of this file are made available subject to the terms of
  *  either of the following licenses
@@ -224,7 +224,7 @@ void SmEditWindow::DataChanged( const DataChangedEvent& )
 {
     const StyleSettings aSettings( GetSettings().GetStyleSettings() );
     SetBackground( aSettings.GetWindowColor() );
-    // edit fields in other Applications use this font instead of
+    // edit fields in other Applications use this font instead of 
     // the application font thus we use this one too
     SetPointFont( aSettings.GetFieldFont() /*aSettings.GetAppFont()*/ );
     SetTextColor( aSettings.GetWindowTextColor() );
@@ -237,10 +237,10 @@ void SmEditWindow::DataChanged( const DataChangedEvent& )
         //!
         //! see also SmDocShell::GetEditEngine() !
         //!
-
+        
         pEditEngine->SetDefTab( USHORT( GetTextWidth( C2S("XXXX") ) ) );
 
-        USHORT aFntInfoId[3] = {
+        USHORT aFntInfoId[3] = { 
                 EE_CHAR_FONTINFO, EE_CHAR_FONTINFO_CJK, EE_CHAR_FONTINFO_CTL };
         for (int i = 0;  i < 3;  ++i)
         {
@@ -257,7 +257,7 @@ void SmEditWindow::DataChanged( const DataChangedEvent& )
             }
         }
 
-        SvxFontHeightItem aItem( GetFont().GetSize().Height(), 100,
+        SvxFontHeightItem aItem( GetFont().GetSize().Height(), 100, 
                                  EE_CHAR_FONTHEIGHT );
         pEditEngineItemPool->SetPoolDefaultItem( aItem );
         aItem.SetWhich( EE_CHAR_FONTHEIGHT_CJK );
@@ -371,10 +371,7 @@ void SmEditWindow::Command(const CommandEvent& rCEvt)
         PopupMenu* pPopupMenu = new PopupMenu(SmResId(RID_COMMANDMENU));
         pPopupMenu->SetSelectHdl(LINK(this, SmEditWindow, MenuSelectHdl));
 
-        Point aPos(5, 5);
-        if (rCEvt.IsMouseEvent())
-            aPos = rCEvt.GetMousePosPixel();
-        pPopupMenu->Execute( this, aPos );
+        pPopupMenu->Execute( this, rCEvt.GetMousePosPixel() );
         delete pPopupMenu;
     }
     else if (pEditView)
@@ -451,7 +448,7 @@ void SmEditWindow::KeyInput(const KeyEvent& rKEvt)
             SmDocShell *pDocShell = GetDoc();
             if (pDocShell)
                 pDocShell->SetModified( GetEditEngine()->IsModified() );
-
+            
             aModifyTimer.Start();
         }
     }
@@ -467,7 +464,7 @@ void SmEditWindow::Paint(const Rectangle& rRect)
 void SmEditWindow::CreateEditView()
 {
     EditEngine *pEditEngine = GetEditEngine();
-
+    
     //! pEditEngine and pEditView may be 0.
     //! For example when the program is used by the document-converter
     if (!pEditView && pEditEngine)
