@@ -2,9 +2,9 @@
  *
  *  $RCSfile: viewport.cxx,v $
  *
- *  $Revision: 1.32 $
+ *  $Revision: 1.33 $
  *
- *  last change: $Author: obo $ $Date: 2004-03-19 12:49:57 $
+ *  last change: $Author: obo $ $Date: 2004-07-06 11:34:22 $
  *
  *  The Contents of this file are made available subject to the terms of
  *  either of the following licenses
@@ -202,8 +202,8 @@ void SwView::InvalidateRulerPos()
         SID_RULER_LR_MIN_MAX, SID_ATTR_LONG_ULSPACE, SID_ATTR_LONG_LRSPACE,
         SID_RULER_BORDER_DISTANCE,
         SID_ATTR_PARA_LRSPACE_VERTICAL, SID_RULER_BORDERS_VERTICAL,
-        SID_RULER_TEXT_RIGHT_TO_LEFT, 
-        SID_RULER_ROWS, SID_RULER_ROWS_VERTICAL, FN_STAT_PAGE, 
+        SID_RULER_TEXT_RIGHT_TO_LEFT,
+        SID_RULER_ROWS, SID_RULER_ROWS_VERTICAL, FN_STAT_PAGE,
         0
     };
 
@@ -935,14 +935,14 @@ void SwView::CalcAndSetBorderPixel( SvBorder &rToFill, FASTBOOL bInner )
 
     const StyleSettings &rSet = GetEditWin().GetSettings().GetStyleSettings();
     const long nTmp = rSet.GetScrollBarSize();
-    if( pVScrollbar->IsVisible(TRUE) )
+    if( pVScrollbar->IsVisible(FALSE) )
     {
         if(bRightVRuler)
             rToFill.Left() = nTmp;
         else
             rToFill.Right()  = nTmp;
     }
-    if ( pHScrollbar->IsVisible(TRUE) )
+    if ( pHScrollbar->IsVisible(FALSE) && !pWrtShell->IsBrowseMode() )
         rToFill.Bottom() = nTmp;
 
     SetBorderPixel( rToFill );
