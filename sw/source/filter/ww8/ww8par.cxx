@@ -2,9 +2,9 @@
  *
  *  $RCSfile: ww8par.cxx,v $
  *
- *  $Revision: 1.12 $
+ *  $Revision: 1.13 $
  *
- *  last change: $Author: cmc $ $Date: 2001-02-20 15:24:20 $
+ *  last change: $Author: os $ $Date: 2001-02-27 15:03:08 $
  *
  *  The Contents of this file are made available subject to the terms of
  *  either of the following licenses
@@ -696,9 +696,9 @@ void SwWW8ImplReader::ImportDop( BOOL bNewDoc )
         // set default language (from FIB)
         rDoc.GetAttrPool().SetPoolDefaultItem(
             SvxLanguageItem( (const LanguageType)pWwFib->lid )  );
-    
+
         //import magic doptypography information, if its there
-        if (pWwFib->nFib > 105) 
+        if (pWwFib->nFib > 105)
             ImportDopTypography(pWDop->doptypography);
     }
 }
@@ -708,7 +708,7 @@ void SwWW8ImplReader::ImportDopTypography(const WW8DopTypography &rTypo)
     switch (rTypo.iLevelOfKinsoku)
     {
 #if 0	/*
-        Do the defaults differ between Microsoft versions ?, do we do 
+        Do the defaults differ between Microsoft versions ?, do we do
         something about it if so ?
         */
         case 0:
@@ -740,8 +740,8 @@ void SwWW8ImplReader::ImportDopTypography(const WW8DopTypography &rTypo)
     }
 
     /*
-    This MS hack means that level 2 of japanese is not in operation, so we put 
-    in what we know are the MS defaults, there is a complementary reverse 
+    This MS hack means that level 2 of japanese is not in operation, so we put
+    in what we know are the MS defaults, there is a complementary reverse
     hack in the writer. Its our default as well, but we can set it anyway
     as a flag for later.
     */
@@ -871,7 +871,7 @@ long SwWW8ImplReader::Read_Ftn( WW8PLCFManResult* pRes, BOOL )
     Ignoring Footnote outside of the normal Text. People will put footnotes
     into field results and field commands.
     */
-    if (bIgnoreText || 
+    if (bIgnoreText ||
         pPaM->GetPoint()->nNode < rDoc.GetNodes().GetEndOfExtras().GetIndex())
 #endif
         return 0;
@@ -2349,7 +2349,7 @@ ULONG SwWW8ImplReader::LoadDoc1( SwPaM& rPaM ,WW8Glossary *pGloss)
 
                 aInfo.ePos = FTNPOS_PAGE;
                 aInfo.eNum = eNumA[pWDop->rncFtn];
-                aInfo.aFmt.eType = eNumTA[pWDop->nfcFtnRef];
+                aInfo.aFmt.SetNumberingType(eNumTA[pWDop->nfcFtnRef]);
                 if( pWDop->nFtn )
                     aInfo.nFtnOffset = pWDop->nFtn - 1;
                 rDoc.SetFtnInfo( aInfo );
@@ -2360,7 +2360,7 @@ ULONG SwWW8ImplReader::LoadDoc1( SwPaM& rPaM ,WW8Glossary *pGloss)
 
                 // Ich kann nicht setzen, wann neu nummerieren...
                 //	aInfo.eNum = eNumA[pWDop->pDop->rncEdn];
-                aInfo.aFmt.eType = eNumTA[pWDop->nfcEdnRef];
+                aInfo.aFmt.SetNumberingType(eNumTA[pWDop->nfcEdnRef]);
                 if( pWDop->nEdn )
                     aInfo.nFtnOffset = pWDop->nEdn - 1;
                 rDoc.SetEndNoteInfo( aInfo );
@@ -3048,23 +3048,26 @@ void SwMSDffManager::ProcessClientAnchor2( SvStream& rSt, DffRecordHeader& rHd, 
 
       Source Code Control System - Header
 
-      $Header: /zpool/svn/migration/cvs_rep_09_09_08/code/sw/source/filter/ww8/ww8par.cxx,v 1.12 2001-02-20 15:24:20 cmc Exp $
+      $Header: /zpool/svn/migration/cvs_rep_09_09_08/code/sw/source/filter/ww8/ww8par.cxx,v 1.13 2001-02-27 15:03:08 os Exp $
 
       Source Code Control System - Update
 
       $Log: not supported by cvs2svn $
+      Revision 1.12  2001/02/20 15:24:20  cmc
+      #84095# Footnotes in field results that are being ignored shouldn't therefore be inserted
+
       Revision 1.11  2001/02/16 10:08:12  cmc
       Normalize japanese doptypography variable names
-    
+
       Revision 1.10  2001/02/01 16:11:30  cmc
       #83362# Missing i18n header include
-    
+
       Revision 1.9  2001/01/30 20:11:06  cmc
       #83362# CJK Forbidden Character {Im|Ex}port
-    
+
       Revision 1.8  2001/01/26 15:43:22  jp
       Bug #77951#: MakePageDesc - create I18N names
-    
+
       Revision 1.7  2001/01/22 09:05:58  os
       update of filter configuration
 
