@@ -2,9 +2,9 @@
  *
  *  $RCSfile: docfld.cxx,v $
  *
- *  $Revision: 1.21 $
+ *  $Revision: 1.22 $
  *
- *  last change: $Author: obo $ $Date: 2004-08-12 12:16:15 $
+ *  last change: $Author: kz $ $Date: 2004-10-04 19:02:51 $
  *
  *  The Contents of this file are made available subject to the terms of
  *  either of the following licenses
@@ -81,9 +81,6 @@
 #endif
 #ifndef _APP_HXX //autogen
 #include <vcl/svapp.hxx>
-#endif
-#ifndef _SO2REF_HXX //autogen
-#include <so3/so2ref.hxx>
 #endif
 #ifndef _UNOTOOLS_CHARCLASS_HXX
 #include <unotools/charclass.hxx>
@@ -187,11 +184,6 @@
 #include <SwUndoField.hxx> // #111840#
 
 using namespace com::sun::star::uno; // #111840#
-
-#ifndef SO2_DECL_SVLINKNAME_DEFINED
-#define SO2_DECL_SVLINKNAME_DEFINED
-SO2_DECL_REF(SvLinkName)
-#endif
 
 extern BOOL IsFrameBehind( const SwTxtNode& rMyNd, USHORT nMySttPos,
                         const SwTxtNode& rBehindNd, USHORT nSttPos );
@@ -1740,13 +1732,13 @@ const SwDBData& SwDoc::GetDBDesc()
                             if(pFld->IsFldInDoc())
                             {
                                 if(RES_DBFLD == nWhich)
-                                    aDBData = 
+                                    aDBData =
                                         (static_cast < SwDBFieldType * > (pFld->GetFld()->GetTyp()))
                                             ->GetDBData();
-                                else    
+                                else
                                     aDBData = (static_cast < SwDBNameInfField* > (pFld->GetFld()))->GetRealDBData();
                                 break;
-                            }        
+                            }
                             pFld = (SwFmtFld*)aIter.Next();
                         }
                     }
@@ -2092,7 +2084,7 @@ void SwDoc::ReplaceUsedDBs( const SvStringsDtor& rUsedDBNames,
                 {
                     rFormel.Erase( nPos, sDBName.Len() );
                     rFormel.Insert( sNewName, nPos );
-                    //prevent re-searching - this is useless and provokes 
+                    //prevent re-searching - this is useless and provokes
                     //endless loops when names containing each other and numbers are exchanged
                     //e.g.: old ´12345.12345  new: i12345.12345
                     nPos += sNewName.Len();
