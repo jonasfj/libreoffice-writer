@@ -2,9 +2,9 @@
  *
  *  $RCSfile: acctable.cxx,v $
  *
- *  $Revision: 1.22 $
+ *  $Revision: 1.23 $
  *
- *  last change: $Author: rt $ $Date: 2004-06-17 08:05:57 $
+ *  last change: $Author: vg $ $Date: 2004-12-23 10:02:55 $
  *
  *  The Contents of this file are made available subject to the terms of
  *  either of the following licenses
@@ -58,7 +58,6 @@
  *
  *
  ************************************************************************/
-
 
 #pragma hdrstop
 
@@ -162,7 +161,7 @@ class SwAccessibleTableData_Impl
     Int32Set_Impl	maRows;
     Int32Set_Impl	maColumns;
     Int32PairList_Impl maExtents;	// cell extends for event processing only
-    Point 	maTabFrmPos;		
+    Point 	maTabFrmPos;
     const SwTabFrm *mpTabFrm;
     sal_Bool mbIsInPagePreview;
 
@@ -175,8 +174,8 @@ class SwAccessibleTableData_Impl
     sal_Bool FindCell( const Point& rPos, const SwFrm *pFrm ,
                            sal_Bool bExact, const SwFrm *& rFrm ) const;
 
-    void GetSelection( const Point& rTabPos, const SwRect& rArea, 
-                       const SwSelBoxes& rSelBoxes, const SwFrm *pFrm, 
+    void GetSelection( const Point& rTabPos, const SwRect& rArea,
+                       const SwSelBoxes& rSelBoxes, const SwFrm *pFrm,
                        SwAccTableSelHander_Impl& rSelHdl,
                        sal_Bool bColumns ) const;
 
@@ -204,7 +203,7 @@ public:
                           SwAccTableSelHander_Impl& rSelHdl,
                        sal_Bool bColumns ) const;
 
-    void CheckRowAndCol( sal_Int32 nRow, sal_Int32 nCol, 
+    void CheckRowAndCol( sal_Int32 nRow, sal_Int32 nCol,
                          SwAccessibleTable *pThis ) const
         throw(IndexOutOfBoundsException );
 
@@ -233,7 +232,7 @@ void SwAccessibleTableData_Impl::CollectData( const SwFrm *pFrm )
                 maRows.insert( pLower->Frm().Top() - maTabFrmPos.Y() );
                 CollectData( pLower );
             }
-            else if( pLower->IsCellFrm() && 
+            else if( pLower->IsCellFrm() &&
                      rLower.IsAccessible( mbIsInPagePreview ) )
             {
                 maColumns.insert( pLower->Frm().Left() - maTabFrmPos.X() );
@@ -258,16 +257,16 @@ void SwAccessibleTableData_Impl::CollectExtents( const SwFrm *pFrm )
         const SwFrm *pLower = rLower.GetSwFrm();
         if( pLower )
         {
-            if( pLower->IsCellFrm() && 
+            if( pLower->IsCellFrm() &&
                 rLower.IsAccessible( mbIsInPagePreview ) )
             {
                 sal_Int32 nRow, nCol;
                 Int32Pair_Impl aCellExtents;
-                GetRowColumnAndExtent( pLower->Frm(), nRow, nCol, 
-                                       aCellExtents.first, 
+                GetRowColumnAndExtent( pLower->Frm(), nRow, nCol,
+                                       aCellExtents.first,
                                        aCellExtents.second );
 
-                maExtents.push_back( aCellExtents );		
+                maExtents.push_back( aCellExtents );
             }
             else
             {
@@ -293,13 +292,13 @@ sal_Bool SwAccessibleTableData_Impl::CompareExtents( const SwFrm *pFrm,
         const SwFrm *pLower = rLower.GetSwFrm();
         if( pLower )
         {
-            if( pLower->IsCellFrm() && 
+            if( pLower->IsCellFrm() &&
                 rLower.IsAccessible( mbIsInPagePreview ) )
             {
                 sal_Int32 nRow, nCol;
                 Int32Pair_Impl aCellExtents;
-                GetRowColumnAndExtent( pLower->Frm(), nRow, nCol, 
-                                       aCellExtents.first, 
+                GetRowColumnAndExtent( pLower->Frm(), nRow, nCol,
+                                       aCellExtents.first,
                                        aCellExtents.second );
                 if( rIter == rEndIter ||
                     *rIter != aCellExtents )
@@ -348,7 +347,7 @@ sal_Bool SwAccessibleTableData_Impl::FindCell(
                     ASSERT( rFrm.Left() <= rPos.X() && rFrm.Top() <= rPos.Y(),
                             "find frame moved to far!" );
                     bFound = sal_True;
-                    if( !bExact || 
+                    if( !bExact ||
                         (rFrm.Top() == rPos.Y() && rFrm.Left() == rPos.Y() ) )
                     {
                         rRet = pLower;
@@ -368,7 +367,7 @@ sal_Bool SwAccessibleTableData_Impl::FindCell(
 
 void SwAccessibleTableData_Impl::GetSelection(
             const Point& rTabPos,
-            const SwRect& rArea, 
+            const SwRect& rArea,
             const SwSelBoxes& rSelBoxes,
             const SwFrm *pFrm,
             SwAccTableSelHander_Impl& rSelHdl,
@@ -399,18 +398,18 @@ void SwAccessibleTableData_Impl::GetSelection(
 
                     sal_Int32 nPos = bColumns ? (rBox.Left() - rTabPos.X())
                                               : (rBox.Top() - rTabPos.Y());
-                    Int32Set_Impl::const_iterator aSttRowOrCol( 
+                    Int32Set_Impl::const_iterator aSttRowOrCol(
                         rRowsOrCols.lower_bound( nPos ) );
                     sal_Int32 nRowOrCol =
-                        static_cast< sal_Int32 >( ::std::distance( 
+                        static_cast< sal_Int32 >( ::std::distance(
                             rRowsOrCols.begin(), aSttRowOrCol ) );
 
                     nPos = bColumns ? (rBox.Right() - rTabPos.X())
                                     : (rBox.Bottom() - rTabPos.Y());
-                    Int32Set_Impl::const_iterator aEndRowOrCol( 
+                    Int32Set_Impl::const_iterator aEndRowOrCol(
                         rRowsOrCols.upper_bound( nPos ) );
                     sal_Int32 nExt =
-                        static_cast< sal_Int32 >( ::std::distance( 
+                        static_cast< sal_Int32 >( ::std::distance(
                             aSttRowOrCol, aEndRowOrCol ) );
 
                     rSelHdl.Unselect( nRowOrCol, nExt );
@@ -440,7 +439,7 @@ const SwFrm *SwAccessibleTableData_Impl::GetCell(
     return pCellFrm;
 }
 
-void SwAccessibleTableData_Impl::GetSelection( 
+void SwAccessibleTableData_Impl::GetSelection(
                        sal_Int32 nStart, sal_Int32 nEnd,
                        const SwSelBoxes& rSelBoxes,
                           SwAccTableSelHander_Impl& rSelHdl,
@@ -449,11 +448,11 @@ void SwAccessibleTableData_Impl::GetSelection(
     SwRect aArea( mpTabFrm->Frm() );
     Point aPos( aArea.Pos() );
 
-    const Int32Set_Impl& rRowsOrColumns = bColumns ? maColumns : maRows; 
+    const Int32Set_Impl& rRowsOrColumns = bColumns ? maColumns : maRows;
     if( nStart > 0 )
     {
         Int32Set_Impl::const_iterator aStt( rRowsOrColumns.begin() );
-        ::std::advance( aStt, 
+        ::std::advance( aStt,
             static_cast< Int32Set_Impl::difference_type >( nStart ) );
         if( bColumns )
             aArea.Left( *aStt + aPos.X() );
@@ -463,7 +462,7 @@ void SwAccessibleTableData_Impl::GetSelection(
     if( nEnd < static_cast< sal_Int32 >( rRowsOrColumns.size() ) )
     {
         Int32Set_Impl::const_iterator aEnd( rRowsOrColumns.begin() );
-        ::std::advance( aEnd, 
+        ::std::advance( aEnd,
             static_cast< Int32Set_Impl::difference_type >( nEnd ) );
         if( bColumns )
             aArea.Right( *aEnd + aPos.X() - 1 );
@@ -495,7 +494,7 @@ inline sal_Int32 SwAccessibleTableData_Impl::GetColumnCount() const
     return static_cast< sal_Int32 >( maColumns.size() );
 }
 
-sal_Bool SwAccessibleTableData_Impl::CompareExtents( 
+sal_Bool SwAccessibleTableData_Impl::CompareExtents(
                                 const SwAccessibleTableData_Impl& rCmp ) const
 {
     if( maExtents.size() != rCmp.maExtents.size() )
@@ -533,7 +532,7 @@ inline Int32Set_Impl::const_iterator SwAccessibleTableData_Impl::GetRowIter(
     Int32Set_Impl::const_iterator aCol( GetRows().begin() );
     if( nRow > 0 )
     {
-        ::std::advance( aCol, 
+        ::std::advance( aCol,
                     static_cast< Int32Set_Impl::difference_type >( nRow ) );
     }
     return aCol;
@@ -545,13 +544,13 @@ inline Int32Set_Impl::const_iterator SwAccessibleTableData_Impl::GetColumnIter(
     Int32Set_Impl::const_iterator aCol = GetColumns().begin();
     if( nColumn > 0 )
     {
-        ::std::advance( aCol, 
+        ::std::advance( aCol,
                     static_cast< Int32Set_Impl::difference_type >( nColumn ) );
     }
     return aCol;
 }
 
-void SwAccessibleTableData_Impl::CheckRowAndCol( 
+void SwAccessibleTableData_Impl::CheckRowAndCol(
         sal_Int32 nRow, sal_Int32 nCol, SwAccessibleTable *pThis ) const
     throw(IndexOutOfBoundsException )
 {
@@ -572,11 +571,11 @@ void SwAccessibleTableData_Impl::GetRowColumnAndExtent(
         sal_Int32& rRow, sal_Int32& rColumn,
         sal_Int32& rRowExtent, sal_Int32& rColumnExtent ) const
 {
-    Int32Set_Impl::const_iterator aStt( 
+    Int32Set_Impl::const_iterator aStt(
                 maRows.lower_bound( rBox.Top() - maTabFrmPos.Y() ) );
-    Int32Set_Impl::const_iterator aEnd( 
+    Int32Set_Impl::const_iterator aEnd(
                 maRows.upper_bound( rBox.Bottom() - maTabFrmPos.Y() ) );
-    rRow = 
+    rRow =
          static_cast< sal_Int32 >( ::std::distance( maRows.begin(), aStt ) );
     rRowExtent =
          static_cast< sal_Int32 >( ::std::distance( aStt, aEnd ) );
@@ -596,7 +595,7 @@ class SwAccSingleTableSelHander_Impl : public SwAccTableSelHander_Impl
     sal_Bool bSelected;
 
 public:
-    
+
     inline SwAccSingleTableSelHander_Impl();
 
     inline sal_Bool IsSelected() const { return bSelected; }
@@ -623,7 +622,7 @@ class SwAccAllTableSelHander_Impl : public SwAccTableSelHander_Impl
     sal_Int32 nCount;
 
 public:
-    
+
     inline SwAccAllTableSelHander_Impl( sal_Int32 nSize );
 
     Sequence < sal_Int32 > GetSelSequence();
@@ -691,7 +690,7 @@ const SwSelBoxes *SwAccessibleTable::GetSelBoxes() const
     return pSelBoxes;
 }
 
-void SwAccessibleTable::FireTableChangeEvent( 
+void SwAccessibleTable::FireTableChangeEvent(
         const SwAccessibleTableData_Impl& rTableData )
 {
     AccessibleTableModelChange aModelChange;
@@ -723,7 +722,7 @@ const SwTableBox* SwAccessibleTable::GetTableBox( sal_Int32 nChildIndex ) const
         const SwFrm* pChildFrm = aCell.GetSwFrm();
         if( (pChildFrm != NULL) && pChildFrm->IsCellFrm() )
         {
-            const SwCellFrm* pCellFrm = 
+            const SwCellFrm* pCellFrm =
                 static_cast<const SwCellFrm*>( pChildFrm );
             pBox = pCellFrm->GetTabBox();
         }
@@ -743,11 +742,11 @@ sal_Bool SwAccessibleTable::IsChildSelected( sal_Int32 nChildIndex ) const
         DBG_ASSERT( pBox != NULL, "We need the table box." );
         bRet = pSelBoxes->Seek_Entry( const_cast<SwTableBox*>( pBox ) );
     }
-    
+
     return bRet;
 }
 
-sal_Int32 SwAccessibleTable::GetIndexOfSelectedChild( 
+sal_Int32 SwAccessibleTable::GetIndexOfSelectedChild(
                 sal_Int32 nSelectedChildIndex ) const
 {
     // iterate over all children to n-th isAccessibleChildSelected()
@@ -782,7 +781,7 @@ void SwAccessibleTable::GetStates(
         rStateSet.AddState( AccessibleStateType::MULTI_SELECTABLE );
 }
 
-SwAccessibleTable::SwAccessibleTable( 
+SwAccessibleTable::SwAccessibleTable(
         SwAccessibleMap *pMap,
         const SwTabFrm *pTabFrm	) :
     SwAccessibleContext( pMap, AccessibleRole::TABLE, pTabFrm ),
@@ -862,7 +861,7 @@ void SwAccessibleTable::Modify( SfxPoolItem *pOld, SfxPoolItem *pNew)
         break;
 
     case RES_OBJECTDYING:
-        if( GetRegisteredIn() == 
+        if( GetRegisteredIn() ==
                 static_cast< SwModify *>( static_cast< SwPtrMsgPoolItem * >( pOld )->pObject ) )
             pRegisteredIn->Remove( this );
         break;
@@ -873,7 +872,7 @@ void SwAccessibleTable::Modify( SfxPoolItem *pOld, SfxPoolItem *pNew)
     }
 }
 
-Any SwAccessibleTable::queryInterface( const ::com::sun::star::uno::Type& rType ) 
+Any SwAccessibleTable::queryInterface( const ::com::sun::star::uno::Type& rType )
     throw (RuntimeException)
 {
     Any aRet;
@@ -910,7 +909,7 @@ Sequence< ::com::sun::star::uno::Type > SAL_CALL SwAccessibleTable::getTypes() t
     return aTypes;
 }
 
-Sequence< sal_Int8 > SAL_CALL SwAccessibleTable::getImplementationId() 
+Sequence< sal_Int8 > SAL_CALL SwAccessibleTable::getImplementationId()
         throw(RuntimeException)
 {
     vos::OGuard aGuard(Application::GetSolarMutex());
@@ -949,7 +948,7 @@ OUString SAL_CALL SwAccessibleTable::getAccessibleDescription (void)
     return sDesc;
 }
 
-sal_Int32 SAL_CALL SwAccessibleTable::getAccessibleRowCount() 
+sal_Int32 SAL_CALL SwAccessibleTable::getAccessibleRowCount()
     throw (RuntimeException)
 {
     vos::OGuard aGuard(Application::GetSolarMutex());
@@ -969,15 +968,15 @@ sal_Int32 SAL_CALL SwAccessibleTable::getAccessibleColumnCount(  )
     return GetTableData().GetColumnCount();
 }
 
-OUString SAL_CALL SwAccessibleTable::getAccessibleRowDescription( 
-            sal_Int32 nRow ) 
+OUString SAL_CALL SwAccessibleTable::getAccessibleRowDescription(
+            sal_Int32 nRow )
     throw (IndexOutOfBoundsException, RuntimeException)
 {
     // TODO: Is there any reasonable we can do here?
     OUString sDesc;
 
     GetTableData().CheckRowAndCol(nRow, 0, this);
-    
+
     return sDesc;
 }
 
@@ -1015,17 +1014,17 @@ sal_Int32 SAL_CALL SwAccessibleTable::getAccessibleRowExtentAt(
     {
         sal_Int32 nBottom = pCellFrm->Frm().Bottom();
         nBottom -= GetFrm()->Frm().Top();
-        Int32Set_Impl::const_iterator aEndRow( 
+        Int32Set_Impl::const_iterator aEndRow(
                 GetTableData().GetRows().upper_bound( nBottom ) );
         nExtend =
              static_cast< sal_Int32 >( ::std::distance( aSttRow, aEndRow ) );
     }
-        
+
     return nExtend;
 }
 
 sal_Int32 SAL_CALL SwAccessibleTable::getAccessibleColumnExtentAt(
-               sal_Int32 nRow, sal_Int32 nColumn ) 
+               sal_Int32 nRow, sal_Int32 nColumn )
     throw (IndexOutOfBoundsException, RuntimeException)
 {
     sal_Int32 nExtend = -1;
@@ -1046,12 +1045,12 @@ sal_Int32 SAL_CALL SwAccessibleTable::getAccessibleColumnExtentAt(
     {
         sal_Int32 nRight = pCellFrm->Frm().Right();
         nRight -= GetFrm()->Frm().Left();
-        Int32Set_Impl::const_iterator aEndCol( 
+        Int32Set_Impl::const_iterator aEndCol(
                 GetTableData().GetColumns().upper_bound( nRight ) );
         nExtend =
              static_cast< sal_Int32 >( ::std::distance( aSttCol, aEndCol ) );
     }
-        
+
     return nExtend;
 }
 
@@ -1186,7 +1185,7 @@ Reference< XAccessible > SAL_CALL SwAccessibleTable::getAccessibleCellAt(
 
     CHECK_FOR_DEFUNC( XAccessibleTable )
 
-    const SwFrm *pCellFrm = 
+    const SwFrm *pCellFrm =
                     GetTableData().GetCell( nRow, nColumn, sal_False, this );
     if( pCellFrm )
         xRet = GetMap()->GetContext( pCellFrm, sal_True );
@@ -1202,7 +1201,7 @@ Reference< XAccessible > SAL_CALL SwAccessibleTable::getAccessibleCaption()
     return xRet;
 }
 
-Reference< XAccessible > SAL_CALL SwAccessibleTable::getAccessibleSummary() 
+Reference< XAccessible > SAL_CALL SwAccessibleTable::getAccessibleSummary()
     throw (RuntimeException)
 {
     // summaries aren't supported
@@ -1268,16 +1267,16 @@ sal_Int32 SAL_CALL SwAccessibleTable::getAccessibleRow( sal_Int32 nChildIndex )
     {
         sal_Int32 nTop = aCell.GetSwFrm()->Frm().Top();
         nTop -= GetFrm()->Frm().Top();
-        Int32Set_Impl::const_iterator aRow( 
+        Int32Set_Impl::const_iterator aRow(
                 GetTableData().GetRows().lower_bound( nTop ) );
-        nRet = static_cast< sal_Int32 >( ::std::distance( 
+        nRet = static_cast< sal_Int32 >( ::std::distance(
                     GetTableData().GetRows().begin(), aRow ) );
     }
     else
     {
         ASSERT( !aCell.IsValid(), "SwAccessibleTable::getAccessibleColumn:"
                 "aCell not expected to be valid.");
-        
+
         throw IndexOutOfBoundsException();
     }
 
@@ -1299,16 +1298,16 @@ sal_Int32 SAL_CALL SwAccessibleTable::getAccessibleColumn(
     {
         sal_Int32 nLeft = aCell.GetSwFrm()->Frm().Left();
         nLeft -= GetFrm()->Frm().Left();
-        Int32Set_Impl::const_iterator aCol( 
+        Int32Set_Impl::const_iterator aCol(
                 GetTableData().GetColumns().lower_bound( nLeft ) );
-        nRet = static_cast< sal_Int32 >( ::std::distance( 
+        nRet = static_cast< sal_Int32 >( ::std::distance(
                     GetTableData().GetColumns().begin(), aCol ) );
     }
     else
     {
         ASSERT( !aCell.IsValid(), "SwAccessibleTable::getAccessibleColumn:"
                 "aCell not expected to be valid.");
-        
+
         throw IndexOutOfBoundsException();
     }
 
@@ -1326,9 +1325,9 @@ sal_Bool SAL_CALL SwAccessibleTable::supportsService(
         const ::rtl::OUString& sTestServiceName)
     throw (::com::sun::star::uno::RuntimeException)
 {
-    return sTestServiceName.equalsAsciiL( sServiceName, 
+    return sTestServiceName.equalsAsciiL( sServiceName,
                                           sizeof(sServiceName)-1 ) ||
-           sTestServiceName.equalsAsciiL( sAccessibleServiceName, 
+           sTestServiceName.equalsAsciiL( sAccessibleServiceName,
                                              sizeof(sAccessibleServiceName)-1 );
 }
 
@@ -1362,7 +1361,7 @@ void SwAccessibleTable::Dispose( sal_Bool bRecursive )
     SwAccessibleContext::Dispose( bRecursive );
 }
 
-void SwAccessibleTable::DisposeChild( const SwFrmOrObj& rChildFrmOrObj, 
+void SwAccessibleTable::DisposeChild( const SwFrmOrObj& rChildFrmOrObj,
                                     sal_Bool bRecursive )
 {
     vos::OGuard aGuard(Application::GetSolarMutex());
@@ -1392,13 +1391,13 @@ void SwAccessibleTable::InvalidateChildPosOrSize( const SwFrmOrObj& rChildFrmOrO
 
     if( HasTableData() )
     {
-        ASSERT( !HasTableData() || 
+        ASSERT( !HasTableData() ||
                 GetFrm()->Frm().Pos() == GetTableData().GetTablePos(),
                 "table has invalid position" );
         if( HasTableData() )
         {
             const SwTabFrm* pTabFrm = static_cast<const SwTabFrm*>( GetFrm() );
-            SwAccessibleTableData_Impl *pNewTableData = 
+            SwAccessibleTableData_Impl *pNewTableData =
                 new SwAccessibleTableData_Impl( pTabFrm, IsInPagePreview() );
             if( !pNewTableData->CompareExtents( GetTableData() ) )
             {
@@ -1429,8 +1428,8 @@ void SwAccessibleTable::InvalidateChildPosOrSize( const SwFrmOrObj& rChildFrmOrO
 //  XAccessibleSelection
 //
 
-void SAL_CALL SwAccessibleTable::selectAccessibleChild( 
-    sal_Int32 nChildIndex ) 
+void SAL_CALL SwAccessibleTable::selectAccessibleChild(
+    sal_Int32 nChildIndex )
     throw ( IndexOutOfBoundsException, RuntimeException )
 {
     vos::OGuard aGuard(Application::GetSolarMutex());
@@ -1447,6 +1446,14 @@ void SAL_CALL SwAccessibleTable::selectAccessibleChild(
     if( pCrsrShell == NULL )
         return;
 
+    // --> OD 2004-11-16 #111714# - assure, that child, indentified by the given
+    // index, isn't already selected.
+    if ( IsChildSelected( nChildIndex ) )
+    {
+        return;
+    }
+    // <--
+
     // now we can start to do the work: check whether we already have
     // a table selection (in 'our' table). If so, extend the
     // selection, else select the current cell.
@@ -1460,7 +1467,7 @@ void SAL_CALL SwAccessibleTable::selectAccessibleChild(
         const SwTableLine* pUpper = pBox->GetUpper();
         while( pUpper->GetUpper() != NULL )
             pUpper = pUpper->GetUpper()->GetUpper();
-        USHORT nPos = 
+        USHORT nPos =
             pSelectedTable->GetTable().GetTabLines().GetPos( pUpper );
         if( nPos == USHRT_MAX )
             pSelectedTable = NULL;
@@ -1496,7 +1503,7 @@ void SAL_CALL SwAccessibleTable::selectAccessibleChild(
     }
     else
     {
-        // if the cursor is already in this table, 
+        // if the cursor is already in this table,
         // expand the current selection (i.e., set
         // point to new position; keep mark)
         SwPaM aPaM( *pStartNode );
@@ -1525,9 +1532,9 @@ void SAL_CALL SwAccessibleTable::selectAccessibleChild(
 }
 
 
-sal_Bool SAL_CALL SwAccessibleTable::isAccessibleChildSelected( 
-    sal_Int32 nChildIndex ) 
-    throw ( IndexOutOfBoundsException, 
+sal_Bool SAL_CALL SwAccessibleTable::isAccessibleChildSelected(
+    sal_Int32 nChildIndex )
+    throw ( IndexOutOfBoundsException,
             RuntimeException )
 {
     vos::OGuard aGuard(Application::GetSolarMutex());
@@ -1539,7 +1546,7 @@ sal_Bool SAL_CALL SwAccessibleTable::isAccessibleChildSelected(
     return IsChildSelected( nChildIndex );
 }
 
-void SAL_CALL SwAccessibleTable::clearAccessibleSelection(  ) 
+void SAL_CALL SwAccessibleTable::clearAccessibleSelection(  )
     throw ( RuntimeException )
 {
     vos::OGuard aGuard(Application::GetSolarMutex());
@@ -1555,7 +1562,7 @@ void SAL_CALL SwAccessibleTable::clearAccessibleSelection(  )
     }
 }
 
-void SAL_CALL SwAccessibleTable::selectAllAccessibleChildren(  ) 
+void SAL_CALL SwAccessibleTable::selectAllAccessibleChildren(  )
     throw ( RuntimeException )
 {
     // first clear selection, then select first and last child
@@ -1564,7 +1571,7 @@ void SAL_CALL SwAccessibleTable::selectAllAccessibleChildren(  )
     selectAccessibleChild( GetChildCount()-1 );
 }
 
-sal_Int32 SAL_CALL SwAccessibleTable::getSelectedAccessibleChildCount(  ) 
+sal_Int32 SAL_CALL SwAccessibleTable::getSelectedAccessibleChildCount(  )
     throw ( RuntimeException )
 {
     vos::OGuard aGuard(Application::GetSolarMutex());
@@ -1581,9 +1588,9 @@ sal_Int32 SAL_CALL SwAccessibleTable::getSelectedAccessibleChildCount(  )
     return nCount;
 }
 
-Reference<XAccessible> SAL_CALL SwAccessibleTable::getSelectedAccessibleChild( 
-    sal_Int32 nSelectedChildIndex ) 
-    throw ( IndexOutOfBoundsException, 
+Reference<XAccessible> SAL_CALL SwAccessibleTable::getSelectedAccessibleChild(
+    sal_Int32 nSelectedChildIndex )
+    throw ( IndexOutOfBoundsException,
             RuntimeException)
 {
     vos::OGuard aGuard(Application::GetSolarMutex());
@@ -1602,9 +1609,10 @@ Reference<XAccessible> SAL_CALL SwAccessibleTable::getSelectedAccessibleChild(
     return getAccessibleChild( nChildIndex );
 }
 
-void SAL_CALL SwAccessibleTable::deselectAccessibleChild( 
-    sal_Int32 nSelectedChildIndex ) 
-    throw ( IndexOutOfBoundsException, 
+// --> OD 2004-11-16 #111714# - index has to be treated as global child index.
+void SAL_CALL SwAccessibleTable::deselectAccessibleChild(
+    sal_Int32 nChildIndex )
+    throw ( IndexOutOfBoundsException,
             RuntimeException )
 {
     vos::OGuard aGuard(Application::GetSolarMutex());
@@ -1612,26 +1620,29 @@ void SAL_CALL SwAccessibleTable::deselectAccessibleChild(
 
     SwCrsrShell* pCrsrShell = GetCrsrShell();
 
-    // paremter checking (part 1): index lower 0
-    if( nSelectedChildIndex < 0 || !pCrsrShell )
+    // --> OD 2004-11-16 #111714# - index has to be treated as global child index
+    if ( !pCrsrShell )
         throw IndexOutOfBoundsException();
 
-    sal_Int32 nChildIndex = GetIndexOfSelectedChild( nSelectedChildIndex );
-
-    // parameter checking (part 2): index higher than selected children?
-    if( nChildIndex < 0 )
+    // assure, that given child index is in bounds.
+    if ( nChildIndex < 0 || nChildIndex >= GetChildCount() )
         throw IndexOutOfBoundsException();
+
+    // assure, that child, identified by the given index, is selected.
+    if ( !IsChildSelected( nChildIndex ) )
+        return;
+    // <--
 
     const SwTableBox* pBox = GetTableBox( nChildIndex );
     DBG_ASSERT( pBox != NULL, "We need the table box." );
 
-    // If we unselect point, then set cursor to mark. If we clear another 
+    // If we unselect point, then set cursor to mark. If we clear another
     // selected box, then set cursor to point.
     // reduce selection to mark.
     SwPaM *pPaM = pCrsrShell->GetTblCrs() ? pCrsrShell->GetTblCrs()
                                                 : pCrsrShell->GetCrsr();
-    sal_Bool bDeselectPoint = 
-        pBox->GetSttNd() == 
+    sal_Bool bDeselectPoint =
+        pBox->GetSttNd() ==
             pPaM->GetPoint()->nNode.GetNode().FindTableBoxStartNode();
 
     SwPaM aPaM( bDeselectPoint ? *pPaM->GetMark() : *pPaM->GetPoint() );
