@@ -2,9 +2,9 @@
  *
  *  $RCSfile: writerwordglue.cxx,v $
  *
- *  $Revision: 1.8 $
+ *  $Revision: 1.9 $
  *
- *  last change: $Author: obo $ $Date: 2004-04-27 14:10:57 $
+ *  last change: $Author: kz $ $Date: 2004-05-18 14:55:54 $
  *
  *  The Contents of this file are made available subject to the terms of
  *  either of the following licenses
@@ -107,10 +107,10 @@
 #ifndef _SVX_ULSPITEM_HXX
 #   include <svx/ulspitem.hxx>      //SvxULSpaceItem
 #endif
-#ifndef _SVX_BOXITEM_HXX 
+#ifndef _SVX_BOXITEM_HXX
 #   include <svx/boxitem.hxx>       //SvxBoxItem
 #endif
-#ifndef _SVX_FONTITEM_HXX 
+#ifndef _SVX_FONTITEM_HXX
 #   include <svx/fontitem.hxx>      //SvxFontItem
 #endif
 #ifndef _FRMFMT_HXX
@@ -125,7 +125,7 @@
 #ifndef _FMTFSIZE_HXX
 #   include <fmtfsize.hxx>          //SwFmtFrmSize
 #endif
-#ifndef _SWRECT_HXX 
+#ifndef _SWRECT_HXX
 #   include <swrect.hxx>            //SwRect
 #endif
 #ifndef _FMTHDFT_HXX
@@ -173,10 +173,10 @@ namespace
         as this is word's only setting, and the reason for the existance of the
         dynamic spacing features. If we have dynamic spacing active then we can
         add its spacing to the value height of the h/f and get the wanted total
-        size for word. 
-        
+        size for word.
+
         Otherwise we have to get the real layout rendered
-        height, which is totally nonoptimum, but the best we can do. 
+        height, which is totally nonoptimum, but the best we can do.
         */
         long nDist=0;
         const SwFmtFrmSize& rSz = rFmt.GetFrmSize();
@@ -194,7 +194,7 @@ namespace
             else
             {
                 const SwFmtFrmSize& rSz = rFmt.GetFrmSize();
-                if (ATT_VAR_SIZE != rSz.GetSizeType())
+                if (ATT_VAR_SIZE != rSz.GetHeightSizeType())
                     nDist += rSz.GetHeight();
                 else
                 {
@@ -265,7 +265,7 @@ namespace
             RES_NONE, RES_NONE, RES_POOLCOLL_DOC_TITEL, RES_NONE,
             RES_POOLCOLL_SIGNATURE, RES_NONE, RES_POOLCOLL_TEXT,
             RES_POOLCOLL_TEXT_MOVE, RES_NONE, RES_NONE, RES_NONE, RES_NONE,
-            RES_NONE, RES_NONE, RES_POOLCOLL_DOC_SUBTITEL 
+            RES_NONE, RES_NONE, RES_POOLCOLL_DOC_SUBTITEL
         };
 
         const size_t nArrSize = (sizeof(aArr) / sizeof(aArr[0]));
@@ -287,7 +287,7 @@ namespace
 
     SwTxtFmtColl* MapperImpl<SwTxtFmtColl>::MakeStyle(const String &rName)
     {
-        return mrDoc.MakeTxtFmtColl(rName, 
+        return mrDoc.MakeTxtFmtColl(rName,
             const_cast<SwTxtFmtColl *>(mrDoc.GetDfltTxtFmtColl()));
     }
 
@@ -363,8 +363,8 @@ namespace
         StyleResult GetStyle(const String& rName, ww::sti eSti);
     };
 
-    template<class C> 
-    typename StyleMapperImpl<C>::StyleResult 
+    template<class C>
+    typename StyleMapperImpl<C>::StyleResult
     StyleMapperImpl<C>::GetStyle(const String& rName, ww::sti eSti)
     {
         C *pRet = maHelper.GetBuiltInStyle(eSti);
@@ -399,7 +399,7 @@ namespace
         return StyleResult(pRet, bStyExist);
     }
 
-    template<class C> 
+    template<class C>
     C* StyleMapperImpl<C>::MakeNonCollidingStyle(const String& rName)
     {
         String aName(rName);
@@ -415,7 +415,7 @@ namespace
 
             sal_Int32 nI = 1;
             while (
-                    (pColl = maHelper.GetStyle(aName)) && 
+                    (pColl = maHelper.GetStyle(aName)) &&
                     (nI < SAL_MAX_INT32)
                   )
             {
@@ -464,7 +464,7 @@ namespace
     }
 
     //Utility to remove entries before a given starting position
-    class IfBeforeStart 
+    class IfBeforeStart
         : public std::unary_function<const sw::util::CharRunEntry&, bool>
     {
     private:
@@ -486,23 +486,23 @@ namespace sw
         {
             static const long aSizes[] =
             {
-                lA0Width, lA0Height, lA1Width, lA2Width, lA3Width, lA4Width, 
-                lA5Width, lB4Width, lB4Height, lB5Width, lB6Width, lC4Width, 
+                lA0Width, lA0Height, lA1Width, lA2Width, lA3Width, lA4Width,
+                lA5Width, lB4Width, lB4Height, lB5Width, lB6Width, lC4Width,
                 lC4Height, lC5Width, lC6Width, lC65Width, lC65Height, lDLWidth,
                 lDLHeight, lJISB4Width, lJISB4Height, lJISB5Width, lJISB6Width,
-                lLetterWidth, lLetterHeight, lLegalHeight, lTabloidWidth, 
-                lTabloidHeight, lDiaWidth, lDiaHeight, lScreenWidth, 
+                lLetterWidth, lLetterHeight, lLegalHeight, lTabloidWidth,
+                lTabloidHeight, lDiaWidth, lDiaHeight, lScreenWidth,
                 lScreenHeight, lAWidth, lAHeight, lBHeight, lCHeight, lDHeight,
                 lEHeight, lExeWidth, lExeHeight, lLegal2Width, lLegal2Height,
                 lCom675Width, lCom675Height, lCom9Width, lCom9Height,
-                lCom10Width, lCom10Height, lCom11Width, lCom11Height, 
+                lCom10Width, lCom10Height, lCom11Width, lCom11Height,
                 lCom12Width, lMonarchHeight, lKai16Width, lKai16Height,
-                lKai32Width, lKai32BigWidth, lKai32BigHeight           
+                lKai32Width, lKai32BigWidth, lKai32BigHeight
             };
 
             const long nWriggleRoom = 5;
             const long *pEnd = aSizes + sizeof(aSizes) / sizeof(aSizes[0]);
-            const long *pEntry = 
+            const long *pEntry =
                 std::find_if(aSizes, pEnd, closeenough(nSize, nWriggleRoom));
 
             if (pEntry != pEnd)
@@ -515,7 +515,7 @@ namespace sw
     namespace util
     {
 
-        bool IsPlausableSingleWordSection(const SwFrmFmt &rTitleFmt, 
+        bool IsPlausableSingleWordSection(const SwFrmFmt &rTitleFmt,
             const SwFrmFmt &rFollowFmt)
         {
             bool bPlausableTitlePage = true;
@@ -554,7 +554,7 @@ namespace sw
             }
             else
                 dyaHdrTop = dyaHdrBottom = 0;
-            const SvxULSpaceItem &rUL = 
+            const SvxULSpaceItem &rUL =
                 ItemGet<SvxULSpaceItem>(rPage, RES_UL_SPACE);
             dyaHdrTop += rUL.GetUpper();
             dyaHdrBottom += rUL.GetLower();
@@ -579,13 +579,13 @@ namespace sw
             }
         }
 
-        bool HdFtDistanceGlue::EqualTopBottom(const HdFtDistanceGlue &rOther) 
+        bool HdFtDistanceGlue::EqualTopBottom(const HdFtDistanceGlue &rOther)
             const
         {
             return (dyaTop == rOther.dyaTop && dyaBottom == rOther.dyaBottom);
         }
 
-        ParaStyleMapper::ParaStyleMapper(SwDoc &rDoc) 
+        ParaStyleMapper::ParaStyleMapper(SwDoc &rDoc)
             : mpImpl(new StyleMapperImpl<SwTxtFmtColl>(rDoc))
         {
         }
@@ -601,7 +601,7 @@ namespace sw
             return mpImpl->GetStyle(rName, eSti);
         }
 
-        CharStyleMapper::CharStyleMapper(SwDoc &rDoc) 
+        CharStyleMapper::CharStyleMapper(SwDoc &rDoc)
             : mpImpl(new StyleMapperImpl<SwCharFmt>(rDoc))
         {
         }
@@ -651,7 +651,7 @@ namespace sw
             return nA < nB;
         }
 
-        CharRuns GetPseudoCharRuns(const SwTxtNode& rTxtNd, 
+        CharRuns GetPseudoCharRuns(const SwTxtNode& rTxtNd,
             xub_StrLen nTxtStart, bool bSplitOnCharSet)
         {
             const String &rTxt = rTxtNd.GetTxt();
@@ -660,7 +660,7 @@ namespace sw
             ASSERT(rTxtNd.GetDoc(), "No document for node?, suspicious");
             if (rTxtNd.GetDoc())
             {
-                if (FRMDIR_HORI_RIGHT_TOP == 
+                if (FRMDIR_HORI_RIGHT_TOP ==
                     rTxtNd.GetDoc()->GetTextDirection(SwPosition(rTxtNd)))
                 {
                     bParaIsRTL = true;
@@ -681,7 +681,7 @@ namespace sw
 
             if (!rTxt.Len())
             {
-                aRunChanges.push_back(CharRunEntry(0, nScript, eChrSet, 
+                aRunChanges.push_back(CharRunEntry(0, nScript, eChrSet,
                     bParaIsRTL));
                 return aRunChanges;
             }
@@ -701,11 +701,11 @@ namespace sw
             DirChanges aDirChanges;
             CharSetChanges aCharSets;
             ScriptChanges aScripts;
-            
+
             UBiDiDirection eDefaultDir = bParaIsRTL ? UBIDI_RTL : UBIDI_LTR;
             UErrorCode nError = U_ZERO_ERROR;
             UBiDi* pBidi = ubidi_openSized(rTxt.Len(), 0, &nError);
-            ubidi_setPara(pBidi, rTxt.GetBuffer(), rTxt.Len(), eDefaultDir, 
+            ubidi_setPara(pBidi, rTxt.GetBuffer(), rTxt.Len(), eDefaultDir,
                 0, &nError);
 
             sal_Int32 nCount = ubidi_countRuns(pBidi, &nError);
@@ -763,7 +763,7 @@ namespace sw
                 xub_StrLen nPos = 0;
                 while (nPos < nLen)
                 {
-                    sal_Int32 nEnd = pBreakIt->xBreak->endOfScript(rTxt, nPos, 
+                    sal_Int32 nEnd = pBreakIt->xBreak->endOfScript(rTxt, nPos,
                         nScript);
                     if (nEnd < 0)
                         break;
@@ -785,7 +785,7 @@ namespace sw
             bool bCharIsRTL = bParaIsRTL;
 
             while (
-                    aBiDiIter != aBiDiEnd || 
+                    aBiDiIter != aBiDiEnd ||
                     aCharSetIter != aCharSetEnd ||
                     aScriptIter != aScriptEnd
                   )
@@ -836,9 +836,9 @@ namespace sw
                 }
             }
 
-            aRunChanges.erase(std::remove_if(aRunChanges.begin(), 
+            aRunChanges.erase(std::remove_if(aRunChanges.begin(),
                 aRunChanges.end(), IfBeforeStart(nTxtStart)), aRunChanges.end());
-            
+
             return aRunChanges;
         }
     }
@@ -869,7 +869,7 @@ namespace sw
                     rtl_TextEncodingToWinCharset(eTextEncoding));
         }
     }
-    
+
 }
 
 /* vi:set tabstop=4 shiftwidth=4 expandtab: */
