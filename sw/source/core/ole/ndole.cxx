@@ -2,9 +2,9 @@
  *
  *  $RCSfile: ndole.cxx,v $
  *
- *  $Revision: 1.12 $
+ *  $Revision: 1.13 $
  *
- *  last change: $Author: rt $ $Date: 2003-04-24 16:44:48 $
+ *  last change: $Author: obo $ $Date: 2003-09-01 12:36:33 $
  *
  *  The Contents of this file are made available subject to the terms of
  *  either of the following licenses
@@ -270,10 +270,8 @@ JP 02.10.97 - OLE Objecte stehen immer alleine im Rahmen, also hat es
 }
 
 
-SwOLENode * SwNodes::MakeOLENode( const SwNodeIndex & rWhere,
-                                    String &rName,
-                                    SwGrfFmtColl* pGrfColl,
-                                    SwAttrSet* pAutoAttr )
+SwOLENode * SwNodes::MakeOLENode( const SwNodeIndex & rWhere, 
+    const String &rName, SwGrfFmtColl* pGrfColl, SwAttrSet* pAutoAttr )
 {
     ASSERT( pGrfColl,"SwNodes::MakeOLENode: Formatpointer ist 0." );
 
