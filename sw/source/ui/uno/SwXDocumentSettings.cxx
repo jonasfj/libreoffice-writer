@@ -2,9 +2,9 @@
  *
  *  $RCSfile: SwXDocumentSettings.cxx,v $
  *
- *  $Revision: 1.27 $
+ *  $Revision: 1.28 $
  *
- *  last change: $Author: rt $ $Date: 2003-06-12 07:42:17 $
+ *  last change: $Author: kz $ $Date: 2003-08-27 16:31:58 $
  *
  *  The Contents of this file are made available subject to the terms of
  *  either of the following licenses
@@ -167,7 +167,9 @@ enum SwDocumentSettingsPropertyHandles
     HANDLE_UPDATE_FROM_TEMPLATE,
     HANDLE_PRINTER_INDEPENDENT_LAYOUT,
     HANDLE_IS_LABEL_DOC,
-    HANDLE_IS_ADD_FLY_OFFSET
+    HANDLE_IS_ADD_FLY_OFFSET,
+    /* Stampit It disable the print cancel button of the shown progress dialog. */
+    HANDLE_ALLOW_PRINTJOB_CANCEL
 };
 
 MasterPropertySetInfo * lcl_createSettingsInfo()
@@ -196,6 +198,8 @@ MasterPropertySetInfo * lcl_createSettingsInfo()
         { RTL_CONSTASCII_STRINGPARAM("PrinterIndependentLayout"),   HANDLE_PRINTER_INDEPENDENT_LAYOUT,		CPPUTYPE_INT16, 			0,	 0},
         { RTL_CONSTASCII_STRINGPARAM("IsLabelDocument"),            HANDLE_IS_LABEL_DOC,                    CPPUTYPE_BOOLEAN,           0,   0},
         { RTL_CONSTASCII_STRINGPARAM("AddFrameOffsets"),            HANDLE_IS_ADD_FLY_OFFSET,               CPPUTYPE_BOOLEAN,           0,   0},
+        /* Stampit It disable the print cancel button of the shown progress dialog. */
+        { RTL_CONSTASCII_STRINGPARAM("AllowPrintJobCancel"),        HANDLE_ALLOW_PRINTJOB_CANCEL,           CPPUTYPE_BOOLEAN,           0,   0},
 /*
  * As OS said, we don't have a view when we need to set this, so I have to
  * find another solution before adding them to this property set - MTG
@@ -270,14 +274,14 @@ void SwXDocumentSettings::release ()
     OWeakObject::release();
 }
 
-uno::Sequence< uno::Type > SAL_CALL SwXDocumentSettings::getTypes(  ) 
+uno::Sequence< uno::Type > SAL_CALL SwXDocumentSettings::getTypes(  )
     throw (RuntimeException)
 {
     vos::OGuard aGuard(Application::GetSolarMutex());
 
     uno::Sequence< uno::Type > aBaseTypes( 5 );
     uno::Type* pBaseTypes = aBaseTypes.getArray();
-    
+
     // from MasterPropertySet
     pBaseTypes[0] = ::getCppuType((Reference< XPropertySet >*)0);
     pBaseTypes[1] = ::getCppuType((Reference< XPropertyState >*)0);
@@ -285,11 +289,11 @@ uno::Sequence< uno::Type > SAL_CALL SwXDocumentSettings::getTypes(  )
     //
     pBaseTypes[3] = ::getCppuType((Reference< XServiceInfo >*)0);
     pBaseTypes[4] = ::getCppuType((Reference< XTypeProvider >*)0);
-    
+
     return aBaseTypes;
 }
 
-uno::Sequence< sal_Int8 > SAL_CALL SwXDocumentSettings::getImplementationId(  ) 
+uno::Sequence< sal_Int8 > SAL_CALL SwXDocumentSettings::getImplementationId(  )
     throw (RuntimeException)
 {
     vos::OGuard aGuard(Application::GetSolarMutex());
@@ -511,24 +515,32 @@ void SwXDocumentSettings::_setSingleValue( const comphelper::PropertyInfo & rInf
             rValue >>= nTmp;
             if( (nTmp == document::PrinterIndependentLayout::ENABLED ) ||
                 (nTmp == document::PrinterIndependentLayout::DISABLED ) )
-                mpDoc->SetUseVirtualDevice( 
+                mpDoc->SetUseVirtualDevice(
                     nTmp == document::PrinterIndependentLayout::ENABLED  );
             else
                 throw IllegalArgumentException();
         }
         break;
         case HANDLE_IS_LABEL_DOC :
-        {    
+        {
             sal_Bool bSet;
             if(!(rValue >>= bSet))
                 throw IllegalArgumentException();
-            mpDoc->SetLabelDoc(bSet);   
-        }    
+            mpDoc->SetLabelDoc(bSet);
+        }
         break;
         case HANDLE_IS_ADD_FLY_OFFSET:
         {
             sal_Bool bTmp = *(sal_Bool*)rValue.getValue();
             mpDoc->SetAddFlyOffsets( bTmp );
+        }
+        break;
+        case HANDLE_ALLOW_PRINTJOB_CANCEL:
+        {
+            sal_Bool bState;
+            if (!(rValue >>= bState))
+                throw IllegalArgumentException();
+            mpDocSh->Stamp_SetPrintCancelState(bState);
         }
         break;
         default:
@@ -689,7 +701,7 @@ void SwXDocumentSettings::_getSingleValue( const comphelper::PropertyInfo & rInf
         break;
         case HANDLE_PRINTER_INDEPENDENT_LAYOUT:
         {
-            sal_Int16 nTmp = mpDoc->IsUseVirtualDevice() 
+            sal_Int16 nTmp = mpDoc->IsUseVirtualDevice()
                 ? document::PrinterIndependentLayout::ENABLED
                 : document::PrinterIndependentLayout::DISABLED;
             rValue <<= nTmp;
@@ -700,11 +712,17 @@ void SwXDocumentSettings::_getSingleValue( const comphelper::PropertyInfo & rInf
             sal_Bool bLabel = mpDoc->IsLabelDoc();
             rValue <<= bLabel;
         }
-        break;        
+        break;
         case HANDLE_IS_ADD_FLY_OFFSET:
         {
             sal_Bool bTmp = mpDoc->IsAddFlyOffsets();
             rValue.setValue( &bTmp, ::getBooleanCppuType() );
+        }
+        break;
+        case HANDLE_ALLOW_PRINTJOB_CANCEL:
+        {
+            sal_Bool bPrintCancelState = mpDocSh->Stamp_GetPrintCancelState();
+            rValue.setValue(&bPrintCancelState, ::getBooleanCppuType());
         }
         break;
         default:
