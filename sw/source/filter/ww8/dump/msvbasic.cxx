@@ -2,9 +2,9 @@
  *
  *  $RCSfile: msvbasic.cxx,v $
  *
- *  $Revision: 1.1.1.1 $
+ *  $Revision: 1.2 $
  *
- *  last change: $Author: hr $ $Date: 2000-09-18 17:14:59 $
+ *  last change: $Author: jp $ $Date: 2000-10-24 14:01:34 $
  *
  *  The Contents of this file are made available subject to the terms of
  *  either of the following licenses
@@ -177,7 +177,7 @@ void VBA_Impl::ConfirmFixedMiddle2(SvStorageStreamRef &xVBAProject)
         0x1c, 0x10, 0x8a, 0x2f, 0x04, 0x02, 0x24, 0x00,
         0x9c, 0x02, 0x00, 0x00
     };
-        
+
     BYTE test[20];
     xVBAProject->Read(test,20);
     if (memcmp(stest,test,20) != 0)
@@ -202,7 +202,8 @@ void VBA_Impl::Output( int nLen, const BYTE *pData)
 int VBA_Impl::ReadVBAProject(const SvStorageRef &rxVBAStorage)
     {
     SvStorageStreamRef xVBAProject;
-    xVBAProject = rxVBAStorage->OpenStream( "_VBA_PROJECT",
+    xVBAProject = rxVBAStorage->OpenStream(
+                    String::CreateFromAscii( "_VBA_PROJECT" ),
                     STREAM_STD_READ | STREAM_NOCREATE );
 
     if( !xVBAProject.Is() || SVSTREAM_OK != xVBAProject->GetError() )
@@ -213,13 +214,13 @@ int VBA_Impl::ReadVBAProject(const SvStorageRef &rxVBAStorage)
     xVBAProject->SetNumberFormatInt( NUMBERFORMAT_INT_LITTLEENDIAN );
 
     //*pOut << hex;
-    BYTE header[30] = 
+    BYTE header[30] =
     {
         0xcc, 0x61, 0x5e, 0x00, 0x00, 0x01, 0x00, 0xff,
         0x07, 0x04, 0x00, 0x00, 0x09, 0x04, 0x00, 0x00,
-        0xe4, 0x04, 0x01, 0x00, 0x00, 0x00, 0x00, 0x00, 
+        0xe4, 0x04, 0x01, 0x00, 0x00, 0x00, 0x00, 0x00,
         0x00, 0x00, 0x00, 0x00, 0x01, 0x00
-    }; 
+    };
     BYTE headerin[30];
 
     xVBAProject->Read(headerin,30);
@@ -268,10 +269,10 @@ int VBA_Impl::ReadVBAProject(const SvStorageRef &rxVBAStorage)
         }
     }
 
-    //appears to be a fixed 20 byte sequence here, and then the strings 
+    //appears to be a fixed 20 byte sequence here, and then the strings
     //continue
     ConfirmFixedMiddle(xVBAProject);
-    
+
     count=0;
     testc=0;
 
@@ -317,7 +318,7 @@ int VBA_Impl::ReadVBAProject(const SvStorageRef &rxVBAStorage)
     {
         xVBAProject->Read(&junksize,2); // usually 18 02, sometimes 1e 02
         //but sometimes its a run of numbers until 0xffff, gagh!!!
-        //*pOut << "position is " << xVBAProject->Tell() << "len is " 
+        //*pOut << "position is " << xVBAProject->Tell() << "len is "
         //	<< junksize << endl;
     }
 
@@ -336,7 +337,7 @@ int VBA_Impl::ReadVBAProject(const SvStorageRef &rxVBAStorage)
 
     *xVBAProject >> nOffsets;
     pOffsets = new VBAOffset_Impl[nOffsets];
-    int i;	
+    int i;
     for (i=0;i<nOffsets;i++)
         {
         BYTE discard;
@@ -351,7 +352,7 @@ int VBA_Impl::ReadVBAProject(const SvStorageRef &rxVBAStorage)
             }
         *xVBAProject >> len;
         xVBAProject->SeekRel(len);
-        
+
         //begin section, another problem area
         *xVBAProject >> len;
         if (len == 0xFFFF)
@@ -427,7 +428,7 @@ const String &VBA_Impl::Decompress( UINT16 nIndex, int *pOverflow)
         xVBAStream->GetError() )
     {
         DBG_WARNING("Not able to open vb module ");
-        DBG_WARNING((pOffsets[nIndex].sName).GetStr());
+//		DBG_WARNING((pOffsets[nIndex].sName).GetStr());
     }
     else
     {
@@ -440,10 +441,10 @@ const String &VBA_Impl::Decompress( UINT16 nIndex, int *pOverflow)
          */
         if (bCommented)
         {
-            String sTempStringa("\x0D\x0A");
-            String sTempStringb("\x0D\x0ARem ");
+            String sTempStringa(String::CreateFromAscii( "\x0D\x0A"));
+            String sTempStringb(String::CreateFromAscii( "\x0D\x0ARem "));
             sVBAString.SearchAndReplaceAll(sTempStringa,sTempStringb);
-            sVBAString.Insert("Rem ",0);
+            sVBAString.InsertAscii("Rem ",0);
         }
     }
     return sVBAString;
@@ -571,23 +572,26 @@ int VBA_Impl::DecompressVBA( int nIndex, SvStorageStreamRef &xVBAStream )
 
     Source Code Control System - Header
 
-    $Header: /zpool/svn/migration/cvs_rep_09_09_08/code/sw/source/filter/ww8/dump/msvbasic.cxx,v 1.1.1.1 2000-09-18 17:14:59 hr Exp $
+    $Header: /zpool/svn/migration/cvs_rep_09_09_08/code/sw/source/filter/ww8/dump/msvbasic.cxx,v 1.2 2000-10-24 14:01:34 jp Exp $
 
     Source Code Control System - Update
 
     $Log: not supported by cvs2svn $
+    Revision 1.1.1.1  2000/09/18 17:14:59  hr
+    initial import
+
     Revision 1.5  2000/09/18 16:05:03  willem.vandorp
     OpenOffice header added.
-    
+
     Revision 1.4  2000/02/03 09:31:52  cmc
     #72268# Office 2000 compatibility bug fixed
-    
+
     Revision 1.2  2000/01/26 16:40:15  cmc
     Made VBA Project stream reader more robust
-    
+
     Revision 1.1  2000/01/26 12:34:58  jp
     #72268#: move form svdraw to here
-    
+
     Revision 1.4  2000/01/25 16:12:21  rt
     #65293# includes unnecessary
 
