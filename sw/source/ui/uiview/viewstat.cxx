@@ -2,9 +2,9 @@
  *
  *  $RCSfile: viewstat.cxx,v $
  *
- *  $Revision: 1.31 $
+ *  $Revision: 1.32 $
  *
- *  last change: $Author: obo $ $Date: 2004-11-17 13:16:55 $
+ *  last change: $Author: hr $ $Date: 2004-11-26 20:00:01 $
  *
  *  The Contents of this file are made available subject to the terms of
  *  either of the following licenses
@@ -168,6 +168,7 @@
 #endif
 
 using namespace ::com::sun::star;
+
 /*--------------------------------------------------------------------
     Beschreibung:
  --------------------------------------------------------------------*/
@@ -463,7 +464,7 @@ void SwView::GetState(SfxItemSet &rSet)
                 SfxChildWindow* pCh = GetViewFrame()->GetChildWindow( SID_SPELL_DIALOG );
                 if( !pCh && pWrtShell->IsSelObjProtected(FLYPROTECT_CONTENT))
                     rSet.DisableItem(nWhich);
-            }        
+            }
             break;
             case FN_MAILMERGE_SENDMAIL_CHILDWINDOW:
             break;
@@ -471,7 +472,7 @@ void SwView::GetState(SfxItemSet &rSet)
             {
                 if(!GetMailMergeConfigItem())
                     rSet.DisableItem(nWhich);
-            }        
+            }
             break;
             case SID_ALIGN_ANY_LEFT :
             case SID_ALIGN_ANY_HCENTER  :
@@ -555,8 +556,8 @@ void SwView::GetDrawState(SfxItemSet &rSet)
         switch(nWhich)
         {
         case SID_INSERT_DRAW:
-            if(bWeb)
-                rSet.DisableItem(nWhich);
+            if ( bWeb )
+                rSet.DisableItem( nWhich );
             else
             {
                 SfxAllEnumItem aEnum(SID_INSERT_DRAW, nDrawSfxId);
@@ -621,7 +622,7 @@ sal_Bool SwView::HasUIFeature( sal_uInt32 nFeature )
     {
         case CHILDWIN_LABEL     : bRet = pWrtShell->IsLabelDoc(); break;
         case CHILDWIN_MAILMERGE : bRet = 0 != GetMailMergeConfigItem(); break;
-    }            
+    }
     return bRet;
 }
 
