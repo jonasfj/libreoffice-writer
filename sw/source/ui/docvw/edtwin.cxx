@@ -2,9 +2,9 @@
  *
  *  $RCSfile: edtwin.cxx,v $
  *
- *  $Revision: 1.74 $
+ *  $Revision: 1.75 $
  *
- *  last change: $Author: hr $ $Date: 2004-02-02 18:38:47 $
+ *  last change: $Author: hr $ $Date: 2004-02-03 16:39:32 $
  *
  *  The Contents of this file are made available subject to the terms of
  *  either of the following licenses
@@ -190,15 +190,11 @@
 #ifndef _SVX_PROTITEM_HXX //autogen
 #include <svx/protitem.hxx>
 #endif
-#ifndef _OFAACCFG_HXX //autogen
-#include <offmgr/ofaaccfg.hxx>
-#endif
-#ifndef _OFF_APP_HXX //autogen
-#include <offmgr/app.hxx>
-#endif
 #ifndef _UNOTOOLS_CHARCLASS_HXX
 #include <unotools/charclass.hxx>
 #endif
+
+#include <svx/acorrcfg.hxx>
 
 #ifndef _EDTWIN_HXX //autogen
 #include <edtwin.hxx>
@@ -1273,14 +1269,14 @@ void SwEditWin::KeyInput(const KeyEvent &rKEvt)
         return;
     }
 
-    OfaAutoCorrCfg* pACfg = 0;
+    SvxAutoCorrCfg* pACfg = 0;
     SvxAutoCorrect* pACorr = 0;
 
     com::sun::star::uno::Reference< com::sun::star::frame::XDispatchRecorder > xRecorder =
             rView.GetViewFrame()->GetBindings().GetRecorder();
     if ( !xRecorder.is() )
     {
-        pACfg = OFF_APP()->GetAutoCorrConfig();
+        pACfg = SvxAutoCorrCfg::Get();
         pACorr = pACfg->GetAutoCorrect();
     }
 
@@ -1955,7 +1951,7 @@ KEYINPUT_CHECKTABLE_INSDEL:
 
 
             if( !aKeyEvent.GetRepeat() && pACorr &&
-                    pACfg->IsAutoFmtByInput() && 
+                    pACfg->IsAutoFmtByInput() &&
                 (( pACorr->IsAutoCorrFlag( ChgWeightUnderl ) &&
                     ( '*' == aCh || '_' == aCh ) ) ||
                  ( pACorr->IsAutoCorrFlag( ChgQuotes ) && ('\"' == aCh ))||
@@ -1999,7 +1995,7 @@ KEYINPUT_CHECKTABLE_INSDEL:
 
         case KS_CheckAutoCorrect:
         {
-            if( pACorr && pACfg->IsAutoFmtByInput() && 
+            if( pACorr && pACfg->IsAutoFmtByInput() &&
                 pACorr->IsAutoCorrFlag( CptlSttSntnc | CptlSttWrd |
                                         ChgFractionSymbol | ChgOrdinalNumber |
                                         ChgToEnEmDash | SetINetAttr |
@@ -4189,12 +4185,12 @@ void SwEditWin::Command( const CommandEvent& rCEvt )
             break;
 
     case COMMAND_STARTEXTTEXTINPUT:
-    {    
+    {
         SwWrtShell &rSh = rView.GetWrtShell();
         BOOL bIsDocReadOnly = rView.GetDocShell()->IsReadOnly() &&
                               rSh.IsCrsrReadonly();
         if(!bIsDocReadOnly)
-        {        
+        {
             if( rSh.HasDrawView() && rSh.GetDrawView()->IsTextEdit() )
             {
                 bCallBase = FALSE;
@@ -4212,12 +4208,12 @@ void SwEditWin::Command( const CommandEvent& rCEvt )
         break;
     }
     case COMMAND_ENDEXTTEXTINPUT:
-    {    
+    {
         SwWrtShell &rSh = rView.GetWrtShell();
         BOOL bIsDocReadOnly = rView.GetDocShell()->IsReadOnly() &&
                               rSh.IsCrsrReadonly();
         if(!bIsDocReadOnly)
-        {        
+        {
             if( rSh.HasDrawView() && rSh.GetDrawView()->IsTextEdit() )
             {
                 bCallBase = FALSE;
@@ -4229,23 +4225,23 @@ void SwEditWin::Command( const CommandEvent& rCEvt )
                 String sRecord = rSh.DeleteExtTextInput();
                 com::sun::star::uno::Reference< com::sun::star::frame::XDispatchRecorder > xRecorder =
                         rView.GetViewFrame()->GetBindings().GetRecorder();
-            
+
                 if ( sRecord.Len() )
                 {
                     // #102812# convert quotes in IME text
                     // works on the last input character, this is escpecially in Korean text often done
                     // quotes that are inside of the string are not replaced!
                     const sal_Unicode aCh = sRecord.GetChar(sRecord.Len() - 1);
-                    OfaAutoCorrCfg* pACfg = OFF_APP()->GetAutoCorrConfig();
+                    SvxAutoCorrCfg* pACfg = SvxAutoCorrCfg::Get();
                     SvxAutoCorrect* pACorr = pACfg->GetAutoCorrect();
-                    if(pACorr && 
+                    if(pACorr &&
                         ( pACorr->IsAutoCorrFlag( ChgQuotes ) && ('\"' == aCh ))||
                         ( pACorr->IsAutoCorrFlag( ChgSglQuotes ) && ( '\'' == aCh)))
                     {
                         rSh.DelLeft();
                         rSh.AutoCorrect( *pACorr, aCh );
-                    }        
-            
+                    }
+
                     if ( xRecorder.is() )
                     {
                         //Shell ermitteln
@@ -4261,15 +4257,15 @@ void SwEditWin::Command( const CommandEvent& rCEvt )
                 }
             }
         }
-    }    
+    }
     break;
     case COMMAND_EXTTEXTINPUT:
-    {    
+    {
         SwWrtShell &rSh = rView.GetWrtShell();
         BOOL bIsDocReadOnly = rView.GetDocShell()->IsReadOnly() &&
                               rSh.IsCrsrReadonly();
         if(!bIsDocReadOnly)
-        {        
+        {
             QuickHelpData aTmpQHD;
             if( pQuickHlpData->bClear )
             {
@@ -4295,8 +4291,8 @@ void SwEditWin::Command( const CommandEvent& rCEvt )
                 com::sun::star::uno::Reference< com::sun::star::frame::XDispatchRecorder > xRecorder =
                         rView.GetViewFrame()->GetBindings().GetRecorder();
                 if(!xRecorder.is())
-                {       
-                    OfaAutoCorrCfg* pACfg = OFF_APP()->GetAutoCorrConfig();
+                {
+                    SvxAutoCorrCfg* pACfg = SvxAutoCorrCfg::Get();
                     SvxAutoCorrect* pACorr = pACfg->GetAutoCorrect();
                     if( pACfg && pACorr &&
                         ( pACfg->IsAutoTextTip() ||
@@ -4614,7 +4610,7 @@ void QuickHelpData::FillStrArr( SwWrtShell& rSh, const String& rWord )
  *
  * --------------------------------------------------*/
 void SwEditWin::ShowAutoTextCorrectQuickHelp(
-        const String& rWord, OfaAutoCorrCfg* pACfg, SvxAutoCorrect* pACorr )
+        const String& rWord, SvxAutoCorrCfg* pACfg, SvxAutoCorrect* pACorr )
 {
     SwWrtShell& rSh = rView.GetWrtShell();
     pQuickHlpData->ClearCntnt();
