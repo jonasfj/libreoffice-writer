@@ -2,9 +2,9 @@
  *
  *  $RCSfile: document.cxx,v $
  *
- *  $Revision: 1.15 $
+ *  $Revision: 1.16 $
  *
- *  last change: $Author: tl $ $Date: 2001-03-08 09:24:49 $
+ *  last change: $Author: jp $ $Date: 2001-03-09 17:14:39 $
  *
  *  The Contents of this file are made available subject to the terms of
  *  either of the following licenses
@@ -383,41 +383,41 @@ void SmDocShell::ArrangeFormula()
 
     SetFormulaArranged(TRUE);
 }
-    
+
 
 EditEngine& SmDocShell::GetEditEngine()
 {
     if (!pEditEngine)
     {
         pEditEngineItemPool = EditEngine::CreatePool();
-        
+
         Font aFont( Application::GetSettings().GetStyleSettings().GetAppFont() );
-        
+
         Size aFntSize( /*Application::GetDefaultDevice()->PixelToLogic( */
                             aFont.GetSize()/*, MapMode( MAP_100MM ) )*/);
-        
+
         long nFntHeight = aFntSize.Height();
 
-        pEditEngineItemPool->SetPoolDefaultItem( 
+        pEditEngineItemPool->SetPoolDefaultItem(
                 SvxFontItem( aFont.GetFamily(), aFont.GetName(),
                     aFont.GetStyleName(), aFont.GetPitch(), aFont.GetCharSet(),
                     EE_CHAR_FONTINFO ) );
-        pEditEngineItemPool->SetPoolDefaultItem( 
+        pEditEngineItemPool->SetPoolDefaultItem(
                 SvxFontHeightItem( nFntHeight, 100, EE_CHAR_FONTHEIGHT ) );
-        pEditEngineItemPool->SetPoolDefaultItem( 
+        pEditEngineItemPool->SetPoolDefaultItem(
                 SvxFontHeightItem( nFntHeight, 100, EE_CHAR_FONTHEIGHT_CJK ) );
-        pEditEngineItemPool->SetPoolDefaultItem( 
+        pEditEngineItemPool->SetPoolDefaultItem(
                 SvxFontHeightItem( nFntHeight, 100, EE_CHAR_FONTHEIGHT_CTL ) );
-    
+
         pEditEngine = new EditEngine( pEditEngineItemPool );
-        
+
         pEditEngine->EnableUndo( TRUE );
-        pEditEngine->SetDefTab( USHORT( 
+        pEditEngine->SetDefTab( USHORT(
             Application::GetDefaultDevice()->GetTextWidth( C2S("XXXX") ) ) );
-    
+
         pEditEngine->SetControlWord(
                 (pEditEngine->GetControlWord() | EE_CNTRL_AUTOINDENTING) &
-                (~EE_CNTRL_UNDOATTRIBS) & 
+                (~EE_CNTRL_UNDOATTRIBS) &
                 (~EE_CNTRL_PASTESPECIAL) );
 
         pEditEngine->SetWordDelimiters( C2S(" .=+-*/(){}[];\"" ) );
@@ -428,13 +428,13 @@ EditEngine& SmDocShell::GetEditEngine()
         pEditEngine->EraseVirtualDevice();
         pEditEngine->ClearModifyFlag();
 
-        // forces new settings to be used		   
+        // forces new settings to be used
         //pEditEngine->Clear();	//#77957 incorrect font size
     }
     return *pEditEngine;
 }
-    
-    
+
+
 SfxItemPool& SmDocShell::GetEditEngineItemPool()
 {
     if (!pEditEngineItemPool)
@@ -681,6 +681,12 @@ BOOL SmDocShell::SetData( SvData *pData )
         }
     }
     return SfxInPlaceObject::SetData( pData );
+}
+
+BOOL SmDocShell::SetData( const String& rData )
+{
+    SetText( rData );
+    return TRUE;
 }
 
 void SmDocShell::Convert40To50Txt()
