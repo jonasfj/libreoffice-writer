@@ -2,9 +2,9 @@
  *
  *  $RCSfile: ww8atr.cxx,v $
  *
- *  $Revision: 1.81 $
+ *  $Revision: 1.82 $
  *
- *  last change: $Author: rt $ $Date: 2004-06-17 13:48:42 $
+ *  last change: $Author: kz $ $Date: 2004-08-02 14:20:52 $
  *
  *  The Contents of this file are made available subject to the terms of
  *  either of the following licenses
@@ -818,7 +818,7 @@ BYTE SwWW8Writer::GetNumId( USHORT eNumType )
     return nRet;
 }
 
-void SwWW8Writer::ExportOutlineNumbering(BYTE nLvl, const SwNumFmt &rNFmt, 
+void SwWW8Writer::ExportOutlineNumbering(BYTE nLvl, const SwNumFmt &rNFmt,
     const SwFmt &rFmt)
 {
     if (nLvl >= WW8ListManager::nMaxLevel)
@@ -4843,7 +4843,7 @@ SwAttrFnTab aWW8AttrFnTab = {
 /* RES_FRMATR_DUMMY8 */             0, // Dummy:
 /* RES_FRMATR_DUMMY9 */             0, // Dummy:
 /* RES_FOLLOW_TEXT_FLOW */          0,
-/* RES_FRMATR_DUMMY1 */             0, // Dummy:
+/* RES_WRAP_INFLUENCE_ON_OBJPOS */  0,
 /* RES_FRMATR_DUMMY2 */             0, // Dummy:
 /* RES_FRMATR_DUMMY3 */             0, // Dummy:
 /* RES_FRMATR_DUMMY4 */             0, // Dummy:
