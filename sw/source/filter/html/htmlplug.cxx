@@ -2,9 +2,9 @@
  *
  *  $RCSfile: htmlplug.cxx,v $
  *
- *  $Revision: 1.10 $
+ *  $Revision: 1.11 $
  *
- *  last change: $Author: mib $ $Date: 2002-08-01 13:28:38 $
+ *  last change: $Author: vg $ $Date: 2003-04-15 16:59:02 $
  *
  *  The Contents of this file are made available subject to the terms of
  *  either of the following licenses
@@ -554,12 +554,12 @@ void SwHTMLParser::NewObject()
     SwVertOrient eVertOri = VERT_TOP;
     SwHoriOrient eHoriOri = HORI_NONE;
 
-    sal_Bool bPrcWidth = sal_False, bPrcHeight = sal_False, 
+    sal_Bool bPrcWidth = sal_False, bPrcHeight = sal_False,
              bDeclare = sal_False;
     // Eine neue Command-List anlegen
     if( pAppletImpl )
         delete pAppletImpl;
-    pAppletImpl = new SwApplet_Impl( pDoc->GetAttrPool(), 
+    pAppletImpl = new SwApplet_Impl( pDoc->GetAttrPool(),
                                      RES_FRMATR_BEGIN, RES_FRMATR_END-1 );
 
     const HTMLOptions *pOptions = GetOptions();
@@ -636,12 +636,12 @@ void SwHTMLParser::NewObject()
                                   pOption->GetString() );
 
     }
-    
+
     // Objects that are declared only are not evaluated. Moreover, only
     // Java applets are supported.
     sal_Bool bIsApplet = sal_False;;
 
-    if( !bDeclare && aClassID.Len() == 42 && 
+    if( !bDeclare && aClassID.Len() == 42 &&
         aClassID.EqualsAscii( "clsid:", 0, 6 ) )
     {
         aClassID.Erase( 0, 6 );
@@ -661,7 +661,7 @@ void SwHTMLParser::NewObject()
         pAppletImpl = 0;
         return;
     }
-    
+
     pAppletImpl->SetAltText( aStandBy );
 
     SfxItemSet aItemSet( pDoc->GetAttrPool(), pCSS1Parser->GetWhichMap() );
@@ -1186,7 +1186,7 @@ Writer& OutHTML_FrmFmtOLENode( Writer& rWrt, const SwFrmFmt& rFrmFmt,
         const XubString& rURL = pApplet->GetCodeBase();
         if( rURL.Len() )
         {
-#ifdef DEBUG
+#if OSL_DEBUG_LEVEL > 1
             String sTmp( INetURLObject::GetBaseURL() );
 #endif
             String sCodeBase( INetURLObject::AbsToRel(rURL,
