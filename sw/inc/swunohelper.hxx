@@ -2,9 +2,9 @@
  *
  *  $RCSfile: swunohelper.hxx,v $
  *
- *  $Revision: 1.4 $
+ *  $Revision: 1.5 $
  *
- *  last change: $Author: rt $ $Date: 2004-08-23 08:40:02 $
+ *  last change: $Author: rt $ $Date: 2004-09-20 13:04:20 $
  *
  *  The Contents of this file are made available subject to the terms of
  *  either of the following licenses
@@ -77,7 +77,8 @@ namespace com { namespace sun { namespace star {
 
 class String;
 class SvStrings;
-
+class SvPtrarr;
+        
 namespace SWUnoHelper {
 
 // calls over the compherl the getEnumAsInt32 function and handle the
