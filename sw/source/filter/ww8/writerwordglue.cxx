@@ -2,9 +2,9 @@
  *
  *  $RCSfile: writerwordglue.cxx,v $
  *
- *  $Revision: 1.2 $
+ *  $Revision: 1.3 $
  *
- *  last change: $Author: obo $ $Date: 2003-09-01 12:39:59 $
+ *  last change: $Author: rt $ $Date: 2003-09-25 07:41:55 $
  *
  *  The Contents of this file are made available subject to the terms of
  *  either of the following licenses
@@ -66,11 +66,11 @@
 #include "writerwordglue.hxx"
 #endif
 
-#include <algorithm>		//std::find_if
-#include <functional>		//std::unary_function
+#include <algorithm>        //std::find_if
+#include <functional>       //std::unary_function
 
 #ifndef _SVX_PAPERINF_HXX
-#include <svx/paperinf.hxx>	//lA0Width...
+#include <svx/paperinf.hxx> //lA0Width...
 #endif
 
 namespace sw
