@@ -2,9 +2,9 @@
  *
  *  $RCSfile: ww8par.hxx,v $
  *
- *  $Revision: 1.11 $
+ *  $Revision: 1.12 $
  *
- *  last change: $Author: cmc $ $Date: 2001-02-06 17:28:21 $
+ *  last change: $Author: jp $ $Date: 2001-02-15 20:08:10 $
  *
  *  The Contents of this file are made available subject to the terms of
  *  either of the following licenses
@@ -486,12 +486,12 @@ class SwMSDffManager : public SvxMSDffManager
 public:
     static UINT32 GetFilterFlags();
     SwMSDffManager( SwWW8ImplReader& rRdr );
-    const com::sun::star::uno::Reference< com::sun::star::drawing::XShape > 
+    const com::sun::star::uno::Reference< com::sun::star::drawing::XShape >
         GetLastOCXShape() const {return xShape;}
 private:
 // If we convert an OCX through this manager we will store the uno XShape
 // reference created through the conversion
-    mutable com::sun::star::uno::Reference< 
+    mutable com::sun::star::uno::Reference<
         com::sun::star::drawing::XShape > xShape;
 };
 
@@ -838,7 +838,7 @@ friend class WW8FormulaControl;
         SwWw8ControlType nWhich);
 
     void ImportDop( BOOL bNewDoc );
-    
+
     //This converts MS Asian Typography information into OOo's
     void ImportDopTypography(const WW8DopTypography &rTypo);
 
@@ -1000,6 +1000,7 @@ public:		// eigentlich private, geht aber leider nur public
     void Read_FontKern(			USHORT, BYTE* pData, short nLen );
     void Read_Invisible(		USHORT, BYTE* pData, short nLen );
     void Read_Emphasis(			USHORT, BYTE* pData, short nLen );
+    void Read_ScaleWidth(		USHORT, BYTE* pData, short nLen );
 
     void Read_NoLineNumb(		USHORT nId, BYTE* pData, short nLen );
 
@@ -1061,7 +1062,7 @@ public:		// eigentlich private, geht aber leider nur public
 
     void Read_StyleCode( 		USHORT, BYTE* pData, short nLen );
     void Read_Majority(	 		USHORT, BYTE* pData, short nLen );
-    void Read_DoubleLine( USHORT, BYTE* pDATA, short nLen);
+    void Read_DoubleLine_Rotate( USHORT, BYTE* pDATA, short nLen);
 
                                         // Felder
 
@@ -1142,23 +1143,26 @@ public:		// eigentlich private, geht aber leider nur public
 
     Source Code Control System - Header
 
-      $Header: /zpool/svn/migration/cvs_rep_09_09_08/code/sw/source/filter/ww8/ww8par.hxx,v 1.11 2001-02-06 17:28:21 cmc Exp $
+      $Header: /zpool/svn/migration/cvs_rep_09_09_08/code/sw/source/filter/ww8/ww8par.hxx,v 1.12 2001-02-15 20:08:10 jp Exp $
 
       Source Code Control System - Update
 
       $Log: not supported by cvs2svn $
+      Revision 1.11  2001/02/06 17:28:21  cmc
+      #83581# CJK Two Lines in One {Im|Ex}port for Word
+
       Revision 1.10  2001/01/30 20:11:06  cmc
       #83362# CJK Forbidden Character {Im|Ex}port
-    
+
       Revision 1.9  2000/12/15 15:33:06  cmc
       #79055# OCX FormControls changes
-    
+
       Revision 1.8  2000/12/04 14:08:08  khz
       #78930# Pictures in Hyperlinks will be imported as Graphics with Hyperlink
-    
+
       Revision 1.7  2000/12/01 11:22:52  jp
       Task #81077#: im-/export of CJK documents
-    
+
       Revision 1.6  2000/11/23 13:37:53  khz
       #79474# Save/restore PLCF state before/after reading header or footer data
 

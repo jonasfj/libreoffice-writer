@@ -2,9 +2,9 @@
  *
  *  $RCSfile: ww8scan.cxx,v $
  *
- *  $Revision: 1.8 $
+ *  $Revision: 1.9 $
  *
- *  last change: $Author: cmc $ $Date: 2001-02-06 17:28:21 $
+ *  last change: $Author: jp $ $Date: 2001-02-15 20:08:10 $
  *
  *  The Contents of this file are made available subject to the terms of
  *  either of the following licenses
@@ -4881,7 +4881,7 @@ void WW8PLCF_HdFt::UpdateIndex( BYTE grpfIhdt )
 
 
 
-WW8Dop::WW8Dop( SvStream& rSt, INT16 nFib, INT32 nPos, INT32 nSize ) 
+WW8Dop::WW8Dop( SvStream& rSt, INT16 nFib, INT32 nPos, INT32 nSize )
 {
     BYTE* pData = new BYTE[ 500 ];
     BYTE* pDataPtr = pData;
@@ -5077,9 +5077,9 @@ WW8Dop::WW8Dop( SvStream& rSt, INT16 nFib, INT32 nPos, INT32 nSize )
     delete pDataPtr;
 }
 
-WW8Dop::WW8Dop() 
+WW8Dop::WW8Dop()
 {
-    // first set everything to a default of 0 
+    // first set everything to a default of 0
     memset( &nDataStart, 0,	(&nDataEnd - &nDataStart) );
 
     fWidowControl = 1;
@@ -5364,7 +5364,7 @@ void WW8DopTypography::WriteToMem(BYTE *&pData) const
 ULONG WW8DopTypography::GetConvertedLang() const
 {
     ULONG nLang;
-    //This isn't a documented issue, so we might have it all wrong, 
+    //This isn't a documented issue, so we might have it all wrong,
     //i.e. i.e. whats with the powers of two ?
     //
     //I have assumed peoples republic/taiwan == simplified/traditional
@@ -5384,9 +5384,9 @@ ULONG WW8DopTypography::GetConvertedLang() const
             break;
         default:
             ASSERT(0, "Unknown MS Asian Typography language, please report");
-            nLang = LANGUAGE_CHINESE;  
+            nLang = LANGUAGE_CHINESE;
             break;
-        case 0:		
+        case 0:
                 //And here we have the possibility that it says 2, but
                 //its really a bug and only japanese level 2 has been selected
                 //after a custom version was chosen on last save!
@@ -5758,7 +5758,7 @@ static SprmInfo aWwSprmTab[] = {
     0x4A4F, 2, L_FIX, // "sprmCRgFtc0" chp.rgftc[0];ftc for ASCII text (see below);short;
     0x4A50, 2, L_FIX, // "sprmCRgFtc1" chp.rgftc[1];ftc for Far East text (see below);short;
     0x4A51, 2, L_FIX, // "sprmCRgFtc2" chp.rgftc[2];ftc for non-Far East text (see below);short;
-//0x4852, 0, L_FIX, // "sprmCCharScale" ;;;
+    0x4852, 2, L_FIX, // "sprmCCharScale" ;;short;
     0x2A53, 1, L_FIX, // "sprmCFDStrike" chp.fDStrike;;byte;
     0x0854, 1, L_FIX, // "sprmCFImprint" chp.fImprint;1 or 0;bit;
     0x0855, 1, L_FIX, // "sprmCFSpec" chp.fSpec ;1 or 0;bit;
@@ -6093,20 +6093,23 @@ BYTE WW8SprmDataOfs( USHORT nId )
 /*************************************************************************
       Source Code Control System - Header
 
-      $Header: /zpool/svn/migration/cvs_rep_09_09_08/code/sw/source/filter/ww8/ww8scan.cxx,v 1.8 2001-02-06 17:28:21 cmc Exp $
+      $Header: /zpool/svn/migration/cvs_rep_09_09_08/code/sw/source/filter/ww8/ww8scan.cxx,v 1.9 2001-02-15 20:08:10 jp Exp $
 
       Source Code Control System - Update
 
       $Log: not supported by cvs2svn $
+      Revision 1.8  2001/02/06 17:28:21  cmc
+      #83581# CJK Two Lines in One {Im|Ex}port for Word
+
       Revision 1.7  2001/01/30 20:11:06  cmc
       #83362# CJK Forbidden Character {Im|Ex}port
-    
+
       Revision 1.6  2001/01/24 16:06:35  cmc
       #79464# Bad Table Row End Search
-    
+
       Revision 1.5  2000/12/01 11:22:52  jp
       Task #81077#: im-/export of CJK documents
-    
+
       Revision 1.4  2000/11/23 13:37:53  khz
       #79474# Save/restore PLCF state before/after reading header or footer data
 
