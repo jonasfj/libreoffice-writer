@@ -2,9 +2,9 @@
  *
  *  $RCSfile: parasc.cxx,v $
  *
- *  $Revision: 1.19 $
+ *  $Revision: 1.20 $
  *
- *  last change: $Author: obo $ $Date: 2004-01-13 16:37:08 $
+ *  last change: $Author: rt $ $Date: 2005-01-11 12:23:40 $
  *
  *  The Contents of this file are made available subject to the terms of
  *  either of the following licenses
@@ -160,7 +160,7 @@ public:
 
 
 // Aufruf fuer die allg. Reader-Schnittstelle
-ULONG AsciiReader::Read( SwDoc &rDoc, SwPaM &rPam, const String & )
+ULONG AsciiReader::Read( SwDoc &rDoc, const String&, SwPaM &rPam, const String & )
 {
     if( !pStrm )
     {
@@ -306,10 +306,10 @@ ULONG SwASCIIParser::CallParser()
                     // defaults are exported always if the have changed for
                     // text documents in general. That's not sensible, as well
                     // as it is not sensible to export them always.
-                    sal_uInt16 aWhichIds[4] = 
-                    { 
+                    sal_uInt16 aWhichIds[4] =
+                    {
                         RES_CHRATR_FONT, RES_CHRATR_CJK_FONT,
-                        RES_CHRATR_CTL_FONT, 0 
+                        RES_CHRATR_CTL_FONT, 0
                     };
                     sal_uInt16 *pWhichIds = aWhichIds;
                     while (*pWhichIds)
@@ -360,15 +360,15 @@ ULONG SwASCIIParser::ReadChars()
     const SwAsciiOptions *pUseMe=&rOpt;
     SwAsciiOptions aEmpty;
     if (nFileSize >= 2 &&
-        aEmpty.GetFontName() == rOpt.GetFontName() && 
-        aEmpty.GetCharSet() == rOpt.GetCharSet() && 
-        aEmpty.GetLanguage() == rOpt.GetLanguage() && 
+        aEmpty.GetFontName() == rOpt.GetFontName() &&
+        aEmpty.GetCharSet() == rOpt.GetCharSet() &&
+        aEmpty.GetLanguage() == rOpt.GetLanguage() &&
         aEmpty.GetParaFlags() == rOpt.GetParaFlags())
     {
         ULONG nLen, nOrig;
         nOrig = nLen = rInput.Read(pArr, ASC_BUFFLEN);
         CharSet eCharSet;
-        bool bRet = SwIoSystem::IsDetectableText(pArr, nLen, &eCharSet, 
+        bool bRet = SwIoSystem::IsDetectableText(pArr, nLen, &eCharSet,
             &bSwapUnicode);
         ASSERT(bRet, "Autodetect of text import without nag dialog must "
             "have failed");
@@ -377,7 +377,7 @@ ULONG SwASCIIParser::ReadChars()
             aEmpty.SetCharSet(eCharSet);
             rInput.SeekRel(-(long(nLen)));
         }
-        else 
+        else
             rInput.SeekRel(-(long(nOrig)));
         pUseMe=&aEmpty;
     }
@@ -387,8 +387,8 @@ ULONG SwASCIIParser::ReadChars()
     CharSet currentCharSet = pUseMe->GetCharSet();
     if (RTL_TEXTENCODING_UCS2 != currentCharSet)
     {
-        if( currentCharSet == RTL_TEXTENCODING_DONTKNOW ) 
-                currentCharSet = RTL_TEXTENCODING_ASCII_US; 
+        if( currentCharSet == RTL_TEXTENCODING_DONTKNOW )
+                currentCharSet = RTL_TEXTENCODING_ASCII_US;
         hConverter = rtl_createTextToUnicodeConverter( currentCharSet );
         ASSERT( hConverter, "no string convert avaiable" );
         if (!hConverter)
