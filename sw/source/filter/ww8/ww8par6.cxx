@@ -2,9 +2,9 @@
  *
  *  $RCSfile: ww8par6.cxx,v $
  *
- *  $Revision: 1.153 $
+ *  $Revision: 1.154 $
  *
- *  last change: $Author: kz $ $Date: 2004-05-18 14:57:19 $
+ *  last change: $Author: rt $ $Date: 2004-07-12 13:35:39 $
  *
  *  The Contents of this file are made available subject to the terms of
  *  either of the following licenses
@@ -1397,8 +1397,10 @@ void GetLineIndex(SvxBoxItem &rBox, short nLineThickness, short nSpace, BYTE nCo
         // or if in necessary by a double line
         case 24:
         case 25:
-            if( nLineThickness < 20)
+            if( nLineThickness < 10)
                 eCodeIdx = WW8_BordersSO::single0;//   1 Twip for us
+            else if( nLineThickness < 20)
+                eCodeIdx = WW8_BordersSO::single5;//   10 Twips for us
             else if (nLineThickness < 50)
                 eCodeIdx = WW8_BordersSO::single1;//  20 Twips
             else if (nLineThickness < 80)
@@ -3018,7 +3020,7 @@ void SwWW8ImplReader::Read_BoldUsw( USHORT nId, const BYTE* pData, short nLen )
         {
             // The style based on has Bit 7 set ?
             if (
-                pSI->nBase < nColls && (*pData & 0x80) && 
+                pSI->nBase < nColls && (*pData & 0x80) &&
                 (pCollA[pSI->nBase].n81Flags & nMask)
                )
             {
@@ -3934,7 +3936,7 @@ void SwWW8ImplReader::AdjustStyleTabStops(long nLeft, SwWW8StyInf *pWWSty)
                 false, &pTabs ) == SFX_ITEM_SET;
             if (bOnMarginStyle)
             {
-                const SvxLRSpaceItem &rLR = 
+                const SvxLRSpaceItem &rLR =
                     ItemGet<SvxLRSpaceItem>(*pSty, RES_LR_SPACE);
                 nOldLeft = rLR.GetTxtLeft();
             }
@@ -3963,7 +3965,7 @@ bool lcl_HasExplicitLeft(const WW8RStyle *pStyles, bool bVer67)
         else
         {
             return (
-                    pStyles->HasParaSprm(0x840F) || 
+                    pStyles->HasParaSprm(0x840F) ||
                     pStyles->HasParaSprm(0x845E)
                    );
         }
@@ -4057,8 +4059,8 @@ void SwWW8ImplReader::Read_LR( USHORT nId, const BYTE* pData, short nLen )
                 const BYTE *pIsZeroed = pPlcxMan->GetPapPLCF()->HasSprm(0x460B);
                 if (pIsZeroed && *pIsZeroed == 0)
                 {
-                    const SvxLRSpaceItem &rLR = 
-                        ItemGet<SvxLRSpaceItem>(*(pCollA[nAktColl].pFmt), 
+                    const SvxLRSpaceItem &rLR =
+                        ItemGet<SvxLRSpaceItem>(*(pCollA[nAktColl].pFmt),
                         RES_LR_SPACE);
                     nPara -= rLR.GetTxtFirstLineOfst();
                 }
@@ -4178,7 +4180,7 @@ void SwWW8ImplReader::Read_DontAddEqual(USHORT, const BYTE *pData, short nLen)
 {
     if (nLen < 0)
         return;
-    
+
     if (*pData)
         maTracer.Log(sw::log::eDontAddSpaceForEqualStyles);
 }
@@ -4203,7 +4205,7 @@ void SwWW8ImplReader::Read_ParaAutoBefore(USHORT, const BYTE *pData, short nLen)
     }
     else
     {
-        if (pAktColl)   
+        if (pAktColl)
             pCollA[nAktColl].bParaAutoBefore = false;
         else
             bParaAutoBefore = false;
@@ -4230,7 +4232,7 @@ void SwWW8ImplReader::Read_ParaAutoAfter(USHORT, const BYTE *pData, short nLen)
     }
     else
     {
-        if (pAktColl)   
+        if (pAktColl)
             pCollA[nAktColl].bParaAutoAfter = false;
         else
             bParaAutoAfter = false;
@@ -4322,13 +4324,13 @@ void SwWW8ImplReader::Read_Justify( USHORT, const BYTE* pData, short nLen )
 bool SwWW8ImplReader::IsRightToLeft()
 {
     bool bRTL = false;
-    const BYTE *pDir = 
+    const BYTE *pDir =
         pPlcxMan ? pPlcxMan->GetPapPLCF()->HasSprm(0x2441) : 0;
     if (pDir)
         bRTL = *pDir ? true : false;
     else
     {
-        const SvxFrameDirectionItem* pDir= 
+        const SvxFrameDirectionItem* pDir=
             (const SvxFrameDirectionItem*)GetFmtAttr(RES_FRAMEDIR);
         if (pDir && (pDir->GetValue() == FRMDIR_HORI_RIGHT_TOP))
             bRTL = true;
@@ -4520,7 +4522,7 @@ void SwWW8ImplReader::Read_TxtAnim(USHORT nId, const BYTE* pData, short nLen)
         {
             bool bBlink;
 
-            // #110851# The 7 animated text effects available in word all get 
+            // #110851# The 7 animated text effects available in word all get
             // mapped to a blinking text effect in StarOffice
             // 0 no animation       1 Las Vegas lights
             // 2 background blink   3 sparkle text
@@ -4528,7 +4530,7 @@ void SwWW8ImplReader::Read_TxtAnim(USHORT nId, const BYTE* pData, short nLen)
             // 6 shimmer
             if (*pData > 0 && *pData < 7 )
                 bBlink = true;
-            else 
+            else
                 bBlink = false;
 
             NewAttr(SvxBlinkItem(bBlink));
@@ -4793,7 +4795,7 @@ void SwWW8ImplReader::Read_Border(USHORT , const BYTE* , short nLen)
                 if (pBox)
                     aBox = *pBox;
                 short aSizeArray[5]={0};
-#if 0 
+#if 0
                 // #i20672# we can't properly support between lines so best to ignore
                 // them for now
                 SetBorder(aBox, aBrcs, &aSizeArray[0], nBorder, true);
