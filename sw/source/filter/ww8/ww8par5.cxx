@@ -2,9 +2,9 @@
  *
  *  $RCSfile: ww8par5.cxx,v $
  *
- *  $Revision: 1.31 $
+ *  $Revision: 1.32 $
  *
- *  last change: $Author: cmc $ $Date: 2002-01-10 14:11:05 $
+ *  last change: $Author: jp $ $Date: 2002-01-16 16:23:41 $
  *
  *  The Contents of this file are made available subject to the terms of
  *  either of the following licenses
@@ -216,7 +216,7 @@ public:
     void SetNextPtr( xub_StrLen _nNext ) { nNext = _nNext; }
 
     xub_StrLen FindNextStringPiece( xub_StrLen _nStart = STRING_NOTFOUND );
-    BOOL GetTokenSttFromTo(xub_StrLen* _pFrom, xub_StrLen* _pTo, 
+    BOOL GetTokenSttFromTo(xub_StrLen* _pFrom, xub_StrLen* _pTo,
         xub_StrLen _nMax);
 
     String GetResult() const;
@@ -412,7 +412,7 @@ long SwWW8ImplReader::Read_Book(WW8PLCFManResult*, BOOL bStartAttr)
 
     if (pB->GetIsEnd())
     {
-        pEndStck->SetAttr( *pPaM->GetPoint(), RES_FLTR_BOOKMARK, TRUE, 
+        pEndStck->SetAttr( *pPaM->GetPoint(), RES_FLTR_BOOKMARK, TRUE,
             pB->GetHandle() );
         return 0;
     }
@@ -423,8 +423,8 @@ long SwWW8ImplReader::Read_Book(WW8PLCFManResult*, BOOL bStartAttr)
 
     //"_Toc*" and "_Hlt*" are unnecessary
     const String* pName = pB->GetName();
-    if(    !pName || pName->EqualsIgnoreCaseAscii( "_Toc", 0, 4 )   
-        || pName->EqualsIgnoreCaseAscii( "_Hlt", 0, 4 ) ) 
+    if(    !pName || pName->EqualsIgnoreCaseAscii( "_Toc", 0, 4 )
+        || pName->EqualsIgnoreCaseAscii( "_Hlt", 0, 4 ) )
         return 0;
 
     //JP 16.11.98: ToUpper darf auf keinen Fall gemacht werden, weil der
@@ -553,7 +553,7 @@ xub_StrLen FindParaStart( const String& rStr, sal_Unicode cToken, sal_Unicode cT
                    && rStr.GetChar( nBuf ) == ' ' )
                 nBuf++;
             // return start of parameters
-            return nBuf < rStr.Len() ? nBuf : STRING_NOTFOUND; 
+            return nBuf < rStr.Len() ? nBuf : STRING_NOTFOUND;
         }
     }
     return STRING_NOTFOUND;
@@ -798,7 +798,7 @@ long SwWW8ImplReader::Read_Field( WW8PLCFManResult* pRes, BOOL )
 
     WW8PLCFx_FLD* pF = pPlcxMan->GetFld();
     ASSERT(pF, "WW8PLCFx_FLD - Pointer nicht da");
-    if( !pF ) 
+    if( !pF )
         return 0;
 
     BOOL bOk = pF->GetPara( pRes->nCp2OrIdx, aF );
@@ -1281,7 +1281,7 @@ eF_ResT SwWW8ImplReader::Read_F_DocInfo( WW8FieldDesc* pF, String& rStr )
                 // additional fields are to be coded soon!   :-)
 
                 static const USHORT nLangCnt = 4;
-                static const sal_Char * aNameSet_26[nFldCnt][nLangCnt+1] = 
+                static const sal_Char * aNameSet_26[nFldCnt][nLangCnt+1] =
                 {
                     {aName10, aName11, aName12, aName13, aName14},
                     {aName20, aName21, aName22, aName23, aName24},
@@ -1295,7 +1295,7 @@ eF_ResT SwWW8ImplReader::Read_F_DocInfo( WW8FieldDesc* pF, String& rStr )
                 {
                     for(nFIdx = 0;  !bFldFound && (nFldCnt  > nFIdx); ++nFIdx)
                     {
-                        if( aStr.Equals( String( aNameSet_26[nFIdx][nLIdx], 
+                        if( aStr.Equals( String( aNameSet_26[nFIdx][nLIdx],
                             RTL_TEXTENCODING_MS_1252 ) ) )
                         {
                             bFldFound = TRUE;
@@ -1311,48 +1311,48 @@ eF_ResT SwWW8ImplReader::Read_F_DocInfo( WW8FieldDesc* pF, String& rStr )
 
     switch( pF->nId )
     {
-        case 14: 
+        case 14:
             /* kann alle INFO-Vars!! */
-            nSub = DI_KEYS;	
+            nSub = DI_KEYS;
             break;
-        case 15: 
-            nSub = DI_TITEL;										 
+        case 15:
+            nSub = DI_TITEL;
             break;
-        case 16: 
-            nSub = DI_THEMA;										 
+        case 16:
+            nSub = DI_THEMA;
             break;
-        case 18: 
-            nSub = DI_KEYS;										 
+        case 18:
+            nSub = DI_KEYS;
             break;
-        case 19: 
-            nSub = DI_COMMENT;										 
+        case 19:
+            nSub = DI_COMMENT;
             break;
-        case 20: 
-            nSub = DI_CHANGE; 
-            nReg = DI_SUB_AUTHOR;				 
+        case 20:
+            nSub = DI_CHANGE;
+            nReg = DI_SUB_AUTHOR;
             break;
-        case 21: 
-            nSub = DI_CREATE; 
-            nReg = DI_SUB_DATE; 
-            bDateTime = TRUE; 
+        case 21:
+            nSub = DI_CREATE;
+            nReg = DI_SUB_DATE;
+            bDateTime = TRUE;
             break;
-        case 23: 
-            nSub = DI_PRINT;  
-            nReg = DI_SUB_DATE; 
-            bDateTime = TRUE; 
+        case 23:
+            nSub = DI_PRINT;
+            nReg = DI_SUB_DATE;
+            bDateTime = TRUE;
             break;
-        case 24: 
-            nSub = DI_DOCNO;										 
+        case 24:
+            nSub = DI_DOCNO;
             break;
-        case 22: 
-            nSub = DI_CHANGE; 
-            nReg = DI_SUB_DATE; 
-            bDateTime = TRUE; 
+        case 22:
+            nSub = DI_CHANGE;
+            nReg = DI_SUB_DATE;
+            bDateTime = TRUE;
             break;
-        case 25: 
-            nSub = DI_CHANGE; 
-            nReg = DI_SUB_TIME; 
-            bDateTime = TRUE; 
+        case 25:
+            nSub = DI_CHANGE;
+            nReg = DI_SUB_TIME;
+            bDateTime = TRUE;
             break;
     }
 
@@ -1363,14 +1363,14 @@ eF_ResT SwWW8ImplReader::Read_F_DocInfo( WW8FieldDesc* pF, String& rStr )
         short nDT = GetTimeDatePara( rDoc, rStr, nFormat );
         switch( nDT )
         {
-            case NUMBERFORMAT_DATE:		
-                nReg = DI_SUB_DATE;	
+            case NUMBERFORMAT_DATE:
+                nReg = DI_SUB_DATE;
                 break;
-            case NUMBERFORMAT_TIME:		
-                nReg = DI_SUB_TIME;	
+            case NUMBERFORMAT_TIME:
+                nReg = DI_SUB_TIME;
                 break;
-            case NUMBERFORMAT_DATETIME:	
-                nReg = DI_SUB_DATE;	
+            case NUMBERFORMAT_DATETIME:
+                nReg = DI_SUB_DATE;
                 break;
             default:
                 nReg = DI_SUB_DATE;
@@ -2912,18 +2912,30 @@ void SwWW8ImplReader::ImportTox( int nFldId, String aStr )
     USHORT nLevel = 1;
 
     xub_StrLen n;
-    String sKey1;
+    String sKey1, sKey2, sFldTxt;
     long nRet;
     _ReadFieldParams aReadParam( aStr );
     while( -1 != ( nRet = aReadParam.SkipToNextToken() ))
         switch( nRet )
         {
         case -2:
-            if( !sKey1.Len() )
+            if( !sFldTxt.Len() )
             {
-                sKey1 = aReadParam.GetResult().GetToken(0, ':');
-                if( !sKey1.Len() )
-                    sKey1 = aReadParam.GetResult(); // PrimaryKey ohne ":", 2nd dahinter
+                // PrimaryKey ohne ":", 2nd dahinter
+                sFldTxt = aReadParam.GetResult();
+                xub_StrLen nFnd = sFldTxt.Search( ':' );
+                if( STRING_NOTFOUND != nFnd )  // it exist levels
+                {
+                    sKey1 = sFldTxt.Copy( 0, nFnd );
+
+                    xub_StrLen nScndFnd = sFldTxt.Search( ':', nFnd+1 );
+                    if( STRING_NOTFOUND != nScndFnd )
+                    {
+                        sKey2 = sFldTxt.Copy( nFnd+1, nScndFnd - nFnd - 1 );
+                        nFnd = nScndFnd;
+                    }
+                    sFldTxt.Erase( 0, nFnd+1 );
+                }
             }
             break;
 
@@ -2959,13 +2971,9 @@ void SwWW8ImplReader::ImportTox( int nFldId, String aStr )
     if( eTox != TOX_INDEX )
         aM.SetLevel( nLevel );
 
-    if( sKey1.Len() )
-    {
-        aM.SetAlternativeText( sKey1 );	// WW/SW: unterschiedliche Reihenfolge
-                                        // Text mit Key1 tauschen
-    }
-    else
-        aM.SetAlternativeText( aStr );
+    aM.SetAlternativeText( sFldTxt );
+    aM.SetPrimaryKey( sKey1 );
+    aM.SetSecondaryKey( sKey2 );
 
     if( !aM.IsAlternativeText() )
     {
