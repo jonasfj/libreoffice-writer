@@ -2,9 +2,9 @@
  *
  *  $RCSfile: xmltexti.cxx,v $
  *
- *  $Revision: 1.38 $
+ *  $Revision: 1.39 $
  *
- *  last change: $Author: rt $ $Date: 2005-01-31 09:11:02 $
+ *  last change: $Author: vg $ $Date: 2005-02-21 16:42:47 $
  *
  *  The Contents of this file are made available subject to the terms of
  *  either of the following licenses
@@ -630,7 +630,7 @@ Reference< XPropertySet > SwXMLTextImportHelper::createAndInsertOOoLink(
     // Copy URL into URL oject on the way.
        INetURLObject aURLObj;
     bool bValidURL = rHRef.getLength() != 0 &&
-                     aURLObj.SetURL( URIHelper::SmartRel2Abs( 
+                     aURLObj.SetURL( URIHelper::SmartRel2Abs(
                                 INetURLObject( GetXMLImport().GetBaseURL() ), rHRef ) );
     if( !bValidURL )
         return xPropSet;
@@ -711,7 +711,12 @@ Reference< XPropertySet > SwXMLTextImportHelper::createAndInsertApplet(
     lcl_putHeightAndWidth( aItemSet, nHeight, nWidth);
 
     SwApplet_Impl aAppletImpl ( aItemSet );
-    aAppletImpl.CreateApplet ( rCode, rName, bMayScript, rHRef, GetXMLImport().GetBaseURL() );
+
+    String sCodeBase;
+    if( rHRef.getLength() )
+        sCodeBase = GetXMLImport().GetAbsoluteReference( rHRef );
+
+    aAppletImpl.CreateApplet ( rCode, rName, bMayScript, sCodeBase, GetXMLImport().GetDocumentBase() );
 
     SwFrmFmt *pFrmFmt = pDoc->Insert( *pTxtCrsr->GetPaM(),
                                        aAppletImpl.GetApplet(),
@@ -747,7 +752,7 @@ Reference< XPropertySet > SwXMLTextImportHelper::createAndInsertPlugin(
     // either, do not insert plugin and return early. Copy URL into URL oject
     // on the way.
        INetURLObject aURLObj;
-    
+
     bool bValidURL = rHRef.getLength() != 0 &&
                      aURLObj.SetURL( rHRef );
     bool bValidMimeType = rMimeType.getLength() != 0;
@@ -896,7 +901,7 @@ Reference< XPropertySet > SwXMLTextImportHelper::createAndInsertFloatingFrame(
             if ( xSet.is() )
             {
                 xSet->setPropertyValue( ::rtl::OUString::createFromAscii("FrameURL"),
-                    makeAny( ::rtl::OUString( URIHelper::SmartRel2Abs( 
+                    makeAny( ::rtl::OUString( URIHelper::SmartRel2Abs(
                             INetURLObject( GetXMLImport().GetBaseURL() ), rHRef ) ) ) );
 
                 xSet->setPropertyValue( ::rtl::OUString::createFromAscii("FrameName"),
