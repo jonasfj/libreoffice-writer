@@ -2,9 +2,9 @@
  *
  *  $RCSfile: wrthtml.cxx,v $
  *
- *  $Revision: 1.16 $
+ *  $Revision: 1.17 $
  *
- *  last change: $Author: mib $ $Date: 2002-07-01 12:18:06 $
+ *  last change: $Author: os $ $Date: 2002-07-04 07:48:54 $
  *
  *  The Contents of this file are made available subject to the terms of
  *  either of the following licenses
@@ -116,7 +116,7 @@
 #ifndef _SVX_FONTITEM_HXX
 #include <svx/fontitem.hxx>
 #endif
-#ifndef _SVX_SCRIPTTYPEITEM_HXX 
+#ifndef _SVX_SCRIPTTYPEITEM_HXX
 #include <svx/scripttypeitem.hxx>
 #endif
 #ifndef _SVX_LANGITEM_HXX
@@ -306,15 +306,12 @@ sal_uInt32 SwHTMLWriter::WriteStream()
     // (dann auch obere und untere Absatz-Abstaende)
     nExportMode = pHtmlOptions->GetExportMode();
     nHTMLMode = GetHtmlMode(0);
-    if( HTML_CFG_WRITER==nExportMode || HTML_CFG_NS30==nExportMode ||
+    if( HTML_CFG_WRITER==nExportMode ||
         HTML_CFG_NS40==nExportMode )
         nHTMLMode |= HTMLMODE_BLOCK_SPACER;
 
     if( HTML_CFG_WRITER==nExportMode || HTML_CFG_MSIE==nExportMode )
         nHTMLMode |= (HTMLMODE_FLOAT_FRAME | HTMLMODE_LSPACE_IN_NUMBUL);
-
-    if( HTML_CFG_NS30==nExportMode )
-        nHTMLMode |= HTMLMODE_VERT_SPACER;
 
     if( HTML_CFG_MSIE==nExportMode )
         nHTMLMode |= HTMLMODE_NBSP_IN_TABLES;
@@ -336,7 +333,7 @@ sal_uInt32 SwHTMLWriter::WriteStream()
     if( HTML_CFG_HTML32!=nExportMode )
         nHTMLMode |= HTMLMODE_FONT_GENERIC;
 
-    if( HTML_CFG_NS30==nExportMode || HTML_CFG_NS40==nExportMode )
+    if( HTML_CFG_NS40==nExportMode )
         nHTMLMode |= HTMLMODE_NO_CONTROL_CENTERING;
 
     bCfgOutStyles = IsHTMLMode(HTMLMODE_SOME_STYLES |
@@ -1354,7 +1351,7 @@ sal_uInt16 SwHTMLWriter::GetLangWhichIdFromScript( sal_uInt16 nScript )
     case CSS1_OUTMODE_CTL:
         nWhichId = RES_CHRATR_CJK_LANGUAGE;
         break;
-    default:	
+    default:
         nWhichId = RES_CHRATR_LANGUAGE;
         break;
     }
