@@ -2,9 +2,9 @@
  *
  *  $RCSfile: unomailmerge.cxx,v $
  *
- *  $Revision: 1.4 $
+ *  $Revision: 1.5 $
  *
- *  last change: $Author: hr $ $Date: 2003-04-04 18:17:51 $
+ *  last change: $Author: vg $ $Date: 2003-04-15 17:04:25 $
  *
  *  The Contents of this file are made available subject to the terms of
  *  either of the following licenses
@@ -237,16 +237,16 @@ class DisposeHelper
 
 public:
     DisposeHelper() {}
-#ifdef DEBUG
+#if OSL_DEBUG_LEVEL > 1
     ~DisposeHelper();
 #else
     ~DisposeHelper()    { if (xC.is()) xC->dispose(); }
 #endif
-    
+
     BOOL    SetInterface( uno::Reference< XInterface > &rxRef )  { return (xC = uno::Reference< XComponent >( rxRef, UNO_QUERY )).is(); }
 };
 
-#ifdef DEBUG
+#if OSL_DEBUG_LEVEL > 1
 DisposeHelper::~DisposeHelper()
 {
     if (xC.is())
@@ -304,9 +304,9 @@ static CloseResult CloseModelAndDocSh(
 
 ////////////////////////////////////////////////////////////
 
-static BOOL LoadFromURL_impl( 
-        Reference< frame::XModel > &rxModel, 
-        SfxObjectShellRef &rxDocSh, 
+static BOOL LoadFromURL_impl(
+        Reference< frame::XModel > &rxModel,
+        SfxObjectShellRef &rxDocSh,
         const String &rURL,
         BOOL bClose )
     throw (RuntimeException)
@@ -329,7 +329,7 @@ static BOOL LoadFromURL_impl(
         return FALSE;
     }
 
-    // try to get the DocShell 
+    // try to get the DocShell
     SwDocShell *pTmpDocShell = 0;
     Reference < XUnoTunnel > xTunnel( xTmpModel, UNO_QUERY );
     if (xTunnel.is())
@@ -337,7 +337,7 @@ static BOOL LoadFromURL_impl(
         SwXTextDocument* pTextDoc = (SwXTextDocument *) xTunnel->getSomething( SwXTextDocument::getUnoTunnelId() );
         pTmpDocShell = pTextDoc ? pTextDoc->GetDocShell() : 0;
     }
- 
+
     BOOL bRes = FALSE;
     if (xTmpModel.is() && pTmpDocShell)    // everything available?
     {
@@ -353,7 +353,7 @@ static BOOL LoadFromURL_impl(
         SfxObjectShellRef xTmpDocSh = pTmpDocShell;
         CloseModelAndDocSh( xTmpModel, xTmpDocSh );
     }
-    
+
     return bRes;
 }
 
@@ -572,9 +572,9 @@ SwXMailMerge::SwXMailMerge() :
     SfxViewFrame *pFrame = SFX_APP()->CreateViewFrame( *xDocSh, 0, TRUE );
     SwView *pView = (SwView*) pFrame->GetViewShell();
     pView->AttrChangedNotify( &pView->GetWrtShell() );//Damit SelectShell gerufen wird.
-    
-    xModel = pDocShell->GetModel(); 
-    
+
+    xModel = pDocShell->GetModel();
+
     nDataCommandType    = sdb::CommandType::TABLE;
     nOutputType         = MailMergeType::PRINTER;
     bEscapeProcessing   = sal_False;
@@ -589,15 +589,15 @@ SwXMailMerge::~SwXMailMerge()
     DeleteTmpFile_Impl( xModel, xDocSh, aTmpFileName );
 }
 
-uno::Any SAL_CALL SwXMailMerge::execute( 
-        const uno::Sequence< beans::NamedValue >& rArguments ) 
+uno::Any SAL_CALL SwXMailMerge::execute(
+        const uno::Sequence< beans::NamedValue >& rArguments )
     throw (IllegalArgumentException, Exception, RuntimeException)
 {
     vos::OGuard aGuard( Application::GetSolarMutex() );
 
     //
-    // get property values to be used 
-    // (use values from the service as default and override them with 
+    // get property values to be used
+    // (use values from the service as default and override them with
     // the values that are provided as arguments)
     //
     uno::Sequence< uno::Any >           aCurSelection   = aSelection;
@@ -728,10 +728,10 @@ uno::Any SAL_CALL SwXMailMerge::execute(
     if (!pView)
         throw RuntimeException();
     SwWrtShell &rSh = *pView->GetWrtShellPtr();
-    
+
     // avoid assertion in 'Update' from Sfx by supplying a shell
-    // and thus avoiding the SelectShell call in Writers GetState function 
-    // while still in Update of Sfx. 
+    // and thus avoiding the SelectShell call in Writers GetState function
+    // while still in Update of Sfx.
     // (GetSelection in Update is not allowed)
     if (pView && aCurDocumentURL.getLength())
         pView->AttrChangedNotify( &pView->GetWrtShell() );//Damit SelectShell gerufen wird.
@@ -831,7 +831,7 @@ uno::Any SAL_CALL SwXMailMerge::execute(
             if (!aCurOutputURL.getLength())
                 throw RuntimeException( OUString ( RTL_CONSTASCII_USTRINGPARAM ( "OutputURL is not set and can not be obtained." ) ), static_cast < cppu::OWeakObject * > ( this ) );
         }
-        
+
         aURLObj.SetSmartURL( aCurOutputURL );
         String aPath = aURLObj.GetMainURL( INetURLObject::DECODE_TO_IURI );
 
@@ -909,7 +909,7 @@ void SwXMailMerge::launchEvent( const PropertyChangeEvent &rEvt ) const
 {
     cppu::OInterfaceContainerHelper *pContainer =
             aPropListeners.getContainer( rEvt.PropertyHandle );
-    if (pContainer) 
+    if (pContainer)
     {
         cppu::OInterfaceIteratorHelper aIt( *pContainer );
         while (aIt.hasMoreElements())
@@ -922,7 +922,7 @@ void SwXMailMerge::launchEvent( const PropertyChangeEvent &rEvt ) const
 }
 
 
-uno::Reference< beans::XPropertySetInfo > SAL_CALL SwXMailMerge::getPropertySetInfo(  ) 
+uno::Reference< beans::XPropertySetInfo > SAL_CALL SwXMailMerge::getPropertySetInfo(  )
     throw (RuntimeException)
 {
     vos::OGuard aGuard( Application::GetSolarMutex() );
@@ -930,8 +930,8 @@ uno::Reference< beans::XPropertySetInfo > SAL_CALL SwXMailMerge::getPropertySetI
     return aRef;
 }
 
-void SAL_CALL SwXMailMerge::setPropertyValue( 
-        const OUString& rPropertyName, const uno::Any& rValue ) 
+void SAL_CALL SwXMailMerge::setPropertyValue(
+        const OUString& rPropertyName, const uno::Any& rValue )
     throw (UnknownPropertyException, PropertyVetoException, IllegalArgumentException, WrappedTargetException, RuntimeException)
 {
     vos::OGuard aGuard( Application::GetSolarMutex() );
@@ -1037,14 +1037,14 @@ void SAL_CALL SwXMailMerge::setPropertyValue(
     }
 }
 
-uno::Any SAL_CALL SwXMailMerge::getPropertyValue( 
-        const OUString& rPropertyName ) 
+uno::Any SAL_CALL SwXMailMerge::getPropertyValue(
+        const OUString& rPropertyName )
     throw (UnknownPropertyException, WrappedTargetException, RuntimeException)
 {
     vos::OGuard aGuard( Application::GetSolarMutex() );
 
     Any aRet;
-    
+
     const SfxItemPropertyMap* pCur = SfxItemPropertyMap::GetByName( pMap, rPropertyName );
     if (!pCur)
         throw UnknownPropertyException();
@@ -1075,9 +1075,9 @@ uno::Any SAL_CALL SwXMailMerge::getPropertyValue(
     return aRet;
 }
 
-void SAL_CALL SwXMailMerge::addPropertyChangeListener( 
-        const OUString& rPropertyName, 
-        const uno::Reference< beans::XPropertyChangeListener >& rListener ) 
+void SAL_CALL SwXMailMerge::addPropertyChangeListener(
+        const OUString& rPropertyName,
+        const uno::Reference< beans::XPropertyChangeListener >& rListener )
     throw (UnknownPropertyException, WrappedTargetException, RuntimeException)
 {
     vos::OGuard aGuard( Application::GetSolarMutex() );
@@ -1092,9 +1092,9 @@ void SAL_CALL SwXMailMerge::addPropertyChangeListener(
     }
 }
 
-void SAL_CALL SwXMailMerge::removePropertyChangeListener( 
-        const OUString& rPropertyName, 
-        const uno::Reference< beans::XPropertyChangeListener >& rListener ) 
+void SAL_CALL SwXMailMerge::removePropertyChangeListener(
+        const OUString& rPropertyName,
+        const uno::Reference< beans::XPropertyChangeListener >& rListener )
     throw (UnknownPropertyException, WrappedTargetException, RuntimeException)
 {
     vos::OGuard aGuard( Application::GetSolarMutex() );
@@ -1109,18 +1109,18 @@ void SAL_CALL SwXMailMerge::removePropertyChangeListener(
     }
 }
 
-void SAL_CALL SwXMailMerge::addVetoableChangeListener( 
-        const OUString& rPropertyName, 
-        const uno::Reference< beans::XVetoableChangeListener >& rListener ) 
+void SAL_CALL SwXMailMerge::addVetoableChangeListener(
+        const OUString& rPropertyName,
+        const uno::Reference< beans::XVetoableChangeListener >& rListener )
     throw (UnknownPropertyException, WrappedTargetException, RuntimeException)
 {
     // no vetoable property, thus no support for vetoable change listeners
     DBG_WARNING( "not implemented");
 }
 
-void SAL_CALL SwXMailMerge::removeVetoableChangeListener( 
-        const OUString& rPropertyName, 
-        const uno::Reference< beans::XVetoableChangeListener >& rListener ) 
+void SAL_CALL SwXMailMerge::removeVetoableChangeListener(
+        const OUString& rPropertyName,
+        const uno::Reference< beans::XVetoableChangeListener >& rListener )
     throw (UnknownPropertyException, WrappedTargetException, RuntimeException)
 {
     // no vetoable property, thus no support for vetoable change listeners
@@ -1144,7 +1144,7 @@ void SAL_CALL SwXMailMerge::dispose()
     }
 }
 
-void SAL_CALL SwXMailMerge::addEventListener( 
+void SAL_CALL SwXMailMerge::addEventListener(
         const Reference< XEventListener >& rxListener )
     throw(RuntimeException)
 {
@@ -1153,7 +1153,7 @@ void SAL_CALL SwXMailMerge::addEventListener(
         aEvtListeners.addInterface( rxListener );
 }
 
-void SAL_CALL SwXMailMerge::removeEventListener( 
+void SAL_CALL SwXMailMerge::removeEventListener(
         const Reference< XEventListener >& rxListener )
     throw(RuntimeException)
 {
@@ -1162,8 +1162,8 @@ void SAL_CALL SwXMailMerge::removeEventListener(
         aEvtListeners.removeInterface( rxListener );
 }
 
-void SAL_CALL SwXMailMerge::addMailMergeEventListener( 
-        const uno::Reference< XMailMergeListener >& rxListener ) 
+void SAL_CALL SwXMailMerge::addMailMergeEventListener(
+        const uno::Reference< XMailMergeListener >& rxListener )
     throw (RuntimeException)
 {
     vos::OGuard aGuard( Application::GetSolarMutex() );
@@ -1171,8 +1171,8 @@ void SAL_CALL SwXMailMerge::addMailMergeEventListener(
         aMergeListeners.addInterface( rxListener );
 }
 
-void SAL_CALL SwXMailMerge::removeMailMergeEventListener( 
-        const uno::Reference< XMailMergeListener >& rxListener ) 
+void SAL_CALL SwXMailMerge::removeMailMergeEventListener(
+        const uno::Reference< XMailMergeListener >& rxListener )
     throw (RuntimeException)
 {
     vos::OGuard aGuard( Application::GetSolarMutex() );
@@ -1203,7 +1203,7 @@ uno::Sequence< OUString > SAL_CALL SwXMailMerge::getSupportedServiceNames()
 
 ////////////////////////////////////////////////////////////
 
-uno::Sequence< OUString > SAL_CALL SwXMailMerge_getSupportedServiceNames() 
+uno::Sequence< OUString > SAL_CALL SwXMailMerge_getSupportedServiceNames()
     throw()
 {
     uno::Sequence< OUString > aNames(1);
@@ -1211,21 +1211,21 @@ uno::Sequence< OUString > SAL_CALL SwXMailMerge_getSupportedServiceNames()
     return aNames;
 }
 
-OUString SAL_CALL SwXMailMerge_getImplementationName() 
+OUString SAL_CALL SwXMailMerge_getImplementationName()
     throw()
 {
     return OUString( C2U( "SwXMailMerge" ) );
 }
 
 uno::Reference< uno::XInterface > SAL_CALL SwXMailMerge_createInstance(
-        const uno::Reference< XMultiServiceFactory > & rSMgr) 
+        const uno::Reference< XMultiServiceFactory > & rSMgr)
     throw( uno::Exception )
 {
     vos::OGuard aGuard( Application::GetSolarMutex() );
 
     //the module may not be loaded
     SW_MOD()->Load();
-    
+
     uno::Reference< uno::XInterface > xRef = (cppu::OWeakObject *) new SwXMailMerge();
     return xRef;
 }
