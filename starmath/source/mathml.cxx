@@ -2,9 +2,9 @@
  *
  *  $RCSfile: mathml.cxx,v $
  *
- *  $Revision: 1.26 $
+ *  $Revision: 1.27 $
  *
- *  last change: $Author: mib $ $Date: 2001-05-31 09:52:30 $
+ *  last change: $Author: jp $ $Date: 2001-06-11 08:19:40 $
  *
  *  The Contents of this file are made available subject to the terms of
  *  either of the following licenses
@@ -290,7 +290,7 @@ sal_Bool SmXMLWrapper::Import(SfxMedium &rMedium)
         return sal_False;
 
     //Make a model component from our SmModel
-    uno::Reference< lang::XComponent > xModelComp( rModel, uno::UNO_QUERY );
+    uno::Reference< lang::XComponent > xModelComp( xModel, uno::UNO_QUERY );
     DBG_ASSERT( xModelComp.is(), "XMLReader::Read: got no model" );
 
     if( rMedium.IsStorage())
@@ -677,13 +677,13 @@ sal_Bool SmXMLWrapper::Export(SfxMedium &rMedium)
     DBG_ASSERT(xServiceFactory.is(),"got no service manager");
 
     //Get model
-    uno::Reference< lang::XComponent > xModelComp(rModel, uno::UNO_QUERY );
+    uno::Reference< lang::XComponent > xModelComp(xModel, uno::UNO_QUERY );
 
     if (!bFlat) //Storage (Package) of Stream
     {
         sal_Bool bEmbedded = sal_False;
         uno::Reference <lang::XUnoTunnel> xTunnel;
-        xTunnel = uno::Reference <lang::XUnoTunnel> (rModel,uno::UNO_QUERY);
+        xTunnel = uno::Reference <lang::XUnoTunnel> (xModel,uno::UNO_QUERY);
         SmModel *pModel = reinterpret_cast<SmModel *>
             (xTunnel->getSomething(SmModel::getUnoTunnelId()));
 
@@ -3255,7 +3255,7 @@ void SmXMLExport::ExportMath(const SmNode *pNode, int nLevel)
 {
     const SmMathSymbolNode *pTemp = static_cast<const SmMathSymbolNode *>
         (pNode);
-    SvXMLElementExport aMath(*this,XML_NAMESPACE_MATH,sXML_mo, 
+    SvXMLElementExport aMath(*this,XML_NAMESPACE_MATH,sXML_mo,
         sal_True,sal_False);
     sal_Unicode nArse[2];
     nArse[0] = MathType::aMathTypeTable[pTemp->GetText().GetChar(0)&0x00FF];
@@ -3449,7 +3449,7 @@ void SmXMLExport::ExportBrace(const SmNode *pNode, int nLevel)
     {
         sal_Unicode nArse[2];
         nArse[1] = 0;
-        nArse[0] = MathType::aMathTypeTable[pLeft->GetText().GetChar(0) 
+        nArse[0] = MathType::aMathTypeTable[pLeft->GetText().GetChar(0)
             & 0x00FF];
         DBG_ASSERT(nArse[0] != 0xffff,"Non existant symbol");
         AddAttribute(XML_NAMESPACE_MATH,sXML_open,nArse);
@@ -3457,7 +3457,7 @@ void SmXMLExport::ExportBrace(const SmNode *pNode, int nLevel)
             & 0x00FF];
         DBG_ASSERT(nArse[0] != 0xffff,"Non existant symbol");
         AddAttribute(XML_NAMESPACE_MATH,sXML_close,nArse);
-        pFences = new SvXMLElementExport(*this,XML_NAMESPACE_MATH,sXML_mfenced, 
+        pFences = new SvXMLElementExport(*this,XML_NAMESPACE_MATH,sXML_mfenced,
             sal_True,sal_True);
     }
     else if (pLeft && (pLeft->GetToken().eType != TNONE))
