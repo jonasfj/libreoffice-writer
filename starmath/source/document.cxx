@@ -2,9 +2,9 @@
  *
  *  $RCSfile: document.cxx,v $
  *
- *  $Revision: 1.21 $
+ *  $Revision: 1.22 $
  *
- *  last change: $Author: tl $ $Date: 2001-03-23 08:00:39 $
+ *  last change: $Author: jp $ $Date: 2001-03-29 19:40:27 $
  *
  *  The Contents of this file are made available subject to the terms of
  *  either of the following licenses
@@ -404,10 +404,10 @@ EditEngine& SmDocShell::GetEditEngine()
                 SvxFontItem( aFont.GetFamily(), aFont.GetName(),
                     aFont.GetStyleName(), aFont.GetPitch(), aFont.GetCharSet(),
                     EE_CHAR_FONTINFO ) );
-        
-        SvxFontHeightItem aFontHeigt( 
-                        Application::GetDefaultDevice()->LogicToPixel( 
-                        Size( 0, 10 ), MapMode( MAP_POINT ) ).Height(), 100, 
+
+        SvxFontHeightItem aFontHeigt(
+                        Application::GetDefaultDevice()->LogicToPixel(
+                        Size( 0, 10 ), MapMode( MAP_POINT ) ).Height(), 100,
                         EE_CHAR_FONTHEIGHT );
         pEditEngineItemPool->SetPoolDefaultItem( aFontHeigt );
         aFontHeigt.SetWhich( EE_CHAR_FONTHEIGHT_CJK );
@@ -725,7 +725,7 @@ BOOL SmDocShell::ConvertFrom(SfxMedium &rMedium)
 {
     BOOL	 bSuccess = FALSE;
     const String& rFltName = rMedium.GetFilter()->GetFilterName();
-    if (rFltName.EqualsAscii( MATHML_XML ) || 
+    if (rFltName.EqualsAscii( MATHML_XML ) ||
         rFltName.EqualsAscii( STAROFFICE_XML ))
     {
         if (pTree)
@@ -901,6 +901,11 @@ BOOL SmDocShell::Save()
 #endif
     if ( SfxInPlaceObject::Save() )
     {
+        if( !pTree )
+            Parse();
+        if( pTree && !IsFormulaArranged() )
+            ArrangeFormula();
+
         SvStorage *pStor = GetStorage();
         if(pStor->GetVersion() >= SOFFICE_FILEFORMAT_60)
         {
@@ -932,6 +937,11 @@ BOOL SmDocShell::SaveAs(SvStorage * pNewStor)
     BOOL bRet = FALSE;
     if ( SfxInPlaceObject::SaveAs( pNewStor ) )
     {
+        if( !pTree )
+            Parse();
+        if( pTree && !IsFormulaArranged() )
+            ArrangeFormula();
+
         if (pNewStor->GetVersion() >= SOFFICE_FILEFORMAT_60)
         {
             // a math package as a storage
@@ -965,6 +975,11 @@ BOOL SmDocShell::ConvertTo( SfxMedium &rMedium )
     const SfxFilter* pFlt = rMedium.GetFilter();
     if( pFlt )
     {
+        if( !pTree )
+            Parse();
+        if( pTree && !IsFormulaArranged() )
+            ArrangeFormula();
+
         const String& rFltName = pFlt->GetFilterName();
         if(rFltName.EqualsAscii( STAROFFICE_XML ))
         {
