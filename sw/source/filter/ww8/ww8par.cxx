@@ -2,9 +2,9 @@
  *
  *  $RCSfile: ww8par.cxx,v $
  *
- *  $Revision: 1.123 $
+ *  $Revision: 1.124 $
  *
- *  last change: $Author: obo $ $Date: 2004-01-13 17:12:26 $
+ *  last change: $Author: hr $ $Date: 2004-02-02 18:36:19 $
  *
  *  The Contents of this file are made available subject to the terms of
  *  either of the following licenses
@@ -231,6 +231,10 @@
 #ifndef _SWTABLE_HXX
 #include <swtable.hxx>          // class SwTableLines, ...
 #endif
+// #i18732#
+#ifndef _FMTFOLLOWTEXTFLOW_HXX
+#include <fmtfollowtextflow.hxx>
+#endif
 
 #ifndef _COM_SUN_STAR_I18N_FORBIDDENCHARACTERS_HPP_
 #include <com/sun/star/i18n/ForbiddenCharacters.hpp>
@@ -270,9 +274,9 @@
 using namespace sw::types;
  
 SwMSDffManager::SwMSDffManager( SwWW8ImplReader& rRdr )
-    : SvxMSDffManager(*rRdr.pTableStream, rRdr.pWwFib->fcDggInfo, 
-        rRdr.pDataStream, 0, 0, COL_WHITE, 12, rRdr.pStrm, 
-        rRdr.maTracer.GetTrace()), 
+    : SvxMSDffManager(*rRdr.pTableStream, rRdr.pWwFib->fcDggInfo,
+        rRdr.pDataStream, 0, 0, COL_WHITE, 12, rRdr.pStrm,
+        rRdr.maTracer.GetTrace()),
     rReader(rRdr), pFallbackStream(0), pOldEscherBlipCache(0)
 {
     nSvxMSDffOLEConvFlags = SwMSDffManager::GetFilterFlags();
@@ -821,7 +825,7 @@ bool lcl_ShouldMakeHidden(const SwFltStackEntry* pEntry, const SwPaM &rPaM)
             bEmpty = false;
         else if (const SwTxtNode *pDest = rPaM.GetNode()->GetTxtNode())
         {
-            String sString = pDest->GetExpandTxt(pEntry->nMkCntnt, 
+            String sString = pDest->GetExpandTxt(pEntry->nMkCntnt,
                 pEntry->nPtCntnt-pEntry->nMkCntnt);
             if (!sString.Len())
                 bEmpty = true;
@@ -1089,6 +1093,8 @@ void SwWW8ImplReader::ImportDop()
     // move tabs on alignment
     rDoc.SetTabCompat(true);
     maTracer.Log(sw::log::eTabStopDistance);
+    // OD 14.10.2003 #i18732# - adjust default of option 'FollowTextFlow'
+    rDoc.SetDefault( SwFmtFollowTextFlow( FALSE ) );
 
     // Import Default-Tabs
     long nDefTabSiz = pWDop->dxaTab;
