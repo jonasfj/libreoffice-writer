@@ -2,9 +2,9 @@
  *
  *  $RCSfile: docnum.cxx,v $
  *
- *  $Revision: 1.13 $
+ *  $Revision: 1.14 $
  *
- *  last change: $Author: vg $ $Date: 2003-05-16 13:51:26 $
+ *  last change: $Author: vg $ $Date: 2003-06-10 13:17:20 $
  *
  *  The Contents of this file are made available subject to the terms of
  *  either of the following licenses
@@ -138,6 +138,9 @@
 #endif
 #ifndef _COMCORE_HRC
 #include <comcore.hrc>
+#endif
+#ifndef _SVX_ADJITEM_HXX
+#include <svx/adjitem.hxx>
 #endif
 
 inline BYTE GetUpperLvlChg( BYTE nCurLvl, BYTE nLevel, USHORT nMask )
@@ -306,16 +309,16 @@ BOOL SwDoc::OutlineUpDown( const SwPaM& rPam, short nOffset )
             aCollArr[ nLevel ] = (*pTxtFmtCollTbl)[ n ];
     }
 
-    /* --> #i13747# 
+    /* --> #i13747#
 
        Build a move table that states from which level an outline will
        be moved to which other level. */
 
     /* the move table
 
-       aMoveArr[n] = m: replace aCollArr[n] with aCollArr[m] 
+       aMoveArr[n] = m: replace aCollArr[n] with aCollArr[m]
     */
-    int aMoveArr[MAXLEVEL]; 
+    int aMoveArr[MAXLEVEL];
     int nStep; // step size for searching in aCollArr: -1 or 1
     int nNum; // amount of steps for stepping in aCollArr
 
@@ -366,7 +369,7 @@ BOOL SwDoc::OutlineUpDown( const SwPaM& rPam, short nOffset )
         else
             aMoveArr[n] = -1;
     }
-    
+
     /* If moving of the outline levels is applicable, i.e. for all
        outline levels occuring in the document there has to be a valid
        target outline level implied by aMoveArr. */
@@ -376,9 +379,9 @@ BOOL SwDoc::OutlineUpDown( const SwPaM& rPam, short nOffset )
         SwTxtNode* pTxtNd = rOutlNds[ n ]->GetTxtNode();
         SwTxtFmtColl* pColl = pTxtNd->GetTxtColl();
         int nLevel = pColl->GetOutlineLevel();
-        
+
         if (aMoveArr[nLevel] == -1)
-            bMoveApplicable = false;		
+            bMoveApplicable = false;
     }
 
     if (! bMoveApplicable )
@@ -398,15 +401,15 @@ BOOL SwDoc::OutlineUpDown( const SwPaM& rPam, short nOffset )
     {
         SwTxtNode* pTxtNd = rOutlNds[ n ]->GetTxtNode();
         SwTxtFmtColl* pColl = pTxtNd->GetTxtColl();
-        
-        ASSERT(pColl->GetOutlineLevel() < MAXLEVEL, 
+
+        ASSERT(pColl->GetOutlineLevel() < MAXLEVEL,
                "non outline node in outline nodes?");
 
         int nLevel = pColl->GetOutlineLevel();
 
-        ASSERT(aMoveArr[nLevel] >= 0, 
+        ASSERT(aMoveArr[nLevel] >= 0,
                "move table: current TxtColl not found when building table!");
-        
+
 
         if (nLevel < MAXLEVEL && aMoveArr[nLevel] >= 0)
         {
@@ -586,7 +589,7 @@ USHORT lcl_FindOutlineNum( const SwNodes& rNds, String& rName )
         sNum = sName.GetToken( 0, '.', nPos );
         // #i4533# without this check all parts delimited by a dot are treated as outline numbers
         if(!ByteString(sNum, gsl_getSystemTextEncoding()).IsNumericAscii())
-            nPos = STRING_NOTFOUND;                
+            nPos = STRING_NOTFOUND;
     }
     rName = sName;		// das ist der nachfolgende Text.
 
@@ -673,19 +676,19 @@ BOOL SwDoc::GotoOutline( SwPosition& rPos, const String& rName ) const
         {
             SwTxtNode* pNd = rOutlNds[ nFndPos ]->GetTxtNode();
             String sExpandedText = pNd->GetExpandTxt();
-            //#i4533# leading numbers followed by a dot have been remove while 
+            //#i4533# leading numbers followed by a dot have been remove while
             //searching for the outline position
             //to compensate this they must be removed from the paragraphs text content, too
             USHORT nPos = 0;
             String sTempNum;
-            while(sExpandedText.Len() && (sTempNum = sExpandedText.GetToken(0, '.', nPos)).Len() && 
-                    STRING_NOTFOUND != nPos && 
+            while(sExpandedText.Len() && (sTempNum = sExpandedText.GetToken(0, '.', nPos)).Len() &&
+                    STRING_NOTFOUND != nPos &&
                     ByteString(sTempNum, gsl_getSystemTextEncoding()).IsNumericAscii())
             {
                 sExpandedText.Erase(0, nPos);
                 nPos = 0;
             }
-                    
+
             if( !sExpandedText.Equals( sName ) )
             {
                 USHORT nTmp = ::lcl_FindOutlineName( GetNodes(), sName, TRUE );
@@ -833,7 +836,7 @@ void lcl_ChgNumRule( SwDoc& rDoc, const SwNumRule& rRule, SwHistory* pHist,
 }
 
 void SwDoc::SetNumRule( const SwPaM& rPam, const SwNumRule& rRule,
-                        BOOL bSetAbsLSpace )
+                        sal_Bool bSetAbsLSpace, sal_Bool bCalledFromShell )
 {
     SwUndoInsNum* pUndo;
     if( DoesUndo() )
@@ -848,8 +851,31 @@ void SwDoc::SetNumRule( const SwPaM& rPam, const SwNumRule& rRule,
     ULONG nPamPos = rPam.Start()->nNode.GetIndex();
     BOOL bSetItem = TRUE;
     SwNumRule* pNew = FindNumRulePtr( rRule.GetName() );
+
     if( !pNew )
+    {
         pNew = (*pNumRuleTbl)[ MakeNumRule( rRule.GetName(), &rRule ) ];
+
+        /* #109308# If called from a shell propagate an existing
+            adjust item at the beginning am rPam into the new
+            numbering rule. */
+        if (bCalledFromShell)
+        {
+            SwCntntNode * pCntntNode = rPam.GetCntntNode();
+
+            if (pCntntNode)
+            {
+                SwAttrSet & rAttrSet = pCntntNode->GetSwAttrSet();
+                const SfxPoolItem * pItem = NULL;
+
+                if (SFX_ITEM_SET == rAttrSet.GetItemState(RES_PARATR_ADJUST,
+                                                          TRUE,
+                                                          &pItem))
+                    pNew->SetNumAdjust(((SvxAdjustItem *) pItem)->GetAdjust());
+            }
+        }
+
+    }
     else if( rRule.IsAutoRule() && !(*pNew == rRule) )
     {
         // die Rule existiert schon, wurde aber veraendert. Dann muss hier
