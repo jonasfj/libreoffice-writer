@@ -2,9 +2,9 @@
  *
  *  $RCSfile: unnum.cxx,v $
  *
- *  $Revision: 1.7 $
+ *  $Revision: 1.8 $
  *
- *  last change: $Author: vg $ $Date: 2005-02-21 16:06:40 $
+ *  last change: $Author: vg $ $Date: 2005-03-08 11:16:04 $
  *
  *  The Contents of this file are made available subject to the terms of
  *  either of the following licenses
@@ -197,7 +197,9 @@ void SwUndoInsNum::Redo( SwUndoIter& rUndoIter )
             rDoc.ReplaceNumRule( *rUndoIter.pAktPam->GetPoint(),
                                 sReplaceRule, aNumRule.GetName() );
         else
-            rDoc.SetNumRule( *rUndoIter.pAktPam, aNumRule, FALSE );
+            // --> OD 2005-02-25 #i42921# - adapt to changed signature
+            rDoc.SetNumRule( *rUndoIter.pAktPam, aNumRule );
+            // <--
     }
 }
 
@@ -212,7 +214,9 @@ void SwUndoInsNum::Repeat( SwUndoIter& rUndoIter )
     if( nSttNode )
     {
         if( !sReplaceRule.Len() )
-            rUndoIter.GetDoc().SetNumRule( *rUndoIter.pAktPam, aNumRule, FALSE );
+            // --> OD 2005-02-25 #i42921# - adapt to changed signature
+            rUndoIter.GetDoc().SetNumRule( *rUndoIter.pAktPam, aNumRule );
+            // <--
     }
     else
         rUndoIter.GetDoc().ChgNumRuleFmts( aNumRule );
@@ -372,7 +376,7 @@ void SwUndoMoveNum::Repeat( SwUndoIter& rUndoIter )
 
 
 SwUndoNumUpDown::SwUndoNumUpDown( const SwPaM& rPam, short nOff )
-    : SwUndo( nOff > 0 ? UNDO_NUMUP : UNDO_NUMDOWN ), SwUndRng( rPam ), 
+    : SwUndo( nOff > 0 ? UNDO_NUMUP : UNDO_NUMDOWN ), SwUndRng( rPam ),
       nOffset( nOff )
 {
     // nOffset: Down 	=>  1
@@ -402,7 +406,7 @@ void SwUndoNumUpDown::Repeat( SwUndoIter& rUndoIter )
 /*  */
 
 // #115901#
-SwUndoNumOrNoNum::SwUndoNumOrNoNum( const SwNodeIndex& rIdx, 
+SwUndoNumOrNoNum::SwUndoNumOrNoNum( const SwNodeIndex& rIdx,
                                     const SwNodeNum & rOldNum,
                                     const SwNodeNum & rNewNum)
     : SwUndo( UNDO_NUMORNONUM ), nIdx( rIdx.GetIndex() ), mNewNum(rNewNum),
