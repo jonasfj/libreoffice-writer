@@ -2,9 +2,9 @@
  *
  *  $RCSfile: xmlimp.cxx,v $
  *
- *  $Revision: 1.54 $
+ *  $Revision: 1.55 $
  *
- *  last change: $Author: dvo $ $Date: 2001-09-28 16:36:02 $
+ *  last change: $Author: jp $ $Date: 2001-11-14 19:53:31 $
  *
  *  The Contents of this file are made available subject to the terms of
  *  either of the following licenses
@@ -193,7 +193,7 @@ struct OUStringEquals
                          const rtl::OUString &r2) const
     {
         return r1 == r2;
-    }	
+    }
 };
 
 //----------------------------------------------------------------------------
@@ -306,7 +306,7 @@ SvXMLImportContext *SwXMLDocContext_Impl::CreateChildContext(
         pContext = GetSwImport().CreateStylesContext( rLocalName, xAttrList,
                                                       sal_False );
         break;
-    case XML_TOK_DOC_AUTOSTYLES:	
+    case XML_TOK_DOC_AUTOSTYLES:
         // don't use the autostyles from the styles-document for the progress
         if ( ! IsXMLToken( GetLocalName(), XML_DOCUMENT_STYLES ) )
             GetSwImport().SetProgressValue( 2 * PROGRESS_BAR_STEP );
@@ -778,7 +778,7 @@ class SvTextShapeImportHelper : public XMLTextShapeImportHelper
     UniReference< ::xmloff::OFormLayerXMLImport > rFormImport;
 
     // hold reference to the one page (if it exists) for calling startPage()
-    // and endPage. If !xPage.is(), then this document doesn't have a 
+    // and endPage. If !xPage.is(), then this document doesn't have a
     // XDrawPage.
     Reference<drawing::XDrawPage> xPage;
 
@@ -864,7 +864,7 @@ void SwXMLImport::SetViewSettings(const Sequence < PropertyValue > & aViewProps)
     const PropertyValue *pValue = aViewProps.getConstArray();
 
     long nTmp;
-    sal_Bool bShowRedlineChanges = sal_False, bBrowseMode = sal_False, 
+    sal_Bool bShowRedlineChanges = sal_False, bBrowseMode = sal_False,
              bShowFooter = sal_False, bShowHeader = sal_False;
     sal_Bool bChangeShowRedline = sal_False, bChangeBrowseMode = sal_False,
              bChangeFooter = sal_False, bChangeHeader = sal_False;
@@ -917,11 +917,11 @@ void SwXMLImport::SetViewSettings(const Sequence < PropertyValue > & aViewProps)
         pDoc->GetDocShell()->SetVisArea ( aRect );
 
     if (bChangeHeader)
-        pDoc->SetHeadInBrowse ( bShowHeader ); 
+        pDoc->SetHeadInBrowse ( bShowHeader );
     if (bChangeFooter)
-        pDoc->SetFootInBrowse ( bShowFooter ); 
+        pDoc->SetFootInBrowse ( bShowFooter );
     if (bChangeBrowseMode)
-        pDoc->SetBrowseMode ( bBrowseMode ); 
+        pDoc->SetBrowseMode ( bBrowseMode );
     if (bChangeShowRedline)
         GetTextImport()->SetShowChanges( bShowRedlineChanges );
 }
@@ -940,40 +940,74 @@ void SwXMLImport::SetConfigurationSettings(const Sequence < PropertyValue > & aC
     if( !xInfo.is() )
         return;
 
-    std::hash_set < OUString, OUStringHash, OUStringEquals > aSet;
-    
-    // Insert all user level settings to the hash_set
-    aSet.insert ( OUString ( RTL_CONSTASCII_USTRINGPARAM ( "ForbiddenCharacters" ) ) );
-    aSet.insert ( OUString ( RTL_CONSTASCII_USTRINGPARAM ( "IsKernAsianPunctuation" ) ) );
-    aSet.insert ( OUString ( RTL_CONSTASCII_USTRINGPARAM ( "CharacterCompressionType" ) ) );
-    aSet.insert ( OUString ( RTL_CONSTASCII_USTRINGPARAM ( "LinkUpdateMode" ) ) );
-    aSet.insert ( OUString ( RTL_CONSTASCII_USTRINGPARAM ( "FieldAutoUpdate" ) ) );
-    aSet.insert ( OUString ( RTL_CONSTASCII_USTRINGPARAM ( "ChartAutoUpdate" ) ) );
-    aSet.insert ( OUString ( RTL_CONSTASCII_USTRINGPARAM ( "AddParaTableSpacing" ) ) );
-    aSet.insert ( OUString ( RTL_CONSTASCII_USTRINGPARAM ( "AddParaTableSpacingAtStart" ) ) );
-    aSet.insert ( OUString ( RTL_CONSTASCII_USTRINGPARAM ( "PrintAnnotationMode" ) ) );
-    aSet.insert ( OUString ( RTL_CONSTASCII_USTRINGPARAM ( "PrintBlackFonts" ) ) );
-    aSet.insert ( OUString ( RTL_CONSTASCII_USTRINGPARAM ( "PrintControls" ) ) );
-    aSet.insert ( OUString ( RTL_CONSTASCII_USTRINGPARAM ( "PrintDrawings" ) ) );
-    aSet.insert ( OUString ( RTL_CONSTASCII_USTRINGPARAM ( "PrintGraphics" ) ) );
-    aSet.insert ( OUString ( RTL_CONSTASCII_USTRINGPARAM ( "PrintLeftPages" ) ) );
-    aSet.insert ( OUString ( RTL_CONSTASCII_USTRINGPARAM ( "PrintPageBackground" ) ) );
-    aSet.insert ( OUString ( RTL_CONSTASCII_USTRINGPARAM ( "PrintProspect" ) ) );
-    aSet.insert ( OUString ( RTL_CONSTASCII_USTRINGPARAM ( "PrintReversed" ) ) );
-    aSet.insert ( OUString ( RTL_CONSTASCII_USTRINGPARAM ( "PrintRightPages" ) ) );
-    aSet.insert ( OUString ( RTL_CONSTASCII_USTRINGPARAM ( "PrintFaxName" ) ) );
-    aSet.insert ( OUString ( RTL_CONSTASCII_USTRINGPARAM ( "PrintPaperFromSetup" ) ) );
-    aSet.insert ( OUString ( RTL_CONSTASCII_USTRINGPARAM ( "PrintTables" ) ) );
-    aSet.insert ( OUString ( RTL_CONSTASCII_USTRINGPARAM ( "PrintSingleJobs" ) ) );
+    // static array of setting names which are not loaded. Its sorted
+    // first by the length, then by the name!
+    static const struct {
+        const sal_Char* pName;
+        sal_uInt16 nLen;
+    }  aNotSetArr[] =
+    {
+        {RTL_CONSTASCII_STRINGPARAM ( "PrintTables" )},
+        {RTL_CONSTASCII_STRINGPARAM ( "PrintFaxName" )},
+        {RTL_CONSTASCII_STRINGPARAM ( "PrintControls" )},
+        {RTL_CONSTASCII_STRINGPARAM ( "PrintDrawings" )},
+        {RTL_CONSTASCII_STRINGPARAM ( "PrintGraphics" )},
+        {RTL_CONSTASCII_STRINGPARAM ( "PrintProspect" )},
+        {RTL_CONSTASCII_STRINGPARAM ( "PrintReversed" )},
+        {RTL_CONSTASCII_STRINGPARAM ( "LinkUpdateMode" )},
+        {RTL_CONSTASCII_STRINGPARAM ( "PrintLeftPages" )},
+        {RTL_CONSTASCII_STRINGPARAM ( "FieldAutoUpdate" )},
+        {RTL_CONSTASCII_STRINGPARAM ( "ChartAutoUpdate" )},
+        {RTL_CONSTASCII_STRINGPARAM ( "PrintBlackFonts" )},
+        {RTL_CONSTASCII_STRINGPARAM ( "PrintRightPages" )},
+        {RTL_CONSTASCII_STRINGPARAM ( "PrintSingleJobs" )},
+        {RTL_CONSTASCII_STRINGPARAM ( "AddParaTableSpacing" )},
+        {RTL_CONSTASCII_STRINGPARAM ( "ForbiddenCharacters" )},
+        {RTL_CONSTASCII_STRINGPARAM ( "PrintAnnotationMode" )},
+        {RTL_CONSTASCII_STRINGPARAM ( "PrintPageBackground" )},
+        {RTL_CONSTASCII_STRINGPARAM ( "PrintPaperFromSetup" )},
+        {RTL_CONSTASCII_STRINGPARAM ( "IsKernAsianPunctuation" )},
+        {RTL_CONSTASCII_STRINGPARAM ( "CharacterCompressionType" )},
+        {RTL_CONSTASCII_STRINGPARAM ( "AddParaTableSpacingAtStart" )}
+    };
 
-    std::hash_set < OUString, OUStringHash, OUStringEquals >::const_iterator aEnd = aSet.end();
     sal_Int32 nCount = aConfigProps.getLength();
     const PropertyValue* pValues = aConfigProps.getConstArray();
+
     SvtSaveOptions aSaveOpt;
+    BOOL bIsUserSetting = aSaveOpt.IsLoadUserSettings(),
+         bSet = bIsUserSetting;
 
     while( nCount-- )
     {
-        if (aSaveOpt.IsLoadUserSettings() || aSet.find ( pValues->Name ) == aEnd )
+        if( !bIsUserSetting )
+        {
+            // search the entry in the table
+            const OUString& rNm = pValues->Name;
+            bSet = TRUE;
+            register USHORT nO = sizeof(aNotSetArr) / sizeof(aNotSetArr[0])-1,
+                    nM, nU = 0;
+            while( nU <= nO )
+            {
+                nM = nU + ( nO - nU ) / 2;
+                int nCmp = rNm.getLength() - aNotSetArr[ nM ].nLen;
+                if( !nCmp )		        // equal?
+                    nCmp = rNm.compareToAscii( aNotSetArr[ nM ].pName );
+                if( !nCmp )
+                {
+                    bSet = FALSE;
+                    break;
+                }
+                else if( 0 < nCmp )
+                    nU = nM + 1;
+                else if( nM == 0 )
+                    break;
+                else
+                    nO = nM - 1;
+            }
+        }
+
+        if( bSet )
         {
             try
             {
@@ -992,8 +1026,8 @@ void SwXMLImport::SetConfigurationSettings(const Sequence < PropertyValue > & aC
 }
 
 
-void SwXMLImport::initialize( 
-    const Sequence<Any>& aArguments ) 
+void SwXMLImport::initialize(
+    const Sequence<Any>& aArguments )
     throw( uno::Exception, uno::RuntimeException)
 {
     // delegate to super class
@@ -1003,7 +1037,7 @@ void SwXMLImport::initialize(
     sal_Int32 nLength = aArguments.getLength();
     for(sal_Int32 i = 0; i < nLength; i++)
     {
-        if (aArguments[i].getValueType() == 
+        if (aArguments[i].getValueType() ==
             ::getCppuType((const beans::PropertyValue*)0) )
         {
             beans::PropertyValue aValue;
@@ -1135,7 +1169,7 @@ uno::Reference< uno::XInterface > SAL_CALL SwXMLImportSettings_createInstance(
 
 // XServiceInfo
 // override empty method from parent class
-OUString SAL_CALL SwXMLImport::getImplementationName() 
+OUString SAL_CALL SwXMLImport::getImplementationName()
     throw(RuntimeException)
 {
     switch( getImportFlags() )
