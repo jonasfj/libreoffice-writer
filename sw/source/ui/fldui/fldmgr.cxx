@@ -2,9 +2,9 @@
  *
  *  $RCSfile: fldmgr.cxx,v $
  *
- *  $Revision: 1.29 $
+ *  $Revision: 1.30 $
  *
- *  last change: $Author: rt $ $Date: 2004-01-07 16:35:00 $
+ *  last change: $Author: hr $ $Date: 2004-02-03 16:40:16 $
  *
  *  The Contents of this file are made available subject to the terms of
  *  either of the following licenses
@@ -72,7 +72,7 @@
 #ifndef _SFXSTRITEM_HXX
 #include <svtools/stritem.hxx>
 #endif
-#ifndef _SVTOOLS_LANGUAGEOPTIONS_HXX 
+#ifndef _SVTOOLS_LANGUAGEOPTIONS_HXX
 #include <svtools/languageoptions.hxx>
 #endif
 
@@ -148,9 +148,6 @@
 #endif
 #ifndef _SBXCLASS_HXX //autogen
 #include <svtools/sbx.hxx>
-#endif
-#ifndef _OFF_APP_HXX //autogen
-#include <offmgr/app.hxx>
 #endif
 #ifndef _ZFORLIST_HXX //autogen
 #include <svtools/zforlist.hxx>
@@ -451,7 +448,7 @@ BOOL  SwFldMgr::CanInsertRefMark( const String& rStr )
     SwWrtShell *pSh = pWrtShell ? pWrtShell : lcl_GetShell();
     DBG_ASSERT(pSh, "no SwWrtShell found")
     if(pSh)
-    {        
+    {
         USHORT nCnt = pSh->GetCrsrCnt();
 
         // der letzte Crsr muss keine aufgespannte Selektion
@@ -472,7 +469,7 @@ void SwFldMgr::RemoveDBTypes()
     SwWrtShell * pSh = pWrtShell ? pWrtShell : lcl_GetShell();
     DBG_ASSERT(pSh, "no SwWrtShell found")
     if(pSh)
-    {        
+    {
         USHORT nCount = pSh->GetFldTypeCount(RES_DBFLD);
         for ( USHORT i=0; i < nCount ; ++i )
         {
@@ -651,7 +648,7 @@ USHORT SwFldMgr::GetTypeId(USHORT nPos)
 }
 
 
-const String& SwFldMgr::GetTypeStr(USHORT nPos) 
+const String& SwFldMgr::GetTypeStr(USHORT nPos)
 {
     ASSERT(nPos < ::GetPackCount(), "unzulaessige TypeId");
 
@@ -679,7 +676,7 @@ const String& SwFldMgr::GetTypeStr(USHORT nPos)
  --------------------------------------------------------------------*/
 
 
-USHORT SwFldMgr::GetPos(USHORT nTypeId) 
+USHORT SwFldMgr::GetPos(USHORT nTypeId)
 {
     switch( nTypeId )
     {
@@ -757,7 +754,7 @@ BOOL SwFldMgr::GetSubTypes(USHORT nTypeId, SvStringsDtor& rToFill)
             case TYP_SETFLD:
             case TYP_USERFLD:
             {
-            
+
                 const USHORT nCount = pSh->GetFldTypeCount();
                 for(USHORT i = 0; i < nCount; ++i)
                 {
@@ -864,7 +861,7 @@ USHORT SwFldMgr::GetFormatCount(USHORT nTypeId, BOOL bIsText, BOOL bHtmlMode) co
                 USHORT nCount = (USHORT)(nEnd - nStart);
                 GetNumberingInfo();
                 SvtLanguageOptions aLangOpt;
-                if(xNumberingInfo.is() && 
+                if(xNumberingInfo.is() &&
                     (aLangOpt.IsCJKFontEnabled()||aLangOpt.IsCTLFontEnabled()))
                 {
                     Sequence<sal_Int16> aTypes = xNumberingInfo->getSupportedNumberingTypes();
@@ -1580,7 +1577,7 @@ BOOL SwFldMgr::InsertFld(  const SwInsertFld_Data& rData )
             bPageVar = TRUE;
             break;
         case TYP_DROPDOWN :
-        {    
+        {
             pFld = new SwDropDownField(pCurShell->GetFldType( 0, RES_DROPDOWN ));
             xub_StrLen nTokenCount = rData.sPar2.Len() ? rData.sPar2.GetTokenCount(DB_DELIM) : 0;
             Sequence<OUString> aEntries(nTokenCount);
@@ -1602,7 +1599,7 @@ BOOL SwFldMgr::InsertFld(  const SwInsertFld_Data& rData )
      //the auto language flag has to be set prior to the language!
      pFld->SetAutomaticLanguage(rData.bIsAutomaticLanguage);
      USHORT nLang = GetCurrLanguage();
-     pFld->SetLanguage(nLang);	
+     pFld->SetLanguage(nLang);
 
     // Einfuegen
     pCurShell->StartAllAction();
@@ -1934,7 +1931,7 @@ BOOL SwFldMgr::ChooseMacro(const String &rSelMacro)
     }
 
     // choose macro dialog
-    String aScriptURL = OfficeApplication::ChooseMacro(FALSE, TRUE, sSelMacro);
+    String aScriptURL = SfxApplication::ChooseMacro(FALSE, TRUE, sSelMacro);
 
     // aScriptURL has the following format:
     // vnd.sun.star.script:language=[language],macro=[macro],location=[location]
