@@ -2,9 +2,9 @@
  *
  *  $RCSfile: ww8scan.hxx,v $
  *
- *  $Revision: 1.3 $
+ *  $Revision: 1.4 $
  *
- *  last change: $Author: khz $ $Date: 2000-11-23 13:37:53 $
+ *  last change: $Author: jp $ $Date: 2000-12-01 11:22:53 $
  *
  *  The Contents of this file are made available subject to the terms of
  *  either of the following licenses
@@ -866,7 +866,7 @@ public:
         7 == "only WinWord 95"
         8 == "WinWord 97 or newer"
     */
-    BYTE nVersion;	
+    BYTE nVersion;
     /*
         error status
     */
@@ -1288,6 +1288,7 @@ protected:
     UINT16	istdMaxFixedWhenSaved;	// How many fixed-index istds are there?
     UINT16	nVerBuiltInNamesWhenSaved;	// Current version of built-in stylenames
     UINT16	ftcStandardChpStsh;		// ftc used by StandardChpStsh for this document
+    UINT16	ftcStandardChpCJKStsh;	// ftc used by StandardChpStsh for this document
 
 public:
     WW8Style( SvStream& rSt, WW8Fib& rFibPara );
@@ -1540,36 +1541,39 @@ public:
 /*************************************************************************
       Source Code Control System - Header
 
-      $Header: /zpool/svn/migration/cvs_rep_09_09_08/code/sw/source/filter/ww8/ww8scan.hxx,v 1.3 2000-11-23 13:37:53 khz Exp $
+      $Header: /zpool/svn/migration/cvs_rep_09_09_08/code/sw/source/filter/ww8/ww8scan.hxx,v 1.4 2000-12-01 11:22:53 jp Exp $
 
 
       Source Code Control System - Update
 
       $Log: not supported by cvs2svn $
+      Revision 1.3  2000/11/23 13:37:53  khz
+      #79474# Save/restore PLCF state before/after reading header or footer data
+
       Revision 1.2  2000/11/21 11:23:57  khz
       added comments
-    
+
       Revision 1.1.1.1  2000/09/18 17:14:59  hr
       initial import
-    
+
       Revision 1.58  2000/09/18 16:05:02  willem.vandorp
       OpenOffice header added.
-    
+
       Revision 1.57  2000/08/24 06:43:01  khz
       #75708# advance StartPos of attributes starting on a Table-Row-End by 1
-    
+
       Revision 1.56  2000/07/12 12:24:54  khz
       #76503# use WW8PLCFx_Cp_FKP::?etIdx2() to save/restore nIdx of pPcd
-    
+
       Revision 1.55  2000/05/31 12:23:05  khz
       Changes for Unicode
-    
+
       Revision 1.54  2000/05/25 08:06:37  khz
       Piece Table optimization, Unicode changes, Bugfixes
-    
+
       Revision 1.53  2000/05/18 10:58:50  jp
       Changes for Unicode
-    
+
       Revision 1.52  2000/05/16 12:13:13  jp
       ASS_FALSE define removed
 

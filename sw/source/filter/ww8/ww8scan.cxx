@@ -2,9 +2,9 @@
  *
  *  $RCSfile: ww8scan.cxx,v $
  *
- *  $Revision: 1.4 $
+ *  $Revision: 1.5 $
  *
- *  last change: $Author: khz $ $Date: 2000-11-23 13:37:53 $
+ *  last change: $Author: jp $ $Date: 2000-12-01 11:22:52 $
  *
  *  The Contents of this file are made available subject to the terms of
  *  either of the following licenses
@@ -4479,9 +4479,12 @@ WW8Style::WW8Style( SvStream& rStream, WW8Fib& rFibPara ): rSt( rStream ), rFib(
         if( 14 > nRead ) break;
         rSt >> ftcStandardChpStsh;
 
+        if( 16 > nRead ) break;
+        rSt >> ftcStandardChpCJKStsh;
+
         // ggfs. den Rest ueberlesen
-        if( 14 < nRead )
-            rSt.SeekRel( nRead-14 );
+        if( 16 < nRead )
+            rSt.SeekRel( nRead-16 );
     }
     while( !this );	// Trick: obiger Block wird genau einmal durchlaufen
                                     //   und kann vorzeitig per "break" verlassen werden.
@@ -5634,7 +5637,7 @@ static SprmInfo aWwSprmTab[] = {
     0xCA31, 0, L_VAR, // "sprmCIstdPermute" chp.istd;permutation vector (see below);variable length;
     0x2A32, 0, L_VAR, // "sprmCDefault" whole CHP (see below);none;variable length;
     0x2A33, 0, L_FIX, // "sprmCPlain" whole CHP (see below);none;0;
-//0x2A34, 0, L_FIX, // "sprmCKcd" ;;;
+    0x2A34, 1, L_FIX, // "sprmCKcd" ;;;
     0x0835, 1, L_FIX, // "sprmCFBold" chp.fBold;0,1, 128, or 129 (see below);byte;
     0x0836, 1, L_FIX, // "sprmCFItalic" chp.fItalic;0,1, 128, or 129 (see below);byte;
     0x0837, 1, L_FIX, // "sprmCFStrike" chp.fStrike;0,1, 128, or 129 (see below);byte;
@@ -5679,7 +5682,7 @@ static SprmInfo aWwSprmTab[] = {
 //0x4A5E, 0, L_FIX, // "sprmCFtcBi" ;;;
 //0x485F, 0, L_FIX, // "sprmCLidBi" ;;;
 //0x4A60, 0, L_FIX, // "sprmCIcoBi" ;;;
-//0x4A61, 0, L_FIX, // "sprmCHpsBi" ;;;
+    0x4A61, 2, L_FIX, // "sprmCHpsBi" ;;;
     0xCA62, 0, L_VAR, // "sprmCDispFldRMark" chp.fDispFldRMark, chp.ibstDispFldRMark, chp.dttmDispFldRMark ;Complex (see below);variable length always recorded as 39 bytes;
     0x4863, 2, L_FIX, // "sprmCIbstRMarkDel" chp.ibstRMarkDel;index into sttbRMark;short;
     0x6864, 4, L_FIX, // "sprmCDttmRMarkDel" chp.dttmRMarkDel;DTTM;long;
@@ -5998,59 +6001,62 @@ BYTE WW8SprmDataOfs( USHORT nId )
 /*************************************************************************
       Source Code Control System - Header
 
-      $Header: /zpool/svn/migration/cvs_rep_09_09_08/code/sw/source/filter/ww8/ww8scan.cxx,v 1.4 2000-11-23 13:37:53 khz Exp $
+      $Header: /zpool/svn/migration/cvs_rep_09_09_08/code/sw/source/filter/ww8/ww8scan.cxx,v 1.5 2000-12-01 11:22:52 jp Exp $
 
       Source Code Control System - Update
 
       $Log: not supported by cvs2svn $
+      Revision 1.4  2000/11/23 13:37:53  khz
+      #79474# Save/restore PLCF state before/after reading header or footer data
+
       Revision 1.3  2000/10/24 14:26:55  jp
       move some code out of the dump define
-    
+
       Revision 1.2  2000/10/20 11:19:29  khz
       #78761# don't reset nStartFc when calling WW8PLCFx_Fc_FKP::NewFkp()
-    
+
       Revision 1.1.1.1  2000/09/18 17:14:59  hr
       initial import
-    
+
       Revision 1.106  2000/09/18 16:05:02  willem.vandorp
       OpenOffice header added.
-    
+
       Revision 1.105  2000/08/24 06:42:57  khz
       #75708# advance StartPos of attributes starting on a Table-Row-End by 1
-    
+
       Revision 1.104  2000/08/22 12:25:11  khz
       #77550# prevent invalid SPRMs from setting pMemPos to 0x00000001
-    
+
       Revision 1.103  2000/08/21 15:03:01  khz
       #77692# import page orientation
-    
+
       Revision 1.102  2000/08/18 09:49:57  khz
       Skip trailing WORD (instead of BYTE) in WW8Read_xstz
-    
+
       Revision 1.101  2000/07/28 08:01:46  khz
       #77183# avoid accessing pPcd when there is NO Piece Table
-    
+
       Revision 1.100  2000/07/19 10:36:50  khz
       ##76458# wrong parameter calling WW8Read_xstz in WW8ReadSTTBF() ctor fixed
-    
+
       Revision 1.99  2000/07/12 12:24:27  khz
       #76503# use WW8PLCFx_Cp_FKP::?etIdx2() to save/restore nIdx of pPcd
-    
+
       Revision 1.98  2000/06/07 12:43:18  khz
       Changes for Unicode
-    
+
       Revision 1.97  2000/05/31 12:23:01  khz
       Changes for Unicode
-    
+
       Revision 1.96  2000/05/25 09:55:51  hr
       workaound for Solaris Workshop compiler, SWAPLONG -> SWAPSHORT
-    
+
       Revision 1.95  2000/05/25 08:06:31  khz
       Piece Table optimization, Unicode changes, Bugfixes
-    
+
       Revision 1.94  2000/05/18 10:58:46  jp
       Changes for Unicode
-    
+
       Revision 1.93  2000/05/16 12:13:09  jp
       ASS_FALSE define removed
 

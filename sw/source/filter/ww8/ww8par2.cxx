@@ -2,9 +2,9 @@
  *
  *  $RCSfile: ww8par2.cxx,v $
  *
- *  $Revision: 1.2 $
+ *  $Revision: 1.3 $
  *
- *  last change: $Author: khz $ $Date: 2000-10-25 14:10:36 $
+ *  last change: $Author: jp $ $Date: 2000-12-01 11:22:52 $
  *
  *  The Contents of this file are made available subject to the terms of
  *  either of the following licenses
@@ -211,7 +211,7 @@ class WW8TabDesc
 
     WW8TabBandDesc* pFirstBand;
     WW8TabBandDesc* pActBand;
-    
+
     SwPosition* pTmpPos;
 
     const SwTable* pTable;			// Tabelle
@@ -607,7 +607,7 @@ void SwWW8ImplReader::StartAnl( BYTE* pSprm13 )
     }
     if( !sNumRule.Len() )
     {
-        //sNumRule = rDoc.GetUniqueNumRuleName();	
+        //sNumRule = rDoc.GetUniqueNumRuleName();
         pNumRule = rDoc.GetNumRuleTbl()[ rDoc.MakeNumRule( sNumRule ) ];
         if( pTableDesc )
         {
@@ -623,7 +623,7 @@ void SwWW8ImplReader::StartAnl( BYTE* pSprm13 )
     NextAnlLine( pSprm13, pS12 );						// Einstellungen fuer 1. Zeile
 
                                                 // NumRules ueber Stack setzen
-    pCtrlStck->NewAttr( *pPaM->GetPoint(), 
+    pCtrlStck->NewAttr( *pPaM->GetPoint(),
             SfxStringItem( RES_FLTR_NUMRULE, pNumRule->GetName() ) );
 }
 
@@ -1089,11 +1089,11 @@ static BOOL SearchRowEnd( BOOL bVer67, BOOL bComplex, WW8PLCFx_Cp_FKP* pPap )
 
 WW8TabDesc::WW8TabDesc( SwWW8ImplReader* pIoClass )
     : pIo( pIoClass ),
-    pFirstBand( 0 ), 
-    pActBand( 0 ), 
+    pFirstBand( 0 ),
+    pActBand( 0 ),
     pTmpPos( 0 ),
-    pTable( 0 ), 	
-    pTblNd( 0 ), 	
+    pTable( 0 ),
+    pTblNd( 0 ),
     pTabLines( 0 ),
     pTabLine( 0 ),
     pTabBoxes( 0 ),
@@ -1138,7 +1138,7 @@ WW8TabDesc::WW8TabDesc( SwWW8ImplReader* pIoClass )
 
     WW8PLCFx_Cp_FKP* pPap = pIoClass->pPlcxMan->GetPapPLCF();
 
-    
+
     eOri = HORI_LEFT;
 
     // process pPap until end of table found
@@ -2177,7 +2177,7 @@ void WW8TabDesc::TableCellEnd()
 //	BOOL bRowEnded = pIo->bWasTabRowEnd;
     if( pIo->bWasTabRowEnd )  // bWasTabRowEnd will be deactivated
     {						  // in SwWW8ImplReader::ProcessSpecial()
-        
+
         USHORT iCol = GetLogicalWWCol();
         if( iCol < aNumRuleNames.Count() )
             aNumRuleNames.DeleteAndDestroy( iCol, aNumRuleNames.Count()-iCol );
@@ -2214,10 +2214,10 @@ void WW8TabDesc::TableCellEnd()
         nAktCol++;
     }
     SetPamInCell( nAktCol, TRUE, TRUE );
-    
+
     // finish Annotated Level Numbering ?
     if( pIo->bAnl && !pIo->bAktAND_fNumberAcross )
-        pIo->StopAnl( IsValidCell( nAktCol ) );//FALSE );//!bRowEnded ); // 
+        pIo->StopAnl( IsValidCell( nAktCol ) );//FALSE );//!bRowEnded ); //
 }
 
 
@@ -2526,22 +2526,22 @@ nWwNumLevel( 0 ), pStyRule( 0 )
 
 void WW8RStyle::Set1StyleDefaults()
 {
-    if( !bFontChanged )							// Style hat keinen Font ?
+    if( !bFontChanged )		// Style has no Font? set the default
+        pIo->SetNewFontAttr( ftcStandardChpStsh, TRUE, RES_CHRATR_FONT );
+
+    if( !bCJKFontChanged )	// Style no CJK Font? set the default
+        pIo->SetNewFontAttr( ftcStandardChpCJKStsh, TRUE, RES_CHRATR_CJK_FONT );
+
+    if( !pIo->bNoAttrImport )
     {
-        short nWwDefaultFont = ftcStandardChpStsh;
-        pIo->SetNewFontAttr( nWwDefaultFont );	// ... dann hart 'reinsetzen
-    }
-    if( pIo->bNoAttrImport )
-        return;
-    if( !bFSizeChanged )
-    {											// Style hat keine FontSize ?
-        SvxFontHeightItem aSz( 200 );			// WW-Default: 10pt
-        pIo->pAktColl->SetAttr( aSz );
-    }
-    if( pIo->pWDop->fWidowControl && !bWidowsChanged )	// Widows ?
-    {
-        pIo->pAktColl->SetAttr( SvxWidowsItem( 2 ) );
-        pIo->pAktColl->SetAttr( SvxOrphansItem( 2 ) );
+        if( !bFSizeChanged )	// Style hat keine FontSize ? WW-Default: 10pt
+            pIo->pAktColl->SetAttr( SvxFontHeightItem( 200 ) );
+
+        if( pIo->pWDop->fWidowControl && !bWidowsChanged )	// Widows ?
+        {
+            pIo->pAktColl->SetAttr( SvxWidowsItem( 2 ) );
+            pIo->pAktColl->SetAttr( SvxOrphansItem( 2 ) );
+        }
     }
 }
 
@@ -2628,14 +2628,12 @@ SwCharFmt* WW8RStyle::MakeOrGetCharFmt( BOOL* pbStyExist, WW8_STD* pStd, const S
             return pFmt;
         }
     }
-    {
-        *pbStyExist = FALSE;
-        String aName( rName );
-        USHORT nPos = aName.Search( ',' );
-        if( nPos )	// mehrere Namen mit Komma getrennt gibts im SW nicht
-            aName.Erase( nPos );
-        return MakeNewCharFmt( pStd, aName );	// nicht gefunden
-    }
+    *pbStyExist = FALSE;
+    String aName( rName );
+    xub_StrLen nPos = aName.Search( ',' );
+    if( STRING_NOTFOUND != nPos )	// mehrere Namen mit Komma getrennt
+        aName.Erase( nPos );		// gibts im SW nicht
+    return MakeNewCharFmt( pStd, aName );	// nicht gefunden
 }
 
 //-----------------------------------------
@@ -2722,51 +2720,30 @@ SwTxtFmtColl* WW8RStyle::MakeOrGetFmtColl( BOOL* pbStyExist, WW8_STD* pStd, cons
     ASSERT( ( sizeof( aArr ) / sizeof( RES_POOL_COLLFMT_TYPE ) == 75 ),
             "Style-UEbersetzungstabelle hat falsche Groesse" );
 
-#if 1
     if( pStd->sti < sizeof( aArr ) / sizeof( RES_POOL_COLLFMT_TYPE )
         && aArr[pStd->sti]!=RES_NONE	// Default-Style bekannt
-        && !( pIo->nIniFlags & WW8FL_NO_DEFSTYLES ) ){ // nicht abgeschaltet
+        && !( pIo->nIniFlags & WW8FL_NO_DEFSTYLES ) ) // nicht abgeschaltet
+    {
 
         SwTxtFmtColl* pCol = pIo->rDoc.GetTxtCollFromPool( aArr[pStd->sti] );
-        if( pCol ){
+        if( pCol )
+        {
             *pbStyExist = TRUE;
             return pCol;
         }
     }
+    String aName( rName );
+    xub_StrLen nPos = aName.Search( ',' );
+    if( STRING_NOTFOUND != nPos )	// mehrere Namen mit Komma getrennt
+        aName.Erase( nPos );		// gibts im SW nicht
+    SwTxtFmtColl* pCol = SearchFmtColl( aName );
+    if( pCol )
     {
-        String aName( rName );
-        USHORT nPos = aName.Search( ',' );
-        if( nPos )	// mehrere Namen mit Komma getrennt gibts im SW nicht
-            aName.Erase( nPos );
-        SwTxtFmtColl* pCol = SearchFmtColl( aName );
-        if( pCol ){
-            *pbStyExist = TRUE;
-            return pCol;
-        }
-        *pbStyExist = FALSE;
-        return MakeNewFmtColl( pStd, aName );	// nicht gefunden
+        *pbStyExist = TRUE;
+        return pCol;
     }
-#else // 1
-    if( pIo->bNew 					// Einfuegen: immer neue Styles generieren
-        && pStd->sti < sizeof( aArr ) / sizeof( RES_POOL_COLLFMT_TYPE )
-        && aArr[pStd->sti]!=RES_NONE	// Default-Style bekannt
-        && !( pIo->nIniFlags & WW8FL_NO_DEFSTYLES ) ){ // nicht abgeschaltet
-
-        SwTxtFmtColl* pCol = pIo->rDoc.GetTxtCollFromPool( aArr[pStd->sti] );
-        if( pCol ){
-            *pbStyExist = TRUE;
-            return pCol;
-        }
-    }
-    {
-        *pbStyExist = FALSE;
-        String aName( rName );
-        USHORT nPos = aName.Search( ',' );
-        if( nPos )	// mehrere Namen mit Komma getrennt gibts im SW nicht
-            aName.Erase( nPos );
-        return MakeNewFmtColl( pStd, aName );	// nicht gefunden
-    }
-#endif // !1
+    *pbStyExist = FALSE;
+    return MakeNewFmtColl( pStd, aName );	// nicht gefunden
 }
 
 void WW8RStyle::Import1Style( USHORT nNr )
@@ -2852,7 +2829,7 @@ void WW8RStyle::Import1Style( USHORT nNr )
                                     // wird, gehts danach wieder richtig
 
     pStyRule = 0;					// falls noetig, neu anlegen
-    bFontChanged = bFSizeChanged = bWidowsChanged = FALSE;
+    bFontChanged = bCJKFontChanged = bFSizeChanged = bWidowsChanged = FALSE;
     pIo->SetNAktColl( nNr );
     pIo->bStyNormal = nNr == 0;
 
@@ -2990,7 +2967,7 @@ void WW8RStyle::Import()
         aAttr.GetMinLead()    = 2;
         aAttr.GetMinTrail()   = 2;
         aAttr.GetMaxHyphens() = 0;
-        
+
         pIo->pStandardFmtColl->SetAttr( aAttr );
     }
 
@@ -3026,50 +3003,53 @@ void SwWW8ImplReader::ReadDocInfo()
 
       Source Code Control System - Header
 
-      $Header: /zpool/svn/migration/cvs_rep_09_09_08/code/sw/source/filter/ww8/ww8par2.cxx,v 1.2 2000-10-25 14:10:36 khz Exp $
+      $Header: /zpool/svn/migration/cvs_rep_09_09_08/code/sw/source/filter/ww8/ww8par2.cxx,v 1.3 2000-12-01 11:22:52 jp Exp $
 
       Source Code Control System - Update
 
       $Log: not supported by cvs2svn $
+      Revision 1.2  2000/10/25 14:10:36  khz
+      Now supporting negative horizontal indentation of paragrahps and tables
+
       Revision 1.1.1.1  2000/09/18 17:14:58  hr
       initial import
-    
+
       Revision 1.80  2000/09/18 16:05:00  willem.vandorp
       OpenOffice header added.
-    
+
       Revision 1.79  2000/08/17 13:49:28  khz
       #77316# set Default Char Format if no Base Format known
-    
+
       Revision 1.78  2000/07/28 15:37:27  khz
       #73796# don't delete NumRule from Attr but set it into pDoc
-    
+
       Revision 1.77  2000/07/27 10:21:36  khz
       #73796# stop ANList when opening next cell in a row and !bAktAND_fNumberAcross
-    
+
       Revision 1.76  2000/07/25 15:17:45  khz
       #76811# read/write AutoHyphenation flag from/into Document Properties
-    
+
       Revision 1.75  2000/07/24 12:56:38  jp
       Bug #76561#: convert Bulletchar to unicode
-    
+
       Revision 1.74  2000/07/11 11:39:06  khz
       #76673# prepare implementation of sprmTDelete and sprmTInsert
-    
+
       Revision 1.73  2000/07/11 11:30:55  khz
       #76673# prepare implementation of sprmTDelete and sprmTInsert
-    
+
       Revision 1.72  2000/06/08 16:12:55  khz
       Piece table optimization only when piece table exists ;-)
-    
+
       Revision 1.71  2000/05/31 12:23:09  khz
       Changes for Unicode
-    
+
       Revision 1.70  2000/05/25 08:06:48  khz
       Piece Table optimization, Unicode changes, Bugfixes
-    
+
       Revision 1.69  2000/05/18 10:58:59  jp
       Changes for Unicode
-    
+
       Revision 1.68  2000/05/16 12:13:04  jp
       ASS_FALSE define removed
 
