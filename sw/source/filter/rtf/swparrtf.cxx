@@ -2,9 +2,9 @@
  *
  *  $RCSfile: swparrtf.cxx,v $
  *
- *  $Revision: 1.30 $
+ *  $Revision: 1.31 $
  *
- *  last change: $Author: rt $ $Date: 2003-09-25 07:39:45 $
+ *  last change: $Author: kz $ $Date: 2003-10-15 09:59:09 $
  *
  *  The Contents of this file are made available subject to the terms of
  *  either of the following licenses
@@ -114,6 +114,9 @@
 #endif
 #ifndef _SVX_HYZNITEM_HXX
 #include <svx/hyznitem.hxx>
+#endif
+#ifndef _COM_SUN_STAR_DOCUMENT_PRINTERINDEPENDENTLAYOUT_HPP_
+#include <com/sun/star/document/PrinterIndependentLayout.hpp>
 #endif
 #ifndef _FMTPDSC_HXX //autogen
 #include <fmtpdsc.hxx>
@@ -370,7 +373,7 @@ void SwRTFParser::Continue( int nToken )
         {
             pDoc->SetParaSpaceMax(true, true);
             pDoc->SetTabCompat(true);
-            pDoc->_SetUseVirtualDevice(true);
+            pDoc->_SetUseVirtualDevice(com::sun::star::document::PrinterIndependentLayout::HIGH_RESOLUTION);
         }
 
         // einen temporaeren Index anlegen, auf Pos 0 so wird er nicht bewegt!
@@ -875,14 +878,14 @@ void rtfSections::SetHdFt(rtfSection &rSection)
     {
         if (rSection.maPageInfo.mbTitlePageHdFtUsed)
         {
-            MoveFrom(*rSection.maPageInfo.mpTitlePageHdFt, 
+            MoveFrom(*rSection.maPageInfo.mpTitlePageHdFt,
                     *rSection.mpTitlePage);
             rSection.maPageInfo.mbTitlePageHdFtUsed = false;
             rSection.maPageInfo.mpTitlePageHdFt = rSection.mpTitlePage;
         }
         else
         {
-            CopyFrom(*rSection.maPageInfo.mpTitlePageHdFt, 
+            CopyFrom(*rSection.maPageInfo.mpTitlePageHdFt,
                     *rSection.mpTitlePage);
         }
     }
@@ -1039,7 +1042,7 @@ void rtfSections::InsertSegments(bool bNewDoc)
             if (aIter->mpTitlePage)
                 aIter->mpTitlePage->SetFollow(aIter->mpPage);
 
-            if (aIter->PageRestartNo() || 
+            if (aIter->PageRestartNo() ||
                 ((aIter == aStart) && aIter->PageStartAt() != 1))
                 aPgDesc.SetNumOffset(aIter->PageStartAt());
 
@@ -1419,7 +1422,7 @@ SETCHDATEFIELD:
         break;
     case RTF_LYTPRTMET:
         if (IsNewDoc())
-            pDoc->_SetUseVirtualDevice(false);
+            pDoc->_SetUseVirtualDevice(com::sun::star::document::PrinterIndependentLayout::DISABLED);
         break;
     case RTF_U:
         {
@@ -1665,7 +1668,7 @@ void SwRTFParser::SetAttrInDoc( SvxRTFItemStackType &rSet )
         for( ULONG n = nSNd; n <= nENd; ++n )
         {
             SwTxtNode* pTxtNd = pDoc->GetNodes()[ n ]->GetTxtNode();
-            if( pTxtNd ) 
+            if( pTxtNd )
             {
                 pTxtNd->SwCntntNode::SetAttr(
                     *GetDfltAttr(RES_PARATR_NUMRULE));
@@ -1688,7 +1691,7 @@ SectPageInformation::SectPageInformation(const DocPageInformation &rDoc)
     mnPgwsxn(rDoc.mnPaperw), mnPghsxn(rDoc.mnPaperh),
     mnMarglsxn(rDoc.mnMargl), mnMargrsxn(rDoc.mnMargr),
     mnMargtsxn(rDoc.mnMargt), mnMargbsxn(rDoc.mnMargb),
-    mnGutterxsn(rDoc.mnGutter), mnHeadery(720), mnFootery(720), 
+    mnGutterxsn(rDoc.mnGutter), mnHeadery(720), mnFootery(720),
     mnPgnStarts(rDoc.mnPgnStart), mnCols(1), mnColsx(720),
     mnStextflow(rDoc.mbRTLdoc ? 3 : 0), mnBkc(2), mbLndscpsxn(rDoc.mbLandscape),
     mbTitlepg(false), mbFacpgsxn(rDoc.mbFacingp), mbRTLsection(rDoc.mbRTLdoc),
@@ -1708,8 +1711,8 @@ SectPageInformation::SectPageInformation(const SectPageInformation &rSect)
     mnStextflow(rSect.mnStextflow), mnBkc(rSect.mnBkc),
     mbLndscpsxn(rSect.mbLndscpsxn), mbTitlepg(rSect.mbTitlepg),
     mbFacpgsxn(rSect.mbFacpgsxn), mbRTLsection(rSect.mbRTLsection),
-    mbPgnrestart(rSect.mbPgnrestart), 
-    mbTitlePageHdFtUsed(rSect.mbTitlePageHdFtUsed), 
+    mbPgnrestart(rSect.mbPgnrestart),
+    mbTitlePageHdFtUsed(rSect.mbTitlePageHdFtUsed),
     mbPageHdFtUsed(rSect.mbPageHdFtUsed)
 {
 };
@@ -2093,14 +2096,14 @@ void SwRTFParser::ReadDocControls( int nToken )
         if (pColl)
         {
             if (
-                IsNewDoc() && bSetHyph && 
-                SFX_ITEM_SET != pColl->GetItemState(RES_PARATR_HYPHENZONE, 
-                false) 
+                IsNewDoc() && bSetHyph &&
+                SFX_ITEM_SET != pColl->GetItemState(RES_PARATR_HYPHENZONE,
+                false)
                )
             {
                 pColl->SetAttr(SvxHyphenZoneItem(true));
             }
-                    
+
             pDoc->SetTxtFmtColl( *pPam, pColl );
         }
     }
@@ -2157,7 +2160,7 @@ SwPageDesc* SwRTFParser::_MakeNewPageDesc( int bFirst )
 {
     USHORT* pNo = bFirst ? &nAktFirstPageDesc : &nAktPageDesc;
     USHORT nNew = pDoc->MakePageDesc( ViewShell::GetShellRes()->
-                    GetPageDescName( pDoc->GetPageDescCnt(), bFirst ), 0, 
+                    GetPageDescName( pDoc->GetPageDescCnt(), bFirst ), 0,
                                       FALSE );
     SwPageDesc& rAkt = pDoc->_GetPageDesc( nNew );
     SwPageDesc& rOld = pDoc->_GetPageDesc( *pNo );
@@ -2246,16 +2249,16 @@ BOOL lcl_SetFmtCol( SwFmt& rFmt, USHORT nCols, USHORT nColSpace,
     return bSet;
 }
 
-// MM. Test to see if the current Document pointer is 
+// MM. Test to see if the current Document pointer is
 // pointing to a pages desc and if it is return it.
-SwFmtPageDesc* SwRTFParser::GetCurrentPageDesc(SwPaM *pPam) 
+SwFmtPageDesc* SwRTFParser::GetCurrentPageDesc(SwPaM *pPam)
 {
     const SfxPoolItem* pItem;
     const SwCntntNode* pNd = pPam->GetCntntNode();
     SwFmtPageDesc* aFmtPageDsc = 0;
 
     // If the current object is a page desc.
-    if( pNd && pNd->GetpSwAttrSet() && SFX_ITEM_SET ==			
+    if( pNd && pNd->GetpSwAttrSet() && SFX_ITEM_SET ==
         pNd->GetpSwAttrSet()->GetItemState( RES_PAGEDESC,
         FALSE, &pItem ) )
     {
@@ -2328,7 +2331,7 @@ void SwRTFParser::ReadSectControls( int nToken )
         "page info, though probably legal");
     if (maSegments.empty())
     {
-        maSegments.push_back(rtfSection(*pPam->GetPoint(), 
+        maSegments.push_back(rtfSection(*pPam->GetPoint(),
             SectPageInformation(maPageDefaults)));
     }
 
@@ -2488,7 +2491,7 @@ void SwRTFParser::ReadSectControls( int nToken )
             case RTF_COLSX:
                 aNewSection.mnColsx = nTokenValue;
                 break;
-            case RTF_COLNO: 
+            case RTF_COLNO:
                 {
                     long nAktCol = nValue;
                     if (RTF_COLW == GetNextToken())
@@ -2534,12 +2537,12 @@ void SwRTFParser::ReadSectControls( int nToken )
                     }
                     if (nSkip)
                     {
-                        bWeiter = ((-1 == nSkip) && 
+                        bWeiter = ((-1 == nSkip) &&
                             (
                               RTF_FOOTER == nToken || RTF_HEADER == nToken ||
                               RTF_FOOTERR == nToken || RTF_HEADERR == nToken ||
                               RTF_FOOTERL == nToken || RTF_HEADERL == nToken ||
-                              RTF_FOOTERF == nToken || RTF_HEADERF == nToken 
+                              RTF_FOOTERF == nToken || RTF_HEADERF == nToken
                             ));
                         SkipToken (nSkip);		// Ignore wieder zurueck
                     }
@@ -2946,7 +2949,7 @@ void SwRTFParser::ReadPrtData()
 static const SwNodeIndex* SetHeader(SwFrmFmt* pHdFtFmt, BOOL bReuseOld)
 {
     ASSERT(pHdFtFmt, "Impossible, no header");
-    const SwFrmFmt* pExisting = bReuseOld ? 
+    const SwFrmFmt* pExisting = bReuseOld ?
         pHdFtFmt->GetHeader().GetHeaderFmt() : 0;
     if (!pExisting)
     {
@@ -2960,7 +2963,7 @@ static const SwNodeIndex* SetHeader(SwFrmFmt* pHdFtFmt, BOOL bReuseOld)
 static const SwNodeIndex* SetFooter(SwFrmFmt* pHdFtFmt, BOOL bReuseOld)
 {
     ASSERT(pHdFtFmt, "Impossible, no footer");
-    const SwFrmFmt* pExisting = bReuseOld ? 
+    const SwFrmFmt* pExisting = bReuseOld ?
         pHdFtFmt->GetFooter().GetFooterFmt() : 0;
     if (!pExisting)
     {
@@ -3339,7 +3342,7 @@ SwTxtFmtColl* SwRTFParser::MakeColl( const String& rName, USHORT nPos,
 
     // Collection neu erzeugen
     pColl = pDoc->MakeTxtFmtColl( aNm,
-                    pDoc->GetTxtCollFromPoolSimple( RES_POOLCOLL_STANDARD, 
+                    pDoc->GetTxtCollFromPoolSimple( RES_POOLCOLL_STANDARD,
                                                     FALSE ) );
 
     // sollte es eine Vorlage aus dem Pool sein ??
@@ -3595,7 +3598,7 @@ SwTxtFmtColl* SwRTFParser::MakeStyle( USHORT nNo, const SvxRTFStyleType& rStyle 
             // ist die ueberhaupt als Style vorhanden ?
             pDerivedColl = pDerivedStyle
                     ? MakeStyle( nStyleNo, *pDerivedStyle )
-                    : pDoc->GetTxtCollFromPoolSimple( RES_POOLCOLL_STANDARD, 
+                    : pDoc->GetTxtCollFromPoolSimple( RES_POOLCOLL_STANDARD,
                                                       FALSE );
         }
 
