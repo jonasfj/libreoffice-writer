@@ -2,9 +2,9 @@
  *
  *  $RCSfile: edtwin2.cxx,v $
  *
- *  $Revision: 1.12 $
+ *  $Revision: 1.13 $
  *
- *  last change: $Author: obo $ $Date: 2004-08-12 13:01:18 $
+ *  last change: $Author: obo $ $Date: 2004-09-09 09:14:57 $
  *
  *  The Contents of this file are made available subject to the terms of
  *  either of the following licenses
@@ -408,15 +408,31 @@ void SwEditWin::RequestHelp(const HelpEvent &rEvt)
             BYTE nTabCols = rSh.WhichMouseTabCol(aPos);
             USHORT nTabRes = 0;
             switch(nTabCols)
-            {        
+            {
                 case SW_TABCOL_HORI:
                 case SW_TABCOL_VERT:
                     nTabRes = STR_TABLE_COL_ADJUST;
-                break;
+                    break;
                 case SW_TABROW_HORI:
                 case SW_TABROW_VERT:
                     nTabRes = STR_TABLE_ROW_ADJUST;
-                break;
+                    break;
+                // --> FME 2004-07-30 #i32329# Enhanced table selection
+                case SW_TABSEL_HORI:
+                case SW_TABSEL_HORI_RTL:
+                case SW_TABSEL_VERT:
+                    nTabRes = STR_TABLE_SELECT_ALL;
+                    break;
+                case SW_TABROWSEL_HORI:
+                case SW_TABROWSEL_HORI_RTL:
+                case SW_TABROWSEL_VERT:
+                    nTabRes = STR_TABLE_SELECT_ROW;
+                    break;
+                case SW_TABCOLSEL_HORI:
+                case SW_TABCOLSEL_VERT:
+                    nTabRes = STR_TABLE_SELECT_COL;
+                    break;
+                // <--
             }
             if(nTabRes)
             {
@@ -424,9 +440,9 @@ void SwEditWin::RequestHelp(const HelpEvent &rEvt)
                 Size aTxtSize( GetTextWidth(sTxt), GetTextHeight());
                 Rectangle aRect(rEvt.GetMousePosPixel(), aTxtSize);
                 Help::ShowQuickHelp(this, aRect, sTxt);
-            }    
+            }
             bWeiter = FALSE;
-        }            
+        }
     }
 
 /*
