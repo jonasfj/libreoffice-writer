@@ -2,9 +2,9 @@
  *
  *  $RCSfile: wrtw8esh.cxx,v $
  *
- *  $Revision: 1.8 $
+ *  $Revision: 1.9 $
  *
- *  last change: $Author: cmc $ $Date: 2001-01-18 10:59:22 $
+ *  last change: $Author: jp $ $Date: 2001-02-07 17:28:25 $
  *
  *  The Contents of this file are made available subject to the terms of
  *  either of the following licenses
@@ -1035,7 +1035,7 @@ SwEscherEx::SwEscherEx( SvStream* pStrm, SwWW8Writer& rWW8Wrt )
             << (sal_uInt32)0x08000001
             << (sal_uInt32)0x08000002
             << (sal_uInt32)0x100000f7;
-    
+
     CloseContainer();	// ESCHER_DggContainer
 
     BYTE i = 2;		// for header/footer and the other
@@ -1068,7 +1068,7 @@ SwEscherEx::SwEscherEx( SvStream* pStrm, SwWW8Writer& rWW8Wrt )
                 for( USHORT n = 0; n < aSortFmts.Count(); ++n )
                 {
                     const SwFrmFmt& rFmt = *(SwFrmFmt*)aSortFmts[ n ];
-                    if( RES_FLYFRMFMT == rFmt.Which()) 
+                    if( RES_FLYFRMFMT == rFmt.Which())
                         nShapeId = WriteFlyFrm( rFmt );
                     else if (rFmt.FindRealSdrObject()->GetObjInventor() ==
                              FmFormInventor)
@@ -1234,16 +1234,16 @@ static int
 void SwEscherEx::WriteFrmExtraData( const SwFrmFmt& rFmt )
 {
     const RndStdIds eAnchor = rFmt.GetAnchor().GetAnchorId();
-    
+
     const SwFmtHoriOrient&	rHoriOri = rFmt.GetHoriOrient();
     const SwFmtVertOrient&	rVertOri = rFmt.GetVertOrient();
 
     const SwHoriOrient eHOri = rHoriOri.GetHoriOrient();
     const SwVertOrient eVOri = rVertOri.GetVertOrient();
-    
+
     SwRelationOrient   eHRel = rHoriOri.GetRelationOrient();
     SwRelationOrient   eVRel = rVertOri.GetRelationOrient();
-    
+
     UINT32 nHIndex = 0;
     UINT32 nVIndex = 0;
 
@@ -1253,8 +1253,8 @@ void SwEscherEx::WriteFrmExtraData( const SwFrmFmt& rFmt )
             nHIndex = 0x00000000;
             nVIndex = 0x10000000;
             // match eHRel ?
-            if(      REL_PG_PRTAREA == eHRel ) eHRel = PRTAREA;
-            else if( REL_PG_FRAME   == eHRel ) eHRel = FRAME;
+            if(      PRTAREA == eHRel ) eHRel = REL_PG_PRTAREA;
+            else if( FRAME   == eHRel ) eHRel = REL_PG_FRAME;
             // match eVRel ?
             if(      REL_PG_PRTAREA == eVRel ) eVRel = PRTAREA;
             else
@@ -1331,7 +1331,7 @@ void SwEscherEx::WriteFrmExtraData( const SwFrmFmt& rFmt )
         case HORI_NONE:
             nHIndex |= 0x00000500;
             break;
-        default: 
+        default:
         //  nHIndex |= 0x00000000; // HORI_LEFT
             break;
     }
@@ -1384,7 +1384,7 @@ void SwEscherEx::WriteFrmExtraData( const SwFrmFmt& rFmt )
         case VERT_LINE_BOTTOM:
             nVIndex |= 0x00000900;
             break;
-        default: 
+        default:
         //  nVIndex |= 0x00000000; // VERT_TOP
             break;
     }
@@ -1412,8 +1412,8 @@ void SwEscherEx::WriteFrmExtraData( const SwFrmFmt& rFmt )
 //     H O R I Z O N T A L    SwHoriOrient:   HORI_LEFT, HORI_INSIDE, HORI_RIGHT, HORI_OUTSIDE, HORI_CENTER, HORI_NONE
 //                                                0          1            2           3             4            5
 
-    // RndStdIds: FLY_PAGE: 0   
-    
+    // RndStdIds: FLY_PAGE: 0
+
     // SwRelationOrient: REL_PG_LEFT: 2
     //               |
                 0x00020011,  // SwHoriOrient: HORI_LEFT
@@ -1588,7 +1588,7 @@ void SwEscherEx::WriteFrmExtraData( const SwFrmFmt& rFmt )
                 0x02080333,
                 0x02080423,
                 0x02080503,
-    
+
 //     V E R T I C A L   SwVertOrient:   VERT_TOP, VERT_BOTTOM, VERT_CENTER, VERT_NONE, VERT_CHAR_TOP, VERT_CHAR_CENTER, VERT_CHAR_BOTTOM, VERT_LINE_TOP, VERT_LINE_CENTER, VERT_LINE_BOTTOM
 //                                           0         1            2            3          4              5                 6 == "below"      7              8                 9
 
@@ -1621,7 +1621,7 @@ void SwEscherEx::WriteFrmExtraData( const SwFrmFmt& rFmt )
                 0x11010133,  //               VERT_BOTTOM
                 0x11010223,  //               VERT_CENTER
                 0x11010302,  //               VERT_NONE
-                                                                            
+
     // RndStdIds: "to character" == FLY_AUTO_CNTNT: 0x12
     //
     // SwRelationOrient: "Margin" == FRAME: 0
@@ -1636,7 +1636,7 @@ void SwEscherEx::WriteFrmExtraData( const SwFrmFmt& rFmt )
                 0x12010133,  //               VERT_BOTTOM
                 0x12010223,  //               VERT_CENTER
                 0x12010302,  //               VERT_NONE
-    // SwRelationOrient: "Character" == REL_CHAR: 2 
+    // SwRelationOrient: "Character" == REL_CHAR: 2
     //               |
                 0x12020013,  // SwVertOrient: VERT_TOP
                 0x12020133,  //               VERT_BOTTOM
@@ -1656,7 +1656,7 @@ void SwEscherEx::WriteFrmExtraData( const SwFrmFmt& rFmt )
                 0x13000413,  //               VERT_CHAR_TOP   (character)
                 0x13000533,  //               VERT_CHAR_CENTER
                 0x13000623,  //               VERT_CHAR_BOTTOM == "below"
-                
+
                 0x13000713,  //               VERT_LINE_TOP   (row)
                 0x13000813,  //               VERT_LINE_CENTER
                 0x13000923,  //               VERT_LINE_BOTTOM
@@ -1784,7 +1784,7 @@ void SwEscherEx::WriteTxtFlyFrame( const SwFrmFmt& rFmt, UINT32 nShapeId,
     WriteFlyFrameAttr( rFmt, aPropOpt );
     aPropOpt.Commit( GetStream() );
 
-    // store anchor attribute 
+    // store anchor attribute
     WriteFrmExtraData( rFmt );
 
     AddAtom( 4, ESCHER_ClientAnchor );	GetStream() << 0L;
@@ -1856,7 +1856,7 @@ void SwEscherEx::WriteGrfFlyFrame( const SwFrmFmt& rFmt, UINT32 nShapeId )
     WriteGrfAttr( rGrfNd, aPropOpt );
     aPropOpt.Commit( GetStream() );
 
-    // store anchor attribute 
+    // store anchor attribute
     WriteFrmExtraData( rFmt );
 
     AddAtom( 4, ESCHER_ClientAnchor );		GetStream() << 0L;
@@ -1889,9 +1889,9 @@ void SwEscherEx::WriteOCXControl( const SwFrmFmt& rFmt, UINT32 nShapeId )
         WriteFlyFrameAttr( rFmt, aPropOpt );
         aPropOpt.Commit( GetStream() );
 
-        // store anchor attribute 
+        // store anchor attribute
         WriteFrmExtraData( rFmt );
-        
+
         AddAtom( 4, ESCHER_ClientAnchor ); 		GetStream() << 0L;
         AddAtom( 4, ESCHER_ClientData );		GetStream() << 1L;
 
@@ -1956,7 +1956,7 @@ void SwEscherEx::WriteOLEFlyFrame( const SwFrmFmt& rFmt, UINT32 nShapeId )
         WriteGrfAttr( rOLENd, aPropOpt );
         aPropOpt.Commit( GetStream() );
 
-        // store anchor attribute 
+        // store anchor attribute
         WriteFrmExtraData( rFmt );
 
         AddAtom( 4, ESCHER_ClientAnchor ); 		GetStream() << 0L;
@@ -2257,10 +2257,10 @@ BOOL SwMSConvertControls::ExportControl(Writer &rWrt, const SdrObject *pObj)
     SdrUnoObj *pFormObj = PTR_CAST(SdrUnoObj,pObj);
     uno::Reference< awt::XControlModel > xControlModel =
     pFormObj->GetUnoControlModel();
-                
+
     //Why oh lord do we use so many different units ?
-    //I think I painted myself into a little bit of a 
-    //corner by trying to use the uno interface for 
+    //I think I painted myself into a little bit of a
+    //corner by trying to use the uno interface for
     //controls export
     Size aTempSize=pFormObj->GetLogicRect().GetSize();
     awt::Size aSize;
@@ -2284,7 +2284,7 @@ BOOL SwMSConvertControls::ExportControl(Writer &rWrt, const SdrObject *pObj)
     String sName;
     if (!WriteOCXStream(xOleStg,xControlModel,aSize,sName))
         return FALSE;
-    
+
     BYTE aSpecOLE[] =
     {
         0x03, 0x6a, 0xFF, 0xFF, 0xFF, 0xFF, // sprmCPicLocation
@@ -2295,7 +2295,7 @@ BOOL SwMSConvertControls::ExportControl(Writer &rWrt, const SdrObject *pObj)
     //Set the obj id into the sprmCPicLocation
     BYTE *pData = aSpecOLE+2;
     Set_UInt32(pData,(UINT32)pObj);
-    
+
     sName.InsertAscii(" CONTROL Forms.",0);
     sName.AppendAscii(".1 \\s ");
 
@@ -2316,38 +2316,41 @@ BOOL SwMSConvertControls::ExportControl(Writer &rWrt, const SdrObject *pObj)
 
       Source Code Control System - Header
 
-      $Header: /zpool/svn/migration/cvs_rep_09_09_08/code/sw/source/filter/ww8/wrtw8esh.cxx,v 1.8 2001-01-18 10:59:22 cmc Exp $
+      $Header: /zpool/svn/migration/cvs_rep_09_09_08/code/sw/source/filter/ww8/wrtw8esh.cxx,v 1.9 2001-02-07 17:28:25 jp Exp $
 
       Source Code Control System - Update
 
       $Log: not supported by cvs2svn $
+      Revision 1.8  2001/01/18 10:59:22  cmc
+      #82587# Slightly Bizarre word late binding problem solved
+
       Revision 1.7  2001/01/16 13:01:59  obo
       #65293# parse error linux compiler
-    
+
       Revision 1.6  2000/12/13 14:13:35  sj
       AddWmf, AddGraphic had been removed from EscherEx, UniqueId from GraphicObject is now used to get the GraphicId
-    
+
       Revision 1.5  2000/12/11 14:31:03  sj
       now using EscherPropertyContainer to create the ESCHER_OPT atom
-    
+
       Revision 1.4  2000/11/13 10:11:28  khz
       export extended WW9-Frame-Alignment (write Escher record 0xF122)
-    
+
       Revision 1.3  2000/10/10 16:54:06  cmc
       MSOffice 97/2000 Controls {Im|Ex}port
-    
+
       Revision 1.2  2000/09/21 12:18:55  khz
       #78753# Avoid dividing by zero.
-    
+
       Revision 1.1.1.1  2000/09/18 17:14:58  hr
       initial import
-    
+
       Revision 1.23  2000/09/18 16:04:57  willem.vandorp
       OpenOffice header added.
-    
+
       Revision 1.22  2000/08/25 12:27:31  jp
       Graphic Crop-Attribut exported to SVX
-    
+
       Revision 1.21  2000/07/17 20:28:23  jp
       WriteGrfFlyFrame: alloc buffer for the linked graphics
 
