@@ -2,9 +2,9 @@
  *
  *  $RCSfile: SwXTextDefaults.cxx,v $
  *
- *  $Revision: 1.6 $
+ *  $Revision: 1.7 $
  *
- *  last change: $Author: mtg $ $Date: 2001-11-28 20:01:17 $
+ *  last change: $Author: tl $ $Date: 2002-08-14 10:10:46 $
  *
  *  The Contents of this file are made available subject to the terms of
  *  either of the following licenses
@@ -70,10 +70,10 @@
 #ifndef _UNOMAP_HXX
 #include <unomap.hxx>
 #endif
-#ifndef _VOS_MUTEX_HXX_ 
+#ifndef _VOS_MUTEX_HXX_
 #include <vos/mutex.hxx>
 #endif
-#ifndef _SV_SVAPP_HXX 
+#ifndef _SV_SVAPP_HXX
 #include <vcl/svapp.hxx>
 #endif
 #ifndef _UNOPRNMS_HXX
@@ -93,21 +93,21 @@ using namespace com::sun::star::uno;
 using namespace com::sun::star::beans;
 using namespace com::sun::star::lang;
 
-SwXTextDefaults::SwXTextDefaults ( SwDoc * pNewDoc ) 
+SwXTextDefaults::SwXTextDefaults ( SwDoc * pNewDoc )
 : pDoc (pNewDoc)
 , aPropSet (aSwMapProvider.GetPropertyMap ( PROPERTY_MAP_TEXT_DEFAULT ) )
-{ 
-}
-SwXTextDefaults::~SwXTextDefaults () 
 {
 }
-Reference< XPropertySetInfo > SAL_CALL SwXTextDefaults::getPropertySetInfo(  ) 
+SwXTextDefaults::~SwXTextDefaults ()
+{
+}
+Reference< XPropertySetInfo > SAL_CALL SwXTextDefaults::getPropertySetInfo(  )
         throw(RuntimeException)
 {
     static uno::Reference < XPropertySetInfo > xRef = aPropSet.getPropertySetInfo();
     return xRef;
 }
-void SAL_CALL SwXTextDefaults::setPropertyValue( const OUString& rPropertyName, const Any& aValue ) 
+void SAL_CALL SwXTextDefaults::setPropertyValue( const OUString& rPropertyName, const Any& aValue )
         throw(UnknownPropertyException, PropertyVetoException, IllegalArgumentException, WrappedTargetException, RuntimeException)
 {
     vos::OGuard aGuard( Application::GetSolarMutex());
@@ -117,14 +117,14 @@ void SAL_CALL SwXTextDefaults::setPropertyValue( const OUString& rPropertyName, 
     if (!pMap)
         throw UnknownPropertyException(OUString ( RTL_CONSTASCII_USTRINGPARAM ( "Unknown property: " ) ) + rPropertyName, static_cast < cppu::OWeakObject * > ( this ) );
     if ( pMap->nFlags & PropertyAttribute::READONLY)
-        throw IllegalArgumentException ( OUString ( RTL_CONSTASCII_USTRINGPARAM ( "Property is read-only: " ) ) + rPropertyName, static_cast < cppu::OWeakObject * > ( this ), 0 );
+        throw PropertyVetoException ( OUString ( RTL_CONSTASCII_USTRINGPARAM ( "Property is read-only: " ) ) + rPropertyName, static_cast < cppu::OWeakObject * > ( this ) );
     const SfxPoolItem& rItem = pDoc->GetDefault(pMap->nWID);
     SfxPoolItem * pNewItem = rItem.Clone();
     pNewItem->PutValue( aValue, pMap->nMemberId);
     pDoc->SetDefault(*pNewItem);
     delete pNewItem;
 }
-Any SAL_CALL SwXTextDefaults::getPropertyValue( const OUString& rPropertyName ) 
+Any SAL_CALL SwXTextDefaults::getPropertyValue( const OUString& rPropertyName )
         throw(UnknownPropertyException, WrappedTargetException, RuntimeException)
 {
     vos::OGuard aGuard( Application::GetSolarMutex());
@@ -138,28 +138,28 @@ Any SAL_CALL SwXTextDefaults::getPropertyValue( const OUString& rPropertyName )
     rItem.QueryValue( aRet, pMap->nMemberId );
     return aRet;
 }
-void SAL_CALL SwXTextDefaults::addPropertyChangeListener( const OUString& rPropertyName, const Reference< XPropertyChangeListener >& xListener ) 
+void SAL_CALL SwXTextDefaults::addPropertyChangeListener( const OUString& rPropertyName, const Reference< XPropertyChangeListener >& xListener )
         throw(UnknownPropertyException, WrappedTargetException, RuntimeException)
 {
     DBG_WARNING ( "not implemented" );
 }
-void SAL_CALL SwXTextDefaults::removePropertyChangeListener( const OUString& rPropertyName, const Reference< XPropertyChangeListener >& aListener ) 
+void SAL_CALL SwXTextDefaults::removePropertyChangeListener( const OUString& rPropertyName, const Reference< XPropertyChangeListener >& aListener )
         throw(UnknownPropertyException, WrappedTargetException, RuntimeException)
 {
     DBG_WARNING ( "not implemented" );
 }
-void SAL_CALL SwXTextDefaults::addVetoableChangeListener( const OUString& rPropertyName, const Reference< XVetoableChangeListener >& aListener ) 
+void SAL_CALL SwXTextDefaults::addVetoableChangeListener( const OUString& rPropertyName, const Reference< XVetoableChangeListener >& aListener )
         throw(UnknownPropertyException, WrappedTargetException, RuntimeException)
 {
     DBG_WARNING ( "not implemented" );
 }
-void SAL_CALL SwXTextDefaults::removeVetoableChangeListener( const OUString& rPropertyName, const Reference< XVetoableChangeListener >& aListener ) 
+void SAL_CALL SwXTextDefaults::removeVetoableChangeListener( const OUString& rPropertyName, const Reference< XVetoableChangeListener >& aListener )
         throw(UnknownPropertyException, WrappedTargetException, RuntimeException)
 {
     DBG_WARNING ( "not implemented" );
 }
     // XPropertyState
-PropertyState SAL_CALL SwXTextDefaults::getPropertyState( const OUString& rPropertyName ) 
+PropertyState SAL_CALL SwXTextDefaults::getPropertyState( const OUString& rPropertyName )
         throw(UnknownPropertyException, RuntimeException)
 {
     vos::OGuard aGuard( Application::GetSolarMutex());
@@ -170,14 +170,14 @@ PropertyState SAL_CALL SwXTextDefaults::getPropertyState( const OUString& rPrope
     if (!pMap)
         throw UnknownPropertyException(OUString ( RTL_CONSTASCII_USTRINGPARAM ( "Unknown property: " ) ) + rPropertyName, static_cast < cppu::OWeakObject * > ( this ) );
     if ( pMap->nFlags & PropertyAttribute::READONLY)
-        throw RuntimeException ( OUString ( RTL_CONSTASCII_USTRINGPARAM ( "Property is read-only: " ) ) + rPropertyName, static_cast < cppu::OWeakObject * > ( this ) );
+        throw PropertyVetoException ( OUString ( RTL_CONSTASCII_USTRINGPARAM ( "Property is read-only: " ) ) + rPropertyName, static_cast < cppu::OWeakObject * > ( this ) );
 
     const SfxPoolItem& rItem = pDoc->GetDefault(pMap->nWID);
     if (IsStaticDefaultItem ( &rItem ) )
         eRet = PropertyState_DEFAULT_VALUE;
     return eRet;
 }
-Sequence< PropertyState > SAL_CALL SwXTextDefaults::getPropertyStates( const Sequence< OUString >& rPropertyNames ) 
+Sequence< PropertyState > SAL_CALL SwXTextDefaults::getPropertyStates( const Sequence< OUString >& rPropertyNames )
         throw(UnknownPropertyException, RuntimeException)
 {
     const sal_Int32 nCount = rPropertyNames.getLength();
@@ -190,7 +190,7 @@ Sequence< PropertyState > SAL_CALL SwXTextDefaults::getPropertyStates( const Seq
 
     return aRet;
 }
-void SAL_CALL SwXTextDefaults::setPropertyToDefault( const OUString& rPropertyName ) 
+void SAL_CALL SwXTextDefaults::setPropertyToDefault( const OUString& rPropertyName )
         throw(UnknownPropertyException, RuntimeException)
 {
     if (!pDoc)
@@ -199,11 +199,11 @@ void SAL_CALL SwXTextDefaults::setPropertyToDefault( const OUString& rPropertyNa
     if (!pMap)
         throw UnknownPropertyException(OUString ( RTL_CONSTASCII_USTRINGPARAM ( "Unknown property: " ) ) + rPropertyName, static_cast < cppu::OWeakObject * > ( this ) );
     if ( pMap->nFlags & PropertyAttribute::READONLY)
-        throw RuntimeException ( OUString ( RTL_CONSTASCII_USTRINGPARAM ( "Property is read-only: " ) ) + rPropertyName, static_cast < cppu::OWeakObject * > ( this ) );
+        throw PropertyVetoException ( OUString ( RTL_CONSTASCII_USTRINGPARAM ( "Property is read-only: " ) ) + rPropertyName, static_cast < cppu::OWeakObject * > ( this ) );
    SfxItemPool rSet (pDoc->GetAttrPool());
    rSet.ResetPoolDefaultItem ( pMap->nWID );
 }
-Any SAL_CALL SwXTextDefaults::getPropertyDefault( const OUString& rPropertyName ) 
+Any SAL_CALL SwXTextDefaults::getPropertyDefault( const OUString& rPropertyName )
         throw(UnknownPropertyException, WrappedTargetException, RuntimeException)
 {
     if (!pDoc)
@@ -212,7 +212,7 @@ Any SAL_CALL SwXTextDefaults::getPropertyDefault( const OUString& rPropertyName 
     if (!pMap)
         throw UnknownPropertyException(OUString ( RTL_CONSTASCII_USTRINGPARAM ( "Unknown property: " ) ) + rPropertyName, static_cast < cppu::OWeakObject * > ( this ) );
     if ( pMap->nFlags & PropertyAttribute::READONLY)
-        throw RuntimeException ( OUString ( RTL_CONSTASCII_USTRINGPARAM ( "Property is read-only: " ) ) + rPropertyName, static_cast < cppu::OWeakObject * > ( this ) );
+        throw PropertyVetoException ( OUString ( RTL_CONSTASCII_USTRINGPARAM ( "Property is read-only: " ) ) + rPropertyName, static_cast < cppu::OWeakObject * > ( this ) );
     Any aRet;
     SfxItemPool rSet (pDoc->GetAttrPool());
     const SfxPoolItem *pItem = rSet.GetPoolDefaultItem ( pMap->nWID );
