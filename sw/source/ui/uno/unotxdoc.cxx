@@ -2,9 +2,9 @@
  *
  *  $RCSfile: unotxdoc.cxx,v $
  *
- *  $Revision: 1.70 $
+ *  $Revision: 1.71 $
  *
- *  last change: $Author: hr $ $Date: 2003-03-27 15:44:56 $
+ *  last change: $Author: vg $ $Date: 2003-04-01 10:14:23 $
  *
  *  The Contents of this file are made available subject to the terms of
  *  either of the following licenses
@@ -2450,10 +2450,23 @@ sal_Int32 SAL_CALL SwXTextDocument::getRendererCount(
     SwDoc *pDoc = GetRenderDoc( pView, rSelection );
     if (!pDoc)
         throw RuntimeException();
+
     SwWrtShell *pWrtShell = pDoc->GetDocShell()->GetWrtShell();
-    if(pWrtShell)
+
+    if( pWrtShell )
+    {
+        SwViewOption aViewOpt( *pWrtShell->GetViewOptions() );
+        aViewOpt.SetPDFExport( TRUE );
+        if ( pWrtShell->IsBrowseMode() )
+            aViewOpt.SetPrtFormat( TRUE );
+        pWrtShell->ApplyViewOptions( aViewOpt );
+
         pWrtShell->CalcLayout();
-    
+        
+        aViewOpt.SetPDFExport( FALSE );
+        pWrtShell->ApplyViewOptions( aViewOpt );
+    }
+
     return pDoc->GetPageCount();
 }
 /* -----------------------------23.08.02 16:00--------------------------------
@@ -2478,7 +2491,7 @@ uno::Sequence< beans::PropertyValue > SAL_CALL SwXTextDocument::getRenderer(
 
     Size aPgSize( pDoc->GetPageSize( nRenderer + 1 ) );
     DBG_ASSERT( aPgSize != Size(), "no page size" );
-    
+
     awt::Size aPageSize( TWIP_TO_MM100( aPgSize.Width() ),
                          TWIP_TO_MM100( aPgSize.Height() ));
     uno::Sequence< beans::PropertyValue > aRenderer(1);
@@ -2524,7 +2537,7 @@ void SAL_CALL SwXTextDocument::render(
     SwDoc *pDoc = GetRenderDoc( pView, rSelection );
     if (!pDoc || !pView)
         throw RuntimeException();
-    
+
     if (!(0 <= nRenderer  &&  nRenderer < pDoc->GetPageCount()))
         throw IllegalArgumentException();
 
@@ -2567,10 +2580,10 @@ void SAL_CALL SwXTextDocument::render(
         aPage.SetTotalRange( Range( 0, RANGE_MAX ) );
         aPage.Select( aPageRange );
         aOptions.aMulti = aPage;
-        
+
         //! Note: Since for PDF export of (multi-)selection a temporary
         //! document is created that contains only the selects parts,
-        //! and thus that document is to printed in whole the, 
+        //! and thus that document is to printed in whole the,
         //! aOptions.bPrintSelection parameter will be false.
         aOptions.bPrintSelection = FALSE;
 
