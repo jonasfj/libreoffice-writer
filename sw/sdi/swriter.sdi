@@ -553,7 +553,7 @@ SfxVoidItem BackgroundDialog FN_FORMAT_BACKGROUND_DLG
 ]
 
 //--------------------------------------------------------------------------
-SfxVoidItem Backspace FN_BACKSPACE
+SfxVoidItem SwBackspace FN_BACKSPACE
 ()
 [
     /* flags: */
@@ -2003,7 +2003,7 @@ SfxVoidItem FootnoteDialog FN_FORMAT_FOOTNOTE_DLG
 ]
 
 //--------------------------------------------------------------------------
-SfxVoidItem FootnoteDialog FN_EDIT_FOOTNOTE
+SfxVoidItem EditFootnote FN_EDIT_FOOTNOTE
 ()
 [
     /* flags: */
@@ -3132,7 +3132,7 @@ SfxBoolItem GotoPrevWrongTableFormula FN_PREV_TBLFML_ERR
 ]
 
 //--------------------------------------------------------------------------
-SfxVoidItem GoToStart FN_START_TABLE
+SfxVoidItem GoToStartOfTable FN_START_TABLE
 ()
 [
     /* flags: */
@@ -4355,7 +4355,7 @@ SfxVoidItem InsertFrameInteract FN_INSERT_FRAME_INTERACT
 ]
 
 //--------------------------------------------------------------------------
-SfxVoidItem InsertFrameInteract FN_INSERT_FRAME_INTERACT_NOCOL
+SfxVoidItem InsertFrameInteractNoColumns FN_INSERT_FRAME_INTERACT_NOCOL
 ()
 [
     /* flags: */
@@ -4671,15 +4671,15 @@ SfxVoidItem InsertObject FN_INSERT_OBJECT_DLG
     ReadOnlyDoc = FALSE,
     Toggle = FALSE,
     Container = FALSE,
-    RecordAbsolute = FALSE, 
+    RecordAbsolute = FALSE,
     RecordPerSet;
     Asynchron;
 
-    /* config: */ 
-    AccelConfig = TRUE, 
-    MenuConfig = TRUE, 
-    StatusBarConfig = FALSE, 
-    ToolBoxConfig = TRUE, 
+    /* config: */
+    AccelConfig = TRUE,
+    MenuConfig = TRUE,
+    StatusBarConfig = FALSE,
+    ToolBoxConfig = TRUE,
     GroupId = GID_INSERT;
 ]
 
@@ -4687,24 +4687,24 @@ SfxVoidItem InsertObject FN_INSERT_OBJECT_DLG
 SfxVoidItem InsertObjectStarMath FN_INSERT_SMA
 ()
 [
-    /* flags: */  
-    AutoUpdate = FALSE, 
-    Cachable = Cachable, 
-    FastCall = FALSE, 
-    HasCoreId = FALSE, 
-    HasDialog = FALSE, 
-    ReadOnlyDoc = FALSE, 
-    Toggle = FALSE, 
-    Container = FALSE, 
-    RecordAbsolute = FALSE, 
+    /* flags: */
+    AutoUpdate = FALSE,
+    Cachable = Cachable,
+    FastCall = FALSE,
+    HasCoreId = FALSE,
+    HasDialog = FALSE,
+    ReadOnlyDoc = FALSE,
+    Toggle = FALSE,
+    Container = FALSE,
+    RecordAbsolute = FALSE,
     RecordPerSet;
     Asynchron;
 
-    /* config: */ 
-    AccelConfig = TRUE, 
-    MenuConfig = TRUE, 
-    StatusBarConfig = FALSE, 
-    ToolBoxConfig = TRUE, 
+    /* config: */
+    AccelConfig = TRUE,
+    MenuConfig = TRUE,
+    StatusBarConfig = FALSE,
+    ToolBoxConfig = TRUE,
     GroupId = GID_INSERT;
 ]
 
@@ -4712,24 +4712,24 @@ SfxVoidItem InsertObjectStarMath FN_INSERT_SMA
 SfxVoidItem InsertPagebreak FN_INSERT_PAGEBREAK
 ()
 [
-    /* flags: */  
-    AutoUpdate = FALSE, 
-    Cachable = Cachable, 
-    FastCall = FALSE, 
-    HasCoreId = FALSE, 
-    HasDialog = FALSE, 
-    ReadOnlyDoc = FALSE, 
-    Toggle = FALSE, 
-    Container = FALSE, 
-    RecordAbsolute = FALSE, 
+    /* flags: */
+    AutoUpdate = FALSE,
+    Cachable = Cachable,
+    FastCall = FALSE,
+    HasCoreId = FALSE,
+    HasDialog = FALSE,
+    ReadOnlyDoc = FALSE,
+    Toggle = FALSE,
+    Container = FALSE,
+    RecordAbsolute = FALSE,
     RecordPerSet;
     Synchron;
 
-    /* config: */ 
-    AccelConfig = TRUE, 
-    MenuConfig = TRUE, 
-    StatusBarConfig = FALSE, 
-    ToolBoxConfig = TRUE, 
+    /* config: */
+    AccelConfig = TRUE,
+    MenuConfig = TRUE,
+    StatusBarConfig = FALSE,
+    ToolBoxConfig = TRUE,
     GroupId = GID_INSERT;
 ]
 
@@ -4737,24 +4737,24 @@ SfxVoidItem InsertPagebreak FN_INSERT_PAGEBREAK
 SfxVoidItem InsertPageCountField FN_INSERT_FLD_PGCOUNT
 ()
 [
-    /* flags: */  
-    AutoUpdate = FALSE, 
-    Cachable = Cachable, 
-    FastCall = FALSE, 
-    HasCoreId = FALSE, 
-    HasDialog = FALSE, 
-    ReadOnlyDoc = FALSE, 
-    Toggle = FALSE, 
-    Container = FALSE, 
-    RecordAbsolute = FALSE, 
+    /* flags: */
+    AutoUpdate = FALSE,
+    Cachable = Cachable,
+    FastCall = FALSE,
+    HasCoreId = FALSE,
+    HasDialog = FALSE,
+    ReadOnlyDoc = FALSE,
+    Toggle = FALSE,
+    Container = FALSE,
+    RecordAbsolute = FALSE,
     RecordPerSet;
     Synchron;
 
-    /* config: */ 
-    AccelConfig = TRUE, 
-    MenuConfig = TRUE, 
-    StatusBarConfig = FALSE, 
-    ToolBoxConfig = TRUE, 
+    /* config: */
+    AccelConfig = TRUE,
+    MenuConfig = TRUE,
+    StatusBarConfig = FALSE,
+    ToolBoxConfig = TRUE,
     GroupId = GID_INSERT;
 ]
 
@@ -4762,26 +4762,26 @@ SfxVoidItem InsertPageCountField FN_INSERT_FLD_PGCOUNT
 SfxObjectItem InsertPageFooter FN_INSERT_PAGEFOOTER
 
 [
-    /* flags: */  
-    AutoUpdate = FALSE, 
-    Cachable = Cachable, 
-    FastCall = FALSE, 
-    HasCoreId = FALSE, 
-    HasDialog = FALSE, 
-    ReadOnlyDoc = FALSE, 
-    Toggle = FALSE, 
-    Container = FALSE, 
-    RecordAbsolute = FALSE, 
+    /* flags: */
+    AutoUpdate = FALSE,
+    Cachable = Cachable,
+    FastCall = FALSE,
+    HasCoreId = FALSE,
+    HasDialog = FALSE,
+    ReadOnlyDoc = FALSE,
+    Toggle = FALSE,
+    Container = FALSE,
+    RecordAbsolute = FALSE,
     RecordPerSet;
     Asynchron;
 
-    Readonly = FALSE, 
+    Readonly = FALSE,
 
-    /* config: */ 
-    AccelConfig = FALSE, 
-    MenuConfig = TRUE, 
-    StatusBarConfig = FALSE, 
-    ToolBoxConfig = FALSE, 
+    /* config: */
+    AccelConfig = FALSE,
+    MenuConfig = TRUE,
+    StatusBarConfig = FALSE,
+    ToolBoxConfig = FALSE,
     GroupId = GID_INSERT;
 ]
 
@@ -4789,26 +4789,26 @@ SfxObjectItem InsertPageFooter FN_INSERT_PAGEFOOTER
 SfxObjectItem InsertPageHeader FN_INSERT_PAGEHEADER
 
 [
-    /* flags: */  
-    AutoUpdate = FALSE, 
-    Cachable = Cachable, 
-    FastCall = FALSE, 
-    HasCoreId = FALSE, 
-    HasDialog = FALSE, 
-    ReadOnlyDoc = FALSE, 
-    Toggle = FALSE, 
-    Container = FALSE, 
-    RecordAbsolute = FALSE, 
+    /* flags: */
+    AutoUpdate = FALSE,
+    Cachable = Cachable,
+    FastCall = FALSE,
+    HasCoreId = FALSE,
+    HasDialog = FALSE,
+    ReadOnlyDoc = FALSE,
+    Toggle = FALSE,
+    Container = FALSE,
+    RecordAbsolute = FALSE,
     RecordPerSet;
     Asynchron;
 
-    Readonly = FALSE, 
+    Readonly = FALSE,
 
-    /* config: */ 
-    AccelConfig = FALSE, 
-    MenuConfig = TRUE, 
-    StatusBarConfig = FALSE, 
-    ToolBoxConfig = FALSE, 
+    /* config: */
+    AccelConfig = FALSE,
+    MenuConfig = TRUE,
+    StatusBarConfig = FALSE,
+    ToolBoxConfig = FALSE,
     GroupId = GID_INSERT;
 ]
 
@@ -4816,24 +4816,24 @@ SfxObjectItem InsertPageHeader FN_INSERT_PAGEHEADER
 SfxVoidItem InsertPageNumberField FN_INSERT_FLD_PGNUMBER
 ()
 [
-    /* flags: */  
-    AutoUpdate = FALSE, 
-    Cachable = Cachable, 
-    FastCall = FALSE, 
-    HasCoreId = FALSE, 
-    HasDialog = FALSE, 
-    ReadOnlyDoc = FALSE, 
-    Toggle = FALSE, 
-    Container = FALSE, 
-    RecordAbsolute = FALSE, 
+    /* flags: */
+    AutoUpdate = FALSE,
+    Cachable = Cachable,
+    FastCall = FALSE,
+    HasCoreId = FALSE,
+    HasDialog = FALSE,
+    ReadOnlyDoc = FALSE,
+    Toggle = FALSE,
+    Container = FALSE,
+    RecordAbsolute = FALSE,
     RecordPerSet;
     Asynchron;
 
-    /* config: */ 
-    AccelConfig = TRUE, 
-    MenuConfig = TRUE, 
-    StatusBarConfig = FALSE, 
-    ToolBoxConfig = TRUE, 
+    /* config: */
+    AccelConfig = TRUE,
+    MenuConfig = TRUE,
+    StatusBarConfig = FALSE,
+    ToolBoxConfig = TRUE,
     GroupId = GID_INSERT;
 ]
 
@@ -4841,24 +4841,24 @@ SfxVoidItem InsertPageNumberField FN_INSERT_FLD_PGNUMBER
 SfxVoidItem InsertPara FN_INSERT_BREAK
 ()
 [
-    /* flags: */  
-    AutoUpdate = FALSE, 
-    Cachable = Cachable, 
-    FastCall = FALSE, 
-    HasCoreId = FALSE, 
-    HasDialog = FALSE, 
-    ReadOnlyDoc = FALSE, 
-    Toggle = FALSE, 
-    Container = FALSE, 
-    RecordAbsolute = FALSE, 
+    /* flags: */
+    AutoUpdate = FALSE,
+    Cachable = Cachable,
+    FastCall = FALSE,
+    HasCoreId = FALSE,
+    HasDialog = FALSE,
+    ReadOnlyDoc = FALSE,
+    Toggle = FALSE,
+    Container = FALSE,
+    RecordAbsolute = FALSE,
     RecordPerSet;
     Synchron;
 
-    /* config: */ 
-    AccelConfig = TRUE, 
-    MenuConfig = TRUE, 
-    StatusBarConfig = FALSE, 
-    ToolBoxConfig = TRUE, 
+    /* config: */
+    AccelConfig = TRUE,
+    MenuConfig = TRUE,
+    StatusBarConfig = FALSE,
+    ToolBoxConfig = TRUE,
     GroupId = GID_INSERT;
 ]
 
@@ -4866,24 +4866,24 @@ SfxVoidItem InsertPara FN_INSERT_BREAK
 SfxVoidItem InsertReferenzField FN_INSERT_REF_FIELD
 ()
 [
-    /* flags: */  
-    AutoUpdate = FALSE, 
-    Cachable = Cachable, 
-    FastCall = FALSE, 
-    HasCoreId = FALSE, 
-    HasDialog = FALSE, 
-    ReadOnlyDoc = FALSE, 
-    Toggle = FALSE, 
-    Container = FALSE, 
-    RecordAbsolute = FALSE, 
+    /* flags: */
+    AutoUpdate = FALSE,
+    Cachable = Cachable,
+    FastCall = FALSE,
+    HasCoreId = FALSE,
+    HasDialog = FALSE,
+    ReadOnlyDoc = FALSE,
+    Toggle = FALSE,
+    Container = FALSE,
+    RecordAbsolute = FALSE,
     RecordPerSet;
     Synchron;
 
-    /* config: */ 
-    AccelConfig = TRUE, 
-    MenuConfig = TRUE, 
-    StatusBarConfig = FALSE, 
-    ToolBoxConfig = TRUE, 
+    /* config: */
+    AccelConfig = TRUE,
+    MenuConfig = TRUE,
+    StatusBarConfig = FALSE,
+    ToolBoxConfig = TRUE,
     GroupId = GID_INSERT;
 ]
 
@@ -4891,24 +4891,24 @@ SfxVoidItem InsertReferenzField FN_INSERT_REF_FIELD
 SfxStringItem InsertRegion FN_INSERT_REGION
 ()
 [
-    /* flags: */  
-    AutoUpdate = FALSE, 
-    Cachable = Cachable, 
-    FastCall = FALSE, 
-    HasCoreId = FALSE, 
-    HasDialog = TRUE, 
-    ReadOnlyDoc = FALSE, 
-    Toggle = FALSE, 
-    Container = FALSE, 
-    RecordAbsolute = FALSE, 
+    /* flags: */
+    AutoUpdate = FALSE,
+    Cachable = Cachable,
+    FastCall = FALSE,
+    HasCoreId = FALSE,
+    HasDialog = TRUE,
+    ReadOnlyDoc = FALSE,
+    Toggle = FALSE,
+    Container = FALSE,
+    RecordAbsolute = FALSE,
     RecordPerSet;
     Asynchron;
 
-    /* config: */ 
-    AccelConfig = TRUE, 
-    MenuConfig = TRUE, 
-    StatusBarConfig = FALSE, 
-    ToolBoxConfig = TRUE, 
+    /* config: */
+    AccelConfig = TRUE,
+    MenuConfig = TRUE,
+    StatusBarConfig = FALSE,
+    ToolBoxConfig = TRUE,
     GroupId = GID_INSERT;
 ]
 
@@ -4916,24 +4916,24 @@ SfxStringItem InsertRegion FN_INSERT_REGION
 SfxVoidItem InsertRowDialog FN_TABLE_INSERT_ROW_DLG
 ()
 [
-    /* flags: */  
-    AutoUpdate = FALSE, 
-    Cachable = Cachable, 
-    FastCall = TRUE, 
-    HasCoreId = FALSE, 
-    HasDialog = TRUE, 
-    ReadOnlyDoc = FALSE, 
-    Toggle = FALSE, 
-    Container = FALSE, 
-    RecordAbsolute = FALSE, 
+    /* flags: */
+    AutoUpdate = FALSE,
+    Cachable = Cachable,
+    FastCall = TRUE,
+    HasCoreId = FALSE,
+    HasDialog = TRUE,
+    ReadOnlyDoc = FALSE,
+    Toggle = FALSE,
+    Container = FALSE,
+    RecordAbsolute = FALSE,
     RecordPerSet;
     Asynchron;
 
-    /* config: */ 
-    AccelConfig = FALSE, 
-    MenuConfig = FALSE, 
-    StatusBarConfig = FALSE, 
-    ToolBoxConfig = FALSE, 
+    /* config: */
+    AccelConfig = FALSE,
+    MenuConfig = FALSE,
+    StatusBarConfig = FALSE,
+    ToolBoxConfig = FALSE,
     GroupId = GID_TABLE;
 ]
 
@@ -4941,24 +4941,24 @@ SfxVoidItem InsertRowDialog FN_TABLE_INSERT_ROW_DLG
 SfxVoidItem InsertRows FN_TABLE_INSERT_ROW
 ()
 [
-    /* flags: */  
-    AutoUpdate = FALSE, 
-    Cachable = Cachable, 
-    FastCall = TRUE, 
-    HasCoreId = FALSE, 
-    HasDialog = TRUE, 
-    ReadOnlyDoc = FALSE, 
-    Toggle = FALSE, 
-    Container = FALSE, 
-    RecordAbsolute = FALSE, 
+    /* flags: */
+    AutoUpdate = FALSE,
+    Cachable = Cachable,
+    FastCall = TRUE,
+    HasCoreId = FALSE,
+    HasDialog = TRUE,
+    ReadOnlyDoc = FALSE,
+    Toggle = FALSE,
+    Container = FALSE,
+    RecordAbsolute = FALSE,
     RecordPerSet;
     Asynchron;
 
-    /* config: */ 
-    AccelConfig = FALSE, 
-    MenuConfig = FALSE, 
-    StatusBarConfig = FALSE, 
-    ToolBoxConfig = TRUE, 
+    /* config: */
+    AccelConfig = FALSE,
+    MenuConfig = FALSE,
+    StatusBarConfig = FALSE,
+    ToolBoxConfig = TRUE,
     GroupId = GID_TABLE;
 ]
 
@@ -4966,24 +4966,24 @@ SfxVoidItem InsertRows FN_TABLE_INSERT_ROW
 SfxVoidItem InsertScript FN_JAVAEDIT
 ()
 [
-    /* flags: */  
-    AutoUpdate = FALSE, 
-    Cachable = Cachable, 
-    FastCall = FALSE, 
-    HasCoreId = FALSE, 
-    HasDialog = TRUE, 
-    ReadOnlyDoc = FALSE, 
-    Toggle = FALSE, 
-    Container = FALSE, 
-    RecordAbsolute = FALSE, 
+    /* flags: */
+    AutoUpdate = FALSE,
+    Cachable = Cachable,
+    FastCall = FALSE,
+    HasCoreId = FALSE,
+    HasDialog = TRUE,
+    ReadOnlyDoc = FALSE,
+    Toggle = FALSE,
+    Container = FALSE,
+    RecordAbsolute = FALSE,
     RecordPerSet;
     Asynchron;
 
-    /* config: */ 
-    AccelConfig = TRUE, 
-    MenuConfig = TRUE, 
-    StatusBarConfig = FALSE, 
-    ToolBoxConfig = TRUE, 
+    /* config: */
+    AccelConfig = TRUE,
+    MenuConfig = TRUE,
+    StatusBarConfig = FALSE,
+    ToolBoxConfig = TRUE,
     GroupId = GID_INSERT;
 ]
 
@@ -4991,24 +4991,24 @@ SfxVoidItem InsertScript FN_JAVAEDIT
 SfxVoidItem InsertSoftHyphen FN_INSERT_SOFT_HYPHEN
 ()
 [
-    /* flags: */  
-    AutoUpdate = FALSE, 
-    Cachable = Cachable, 
-    FastCall = TRUE, 
-    HasCoreId = FALSE, 
-    HasDialog = FALSE, 
-    ReadOnlyDoc = FALSE, 
-    Toggle = FALSE, 
-    Container = FALSE, 
-    RecordAbsolute = FALSE, 
+    /* flags: */
+    AutoUpdate = FALSE,
+    Cachable = Cachable,
+    FastCall = TRUE,
+    HasCoreId = FALSE,
+    HasDialog = FALSE,
+    ReadOnlyDoc = FALSE,
+    Toggle = FALSE,
+    Container = FALSE,
+    RecordAbsolute = FALSE,
     RecordPerSet;
     Synchron;
 
-    /* config: */ 
-    AccelConfig = TRUE, 
-    MenuConfig = TRUE, 
-    StatusBarConfig = FALSE, 
-    ToolBoxConfig = TRUE, 
+    /* config: */
+    AccelConfig = TRUE,
+    MenuConfig = TRUE,
+    StatusBarConfig = FALSE,
+    ToolBoxConfig = TRUE,
     GroupId = GID_INSERT;
 ]
 
@@ -5016,24 +5016,24 @@ SfxVoidItem InsertSoftHyphen FN_INSERT_SOFT_HYPHEN
 SfxVoidItem InsertSymbol FN_INSERT_SYMBOL
 ()
 [
-    /* flags: */  
-    AutoUpdate = FALSE, 
-    Cachable = Cachable, 
-    FastCall = FALSE, 
-    HasCoreId = FALSE, 
-    HasDialog = TRUE, 
-    ReadOnlyDoc = FALSE, 
-    Toggle = FALSE, 
-    Container = FALSE, 
-    RecordAbsolute = FALSE, 
+    /* flags: */
+    AutoUpdate = FALSE,
+    Cachable = Cachable,
+    FastCall = FALSE,
+    HasCoreId = FALSE,
+    HasDialog = TRUE,
+    ReadOnlyDoc = FALSE,
+    Toggle = FALSE,
+    Container = FALSE,
+    RecordAbsolute = FALSE,
     RecordPerSet;
     Asynchron;
 
-    /* config: */ 
-    AccelConfig = TRUE, 
-    MenuConfig = TRUE, 
-    StatusBarConfig = FALSE, 
-    ToolBoxConfig = TRUE, 
+    /* config: */
+    AccelConfig = TRUE,
+    MenuConfig = TRUE,
+    StatusBarConfig = FALSE,
+    ToolBoxConfig = TRUE,
     GroupId = GID_INSERT;
 ]
 
@@ -5041,27 +5041,27 @@ SfxVoidItem InsertSymbol FN_INSERT_SYMBOL
 SfxVoidItem InsertTable FN_INSERT_TABLE
 ()
 [
-    /* flags: */  
-    AutoUpdate = FALSE, 
-    Cachable = Cachable, 
-    FastCall = FALSE, 
-    HasCoreId = FALSE, 
-    HasDialog = TRUE, 
-    ReadOnlyDoc = FALSE, 
-    Toggle = FALSE, 
-    Container = FALSE, 
-    RecordAbsolute = FALSE, 
+    /* flags: */
+    AutoUpdate = FALSE,
+    Cachable = Cachable,
+    FastCall = FALSE,
+    HasCoreId = FALSE,
+    HasDialog = TRUE,
+    ReadOnlyDoc = FALSE,
+    Toggle = FALSE,
+    Container = FALSE,
+    RecordAbsolute = FALSE,
     RecordPerSet;
     Asynchron;
 
     /* status: */
     SlotType = SfxUInt16Item
 
-    /* config: */ 
-    AccelConfig = TRUE, 
-    MenuConfig = TRUE, 
-    StatusBarConfig = FALSE, 
-    ToolBoxConfig = TRUE, 
+    /* config: */
+    AccelConfig = TRUE,
+    MenuConfig = TRUE,
+    StatusBarConfig = FALSE,
+    ToolBoxConfig = TRUE,
     GroupId = GID_INSERT;
 ]
 
@@ -5069,24 +5069,24 @@ SfxVoidItem InsertTable FN_INSERT_TABLE
 SfxVoidItem InsertTimeField FN_INSERT_FLD_TIME
 ()
 [
-    /* flags: */  
-    AutoUpdate = FALSE, 
-    Cachable = Cachable, 
-    FastCall = FALSE, 
-    HasCoreId = FALSE, 
-    HasDialog = FALSE, 
-    ReadOnlyDoc = FALSE, 
-    Toggle = FALSE, 
-    Container = FALSE, 
-    RecordAbsolute = FALSE, 
+    /* flags: */
+    AutoUpdate = FALSE,
+    Cachable = Cachable,
+    FastCall = FALSE,
+    HasCoreId = FALSE,
+    HasDialog = FALSE,
+    ReadOnlyDoc = FALSE,
+    Toggle = FALSE,
+    Container = FALSE,
+    RecordAbsolute = FALSE,
     RecordPerSet;
     Synchron;
 
-    /* config: */ 
-    AccelConfig = TRUE, 
-    MenuConfig = TRUE, 
-    StatusBarConfig = FALSE, 
-    ToolBoxConfig = TRUE, 
+    /* config: */
+    AccelConfig = TRUE,
+    MenuConfig = TRUE,
+    StatusBarConfig = FALSE,
+    ToolBoxConfig = TRUE,
     GroupId = GID_INSERT;
 ]
 
@@ -5094,24 +5094,24 @@ SfxVoidItem InsertTimeField FN_INSERT_FLD_TIME
 SfxVoidItem InsertTitleField FN_INSERT_FLD_TITLE
 ()
 [
-    /* flags: */  
-    AutoUpdate = FALSE, 
-    Cachable = Cachable, 
-    FastCall = FALSE, 
-    HasCoreId = FALSE, 
-    HasDialog = FALSE, 
-    ReadOnlyDoc = FALSE, 
-    Toggle = FALSE, 
-    Container = FALSE, 
-    RecordAbsolute = FALSE, 
+    /* flags: */
+    AutoUpdate = FALSE,
+    Cachable = Cachable,
+    FastCall = FALSE,
+    HasCoreId = FALSE,
+    HasDialog = FALSE,
+    ReadOnlyDoc = FALSE,
+    Toggle = FALSE,
+    Container = FALSE,
+    RecordAbsolute = FALSE,
     RecordPerSet;
     Synchron;
 
-    /* config: */ 
-    AccelConfig = TRUE, 
-    MenuConfig = TRUE, 
-    StatusBarConfig = FALSE, 
-    ToolBoxConfig = TRUE, 
+    /* config: */
+    AccelConfig = TRUE,
+    MenuConfig = TRUE,
+    StatusBarConfig = FALSE,
+    ToolBoxConfig = TRUE,
     GroupId = GID_INSERT;
 ]
 
@@ -5119,24 +5119,24 @@ SfxVoidItem InsertTitleField FN_INSERT_FLD_TITLE
 SfxVoidItem InsertTopicField FN_INSERT_FLD_TOPIC
 ()
 [
-    /* flags: */  
-    AutoUpdate = FALSE, 
-    Cachable = Cachable, 
-    FastCall = FALSE, 
-    HasCoreId = FALSE, 
-    HasDialog = FALSE, 
-    ReadOnlyDoc = FALSE, 
-    Toggle = FALSE, 
-    Container = FALSE, 
-    RecordAbsolute = FALSE, 
+    /* flags: */
+    AutoUpdate = FALSE,
+    Cachable = Cachable,
+    FastCall = FALSE,
+    HasCoreId = FALSE,
+    HasDialog = FALSE,
+    ReadOnlyDoc = FALSE,
+    Toggle = FALSE,
+    Container = FALSE,
+    RecordAbsolute = FALSE,
     RecordPerSet;
     Synchron;
 
-    /* config: */ 
-    AccelConfig = TRUE, 
-    MenuConfig = TRUE, 
-    StatusBarConfig = FALSE, 
-    ToolBoxConfig = TRUE, 
+    /* config: */
+    AccelConfig = TRUE,
+    MenuConfig = TRUE,
+    StatusBarConfig = FALSE,
+    ToolBoxConfig = TRUE,
     GroupId = GID_INSERT;
 ]
 
@@ -5144,24 +5144,24 @@ SfxVoidItem InsertTopicField FN_INSERT_FLD_TOPIC
 SfxVoidItem JumpDownThisLevel FN_NUM_BULLET_NEXT
 ()
 [
-    /* flags: */  
-    AutoUpdate = FALSE, 
-    Cachable = Cachable, 
-    FastCall = FALSE, 
-    HasCoreId = FALSE, 
-    HasDialog = FALSE, 
-    ReadOnlyDoc = TRUE, 
-    Toggle = FALSE, 
-    Container = FALSE, 
-    RecordAbsolute = FALSE, 
+    /* flags: */
+    AutoUpdate = FALSE,
+    Cachable = Cachable,
+    FastCall = FALSE,
+    HasCoreId = FALSE,
+    HasDialog = FALSE,
+    ReadOnlyDoc = TRUE,
+    Toggle = FALSE,
+    Container = FALSE,
+    RecordAbsolute = FALSE,
     RecordPerSet;
     Synchron;
 
-    /* config: */ 
-    AccelConfig = TRUE, 
-    MenuConfig = TRUE, 
-    StatusBarConfig = FALSE, 
-    ToolBoxConfig = TRUE, 
+    /* config: */
+    AccelConfig = TRUE,
+    MenuConfig = TRUE,
+    StatusBarConfig = FALSE,
+    ToolBoxConfig = TRUE,
     GroupId = GID_ENUMERATION;
 ]
 
@@ -5169,24 +5169,24 @@ SfxVoidItem JumpDownThisLevel FN_NUM_BULLET_NEXT
 SfxVoidItem JumpToEndOfDoc FN_END_DOC_DIRECT
 ()
 [
-    /* flags: */  
-    AutoUpdate = FALSE, 
-    Cachable = Cachable, 
-    FastCall = FALSE, 
-    HasCoreId = FALSE, 
-    HasDialog = FALSE, 
-    ReadOnlyDoc = TRUE, 
-    Toggle = FALSE, 
-    Container = FALSE, 
-    RecordAbsolute = FALSE, 
+    /* flags: */
+    AutoUpdate = FALSE,
+    Cachable = Cachable,
+    FastCall = FALSE,
+    HasCoreId = FALSE,
+    HasDialog = FALSE,
+    ReadOnlyDoc = TRUE,
+    Toggle = FALSE,
+    Container = FALSE,
+    RecordAbsolute = FALSE,
     RecordPerSet;
     Synchron;
 
-    /* config: */ 
-    AccelConfig = TRUE, 
-    MenuConfig = TRUE, 
-    StatusBarConfig = FALSE, 
-    ToolBoxConfig = TRUE, 
+    /* config: */
+    AccelConfig = TRUE,
+    MenuConfig = TRUE,
+    StatusBarConfig = FALSE,
+    ToolBoxConfig = TRUE,
     GroupId = GID_NAVIGATOR;
 ]
 
@@ -5194,24 +5194,24 @@ SfxVoidItem JumpToEndOfDoc FN_END_DOC_DIRECT
 SfxVoidItem JumpToFooter FN_TO_FOOTER
 ()
 [
-    /* flags: */  
-    AutoUpdate = FALSE, 
-    Cachable = Cachable, 
-    FastCall = TRUE, 
-    HasCoreId = FALSE, 
-    HasDialog = FALSE, 
-    ReadOnlyDoc = TRUE, 
-    Toggle = FALSE, 
-    Container = FALSE, 
-    RecordAbsolute = FALSE, 
+    /* flags: */
+    AutoUpdate = FALSE,
+    Cachable = Cachable,
+    FastCall = TRUE,
+    HasCoreId = FALSE,
+    HasDialog = FALSE,
+    ReadOnlyDoc = TRUE,
+    Toggle = FALSE,
+    Container = FALSE,
+    RecordAbsolute = FALSE,
     RecordPerSet;
     Synchron;
 
-    /* config: */ 
-    AccelConfig = TRUE, 
-    MenuConfig = TRUE, 
-    StatusBarConfig = FALSE, 
-    ToolBoxConfig = TRUE, 
+    /* config: */
+    AccelConfig = TRUE,
+    MenuConfig = TRUE,
+    StatusBarConfig = FALSE,
+    ToolBoxConfig = TRUE,
     GroupId = GID_NAVIGATOR;
 ]
 
@@ -5219,24 +5219,24 @@ SfxVoidItem JumpToFooter FN_TO_FOOTER
 SfxVoidItem JumpToFootnoteOrAnchor FN_FOOTNOTE_TO_ANCHOR
 ()
 [
-    /* flags: */  
-    AutoUpdate = FALSE, 
-    Cachable = Cachable, 
-    FastCall = TRUE, 
-    HasCoreId = FALSE, 
-    HasDialog = FALSE, 
-    ReadOnlyDoc = TRUE, 
-    Toggle = FALSE, 
-    Container = FALSE, 
-    RecordAbsolute = FALSE, 
+    /* flags: */
+    AutoUpdate = FALSE,
+    Cachable = Cachable,
+    FastCall = TRUE,
+    HasCoreId = FALSE,
+    HasDialog = FALSE,
+    ReadOnlyDoc = TRUE,
+    Toggle = FALSE,
+    Container = FALSE,
+    RecordAbsolute = FALSE,
     RecordPerSet;
     Synchron;
 
-    /* config: */ 
-    AccelConfig = TRUE, 
-    MenuConfig = TRUE, 
-    StatusBarConfig = FALSE, 
-    ToolBoxConfig = TRUE, 
+    /* config: */
+    AccelConfig = TRUE,
+    MenuConfig = TRUE,
+    StatusBarConfig = FALSE,
+    ToolBoxConfig = TRUE,
     GroupId = GID_NAVIGATOR;
 ]
 
@@ -5244,24 +5244,24 @@ SfxVoidItem JumpToFootnoteOrAnchor FN_FOOTNOTE_TO_ANCHOR
 SfxVoidItem JumpToHeader FN_TO_HEADER
 ()
 [
-    /* flags: */  
-    AutoUpdate = FALSE, 
-    Cachable = Cachable, 
-    FastCall = TRUE, 
-    HasCoreId = FALSE, 
-    HasDialog = FALSE, 
-    ReadOnlyDoc = TRUE, 
-    Toggle = FALSE, 
-    Container = FALSE, 
-    RecordAbsolute = FALSE, 
+    /* flags: */
+    AutoUpdate = FALSE,
+    Cachable = Cachable,
+    FastCall = TRUE,
+    HasCoreId = FALSE,
+    HasDialog = FALSE,
+    ReadOnlyDoc = TRUE,
+    Toggle = FALSE,
+    Container = FALSE,
+    RecordAbsolute = FALSE,
     RecordPerSet;
     Synchron;
 
-    /* config: */ 
-    AccelConfig = TRUE, 
-    MenuConfig = TRUE, 
-    StatusBarConfig = FALSE, 
-    ToolBoxConfig = TRUE, 
+    /* config: */
+    AccelConfig = TRUE,
+    MenuConfig = TRUE,
+    StatusBarConfig = FALSE,
+    ToolBoxConfig = TRUE,
     GroupId = GID_NAVIGATOR;
 ]
 
@@ -5269,24 +5269,24 @@ SfxVoidItem JumpToHeader FN_TO_HEADER
 SfxBoolItem JumpToNextBookmark FN_NEXT_BOOKMARK
 ()
 [
-    /* flags: */  
-    AutoUpdate = FALSE, 
-    Cachable = Cachable, 
-    FastCall = TRUE, 
-    HasCoreId = FALSE, 
-    HasDialog = FALSE, 
-    ReadOnlyDoc = TRUE, 
-    Toggle = FALSE, 
-    Container = FALSE, 
-    RecordAbsolute = FALSE, 
+    /* flags: */
+    AutoUpdate = FALSE,
+    Cachable = Cachable,
+    FastCall = TRUE,
+    HasCoreId = FALSE,
+    HasDialog = FALSE,
+    ReadOnlyDoc = TRUE,
+    Toggle = FALSE,
+    Container = FALSE,
+    RecordAbsolute = FALSE,
     RecordPerSet;
     Synchron;
 
-    /* config: */ 
-    AccelConfig = TRUE, 
-    MenuConfig = TRUE, 
-    StatusBarConfig = FALSE, 
-    ToolBoxConfig = TRUE, 
+    /* config: */
+    AccelConfig = TRUE,
+    MenuConfig = TRUE,
+    StatusBarConfig = FALSE,
+    ToolBoxConfig = TRUE,
     GroupId = GID_NAVIGATOR;
 ]
 
@@ -5294,24 +5294,24 @@ SfxBoolItem JumpToNextBookmark FN_NEXT_BOOKMARK
 SfxBoolItem JumpToNextFootnote FN_NEXT_FOOTNOTE
 ()
 [
-    /* flags: */  
-    AutoUpdate = FALSE, 
-    Cachable = Cachable, 
-    FastCall = TRUE, 
-    HasCoreId = FALSE, 
-    HasDialog = FALSE, 
-    ReadOnlyDoc = TRUE, 
-    Toggle = FALSE, 
-    Container = FALSE, 
-    RecordAbsolute = FALSE, 
+    /* flags: */
+    AutoUpdate = FALSE,
+    Cachable = Cachable,
+    FastCall = TRUE,
+    HasCoreId = FALSE,
+    HasDialog = FALSE,
+    ReadOnlyDoc = TRUE,
+    Toggle = FALSE,
+    Container = FALSE,
+    RecordAbsolute = FALSE,
     RecordPerSet;
     Synchron;
 
-    /* config: */ 
-    AccelConfig = TRUE, 
-    MenuConfig = TRUE, 
-    StatusBarConfig = FALSE, 
-    ToolBoxConfig = TRUE, 
+    /* config: */
+    AccelConfig = TRUE,
+    MenuConfig = TRUE,
+    StatusBarConfig = FALSE,
+    ToolBoxConfig = TRUE,
     GroupId = GID_NAVIGATOR;
 ]
 
@@ -5319,24 +5319,24 @@ SfxBoolItem JumpToNextFootnote FN_NEXT_FOOTNOTE
 SfxBoolItem JumpToNextFrame FN_CNTNT_TO_NEXT_FRAME
 ()
 [
-    /* flags: */  
-    AutoUpdate = FALSE, 
-    Cachable = Cachable, 
-    FastCall = TRUE, 
-    HasCoreId = FALSE, 
-    HasDialog = FALSE, 
-    ReadOnlyDoc = TRUE, 
-    Toggle = FALSE, 
-    Container = FALSE, 
-    RecordAbsolute = FALSE, 
+    /* flags: */
+    AutoUpdate = FALSE,
+    Cachable = Cachable,
+    FastCall = TRUE,
+    HasCoreId = FALSE,
+    HasDialog = FALSE,
+    ReadOnlyDoc = TRUE,
+    Toggle = FALSE,
+    Container = FALSE,
+    RecordAbsolute = FALSE,
     RecordPerSet;
     Synchron;
 
-    /* config: */ 
-    AccelConfig = TRUE, 
-    MenuConfig = TRUE, 
-    StatusBarConfig = FALSE, 
-    ToolBoxConfig = TRUE, 
+    /* config: */
+    AccelConfig = TRUE,
+    MenuConfig = TRUE,
+    StatusBarConfig = FALSE,
+    ToolBoxConfig = TRUE,
     GroupId = GID_NAVIGATOR;
 ]
 
@@ -5344,24 +5344,24 @@ SfxBoolItem JumpToNextFrame FN_CNTNT_TO_NEXT_FRAME
 SfxBoolItem JumpToNextRegion FN_GOTO_NEXT_REGION
 ()
 [
-    /* flags: */  
-    AutoUpdate = FALSE, 
-    Cachable = Cachable, 
-    FastCall = FALSE, 
-    HasCoreId = FALSE, 
-    HasDialog = FALSE, 
-    ReadOnlyDoc = TRUE, 
-    Toggle = FALSE, 
-    Container = FALSE, 
-    RecordAbsolute = FALSE, 
+    /* flags: */
+    AutoUpdate = FALSE,
+    Cachable = Cachable,
+    FastCall = FALSE,
+    HasCoreId = FALSE,
+    HasDialog = FALSE,
+    ReadOnlyDoc = TRUE,
+    Toggle = FALSE,
+    Container = FALSE,
+    RecordAbsolute = FALSE,
     RecordPerSet;
     Synchron;
 
-    /* config: */ 
-    AccelConfig = TRUE, 
-    MenuConfig = TRUE, 
-    StatusBarConfig = FALSE, 
-    ToolBoxConfig = TRUE, 
+    /* config: */
+    AccelConfig = TRUE,
+    MenuConfig = TRUE,
+    StatusBarConfig = FALSE,
+    ToolBoxConfig = TRUE,
     GroupId = GID_NAVIGATOR;
 ]
 
@@ -5369,24 +5369,24 @@ SfxBoolItem JumpToNextRegion FN_GOTO_NEXT_REGION
 SfxBoolItem JumpToNextTable FN_NEXT_TABLE
 ()
 [
-    /* flags: */  
-    AutoUpdate = FALSE, 
-    Cachable = Cachable, 
-    FastCall = TRUE, 
-    HasCoreId = FALSE, 
-    HasDialog = FALSE, 
-    ReadOnlyDoc = TRUE, 
-    Toggle = FALSE, 
-    Container = FALSE, 
-    RecordAbsolute = FALSE, 
+    /* flags: */
+    AutoUpdate = FALSE,
+    Cachable = Cachable,
+    FastCall = TRUE,
+    HasCoreId = FALSE,
+    HasDialog = FALSE,
+    ReadOnlyDoc = TRUE,
+    Toggle = FALSE,
+    Container = FALSE,
+    RecordAbsolute = FALSE,
     RecordPerSet;
     Synchron;
 
-    /* config: */ 
-    AccelConfig = TRUE, 
-    MenuConfig = TRUE, 
-    StatusBarConfig = FALSE, 
-    ToolBoxConfig = TRUE, 
+    /* config: */
+    AccelConfig = TRUE,
+    MenuConfig = TRUE,
+    StatusBarConfig = FALSE,
+    ToolBoxConfig = TRUE,
     GroupId = GID_NAVIGATOR;
 ]
 
@@ -5394,24 +5394,24 @@ SfxBoolItem JumpToNextTable FN_NEXT_TABLE
 SfxBoolItem JumpToPrevBookmark FN_PREV_BOOKMARK
 ()
 [
-    /* flags: */  
-    AutoUpdate = FALSE, 
-    Cachable = Cachable, 
-    FastCall = TRUE, 
-    HasCoreId = FALSE, 
-    HasDialog = FALSE, 
-    ReadOnlyDoc = TRUE, 
-    Toggle = FALSE, 
-    Container = FALSE, 
-    RecordAbsolute = FALSE, 
+    /* flags: */
+    AutoUpdate = FALSE,
+    Cachable = Cachable,
+    FastCall = TRUE,
+    HasCoreId = FALSE,
+    HasDialog = FALSE,
+    ReadOnlyDoc = TRUE,
+    Toggle = FALSE,
+    Container = FALSE,
+    RecordAbsolute = FALSE,
     RecordPerSet;
     Synchron;
 
-    /* config: */ 
-    AccelConfig = TRUE, 
-    MenuConfig = TRUE, 
-    StatusBarConfig = FALSE, 
-    ToolBoxConfig = TRUE, 
+    /* config: */
+    AccelConfig = TRUE,
+    MenuConfig = TRUE,
+    StatusBarConfig = FALSE,
+    ToolBoxConfig = TRUE,
     GroupId = GID_NAVIGATOR;
 ]
 
@@ -5419,24 +5419,24 @@ SfxBoolItem JumpToPrevBookmark FN_PREV_BOOKMARK
 SfxBoolItem JumpToPrevFootnote FN_PREV_FOOTNOTE
 ()
 [
-    /* flags: */  
-    AutoUpdate = FALSE, 
-    Cachable = Cachable, 
-    FastCall = TRUE, 
-    HasCoreId = FALSE, 
-    HasDialog = FALSE, 
-    ReadOnlyDoc = TRUE, 
-    Toggle = FALSE, 
-    Container = FALSE, 
-    RecordAbsolute = FALSE, 
+    /* flags: */
+    AutoUpdate = FALSE,
+    Cachable = Cachable,
+    FastCall = TRUE,
+    HasCoreId = FALSE,
+    HasDialog = FALSE,
+    ReadOnlyDoc = TRUE,
+    Toggle = FALSE,
+    Container = FALSE,
+    RecordAbsolute = FALSE,
     RecordPerSet;
     Synchron;
 
-    /* config: */ 
-    AccelConfig = TRUE, 
-    MenuConfig = TRUE, 
-    StatusBarConfig = FALSE, 
-    ToolBoxConfig = TRUE, 
+    /* config: */
+    AccelConfig = TRUE,
+    MenuConfig = TRUE,
+    StatusBarConfig = FALSE,
+    ToolBoxConfig = TRUE,
     GroupId = GID_NAVIGATOR;
 ]
 
@@ -5444,24 +5444,24 @@ SfxBoolItem JumpToPrevFootnote FN_PREV_FOOTNOTE
 SfxBoolItem JumpToPrevRegion FN_GOTO_PREV_REGION
 ()
 [
-    /* flags: */  
-    AutoUpdate = FALSE, 
-    Cachable = Cachable, 
-    FastCall = FALSE, 
-    HasCoreId = FALSE, 
-    HasDialog = FALSE, 
-    ReadOnlyDoc = TRUE, 
-    Toggle = FALSE, 
-    Container = FALSE, 
-    RecordAbsolute = FALSE, 
+    /* flags: */
+    AutoUpdate = FALSE,
+    Cachable = Cachable,
+    FastCall = FALSE,
+    HasCoreId = FALSE,
+    HasDialog = FALSE,
+    ReadOnlyDoc = TRUE,
+    Toggle = FALSE,
+    Container = FALSE,
+    RecordAbsolute = FALSE,
     RecordPerSet;
     Synchron;
 
-    /* config: */ 
-    AccelConfig = TRUE, 
-    MenuConfig = TRUE, 
-    StatusBarConfig = FALSE, 
-    ToolBoxConfig = TRUE, 
+    /* config: */
+    AccelConfig = TRUE,
+    MenuConfig = TRUE,
+    StatusBarConfig = FALSE,
+    ToolBoxConfig = TRUE,
     GroupId = GID_NAVIGATOR;
 ]
 
@@ -5469,24 +5469,24 @@ SfxBoolItem JumpToPrevRegion FN_GOTO_PREV_REGION
 SfxBoolItem JumpToPrevTable FN_PREV_TABLE
 ()
 [
-    /* flags: */  
-    AutoUpdate = FALSE, 
-    Cachable = Cachable, 
-    FastCall = TRUE, 
-    HasCoreId = FALSE, 
-    HasDialog = FALSE, 
-    ReadOnlyDoc = TRUE, 
-    Toggle = FALSE, 
-    Container = FALSE, 
-    RecordAbsolute = FALSE, 
+    /* flags: */
+    AutoUpdate = FALSE,
+    Cachable = Cachable,
+    FastCall = TRUE,
+    HasCoreId = FALSE,
+    HasDialog = FALSE,
+    ReadOnlyDoc = TRUE,
+    Toggle = FALSE,
+    Container = FALSE,
+    RecordAbsolute = FALSE,
     RecordPerSet;
     Synchron;
 
-    /* config: */ 
-    AccelConfig = TRUE, 
-    MenuConfig = TRUE, 
-    StatusBarConfig = FALSE, 
-    ToolBoxConfig = TRUE, 
+    /* config: */
+    AccelConfig = TRUE,
+    MenuConfig = TRUE,
+    StatusBarConfig = FALSE,
+    ToolBoxConfig = TRUE,
     GroupId = GID_NAVIGATOR;
 ]
 
@@ -5494,24 +5494,24 @@ SfxBoolItem JumpToPrevTable FN_PREV_TABLE
 SfxVoidItem JumpToReference FN_GOTO_REFERENCE
 ()
 [
-    /* flags: */  
-    AutoUpdate = FALSE, 
-    Cachable = Cachable, 
-    FastCall = FALSE, 
-    HasCoreId = FALSE, 
-    HasDialog = FALSE, 
-    ReadOnlyDoc = TRUE, 
-    Toggle = FALSE, 
-    Container = FALSE, 
-    RecordAbsolute = FALSE, 
+    /* flags: */
+    AutoUpdate = FALSE,
+    Cachable = Cachable,
+    FastCall = FALSE,
+    HasCoreId = FALSE,
+    HasDialog = FALSE,
+    ReadOnlyDoc = TRUE,
+    Toggle = FALSE,
+    Container = FALSE,
+    RecordAbsolute = FALSE,
     RecordPerSet;
     Synchron;
 
-    /* config: */ 
-    AccelConfig = TRUE, 
-    MenuConfig = TRUE, 
-    StatusBarConfig = FALSE, 
-    ToolBoxConfig = TRUE, 
+    /* config: */
+    AccelConfig = TRUE,
+    MenuConfig = TRUE,
+    StatusBarConfig = FALSE,
+    ToolBoxConfig = TRUE,
     GroupId = GID_NAVIGATOR;
 ]
 
@@ -5519,24 +5519,24 @@ SfxVoidItem JumpToReference FN_GOTO_REFERENCE
 SfxVoidItem JumpToStartOfDoc FN_START_DOC_DIRECT
 ()
 [
-    /* flags: */  
-    AutoUpdate = FALSE, 
-    Cachable = Cachable, 
-    FastCall = FALSE, 
-    HasCoreId = FALSE, 
-    HasDialog = FALSE, 
-    ReadOnlyDoc = TRUE, 
-    Toggle = FALSE, 
-    Container = FALSE, 
-    RecordAbsolute = FALSE, 
+    /* flags: */
+    AutoUpdate = FALSE,
+    Cachable = Cachable,
+    FastCall = FALSE,
+    HasCoreId = FALSE,
+    HasDialog = FALSE,
+    ReadOnlyDoc = TRUE,
+    Toggle = FALSE,
+    Container = FALSE,
+    RecordAbsolute = FALSE,
     RecordPerSet;
     Synchron;
 
-    /* config: */ 
-    AccelConfig = TRUE, 
-    MenuConfig = TRUE, 
-    StatusBarConfig = FALSE, 
-    ToolBoxConfig = TRUE, 
+    /* config: */
+    AccelConfig = TRUE,
+    MenuConfig = TRUE,
+    StatusBarConfig = FALSE,
+    ToolBoxConfig = TRUE,
     GroupId = GID_NAVIGATOR;
 ]
 
@@ -5544,24 +5544,24 @@ SfxVoidItem JumpToStartOfDoc FN_START_DOC_DIRECT
 SfxVoidItem JumpUpThisLevel FN_NUM_BULLET_PREV
 ()
 [
-    /* flags: */  
-    AutoUpdate = FALSE, 
-    Cachable = Cachable, 
-    FastCall = FALSE, 
-    HasCoreId = FALSE, 
-    HasDialog = FALSE, 
-    ReadOnlyDoc = TRUE, 
-    Toggle = FALSE, 
-    Container = FALSE, 
-    RecordAbsolute = FALSE, 
+    /* flags: */
+    AutoUpdate = FALSE,
+    Cachable = Cachable,
+    FastCall = FALSE,
+    HasCoreId = FALSE,
+    HasDialog = FALSE,
+    ReadOnlyDoc = TRUE,
+    Toggle = FALSE,
+    Container = FALSE,
+    RecordAbsolute = FALSE,
     RecordPerSet;
     Synchron;
 
-    /* config: */ 
-    AccelConfig = TRUE, 
-    MenuConfig = TRUE, 
-    StatusBarConfig = FALSE, 
-    ToolBoxConfig = TRUE, 
+    /* config: */
+    AccelConfig = TRUE,
+    MenuConfig = TRUE,
+    StatusBarConfig = FALSE,
+    ToolBoxConfig = TRUE,
     GroupId = GID_ENUMERATION;
 ]
 
@@ -5569,24 +5569,24 @@ SfxVoidItem JumpUpThisLevel FN_NUM_BULLET_PREV
 SfxVoidItem LineDownSel FN_LINE_DOWN_SEL
 ()
 [
-    /* flags: */  
-    AutoUpdate = FALSE, 
-    Cachable = Cachable, 
-    FastCall = TRUE, 
-    HasCoreId = FALSE, 
-    HasDialog = FALSE, 
-    ReadOnlyDoc = TRUE, 
-    Toggle = FALSE, 
-    Container = FALSE, 
-    RecordAbsolute = FALSE, 
+    /* flags: */
+    AutoUpdate = FALSE,
+    Cachable = Cachable,
+    FastCall = TRUE,
+    HasCoreId = FALSE,
+    HasDialog = FALSE,
+    ReadOnlyDoc = TRUE,
+    Toggle = FALSE,
+    Container = FALSE,
+    RecordAbsolute = FALSE,
     RecordPerSet;
     Synchron;
 
-    /* config: */ 
-    AccelConfig = TRUE, 
-    MenuConfig = FALSE, 
-    StatusBarConfig = FALSE, 
-    ToolBoxConfig = FALSE, 
+    /* config: */
+    AccelConfig = TRUE,
+    MenuConfig = FALSE,
+    StatusBarConfig = FALSE,
+    ToolBoxConfig = FALSE,
     GroupId = GID_NAVIGATOR;
 ]
 
@@ -5594,24 +5594,24 @@ SfxVoidItem LineDownSel FN_LINE_DOWN_SEL
 SfxVoidItem LineNumberingDialog FN_LINE_NUMBERING_DLG
 ()
 [
-    /* flags: */  
-    AutoUpdate = FALSE, 
-    Cachable = Cachable, 
-    FastCall = FALSE, 
-    HasCoreId = FALSE, 
-    HasDialog = TRUE, 
-    ReadOnlyDoc = FALSE, 
-    Toggle = FALSE, 
-    Container = FALSE, 
-    RecordAbsolute = FALSE, 
+    /* flags: */
+    AutoUpdate = FALSE,
+    Cachable = Cachable,
+    FastCall = FALSE,
+    HasCoreId = FALSE,
+    HasDialog = TRUE,
+    ReadOnlyDoc = FALSE,
+    Toggle = FALSE,
+    Container = FALSE,
+    RecordAbsolute = FALSE,
     RecordPerItem;
     Asynchron;
 
-    /* config: */ 
-    AccelConfig = TRUE, 
-    MenuConfig = TRUE, 
-    StatusBarConfig = FALSE, 
-    ToolBoxConfig = TRUE, 
+    /* config: */
+    AccelConfig = TRUE,
+    MenuConfig = TRUE,
+    StatusBarConfig = FALSE,
+    ToolBoxConfig = TRUE,
     GroupId = GID_FORMAT;
 ]
 
@@ -5619,24 +5619,24 @@ SfxVoidItem LineNumberingDialog FN_LINE_NUMBERING_DLG
 SfxVoidItem LineUpSel FN_LINE_UP_SEL
 ()
 [
-    /* flags: */  
-    AutoUpdate = FALSE, 
-    Cachable = Cachable, 
-    FastCall = TRUE, 
-    HasCoreId = FALSE, 
-    HasDialog = FALSE, 
-    ReadOnlyDoc = TRUE, 
-    Toggle = FALSE, 
-    Container = FALSE, 
-    RecordAbsolute = FALSE, 
+    /* flags: */
+    AutoUpdate = FALSE,
+    Cachable = Cachable,
+    FastCall = TRUE,
+    HasCoreId = FALSE,
+    HasDialog = FALSE,
+    ReadOnlyDoc = TRUE,
+    Toggle = FALSE,
+    Container = FALSE,
+    RecordAbsolute = FALSE,
     RecordPerSet;
     Synchron;
 
-    /* config: */ 
-    AccelConfig = TRUE, 
-    MenuConfig = FALSE, 
-    StatusBarConfig = FALSE, 
-    ToolBoxConfig = FALSE, 
+    /* config: */
+    AccelConfig = TRUE,
+    MenuConfig = FALSE,
+    StatusBarConfig = FALSE,
+    ToolBoxConfig = FALSE,
     GroupId = GID_NAVIGATOR;
 ]
 
@@ -5644,24 +5644,24 @@ SfxVoidItem LineUpSel FN_LINE_UP_SEL
 SfxVoidItem LinkDialog FN_EDIT_LINK_DLG
 ()
 [
-    /* flags: */  
-    AutoUpdate = FALSE, 
-    Cachable = Cachable, 
-    FastCall = FALSE, 
-    HasCoreId = FALSE, 
-    HasDialog = TRUE, 
-    ReadOnlyDoc = FALSE, 
-    Toggle = FALSE, 
-    Container = FALSE, 
-    RecordAbsolute = FALSE, 
+    /* flags: */
+    AutoUpdate = FALSE,
+    Cachable = Cachable,
+    FastCall = FALSE,
+    HasCoreId = FALSE,
+    HasDialog = TRUE,
+    ReadOnlyDoc = FALSE,
+    Toggle = FALSE,
+    Container = FALSE,
+    RecordAbsolute = FALSE,
     RecordPerSet;
     Asynchron;
 
-    /* config: */ 
-    AccelConfig = TRUE, 
-    MenuConfig = TRUE, 
-    StatusBarConfig = FALSE, 
-    ToolBoxConfig = TRUE, 
+    /* config: */
+    AccelConfig = TRUE,
+    MenuConfig = TRUE,
+    StatusBarConfig = FALSE,
+    ToolBoxConfig = TRUE,
     GroupId = GID_EDIT;
 ]
 
@@ -5669,24 +5669,24 @@ SfxVoidItem LinkDialog FN_EDIT_LINK_DLG
 SfxVoidItem LoadStyles SID_TEMPLATE_LOAD
 ()
 [
-    /* flags: */  
-    AutoUpdate = FALSE, 
-    Cachable = Cachable, 
-    FastCall = TRUE, 
-    HasCoreId = FALSE, 
-    HasDialog = TRUE, 
-    ReadOnlyDoc = FALSE, 
-    Toggle = FALSE, 
-    Container = FALSE, 
-    RecordAbsolute = FALSE, 
+    /* flags: */
+    AutoUpdate = FALSE,
+    Cachable = Cachable,
+    FastCall = TRUE,
+    HasCoreId = FALSE,
+    HasDialog = TRUE,
+    ReadOnlyDoc = FALSE,
+    Toggle = FALSE,
+    Container = FALSE,
+    RecordAbsolute = FALSE,
     RecordPerSet;
     Asynchron;
 
-    /* config: */ 
-    AccelConfig = TRUE, 
-    MenuConfig = TRUE, 
-    StatusBarConfig = FALSE, 
-    ToolBoxConfig = TRUE, 
+    /* config: */
+    AccelConfig = TRUE,
+    MenuConfig = TRUE,
+    StatusBarConfig = FALSE,
+    ToolBoxConfig = TRUE,
     GroupId = GID_FORMAT;
 ]
 
@@ -5694,26 +5694,26 @@ SfxVoidItem LoadStyles SID_TEMPLATE_LOAD
 SfxBoolItem Marks FN_VIEW_MARKS
 
 [
-    /* flags: */  
-    AutoUpdate = FALSE, 
-    Cachable = Cachable, 
-    FastCall = FALSE, 
-    HasCoreId = FALSE, 
-    HasDialog = FALSE, 
-    ReadOnlyDoc = TRUE, 
-    Toggle = FALSE, 
-    Container = FALSE, 
-    RecordAbsolute = FALSE, 
+    /* flags: */
+    AutoUpdate = FALSE,
+    Cachable = Cachable,
+    FastCall = FALSE,
+    HasCoreId = FALSE,
+    HasDialog = FALSE,
+    ReadOnlyDoc = TRUE,
+    Toggle = FALSE,
+    Container = FALSE,
+    RecordAbsolute = FALSE,
     RecordPerSet;
     Synchron;
 
-    Readonly = FALSE, 
+    Readonly = FALSE,
 
-    /* config: */ 
-    AccelConfig = TRUE, 
-    MenuConfig = TRUE, 
-    StatusBarConfig = FALSE, 
-    ToolBoxConfig = TRUE, 
+    /* config: */
+    AccelConfig = TRUE,
+    MenuConfig = TRUE,
+    StatusBarConfig = FALSE,
+    ToolBoxConfig = TRUE,
     GroupId = GID_VIEW;
 ]
 
@@ -5721,24 +5721,24 @@ SfxBoolItem Marks FN_VIEW_MARKS
 SfxVoidItem MergeCells FN_TABLE_MERGE_CELLS
 ()
 [
-    /* flags: */  
-    AutoUpdate = FALSE, 
-    Cachable = Cachable, 
-    FastCall = TRUE, 
-    HasCoreId = FALSE, 
-    HasDialog = FALSE, 
-    ReadOnlyDoc = FALSE, 
-    Toggle = FALSE, 
-    Container = FALSE, 
-    RecordAbsolute = FALSE, 
+    /* flags: */
+    AutoUpdate = FALSE,
+    Cachable = Cachable,
+    FastCall = TRUE,
+    HasCoreId = FALSE,
+    HasDialog = FALSE,
+    ReadOnlyDoc = FALSE,
+    Toggle = FALSE,
+    Container = FALSE,
+    RecordAbsolute = FALSE,
     RecordPerSet;
     Synchron;
 
-    /* config: */ 
-    AccelConfig = TRUE, 
-    MenuConfig = TRUE, 
-    StatusBarConfig = FALSE, 
-    ToolBoxConfig = TRUE, 
+    /* config: */
+    AccelConfig = TRUE,
+    MenuConfig = TRUE,
+    StatusBarConfig = FALSE,
+    ToolBoxConfig = TRUE,
     GroupId = GID_TABLE;
 ]
 
@@ -5746,24 +5746,24 @@ SfxVoidItem MergeCells FN_TABLE_MERGE_CELLS
 SfxVoidItem MergeDialog FN_QRY_MERGE
 ()
 [
-    /* flags: */  
-    AutoUpdate = TRUE, 
-    Cachable = Cachable, 
-    FastCall = TRUE, 
-    HasCoreId = FALSE, 
-    HasDialog = FALSE, 
-    ReadOnlyDoc = TRUE, 
-    Toggle = FALSE, 
-    Container = TRUE, 
-    RecordAbsolute = FALSE, 
+    /* flags: */
+    AutoUpdate = TRUE,
+    Cachable = Cachable,
+    FastCall = TRUE,
+    HasCoreId = FALSE,
+    HasDialog = FALSE,
+    ReadOnlyDoc = TRUE,
+    Toggle = FALSE,
+    Container = TRUE,
+    RecordAbsolute = FALSE,
     RecordPerSet;
     Synchron;
 
-    /* config: */ 
-    AccelConfig = TRUE, 
-    MenuConfig = TRUE, 
-    StatusBarConfig = FALSE, 
-    ToolBoxConfig = TRUE, 
+    /* config: */
+    AccelConfig = TRUE,
+    MenuConfig = TRUE,
+    StatusBarConfig = FALSE,
+    ToolBoxConfig = TRUE,
     GroupId = GID_DOCUMENT;
 ]
 
@@ -5771,24 +5771,24 @@ SfxVoidItem MergeDialog FN_QRY_MERGE
 SfxBoolItem MergeTable FN_TABLE_MERGE_TABLE
 ()
 [
-    /* flags: */  
-    AutoUpdate = FALSE, 
-    Cachable = Cachable, 
-    FastCall = TRUE, 
-    HasCoreId = FALSE, 
-    HasDialog = FALSE, 
-    ReadOnlyDoc = FALSE, 
-    Toggle = FALSE, 
-    Container = FALSE, 
-    RecordAbsolute = FALSE, 
+    /* flags: */
+    AutoUpdate = FALSE,
+    Cachable = Cachable,
+    FastCall = TRUE,
+    HasCoreId = FALSE,
+    HasDialog = FALSE,
+    ReadOnlyDoc = FALSE,
+    Toggle = FALSE,
+    Container = FALSE,
+    RecordAbsolute = FALSE,
     RecordPerSet;
     Synchron;
 
-    /* config: */ 
-    AccelConfig = TRUE, 
-    MenuConfig = TRUE, 
-    StatusBarConfig = FALSE, 
-    ToolBoxConfig = TRUE, 
+    /* config: */
+    AccelConfig = TRUE,
+    MenuConfig = TRUE,
+    StatusBarConfig = FALSE,
+    ToolBoxConfig = TRUE,
     GroupId = GID_TABLE;
 ]
 
@@ -5796,27 +5796,27 @@ SfxBoolItem MergeTable FN_TABLE_MERGE_TABLE
 SfxBoolItem MirrorGraphicOnEvenPages FN_GRAPHIC_MIRROR_ON_EVEN_PAGES
 ()
 [
-    /* flags: */  
-    AutoUpdate = TRUE, 
-    Cachable = Cachable, 
-    FastCall = TRUE, 
-    HasCoreId = FALSE, 
-    HasDialog = FALSE, 
-    ReadOnlyDoc = FALSE, 
-    Toggle = FALSE, 
-    Container = FALSE, 
-    RecordAbsolute = FALSE, 
+    /* flags: */
+    AutoUpdate = TRUE,
+    Cachable = Cachable,
+    FastCall = TRUE,
+    HasCoreId = FALSE,
+    HasDialog = FALSE,
+    ReadOnlyDoc = FALSE,
+    Toggle = FALSE,
+    Container = FALSE,
+    RecordAbsolute = FALSE,
     RecordPerSet;
     Synchron;
 
     /* status: */
     SlotType = SfxBoolItem
 
-    /* config: */ 
-    AccelConfig = TRUE, 
-    MenuConfig = TRUE, 
-    StatusBarConfig = FALSE, 
-    ToolBoxConfig = TRUE, 
+    /* config: */
+    AccelConfig = TRUE,
+    MenuConfig = TRUE,
+    StatusBarConfig = FALSE,
+    ToolBoxConfig = TRUE,
     GroupId = GID_FORMAT;
 ]
 
@@ -5824,27 +5824,27 @@ SfxBoolItem MirrorGraphicOnEvenPages FN_GRAPHIC_MIRROR_ON_EVEN_PAGES
 SfxBoolItem MirrorOnEvenPages FN_FRAME_MIRROR_ON_EVEN_PAGES
 ()
 [
-    /* flags: */  
-    AutoUpdate = TRUE, 
-    Cachable = Cachable, 
-    FastCall = TRUE, 
-    HasCoreId = FALSE, 
-    HasDialog = FALSE, 
-    ReadOnlyDoc = FALSE, 
-    Toggle = FALSE, 
-    Container = FALSE, 
-    RecordAbsolute = FALSE, 
+    /* flags: */
+    AutoUpdate = TRUE,
+    Cachable = Cachable,
+    FastCall = TRUE,
+    HasCoreId = FALSE,
+    HasDialog = FALSE,
+    ReadOnlyDoc = FALSE,
+    Toggle = FALSE,
+    Container = FALSE,
+    RecordAbsolute = FALSE,
     RecordPerSet;
     Synchron;
 
     /* status: */
     SlotType = SfxBoolItem
 
-    /* config: */ 
-    AccelConfig = TRUE, 
-    MenuConfig = TRUE, 
-    StatusBarConfig = FALSE, 
-    ToolBoxConfig = TRUE, 
+    /* config: */
+    AccelConfig = TRUE,
+    MenuConfig = TRUE,
+    StatusBarConfig = FALSE,
+    ToolBoxConfig = TRUE,
     GroupId = GID_FORMAT;
 ]
 
@@ -5852,24 +5852,24 @@ SfxBoolItem MirrorOnEvenPages FN_FRAME_MIRROR_ON_EVEN_PAGES
 SfxVoidItem MoveDown FN_NUM_BULLET_MOVEDOWN
 ()
 [
-    /* flags: */  
-    AutoUpdate = FALSE, 
-    Cachable = Cachable, 
-    FastCall = FALSE, 
-    HasCoreId = FALSE, 
-    HasDialog = FALSE, 
-    ReadOnlyDoc = FALSE, 
-    Toggle = FALSE, 
-    Container = FALSE, 
-    RecordAbsolute = FALSE, 
+    /* flags: */
+    AutoUpdate = FALSE,
+    Cachable = Cachable,
+    FastCall = FALSE,
+    HasCoreId = FALSE,
+    HasDialog = FALSE,
+    ReadOnlyDoc = FALSE,
+    Toggle = FALSE,
+    Container = FALSE,
+    RecordAbsolute = FALSE,
     RecordPerSet;
     Synchron;
 
-    /* config: */ 
-    AccelConfig = TRUE, 
-    MenuConfig = TRUE, 
-    StatusBarConfig = FALSE, 
-    ToolBoxConfig = TRUE, 
+    /* config: */
+    AccelConfig = TRUE,
+    MenuConfig = TRUE,
+    StatusBarConfig = FALSE,
+    ToolBoxConfig = TRUE,
     GroupId = GID_EDIT;
 ]
 
@@ -5877,24 +5877,24 @@ SfxVoidItem MoveDown FN_NUM_BULLET_MOVEDOWN
 SfxVoidItem MoveDownSubItems FN_NUM_BULLET_OUTLINE_MOVEDOWN
 ()
 [
-    /* flags: */  
-    AutoUpdate = FALSE, 
-    Cachable = Cachable, 
-    FastCall = FALSE, 
-    HasCoreId = FALSE, 
-    HasDialog = FALSE, 
-    ReadOnlyDoc = FALSE, 
-    Toggle = FALSE, 
-    Container = FALSE, 
-    RecordAbsolute = FALSE, 
+    /* flags: */
+    AutoUpdate = FALSE,
+    Cachable = Cachable,
+    FastCall = FALSE,
+    HasCoreId = FALSE,
+    HasDialog = FALSE,
+    ReadOnlyDoc = FALSE,
+    Toggle = FALSE,
+    Container = FALSE,
+    RecordAbsolute = FALSE,
     RecordPerSet;
     Synchron;
 
-    /* config: */ 
-    AccelConfig = TRUE, 
-    MenuConfig = TRUE, 
-    StatusBarConfig = FALSE, 
-    ToolBoxConfig = TRUE, 
+    /* config: */
+    AccelConfig = TRUE,
+    MenuConfig = TRUE,
+    StatusBarConfig = FALSE,
+    ToolBoxConfig = TRUE,
     GroupId = GID_ENUMERATION;
 ]
 
@@ -5902,24 +5902,24 @@ SfxVoidItem MoveDownSubItems FN_NUM_BULLET_OUTLINE_MOVEDOWN
 SfxVoidItem MoveUp FN_NUM_BULLET_MOVEUP
 ()
 [
-    /* flags: */  
-    AutoUpdate = FALSE, 
-    Cachable = Cachable, 
-    FastCall = FALSE, 
-    HasCoreId = FALSE, 
-    HasDialog = FALSE, 
-    ReadOnlyDoc = FALSE, 
-    Toggle = FALSE, 
-    Container = FALSE, 
-    RecordAbsolute = FALSE, 
+    /* flags: */
+    AutoUpdate = FALSE,
+    Cachable = Cachable,
+    FastCall = FALSE,
+    HasCoreId = FALSE,
+    HasDialog = FALSE,
+    ReadOnlyDoc = FALSE,
+    Toggle = FALSE,
+    Container = FALSE,
+    RecordAbsolute = FALSE,
     RecordPerSet;
     Synchron;
 
-    /* config: */ 
-    AccelConfig = TRUE, 
-    MenuConfig = TRUE, 
-    StatusBarConfig = FALSE, 
-    ToolBoxConfig = TRUE, 
+    /* config: */
+    AccelConfig = TRUE,
+    MenuConfig = TRUE,
+    StatusBarConfig = FALSE,
+    ToolBoxConfig = TRUE,
     GroupId = GID_EDIT;
 ]
 
@@ -5927,24 +5927,24 @@ SfxVoidItem MoveUp FN_NUM_BULLET_MOVEUP
 SfxVoidItem MoveUpSubItems FN_NUM_BULLET_OUTLINE_MOVEUP
 ()
 [
-    /* flags: */  
-    AutoUpdate = FALSE, 
-    Cachable = Cachable, 
-    FastCall = FALSE, 
-    HasCoreId = FALSE, 
-    HasDialog = FALSE, 
-    ReadOnlyDoc = FALSE, 
-    Toggle = FALSE, 
-    Container = FALSE, 
-    RecordAbsolute = FALSE, 
+    /* flags: */
+    AutoUpdate = FALSE,
+    Cachable = Cachable,
+    FastCall = FALSE,
+    HasCoreId = FALSE,
+    HasDialog = FALSE,
+    ReadOnlyDoc = FALSE,
+    Toggle = FALSE,
+    Container = FALSE,
+    RecordAbsolute = FALSE,
     RecordPerSet;
     Synchron;
 
-    /* config: */ 
-    AccelConfig = TRUE, 
-    MenuConfig = TRUE, 
-    StatusBarConfig = FALSE, 
-    ToolBoxConfig = TRUE, 
+    /* config: */
+    AccelConfig = TRUE,
+    MenuConfig = TRUE,
+    StatusBarConfig = FALSE,
+    ToolBoxConfig = TRUE,
     GroupId = GID_ENUMERATION;
 ]
 
@@ -5952,27 +5952,27 @@ SfxVoidItem MoveUpSubItems FN_NUM_BULLET_OUTLINE_MOVEUP
 SfxVoidItem NameGroup FN_NAME_GROUP
 ()
 [
-    /* flags: */  
-    AutoUpdate = FALSE, 
-    Cachable = Cachable, 
-    FastCall = FALSE, 
-    HasCoreId = FALSE, 
-    HasDialog = TRUE, 
-    ReadOnlyDoc = FALSE, 
-    Toggle = FALSE, 
-    Container = FALSE, 
-    RecordAbsolute = FALSE, 
+    /* flags: */
+    AutoUpdate = FALSE,
+    Cachable = Cachable,
+    FastCall = FALSE,
+    HasCoreId = FALSE,
+    HasDialog = TRUE,
+    ReadOnlyDoc = FALSE,
+    Toggle = FALSE,
+    Container = FALSE,
+    RecordAbsolute = FALSE,
     RecordPerSet;
     Asynchron;
 
     /* status: */
     SlotType = SfxStringItem
 
-    /* config: */ 
-    AccelConfig = TRUE, 
-    MenuConfig = TRUE, 
-    StatusBarConfig = FALSE, 
-    ToolBoxConfig = TRUE, 
+    /* config: */
+    AccelConfig = TRUE,
+    MenuConfig = TRUE,
+    StatusBarConfig = FALSE,
+    ToolBoxConfig = TRUE,
     GroupId = GID_FORMAT;
 ]
 
@@ -5980,24 +5980,24 @@ SfxVoidItem NameGroup FN_NAME_GROUP
 SfxBoolItem NewGlobalDoc FN_NEW_GLOBAL_DOC
 ()
 [
-    /* flags: */  
-    AutoUpdate = FALSE, 
-    Cachable = Cachable, 
-    FastCall = FALSE, 
-    HasCoreId = FALSE, 
-    HasDialog = FALSE, 
-    ReadOnlyDoc = TRUE, 
-    Toggle = FALSE, 
-    Container = FALSE, 
-    RecordAbsolute = FALSE, 
+    /* flags: */
+    AutoUpdate = FALSE,
+    Cachable = Cachable,
+    FastCall = FALSE,
+    HasCoreId = FALSE,
+    HasDialog = FALSE,
+    ReadOnlyDoc = TRUE,
+    Toggle = FALSE,
+    Container = FALSE,
+    RecordAbsolute = FALSE,
     RecordPerSet;
     Synchron;
 
-    /* config: */ 
-    AccelConfig = TRUE, 
-    MenuConfig = TRUE, 
-    StatusBarConfig = FALSE, 
-    ToolBoxConfig = TRUE, 
+    /* config: */
+    AccelConfig = TRUE,
+    MenuConfig = TRUE,
+    StatusBarConfig = FALSE,
+    ToolBoxConfig = TRUE,
     GroupId = GID_APPLICATION;
 ]
 
@@ -6005,24 +6005,24 @@ SfxBoolItem NewGlobalDoc FN_NEW_GLOBAL_DOC
 SfxBoolItem NewHtmlDoc FN_NEW_HTML_DOC
 ()
 [
-    /* flags: */  
-    AutoUpdate = FALSE, 
-    Cachable = Cachable, 
-    FastCall = FALSE, 
-    HasCoreId = FALSE, 
-    HasDialog = FALSE, 
-    ReadOnlyDoc = TRUE, 
-    Toggle = FALSE, 
-    Container = FALSE, 
-    RecordAbsolute = FALSE, 
+    /* flags: */
+    AutoUpdate = FALSE,
+    Cachable = Cachable,
+    FastCall = FALSE,
+    HasCoreId = FALSE,
+    HasDialog = FALSE,
+    ReadOnlyDoc = TRUE,
+    Toggle = FALSE,
+    Container = FALSE,
+    RecordAbsolute = FALSE,
     RecordPerSet;
     Synchron;
 
-    /* config: */ 
-    AccelConfig = TRUE, 
-    MenuConfig = TRUE, 
-    StatusBarConfig = FALSE, 
-    ToolBoxConfig = TRUE, 
+    /* config: */
+    AccelConfig = TRUE,
+    MenuConfig = TRUE,
+    StatusBarConfig = FALSE,
+    ToolBoxConfig = TRUE,
     GroupId = GID_APPLICATION;
 ]
 
@@ -6030,26 +6030,26 @@ SfxBoolItem NewHtmlDoc FN_NEW_HTML_DOC
 SfxStringItem NumberFormat FN_NUMBER_FORMAT
 
 [
-    /* flags: */  
-    AutoUpdate = FALSE, 
-    Cachable = Cachable, 
-    FastCall = FALSE, 
-    HasCoreId = FALSE, 
-    HasDialog = FALSE, 
-    ReadOnlyDoc = TRUE, 
-    Toggle = FALSE, 
-    Container = FALSE, 
-    RecordAbsolute = FALSE, 
+    /* flags: */
+    AutoUpdate = FALSE,
+    Cachable = Cachable,
+    FastCall = FALSE,
+    HasCoreId = FALSE,
+    HasDialog = FALSE,
+    ReadOnlyDoc = TRUE,
+    Toggle = FALSE,
+    Container = FALSE,
+    RecordAbsolute = FALSE,
     RecordPerSet;
     Synchron;
 
-    Readonly = FALSE, 
+    Readonly = FALSE,
 
-    /* config: */ 
-    AccelConfig = FALSE, 
-    MenuConfig = FALSE, 
-    StatusBarConfig = FALSE, 
-    ToolBoxConfig = FALSE, 
+    /* config: */
+    AccelConfig = FALSE,
+    MenuConfig = FALSE,
+    StatusBarConfig = FALSE,
+    ToolBoxConfig = FALSE,
     GroupId = GID_FORMAT;
 ]
 
@@ -6057,24 +6057,24 @@ SfxStringItem NumberFormat FN_NUMBER_FORMAT
 SfxVoidItem NumberFormatCurrency FN_NUMBER_CURRENCY
 ()
 [
-    /* flags: */  
-    AutoUpdate = FALSE, 
-    Cachable = Cachable, 
-    FastCall = FALSE, 
-    HasCoreId = FALSE, 
-    HasDialog = FALSE, 
-    ReadOnlyDoc = TRUE, 
-    Toggle = FALSE, 
-    Container = FALSE, 
-    RecordAbsolute = FALSE, 
+    /* flags: */
+    AutoUpdate = FALSE,
+    Cachable = Cachable,
+    FastCall = FALSE,
+    HasCoreId = FALSE,
+    HasDialog = FALSE,
+    ReadOnlyDoc = TRUE,
+    Toggle = FALSE,
+    Container = FALSE,
+    RecordAbsolute = FALSE,
     RecordPerSet;
     Synchron;
 
-    /* config: */ 
-    AccelConfig = TRUE, 
-    MenuConfig = TRUE, 
-    StatusBarConfig = FALSE, 
-    ToolBoxConfig = TRUE, 
+    /* config: */
+    AccelConfig = TRUE,
+    MenuConfig = TRUE,
+    StatusBarConfig = FALSE,
+    ToolBoxConfig = TRUE,
     GroupId = GID_FORMAT;
 ]
 
@@ -6082,24 +6082,24 @@ SfxVoidItem NumberFormatCurrency FN_NUMBER_CURRENCY
 SfxVoidItem NumberFormatDate FN_NUMBER_DATE
 ()
 [
-    /* flags: */  
-    AutoUpdate = FALSE, 
-    Cachable = Cachable, 
-    FastCall = FALSE, 
-    HasCoreId = FALSE, 
-    HasDialog = FALSE, 
-    ReadOnlyDoc = TRUE, 
-    Toggle = FALSE, 
-    Container = FALSE, 
-    RecordAbsolute = FALSE, 
+    /* flags: */
+    AutoUpdate = FALSE,
+    Cachable = Cachable,
+    FastCall = FALSE,
+    HasCoreId = FALSE,
+    HasDialog = FALSE,
+    ReadOnlyDoc = TRUE,
+    Toggle = FALSE,
+    Container = FALSE,
+    RecordAbsolute = FALSE,
     RecordPerSet;
     Synchron;
 
-    /* config: */ 
-    AccelConfig = TRUE, 
-    MenuConfig = TRUE, 
-    StatusBarConfig = FALSE, 
-    ToolBoxConfig = TRUE, 
+    /* config: */
+    AccelConfig = TRUE,
+    MenuConfig = TRUE,
+    StatusBarConfig = FALSE,
+    ToolBoxConfig = TRUE,
     GroupId = GID_FORMAT;
 ]
 
@@ -6107,24 +6107,24 @@ SfxVoidItem NumberFormatDate FN_NUMBER_DATE
 SfxVoidItem NumberFormatDecimal FN_NUMBER_TWODEC
 ()
 [
-    /* flags: */  
-    AutoUpdate = FALSE, 
-    Cachable = Cachable, 
-    FastCall = FALSE, 
-    HasCoreId = FALSE, 
-    HasDialog = FALSE, 
-    ReadOnlyDoc = TRUE, 
-    Toggle = FALSE, 
-    Container = FALSE, 
-    RecordAbsolute = FALSE, 
+    /* flags: */
+    AutoUpdate = FALSE,
+    Cachable = Cachable,
+    FastCall = FALSE,
+    HasCoreId = FALSE,
+    HasDialog = FALSE,
+    ReadOnlyDoc = TRUE,
+    Toggle = FALSE,
+    Container = FALSE,
+    RecordAbsolute = FALSE,
     RecordPerSet;
     Synchron;
 
-    /* config: */ 
-    AccelConfig = TRUE, 
-    MenuConfig = TRUE, 
-    StatusBarConfig = FALSE, 
-    ToolBoxConfig = TRUE, 
+    /* config: */
+    AccelConfig = TRUE,
+    MenuConfig = TRUE,
+    StatusBarConfig = FALSE,
+    ToolBoxConfig = TRUE,
     GroupId = GID_FORMAT;
 ]
 
@@ -6132,24 +6132,24 @@ SfxVoidItem NumberFormatDecimal FN_NUMBER_TWODEC
 SfxVoidItem NumberFormatPercent FN_NUMBER_PERCENT
 ()
 [
-    /* flags: */  
-    AutoUpdate = FALSE, 
-    Cachable = Cachable, 
-    FastCall = FALSE, 
-    HasCoreId = FALSE, 
-    HasDialog = FALSE, 
-    ReadOnlyDoc = TRUE, 
-    Toggle = FALSE, 
-    Container = FALSE, 
-    RecordAbsolute = FALSE, 
+    /* flags: */
+    AutoUpdate = FALSE,
+    Cachable = Cachable,
+    FastCall = FALSE,
+    HasCoreId = FALSE,
+    HasDialog = FALSE,
+    ReadOnlyDoc = TRUE,
+    Toggle = FALSE,
+    Container = FALSE,
+    RecordAbsolute = FALSE,
     RecordPerSet;
     Synchron;
 
-    /* config: */ 
-    AccelConfig = TRUE, 
-    MenuConfig = TRUE, 
-    StatusBarConfig = FALSE, 
-    ToolBoxConfig = TRUE, 
+    /* config: */
+    AccelConfig = TRUE,
+    MenuConfig = TRUE,
+    StatusBarConfig = FALSE,
+    ToolBoxConfig = TRUE,
     GroupId = GID_FORMAT;
 ]
 
@@ -6157,24 +6157,24 @@ SfxVoidItem NumberFormatPercent FN_NUMBER_PERCENT
 SfxVoidItem NumberFormatScientific FN_NUMBER_SCIENTIFIC
 ()
 [
-    /* flags: */  
-    AutoUpdate = FALSE, 
-    Cachable = Cachable, 
-    FastCall = FALSE, 
-    HasCoreId = FALSE, 
-    HasDialog = FALSE, 
-    ReadOnlyDoc = TRUE, 
-    Toggle = FALSE, 
-    Container = FALSE, 
-    RecordAbsolute = FALSE, 
+    /* flags: */
+    AutoUpdate = FALSE,
+    Cachable = Cachable,
+    FastCall = FALSE,
+    HasCoreId = FALSE,
+    HasDialog = FALSE,
+    ReadOnlyDoc = TRUE,
+    Toggle = FALSE,
+    Container = FALSE,
+    RecordAbsolute = FALSE,
     RecordPerSet;
     Synchron;
 
-    /* config: */ 
-    AccelConfig = TRUE, 
-    MenuConfig = TRUE, 
-    StatusBarConfig = FALSE, 
-    ToolBoxConfig = TRUE, 
+    /* config: */
+    AccelConfig = TRUE,
+    MenuConfig = TRUE,
+    StatusBarConfig = FALSE,
+    ToolBoxConfig = TRUE,
     GroupId = GID_FORMAT;
 ]
 
@@ -6182,24 +6182,24 @@ SfxVoidItem NumberFormatScientific FN_NUMBER_SCIENTIFIC
 SfxVoidItem NumberFormatStandard FN_NUMBER_STANDARD
 ()
 [
-    /* flags: */  
-    AutoUpdate = FALSE, 
-    Cachable = Cachable, 
-    FastCall = FALSE, 
-    HasCoreId = FALSE, 
-    HasDialog = FALSE, 
-    ReadOnlyDoc = TRUE, 
-    Toggle = FALSE, 
-    Container = FALSE, 
-    RecordAbsolute = FALSE, 
+    /* flags: */
+    AutoUpdate = FALSE,
+    Cachable = Cachable,
+    FastCall = FALSE,
+    HasCoreId = FALSE,
+    HasDialog = FALSE,
+    ReadOnlyDoc = TRUE,
+    Toggle = FALSE,
+    Container = FALSE,
+    RecordAbsolute = FALSE,
     RecordPerSet;
     Synchron;
 
-    /* config: */ 
-    AccelConfig = TRUE, 
-    MenuConfig = TRUE, 
-    StatusBarConfig = FALSE, 
-    ToolBoxConfig = TRUE, 
+    /* config: */
+    AccelConfig = TRUE,
+    MenuConfig = TRUE,
+    StatusBarConfig = FALSE,
+    ToolBoxConfig = TRUE,
     GroupId = GID_FORMAT;
 ]
 
@@ -6207,24 +6207,24 @@ SfxVoidItem NumberFormatStandard FN_NUMBER_STANDARD
 SfxVoidItem NumberFormatTime FN_NUMBER_TIME
 ()
 [
-    /* flags: */  
-    AutoUpdate = FALSE, 
-    Cachable = Cachable, 
-    FastCall = FALSE, 
-    HasCoreId = FALSE, 
-    HasDialog = FALSE, 
-    ReadOnlyDoc = TRUE, 
-    Toggle = FALSE, 
-    Container = FALSE, 
-    RecordAbsolute = FALSE, 
+    /* flags: */
+    AutoUpdate = FALSE,
+    Cachable = Cachable,
+    FastCall = FALSE,
+    HasCoreId = FALSE,
+    HasDialog = FALSE,
+    ReadOnlyDoc = TRUE,
+    Toggle = FALSE,
+    Container = FALSE,
+    RecordAbsolute = FALSE,
     RecordPerSet;
     Synchron;
 
-    /* config: */ 
-    AccelConfig = TRUE, 
-    MenuConfig = TRUE, 
-    StatusBarConfig = FALSE, 
-    ToolBoxConfig = TRUE, 
+    /* config: */
+    AccelConfig = TRUE,
+    MenuConfig = TRUE,
+    StatusBarConfig = FALSE,
+    ToolBoxConfig = TRUE,
     GroupId = GID_FORMAT;
 ]
 
@@ -6232,26 +6232,26 @@ SfxVoidItem NumberFormatTime FN_NUMBER_TIME
 SfxBoolItem NumberingStart FN_NUMBER_NEWSTART
 
 [
-    /* flags: */  
-    AutoUpdate = TRUE, 
-    Cachable = Cachable, 
-    FastCall = FALSE, 
-    HasCoreId = FALSE, 
-    HasDialog = FALSE, 
-    ReadOnlyDoc = FALSE, 
-    Toggle = TRUE, 
-    Container = FALSE, 
-    RecordAbsolute = FALSE, 
+    /* flags: */
+    AutoUpdate = TRUE,
+    Cachable = Cachable,
+    FastCall = FALSE,
+    HasCoreId = FALSE,
+    HasDialog = FALSE,
+    ReadOnlyDoc = FALSE,
+    Toggle = TRUE,
+    Container = FALSE,
+    RecordAbsolute = FALSE,
     RecordPerSet;
     Asynchron;
 
-    Readonly = FALSE, 
+    Readonly = FALSE,
 
-    /* config: */ 
-    AccelConfig = TRUE, 
-    MenuConfig = TRUE, 
-    StatusBarConfig = FALSE, 
-    ToolBoxConfig = TRUE, 
+    /* config: */
+    AccelConfig = TRUE,
+    MenuConfig = TRUE,
+    StatusBarConfig = FALSE,
+    ToolBoxConfig = TRUE,
     GroupId = GID_ENUMERATION;
 ]
 
@@ -6259,26 +6259,26 @@ SfxBoolItem NumberingStart FN_NUMBER_NEWSTART
 SfxBoolItem NumberOrNoNumber FN_NUM_OR_NONUM
 
 [
-    /* flags: */  
-    AutoUpdate = FALSE, 
-    Cachable = Cachable, 
-    FastCall = FALSE, 
-    HasCoreId = FALSE, 
-    HasDialog = FALSE, 
-    ReadOnlyDoc = FALSE, 
-    Toggle = FALSE, 
-    Container = FALSE, 
-    RecordAbsolute = FALSE, 
+    /* flags: */
+    AutoUpdate = FALSE,
+    Cachable = Cachable,
+    FastCall = FALSE,
+    HasCoreId = FALSE,
+    HasDialog = FALSE,
+    ReadOnlyDoc = FALSE,
+    Toggle = FALSE,
+    Container = FALSE,
+    RecordAbsolute = FALSE,
     RecordPerSet;
     Synchron;
 
-    Readonly = FALSE, 
+    Readonly = FALSE,
 
-    /* config: */ 
-    AccelConfig = TRUE, 
-    MenuConfig = TRUE, 
-    StatusBarConfig = FALSE, 
-    ToolBoxConfig = TRUE, 
+    /* config: */
+    AccelConfig = TRUE,
+    MenuConfig = TRUE,
+    StatusBarConfig = FALSE,
+    ToolBoxConfig = TRUE,
     GroupId = GID_ENUMERATION;
 ]
 
@@ -6286,24 +6286,24 @@ SfxBoolItem NumberOrNoNumber FN_NUM_OR_NONUM
 SfxVoidItem ObjectBackOne FN_FRAME_UP
 ()
 [
-    /* flags: */  
-    AutoUpdate = FALSE, 
-    Cachable = Cachable, 
-    FastCall = TRUE, 
-    HasCoreId = FALSE, 
-    HasDialog = FALSE, 
-    ReadOnlyDoc = FALSE, 
-    Toggle = FALSE, 
-    Container = FALSE, 
-    RecordAbsolute = FALSE, 
+    /* flags: */
+    AutoUpdate = FALSE,
+    Cachable = Cachable,
+    FastCall = TRUE,
+    HasCoreId = FALSE,
+    HasDialog = FALSE,
+    ReadOnlyDoc = FALSE,
+    Toggle = FALSE,
+    Container = FALSE,
+    RecordAbsolute = FALSE,
     RecordPerSet;
     Synchron;
 
-    /* config: */ 
-    AccelConfig = TRUE, 
-    MenuConfig = TRUE, 
-    StatusBarConfig = FALSE, 
-    ToolBoxConfig = TRUE, 
+    /* config: */
+    AccelConfig = TRUE,
+    MenuConfig = TRUE,
+    StatusBarConfig = FALSE,
+    ToolBoxConfig = TRUE,
     GroupId = GID_FORMAT;
 ]
 
@@ -6311,24 +6311,24 @@ SfxVoidItem ObjectBackOne FN_FRAME_UP
 SfxVoidItem ObjectForwardOne FN_FRAME_DOWN
 ()
 [
-    /* flags: */  
-    AutoUpdate = FALSE, 
-    Cachable = Cachable, 
-    FastCall = TRUE, 
-    HasCoreId = FALSE, 
-    HasDialog = FALSE, 
-    ReadOnlyDoc = FALSE, 
-    Toggle = FALSE, 
-    Container = FALSE, 
-    RecordAbsolute = FALSE, 
+    /* flags: */
+    AutoUpdate = FALSE,
+    Cachable = Cachable,
+    FastCall = TRUE,
+    HasCoreId = FALSE,
+    HasDialog = FALSE,
+    ReadOnlyDoc = FALSE,
+    Toggle = FALSE,
+    Container = FALSE,
+    RecordAbsolute = FALSE,
     RecordPerSet;
     Synchron;
 
-    /* config: */ 
-    AccelConfig = TRUE, 
-    MenuConfig = TRUE, 
-    StatusBarConfig = FALSE, 
-    ToolBoxConfig = TRUE, 
+    /* config: */
+    AccelConfig = TRUE,
+    MenuConfig = TRUE,
+    StatusBarConfig = FALSE,
+    ToolBoxConfig = TRUE,
     GroupId = GID_FORMAT;
 ]
 
@@ -6336,26 +6336,26 @@ SfxVoidItem ObjectForwardOne FN_FRAME_DOWN
 SfxBoolItem OnlineAutoFormat FN_AUTOFORMAT_AUTO
 
 [
-    /* flags: */  
-    AutoUpdate = TRUE, 
-    Cachable = Cachable, 
-    FastCall = FALSE, 
-    HasCoreId = FALSE, 
-    HasDialog = FALSE, 
-    ReadOnlyDoc = FALSE, 
-    Toggle = TRUE, 
-    Container = FALSE, 
-    RecordAbsolute = FALSE, 
+    /* flags: */
+    AutoUpdate = TRUE,
+    Cachable = Cachable,
+    FastCall = FALSE,
+    HasCoreId = FALSE,
+    HasDialog = FALSE,
+    ReadOnlyDoc = FALSE,
+    Toggle = TRUE,
+    Container = FALSE,
+    RecordAbsolute = FALSE,
     RecordPerSet;
     Synchron;
 
-    Readonly = FALSE, 
+    Readonly = FALSE,
 
-    /* config: */ 
-    AccelConfig = TRUE, 
-    MenuConfig = TRUE, 
-    StatusBarConfig = FALSE, 
-    ToolBoxConfig = TRUE, 
+    /* config: */
+    AccelConfig = TRUE,
+    MenuConfig = TRUE,
+    StatusBarConfig = FALSE,
+    ToolBoxConfig = TRUE,
     GroupId = GID_FORMAT;
 ]
 
@@ -6363,26 +6363,26 @@ SfxBoolItem OnlineAutoFormat FN_AUTOFORMAT_AUTO
 SfxUInt16Item OptimizeTable FN_OPTIMIZE_TABLE
 
 [
-    /* flags: */  
-    AutoUpdate = FALSE, 
-    Cachable = Cachable, 
-    FastCall = TRUE, 
-    HasCoreId = FALSE, 
-    HasDialog = FALSE, 
-    ReadOnlyDoc = FALSE, 
-    Toggle = FALSE, 
-    Container = FALSE, 
-    RecordAbsolute = FALSE, 
+    /* flags: */
+    AutoUpdate = FALSE,
+    Cachable = Cachable,
+    FastCall = TRUE,
+    HasCoreId = FALSE,
+    HasDialog = FALSE,
+    ReadOnlyDoc = FALSE,
+    Toggle = FALSE,
+    Container = FALSE,
+    RecordAbsolute = FALSE,
     RecordPerSet;
     Synchron;
 
-    Readonly = FALSE, 
+    Readonly = FALSE,
 
-    /* config: */ 
-    AccelConfig = TRUE, 
-    MenuConfig = TRUE, 
-    StatusBarConfig = FALSE, 
-    ToolBoxConfig = TRUE, 
+    /* config: */
+    AccelConfig = TRUE,
+    MenuConfig = TRUE,
+    StatusBarConfig = FALSE,
+    ToolBoxConfig = TRUE,
     GroupId = GID_TABLE;
 ]
 
@@ -6390,24 +6390,24 @@ SfxUInt16Item OptimizeTable FN_OPTIMIZE_TABLE
 SfxVoidItem PageColumnDialog FN_FORMAT_PAGE_COLUMN_DLG
 ()
 [
-    /* flags: */  
-    AutoUpdate = FALSE, 
-    Cachable = Cachable, 
-    FastCall = FALSE, 
-    HasCoreId = FALSE, 
-    HasDialog = TRUE, 
-    ReadOnlyDoc = FALSE, 
-    Toggle = FALSE, 
-    Container = FALSE, 
-    RecordAbsolute = FALSE, 
+    /* flags: */
+    AutoUpdate = FALSE,
+    Cachable = Cachable,
+    FastCall = FALSE,
+    HasCoreId = FALSE,
+    HasDialog = TRUE,
+    ReadOnlyDoc = FALSE,
+    Toggle = FALSE,
+    Container = FALSE,
+    RecordAbsolute = FALSE,
     RecordPerSet;
     Asynchron;
 
-    /* config: */ 
-    AccelConfig = TRUE, 
-    MenuConfig = TRUE, 
-    StatusBarConfig = FALSE, 
-    ToolBoxConfig = TRUE, 
+    /* config: */
+    AccelConfig = TRUE,
+    MenuConfig = TRUE,
+    StatusBarConfig = FALSE,
+    ToolBoxConfig = TRUE,
     GroupId = GID_FORMAT;
 ]
 
@@ -6415,24 +6415,24 @@ SfxVoidItem PageColumnDialog FN_FORMAT_PAGE_COLUMN_DLG
 SfxVoidItem PageDialog FN_FORMAT_PAGE_DLG
 ()
 [
-    /* flags: */  
-    AutoUpdate = FALSE, 
-    Cachable = Cachable, 
-    FastCall = FALSE, 
-    HasCoreId = FALSE, 
-    HasDialog = TRUE, 
-    ReadOnlyDoc = FALSE, 
-    Toggle = FALSE, 
-    Container = FALSE, 
-    RecordAbsolute = FALSE, 
+    /* flags: */
+    AutoUpdate = FALSE,
+    Cachable = Cachable,
+    FastCall = FALSE,
+    HasCoreId = FALSE,
+    HasDialog = TRUE,
+    ReadOnlyDoc = FALSE,
+    Toggle = FALSE,
+    Container = FALSE,
+    RecordAbsolute = FALSE,
     RecordPerItem;
     Asynchron;
 
-    /* config: */ 
-    AccelConfig = TRUE, 
-    MenuConfig = TRUE, 
-    StatusBarConfig = FALSE, 
-    ToolBoxConfig = TRUE, 
+    /* config: */
+    AccelConfig = TRUE,
+    MenuConfig = TRUE,
+    StatusBarConfig = FALSE,
+    ToolBoxConfig = TRUE,
     GroupId = GID_FORMAT;
 ]
 
@@ -6440,24 +6440,24 @@ SfxVoidItem PageDialog FN_FORMAT_PAGE_DLG
 SfxVoidItem PageDown FN_PAGEDOWN
 ()
 [
-    /* flags: */  
-    AutoUpdate = FALSE, 
-    Cachable = Cachable, 
-    FastCall = FALSE, 
-    HasCoreId = FALSE, 
-    HasDialog = FALSE, 
-    ReadOnlyDoc = TRUE, 
-    Toggle = FALSE, 
-    Container = FALSE, 
-    RecordAbsolute = FALSE, 
+    /* flags: */
+    AutoUpdate = FALSE,
+    Cachable = Cachable,
+    FastCall = FALSE,
+    HasCoreId = FALSE,
+    HasDialog = FALSE,
+    ReadOnlyDoc = TRUE,
+    Toggle = FALSE,
+    Container = FALSE,
+    RecordAbsolute = FALSE,
     RecordPerSet;
     Synchron;
 
-    /* config: */ 
-    AccelConfig = TRUE, 
-    MenuConfig = TRUE, 
-    StatusBarConfig = FALSE, 
-    ToolBoxConfig = TRUE, 
+    /* config: */
+    AccelConfig = TRUE,
+    MenuConfig = TRUE,
+    StatusBarConfig = FALSE,
+    ToolBoxConfig = TRUE,
     GroupId = GID_NAVIGATOR;
 ]
 
@@ -6465,24 +6465,24 @@ SfxVoidItem PageDown FN_PAGEDOWN
 SfxVoidItem PageDownSel FN_PAGEDOWN_SEL
 ()
 [
-    /* flags: */  
-    AutoUpdate = FALSE, 
-    Cachable = Cachable, 
-    FastCall = FALSE, 
-    HasCoreId = FALSE, 
-    HasDialog = FALSE, 
-    ReadOnlyDoc = TRUE, 
-    Toggle = FALSE, 
-    Container = FALSE, 
-    RecordAbsolute = FALSE, 
+    /* flags: */
+    AutoUpdate = FALSE,
+    Cachable = Cachable,
+    FastCall = FALSE,
+    HasCoreId = FALSE,
+    HasDialog = FALSE,
+    ReadOnlyDoc = TRUE,
+    Toggle = FALSE,
+    Container = FALSE,
+    RecordAbsolute = FALSE,
     RecordPerSet;
     Synchron;
 
-    /* config: */ 
-    AccelConfig = TRUE, 
-    MenuConfig = TRUE, 
-    StatusBarConfig = FALSE, 
-    ToolBoxConfig = TRUE, 
+    /* config: */
+    AccelConfig = TRUE,
+    MenuConfig = TRUE,
+    StatusBarConfig = FALSE,
+    ToolBoxConfig = TRUE,
     GroupId = GID_NAVIGATOR;
 ]
 
@@ -6491,26 +6491,26 @@ SfxUInt16Item PageOffset FN_CHANGE_PAGENUM
 [
     SfxVoidItem PageOffsetDialog(SfxUInt16Item nOffset FN_CHANGE_PAGENUM);
 
-    /* flags: */  
-    AutoUpdate = FALSE, 
-    Cachable = Cachable, 
-    FastCall = TRUE, 
-    HasCoreId = FALSE, 
-    HasDialog = TRUE, 
-    ReadOnlyDoc = FALSE, 
-    Toggle = FALSE, 
-    Container = FALSE, 
-    RecordAbsolute = FALSE, 
+    /* flags: */
+    AutoUpdate = FALSE,
+    Cachable = Cachable,
+    FastCall = TRUE,
+    HasCoreId = FALSE,
+    HasDialog = TRUE,
+    ReadOnlyDoc = FALSE,
+    Toggle = FALSE,
+    Container = FALSE,
+    RecordAbsolute = FALSE,
     RecordPerSet;
     Asynchron;
 
-    Readonly = FALSE, 
+    Readonly = FALSE,
 
-    /* config: */ 
-    AccelConfig = TRUE, 
-    MenuConfig = TRUE, 
-    StatusBarConfig = FALSE, 
-    ToolBoxConfig = TRUE, 
+    /* config: */
+    AccelConfig = TRUE,
+    MenuConfig = TRUE,
+    StatusBarConfig = FALSE,
+    ToolBoxConfig = TRUE,
     GroupId = GID_OPTIONS;
 ]
 
@@ -6518,24 +6518,24 @@ SfxUInt16Item PageOffset FN_CHANGE_PAGENUM
 SfxVoidItem PageStyleApply FN_SET_PAGE_STYLE
 ()
 [
-    /* flags: */  
-    AutoUpdate = FALSE, 
-    Cachable = Cachable, 
-    FastCall = TRUE, 
-    HasCoreId = FALSE, 
-    HasDialog = TRUE, 
-    ReadOnlyDoc = FALSE, 
-    Toggle = FALSE, 
-    Container = FALSE, 
-    RecordAbsolute = FALSE, 
+    /* flags: */
+    AutoUpdate = FALSE,
+    Cachable = Cachable,
+    FastCall = TRUE,
+    HasCoreId = FALSE,
+    HasDialog = TRUE,
+    ReadOnlyDoc = FALSE,
+    Toggle = FALSE,
+    Container = FALSE,
+    RecordAbsolute = FALSE,
     RecordPerSet;
     Asynchron;
 
-    /* config: */ 
-    AccelConfig = TRUE, 
-    MenuConfig = TRUE, 
-    StatusBarConfig = FALSE, 
-    ToolBoxConfig = TRUE, 
+    /* config: */
+    AccelConfig = TRUE,
+    MenuConfig = TRUE,
+    StatusBarConfig = FALSE,
+    ToolBoxConfig = TRUE,
     GroupId = GID_FORMAT;
 ]
 
@@ -6543,26 +6543,26 @@ SfxVoidItem PageStyleApply FN_SET_PAGE_STYLE
 SfxStringItem PageStyleName FN_STAT_TEMPLATE
 
 [
-    /* flags: */  
-    AutoUpdate = FALSE, 
-    Cachable = Cachable, 
-    FastCall = FALSE, 
-    HasCoreId = FALSE, 
-    HasDialog = FALSE, 
-    ReadOnlyDoc = TRUE, 
-    Toggle = FALSE, 
-    Container = FALSE, 
-    RecordAbsolute = FALSE, 
+    /* flags: */
+    AutoUpdate = FALSE,
+    Cachable = Cachable,
+    FastCall = FALSE,
+    HasCoreId = FALSE,
+    HasDialog = FALSE,
+    ReadOnlyDoc = TRUE,
+    Toggle = FALSE,
+    Container = FALSE,
+    RecordAbsolute = FALSE,
     RecordPerSet;
     Synchron;
 
-    Readonly = TRUE, 
+    Readonly = TRUE,
 
-    /* config: */ 
-    AccelConfig = FALSE, 
-    MenuConfig = FALSE, 
-    StatusBarConfig = TRUE, 
-    ToolBoxConfig = FALSE, 
+    /* config: */
+    AccelConfig = FALSE,
+    MenuConfig = FALSE,
+    StatusBarConfig = TRUE,
+    ToolBoxConfig = FALSE,
     GroupId = GID_VIEW;
 ]
 
@@ -6570,24 +6570,24 @@ SfxStringItem PageStyleName FN_STAT_TEMPLATE
 SfxVoidItem PageUp FN_PAGEUP
 ()
 [
-    /* flags: */  
-    AutoUpdate = FALSE, 
-    Cachable = Cachable, 
-    FastCall = FALSE, 
-    HasCoreId = FALSE, 
-    HasDialog = FALSE, 
-    ReadOnlyDoc = TRUE, 
-    Toggle = FALSE, 
-    Container = FALSE, 
-    RecordAbsolute = FALSE, 
+    /* flags: */
+    AutoUpdate = FALSE,
+    Cachable = Cachable,
+    FastCall = FALSE,
+    HasCoreId = FALSE,
+    HasDialog = FALSE,
+    ReadOnlyDoc = TRUE,
+    Toggle = FALSE,
+    Container = FALSE,
+    RecordAbsolute = FALSE,
     RecordPerSet;
     Synchron;
 
-    /* config: */ 
-    AccelConfig = TRUE, 
-    MenuConfig = TRUE, 
-    StatusBarConfig = FALSE, 
-    ToolBoxConfig = TRUE, 
+    /* config: */
+    AccelConfig = TRUE,
+    MenuConfig = TRUE,
+    StatusBarConfig = FALSE,
+    ToolBoxConfig = TRUE,
     GroupId = GID_NAVIGATOR;
 ]
 
@@ -6595,24 +6595,24 @@ SfxVoidItem PageUp FN_PAGEUP
 SfxVoidItem PageUpSel FN_PAGEUP_SEL
 ()
 [
-    /* flags: */  
-    AutoUpdate = FALSE, 
-    Cachable = Cachable, 
-    FastCall = FALSE, 
-    HasCoreId = FALSE, 
-    HasDialog = FALSE, 
-    ReadOnlyDoc = TRUE, 
-    Toggle = FALSE, 
-    Container = FALSE, 
-    RecordAbsolute = FALSE, 
+    /* flags: */
+    AutoUpdate = FALSE,
+    Cachable = Cachable,
+    FastCall = FALSE,
+    HasCoreId = FALSE,
+    HasDialog = FALSE,
+    ReadOnlyDoc = TRUE,
+    Toggle = FALSE,
+    Container = FALSE,
+    RecordAbsolute = FALSE,
     RecordPerSet;
     Synchron;
 
-    /* config: */ 
-    AccelConfig = TRUE, 
-    MenuConfig = TRUE, 
-    StatusBarConfig = FALSE, 
-    ToolBoxConfig = TRUE, 
+    /* config: */
+    AccelConfig = TRUE,
+    MenuConfig = TRUE,
+    StatusBarConfig = FALSE,
+    ToolBoxConfig = TRUE,
     GroupId = GID_NAVIGATOR;
 ]
 
@@ -6620,24 +6620,24 @@ SfxVoidItem PageUpSel FN_PAGEUP_SEL
 SfxInt16Item PasteSpecial FN_PASTESPECIAL
 ()
 [
-    /* flags: */  
-    AutoUpdate = FALSE, 
-    Cachable = Volatile, 
-    FastCall = TRUE, 
-    HasCoreId = FALSE, 
-    HasDialog = TRUE, 
-    ReadOnlyDoc = FALSE, 
-    Toggle = FALSE, 
-    Container = FALSE, 
-    RecordAbsolute = FALSE, 
+    /* flags: */
+    AutoUpdate = FALSE,
+    Cachable = Volatile,
+    FastCall = TRUE,
+    HasCoreId = FALSE,
+    HasDialog = TRUE,
+    ReadOnlyDoc = FALSE,
+    Toggle = FALSE,
+    Container = FALSE,
+    RecordAbsolute = FALSE,
     RecordPerSet;
     Asynchron;
 
-    /* config: */ 
-    AccelConfig = TRUE, 
-    MenuConfig = TRUE, 
-    StatusBarConfig = FALSE, 
-    ToolBoxConfig = TRUE, 
+    /* config: */
+    AccelConfig = TRUE,
+    MenuConfig = TRUE,
+    StatusBarConfig = FALSE,
+    ToolBoxConfig = TRUE,
     GroupId = GID_EDIT;
 ]
 
@@ -6645,24 +6645,24 @@ SfxInt16Item PasteSpecial FN_PASTESPECIAL
 SfxVoidItem PreviewPrintOptions FN_PREVIEW_PRINT_OPTIONS
 ()
 [
-    /* flags: */  
-    AutoUpdate = TRUE, 
-    Cachable = Cachable, 
-    FastCall = TRUE, 
-    HasCoreId = FALSE, 
-    HasDialog = TRUE, 
-    ReadOnlyDoc = FALSE, 
-    Toggle = FALSE, 
-    Container = FALSE, 
-    RecordAbsolute = FALSE, 
+    /* flags: */
+    AutoUpdate = TRUE,
+    Cachable = Cachable,
+    FastCall = TRUE,
+    HasCoreId = FALSE,
+    HasDialog = TRUE,
+    ReadOnlyDoc = FALSE,
+    Toggle = FALSE,
+    Container = FALSE,
+    RecordAbsolute = FALSE,
     RecordPerSet;
     Synchron;
 
-    /* config: */ 
-    AccelConfig = TRUE, 
-    MenuConfig = TRUE, 
-    StatusBarConfig = FALSE, 
-    ToolBoxConfig = TRUE, 
+    /* config: */
+    AccelConfig = TRUE,
+    MenuConfig = TRUE,
+    StatusBarConfig = FALSE,
+    ToolBoxConfig = TRUE,
     GroupId = GID_DOC;
 ]
 
@@ -6670,27 +6670,27 @@ SfxVoidItem PreviewPrintOptions FN_PREVIEW_PRINT_OPTIONS
 SfxVoidItem PreviewZoom FN_PREVIEW_ZOOM
 ()
 [
-    /* flags: */  
-    AutoUpdate = FALSE, 
-    Cachable = Cachable, 
-    FastCall = TRUE, 
-    HasCoreId = FALSE, 
-    HasDialog = TRUE, 
-    ReadOnlyDoc = TRUE, 
-    Toggle = FALSE, 
-    Container = FALSE, 
-    RecordAbsolute = FALSE, 
+    /* flags: */
+    AutoUpdate = FALSE,
+    Cachable = Cachable,
+    FastCall = TRUE,
+    HasCoreId = FALSE,
+    HasDialog = TRUE,
+    ReadOnlyDoc = TRUE,
+    Toggle = FALSE,
+    Container = FALSE,
+    RecordAbsolute = FALSE,
     RecordPerSet;
     Synchron;
 
     /* status: */
     SlotType = SfxUInt16Item
 
-    /* config: */ 
-    AccelConfig = FALSE, 
-    MenuConfig = FALSE, 
-    StatusBarConfig = FALSE, 
-    ToolBoxConfig = TRUE, 
+    /* config: */
+    AccelConfig = FALSE,
+    MenuConfig = FALSE,
+    StatusBarConfig = FALSE,
+    ToolBoxConfig = TRUE,
     GroupId = GID_VIEW;
 ]
 
@@ -6698,26 +6698,26 @@ SfxVoidItem PreviewZoom FN_PREVIEW_ZOOM
 SfxBoolItem PrintLayout FN_PRINT_LAYOUT
 
 [
-    /* flags: */  
-    AutoUpdate = TRUE, 
-    Cachable = Volatile, 
-    FastCall = FALSE, 
-    HasCoreId = FALSE, 
-    HasDialog = FALSE, 
-    ReadOnlyDoc = TRUE, 
-    Toggle = FALSE, 
-    Container = FALSE, 
-    RecordAbsolute = FALSE, 
+    /* flags: */
+    AutoUpdate = TRUE,
+    Cachable = Volatile,
+    FastCall = FALSE,
+    HasCoreId = FALSE,
+    HasDialog = FALSE,
+    ReadOnlyDoc = TRUE,
+    Toggle = FALSE,
+    Container = FALSE,
+    RecordAbsolute = FALSE,
     RecordPerSet;
     Synchron;
 
-    Readonly = FALSE, 
+    Readonly = FALSE,
 
-    /* config: */ 
-    AccelConfig = TRUE, 
-    MenuConfig = TRUE, 
-    StatusBarConfig = FALSE, 
-    ToolBoxConfig = TRUE, 
+    /* config: */
+    AccelConfig = TRUE,
+    MenuConfig = TRUE,
+    StatusBarConfig = FALSE,
+    ToolBoxConfig = TRUE,
     GroupId = GID_VIEW;
 ]
 
@@ -6725,24 +6725,24 @@ SfxBoolItem PrintLayout FN_PRINT_LAYOUT
 SfxVoidItem PrintPagePreView FN_PRINT_PAGEPREVIEW
 ()
 [
-    /* flags: */  
-    AutoUpdate = FALSE, 
-    Cachable = Cachable, 
-    FastCall = FALSE, 
-    HasCoreId = FALSE, 
-    HasDialog = TRUE, 
-    ReadOnlyDoc = TRUE, 
-    Toggle = FALSE, 
-    Container = FALSE, 
-    RecordAbsolute = FALSE, 
+    /* flags: */
+    AutoUpdate = FALSE,
+    Cachable = Cachable,
+    FastCall = FALSE,
+    HasCoreId = FALSE,
+    HasDialog = TRUE,
+    ReadOnlyDoc = TRUE,
+    Toggle = FALSE,
+    Container = FALSE,
+    RecordAbsolute = FALSE,
     RecordPerSet;
     Asynchron;
 
-    /* config: */ 
-    AccelConfig = TRUE, 
-    MenuConfig = TRUE, 
-    StatusBarConfig = FALSE, 
-    ToolBoxConfig = TRUE, 
+    /* config: */
+    AccelConfig = TRUE,
+    MenuConfig = TRUE,
+    StatusBarConfig = FALSE,
+    ToolBoxConfig = TRUE,
     GroupId = GID_VIEW;
 ]
 
@@ -6750,24 +6750,24 @@ SfxVoidItem PrintPagePreView FN_PRINT_PAGEPREVIEW
 SfxVoidItem Protect FN_TABLE_SET_READ_ONLY_CELLS
 ()
 [
-    /* flags: */  
-    AutoUpdate = FALSE, 
-    Cachable = Cachable, 
-    FastCall = TRUE, 
-    HasCoreId = FALSE, 
-    HasDialog = FALSE, 
-    ReadOnlyDoc = FALSE, 
-    Toggle = FALSE, 
-    Container = FALSE, 
-    RecordAbsolute = FALSE, 
+    /* flags: */
+    AutoUpdate = FALSE,
+    Cachable = Cachable,
+    FastCall = TRUE,
+    HasCoreId = FALSE,
+    HasDialog = FALSE,
+    ReadOnlyDoc = FALSE,
+    Toggle = FALSE,
+    Container = FALSE,
+    RecordAbsolute = FALSE,
     RecordPerSet;
     Synchron;
 
-    /* config: */ 
-    AccelConfig = TRUE, 
-    MenuConfig = TRUE, 
-    StatusBarConfig = FALSE, 
-    ToolBoxConfig = TRUE, 
+    /* config: */
+    AccelConfig = TRUE,
+    MenuConfig = TRUE,
+    StatusBarConfig = FALSE,
+    ToolBoxConfig = TRUE,
     GroupId = GID_TABLE;
 ]
 
@@ -6775,49 +6775,49 @@ SfxVoidItem Protect FN_TABLE_SET_READ_ONLY_CELLS
 SfxVoidItem ProtectTraceChangeMode FN_REDLINE_PROTECT
 ()
 [
-    /* flags: */  
-    AutoUpdate = FALSE, 
-    Cachable = Cachable, 
-    FastCall = FALSE, 
-    HasCoreId = FALSE, 
-    HasDialog = FALSE, 
-    ReadOnlyDoc = TRUE, 
-    Toggle = FALSE, 
-    Container = FALSE, 
-    RecordAbsolute = FALSE, 
+    /* flags: */
+    AutoUpdate = FALSE,
+    Cachable = Cachable,
+    FastCall = FALSE,
+    HasCoreId = FALSE,
+    HasDialog = FALSE,
+    ReadOnlyDoc = TRUE,
+    Toggle = FALSE,
+    Container = FALSE,
+    RecordAbsolute = FALSE,
     RecordPerSet;
     Synchron;
 
-    /* config: */ 
-    AccelConfig = TRUE, 
-    MenuConfig = TRUE, 
-    StatusBarConfig = FALSE, 
-    ToolBoxConfig = TRUE, 
+    /* config: */
+    AccelConfig = TRUE,
+    MenuConfig = TRUE,
+    StatusBarConfig = FALSE,
+    ToolBoxConfig = TRUE,
     GroupId = GID_EDIT;
 ]
 
 //--------------------------------------------------------------------------
-SfxVoidItem Refresh FN_REFRESH_VIEW
+SfxVoidItem RefreshView FN_REFRESH_VIEW
 ()
 [
-    /* flags: */  
-    AutoUpdate = FALSE, 
-    Cachable = Cachable, 
-    FastCall = TRUE, 
-    HasCoreId = FALSE, 
-    HasDialog = FALSE, 
-    ReadOnlyDoc = TRUE, 
-    Toggle = FALSE, 
-    Container = FALSE, 
-    RecordAbsolute = FALSE, 
+    /* flags: */
+    AutoUpdate = FALSE,
+    Cachable = Cachable,
+    FastCall = TRUE,
+    HasCoreId = FALSE,
+    HasDialog = FALSE,
+    ReadOnlyDoc = TRUE,
+    Toggle = FALSE,
+    Container = FALSE,
+    RecordAbsolute = FALSE,
     RecordPerSet;
     Synchron;
 
-    /* config: */ 
-    AccelConfig = TRUE, 
-    MenuConfig = TRUE, 
-    StatusBarConfig = FALSE, 
-    ToolBoxConfig = TRUE, 
+    /* config: */
+    AccelConfig = TRUE,
+    MenuConfig = TRUE,
+    StatusBarConfig = FALSE,
+    ToolBoxConfig = TRUE,
     GroupId = GID_VIEW;
 ]
 
@@ -6825,24 +6825,24 @@ SfxVoidItem Refresh FN_REFRESH_VIEW
 SfxVoidItem Remove FN_NUM_BULLET_OFF
 ()
 [
-    /* flags: */  
-    AutoUpdate = FALSE, 
-    Cachable = Cachable, 
-    FastCall = FALSE, 
-    HasCoreId = FALSE, 
-    HasDialog = FALSE, 
-    ReadOnlyDoc = FALSE, 
-    Toggle = FALSE, 
-    Container = FALSE, 
-    RecordAbsolute = FALSE, 
+    /* flags: */
+    AutoUpdate = FALSE,
+    Cachable = Cachable,
+    FastCall = FALSE,
+    HasCoreId = FALSE,
+    HasDialog = FALSE,
+    ReadOnlyDoc = FALSE,
+    Toggle = FALSE,
+    Container = FALSE,
+    RecordAbsolute = FALSE,
     RecordPerSet;
     Synchron;
 
-    /* config: */ 
-    AccelConfig = TRUE, 
-    MenuConfig = TRUE, 
-    StatusBarConfig = FALSE, 
-    ToolBoxConfig = TRUE, 
+    /* config: */
+    AccelConfig = TRUE,
+    MenuConfig = TRUE,
+    StatusBarConfig = FALSE,
+    ToolBoxConfig = TRUE,
     GroupId = GID_ENUMERATION;
 ]
 
@@ -6850,24 +6850,24 @@ SfxVoidItem Remove FN_NUM_BULLET_OFF
 SfxVoidItem RemoveTableOf FN_REMOVE_CUR_TOX
 ()
 [
-    /* flags: */  
-    AutoUpdate = FALSE, 
-    Cachable = Cachable, 
-    FastCall = TRUE, 
-    HasCoreId = FALSE, 
-    HasDialog = FALSE, 
-    ReadOnlyDoc = FALSE, 
-    Toggle = FALSE, 
-    Container = FALSE, 
-    RecordAbsolute = FALSE, 
+    /* flags: */
+    AutoUpdate = FALSE,
+    Cachable = Cachable,
+    FastCall = TRUE,
+    HasCoreId = FALSE,
+    HasDialog = FALSE,
+    ReadOnlyDoc = FALSE,
+    Toggle = FALSE,
+    Container = FALSE,
+    RecordAbsolute = FALSE,
     RecordPerSet;
     Synchron;
 
-    /* config: */ 
-    AccelConfig = TRUE, 
-    MenuConfig = TRUE, 
-    StatusBarConfig = FALSE, 
-    ToolBoxConfig = TRUE, 
+    /* config: */
+    AccelConfig = TRUE,
+    MenuConfig = TRUE,
+    StatusBarConfig = FALSE,
+    ToolBoxConfig = TRUE,
     GroupId = GID_INSERT;
 ]
 
@@ -6875,24 +6875,24 @@ SfxVoidItem RemoveTableOf FN_REMOVE_CUR_TOX
 SfxVoidItem Repaginate FN_REPAGINATE
 ()
 [
-    /* flags: */  
-    AutoUpdate = FALSE, 
-    Cachable = Cachable, 
-    FastCall = TRUE, 
-    HasCoreId = FALSE, 
-    HasDialog = FALSE, 
-    ReadOnlyDoc = TRUE, 
-    Toggle = FALSE, 
-    Container = FALSE, 
-    RecordAbsolute = FALSE, 
+    /* flags: */
+    AutoUpdate = FALSE,
+    Cachable = Cachable,
+    FastCall = TRUE,
+    HasCoreId = FALSE,
+    HasDialog = FALSE,
+    ReadOnlyDoc = TRUE,
+    Toggle = FALSE,
+    Container = FALSE,
+    RecordAbsolute = FALSE,
     RecordPerSet;
     Asynchron;
 
-    /* config: */ 
-    AccelConfig = TRUE, 
-    MenuConfig = TRUE, 
-    StatusBarConfig = FALSE, 
-    ToolBoxConfig = TRUE, 
+    /* config: */
+    AccelConfig = TRUE,
+    MenuConfig = TRUE,
+    StatusBarConfig = FALSE,
+    ToolBoxConfig = TRUE,
     GroupId = GID_FORMAT;
 ]
 
@@ -6900,24 +6900,24 @@ SfxVoidItem Repaginate FN_REPAGINATE
 SfxBoolItem RepeatSearch FN_REPEAT_SEARCH
 ()
 [
-    /* flags: */  
-    AutoUpdate = FALSE, 
-    Cachable = Cachable, 
-    FastCall = TRUE, 
-    HasCoreId = FALSE, 
-    HasDialog = FALSE, 
-    ReadOnlyDoc = TRUE, 
-    Toggle = FALSE, 
-    Container = FALSE, 
-    RecordAbsolute = FALSE, 
+    /* flags: */
+    AutoUpdate = FALSE,
+    Cachable = Cachable,
+    FastCall = TRUE,
+    HasCoreId = FALSE,
+    HasDialog = FALSE,
+    ReadOnlyDoc = TRUE,
+    Toggle = FALSE,
+    Container = FALSE,
+    RecordAbsolute = FALSE,
     RecordPerSet;
     Asynchron;
 
-    /* config: */ 
-    AccelConfig = TRUE, 
-    MenuConfig = TRUE, 
-    StatusBarConfig = FALSE, 
-    ToolBoxConfig = TRUE, 
+    /* config: */
+    AccelConfig = TRUE,
+    MenuConfig = TRUE,
+    StatusBarConfig = FALSE,
+    ToolBoxConfig = TRUE,
     GroupId = GID_EDIT;
 ]
 
@@ -6925,24 +6925,24 @@ SfxBoolItem RepeatSearch FN_REPEAT_SEARCH
 SfxVoidItem ResetAttributes FN_FORMAT_RESET
 ()
 [
-    /* flags: */  
-    AutoUpdate = FALSE, 
-    Cachable = Cachable, 
-    FastCall = TRUE, 
-    HasCoreId = FALSE, 
-    HasDialog = FALSE, 
-    ReadOnlyDoc = FALSE, 
-    Toggle = FALSE, 
-    Container = FALSE, 
-    RecordAbsolute = FALSE, 
+    /* flags: */
+    AutoUpdate = FALSE,
+    Cachable = Cachable,
+    FastCall = TRUE,
+    HasCoreId = FALSE,
+    HasDialog = FALSE,
+    ReadOnlyDoc = FALSE,
+    Toggle = FALSE,
+    Container = FALSE,
+    RecordAbsolute = FALSE,
     RecordPerSet;
     Synchron;
 
-    /* config: */ 
-    AccelConfig = TRUE, 
-    MenuConfig = TRUE, 
-    StatusBarConfig = FALSE, 
-    ToolBoxConfig = TRUE, 
+    /* config: */
+    AccelConfig = TRUE,
+    MenuConfig = TRUE,
+    StatusBarConfig = FALSE,
+    ToolBoxConfig = TRUE,
     GroupId = GID_FORMAT;
 ]
 
@@ -6950,24 +6950,24 @@ SfxVoidItem ResetAttributes FN_FORMAT_RESET
 SfxVoidItem ResetTableProtection FN_TABLE_UNSET_READ_ONLY
 ()
 [
-    /* flags: */  
-    AutoUpdate = FALSE, 
-    Cachable = Cachable, 
-    FastCall = TRUE, 
-    HasCoreId = FALSE, 
-    HasDialog = FALSE, 
-    ReadOnlyDoc = FALSE, 
-    Toggle = FALSE, 
-    Container = FALSE, 
-    RecordAbsolute = FALSE, 
+    /* flags: */
+    AutoUpdate = FALSE,
+    Cachable = Cachable,
+    FastCall = TRUE,
+    HasCoreId = FALSE,
+    HasDialog = FALSE,
+    ReadOnlyDoc = FALSE,
+    Toggle = FALSE,
+    Container = FALSE,
+    RecordAbsolute = FALSE,
     RecordPerSet;
     Synchron;
 
-    /* config: */ 
-    AccelConfig = TRUE, 
-    MenuConfig = TRUE, 
-    StatusBarConfig = FALSE, 
-    ToolBoxConfig = TRUE, 
+    /* config: */
+    AccelConfig = TRUE,
+    MenuConfig = TRUE,
+    StatusBarConfig = FALSE,
+    ToolBoxConfig = TRUE,
     GroupId = GID_TABLE;
 ]
 
@@ -6975,26 +6975,26 @@ SfxVoidItem ResetTableProtection FN_TABLE_UNSET_READ_ONLY
 SfxBoolItem Ruler FN_RULER
 
 [
-    /* flags: */  
-    AutoUpdate = FALSE, 
-    Cachable = Volatile, 
-    FastCall = FALSE, 
-    HasCoreId = FALSE, 
-    HasDialog = FALSE, 
-    ReadOnlyDoc = TRUE, 
-    Toggle = FALSE, 
-    Container = FALSE, 
-    RecordAbsolute = FALSE, 
+    /* flags: */
+    AutoUpdate = FALSE,
+    Cachable = Volatile,
+    FastCall = FALSE,
+    HasCoreId = FALSE,
+    HasDialog = FALSE,
+    ReadOnlyDoc = TRUE,
+    Toggle = FALSE,
+    Container = FALSE,
+    RecordAbsolute = FALSE,
     RecordPerSet;
     Synchron;
 
-    Readonly = TRUE, 
+    Readonly = TRUE,
 
-    /* config: */ 
-    AccelConfig = TRUE, 
-    MenuConfig = TRUE, 
-    StatusBarConfig = FALSE, 
-    ToolBoxConfig = TRUE, 
+    /* config: */
+    AccelConfig = TRUE,
+    MenuConfig = TRUE,
+    StatusBarConfig = FALSE,
+    ToolBoxConfig = TRUE,
     GroupId = GID_VIEW;
 ]
 
@@ -7002,24 +7002,24 @@ SfxBoolItem Ruler FN_RULER
 SfxVoidItem SbaInsert FN_QRY_INSERT
 ()
 [
-    /* flags: */  
-    AutoUpdate = FALSE, 
-    Cachable = Cachable, 
-    FastCall = TRUE, 
-    HasCoreId = FALSE, 
-    HasDialog = FALSE, 
-    ReadOnlyDoc = TRUE, 
-    Toggle = FALSE, 
-    Container = FALSE, 
-    RecordAbsolute = FALSE, 
+    /* flags: */
+    AutoUpdate = FALSE,
+    Cachable = Cachable,
+    FastCall = TRUE,
+    HasCoreId = FALSE,
+    HasDialog = FALSE,
+    ReadOnlyDoc = TRUE,
+    Toggle = FALSE,
+    Container = FALSE,
+    RecordAbsolute = FALSE,
     RecordPerSet;
     Asynchron;
 
-    /* config: */ 
-    AccelConfig = FALSE, 
-    MenuConfig = FALSE, 
-    StatusBarConfig = FALSE, 
-    ToolBoxConfig = FALSE, 
+    /* config: */
+    AccelConfig = FALSE,
+    MenuConfig = FALSE,
+    StatusBarConfig = FALSE,
+    ToolBoxConfig = FALSE,
     GroupId = GID_DATA;
 ]
 
@@ -7027,24 +7027,24 @@ SfxVoidItem SbaInsert FN_QRY_INSERT
 SfxVoidItem SbaInsertField FN_QRY_INSERT_FIELD
 ()
 [
-    /* flags: */  
-    AutoUpdate = FALSE, 
-    Cachable = Cachable, 
-    FastCall = TRUE, 
-    HasCoreId = FALSE, 
-    HasDialog = FALSE, 
-    ReadOnlyDoc = TRUE, 
-    Toggle = FALSE, 
-    Container = FALSE, 
-    RecordAbsolute = FALSE, 
+    /* flags: */
+    AutoUpdate = FALSE,
+    Cachable = Cachable,
+    FastCall = TRUE,
+    HasCoreId = FALSE,
+    HasDialog = FALSE,
+    ReadOnlyDoc = TRUE,
+    Toggle = FALSE,
+    Container = FALSE,
+    RecordAbsolute = FALSE,
     RecordPerSet;
     Asynchron;
 
-    /* config: */ 
-    AccelConfig = FALSE, 
-    MenuConfig = FALSE, 
-    StatusBarConfig = FALSE, 
-    ToolBoxConfig = FALSE, 
+    /* config: */
+    AccelConfig = FALSE,
+    MenuConfig = FALSE,
+    StatusBarConfig = FALSE,
+    ToolBoxConfig = FALSE,
     GroupId = GID_DATA;
 ]
 
@@ -7052,24 +7052,24 @@ SfxVoidItem SbaInsertField FN_QRY_INSERT_FIELD
 SfxVoidItem SbaMerge FN_QRY_MERGE_FIELD
 ()
 [
-    /* flags: */  
-    AutoUpdate = FALSE, 
-    Cachable = Cachable, 
-    FastCall = TRUE, 
-    HasCoreId = FALSE, 
-    HasDialog = FALSE, 
-    ReadOnlyDoc = FALSE, 
-    Toggle = FALSE, 
-    Container = FALSE, 
-    RecordAbsolute = FALSE, 
+    /* flags: */
+    AutoUpdate = FALSE,
+    Cachable = Cachable,
+    FastCall = TRUE,
+    HasCoreId = FALSE,
+    HasDialog = FALSE,
+    ReadOnlyDoc = FALSE,
+    Toggle = FALSE,
+    Container = FALSE,
+    RecordAbsolute = FALSE,
     RecordPerSet;
     Asynchron;
 
-    /* config: */ 
-    AccelConfig = FALSE, 
-    MenuConfig = FALSE, 
-    StatusBarConfig = FALSE, 
-    ToolBoxConfig = FALSE, 
+    /* config: */
+    AccelConfig = FALSE,
+    MenuConfig = FALSE,
+    StatusBarConfig = FALSE,
+    ToolBoxConfig = FALSE,
     GroupId = GID_DATA;
 ]
 
@@ -7077,26 +7077,26 @@ SfxVoidItem SbaMerge FN_QRY_MERGE_FIELD
 SfxBoolItem ScrollNavigation FN_SCROLL_NAVIGATION
 
 [
-    /* flags: */  
-    AutoUpdate = FALSE, 
-    Cachable = Cachable, 
-    FastCall = FALSE, 
-    HasCoreId = FALSE, 
-    HasDialog = FALSE, 
-    ReadOnlyDoc = TRUE, 
-    Toggle = FALSE, 
-    Container = FALSE, 
-    RecordAbsolute = FALSE, 
+    /* flags: */
+    AutoUpdate = FALSE,
+    Cachable = Cachable,
+    FastCall = FALSE,
+    HasCoreId = FALSE,
+    HasDialog = FALSE,
+    ReadOnlyDoc = TRUE,
+    Toggle = FALSE,
+    Container = FALSE,
+    RecordAbsolute = FALSE,
     RecordPerSet;
     Synchron;
 
-    Readonly = FALSE, 
+    Readonly = FALSE,
 
-    /* config: */ 
-    AccelConfig = FALSE, 
-    MenuConfig = FALSE, 
-    StatusBarConfig = FALSE, 
-    ToolBoxConfig = FALSE, 
+    /* config: */
+    AccelConfig = FALSE,
+    MenuConfig = FALSE,
+    StatusBarConfig = FALSE,
+    ToolBoxConfig = FALSE,
     GroupId = GID_VIEW;
 ]
 
@@ -7104,49 +7104,49 @@ SfxBoolItem ScrollNavigation FN_SCROLL_NAVIGATION
 SfxVoidItem ScrollNextPrev FN_SCROLL_NEXT_PREV
 ()
 [
-    /* flags: */  
-    AutoUpdate = FALSE, 
-    Cachable = Cachable, 
-    FastCall = FALSE, 
-    HasCoreId = FALSE, 
-    HasDialog = FALSE, 
-    ReadOnlyDoc = TRUE, 
-    Toggle = FALSE, 
-    Container = FALSE, 
-    RecordAbsolute = FALSE, 
+    /* flags: */
+    AutoUpdate = FALSE,
+    Cachable = Cachable,
+    FastCall = FALSE,
+    HasCoreId = FALSE,
+    HasDialog = FALSE,
+    ReadOnlyDoc = TRUE,
+    Toggle = FALSE,
+    Container = FALSE,
+    RecordAbsolute = FALSE,
     RecordPerSet;
     Synchron;
 
-    /* config: */ 
-    AccelConfig = FALSE, 
-    MenuConfig = FALSE, 
-    StatusBarConfig = FALSE, 
-    ToolBoxConfig = FALSE, 
+    /* config: */
+    AccelConfig = FALSE,
+    MenuConfig = FALSE,
+    StatusBarConfig = FALSE,
+    ToolBoxConfig = FALSE,
     GroupId = GID_NAVIGATOR;
 ]
 
 //--------------------------------------------------------------------------
-SfxVoidItem Select FN_TABLE_SELECT_ALL
+SfxVoidItem SelectTable FN_TABLE_SELECT_ALL
 ()
 [
-    /* flags: */  
-    AutoUpdate = FALSE, 
-    Cachable = Cachable, 
-    FastCall = TRUE, 
-    HasCoreId = FALSE, 
-    HasDialog = FALSE, 
-    ReadOnlyDoc = TRUE, 
-    Toggle = FALSE, 
-    Container = FALSE, 
-    RecordAbsolute = FALSE, 
+    /* flags: */
+    AutoUpdate = FALSE,
+    Cachable = Cachable,
+    FastCall = TRUE,
+    HasCoreId = FALSE,
+    HasDialog = FALSE,
+    ReadOnlyDoc = TRUE,
+    Toggle = FALSE,
+    Container = FALSE,
+    RecordAbsolute = FALSE,
     RecordPerSet;
     Synchron;
 
-    /* config: */ 
-    AccelConfig = TRUE, 
-    MenuConfig = TRUE, 
-    StatusBarConfig = FALSE, 
-    ToolBoxConfig = TRUE, 
+    /* config: */
+    AccelConfig = TRUE,
+    MenuConfig = TRUE,
+    StatusBarConfig = FALSE,
+    ToolBoxConfig = TRUE,
     GroupId = GID_TABLE;
 ]
 
@@ -7154,26 +7154,26 @@ SfxVoidItem Select FN_TABLE_SELECT_ALL
 SfxUInt16Item SelectionMode FN_STAT_SELMODE
 
 [
-    /* flags: */  
-    AutoUpdate = FALSE, 
-    Cachable = Volatile, 
-    FastCall = FALSE, 
-    HasCoreId = FALSE, 
-    HasDialog = FALSE, 
-    ReadOnlyDoc = TRUE, 
-    Toggle = FALSE, 
-    Container = FALSE, 
-    RecordAbsolute = FALSE, 
+    /* flags: */
+    AutoUpdate = FALSE,
+    Cachable = Volatile,
+    FastCall = FALSE,
+    HasCoreId = FALSE,
+    HasDialog = FALSE,
+    ReadOnlyDoc = TRUE,
+    Toggle = FALSE,
+    Container = FALSE,
+    RecordAbsolute = FALSE,
     RecordPerSet;
     Synchron;
 
-    Readonly = FALSE, 
+    Readonly = FALSE,
 
-    /* config: */ 
-    AccelConfig = FALSE, 
-    MenuConfig = FALSE, 
-    StatusBarConfig = TRUE, 
-    ToolBoxConfig = FALSE, 
+    /* config: */
+    AccelConfig = FALSE,
+    MenuConfig = FALSE,
+    StatusBarConfig = TRUE,
+    ToolBoxConfig = FALSE,
     GroupId = GID_VIEW;
 ]
 
@@ -7181,24 +7181,24 @@ SfxUInt16Item SelectionMode FN_STAT_SELMODE
 SfxVoidItem SelectText FN_SELECT_PARA
 ()
 [
-    /* flags: */  
-    AutoUpdate = FALSE, 
-    Cachable = Cachable, 
-    FastCall = TRUE, 
-    HasCoreId = FALSE, 
-    HasDialog = FALSE, 
-    ReadOnlyDoc = TRUE, 
-    Toggle = FALSE, 
-    Container = FALSE, 
-    RecordAbsolute = FALSE, 
+    /* flags: */
+    AutoUpdate = FALSE,
+    Cachable = Cachable,
+    FastCall = TRUE,
+    HasCoreId = FALSE,
+    HasDialog = FALSE,
+    ReadOnlyDoc = TRUE,
+    Toggle = FALSE,
+    Container = FALSE,
+    RecordAbsolute = FALSE,
     RecordPerSet;
     Synchron;
 
-    /* config: */ 
-    AccelConfig = TRUE, 
-    MenuConfig = TRUE, 
-    StatusBarConfig = FALSE, 
-    ToolBoxConfig = TRUE, 
+    /* config: */
+    AccelConfig = TRUE,
+    MenuConfig = TRUE,
+    StatusBarConfig = FALSE,
+    ToolBoxConfig = TRUE,
     GroupId = GID_EDIT;
 ]
 
@@ -7206,24 +7206,24 @@ SfxVoidItem SelectText FN_SELECT_PARA
 SfxVoidItem SelectWord FN_SELECT_WORD
 ()
 [
-    /* flags: */  
-    AutoUpdate = FALSE, 
-    Cachable = Cachable, 
-    FastCall = TRUE, 
-    HasCoreId = FALSE, 
-    HasDialog = FALSE, 
-    ReadOnlyDoc = TRUE, 
-    Toggle = FALSE, 
-    Container = FALSE, 
-    RecordAbsolute = FALSE, 
+    /* flags: */
+    AutoUpdate = FALSE,
+    Cachable = Cachable,
+    FastCall = TRUE,
+    HasCoreId = FALSE,
+    HasDialog = FALSE,
+    ReadOnlyDoc = TRUE,
+    Toggle = FALSE,
+    Container = FALSE,
+    RecordAbsolute = FALSE,
     RecordPerSet;
     Synchron;
 
-    /* config: */ 
-    AccelConfig = TRUE, 
-    MenuConfig = FALSE, 
-    StatusBarConfig = FALSE, 
-    ToolBoxConfig = FALSE, 
+    /* config: */
+    AccelConfig = TRUE,
+    MenuConfig = FALSE,
+    StatusBarConfig = FALSE,
+    ToolBoxConfig = FALSE,
     GroupId = GID_NAVIGATOR;
 ]
 
@@ -7231,24 +7231,24 @@ SfxVoidItem SelectWord FN_SELECT_WORD
 SfxVoidItem SendAbstractToStarImpress FN_ABSTRACT_STARIMPRESS
 ()
 [
-    /* flags: */  
-    AutoUpdate = FALSE, 
-    Cachable = Cachable, 
-    FastCall = FALSE, 
-    HasCoreId = FALSE, 
-    HasDialog = FALSE, 
-    ReadOnlyDoc = TRUE, 
-    Toggle = FALSE, 
-    Container = FALSE, 
-    RecordAbsolute = FALSE, 
+    /* flags: */
+    AutoUpdate = FALSE,
+    Cachable = Cachable,
+    FastCall = FALSE,
+    HasCoreId = FALSE,
+    HasDialog = FALSE,
+    ReadOnlyDoc = TRUE,
+    Toggle = FALSE,
+    Container = FALSE,
+    RecordAbsolute = FALSE,
     RecordPerSet;
     Synchron;
 
-    /* config: */ 
-    AccelConfig = TRUE, 
-    MenuConfig = TRUE, 
-    StatusBarConfig = FALSE, 
-    ToolBoxConfig = TRUE, 
+    /* config: */
+    AccelConfig = TRUE,
+    MenuConfig = TRUE,
+    StatusBarConfig = FALSE,
+    ToolBoxConfig = TRUE,
     GroupId = GID_DOCUMENT;
 ]
 
@@ -7256,24 +7256,24 @@ SfxVoidItem SendAbstractToStarImpress FN_ABSTRACT_STARIMPRESS
 SfxVoidItem SendOutlineToClipboard FN_OUTLINE_TO_CLIPBOARD
 ()
 [
-    /* flags: */  
-    AutoUpdate = FALSE, 
-    Cachable = Cachable, 
-    FastCall = FALSE, 
-    HasCoreId = FALSE, 
-    HasDialog = FALSE, 
-    ReadOnlyDoc = TRUE, 
-    Toggle = FALSE, 
-    Container = FALSE, 
-    RecordAbsolute = FALSE, 
+    /* flags: */
+    AutoUpdate = FALSE,
+    Cachable = Cachable,
+    FastCall = FALSE,
+    HasCoreId = FALSE,
+    HasDialog = FALSE,
+    ReadOnlyDoc = TRUE,
+    Toggle = FALSE,
+    Container = FALSE,
+    RecordAbsolute = FALSE,
     RecordPerSet;
     Synchron;
 
-    /* config: */ 
-    AccelConfig = TRUE, 
-    MenuConfig = TRUE, 
-    StatusBarConfig = FALSE, 
-    ToolBoxConfig = TRUE, 
+    /* config: */
+    AccelConfig = TRUE,
+    MenuConfig = TRUE,
+    StatusBarConfig = FALSE,
+    ToolBoxConfig = TRUE,
     GroupId = GID_DOCUMENT;
 ]
 
@@ -7281,24 +7281,24 @@ SfxVoidItem SendOutlineToClipboard FN_OUTLINE_TO_CLIPBOARD
 SfxVoidItem SendOutlineToStarImpress FN_OUTLINE_TO_IMPRESS
 ()
 [
-    /* flags: */  
-    AutoUpdate = FALSE, 
-    Cachable = Cachable, 
-    FastCall = FALSE, 
-    HasCoreId = FALSE, 
-    HasDialog = FALSE, 
-    ReadOnlyDoc = TRUE, 
-    Toggle = FALSE, 
-    Container = FALSE, 
-    RecordAbsolute = FALSE, 
+    /* flags: */
+    AutoUpdate = FALSE,
+    Cachable = Cachable,
+    FastCall = FALSE,
+    HasCoreId = FALSE,
+    HasDialog = FALSE,
+    ReadOnlyDoc = TRUE,
+    Toggle = FALSE,
+    Container = FALSE,
+    RecordAbsolute = FALSE,
     RecordPerSet;
     Synchron;
 
-    /* config: */ 
-    AccelConfig = TRUE, 
-    MenuConfig = TRUE, 
-    StatusBarConfig = FALSE, 
-    ToolBoxConfig = TRUE, 
+    /* config: */
+    AccelConfig = TRUE,
+    MenuConfig = TRUE,
+    StatusBarConfig = FALSE,
+    ToolBoxConfig = TRUE,
     GroupId = GID_DOCUMENT;
 ]
 
@@ -7306,27 +7306,27 @@ SfxVoidItem SendOutlineToStarImpress FN_OUTLINE_TO_IMPRESS
 SfxVoidItem SetAnchorAtChar FN_TOOL_ANKER_AT_CHAR
 ()
 [
-    /* flags: */  
-    AutoUpdate = TRUE, 
-    Cachable = Cachable, 
-    FastCall = TRUE, 
-    HasCoreId = FALSE, 
-    HasDialog = FALSE, 
-    ReadOnlyDoc = FALSE, 
-    Toggle = FALSE, 
-    Container = FALSE, 
-    RecordAbsolute = FALSE, 
+    /* flags: */
+    AutoUpdate = TRUE,
+    Cachable = Cachable,
+    FastCall = TRUE,
+    HasCoreId = FALSE,
+    HasDialog = FALSE,
+    ReadOnlyDoc = FALSE,
+    Toggle = FALSE,
+    Container = FALSE,
+    RecordAbsolute = FALSE,
     RecordPerSet;
     Synchron;
 
     /* status: */
     SlotType = SfxBoolItem
 
-    /* config: */ 
-    AccelConfig = TRUE, 
-    MenuConfig = TRUE, 
-    StatusBarConfig = FALSE, 
-    ToolBoxConfig = TRUE, 
+    /* config: */
+    AccelConfig = TRUE,
+    MenuConfig = TRUE,
+    StatusBarConfig = FALSE,
+    ToolBoxConfig = TRUE,
     GroupId = GID_FORMAT;
 ]
 
@@ -7334,27 +7334,27 @@ SfxVoidItem SetAnchorAtChar FN_TOOL_ANKER_AT_CHAR
 SfxVoidItem SetAnchorToChar FN_TOOL_ANKER_CHAR
 ()
 [
-    /* flags: */  
-    AutoUpdate = TRUE, 
-    Cachable = Cachable, 
-    FastCall = TRUE, 
-    HasCoreId = FALSE, 
-    HasDialog = FALSE, 
-    ReadOnlyDoc = FALSE, 
-    Toggle = FALSE, 
-    Container = FALSE, 
-    RecordAbsolute = FALSE, 
+    /* flags: */
+    AutoUpdate = TRUE,
+    Cachable = Cachable,
+    FastCall = TRUE,
+    HasCoreId = FALSE,
+    HasDialog = FALSE,
+    ReadOnlyDoc = FALSE,
+    Toggle = FALSE,
+    Container = FALSE,
+    RecordAbsolute = FALSE,
     RecordPerSet;
     Synchron;
 
     /* status: */
     SlotType = SfxBoolItem
 
-    /* config: */ 
-    AccelConfig = TRUE, 
-    MenuConfig = TRUE, 
-    StatusBarConfig = FALSE, 
-    ToolBoxConfig = TRUE, 
+    /* config: */
+    AccelConfig = TRUE,
+    MenuConfig = TRUE,
+    StatusBarConfig = FALSE,
+    ToolBoxConfig = TRUE,
     GroupId = GID_FORMAT;
 ]
 
@@ -7362,27 +7362,27 @@ SfxVoidItem SetAnchorToChar FN_TOOL_ANKER_CHAR
 SfxVoidItem SetAnchorToFrame FN_TOOL_ANKER_FRAME
 ()
 [
-    /* flags: */  
-    AutoUpdate = TRUE, 
-    Cachable = Cachable, 
-    FastCall = TRUE, 
-    HasCoreId = FALSE, 
-    HasDialog = FALSE, 
-    ReadOnlyDoc = FALSE, 
-    Toggle = FALSE, 
-    Container = FALSE, 
-    RecordAbsolute = FALSE, 
+    /* flags: */
+    AutoUpdate = TRUE,
+    Cachable = Cachable,
+    FastCall = TRUE,
+    HasCoreId = FALSE,
+    HasDialog = FALSE,
+    ReadOnlyDoc = FALSE,
+    Toggle = FALSE,
+    Container = FALSE,
+    RecordAbsolute = FALSE,
     RecordPerSet;
     Synchron;
 
     /* status: */
     SlotType = SfxBoolItem
 
-    /* config: */ 
-    AccelConfig = TRUE, 
-    MenuConfig = TRUE, 
-    StatusBarConfig = FALSE, 
-    ToolBoxConfig = TRUE, 
+    /* config: */
+    AccelConfig = TRUE,
+    MenuConfig = TRUE,
+    StatusBarConfig = FALSE,
+    ToolBoxConfig = TRUE,
     GroupId = GID_FORMAT;
 ]
 
@@ -7390,27 +7390,27 @@ SfxVoidItem SetAnchorToFrame FN_TOOL_ANKER_FRAME
 SfxVoidItem SetAnchorToPage FN_TOOL_ANKER_PAGE
 ()
 [
-    /* flags: */  
-    AutoUpdate = TRUE, 
-    Cachable = Cachable, 
-    FastCall = TRUE, 
-    HasCoreId = FALSE, 
-    HasDialog = FALSE, 
-    ReadOnlyDoc = FALSE, 
-    Toggle = FALSE, 
-    Container = FALSE, 
-    RecordAbsolute = FALSE, 
+    /* flags: */
+    AutoUpdate = TRUE,
+    Cachable = Cachable,
+    FastCall = TRUE,
+    HasCoreId = FALSE,
+    HasDialog = FALSE,
+    ReadOnlyDoc = FALSE,
+    Toggle = FALSE,
+    Container = FALSE,
+    RecordAbsolute = FALSE,
     RecordPerSet;
     Synchron;
 
     /* status: */
     SlotType = SfxBoolItem
 
-    /* config: */ 
-    AccelConfig = TRUE, 
-    MenuConfig = TRUE, 
-    StatusBarConfig = FALSE, 
-    ToolBoxConfig = TRUE, 
+    /* config: */
+    AccelConfig = TRUE,
+    MenuConfig = TRUE,
+    StatusBarConfig = FALSE,
+    ToolBoxConfig = TRUE,
     GroupId = GID_FORMAT;
 ]
 
@@ -7418,27 +7418,27 @@ SfxVoidItem SetAnchorToPage FN_TOOL_ANKER_PAGE
 SfxVoidItem SetAnchorToPara FN_TOOL_ANKER_PARAGRAPH
 ()
 [
-    /* flags: */  
-    AutoUpdate = TRUE, 
-    Cachable = Cachable, 
-    FastCall = TRUE, 
-    HasCoreId = FALSE, 
-    HasDialog = FALSE, 
-    ReadOnlyDoc = FALSE, 
-    Toggle = FALSE, 
-    Container = FALSE, 
-    RecordAbsolute = FALSE, 
+    /* flags: */
+    AutoUpdate = TRUE,
+    Cachable = Cachable,
+    FastCall = TRUE,
+    HasCoreId = FALSE,
+    HasDialog = FALSE,
+    ReadOnlyDoc = FALSE,
+    Toggle = FALSE,
+    Container = FALSE,
+    RecordAbsolute = FALSE,
     RecordPerSet;
     Synchron;
 
     /* status: */
     SlotType = SfxBoolItem
 
-    /* config: */ 
-    AccelConfig = TRUE, 
-    MenuConfig = TRUE, 
-    StatusBarConfig = FALSE, 
-    ToolBoxConfig = TRUE, 
+    /* config: */
+    AccelConfig = TRUE,
+    MenuConfig = TRUE,
+    StatusBarConfig = FALSE,
+    ToolBoxConfig = TRUE,
     GroupId = GID_FORMAT;
 ]
 
@@ -7446,24 +7446,24 @@ SfxVoidItem SetAnchorToPara FN_TOOL_ANKER_PARAGRAPH
 SfxVoidItem SetColumnWidth FN_TABLE_SET_COL_WIDTH
 ()
 [
-    /* flags: */  
-    AutoUpdate = FALSE, 
-    Cachable = Cachable, 
-    FastCall = TRUE, 
-    HasCoreId = FALSE, 
-    HasDialog = FALSE, 
-    ReadOnlyDoc = FALSE, 
-    Toggle = FALSE, 
-    Container = FALSE, 
-    RecordAbsolute = FALSE, 
+    /* flags: */
+    AutoUpdate = FALSE,
+    Cachable = Cachable,
+    FastCall = TRUE,
+    HasCoreId = FALSE,
+    HasDialog = FALSE,
+    ReadOnlyDoc = FALSE,
+    Toggle = FALSE,
+    Container = FALSE,
+    RecordAbsolute = FALSE,
     RecordPerSet;
     Synchron;
 
-    /* config: */ 
-    AccelConfig = FALSE, 
-    MenuConfig = FALSE, 
-    StatusBarConfig = FALSE, 
-    ToolBoxConfig = FALSE, 
+    /* config: */
+    AccelConfig = FALSE,
+    MenuConfig = FALSE,
+    StatusBarConfig = FALSE,
+    ToolBoxConfig = FALSE,
     GroupId = GID_TABLE;
 ]
 
@@ -7471,24 +7471,24 @@ SfxVoidItem SetColumnWidth FN_TABLE_SET_COL_WIDTH
 SfxVoidItem SetExtSelection FN_SET_EXT_MODE
 ()
 [
-    /* flags: */  
-    AutoUpdate = FALSE, 
-    Cachable = Cachable, 
-    FastCall = TRUE, 
-    HasCoreId = FALSE, 
-    HasDialog = FALSE, 
-    ReadOnlyDoc = TRUE, 
-    Toggle = FALSE, 
-    Container = FALSE, 
-    RecordAbsolute = FALSE, 
+    /* flags: */
+    AutoUpdate = FALSE,
+    Cachable = Cachable,
+    FastCall = TRUE,
+    HasCoreId = FALSE,
+    HasDialog = FALSE,
+    ReadOnlyDoc = TRUE,
+    Toggle = FALSE,
+    Container = FALSE,
+    RecordAbsolute = FALSE,
     RecordPerSet;
     Synchron;
 
-    /* config: */ 
-    AccelConfig = TRUE, 
-    MenuConfig = TRUE, 
-    StatusBarConfig = FALSE, 
-    ToolBoxConfig = TRUE, 
+    /* config: */
+    AccelConfig = TRUE,
+    MenuConfig = TRUE,
+    StatusBarConfig = FALSE,
+    ToolBoxConfig = TRUE,
     GroupId = GID_EDIT;
 ]
 
@@ -7496,24 +7496,24 @@ SfxVoidItem SetExtSelection FN_SET_EXT_MODE
 SfxVoidItem SetMultiSelection FN_SET_ADD_MODE
 ()
 [
-    /* flags: */  
-    AutoUpdate = FALSE, 
-    Cachable = Cachable, 
-    FastCall = TRUE, 
-    HasCoreId = FALSE, 
-    HasDialog = FALSE, 
-    ReadOnlyDoc = TRUE, 
-    Toggle = FALSE, 
-    Container = FALSE, 
-    RecordAbsolute = FALSE, 
+    /* flags: */
+    AutoUpdate = FALSE,
+    Cachable = Cachable,
+    FastCall = TRUE,
+    HasCoreId = FALSE,
+    HasDialog = FALSE,
+    ReadOnlyDoc = TRUE,
+    Toggle = FALSE,
+    Container = FALSE,
+    RecordAbsolute = FALSE,
     RecordPerSet;
     Synchron;
 
-    /* config: */ 
-    AccelConfig = TRUE, 
-    MenuConfig = TRUE, 
-    StatusBarConfig = FALSE, 
-    ToolBoxConfig = TRUE, 
+    /* config: */
+    AccelConfig = TRUE,
+    MenuConfig = TRUE,
+    StatusBarConfig = FALSE,
+    ToolBoxConfig = TRUE,
     GroupId = GID_EDIT;
 ]
 
@@ -7521,24 +7521,24 @@ SfxVoidItem SetMultiSelection FN_SET_ADD_MODE
 SfxVoidItem SetOptimalColumnWidth FN_TABLE_ADJUST_CELLS
 ()
 [
-    /* flags: */  
-    AutoUpdate = FALSE, 
-    Cachable = Volatile, 
-    FastCall = TRUE, 
-    HasCoreId = FALSE, 
-    HasDialog = FALSE, 
-    ReadOnlyDoc = FALSE, 
-    Toggle = FALSE, 
-    Container = FALSE, 
-    RecordAbsolute = FALSE, 
+    /* flags: */
+    AutoUpdate = FALSE,
+    Cachable = Volatile,
+    FastCall = TRUE,
+    HasCoreId = FALSE,
+    HasDialog = FALSE,
+    ReadOnlyDoc = FALSE,
+    Toggle = FALSE,
+    Container = FALSE,
+    RecordAbsolute = FALSE,
     RecordPerSet;
     Synchron;
 
-    /* config: */ 
-    AccelConfig = TRUE, 
-    MenuConfig = TRUE, 
-    StatusBarConfig = FALSE, 
-    ToolBoxConfig = TRUE, 
+    /* config: */
+    AccelConfig = TRUE,
+    MenuConfig = TRUE,
+    StatusBarConfig = FALSE,
+    ToolBoxConfig = TRUE,
     GroupId = GID_TABLE;
 ]
 
@@ -7546,24 +7546,24 @@ SfxVoidItem SetOptimalColumnWidth FN_TABLE_ADJUST_CELLS
 SfxVoidItem SetOptimalRowHeight FN_TABLE_OPTIMAL_HEIGHT
 ()
 [
-    /* flags: */  
-    AutoUpdate = FALSE, 
-    Cachable = Cachable, 
-    FastCall = TRUE, 
-    HasCoreId = FALSE, 
-    HasDialog = FALSE, 
-    ReadOnlyDoc = FALSE, 
-    Toggle = FALSE, 
-    Container = FALSE, 
-    RecordAbsolute = FALSE, 
+    /* flags: */
+    AutoUpdate = FALSE,
+    Cachable = Cachable,
+    FastCall = TRUE,
+    HasCoreId = FALSE,
+    HasDialog = FALSE,
+    ReadOnlyDoc = FALSE,
+    Toggle = FALSE,
+    Container = FALSE,
+    RecordAbsolute = FALSE,
     RecordPerSet;
     Synchron;
 
-    /* config: */ 
-    AccelConfig = TRUE, 
-    MenuConfig = TRUE, 
-    StatusBarConfig = FALSE, 
-    ToolBoxConfig = TRUE, 
+    /* config: */
+    AccelConfig = TRUE,
+    MenuConfig = TRUE,
+    StatusBarConfig = FALSE,
+    ToolBoxConfig = TRUE,
     GroupId = GID_TABLE;
 ]
 
@@ -7571,24 +7571,24 @@ SfxVoidItem SetOptimalRowHeight FN_TABLE_OPTIMAL_HEIGHT
 SfxVoidItem SetRowHeight FN_TABLE_SET_ROW_HEIGHT
 ()
 [
-    /* flags: */  
-    AutoUpdate = FALSE, 
-    Cachable = Cachable, 
-    FastCall = TRUE, 
-    HasCoreId = FALSE, 
-    HasDialog = FALSE, 
-    ReadOnlyDoc = FALSE, 
-    Toggle = FALSE, 
-    Container = FALSE, 
-    RecordAbsolute = FALSE, 
+    /* flags: */
+    AutoUpdate = FALSE,
+    Cachable = Cachable,
+    FastCall = TRUE,
+    HasCoreId = FALSE,
+    HasDialog = FALSE,
+    ReadOnlyDoc = FALSE,
+    Toggle = FALSE,
+    Container = FALSE,
+    RecordAbsolute = FALSE,
     RecordPerSet;
     Synchron;
 
-    /* config: */ 
-    AccelConfig = TRUE, 
-    MenuConfig = TRUE, 
-    StatusBarConfig = FALSE, 
-    ToolBoxConfig = TRUE, 
+    /* config: */
+    AccelConfig = TRUE,
+    MenuConfig = TRUE,
+    StatusBarConfig = FALSE,
+    ToolBoxConfig = TRUE,
     GroupId = GID_TABLE;
 ]
 
@@ -7596,26 +7596,26 @@ SfxVoidItem SetRowHeight FN_TABLE_SET_ROW_HEIGHT
 SfxBoolItem ShadowCursor FN_SHADOWCURSOR
 
 [
-    /* flags: */  
-    AutoUpdate = TRUE, 
-    Cachable = Cachable, 
-    FastCall = TRUE, 
-    HasCoreId = FALSE, 
-    HasDialog = FALSE, 
-    ReadOnlyDoc = FALSE, 
-    Toggle = TRUE, 
-    Container = FALSE, 
-    RecordAbsolute = FALSE, 
+    /* flags: */
+    AutoUpdate = TRUE,
+    Cachable = Cachable,
+    FastCall = TRUE,
+    HasCoreId = FALSE,
+    HasDialog = FALSE,
+    ReadOnlyDoc = FALSE,
+    Toggle = TRUE,
+    Container = FALSE,
+    RecordAbsolute = FALSE,
     RecordPerSet;
     Synchron;
 
-    Readonly = FALSE, 
+    Readonly = FALSE,
 
-    /* config: */ 
-    AccelConfig = TRUE, 
-    MenuConfig = TRUE, 
-    StatusBarConfig = FALSE, 
-    ToolBoxConfig = TRUE, 
+    /* config: */
+    AccelConfig = TRUE,
+    MenuConfig = TRUE,
+    StatusBarConfig = FALSE,
+    ToolBoxConfig = TRUE,
     GroupId = GID_OPTIONS;
 ]
 
@@ -7623,24 +7623,24 @@ SfxBoolItem ShadowCursor FN_SHADOWCURSOR
 SfxVoidItem ShiftBackspace FN_SHIFT_BACKSPACE
 ()
 [
-    /* flags: */  
-    AutoUpdate = FALSE, 
-    Cachable = Cachable, 
-    FastCall = TRUE, 
-    HasCoreId = FALSE, 
-    HasDialog = FALSE, 
-    ReadOnlyDoc = FALSE, 
-    Toggle = FALSE, 
-    Container = FALSE, 
-    RecordAbsolute = FALSE, 
+    /* flags: */
+    AutoUpdate = FALSE,
+    Cachable = Cachable,
+    FastCall = TRUE,
+    HasCoreId = FALSE,
+    HasDialog = FALSE,
+    ReadOnlyDoc = FALSE,
+    Toggle = FALSE,
+    Container = FALSE,
+    RecordAbsolute = FALSE,
     RecordPerSet;
     Synchron;
 
-    /* config: */ 
-    AccelConfig = TRUE, 
-    MenuConfig = FALSE, 
-    StatusBarConfig = FALSE, 
-    ToolBoxConfig = FALSE, 
+    /* config: */
+    AccelConfig = TRUE,
+    MenuConfig = FALSE,
+    StatusBarConfig = FALSE,
+    ToolBoxConfig = FALSE,
     GroupId = GID_EDIT;
 ]
 
@@ -7648,24 +7648,24 @@ SfxVoidItem ShiftBackspace FN_SHIFT_BACKSPACE
 SfxVoidItem ShowFourPages FN_SHOW_FOUR_PAGES
 ()
 [
-    /* flags: */  
-    AutoUpdate = FALSE, 
-    Cachable = Cachable, 
-    FastCall = TRUE, 
-    HasCoreId = FALSE, 
-    HasDialog = FALSE, 
-    ReadOnlyDoc = TRUE, 
-    Toggle = FALSE, 
-    Container = FALSE, 
-    RecordAbsolute = FALSE, 
+    /* flags: */
+    AutoUpdate = FALSE,
+    Cachable = Cachable,
+    FastCall = TRUE,
+    HasCoreId = FALSE,
+    HasDialog = FALSE,
+    ReadOnlyDoc = TRUE,
+    Toggle = FALSE,
+    Container = FALSE,
+    RecordAbsolute = FALSE,
     RecordPerSet;
     Synchron;
 
-    /* config: */ 
-    AccelConfig = TRUE, 
-    MenuConfig = TRUE, 
-    StatusBarConfig = FALSE, 
-    ToolBoxConfig = TRUE, 
+    /* config: */
+    AccelConfig = TRUE,
+    MenuConfig = TRUE,
+    StatusBarConfig = FALSE,
+    ToolBoxConfig = TRUE,
     GroupId = GID_VIEW;
 ]
 
@@ -7673,26 +7673,26 @@ SfxVoidItem ShowFourPages FN_SHOW_FOUR_PAGES
 SfxBoolItem ShowHiddenParagraphs FN_VIEW_HIDDEN_PARA
 
 [
-    /* flags: */  
-    AutoUpdate = TRUE, 
-    Cachable = Cachable, 
-    FastCall = FALSE, 
-    HasCoreId = FALSE, 
-    HasDialog = FALSE, 
-    ReadOnlyDoc = TRUE, 
-    Toggle = TRUE, 
-    Container = FALSE, 
-    RecordAbsolute = FALSE, 
+    /* flags: */
+    AutoUpdate = TRUE,
+    Cachable = Cachable,
+    FastCall = FALSE,
+    HasCoreId = FALSE,
+    HasDialog = FALSE,
+    ReadOnlyDoc = TRUE,
+    Toggle = TRUE,
+    Container = FALSE,
+    RecordAbsolute = FALSE,
     RecordPerSet;
     Synchron;
 
-    Readonly = FALSE, 
+    Readonly = FALSE,
 
-    /* config: */ 
-    AccelConfig = TRUE, 
-    MenuConfig = TRUE, 
-    StatusBarConfig = FALSE, 
-    ToolBoxConfig = TRUE, 
+    /* config: */
+    AccelConfig = TRUE,
+    MenuConfig = TRUE,
+    StatusBarConfig = FALSE,
+    ToolBoxConfig = TRUE,
     GroupId = GID_OPTIONS;
 ]
 
@@ -7700,24 +7700,24 @@ SfxBoolItem ShowHiddenParagraphs FN_VIEW_HIDDEN_PARA
 SfxBoolItem ShowRedlining FN_REDLINE_SHOW
 ()
 [
-    /* flags: */  
-    AutoUpdate = TRUE, 
-    Cachable = Cachable, 
-    FastCall = FALSE, 
-    HasCoreId = FALSE, 
-    HasDialog = FALSE, 
-    ReadOnlyDoc = TRUE, 
-    Toggle = TRUE, 
-    Container = FALSE, 
-    RecordAbsolute = FALSE, 
+    /* flags: */
+    AutoUpdate = TRUE,
+    Cachable = Cachable,
+    FastCall = FALSE,
+    HasCoreId = FALSE,
+    HasDialog = FALSE,
+    ReadOnlyDoc = TRUE,
+    Toggle = TRUE,
+    Container = FALSE,
+    RecordAbsolute = FALSE,
     RecordPerSet;
     Synchron;
 
-    /* config: */ 
-    AccelConfig = TRUE, 
-    MenuConfig = TRUE, 
-    StatusBarConfig = FALSE, 
-    ToolBoxConfig = TRUE, 
+    /* config: */
+    AccelConfig = TRUE,
+    MenuConfig = TRUE,
+    StatusBarConfig = FALSE,
+    ToolBoxConfig = TRUE,
     GroupId = GID_VIEW;
 ]
 
@@ -7725,24 +7725,24 @@ SfxBoolItem ShowRedlining FN_REDLINE_SHOW
 SfxVoidItem ShowTwoPages FN_SHOW_TWO_PAGES
 ()
 [
-    /* flags: */  
-    AutoUpdate = FALSE, 
-    Cachable = Cachable, 
-    FastCall = TRUE, 
-    HasCoreId = FALSE, 
-    HasDialog = FALSE, 
-    ReadOnlyDoc = TRUE, 
-    Toggle = FALSE, 
-    Container = FALSE, 
-    RecordAbsolute = FALSE, 
+    /* flags: */
+    AutoUpdate = FALSE,
+    Cachable = Cachable,
+    FastCall = TRUE,
+    HasCoreId = FALSE,
+    HasDialog = FALSE,
+    ReadOnlyDoc = TRUE,
+    Toggle = FALSE,
+    Container = FALSE,
+    RecordAbsolute = FALSE,
     RecordPerSet;
     Synchron;
 
-    /* config: */ 
-    AccelConfig = TRUE, 
-    MenuConfig = TRUE, 
-    StatusBarConfig = FALSE, 
-    ToolBoxConfig = TRUE, 
+    /* config: */
+    AccelConfig = TRUE,
+    MenuConfig = TRUE,
+    StatusBarConfig = FALSE,
+    ToolBoxConfig = TRUE,
     GroupId = GID_VIEW;
 ]
 
@@ -7750,24 +7750,24 @@ SfxVoidItem ShowTwoPages FN_SHOW_TWO_PAGES
 SfxVoidItem Shrink FN_SHRINK_FONT_SIZE
 ()
 [
-    /* flags: */  
-    AutoUpdate = TRUE, 
-    Cachable = Cachable, 
-    FastCall = FALSE, 
-    HasCoreId = FALSE, 
-    HasDialog = FALSE, 
-    ReadOnlyDoc = FALSE, 
-    Toggle = FALSE, 
-    Container = FALSE, 
-    RecordAbsolute = FALSE, 
+    /* flags: */
+    AutoUpdate = TRUE,
+    Cachable = Cachable,
+    FastCall = FALSE,
+    HasCoreId = FALSE,
+    HasDialog = FALSE,
+    ReadOnlyDoc = FALSE,
+    Toggle = FALSE,
+    Container = FALSE,
+    RecordAbsolute = FALSE,
     RecordPerSet;
     Synchron;
 
-    /* config: */ 
-    AccelConfig = TRUE, 
-    MenuConfig = FALSE, 
-    StatusBarConfig = FALSE, 
-    ToolBoxConfig = TRUE, 
+    /* config: */
+    AccelConfig = TRUE,
+    MenuConfig = FALSE,
+    StatusBarConfig = FALSE,
+    ToolBoxConfig = TRUE,
     GroupId = GID_FORMAT;
 ]
 
@@ -7775,76 +7775,49 @@ SfxVoidItem Shrink FN_SHRINK_FONT_SIZE
 SfxVoidItem SortDialog FN_SORTING_DLG
 ()
 [
-    /* flags: */  
-    AutoUpdate = FALSE, 
-    Cachable = Cachable, 
-    FastCall = TRUE, 
-    HasCoreId = FALSE, 
-    HasDialog = TRUE, 
-    ReadOnlyDoc = FALSE, 
-    Toggle = FALSE, 
-    Container = FALSE, 
-    RecordAbsolute = FALSE, 
+    /* flags: */
+    AutoUpdate = FALSE,
+    Cachable = Cachable,
+    FastCall = TRUE,
+    HasCoreId = FALSE,
+    HasDialog = TRUE,
+    ReadOnlyDoc = FALSE,
+    Toggle = FALSE,
+    Container = FALSE,
+    RecordAbsolute = FALSE,
     RecordPerSet;
     Asynchron;
 
-    /* config: */ 
-    AccelConfig = TRUE, 
-    MenuConfig = TRUE, 
-    StatusBarConfig = FALSE, 
-    ToolBoxConfig = TRUE, 
+    /* config: */
+    AccelConfig = TRUE,
+    MenuConfig = TRUE,
+    StatusBarConfig = FALSE,
+    ToolBoxConfig = TRUE,
     GroupId = GID_DATA;
-]
-
-//--------------------------------------------------------------------------
-SfxBoolItem Sourceview FN_SOURCEVIEW
-
-[
-    /* flags: */  
-    AutoUpdate = FALSE, 
-    Cachable = Cachable, 
-    FastCall = FALSE, 
-    HasCoreId = FALSE, 
-    HasDialog = FALSE, 
-    ReadOnlyDoc = TRUE, 
-    Toggle = TRUE, 
-    Container = FALSE, 
-    RecordAbsolute = FALSE, 
-    RecordPerSet;
-    Asynchron;
-
-    Readonly = FALSE, 
-
-    /* config: */ 
-    AccelConfig = TRUE, 
-    MenuConfig = TRUE, 
-    StatusBarConfig = FALSE, 
-    ToolBoxConfig = TRUE, 
-    GroupId = GID_VIEW;
 ]
 
 //--------------------------------------------------------------------------
 SfxVoidItem Spelling FN_SPELLING_DLG
 ()
 [
-    /* flags: */  
-    AutoUpdate = FALSE, 
-    Cachable = Cachable, 
-    FastCall = FALSE, 
-    HasCoreId = FALSE, 
-    HasDialog = TRUE, 
-    ReadOnlyDoc = FALSE, 
-    Toggle = FALSE, 
-    Container = FALSE, 
-    RecordAbsolute = FALSE, 
+    /* flags: */
+    AutoUpdate = FALSE,
+    Cachable = Cachable,
+    FastCall = FALSE,
+    HasCoreId = FALSE,
+    HasDialog = TRUE,
+    ReadOnlyDoc = FALSE,
+    Toggle = FALSE,
+    Container = FALSE,
+    RecordAbsolute = FALSE,
     RecordPerSet;
     Asynchron;
 
-    /* config: */ 
-    AccelConfig = TRUE, 
-    MenuConfig = TRUE, 
-    StatusBarConfig = FALSE, 
-    ToolBoxConfig = TRUE, 
+    /* config: */
+    AccelConfig = TRUE,
+    MenuConfig = TRUE,
+    StatusBarConfig = FALSE,
+    ToolBoxConfig = TRUE,
     GroupId = GID_OPTIONS;
 ]
 
@@ -7852,24 +7825,24 @@ SfxVoidItem Spelling FN_SPELLING_DLG
 SfxVoidItem SplitCell FN_TABLE_SPLIT_CELLS
 ()
 [
-    /* flags: */  
-    AutoUpdate = FALSE, 
-    Cachable = Cachable, 
-    FastCall = TRUE, 
-    HasCoreId = FALSE, 
-    HasDialog = FALSE, 
-    ReadOnlyDoc = FALSE, 
-    Toggle = FALSE, 
-    Container = FALSE, 
-    RecordAbsolute = FALSE, 
+    /* flags: */
+    AutoUpdate = FALSE,
+    Cachable = Cachable,
+    FastCall = TRUE,
+    HasCoreId = FALSE,
+    HasDialog = FALSE,
+    ReadOnlyDoc = FALSE,
+    Toggle = FALSE,
+    Container = FALSE,
+    RecordAbsolute = FALSE,
     RecordPerSet;
     Synchron;
 
-    /* config: */ 
-    AccelConfig = TRUE, 
-    MenuConfig = TRUE, 
-    StatusBarConfig = FALSE, 
-    ToolBoxConfig = TRUE, 
+    /* config: */
+    AccelConfig = TRUE,
+    MenuConfig = TRUE,
+    StatusBarConfig = FALSE,
+    ToolBoxConfig = TRUE,
     GroupId = GID_TABLE;
 ]
 
@@ -7877,24 +7850,24 @@ SfxVoidItem SplitCell FN_TABLE_SPLIT_CELLS
 SfxVoidItem SplitTable FN_TABLE_SPLIT_TABLE
 ()
 [
-    /* flags: */  
-    AutoUpdate = FALSE, 
-    Cachable = Cachable, 
-    FastCall = TRUE, 
-    HasCoreId = FALSE, 
-    HasDialog = FALSE, 
-    ReadOnlyDoc = FALSE, 
-    Toggle = FALSE, 
-    Container = FALSE, 
-    RecordAbsolute = FALSE, 
+    /* flags: */
+    AutoUpdate = FALSE,
+    Cachable = Cachable,
+    FastCall = TRUE,
+    HasCoreId = FALSE,
+    HasDialog = FALSE,
+    ReadOnlyDoc = FALSE,
+    Toggle = FALSE,
+    Container = FALSE,
+    RecordAbsolute = FALSE,
     RecordPerSet;
     Synchron;
 
-    /* config: */ 
-    AccelConfig = TRUE, 
-    MenuConfig = TRUE, 
-    StatusBarConfig = FALSE, 
-    ToolBoxConfig = TRUE, 
+    /* config: */
+    AccelConfig = TRUE,
+    MenuConfig = TRUE,
+    StatusBarConfig = FALSE,
+    ToolBoxConfig = TRUE,
     GroupId = GID_TABLE;
 ]
 
@@ -7902,24 +7875,24 @@ SfxVoidItem SplitTable FN_TABLE_SPLIT_TABLE
 SfxVoidItem StartAutoCorrect FN_AUTO_CORRECT
 ()
 [
-    /* flags: */  
-    AutoUpdate = FALSE, 
-    Cachable = Cachable, 
-    FastCall = TRUE, 
-    HasCoreId = FALSE, 
-    HasDialog = FALSE, 
-    ReadOnlyDoc = FALSE, 
-    Toggle = FALSE, 
-    Container = FALSE, 
-    RecordAbsolute = FALSE, 
+    /* flags: */
+    AutoUpdate = FALSE,
+    Cachable = Cachable,
+    FastCall = TRUE,
+    HasCoreId = FALSE,
+    HasDialog = FALSE,
+    ReadOnlyDoc = FALSE,
+    Toggle = FALSE,
+    Container = FALSE,
+    RecordAbsolute = FALSE,
     RecordPerSet;
     Synchron;
 
-    /* config: */ 
-    AccelConfig = TRUE, 
-    MenuConfig = TRUE, 
-    StatusBarConfig = FALSE, 
-    ToolBoxConfig = TRUE, 
+    /* config: */
+    AccelConfig = TRUE,
+    MenuConfig = TRUE,
+    StatusBarConfig = FALSE,
+    ToolBoxConfig = TRUE,
     GroupId = GID_OPTIONS;
 ]
 
@@ -7927,24 +7900,24 @@ SfxVoidItem StartAutoCorrect FN_AUTO_CORRECT
 SfxVoidItem StartOfDocumentSel FN_START_OF_DOCUMENT_SEL
 ()
 [
-    /* flags: */  
-    AutoUpdate = FALSE, 
-    Cachable = Cachable, 
-    FastCall = TRUE, 
-    HasCoreId = FALSE, 
-    HasDialog = FALSE, 
-    ReadOnlyDoc = TRUE, 
-    Toggle = FALSE, 
-    Container = FALSE, 
-    RecordAbsolute = FALSE, 
+    /* flags: */
+    AutoUpdate = FALSE,
+    Cachable = Cachable,
+    FastCall = TRUE,
+    HasCoreId = FALSE,
+    HasDialog = FALSE,
+    ReadOnlyDoc = TRUE,
+    Toggle = FALSE,
+    Container = FALSE,
+    RecordAbsolute = FALSE,
     RecordPerSet;
     Synchron;
 
-    /* config: */ 
-    AccelConfig = TRUE, 
-    MenuConfig = FALSE, 
-    StatusBarConfig = FALSE, 
-    ToolBoxConfig = FALSE, 
+    /* config: */
+    AccelConfig = TRUE,
+    MenuConfig = FALSE,
+    StatusBarConfig = FALSE,
+    ToolBoxConfig = FALSE,
     GroupId = GID_NAVIGATOR;
 ]
 
@@ -7952,24 +7925,24 @@ SfxVoidItem StartOfDocumentSel FN_START_OF_DOCUMENT_SEL
 SfxVoidItem StartOfLineSel FN_START_OF_LINE_SEL
 ()
 [
-    /* flags: */  
-    AutoUpdate = FALSE, 
-    Cachable = Cachable, 
-    FastCall = TRUE, 
-    HasCoreId = FALSE, 
-    HasDialog = FALSE, 
-    ReadOnlyDoc = TRUE, 
-    Toggle = FALSE, 
-    Container = FALSE, 
-    RecordAbsolute = FALSE, 
+    /* flags: */
+    AutoUpdate = FALSE,
+    Cachable = Cachable,
+    FastCall = TRUE,
+    HasCoreId = FALSE,
+    HasDialog = FALSE,
+    ReadOnlyDoc = TRUE,
+    Toggle = FALSE,
+    Container = FALSE,
+    RecordAbsolute = FALSE,
     RecordPerSet;
     Synchron;
 
-    /* config: */ 
-    AccelConfig = TRUE, 
-    MenuConfig = FALSE, 
-    StatusBarConfig = FALSE, 
-    ToolBoxConfig = FALSE, 
+    /* config: */
+    AccelConfig = TRUE,
+    MenuConfig = FALSE,
+    StatusBarConfig = FALSE,
+    ToolBoxConfig = FALSE,
     GroupId = GID_NAVIGATOR;
 ]
 
@@ -7977,24 +7950,24 @@ SfxVoidItem StartOfLineSel FN_START_OF_LINE_SEL
 SfxVoidItem StartOfParaSel FN_START_OF_PARA_SEL
 ()
 [
-    /* flags: */  
-    AutoUpdate = FALSE, 
-    Cachable = Cachable, 
-    FastCall = TRUE, 
-    HasCoreId = FALSE, 
-    HasDialog = FALSE, 
-    ReadOnlyDoc = TRUE, 
-    Toggle = FALSE, 
-    Container = FALSE, 
-    RecordAbsolute = FALSE, 
+    /* flags: */
+    AutoUpdate = FALSE,
+    Cachable = Cachable,
+    FastCall = TRUE,
+    HasCoreId = FALSE,
+    HasDialog = FALSE,
+    ReadOnlyDoc = TRUE,
+    Toggle = FALSE,
+    Container = FALSE,
+    RecordAbsolute = FALSE,
     RecordPerSet;
     Synchron;
 
-    /* config: */ 
-    AccelConfig = TRUE, 
-    MenuConfig = FALSE, 
-    StatusBarConfig = FALSE, 
-    ToolBoxConfig = FALSE, 
+    /* config: */
+    AccelConfig = TRUE,
+    MenuConfig = FALSE,
+    StatusBarConfig = FALSE,
+    ToolBoxConfig = FALSE,
     GroupId = GID_NAVIGATOR;
 ]
 
@@ -8002,24 +7975,24 @@ SfxVoidItem StartOfParaSel FN_START_OF_PARA_SEL
 SfxVoidItem StateBookmark FN_STAT_BOOKMARK
 ()
 [
-    /* flags: */  
-    AutoUpdate = FALSE, 
-    Cachable = Cachable, 
-    FastCall = FALSE, 
-    HasCoreId = FALSE, 
-    HasDialog = FALSE, 
-    ReadOnlyDoc = TRUE, 
-    Toggle = FALSE, 
-    Container = FALSE, 
-    RecordAbsolute = FALSE, 
+    /* flags: */
+    AutoUpdate = FALSE,
+    Cachable = Cachable,
+    FastCall = FALSE,
+    HasCoreId = FALSE,
+    HasDialog = FALSE,
+    ReadOnlyDoc = TRUE,
+    Toggle = FALSE,
+    Container = FALSE,
+    RecordAbsolute = FALSE,
     RecordPerSet;
     Synchron;
 
-    /* config: */ 
-    AccelConfig = FALSE, 
-    MenuConfig = FALSE, 
-    StatusBarConfig = FALSE, 
-    ToolBoxConfig = FALSE, 
+    /* config: */
+    AccelConfig = FALSE,
+    MenuConfig = FALSE,
+    StatusBarConfig = FALSE,
+    ToolBoxConfig = FALSE,
     GroupId = GID_INTERN;
 ]
 
@@ -8027,26 +8000,26 @@ SfxVoidItem StateBookmark FN_STAT_BOOKMARK
 SfxStringItem StatePageNumber FN_STAT_PAGE
 
 [
-    /* flags: */  
-    AutoUpdate = FALSE, 
-    Cachable = Volatile, 
-    FastCall = FALSE, 
-    HasCoreId = FALSE, 
-    HasDialog = FALSE, 
-    ReadOnlyDoc = TRUE, 
-    Toggle = FALSE, 
-    Container = FALSE, 
-    RecordAbsolute = FALSE, 
+    /* flags: */
+    AutoUpdate = FALSE,
+    Cachable = Volatile,
+    FastCall = FALSE,
+    HasCoreId = FALSE,
+    HasDialog = FALSE,
+    ReadOnlyDoc = TRUE,
+    Toggle = FALSE,
+    Container = FALSE,
+    RecordAbsolute = FALSE,
     RecordPerSet;
     Synchron;
 
-    Readonly = FALSE, 
+    Readonly = FALSE,
 
-    /* config: */ 
-    AccelConfig = FALSE, 
-    MenuConfig = FALSE, 
-    StatusBarConfig = TRUE, 
-    ToolBoxConfig = FALSE, 
+    /* config: */
+    AccelConfig = FALSE,
+    MenuConfig = FALSE,
+    StatusBarConfig = TRUE,
+    ToolBoxConfig = FALSE,
     GroupId = GID_VIEW;
 ]
 
@@ -8054,24 +8027,24 @@ SfxStringItem StatePageNumber FN_STAT_PAGE
 SfxStringItem StateZoom FN_STAT_ZOOM
 ()
 [
-    /* flags: */  
-    AutoUpdate = FALSE, 
-    Cachable = Cachable, 
-    FastCall = FALSE, 
-    HasCoreId = FALSE, 
-    HasDialog = FALSE, 
-    ReadOnlyDoc = TRUE, 
-    Toggle = FALSE, 
-    Container = FALSE, 
-    RecordAbsolute = FALSE, 
+    /* flags: */
+    AutoUpdate = FALSE,
+    Cachable = Cachable,
+    FastCall = FALSE,
+    HasCoreId = FALSE,
+    HasDialog = FALSE,
+    ReadOnlyDoc = TRUE,
+    Toggle = FALSE,
+    Container = FALSE,
+    RecordAbsolute = FALSE,
     RecordPerSet;
     Synchron;
 
-    /* config: */ 
-    AccelConfig = FALSE, 
-    MenuConfig = FALSE, 
-    StatusBarConfig = FALSE, 
-    ToolBoxConfig = FALSE, 
+    /* config: */
+    AccelConfig = FALSE,
+    MenuConfig = FALSE,
+    StatusBarConfig = FALSE,
+    ToolBoxConfig = FALSE,
     GroupId = GID_EDIT;
 ]
 
@@ -8079,26 +8052,26 @@ SfxStringItem StateZoom FN_STAT_ZOOM
 SfxBoolItem SubScript FN_SET_SUB_SCRIPT
 
 [
-    /* flags: */  
-    AutoUpdate = TRUE, 
-    Cachable = Cachable, 
-    FastCall = FALSE, 
-    HasCoreId = FALSE, 
-    HasDialog = FALSE, 
-    ReadOnlyDoc = FALSE, 
-    Toggle = FALSE, 
-    Container = FALSE, 
-    RecordAbsolute = FALSE, 
+    /* flags: */
+    AutoUpdate = TRUE,
+    Cachable = Cachable,
+    FastCall = FALSE,
+    HasCoreId = FALSE,
+    HasDialog = FALSE,
+    ReadOnlyDoc = FALSE,
+    Toggle = FALSE,
+    Container = FALSE,
+    RecordAbsolute = FALSE,
     RecordPerSet;
     Synchron;
 
-    Readonly = FALSE, 
+    Readonly = FALSE,
 
-    /* config: */ 
-    AccelConfig = TRUE, 
-    MenuConfig = TRUE, 
-    StatusBarConfig = FALSE, 
-    ToolBoxConfig = TRUE, 
+    /* config: */
+    AccelConfig = TRUE,
+    MenuConfig = TRUE,
+    StatusBarConfig = FALSE,
+    ToolBoxConfig = TRUE,
     GroupId = GID_FORMAT;
 ]
 
@@ -8106,26 +8079,26 @@ SfxBoolItem SubScript FN_SET_SUB_SCRIPT
 SfxBoolItem SuperScript FN_SET_SUPER_SCRIPT
 
 [
-    /* flags: */  
-    AutoUpdate = TRUE, 
-    Cachable = Cachable, 
-    FastCall = FALSE, 
-    HasCoreId = FALSE, 
-    HasDialog = FALSE, 
-    ReadOnlyDoc = FALSE, 
-    Toggle = FALSE, 
-    Container = FALSE, 
-    RecordAbsolute = FALSE, 
+    /* flags: */
+    AutoUpdate = TRUE,
+    Cachable = Cachable,
+    FastCall = FALSE,
+    HasCoreId = FALSE,
+    HasDialog = FALSE,
+    ReadOnlyDoc = FALSE,
+    Toggle = FALSE,
+    Container = FALSE,
+    RecordAbsolute = FALSE,
     RecordPerSet;
     Synchron;
 
-    Readonly = FALSE, 
+    Readonly = FALSE,
 
-    /* config: */ 
-    AccelConfig = TRUE, 
-    MenuConfig = TRUE, 
-    StatusBarConfig = FALSE, 
-    ToolBoxConfig = TRUE, 
+    /* config: */
+    AccelConfig = TRUE,
+    MenuConfig = TRUE,
+    StatusBarConfig = FALSE,
+    ToolBoxConfig = TRUE,
     GroupId = GID_FORMAT;
 ]
 
@@ -8133,24 +8106,24 @@ SfxBoolItem SuperScript FN_SET_SUPER_SCRIPT
 SfxVoidItem SwBrwInsert FN_SBA_BRW_INSERT
 ()
 [
-    /* flags: */  
-    AutoUpdate = FALSE, 
-    Cachable = Cachable, 
-    FastCall = TRUE, 
-    HasCoreId = FALSE, 
-    HasDialog = FALSE, 
-    ReadOnlyDoc = FALSE, 
-    Toggle = FALSE, 
-    Container = FALSE, 
-    RecordAbsolute = FALSE, 
+    /* flags: */
+    AutoUpdate = FALSE,
+    Cachable = Cachable,
+    FastCall = TRUE,
+    HasCoreId = FALSE,
+    HasDialog = FALSE,
+    ReadOnlyDoc = FALSE,
+    Toggle = FALSE,
+    Container = FALSE,
+    RecordAbsolute = FALSE,
     RecordPerSet;
     Synchron;
 
-    /* config: */ 
-    AccelConfig = FALSE, 
-    MenuConfig = FALSE, 
-    StatusBarConfig = FALSE, 
-    ToolBoxConfig = FALSE, 
+    /* config: */
+    AccelConfig = FALSE,
+    MenuConfig = FALSE,
+    StatusBarConfig = FALSE,
+    ToolBoxConfig = FALSE,
     GroupId = GID_DATA;
 ]
 
@@ -8158,24 +8131,24 @@ SfxVoidItem SwBrwInsert FN_SBA_BRW_INSERT
 SfxVoidItem SwMailMerge FN_SBA_BRW_MERGE
 ()
 [
-    /* flags: */  
-    AutoUpdate = FALSE, 
-    Cachable = Cachable, 
-    FastCall = TRUE, 
-    HasCoreId = FALSE, 
-    HasDialog = FALSE, 
-    ReadOnlyDoc = FALSE, 
-    Toggle = FALSE, 
-    Container = FALSE, 
-    RecordAbsolute = FALSE, 
+    /* flags: */
+    AutoUpdate = FALSE,
+    Cachable = Cachable,
+    FastCall = TRUE,
+    HasCoreId = FALSE,
+    HasDialog = FALSE,
+    ReadOnlyDoc = FALSE,
+    Toggle = FALSE,
+    Container = FALSE,
+    RecordAbsolute = FALSE,
     RecordPerSet;
     Synchron;
 
-    /* config: */ 
-    AccelConfig = FALSE, 
-    MenuConfig = FALSE, 
-    StatusBarConfig = FALSE, 
-    ToolBoxConfig = FALSE, 
+    /* config: */
+    AccelConfig = FALSE,
+    MenuConfig = FALSE,
+    StatusBarConfig = FALSE,
+    ToolBoxConfig = FALSE,
     GroupId = GID_DATA;
 ]
 
@@ -8183,24 +8156,24 @@ SfxVoidItem SwMailMerge FN_SBA_BRW_MERGE
 SfxVoidItem SwUpdate FN_SBA_BRW_UPDATE
 ()
 [
-    /* flags: */  
-    AutoUpdate = FALSE, 
-    Cachable = Cachable, 
-    FastCall = TRUE, 
-    HasCoreId = FALSE, 
-    HasDialog = FALSE, 
-    ReadOnlyDoc = FALSE, 
-    Toggle = FALSE, 
-    Container = FALSE, 
-    RecordAbsolute = FALSE, 
+    /* flags: */
+    AutoUpdate = FALSE,
+    Cachable = Cachable,
+    FastCall = TRUE,
+    HasCoreId = FALSE,
+    HasDialog = FALSE,
+    ReadOnlyDoc = FALSE,
+    Toggle = FALSE,
+    Container = FALSE,
+    RecordAbsolute = FALSE,
     RecordPerSet;
     Synchron;
 
-    /* config: */ 
-    AccelConfig = FALSE, 
-    MenuConfig = FALSE, 
-    StatusBarConfig = FALSE, 
-    ToolBoxConfig = FALSE, 
+    /* config: */
+    AccelConfig = FALSE,
+    MenuConfig = FALSE,
+    StatusBarConfig = FALSE,
+    ToolBoxConfig = FALSE,
     GroupId = GID_DATA;
 ]
 
@@ -8208,24 +8181,24 @@ SfxVoidItem SwUpdate FN_SBA_BRW_UPDATE
 SfxBoolItem SynchronizeLabelsDlg FN_SYNC_LABELS
 ()
 [
-    /* flags: */  
-    AutoUpdate = FALSE, 
-    Cachable = Cachable, 
-    FastCall = FALSE, 
-    HasCoreId = FALSE, 
-    HasDialog = FALSE, 
-    ReadOnlyDoc = FALSE, 
-    Toggle = FALSE, 
-    Container = FALSE, 
-    RecordAbsolute = FALSE, 
+    /* flags: */
+    AutoUpdate = FALSE,
+    Cachable = Cachable,
+    FastCall = FALSE,
+    HasCoreId = FALSE,
+    HasDialog = FALSE,
+    ReadOnlyDoc = FALSE,
+    Toggle = FALSE,
+    Container = FALSE,
+    RecordAbsolute = FALSE,
     RecordPerSet;
     Asynchron;
 
-    /* config: */ 
-    AccelConfig = FALSE, 
-    MenuConfig = FALSE, 
-    StatusBarConfig = FALSE, 
-    ToolBoxConfig = FALSE, 
+    /* config: */
+    AccelConfig = FALSE,
+    MenuConfig = FALSE,
+    StatusBarConfig = FALSE,
+    ToolBoxConfig = FALSE,
     GroupId = GID_EDIT;
 ]
 
@@ -8233,26 +8206,26 @@ SfxBoolItem SynchronizeLabelsDlg FN_SYNC_LABELS
 SfxBoolItem TableBoundaries FN_VIEW_TABLEGRID
 
 [
-    /* flags: */  
-    AutoUpdate = FALSE, 
-    Cachable = Cachable, 
-    FastCall = FALSE, 
-    HasCoreId = FALSE, 
-    HasDialog = FALSE, 
-    ReadOnlyDoc = TRUE, 
-    Toggle = FALSE, 
-    Container = FALSE, 
-    RecordAbsolute = FALSE, 
+    /* flags: */
+    AutoUpdate = FALSE,
+    Cachable = Cachable,
+    FastCall = FALSE,
+    HasCoreId = FALSE,
+    HasDialog = FALSE,
+    ReadOnlyDoc = TRUE,
+    Toggle = FALSE,
+    Container = FALSE,
+    RecordAbsolute = FALSE,
     RecordPerSet;
     Synchron;
 
-    Readonly = FALSE, 
+    Readonly = FALSE,
 
-    /* config: */ 
-    AccelConfig = TRUE, 
-    MenuConfig = TRUE, 
-    StatusBarConfig = FALSE, 
-    ToolBoxConfig = TRUE, 
+    /* config: */
+    AccelConfig = TRUE,
+    MenuConfig = TRUE,
+    StatusBarConfig = FALSE,
+    ToolBoxConfig = TRUE,
     GroupId = GID_VIEW;
 ]
 
@@ -8260,24 +8233,24 @@ SfxBoolItem TableBoundaries FN_VIEW_TABLEGRID
 SfxVoidItem TableDialog FN_FORMAT_TABLE_DLG
 ()
 [
-    /* flags: */  
-    AutoUpdate = FALSE, 
-    Cachable = Cachable, 
-    FastCall = TRUE, 
-    HasCoreId = FALSE, 
-    HasDialog = TRUE, 
-    ReadOnlyDoc = FALSE, 
-    Toggle = FALSE, 
-    Container = FALSE, 
-    RecordAbsolute = FALSE, 
+    /* flags: */
+    AutoUpdate = FALSE,
+    Cachable = Cachable,
+    FastCall = TRUE,
+    HasCoreId = FALSE,
+    HasDialog = TRUE,
+    ReadOnlyDoc = FALSE,
+    Toggle = FALSE,
+    Container = FALSE,
+    RecordAbsolute = FALSE,
     RecordPerItem;
     Asynchron;
 
-    /* config: */ 
-    AccelConfig = TRUE, 
-    MenuConfig = TRUE, 
-    StatusBarConfig = FALSE, 
-    ToolBoxConfig = TRUE, 
+    /* config: */
+    AccelConfig = TRUE,
+    MenuConfig = TRUE,
+    StatusBarConfig = FALSE,
+    ToolBoxConfig = TRUE,
     GroupId = GID_TABLE;
 ]
 
@@ -8285,27 +8258,27 @@ SfxVoidItem TableDialog FN_FORMAT_TABLE_DLG
 SfxVoidItem TableModeFix FN_TABLE_MODE_FIX
 ()
 [
-    /* flags: */  
-    AutoUpdate = TRUE, 
-    Cachable = Cachable, 
-    FastCall = TRUE, 
-    HasCoreId = FALSE, 
-    HasDialog = FALSE, 
-    ReadOnlyDoc = FALSE, 
-    Toggle = FALSE, 
-    Container = FALSE, 
-    RecordAbsolute = FALSE, 
+    /* flags: */
+    AutoUpdate = TRUE,
+    Cachable = Cachable,
+    FastCall = TRUE,
+    HasCoreId = FALSE,
+    HasDialog = FALSE,
+    ReadOnlyDoc = FALSE,
+    Toggle = FALSE,
+    Container = FALSE,
+    RecordAbsolute = FALSE,
     RecordPerSet;
     Synchron;
 
     /* status: */
     SlotType = SfxBoolItem
 
-    /* config: */ 
-    AccelConfig = TRUE, 
-    MenuConfig = TRUE, 
-    StatusBarConfig = FALSE, 
-    ToolBoxConfig = TRUE, 
+    /* config: */
+    AccelConfig = TRUE,
+    MenuConfig = TRUE,
+    StatusBarConfig = FALSE,
+    ToolBoxConfig = TRUE,
     GroupId = GID_TABLE;
 ]
 
@@ -8313,27 +8286,27 @@ SfxVoidItem TableModeFix FN_TABLE_MODE_FIX
 SfxVoidItem TableModeFixProp FN_TABLE_MODE_FIX_PROP
 ()
 [
-    /* flags: */  
-    AutoUpdate = TRUE, 
-    Cachable = Cachable, 
-    FastCall = TRUE, 
-    HasCoreId = FALSE, 
-    HasDialog = FALSE, 
-    ReadOnlyDoc = FALSE, 
-    Toggle = FALSE, 
-    Container = FALSE, 
-    RecordAbsolute = FALSE, 
+    /* flags: */
+    AutoUpdate = TRUE,
+    Cachable = Cachable,
+    FastCall = TRUE,
+    HasCoreId = FALSE,
+    HasDialog = FALSE,
+    ReadOnlyDoc = FALSE,
+    Toggle = FALSE,
+    Container = FALSE,
+    RecordAbsolute = FALSE,
     RecordPerSet;
     Synchron;
 
     /* status: */
     SlotType = SfxBoolItem
 
-    /* config: */ 
-    AccelConfig = TRUE, 
-    MenuConfig = TRUE, 
-    StatusBarConfig = FALSE, 
-    ToolBoxConfig = TRUE, 
+    /* config: */
+    AccelConfig = TRUE,
+    MenuConfig = TRUE,
+    StatusBarConfig = FALSE,
+    ToolBoxConfig = TRUE,
     GroupId = GID_TABLE;
 ]
 
@@ -8341,27 +8314,27 @@ SfxVoidItem TableModeFixProp FN_TABLE_MODE_FIX_PROP
 SfxVoidItem TableModeVariable FN_TABLE_MODE_VARIABLE
 ()
 [
-    /* flags: */  
-    AutoUpdate = TRUE, 
-    Cachable = Cachable, 
-    FastCall = TRUE, 
-    HasCoreId = FALSE, 
-    HasDialog = FALSE, 
-    ReadOnlyDoc = FALSE, 
-    Toggle = FALSE, 
-    Container = FALSE, 
-    RecordAbsolute = FALSE, 
+    /* flags: */
+    AutoUpdate = TRUE,
+    Cachable = Cachable,
+    FastCall = TRUE,
+    HasCoreId = FALSE,
+    HasDialog = FALSE,
+    ReadOnlyDoc = FALSE,
+    Toggle = FALSE,
+    Container = FALSE,
+    RecordAbsolute = FALSE,
     RecordPerSet;
     Synchron;
 
     /* status: */
     SlotType = SfxBoolItem
 
-    /* config: */ 
-    AccelConfig = TRUE, 
-    MenuConfig = TRUE, 
-    StatusBarConfig = FALSE, 
-    ToolBoxConfig = TRUE, 
+    /* config: */
+    AccelConfig = TRUE,
+    MenuConfig = TRUE,
+    StatusBarConfig = FALSE,
+    ToolBoxConfig = TRUE,
     GroupId = GID_TABLE;
 ]
 
@@ -8369,24 +8342,24 @@ SfxVoidItem TableModeVariable FN_TABLE_MODE_VARIABLE
 SfxVoidItem TableNumberFormatDialog FN_NUM_FORMAT_TABLE_DLG
 ()
 [
-    /* flags: */  
-    AutoUpdate = FALSE, 
-    Cachable = Cachable, 
-    FastCall = FALSE, 
-    HasCoreId = FALSE, 
-    HasDialog = TRUE, 
-    ReadOnlyDoc = FALSE, 
-    Toggle = FALSE, 
-    Container = FALSE, 
-    RecordAbsolute = FALSE, 
+    /* flags: */
+    AutoUpdate = FALSE,
+    Cachable = Cachable,
+    FastCall = FALSE,
+    HasCoreId = FALSE,
+    HasDialog = TRUE,
+    ReadOnlyDoc = FALSE,
+    Toggle = FALSE,
+    Container = FALSE,
+    RecordAbsolute = FALSE,
     RecordPerItem;
     Asynchron;
 
-    /* config: */ 
-    AccelConfig = TRUE, 
-    MenuConfig = TRUE, 
-    StatusBarConfig = FALSE, 
-    ToolBoxConfig = TRUE, 
+    /* config: */
+    AccelConfig = TRUE,
+    MenuConfig = TRUE,
+    StatusBarConfig = FALSE,
+    ToolBoxConfig = TRUE,
     GroupId = GID_FORMAT;
 ]
 
@@ -8394,26 +8367,26 @@ SfxVoidItem TableNumberFormatDialog FN_NUM_FORMAT_TABLE_DLG
 SfxBoolItem TableNumberRecognition FN_SET_MODOPT_TBLNUMFMT
 
 [
-    /* flags: */  
-    AutoUpdate = FALSE, 
-    Cachable = Cachable, 
-    FastCall = FALSE, 
-    HasCoreId = FALSE, 
-    HasDialog = FALSE, 
-    ReadOnlyDoc = TRUE, 
-    Toggle = FALSE, 
-    Container = FALSE, 
-    RecordAbsolute = FALSE, 
+    /* flags: */
+    AutoUpdate = FALSE,
+    Cachable = Cachable,
+    FastCall = FALSE,
+    HasCoreId = FALSE,
+    HasDialog = FALSE,
+    ReadOnlyDoc = TRUE,
+    Toggle = FALSE,
+    Container = FALSE,
+    RecordAbsolute = FALSE,
     RecordPerSet;
     Synchron;
 
-    Readonly = FALSE, 
+    Readonly = FALSE,
 
-    /* config: */ 
-    AccelConfig = TRUE, 
-    MenuConfig = TRUE, 
-    StatusBarConfig = FALSE, 
-    ToolBoxConfig = TRUE, 
+    /* config: */
+    AccelConfig = TRUE,
+    MenuConfig = TRUE,
+    StatusBarConfig = FALSE,
+    ToolBoxConfig = TRUE,
     GroupId = GID_TABLE;
 ]
 
@@ -8421,24 +8394,24 @@ SfxBoolItem TableNumberRecognition FN_SET_MODOPT_TBLNUMFMT
 SfxVoidItem TextAttributes FN_DRAWTEXT_ATTR_DLG
 ()
 [
-    /* flags: */  
-    AutoUpdate = FALSE, 
-    Cachable = Cachable, 
-    FastCall = TRUE, 
-    HasCoreId = FALSE, 
-    HasDialog = TRUE, 
-    ReadOnlyDoc = FALSE, 
-    Toggle = FALSE, 
-    Container = FALSE, 
-    RecordAbsolute = FALSE, 
+    /* flags: */
+    AutoUpdate = FALSE,
+    Cachable = Cachable,
+    FastCall = TRUE,
+    HasCoreId = FALSE,
+    HasDialog = TRUE,
+    ReadOnlyDoc = FALSE,
+    Toggle = FALSE,
+    Container = FALSE,
+    RecordAbsolute = FALSE,
     RecordPerSet;
     Asynchron;
 
-    /* config: */ 
-    AccelConfig = TRUE, 
-    MenuConfig = TRUE, 
-    StatusBarConfig = FALSE, 
-    ToolBoxConfig = TRUE, 
+    /* config: */
+    AccelConfig = TRUE,
+    MenuConfig = TRUE,
+    StatusBarConfig = FALSE,
+    ToolBoxConfig = TRUE,
     GroupId = GID_FORMAT;
 ]
 
@@ -8446,24 +8419,24 @@ SfxVoidItem TextAttributes FN_DRAWTEXT_ATTR_DLG
 SfxVoidItem TextWrap FN_DRAW_WRAP_DLG
 ()
 [
-    /* flags: */  
-    AutoUpdate = FALSE, 
-    Cachable = Cachable, 
-    FastCall = TRUE, 
-    HasCoreId = FALSE, 
-    HasDialog = TRUE, 
-    ReadOnlyDoc = FALSE, 
-    Toggle = FALSE, 
-    Container = FALSE, 
-    RecordAbsolute = FALSE, 
+    /* flags: */
+    AutoUpdate = FALSE,
+    Cachable = Cachable,
+    FastCall = TRUE,
+    HasCoreId = FALSE,
+    HasDialog = TRUE,
+    ReadOnlyDoc = FALSE,
+    Toggle = FALSE,
+    Container = FALSE,
+    RecordAbsolute = FALSE,
     RecordPerSet;
     Asynchron;
 
-    /* config: */ 
-    AccelConfig = TRUE, 
-    MenuConfig = TRUE, 
-    StatusBarConfig = FALSE, 
-    ToolBoxConfig = TRUE, 
+    /* config: */
+    AccelConfig = TRUE,
+    MenuConfig = TRUE,
+    StatusBarConfig = FALSE,
+    ToolBoxConfig = TRUE,
     GroupId = GID_FORMAT;
 ]
 
@@ -8471,24 +8444,24 @@ SfxVoidItem TextWrap FN_DRAW_WRAP_DLG
 SfxVoidItem ThesaurusDialog FN_THESAURUS_DLG
 ()
 [
-    /* flags: */  
-    AutoUpdate = FALSE, 
-    Cachable = Cachable, 
-    FastCall = FALSE, 
-    HasCoreId = FALSE, 
-    HasDialog = TRUE, 
-    ReadOnlyDoc = FALSE, 
-    Toggle = FALSE, 
-    Container = FALSE, 
-    RecordAbsolute = FALSE, 
+    /* flags: */
+    AutoUpdate = FALSE,
+    Cachable = Cachable,
+    FastCall = FALSE,
+    HasCoreId = FALSE,
+    HasDialog = TRUE,
+    ReadOnlyDoc = FALSE,
+    Toggle = FALSE,
+    Container = FALSE,
+    RecordAbsolute = FALSE,
     RecordPerSet;
     Asynchron;
 
-    /* config: */ 
-    AccelConfig = TRUE, 
-    MenuConfig = TRUE, 
-    StatusBarConfig = FALSE, 
-    ToolBoxConfig = TRUE, 
+    /* config: */
+    AccelConfig = TRUE,
+    MenuConfig = TRUE,
+    StatusBarConfig = FALSE,
+    ToolBoxConfig = TRUE,
     GroupId = GID_OPTIONS;
 ]
 
@@ -8496,27 +8469,27 @@ SfxVoidItem ThesaurusDialog FN_THESAURUS_DLG
 SfxVoidItem ToggleAnchorType FN_TOOL_ANKER
 ()
 [
-    /* flags: */  
-    AutoUpdate = FALSE, 
-    Cachable = Cachable, 
-    FastCall = TRUE, 
-    HasCoreId = FALSE, 
-    HasDialog = FALSE, 
-    ReadOnlyDoc = FALSE, 
-    Toggle = FALSE, 
-    Container = FALSE, 
-    RecordAbsolute = FALSE, 
+    /* flags: */
+    AutoUpdate = FALSE,
+    Cachable = Cachable,
+    FastCall = TRUE,
+    HasCoreId = FALSE,
+    HasDialog = FALSE,
+    ReadOnlyDoc = FALSE,
+    Toggle = FALSE,
+    Container = FALSE,
+    RecordAbsolute = FALSE,
     RecordPerSet;
     Synchron;
 
     /* status: */
     SlotType = SfxUInt16Item
 
-    /* config: */ 
-    AccelConfig = TRUE, 
-    MenuConfig = TRUE, 
-    StatusBarConfig = FALSE, 
-    ToolBoxConfig = TRUE, 
+    /* config: */
+    AccelConfig = TRUE,
+    MenuConfig = TRUE,
+    StatusBarConfig = FALSE,
+    ToolBoxConfig = TRUE,
     GroupId = GID_FORMAT;
 ]
 
@@ -8524,24 +8497,24 @@ SfxVoidItem ToggleAnchorType FN_TOOL_ANKER
 SfxVoidItem ToggleObjectLayer FN_TOOL_HIERARCHIE
 ()
 [
-    /* flags: */  
-    AutoUpdate = TRUE, 
-    Cachable = Cachable, 
-    FastCall = TRUE, 
-    HasCoreId = FALSE, 
-    HasDialog = FALSE, 
-    ReadOnlyDoc = FALSE, 
-    Toggle = FALSE, 
-    Container = FALSE, 
-    RecordAbsolute = FALSE, 
+    /* flags: */
+    AutoUpdate = TRUE,
+    Cachable = Cachable,
+    FastCall = TRUE,
+    HasCoreId = FALSE,
+    HasDialog = FALSE,
+    ReadOnlyDoc = FALSE,
+    Toggle = FALSE,
+    Container = FALSE,
+    RecordAbsolute = FALSE,
     RecordPerSet;
     Synchron;
 
-    /* config: */ 
-    AccelConfig = TRUE, 
-    MenuConfig = TRUE, 
-    StatusBarConfig = FALSE, 
-    ToolBoxConfig = TRUE, 
+    /* config: */
+    AccelConfig = TRUE,
+    MenuConfig = TRUE,
+    StatusBarConfig = FALSE,
+    ToolBoxConfig = TRUE,
     GroupId = GID_FORMAT;
 ]
 
@@ -8549,26 +8522,26 @@ SfxVoidItem ToggleObjectLayer FN_TOOL_HIERARCHIE
 SfxBoolItem UnderlineDouble FN_UNDERLINE_DOUBLE
 
 [
-    /* flags: */  
-    AutoUpdate = TRUE, 
-    Cachable = Cachable, 
-    FastCall = FALSE, 
-    HasCoreId = FALSE, 
-    HasDialog = FALSE, 
-    ReadOnlyDoc = FALSE, 
-    Toggle = TRUE, 
-    Container = FALSE, 
-    RecordAbsolute = FALSE, 
+    /* flags: */
+    AutoUpdate = TRUE,
+    Cachable = Cachable,
+    FastCall = FALSE,
+    HasCoreId = FALSE,
+    HasDialog = FALSE,
+    ReadOnlyDoc = FALSE,
+    Toggle = TRUE,
+    Container = FALSE,
+    RecordAbsolute = FALSE,
     RecordPerSet;
     Synchron;
 
-    Readonly = FALSE, 
+    Readonly = FALSE,
 
-    /* config: */ 
-    AccelConfig = TRUE, 
-    MenuConfig = TRUE, 
-    StatusBarConfig = FALSE, 
-    ToolBoxConfig = TRUE, 
+    /* config: */
+    AccelConfig = TRUE,
+    MenuConfig = TRUE,
+    StatusBarConfig = FALSE,
+    ToolBoxConfig = TRUE,
     GroupId = GID_FORMAT;
 ]
 
@@ -8576,26 +8549,26 @@ SfxBoolItem UnderlineDouble FN_UNDERLINE_DOUBLE
 SfxVoidItem UnhainFrames FN_FRAME_UNCHAIN
 
 [
-    /* flags: */  
-    AutoUpdate = TRUE, 
-    Cachable = Cachable, 
-    FastCall = FALSE, 
-    HasCoreId = FALSE, 
-    HasDialog = FALSE, 
-    ReadOnlyDoc = FALSE, 
-    Toggle = FALSE, 
-    Container = FALSE, 
-    RecordAbsolute = FALSE, 
+    /* flags: */
+    AutoUpdate = TRUE,
+    Cachable = Cachable,
+    FastCall = FALSE,
+    HasCoreId = FALSE,
+    HasDialog = FALSE,
+    ReadOnlyDoc = FALSE,
+    Toggle = FALSE,
+    Container = FALSE,
+    RecordAbsolute = FALSE,
     RecordPerSet;
     Synchron;
 
-    Readonly = FALSE, 
+    Readonly = FALSE,
 
-    /* config: */ 
-    AccelConfig = FALSE, 
-    MenuConfig = TRUE, 
-    StatusBarConfig = FALSE, 
-    ToolBoxConfig = TRUE, 
+    /* config: */
+    AccelConfig = FALSE,
+    MenuConfig = TRUE,
+    StatusBarConfig = FALSE,
+    ToolBoxConfig = TRUE,
     GroupId = GID_FRAME;
 ]
 
@@ -8603,24 +8576,24 @@ SfxVoidItem UnhainFrames FN_FRAME_UNCHAIN
 SfxVoidItem UnsetCellsReadOnly FN_TABLE_UNSET_READ_ONLY_CELLS
 ()
 [
-    /* flags: */  
-    AutoUpdate = FALSE, 
-    Cachable = Cachable, 
-    FastCall = TRUE, 
-    HasCoreId = FALSE, 
-    HasDialog = FALSE, 
-    ReadOnlyDoc = FALSE, 
-    Toggle = FALSE, 
-    Container = FALSE, 
-    RecordAbsolute = FALSE, 
+    /* flags: */
+    AutoUpdate = FALSE,
+    Cachable = Cachable,
+    FastCall = TRUE,
+    HasCoreId = FALSE,
+    HasDialog = FALSE,
+    ReadOnlyDoc = FALSE,
+    Toggle = FALSE,
+    Container = FALSE,
+    RecordAbsolute = FALSE,
     RecordPerSet;
     Synchron;
 
-    /* config: */ 
-    AccelConfig = TRUE, 
-    MenuConfig = TRUE, 
-    StatusBarConfig = FALSE, 
-    ToolBoxConfig = TRUE, 
+    /* config: */
+    AccelConfig = TRUE,
+    MenuConfig = TRUE,
+    StatusBarConfig = FALSE,
+    ToolBoxConfig = TRUE,
     GroupId = GID_TABLE;
 ]
 
@@ -8628,24 +8601,24 @@ SfxVoidItem UnsetCellsReadOnly FN_TABLE_UNSET_READ_ONLY_CELLS
 SfxVoidItem UpdateAll FN_UPDATE_ALL
 ()
 [
-    /* flags: */  
-    AutoUpdate = FALSE, 
-    Cachable = Cachable, 
-    FastCall = TRUE, 
-    HasCoreId = FALSE, 
-    HasDialog = FALSE, 
-    ReadOnlyDoc = FALSE, 
-    Toggle = FALSE, 
-    Container = FALSE, 
-    RecordAbsolute = FALSE, 
+    /* flags: */
+    AutoUpdate = FALSE,
+    Cachable = Cachable,
+    FastCall = TRUE,
+    HasCoreId = FALSE,
+    HasDialog = FALSE,
+    ReadOnlyDoc = FALSE,
+    Toggle = FALSE,
+    Container = FALSE,
+    RecordAbsolute = FALSE,
     RecordPerSet;
     Asynchron;
 
-    /* config: */ 
-    AccelConfig = TRUE, 
-    MenuConfig = TRUE, 
-    StatusBarConfig = FALSE, 
-    ToolBoxConfig = TRUE, 
+    /* config: */
+    AccelConfig = TRUE,
+    MenuConfig = TRUE,
+    StatusBarConfig = FALSE,
+    ToolBoxConfig = TRUE,
     GroupId = GID_EDIT;
 ]
 
@@ -8653,24 +8626,24 @@ SfxVoidItem UpdateAll FN_UPDATE_ALL
 SfxVoidItem UpdateAllIndexes FN_UPDATE_TOX
 ()
 [
-    /* flags: */  
-    AutoUpdate = FALSE, 
-    Cachable = Cachable, 
-    FastCall = FALSE, 
-    HasCoreId = FALSE, 
-    HasDialog = FALSE, 
-    ReadOnlyDoc = FALSE, 
-    Toggle = FALSE, 
-    Container = FALSE, 
-    RecordAbsolute = FALSE, 
+    /* flags: */
+    AutoUpdate = FALSE,
+    Cachable = Cachable,
+    FastCall = FALSE,
+    HasCoreId = FALSE,
+    HasDialog = FALSE,
+    ReadOnlyDoc = FALSE,
+    Toggle = FALSE,
+    Container = FALSE,
+    RecordAbsolute = FALSE,
     RecordPerSet;
     Synchron;
 
-    /* config: */ 
-    AccelConfig = TRUE, 
-    MenuConfig = TRUE, 
-    StatusBarConfig = FALSE, 
-    ToolBoxConfig = TRUE, 
+    /* config: */
+    AccelConfig = TRUE,
+    MenuConfig = TRUE,
+    StatusBarConfig = FALSE,
+    ToolBoxConfig = TRUE,
     GroupId = GID_EDIT;
 ]
 
@@ -8678,24 +8651,24 @@ SfxVoidItem UpdateAllIndexes FN_UPDATE_TOX
 SfxVoidItem UpdateAllLinks FN_UPDATE_ALL_LINKS
 ()
 [
-    /* flags: */  
-    AutoUpdate = FALSE, 
-    Cachable = Cachable, 
-    FastCall = FALSE, 
-    HasCoreId = FALSE, 
-    HasDialog = FALSE, 
-    ReadOnlyDoc = FALSE, 
-    Toggle = FALSE, 
-    Container = FALSE, 
-    RecordAbsolute = FALSE, 
+    /* flags: */
+    AutoUpdate = FALSE,
+    Cachable = Cachable,
+    FastCall = FALSE,
+    HasCoreId = FALSE,
+    HasDialog = FALSE,
+    ReadOnlyDoc = FALSE,
+    Toggle = FALSE,
+    Container = FALSE,
+    RecordAbsolute = FALSE,
     RecordPerSet;
     Asynchron;
 
-    /* config: */ 
-    AccelConfig = TRUE, 
-    MenuConfig = TRUE, 
-    StatusBarConfig = FALSE, 
-    ToolBoxConfig = TRUE, 
+    /* config: */
+    AccelConfig = TRUE,
+    MenuConfig = TRUE,
+    StatusBarConfig = FALSE,
+    ToolBoxConfig = TRUE,
     GroupId = GID_EDIT;
 ]
 
@@ -8703,24 +8676,24 @@ SfxVoidItem UpdateAllLinks FN_UPDATE_ALL_LINKS
 SfxVoidItem UpdateCharts FN_UPDATE_CHARTS
 ()
 [
-    /* flags: */  
-    AutoUpdate = FALSE, 
-    Cachable = Cachable, 
-    FastCall = TRUE, 
-    HasCoreId = FALSE, 
-    HasDialog = FALSE, 
-    ReadOnlyDoc = FALSE, 
-    Toggle = FALSE, 
-    Container = FALSE, 
-    RecordAbsolute = FALSE, 
+    /* flags: */
+    AutoUpdate = FALSE,
+    Cachable = Cachable,
+    FastCall = TRUE,
+    HasCoreId = FALSE,
+    HasDialog = FALSE,
+    ReadOnlyDoc = FALSE,
+    Toggle = FALSE,
+    Container = FALSE,
+    RecordAbsolute = FALSE,
     RecordPerSet;
     Synchron;
 
-    /* config: */ 
-    AccelConfig = TRUE, 
-    MenuConfig = TRUE, 
-    StatusBarConfig = FALSE, 
-    ToolBoxConfig = TRUE, 
+    /* config: */
+    AccelConfig = TRUE,
+    MenuConfig = TRUE,
+    StatusBarConfig = FALSE,
+    ToolBoxConfig = TRUE,
     GroupId = GID_EDIT;
 ]
 
@@ -8728,26 +8701,26 @@ SfxVoidItem UpdateCharts FN_UPDATE_CHARTS
 SfxVoidItem UpdateCurIndex FN_UPDATE_CUR_TOX
 
 [
-    /* flags: */  
-    AutoUpdate = FALSE, 
-    Cachable = Cachable, 
-    FastCall = TRUE, 
-    HasCoreId = FALSE, 
-    HasDialog = FALSE, 
-    ReadOnlyDoc = FALSE, 
-    Toggle = FALSE, 
-    Container = FALSE, 
-    RecordAbsolute = FALSE, 
+    /* flags: */
+    AutoUpdate = FALSE,
+    Cachable = Cachable,
+    FastCall = TRUE,
+    HasCoreId = FALSE,
+    HasDialog = FALSE,
+    ReadOnlyDoc = FALSE,
+    Toggle = FALSE,
+    Container = FALSE,
+    RecordAbsolute = FALSE,
     RecordPerSet;
     Synchron;
 
-    Readonly = FALSE, 
+    Readonly = FALSE,
 
-    /* config: */ 
-    AccelConfig = TRUE, 
-    MenuConfig = TRUE, 
-    StatusBarConfig = FALSE, 
-    ToolBoxConfig = TRUE, 
+    /* config: */
+    AccelConfig = TRUE,
+    MenuConfig = TRUE,
+    StatusBarConfig = FALSE,
+    ToolBoxConfig = TRUE,
     GroupId = GID_EDIT;
 ]
 
@@ -8755,24 +8728,24 @@ SfxVoidItem UpdateCurIndex FN_UPDATE_CUR_TOX
 SfxVoidItem UpdateFields FN_UPDATE_FIELDS
 ()
 [
-    /* flags: */  
-    AutoUpdate = FALSE, 
-    Cachable = Cachable, 
-    FastCall = TRUE, 
-    HasCoreId = FALSE, 
-    HasDialog = FALSE, 
-    ReadOnlyDoc = FALSE, 
-    Toggle = FALSE, 
-    Container = FALSE, 
-    RecordAbsolute = FALSE, 
+    /* flags: */
+    AutoUpdate = FALSE,
+    Cachable = Cachable,
+    FastCall = TRUE,
+    HasCoreId = FALSE,
+    HasDialog = FALSE,
+    ReadOnlyDoc = FALSE,
+    Toggle = FALSE,
+    Container = FALSE,
+    RecordAbsolute = FALSE,
     RecordPerSet;
     Synchron;
 
-    /* config: */ 
-    AccelConfig = TRUE, 
-    MenuConfig = TRUE, 
-    StatusBarConfig = FALSE, 
-    ToolBoxConfig = TRUE, 
+    /* config: */
+    AccelConfig = TRUE,
+    MenuConfig = TRUE,
+    StatusBarConfig = FALSE,
+    ToolBoxConfig = TRUE,
     GroupId = GID_EDIT;
 ]
 
@@ -8780,24 +8753,24 @@ SfxVoidItem UpdateFields FN_UPDATE_FIELDS
 SfxVoidItem UpdateInputFields FN_UPDATE_INPUTFIELDS
 ()
 [
-    /* flags: */  
-    AutoUpdate = FALSE, 
-    Cachable = Cachable, 
-    FastCall = TRUE, 
-    HasCoreId = FALSE, 
-    HasDialog = FALSE, 
-    ReadOnlyDoc = FALSE, 
-    Toggle = FALSE, 
-    Container = FALSE, 
-    RecordAbsolute = FALSE, 
+    /* flags: */
+    AutoUpdate = FALSE,
+    Cachable = Cachable,
+    FastCall = TRUE,
+    HasCoreId = FALSE,
+    HasDialog = FALSE,
+    ReadOnlyDoc = FALSE,
+    Toggle = FALSE,
+    Container = FALSE,
+    RecordAbsolute = FALSE,
     RecordPerSet;
     Synchron;
 
-    /* config: */ 
-    AccelConfig = TRUE, 
-    MenuConfig = TRUE, 
-    StatusBarConfig = FALSE, 
-    ToolBoxConfig = TRUE, 
+    /* config: */
+    AccelConfig = TRUE,
+    MenuConfig = TRUE,
+    StatusBarConfig = FALSE,
+    ToolBoxConfig = TRUE,
     GroupId = GID_EDIT;
 ]
 
@@ -8805,26 +8778,26 @@ SfxVoidItem UpdateInputFields FN_UPDATE_INPUTFIELDS
 SfxBoolItem ViewBounds FN_VIEW_BOUNDS
 
 [
-    /* flags: */  
-    AutoUpdate = FALSE, 
-    Cachable = Volatile, 
-    FastCall = FALSE, 
-    HasCoreId = FALSE, 
-    HasDialog = FALSE, 
-    ReadOnlyDoc = TRUE, 
-    Toggle = FALSE, 
-    Container = FALSE, 
-    RecordAbsolute = FALSE, 
+    /* flags: */
+    AutoUpdate = FALSE,
+    Cachable = Volatile,
+    FastCall = FALSE,
+    HasCoreId = FALSE,
+    HasDialog = FALSE,
+    ReadOnlyDoc = TRUE,
+    Toggle = FALSE,
+    Container = FALSE,
+    RecordAbsolute = FALSE,
     RecordPerSet;
     Synchron;
 
-    Readonly = FALSE, 
+    Readonly = FALSE,
 
-    /* config: */ 
-    AccelConfig = TRUE, 
-    MenuConfig = TRUE, 
-    StatusBarConfig = FALSE, 
-    ToolBoxConfig = TRUE, 
+    /* config: */
+    AccelConfig = TRUE,
+    MenuConfig = TRUE,
+    StatusBarConfig = FALSE,
+    ToolBoxConfig = TRUE,
     GroupId = GID_VIEW;
 ]
 
@@ -8832,26 +8805,26 @@ SfxBoolItem ViewBounds FN_VIEW_BOUNDS
 SfxBoolItem VRuler FN_VLINEAL
 
 [
-    /* flags: */  
-    AutoUpdate = FALSE, 
-    Cachable = Cachable, 
-    FastCall = FALSE, 
-    HasCoreId = FALSE, 
-    HasDialog = FALSE, 
-    ReadOnlyDoc = TRUE, 
-    Toggle = FALSE, 
-    Container = FALSE, 
-    RecordAbsolute = FALSE, 
+    /* flags: */
+    AutoUpdate = FALSE,
+    Cachable = Cachable,
+    FastCall = FALSE,
+    HasCoreId = FALSE,
+    HasDialog = FALSE,
+    ReadOnlyDoc = TRUE,
+    Toggle = FALSE,
+    Container = FALSE,
+    RecordAbsolute = FALSE,
     RecordPerSet;
     Synchron;
 
-    Readonly = FALSE, 
+    Readonly = FALSE,
 
-    /* config: */ 
-    AccelConfig = TRUE, 
-    MenuConfig = TRUE, 
-    StatusBarConfig = FALSE, 
-    ToolBoxConfig = TRUE, 
+    /* config: */
+    AccelConfig = TRUE,
+    MenuConfig = TRUE,
+    StatusBarConfig = FALSE,
+    ToolBoxConfig = TRUE,
     GroupId = GID_VIEW;
 ]
 
@@ -8859,26 +8832,26 @@ SfxBoolItem VRuler FN_VLINEAL
 SfxBoolItem VScroll FN_VSCROLLBAR
 
 [
-    /* flags: */  
-    AutoUpdate = FALSE, 
-    Cachable = Cachable, 
-    FastCall = FALSE, 
-    HasCoreId = FALSE, 
-    HasDialog = FALSE, 
-    ReadOnlyDoc = TRUE, 
-    Toggle = FALSE, 
-    Container = FALSE, 
-    RecordAbsolute = FALSE, 
+    /* flags: */
+    AutoUpdate = FALSE,
+    Cachable = Cachable,
+    FastCall = FALSE,
+    HasCoreId = FALSE,
+    HasDialog = FALSE,
+    ReadOnlyDoc = TRUE,
+    Toggle = FALSE,
+    Container = FALSE,
+    RecordAbsolute = FALSE,
     RecordPerSet;
     Synchron;
 
-    Readonly = FALSE, 
+    Readonly = FALSE,
 
-    /* config: */ 
-    AccelConfig = TRUE, 
-    MenuConfig = TRUE, 
-    StatusBarConfig = FALSE, 
-    ToolBoxConfig = TRUE, 
+    /* config: */
+    AccelConfig = TRUE,
+    MenuConfig = TRUE,
+    StatusBarConfig = FALSE,
+    ToolBoxConfig = TRUE,
     GroupId = GID_VIEW;
 ]
 
@@ -8886,24 +8859,24 @@ SfxBoolItem VScroll FN_VSCROLLBAR
 SfxVoidItem WordLeftSel FN_PREV_WORD_SEL
 ()
 [
-    /* flags: */  
-    AutoUpdate = FALSE, 
-    Cachable = Cachable, 
-    FastCall = TRUE, 
-    HasCoreId = FALSE, 
-    HasDialog = FALSE, 
-    ReadOnlyDoc = TRUE, 
-    Toggle = FALSE, 
-    Container = FALSE, 
-    RecordAbsolute = FALSE, 
+    /* flags: */
+    AutoUpdate = FALSE,
+    Cachable = Cachable,
+    FastCall = TRUE,
+    HasCoreId = FALSE,
+    HasDialog = FALSE,
+    ReadOnlyDoc = TRUE,
+    Toggle = FALSE,
+    Container = FALSE,
+    RecordAbsolute = FALSE,
     RecordPerSet;
     Synchron;
 
-    /* config: */ 
-    AccelConfig = TRUE, 
-    MenuConfig = FALSE, 
-    StatusBarConfig = FALSE, 
-    ToolBoxConfig = FALSE, 
+    /* config: */
+    AccelConfig = TRUE,
+    MenuConfig = FALSE,
+    StatusBarConfig = FALSE,
+    ToolBoxConfig = FALSE,
     GroupId = GID_NAVIGATOR;
 ]
 
@@ -8911,24 +8884,24 @@ SfxVoidItem WordLeftSel FN_PREV_WORD_SEL
 SfxVoidItem WordRightSel FN_NEXT_WORD_SEL
 ()
 [
-    /* flags: */  
-    AutoUpdate = FALSE, 
-    Cachable = Cachable, 
-    FastCall = TRUE, 
-    HasCoreId = FALSE, 
-    HasDialog = FALSE, 
-    ReadOnlyDoc = TRUE, 
-    Toggle = FALSE, 
-    Container = FALSE, 
-    RecordAbsolute = FALSE, 
+    /* flags: */
+    AutoUpdate = FALSE,
+    Cachable = Cachable,
+    FastCall = TRUE,
+    HasCoreId = FALSE,
+    HasDialog = FALSE,
+    ReadOnlyDoc = TRUE,
+    Toggle = FALSE,
+    Container = FALSE,
+    RecordAbsolute = FALSE,
     RecordPerSet;
     Synchron;
 
-    /* config: */ 
-    AccelConfig = TRUE, 
-    MenuConfig = FALSE, 
-    StatusBarConfig = FALSE, 
-    ToolBoxConfig = FALSE, 
+    /* config: */
+    AccelConfig = TRUE,
+    MenuConfig = FALSE,
+    StatusBarConfig = FALSE,
+    ToolBoxConfig = FALSE,
     GroupId = GID_NAVIGATOR;
 ]
 
@@ -8936,24 +8909,24 @@ SfxVoidItem WordRightSel FN_NEXT_WORD_SEL
 SfxBoolItem WrapAnchorOnly FN_WRAP_ANCHOR_ONLY
 ()
 [
-    /* flags: */  
-    AutoUpdate = TRUE, 
-    Cachable = Cachable, 
-    FastCall = FALSE, 
-    HasCoreId = FALSE, 
-    HasDialog = FALSE, 
-    ReadOnlyDoc = FALSE, 
-    Toggle = FALSE, 
-    Container = FALSE, 
-    RecordAbsolute = FALSE, 
+    /* flags: */
+    AutoUpdate = TRUE,
+    Cachable = Cachable,
+    FastCall = FALSE,
+    HasCoreId = FALSE,
+    HasDialog = FALSE,
+    ReadOnlyDoc = FALSE,
+    Toggle = FALSE,
+    Container = FALSE,
+    RecordAbsolute = FALSE,
     RecordPerSet;
     Synchron;
 
-    /* config: */ 
-    AccelConfig = TRUE, 
-    MenuConfig = TRUE, 
-    StatusBarConfig = FALSE, 
-    ToolBoxConfig = TRUE, 
+    /* config: */
+    AccelConfig = TRUE,
+    MenuConfig = TRUE,
+    StatusBarConfig = FALSE,
+    ToolBoxConfig = TRUE,
     GroupId = GID_FRAME;
 ]
 
@@ -8961,24 +8934,24 @@ SfxBoolItem WrapAnchorOnly FN_WRAP_ANCHOR_ONLY
 SfxBoolItem WrapContour FN_FRAME_WRAP_CONTOUR
 ()
 [
-    /* flags: */  
-    AutoUpdate = TRUE, 
-    Cachable = Cachable, 
-    FastCall = FALSE, 
-    HasCoreId = FALSE, 
-    HasDialog = FALSE, 
-    ReadOnlyDoc = FALSE, 
-    Toggle = FALSE, 
-    Container = FALSE, 
-    RecordAbsolute = FALSE, 
+    /* flags: */
+    AutoUpdate = TRUE,
+    Cachable = Cachable,
+    FastCall = FALSE,
+    HasCoreId = FALSE,
+    HasDialog = FALSE,
+    ReadOnlyDoc = FALSE,
+    Toggle = FALSE,
+    Container = FALSE,
+    RecordAbsolute = FALSE,
     RecordPerSet;
     Synchron;
 
-    /* config: */ 
-    AccelConfig = TRUE, 
-    MenuConfig = TRUE, 
-    StatusBarConfig = FALSE, 
-    ToolBoxConfig = TRUE, 
+    /* config: */
+    AccelConfig = TRUE,
+    MenuConfig = TRUE,
+    StatusBarConfig = FALSE,
+    ToolBoxConfig = TRUE,
     GroupId = GID_FRAME;
 ]
 
@@ -8986,24 +8959,24 @@ SfxBoolItem WrapContour FN_FRAME_WRAP_CONTOUR
 SfxBoolItem WrapIdeal FN_FRAME_WRAP_IDEAL
 ()
 [
-    /* flags: */  
-    AutoUpdate = TRUE, 
-    Cachable = Cachable, 
-    FastCall = FALSE, 
-    HasCoreId = FALSE, 
-    HasDialog = FALSE, 
-    ReadOnlyDoc = FALSE, 
-    Toggle = FALSE, 
-    Container = FALSE, 
-    RecordAbsolute = FALSE, 
+    /* flags: */
+    AutoUpdate = TRUE,
+    Cachable = Cachable,
+    FastCall = FALSE,
+    HasCoreId = FALSE,
+    HasDialog = FALSE,
+    ReadOnlyDoc = FALSE,
+    Toggle = FALSE,
+    Container = FALSE,
+    RecordAbsolute = FALSE,
     RecordPerSet;
     Synchron;
 
-    /* config: */ 
-    AccelConfig = TRUE, 
-    MenuConfig = TRUE, 
-    StatusBarConfig = FALSE, 
-    ToolBoxConfig = TRUE, 
+    /* config: */
+    AccelConfig = TRUE,
+    MenuConfig = TRUE,
+    StatusBarConfig = FALSE,
+    ToolBoxConfig = TRUE,
     GroupId = GID_FRAME;
 ]
 
@@ -9011,24 +8984,24 @@ SfxBoolItem WrapIdeal FN_FRAME_WRAP_IDEAL
 SfxBoolItem WrapLeft FN_FRAME_WRAP_LEFT
 ()
 [
-    /* flags: */  
-    AutoUpdate = TRUE, 
-    Cachable = Cachable, 
-    FastCall = FALSE, 
-    HasCoreId = FALSE, 
-    HasDialog = FALSE, 
-    ReadOnlyDoc = FALSE, 
-    Toggle = FALSE, 
-    Container = FALSE, 
-    RecordAbsolute = FALSE, 
+    /* flags: */
+    AutoUpdate = TRUE,
+    Cachable = Cachable,
+    FastCall = FALSE,
+    HasCoreId = FALSE,
+    HasDialog = FALSE,
+    ReadOnlyDoc = FALSE,
+    Toggle = FALSE,
+    Container = FALSE,
+    RecordAbsolute = FALSE,
     RecordPerSet;
     Synchron;
 
-    /* config: */ 
-    AccelConfig = TRUE, 
-    MenuConfig = TRUE, 
-    StatusBarConfig = FALSE, 
-    ToolBoxConfig = TRUE, 
+    /* config: */
+    AccelConfig = TRUE,
+    MenuConfig = TRUE,
+    StatusBarConfig = FALSE,
+    ToolBoxConfig = TRUE,
     GroupId = GID_FRAME;
 ]
 
@@ -9036,24 +9009,24 @@ SfxBoolItem WrapLeft FN_FRAME_WRAP_LEFT
 SfxBoolItem WrapOff FN_FRAME_NOWRAP
 ()
 [
-    /* flags: */  
-    AutoUpdate = TRUE, 
-    Cachable = Cachable, 
-    FastCall = FALSE, 
-    HasCoreId = FALSE, 
-    HasDialog = FALSE, 
-    ReadOnlyDoc = FALSE, 
-    Toggle = TRUE, 
-    Container = FALSE, 
-    RecordAbsolute = FALSE, 
+    /* flags: */
+    AutoUpdate = TRUE,
+    Cachable = Cachable,
+    FastCall = FALSE,
+    HasCoreId = FALSE,
+    HasDialog = FALSE,
+    ReadOnlyDoc = FALSE,
+    Toggle = TRUE,
+    Container = FALSE,
+    RecordAbsolute = FALSE,
     RecordPerSet;
     Synchron;
 
-    /* config: */ 
-    AccelConfig = TRUE, 
-    MenuConfig = TRUE, 
-    StatusBarConfig = FALSE, 
-    ToolBoxConfig = TRUE, 
+    /* config: */
+    AccelConfig = TRUE,
+    MenuConfig = TRUE,
+    StatusBarConfig = FALSE,
+    ToolBoxConfig = TRUE,
     GroupId = GID_FRAME;
 ]
 
@@ -9061,24 +9034,24 @@ SfxBoolItem WrapOff FN_FRAME_NOWRAP
 SfxBoolItem WrapOn FN_FRAME_WRAP
 ()
 [
-    /* flags: */  
-    AutoUpdate = TRUE, 
-    Cachable = Cachable, 
-    FastCall = FALSE, 
-    HasCoreId = FALSE, 
-    HasDialog = FALSE, 
-    ReadOnlyDoc = FALSE, 
-    Toggle = FALSE, 
-    Container = FALSE, 
-    RecordAbsolute = FALSE, 
+    /* flags: */
+    AutoUpdate = TRUE,
+    Cachable = Cachable,
+    FastCall = FALSE,
+    HasCoreId = FALSE,
+    HasDialog = FALSE,
+    ReadOnlyDoc = FALSE,
+    Toggle = FALSE,
+    Container = FALSE,
+    RecordAbsolute = FALSE,
     RecordPerSet;
     Synchron;
 
-    /* config: */ 
-    AccelConfig = TRUE, 
-    MenuConfig = TRUE, 
-    StatusBarConfig = FALSE, 
-    ToolBoxConfig = TRUE, 
+    /* config: */
+    AccelConfig = TRUE,
+    MenuConfig = TRUE,
+    StatusBarConfig = FALSE,
+    ToolBoxConfig = TRUE,
     GroupId = GID_FRAME;
 ]
 
@@ -9086,24 +9059,24 @@ SfxBoolItem WrapOn FN_FRAME_WRAP
 SfxBoolItem WrapRight FN_FRAME_WRAP_RIGHT
 ()
 [
-    /* flags: */  
-    AutoUpdate = TRUE, 
-    Cachable = Cachable, 
-    FastCall = FALSE, 
-    HasCoreId = FALSE, 
-    HasDialog = FALSE, 
-    ReadOnlyDoc = FALSE, 
-    Toggle = FALSE, 
-    Container = FALSE, 
-    RecordAbsolute = FALSE, 
+    /* flags: */
+    AutoUpdate = TRUE,
+    Cachable = Cachable,
+    FastCall = FALSE,
+    HasCoreId = FALSE,
+    HasDialog = FALSE,
+    ReadOnlyDoc = FALSE,
+    Toggle = FALSE,
+    Container = FALSE,
+    RecordAbsolute = FALSE,
     RecordPerSet;
     Synchron;
 
-    /* config: */ 
-    AccelConfig = TRUE, 
-    MenuConfig = TRUE, 
-    StatusBarConfig = FALSE, 
-    ToolBoxConfig = TRUE, 
+    /* config: */
+    AccelConfig = TRUE,
+    MenuConfig = TRUE,
+    StatusBarConfig = FALSE,
+    ToolBoxConfig = TRUE,
     GroupId = GID_FRAME;
 ]
 
@@ -9111,24 +9084,24 @@ SfxBoolItem WrapRight FN_FRAME_WRAP_RIGHT
 SfxBoolItem WrapThrough FN_FRAME_WRAPTHRU
 ()
 [
-    /* flags: */  
-    AutoUpdate = TRUE, 
-    Cachable = Cachable, 
-    FastCall = FALSE, 
-    HasCoreId = FALSE, 
-    HasDialog = FALSE, 
-    ReadOnlyDoc = FALSE, 
-    Toggle = FALSE, 
-    Container = FALSE, 
-    RecordAbsolute = FALSE, 
+    /* flags: */
+    AutoUpdate = TRUE,
+    Cachable = Cachable,
+    FastCall = FALSE,
+    HasCoreId = FALSE,
+    HasDialog = FALSE,
+    ReadOnlyDoc = FALSE,
+    Toggle = FALSE,
+    Container = FALSE,
+    RecordAbsolute = FALSE,
     RecordPerSet;
     Synchron;
 
-    /* config: */ 
-    AccelConfig = TRUE, 
-    MenuConfig = TRUE, 
-    StatusBarConfig = FALSE, 
-    ToolBoxConfig = TRUE, 
+    /* config: */
+    AccelConfig = TRUE,
+    MenuConfig = TRUE,
+    StatusBarConfig = FALSE,
+    ToolBoxConfig = TRUE,
     GroupId = GID_FRAME;
 ]
 
@@ -9136,24 +9109,24 @@ SfxBoolItem WrapThrough FN_FRAME_WRAPTHRU
 SfxBoolItem WrapThroughTransparent FN_FRAME_WRAPTHRU_TRANSP
 ()
 [
-    /* flags: */  
-    AutoUpdate = TRUE, 
-    Cachable = Cachable, 
-    FastCall = FALSE, 
-    HasCoreId = FALSE, 
-    HasDialog = FALSE, 
-    ReadOnlyDoc = FALSE, 
-    Toggle = FALSE, 
-    Container = FALSE, 
-    RecordAbsolute = FALSE, 
+    /* flags: */
+    AutoUpdate = TRUE,
+    Cachable = Cachable,
+    FastCall = FALSE,
+    HasCoreId = FALSE,
+    HasDialog = FALSE,
+    ReadOnlyDoc = FALSE,
+    Toggle = FALSE,
+    Container = FALSE,
+    RecordAbsolute = FALSE,
     RecordPerSet;
     Synchron;
 
-    /* config: */ 
-    AccelConfig = TRUE, 
-    MenuConfig = TRUE, 
-    StatusBarConfig = FALSE, 
-    ToolBoxConfig = TRUE, 
+    /* config: */
+    AccelConfig = TRUE,
+    MenuConfig = TRUE,
+    StatusBarConfig = FALSE,
+    ToolBoxConfig = TRUE,
     GroupId = GID_FRAME;
 ]
 
