@@ -2,9 +2,9 @@
  *
  *  $RCSfile: olmenu.cxx,v $
  *
- *  $Revision: 1.8 $
+ *  $Revision: 1.9 $
  *
- *  last change: $Author: hr $ $Date: 2001-10-18 16:13:26 $
+ *  last change: $Author: jp $ $Date: 2002-02-01 12:46:48 $
  *
  *  The Contents of this file are made available subject to the terms of
  *  either of the following licenses
@@ -142,6 +142,10 @@
 #ifndef _TEMPAUTO_HXX
 #include <tempauto.hxx>     // temporaere Autokorrektur
 #endif
+#ifndef _CRSSKIP_HXX
+#include <crsskip.hxx>
+#endif
+
 #ifndef _OLMENU_HRC
 #include <olmenu.hrc>
 #endif
@@ -169,7 +173,7 @@ util::Language lcl_CheckLanguage( const OUString &rWord, Reference< XSpellChecke
     const util::Language *pLang = aLangs.getConstArray();
     INT32   nCount = aLangs.getLength();
 
-    //! due to dieckmann (new german) spellchecker excepting many english 
+    //! due to dieckmann (new german) spellchecker excepting many english
     //! (and other?) words as correct
     //! GERMAN and GERMAN_SWISS should be checked last.
     //! Otherwise e.g. english words might be reported as being german words!
@@ -380,7 +384,7 @@ sal_uInt16	SwSpellPopup::Execute( Window* pWin, const Point& rWordPos )
             {
                 case MN_SPELLING:
                 {
-                    pSh->Left();
+                    pSh->Left(CRSR_SKIP_CHARS, FALSE, 1, FALSE );
                     {
                         Reference<XDictionaryList> xDictionaryList( SvxGetDictionaryList() );
                         SvxDicListChgClamp aClamp( xDictionaryList );

@@ -2,9 +2,9 @@
  *
  *  $RCSfile: unotbl.cxx,v $
  *
- *  $Revision: 1.47 $
+ *  $Revision: 1.48 $
  *
- *  last change: $Author: mtg $ $Date: 2001-11-28 20:26:29 $
+ *  last change: $Author: jp $ $Date: 2002-02-01 12:42:16 $
  *
  *  The Contents of this file are made available subject to the terms of
  *  either of the following licenses
@@ -66,8 +66,15 @@
 #pragma hdrstop
 
 #define ITEMID_BOXINFO SID_ATTR_BORDER_INNER
+
+#include <float.h> // for DBL_MIN
+
+#ifndef _SWTYPES_HXX
 #include <swtypes.hxx>
+#endif
+#ifndef _CMDID_H
 #include <cmdid.h>
+#endif
 #ifndef _UNOTBL_HXX
 #include <unotbl.hxx>
 #endif
@@ -232,9 +239,11 @@
 #ifndef _SWSTYLENAMEMAPPER_HXX
 #include <SwStyleNameMapper.hxx>
 #endif
-#include <float.h> // for DBL_MIN
 #ifndef _FRMATR_HXX
 #include <frmatr.hxx>
+#endif
+#ifndef _CRSSKIP_HXX
+#include <crsskip.hxx>
 #endif
 
 using namespace ::com::sun::star;
@@ -843,7 +852,7 @@ const SwStartNode *SwXCell::GetStartNode() const
     return pSttNd;
 }
 
-uno::Reference< XTextCursor >   SwXCell::createCursor() throw ( ::com::sun::star::uno::RuntimeException) 
+uno::Reference< XTextCursor >   SwXCell::createCursor() throw ( ::com::sun::star::uno::RuntimeException)
 {
     return createTextCursor();
 }
@@ -1197,7 +1206,7 @@ SwXCell* SwXCell::CreateXCell(SwFrmFmt* pTblFmt, SwTableBox* pBox, const String*
         if( !pTable )
             pTable = SwTable::FindTable( pTblFmt );
         sal_uInt16 nPos = USHRT_MAX;
-        SwTableBox* pFoundBox = 
+        SwTableBox* pFoundBox =
             pTable->GetTabSortBoxes().Seek_Entry( pBox, &nPos ) ? pBox : NULL;
 
         //wenn es die Box gibt, dann wird auch eine Zelle zurueckgegeben
@@ -1619,7 +1628,7 @@ sal_Bool SwXTextTableCursor::goLeft(sal_Int16 Count, sal_Bool Expand) throw( uno
     {
         SwUnoTableCrsr* pTblCrsr = *pUnoCrsr;
         lcl_CrsrSelect(	pTblCrsr, Expand );
-        bRet = pTblCrsr->LeftRight(sal_True, Count);
+        bRet = pTblCrsr->Left( Count,CRSR_SKIP_CHARS);
     }
     return bRet;
 }
@@ -1635,7 +1644,7 @@ sal_Bool SwXTextTableCursor::goRight(sal_Int16 Count, sal_Bool Expand) throw( un
     {
         SwUnoTableCrsr* pTblCrsr = *pUnoCrsr;
         lcl_CrsrSelect(	pTblCrsr, Expand );
-        bRet = pTblCrsr->LeftRight(sal_False, Count);
+        bRet = pTblCrsr->Right( Count, CRSR_SKIP_CHARS);
     }
     return bRet;
 }
@@ -3595,7 +3604,7 @@ OUString SwXCellRange::getImplementationName(void) throw( RuntimeException )
  ---------------------------------------------------------------------------*/
 BOOL SwXCellRange::supportsService(const OUString& rServiceName) throw( RuntimeException )
 {
-    return 
+    return
         rServiceName.equalsAsciiL( RTL_CONSTASCII_STRINGPARAM ( "com.sun.star.text.CellRange" ) ) ||
          rServiceName.equalsAsciiL( RTL_CONSTASCII_STRINGPARAM ( "com.sun.star.style.CharacterProperties" ) ) ||
         rServiceName.equalsAsciiL( RTL_CONSTASCII_STRINGPARAM ( "com.sun.star.style.CharacterPropertiesAsian" ) ) ||
@@ -3689,7 +3698,7 @@ uno::Reference< table::XCellRange >  SwXCellRange::getCellRangeByPosition(
     uno::Reference< table::XCellRange >  aRet;
     SwFrmFmt* pFmt = GetFrmFmt();
     if(pFmt && getColumnCount() > nRight && getRowCount() > nBottom &&
-        nLeft <= nRight && nTop <= nBottom 
+        nLeft <= nRight && nTop <= nBottom
         && nLeft >= 0 && nRight >= 0 && nTop >= 0 && nBottom >= 0 )
     {
         SwTable* pTable = SwTable::FindTable( pFmt );

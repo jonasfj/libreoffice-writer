@@ -2,9 +2,9 @@
  *
  *  $RCSfile: unoobj.cxx,v $
  *
- *  $Revision: 1.54 $
+ *  $Revision: 1.55 $
  *
- *  last change: $Author: mtg $ $Date: 2001-11-28 20:16:32 $
+ *  last change: $Author: jp $ $Date: 2002-02-01 12:42:16 $
  *
  *  The Contents of this file are made available subject to the terms of
  *  either of the following licenses
@@ -320,6 +320,9 @@
 #endif
 #ifndef _SWSTYLENAMEMAPPER_HXX
 #include <SwStyleNameMapper.hxx>
+#endif
+#ifndef _CRSSKIP_HXX
+#include <crsskip.hxx>
 #endif
 #ifndef _COM_SUN_STAR_BEANS_PROPERTYATTRIBUTE_HPPP_
 #include <com/sun/star/beans/PropertyAttribute.hpp>
@@ -1064,7 +1067,7 @@ void SwXTextCursor::DeleteAndInsert(const String& rText)
                     ASSERT( sal_False, "Doc->Insert(Str) failed." )
                 }
                 SwXTextCursor::SelectPam(*pUnoCrsr, sal_True);
-                    _pStartCrsr->Left(rText.Len());
+                _pStartCrsr->Left(rText.Len(), CRSR_SKIP_CHARS);
             }
         } while( (_pStartCrsr=(SwCursor*)_pStartCrsr->GetNext()) != pUnoCrsr );
         pDoc->EndUndo(UNDO_INSERT);
@@ -1158,7 +1161,7 @@ sal_Bool SwXTextCursor::goLeft(sal_Int16 nCount, sal_Bool Expand) throw( uno::Ru
     if(pUnoCrsr)
     {
         SwXTextCursor::SelectPam(*pUnoCrsr, Expand);
-        bRet = pUnoCrsr->Left( nCount);
+        bRet = pUnoCrsr->Left( nCount, CRSR_SKIP_CHARS);
     }
     else
     {
@@ -1177,7 +1180,7 @@ sal_Bool SwXTextCursor::goRight(sal_Int16 nCount, sal_Bool Expand) throw( uno::R
     if(pUnoCrsr)
     {
         SwXTextCursor::SelectPam(*pUnoCrsr, Expand);
-        bRet = pUnoCrsr->Right(nCount);
+        bRet = pUnoCrsr->Right(nCount, CRSR_SKIP_CHARS);
     }
     else
     {
@@ -1459,7 +1462,7 @@ sal_Bool SwXTextCursor::gotoNextWord(sal_Bool Expand) throw( uno::RuntimeExcepti
         //Absatzende?
         if(pUnoCrsr->GetCntntNode() &&
                 pUnoCrsr->GetPoint()->nContent == pUnoCrsr->GetCntntNode()->Len())
-                bRet = pUnoCrsr->Right();
+                bRet = pUnoCrsr->Right(1, CRSR_SKIP_CHARS);
         else
         {
             bRet = pUnoCrsr->GoNextWord();
@@ -1488,12 +1491,12 @@ sal_Bool SwXTextCursor::gotoPreviousWord(sal_Bool Expand) throw( uno::RuntimeExc
         SwXTextCursor::SelectPam(*pUnoCrsr, Expand);
         //Absatzanfang ?
         if(pUnoCrsr->GetPoint()->nContent == 0)
-            bRet = pUnoCrsr->Left();
+            bRet = pUnoCrsr->Left(1, CRSR_SKIP_CHARS);
         else
         {
             bRet = pUnoCrsr->GoPrevWord();
             if(pUnoCrsr->GetPoint()->nContent == 0)
-                pUnoCrsr->Left();
+                pUnoCrsr->Left(1, CRSR_SKIP_CHARS);
         }
     }
     else
@@ -1562,7 +1565,7 @@ sal_Bool SwXTextCursor::isStartOfSentence(void) throw( uno::RuntimeException )
         if(!bRet && !pUnoCrsr->HasMark())
         {
             SwCursor aCrsr(*pUnoCrsr->GetPoint());
-            aCrsr.LeftRight(sal_False, 1);
+            aCrsr.Right(1, CRSR_SKIP_CHARS);
             if(aCrsr.GoSentence(SwCursor::START_SENT) &&
                 aCrsr.GetPoint()->nContent == pUnoCrsr->GetPoint()->nContent)
                 bRet = sal_True;
@@ -1589,7 +1592,7 @@ sal_Bool SwXTextCursor::isEndOfSentence(void) throw( uno::RuntimeException )
         if(!bRet && !pUnoCrsr->HasMark())
         {
             SwCursor aCrsr(*pUnoCrsr->GetPoint());
-            aCrsr.LeftRight(sal_True, 1);
+            aCrsr.Left( 1, CRSR_SKIP_CHARS);
             if(aCrsr.GoSentence(SwCursor::END_SENT) && aCrsr.GetPoint()->nContent == pUnoCrsr->GetPoint()->nContent)
                 bRet = sal_True;
         }
@@ -1969,7 +1972,7 @@ Sequence< PropertyState > SwXTextCursor::GetPropertyStates(
                 throw UnknownPropertyException(OUString ( RTL_CONSTASCII_USTRINGPARAM ( "Unknown property: " ) ) + pNames[i], static_cast < cppu::OWeakObject * > ( 0 ) );
         }
         if (eCaller == SW_PROPERTY_STATE_CALLER_SWX_TEXT_PORTION &&
-            pMap->nWID < FN_UNO_RANGE_BEGIN && 
+            pMap->nWID < FN_UNO_RANGE_BEGIN &&
             pMap->nWID > FN_UNO_RANGE_END  &&
             pMap->nWID < RES_CHRATR_BEGIN &&
             pMap->nWID > RES_TXTATR_END )
@@ -1985,7 +1988,7 @@ Sequence< PropertyState > SwXTextCursor::GetPropertyStates(
                 {
                     switch ( eCaller )
                     {
-                        case SW_PROPERTY_STATE_CALLER_SWX_TEXT_PORTION:  
+                        case SW_PROPERTY_STATE_CALLER_SWX_TEXT_PORTION:
                             pSet = new SfxItemSet( rPaM.GetDoc()->GetAttrPool(),
                                     RES_CHRATR_BEGIN,   RES_TXTATR_END );
                         break;
@@ -2273,7 +2276,7 @@ uno::Any SwXTextCursor::getPropertyDefault(const OUString& rPropertyName)
     return getPropertyDefaults ( aSequence ).getConstArray()[0];
 }
 
-void SAL_CALL SwXTextCursor::setAllPropertiesToDefault() 
+void SAL_CALL SwXTextCursor::setAllPropertiesToDefault()
     throw (RuntimeException)
 {
     vos::OGuard aGuard(Application::GetSolarMutex());
@@ -2283,7 +2286,7 @@ void SAL_CALL SwXTextCursor::setAllPropertiesToDefault()
     else
         throw uno::RuntimeException();
 }
-void SAL_CALL SwXTextCursor::setPropertiesToDefault( const Sequence< OUString >& aPropertyNames ) 
+void SAL_CALL SwXTextCursor::setPropertiesToDefault( const Sequence< OUString >& aPropertyNames )
     throw (UnknownPropertyException, RuntimeException)
 {
     vos::OGuard aGuard(Application::GetSolarMutex());
@@ -2335,7 +2338,7 @@ void SAL_CALL SwXTextCursor::setPropertiesToDefault( const Sequence< OUString >&
             throw uno::RuntimeException();
     }
 }
-Sequence< Any > SAL_CALL SwXTextCursor::getPropertyDefaults( const Sequence< OUString >& aPropertyNames ) 
+Sequence< Any > SAL_CALL SwXTextCursor::getPropertyDefaults( const Sequence< OUString >& aPropertyNames )
     throw (UnknownPropertyException, WrappedTargetException, RuntimeException)
 {
     vos::OGuard aGuard(Application::GetSolarMutex());
@@ -2350,7 +2353,7 @@ Sequence< Any > SAL_CALL SwXTextCursor::getPropertyDefaults( const Sequence< OUS
             const SfxItemPropertyMap *pSaveMap, *pMap = aPropSet.getPropertyMap();
             const OUString *pNames = aPropertyNames.getConstArray();
             Any *pAny = aRet.getArray();
-            for ( sal_Int32 i = 0; i < nCount; i++) 
+            for ( sal_Int32 i = 0; i < nCount; i++)
             {
                 pSaveMap = pMap;
                 pMap = SfxItemPropertyMap::GetByName( pMap, pNames[i]);
