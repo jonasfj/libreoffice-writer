@@ -2,9 +2,9 @@
  *
  *  $RCSfile: crsrsh.cxx,v $
  *
- *  $Revision: 1.39 $
+ *  $Revision: 1.40 $
  *
- *  last change: $Author: rt $ $Date: 2004-06-16 09:33:30 $
+ *  last change: $Author: hjs $ $Date: 2004-06-28 12:57:51 $
  *
  *  The Contents of this file are made available subject to the terms of
  *  either of the following licenses
@@ -453,7 +453,7 @@ FASTBOOL SwCrsrShell::LeftRight( BOOL bLeft, USHORT nCnt, USHORT nMode,
         bRet = TRUE;
     }
     else
-        bRet = pCurCrsr->LeftRight( bLeft, nCnt, nMode, bVisualAllowed, 
+        bRet = pCurCrsr->LeftRight( bLeft, nCnt, nMode, bVisualAllowed,
                                     bSkipHidden,
                                     !IsOverwriteCrsr() );
 
@@ -473,12 +473,12 @@ void SwCrsrShell::SetMarkedNumLevel(const String & sNumRule, BYTE nLevel)
 
         if (sMarkedNumRule.Len() > 0)
             pDoc->SetMarkedNumLevel(sMarkedNumRule, nMarkedNumLevel, FALSE);
-        
+
         if (sNumRule.Len() > 0)
         {
             pDoc->SetMarkedNumLevel(sNumRule, nLevel, TRUE);
         }
-        
+
         sMarkedNumRule = sNumRule;
         nMarkedNumLevel = nLevel;
 
@@ -488,7 +488,7 @@ void SwCrsrShell::SetMarkedNumLevel(const String & sNumRule, BYTE nLevel)
 
 void SwCrsrShell::UpdateMarkedNumLevel()
 {
-    SwTxtNode * pTxtNd = 
+    SwTxtNode * pTxtNd =
         pCurCrsr->GetPoint()->nNode.GetNode().GetTxtNode();
 
     if (pTxtNd && ! pCurCrsr->HasMark()) // #i27615#
@@ -506,7 +506,7 @@ void SwCrsrShell::UpdateMarkedNumLevel()
             if (pNumRule)
             {
                 const SwNodeNum * pNdNum = pTxtNd->GetNum();
-                SetMarkedNumLevel(pNumRule->GetName(), 
+                SetMarkedNumLevel(pNumRule->GetName(),
                                   pNdNum->GetRealLevel());
             }
         }
@@ -1557,10 +1557,10 @@ void SwCrsrShell::UpdateCrsr( USHORT eFlags, BOOL bIdleEnd )
             aTmpState.nCursorBidiLevel = pCurCrsr->GetCrsrBidiLevel();
 
             // #i27615#
+            SwSpecialPos aSpecialPos;
+            aSpecialPos.nExtendRange = SP_EXTEND_RANGE_BEFORE;
             if (pCurCrsr->IsInFrontOfLabel())
             {
-                SwSpecialPos aSpecialPos;
-                aSpecialPos.nExtendRange = SP_EXTEND_RANGE_BEFORE;
                 aTmpState.pSpecialPos = &aSpecialPos;
             }
 
