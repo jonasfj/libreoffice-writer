@@ -2,9 +2,9 @@
  *
  *  $RCSfile: view.cxx,v $
  *
- *  $Revision: 1.84 $
+ *  $Revision: 1.85 $
  *
- *  last change: $Author: vg $ $Date: 2005-03-10 17:47:46 $
+ *  last change: $Author: vg $ $Date: 2005-03-23 13:02:28 $
  *
  *  The Contents of this file are made available subject to the terms of
  *  either of the following licenses
@@ -1361,7 +1361,7 @@ void SwView::ReadUserData( const String &rUserData, sal_Bool bBrowse )
             bool bSavedFlagValue = pWrtShell->IsMacroExecAllowed();
             pWrtShell->SetMacroExecAllowed( false );
 //!!! pb (11.08.2004): #i32536#
-// os: changed: The user data has to be read if the view is switched back from page preview 
+// os: changed: The user data has to be read if the view is switched back from page preview
             if(bOldShellWasPagePreView)
             {
                 pWrtShell->SwCrsrShell::SetCrsr( aCrsrPos, !bSelectObj );
@@ -1379,7 +1379,7 @@ void SwView::ReadUserData( const String &rUserData, sal_Bool bBrowse )
             // information from print preview. Otherwise, the applied information
             // is lost.
 //!!! pb (11.08.2004): #i32536#
-// os: changed: The user data has to be read if the view is switched back from page preview 
+// os: changed: The user data has to be read if the view is switched back from page preview
             if(bOldShellWasPagePreView)
             {
                 if ( bBrowse )
@@ -1530,7 +1530,7 @@ void SwView::ReadUserDataSequence ( const com::sun::star::uno::Sequence < com::s
                     bool bSavedFlagValue = pWrtShell->IsMacroExecAllowed();
                     pWrtShell->SetMacroExecAllowed( false );
 //!!! pb (11.08.2004): #i32536#
-// os: changed: The user data has to be read if the view is switched back from page preview 
+// os: changed: The user data has to be read if the view is switched back from page preview
                     if(bOldShellWasPagePreView)
                     {
                         pWrtShell->SwCrsrShell::SetCrsr( aCrsrPos, !bSelectObj );
@@ -1552,7 +1552,7 @@ void SwView::ReadUserDataSequence ( const com::sun::star::uno::Sequence < com::s
                    ( pVOpt->GetZoom() != nZoomFactor || pVOpt->GetZoomType() != eZoom ) )
                     SetZoom( eZoom, nZoomFactor, sal_True );
 //!!! pb (11.08.2004): #i32536#
-// os: changed: The user data has to be read if the view is switched back from page preview 
+// os: changed: The user data has to be read if the view is switched back from page preview
                 if(bOldShellWasPagePreView)
                 {
                     if ( bBrowse && bGotVisibleLeft && bGotVisibleTop )
@@ -1729,6 +1729,17 @@ void SwView::Notify( SfxBroadcaster& rBC, const SfxHint& rHint )
         sal_uInt32 nId = ((SfxSimpleHint&)rHint).GetId();
         switch ( nId )
         {
+            // --> OD 2005-03-03 #i43775# - sub shells will be destroyed by the
+            // dispatcher, if the view frame is dying. Thus, reset member <pShell>.
+            case SFX_HINT_DYING:
+                {
+                    if ( &rBC == GetViewFrame() )
+                    {
+                        ResetSubShell();
+                    }
+                }
+                break;
+            // <--
             case SFX_HINT_MODECHANGED:
                 {
                     // Modalmodus-Umschaltung?
