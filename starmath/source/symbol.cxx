@@ -2,9 +2,9 @@
  *
  *  $RCSfile: symbol.cxx,v $
  *
- *  $Revision: 1.18 $
+ *  $Revision: 1.19 $
  *
- *  last change: $Author: tl $ $Date: 2001-10-02 12:58:24 $
+ *  last change: $Author: tl $ $Date: 2002-05-24 13:27:00 $
  *
  *  The Contents of this file are made available subject to the terms of
  *  either of the following licenses
@@ -142,6 +142,7 @@ SmSym::SmSym() :
 {
     aExportName = Name;
     Face.SetTransparent(TRUE);
+    Face.SetAlign(ALIGN_BASELINE);
 }
 
 
@@ -156,8 +157,12 @@ SmSym::SmSym(const String& rName, const Font& rFont, sal_Unicode aChar,
              const String& rSet, BOOL bIsPredefined)
 {
     Name		= aExportName	= rName;
-    Face		= rFont;
-    Character	= aChar;
+
+    Face        = rFont;
+    Face.SetTransparent(TRUE);
+    Face.SetAlign(ALIGN_BASELINE);
+
+    Character   = aChar;
     if (RTL_TEXTENCODING_SYMBOL == rFont.GetCharSet())
         Character |= 0xF000;
     aSetName	= rSet;
@@ -180,7 +185,7 @@ SmSym& SmSym::operator = (const SmSym& rSymbol)
     aExportName	= rSymbol.aExportName;
 
     pHashNext = 0;
-    
+
     if (pSymSetManager)
         pSymSetManager->SetModified(TRUE);
 
@@ -220,7 +225,7 @@ SvStream& operator >> (SvStream& rStream, SmSym& rSymbol)
         rStream >> rSymbol.Face;
     sal_Char cTemp;
     rStream >> cTemp;
-    
+
     rtl_TextEncoding eEnc = rSymbol.Face.GetCharSet();
     if (RTL_TEXTENCODING_DONTKNOW == eEnc)
         eEnc = RTL_TEXTENCODING_SYMBOL;
@@ -362,9 +367,9 @@ SvStream& operator >> (SvStream& rStream, SmSymSet& rSymbolSet)
 
 /**************************************************************************/
 
-SmSymSetManager_Impl::SmSymSetManager_Impl( 
+SmSymSetManager_Impl::SmSymSetManager_Impl(
         SmSymSetManager &rMgr, USHORT HashTableSize ) :
-    
+
     rSymSetMgr    (rMgr)
 {
     NoSymbolSets    = 0;
@@ -395,22 +400,22 @@ SmSymSetManager_Impl::~SmSymSetManager_Impl()
 SmSymSetManager_Impl & SmSymSetManager_Impl::operator = ( const SmSymSetManager_Impl &rImpl )
 {
     //! rMySymSetMgr remains unchanged
-    
+
     NoHashEntries   = rImpl.NoHashEntries;
     if (HashEntries)
         delete [] HashEntries;
     HashEntries = new SmSym *[NoHashEntries];
     memset( HashEntries, 0, sizeof(SmSym *) * NoHashEntries );
-    
+
     NoSymbolSets    = 0;
     SymbolSets.Clear();
     for (USHORT i = 0;  i < rImpl.NoSymbolSets;  ++i)
     {
         rSymSetMgr.AddSymbolSet( new SmSymSet( *rImpl.rSymSetMgr.GetSymbolSet(i) ) );
     }
-    DBG_ASSERT( NoSymbolSets == rImpl.NoSymbolSets, 
+    DBG_ASSERT( NoSymbolSets == rImpl.NoSymbolSets,
             "incorrect number of symbolsets" );
-    
+
     Modified        = TRUE;
     return *this;
 }
@@ -608,7 +613,7 @@ USHORT SmSymSetManager::GetSymbolCount() const
         nRes += GetSymbolSet(i)->GetCount();
     return nRes;
 }
-    
+
 
 const SmSym * SmSymSetManager::GetSymbolByPos( USHORT nPos ) const
 {
