@@ -2,9 +2,9 @@
  *
  *  $RCSfile: ww8graf.cxx,v $
  *
- *  $Revision: 1.28 $
+ *  $Revision: 1.29 $
  *
- *  last change: $Author: cmc $ $Date: 2001-06-12 09:24:43 $
+ *  last change: $Author: jp $ $Date: 2001-07-31 18:38:30 $
  *
  *  The Contents of this file are made available subject to the terms of
  *  either of the following licenses
@@ -768,14 +768,14 @@ void SwWW8ImplReader::InsertTxbxStyAttrs( SfxItemSet& rS, USHORT nColl )
             //If we are set in the source and not set in the destination
             //then add it in.
             if ( SFX_ITEM_SET == pCollA[nColl].pFmt->GetItemState(
-                i, TRUE, &pItem ) ) 
+                i, TRUE, &pItem ) )
             {
                 SfxItemPool *pEditPool = rS.GetPool();
                 USHORT nWhich = i;
                 USHORT nSlotId = rDoc.GetAttrPool().GetSlotId(nWhich);
                 if (
                     nSlotId && nWhich != nSlotId &&
-                    0 != (nWhich = pEditPool->GetWhich(nSlotId)) && 
+                    0 != (nWhich = pEditPool->GetWhich(nSlotId)) &&
                     nWhich != nSlotId &&
                     ( SFX_ITEM_SET != rS.GetItemState(nWhich, FALSE ) )
                    )
@@ -794,7 +794,7 @@ void SwWW8ImplReader::InsertTxbxStyAttrs( SfxItemSet& rS, USHORT nColl )
 // InsertTxbxAttrs() setzt zwischen StartCp und EndCp die Attribute.
 // Dabei werden Style-Attribute als harte Attribute, Absatz- und Zeichen-
 // attribute gesetzt.
-void SwWW8ImplReader::InsertTxbxAttrs( long nStartCp, long nEndCp, 
+void SwWW8ImplReader::InsertTxbxAttrs( long nStartCp, long nEndCp,
     BOOL bONLYnPicLocFc )
 {
     nStartCp += nDrawCpO;
@@ -825,7 +825,7 @@ void SwWW8ImplReader::InsertTxbxAttrs( long nStartCp, long nEndCp,
             {
                 if ( (68 == aRes.nSprmId) || (0x6A03 == aRes.nSprmId) )
                 {
-                    Read_PicLoc( aRes.nSprmId, 
+                    Read_PicLoc( aRes.nSprmId,
                         aRes.pMemPos + 1 + (8 > pWwFib->nVersion ? 0 : 1)
                         + WW8SprmDataOfs( aRes.nSprmId ), 4 );
                     // Ok, that's it.  Now let's get out of here!
@@ -835,7 +835,7 @@ void SwWW8ImplReader::InsertTxbxAttrs( long nStartCp, long nEndCp,
             else if ( aRes.nSprmId && (
                 (256 >  aRes.nSprmId) || (0x0800 <= aRes.nSprmId) ) )
             {
-                //Here place them onto our usual stack and we will pop them 
+                //Here place them onto our usual stack and we will pop them
                 //off and convert them later
                 if (bStartAttr)
                     ImportSprm(aRes.pMemPos, (short)aRes.nMemLen, aRes.nSprmId);
@@ -862,17 +862,21 @@ void SwWW8ImplReader::InsertTxbxAttrs( long nStartCp, long nEndCp,
                 {
                     const SfxPoolItem *pItem = ((*pCtrlStck)[i])->pAttr;
                     USHORT nWhich = pItem->Which();
-                    USHORT nSlotId = rDoc.GetAttrPool().GetSlotId(nWhich);
-                    if (
-                        nSlotId && nWhich != nSlotId &&
-                        0 != (nWhich = pEditPool->GetWhich(nSlotId)) && 
-                        nWhich != nSlotId
-                       )
+                    if( nWhich < RES_FLTRATTR_BEGIN ||
+                        nWhich >= RES_FLTRATTR_END )
                     {
-                        SfxPoolItem* pCopy = pItem->Clone();
-                        pCopy->SetWhich( nWhich );
-                        pS->Put( *pCopy );
-                        delete pCopy;
+                        USHORT nSlotId = rDoc.GetAttrPool().GetSlotId(nWhich);
+                        if (
+                            nSlotId && nWhich != nSlotId &&
+                            0 != (nWhich = pEditPool->GetWhich(nSlotId)) &&
+                            nWhich != nSlotId
+                           )
+                        {
+                            SfxPoolItem* pCopy = pItem->Clone();
+                            pCopy->SetWhich( nWhich );
+                            pS->Put( *pCopy );
+                            delete pCopy;
+                        }
                     }
                 }
             }
@@ -2957,11 +2961,14 @@ void SwWW8ImplReader::EmbeddedFlyFrameSizeLock(SwNodeIndex &rStart,
 
       Source Code Control System - Header
 
-      $Header: /zpool/svn/migration/cvs_rep_09_09_08/code/sw/source/filter/ww8/ww8graf.cxx,v 1.28 2001-06-12 09:24:43 cmc Exp $
+      $Header: /zpool/svn/migration/cvs_rep_09_09_08/code/sw/source/filter/ww8/ww8graf.cxx,v 1.29 2001-07-31 18:38:30 jp Exp $
 
       Source Code Control System - Update
 
       $Log: not supported by cvs2svn $
+      Revision 1.28  2001/06/12 09:24:43  cmc
+      #87558# #87591# ##976## ##980## Implement draw textbox attributes by using normal writer import and mapping to draw attributes using slotids
+    
       Revision 1.27  2001/06/06 12:46:32  cmc
       #76673# ##1005## Fastsave table Insert/Delete Cell implementation, const reworking required
     
