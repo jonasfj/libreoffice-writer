@@ -2,9 +2,9 @@
  *
  *  $RCSfile: xmltexti.cxx,v $
  *
- *  $Revision: 1.32 $
+ *  $Revision: 1.33 $
  *
- *  last change: $Author: hjs $ $Date: 2003-08-19 12:28:05 $
+ *  last change: $Author: rt $ $Date: 2003-09-19 08:45:16 $
  *
  *  The Contents of this file are made available subject to the terms of
  *  either of the following licenses
@@ -63,25 +63,25 @@
 #pragma hdrstop
 
 
-#ifndef _RTL_USTRBUF_HXX_ 
+#ifndef _RTL_USTRBUF_HXX_
 #include <rtl/ustrbuf.hxx>
 #endif
 #ifndef _SO_CLSIDS_HXX
 #include <so3/clsids.hxx>
 #endif
-#ifndef _EMBOBJ_HXX 
+#ifndef _EMBOBJ_HXX
 #include <so3/embobj.hxx>
 #endif
-#ifndef _COM_SUN_STAR_LANG_XUNOTUNNEL_HPP_ 
+#ifndef _COM_SUN_STAR_LANG_XUNOTUNNEL_HPP_
 #include <com/sun/star/lang/XUnoTunnel.hpp>
 #endif
-#ifndef _XMLOFF_PRSTYLEI_HXX_ 
+#ifndef _XMLOFF_PRSTYLEI_HXX_
 #include <xmloff/prstylei.hxx>
 #endif
-#ifndef _XMLOFF_PROPMAPPINGTYPES_HXX 
+#ifndef _XMLOFF_PROPMAPPINGTYPES_HXX
 #include <xmloff/maptype.hxx>
 #endif
-#ifndef _XMLOFF_PROPERTYSETMAPPER_HXX 
+#ifndef _XMLOFF_PROPERTYSETMAPPER_HXX
 #include <xmloff/xmlprmap.hxx>
 #endif
 #ifndef _XMLOFF_TXTPRMAP_HXX
@@ -100,7 +100,7 @@
 #ifndef _UNOFRAME_HXX
 #include "unoframe.hxx"
 #endif
-#ifndef _DOC_HXX 
+#ifndef _DOC_HXX
 #include "doc.hxx"
 #endif
 #ifndef _UNOCOLL_HXX
@@ -151,7 +151,7 @@
 #ifndef _VOS_MUTEX_HXX_
 #include <vos/mutex.hxx>
 #endif
- 
+
 
 
 using namespace ::rtl;
@@ -188,7 +188,7 @@ const XMLServiceMapEntry_Impl aServiceMap[] =
     SERVICE_MAP_ENTRY( MATH, SM ),
     { 0, 0, 0, 0 }
 };
-static void lcl_putHeightAndWidth ( SfxItemSet &rItemSet, 
+static void lcl_putHeightAndWidth ( SfxItemSet &rItemSet,
         sal_Int32 nHeight, sal_Int32 nWidth,
         sal_Int32 *pTwipHeight=0, sal_Int32 *pTwipWidth=0 )
 {
@@ -217,9 +217,9 @@ SwXMLTextImportHelper::SwXMLTextImportHelper(
         SvXMLImport& rImport,
         const Reference<XPropertySet> & rInfoSet,
         sal_Bool bInsertM, sal_Bool bStylesOnlyM, sal_Bool bProgress,
-        sal_Bool bBlockM, sal_Bool bOrganizerM, 
+        sal_Bool bBlockM, sal_Bool bOrganizerM,
         sal_Bool bPreserveRedlineMode ) :
-    XMLTextImportHelper( rModel, rImport, bInsertM, bStylesOnlyM, bProgress, 
+    XMLTextImportHelper( rModel, rImport, bInsertM, bStylesOnlyM, bProgress,
                          bBlockM, bOrganizerM ),
     pRedlineHelper( NULL )
 {
@@ -247,7 +247,7 @@ SvXMLImportContext *SwXMLTextImportHelper::CreateTableChildContext(
                 sal_uInt16 nPrefix, const OUString& rLocalName,
                 const Reference< XAttributeList > & xAttrList )
 {
-    return new SwXMLTableContext( 
+    return new SwXMLTableContext(
                 (SwXMLImport&)rImport, nPrefix, rLocalName, xAttrList );
 }
 
@@ -256,7 +256,7 @@ sal_Bool SwXMLTextImportHelper::IsInHeaderFooter() const
     Reference<XUnoTunnel> xCrsrTunnel(
             ((SwXMLTextImportHelper *)this)->GetCursor(), UNO_QUERY );
     ASSERT( xCrsrTunnel.is(), "missing XUnoTunnel for Cursor" );
-    OTextCursorHelper *pTxtCrsr = 
+    OTextCursorHelper *pTxtCrsr =
                 (OTextCursorHelper*)xCrsrTunnel->getSomething(
                                             OTextCursorHelper::getUnoTunnelId() );
     ASSERT( pTxtCrsr, "SwXTextCursor missing" );
@@ -301,7 +301,7 @@ Reference< XPropertySet > SwXMLTextImportHelper::createAndInsertOLEObject(
 
     Reference<XUnoTunnel> xCrsrTunnel( GetCursor(), UNO_QUERY );
     ASSERT( xCrsrTunnel.is(), "missing XUnoTunnel for Cursor" );
-    OTextCursorHelper *pTxtCrsr = 
+    OTextCursorHelper *pTxtCrsr =
                 (OTextCursorHelper*)xCrsrTunnel->getSomething(
                                             OTextCursorHelper::getUnoTunnelId() );
     ASSERT( pTxtCrsr, "SwXTextCursor missing" );
@@ -311,7 +311,7 @@ Reference< XPropertySet > SwXMLTextImportHelper::createAndInsertOLEObject(
                          RES_FRMATR_END );
     Size aTwipSize( 0, 0 );
     Rectangle aVisArea( 0, 0, nWidth, nHeight );
-    lcl_putHeightAndWidth( aItemSet, nHeight, nWidth, 
+    lcl_putHeightAndWidth( aItemSet, nHeight, nWidth,
                            &aTwipSize.Height(), &aTwipSize.Width() );
 
     SwFrmFmt *pFrmFmt = 0;
@@ -379,7 +379,7 @@ Reference< XPropertySet > SwXMLTextImportHelper::createAndInsertOLEObject(
     SwXFrame *pXFrame = SwXFrames::GetObject( *pFrmFmt, FLYCNTTYPE_OLE );
     xPropSet = pXFrame;
     if( pDoc->GetDrawModel() )
-        SwXFrame::GetOrCreateSdrObject( 
+        SwXFrame::GetOrCreateSdrObject(
                 static_cast<SwFlyFrmFmt*>( pXFrame->GetFrmFmt() ) ); // req for z-order
     if( rTblName.getLength() )
     {
@@ -470,7 +470,7 @@ Reference< XPropertySet > SwXMLTextImportHelper::createAndInsertOLEObject(
             ASSERT( xImpPrMap.is(), "Where is the import prop mapper?" );
             if( xImpPrMap.is() )
             {
-                UniReference<XMLPropertySetMapper> rPropMapper = 
+                UniReference<XMLPropertySetMapper> rPropMapper =
                 xImpPrMap->getPropertySetMapper();
 
                 sal_Int32 nCount = pStyle->GetProperties().size();
@@ -546,7 +546,7 @@ Reference< XPropertySet > SwXMLTextImportHelper::createAndInsertApplet(
     Reference < XPropertySet > xPropSet;
     Reference<XUnoTunnel> xCrsrTunnel( GetCursor(), UNO_QUERY );
     ASSERT( xCrsrTunnel.is(), "missing XUnoTunnel for Cursor" );
-    OTextCursorHelper *pTxtCrsr = 
+    OTextCursorHelper *pTxtCrsr =
                 (OTextCursorHelper*)xCrsrTunnel->getSomething(
                                             OTextCursorHelper::getUnoTunnelId() );
     ASSERT( pTxtCrsr, "SwXTextCursor missing" );
@@ -559,13 +559,13 @@ Reference< XPropertySet > SwXMLTextImportHelper::createAndInsertApplet(
     SwApplet_Impl aAppletImpl ( aItemSet );
     aAppletImpl.CreateApplet ( rCode, rName, bMayScript, rHRef );
 
-    SwFrmFmt *pFrmFmt = pDoc->Insert( *pTxtCrsr->GetPaM(), 
+    SwFrmFmt *pFrmFmt = pDoc->Insert( *pTxtCrsr->GetPaM(),
                                        aAppletImpl.GetApplet(),
                                        &aAppletImpl.GetItemSet());
     SwXFrame *pXFrame = SwXFrames::GetObject( *pFrmFmt, FLYCNTTYPE_OLE );
     xPropSet = pXFrame;
     if( pDoc->GetDrawModel() )
-        SwXFrame::GetOrCreateSdrObject( 
+        SwXFrame::GetOrCreateSdrObject(
                 static_cast<SwFlyFrmFmt*>( pXFrame->GetFrmFmt() ) ); // req for z-order
 
     return xPropSet;
@@ -578,7 +578,7 @@ Reference< XPropertySet > SwXMLTextImportHelper::createAndInsertPlugin(
     Reference < XPropertySet > xPropSet;
     Reference<XUnoTunnel> xCrsrTunnel( GetCursor(), UNO_QUERY );
     ASSERT( xCrsrTunnel.is(), "missing XUnoTunnel for Cursor" );
-    OTextCursorHelper *pTxtCrsr = 
+    OTextCursorHelper *pTxtCrsr =
                 (OTextCursorHelper*)xCrsrTunnel->getSomething(
                                             OTextCursorHelper::getUnoTunnelId() );
     ASSERT( pTxtCrsr, "SwXTextCursor missing" );
@@ -592,14 +592,14 @@ Reference< XPropertySet > SwXMLTextImportHelper::createAndInsertPlugin(
     // either, do not insert plugin and return early. Copy URL into URL oject
     // on the way.
        INetURLObject aURLObj;
-    bool bValidURL = rHRef.getLength() != 0 && 
+    bool bValidURL = rHRef.getLength() != 0 &&
                      aURLObj.SetURL( INetURLObject::RelToAbs(rHRef) );
     bool bValidMimeType = rMimeType.getLength() != 0;
     if( !bValidURL && !bValidMimeType )
         return xPropSet;
 
     SvStorageRef pStor = new SvStorage( aEmptyStr, STREAM_STD_READWRITE);
-    SvFactory *pPlugInFactory = SvFactory::GetDefaultPlugInFactory();
+    SvFactory *pPlugInFactory = (SvFactory*) SvPlugInObject::ClassFactory();
     SvPlugInObjectRef xPlugin = &pPlugInFactory->CreateAndInit( *pPlugInFactory, pStor );
 
     xPlugin->EnableSetModified( FALSE );
@@ -609,13 +609,13 @@ Reference< XPropertySet > SwXMLTextImportHelper::createAndInsertPlugin(
     if( bValidMimeType )
         xPlugin->SetMimeType( rMimeType );
 
-    SwFrmFmt *pFrmFmt = pDoc->Insert( *pTxtCrsr->GetPaM(), 
+    SwFrmFmt *pFrmFmt = pDoc->Insert( *pTxtCrsr->GetPaM(),
                                        xPlugin,
                                        &aItemSet);
     SwXFrame *pXFrame = SwXFrames::GetObject( *pFrmFmt, FLYCNTTYPE_OLE );
     xPropSet = pXFrame;
     if( pDoc->GetDrawModel() )
-        SwXFrame::GetOrCreateSdrObject( 
+        SwXFrame::GetOrCreateSdrObject(
                 static_cast<SwFlyFrmFmt*>( pXFrame->GetFrmFmt() ) ); // req for z-order
 
     return xPropSet;
@@ -632,7 +632,7 @@ Reference< XPropertySet > SwXMLTextImportHelper::createAndInsertFloatingFrame(
     Reference < XPropertySet > xPropSet;
     Reference<XUnoTunnel> xCrsrTunnel( GetCursor(), UNO_QUERY );
     ASSERT( xCrsrTunnel.is(), "missing XUnoTunnel for Cursor" );
-    OTextCursorHelper *pTxtCrsr = 
+    OTextCursorHelper *pTxtCrsr =
                 (OTextCursorHelper*)xCrsrTunnel->getSomething(
                                             OTextCursorHelper::getUnoTunnelId() );
     ASSERT( pTxtCrsr, "SwXTextCursor missing" );
@@ -663,7 +663,7 @@ Reference< XPropertySet > SwXMLTextImportHelper::createAndInsertFloatingFrame(
             ASSERT( xImpPrMap.is(), "Where is the import prop mapper?" );
             if( xImpPrMap.is() )
             {
-                UniReference<XMLPropertySetMapper> rPropMapper = 
+                UniReference<XMLPropertySetMapper> rPropMapper =
                 xImpPrMap->getPropertySetMapper();
 
                 sal_Int32 nCount = pStyle->GetProperties().size();
