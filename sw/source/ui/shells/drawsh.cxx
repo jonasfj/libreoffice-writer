@@ -2,9 +2,9 @@
  *
  *  $RCSfile: drawsh.cxx,v $
  *
- *  $Revision: 1.1.1.1 $
+ *  $Revision: 1.2 $
  *
- *  last change: $Author: hr $ $Date: 2000-09-18 17:14:46 $
+ *  last change: $Author: os $ $Date: 2001-08-01 10:33:18 $
  *
  *  The Contents of this file are made available subject to the terms of
  *  either of the following licenses
@@ -221,10 +221,10 @@ void SwDrawShell::Execute(SfxRequest &rReq)
             }
             break;
 
-        case FN_TOOL_VMIRROR:
+        case FN_FLIP_HORZ_GRAFIC:
             bMirror = FALSE;
             /* no break */
-        case FN_TOOL_HMIRROR:
+        case FN_FLIP_VERT_GRAFIC:
             rSh.MirrorSelection( bMirror );
             break;
 
@@ -449,12 +449,15 @@ void SwDrawShell::GetFormTextState(SfxItemSet& rSet)
       Source Code Control System - History
 
       $Log: not supported by cvs2svn $
+      Revision 1.1.1.1  2000/09/18 17:14:46  hr
+      initial import
+
       Revision 1.143  2000/09/18 16:06:03  willem.vandorp
       OpenOffice header added.
-    
+
       Revision 1.142  2000/09/08 08:12:51  os
       Change: Set/Toggle/Has/Knows/Show/GetChildWindow
-    
+
       Revision 1.141  2000/09/07 15:59:29  os
       change: SFX_DISPATCHER/SFX_BINDINGS removed
 
