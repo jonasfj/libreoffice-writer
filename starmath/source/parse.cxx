@@ -2,9 +2,9 @@
  *
  *  $RCSfile: parse.cxx,v $
  *
- *  $Revision: 1.17 $
+ *  $Revision: 1.18 $
  *
- *  last change: $Author: tl $ $Date: 2001-12-14 09:07:32 $
+ *  last change: $Author: er $ $Date: 2002-01-14 16:00:14 $
  *
  *  The Contents of this file are made available subject to the terms of
  *  either of the following licenses
@@ -449,7 +449,7 @@ void SmParser::Insert(const String &rText, USHORT nPos)
 void SmParser::Replace( USHORT nPos, USHORT nLen, const String &rText )
 {
     DBG_ASSERT( nPos + nLen <= BufferString.Len(), "argument mismatch" );
-    
+
     BufferString.Replace( nPos, nLen, rText );
     INT16  nChg = rText.Len() - nLen;
     BufferIndex += nChg;
@@ -464,7 +464,8 @@ const sal_Int32 coStartFlags =
 
 // Continuing characters may be any alphanumeric or dot.
 const sal_Int32 coContFlags =
-    ( coStartFlags | KParseTokens::ASC_DOT ) & ~KParseTokens::IGNORE_LEADING_WS;
+    ( coStartFlags | KParseTokens::ASC_DOT ) & ~KParseTokens::IGNORE_LEADING_WS
+    | KParseTokens::TWO_DOUBLE_QUOTES_BREAK_STRING;
 
 
 void SmParser::NextToken()
@@ -738,15 +739,15 @@ void SmParser::NextToken()
                         CurToken.aText      = String();
                         CurToken.nRow       = Row;
                         CurToken.nCol       = nTmpStart - ColOff + 1;
-                        
+
                         if (aTmpRes.TokenType & KParseType::IDENTNAME)
                         {
 
                             INT32 n = aTmpRes.EndPos - nTmpStart;
                             CurToken.eType      = TSPECIAL;
                             CurToken.aText      = BufferString.Copy( nTmpStart, n );
-                            
-                            DBG_ASSERT( aTmpRes.EndPos > rnEndPos, 
+
+                            DBG_ASSERT( aTmpRes.EndPos > rnEndPos,
                                     "empty identifier" );
                             if (aTmpRes.EndPos > rnEndPos)
                                 rnEndPos = aTmpRes.EndPos;
@@ -2277,7 +2278,7 @@ void SmParser::Special()
     if (CONVERT_NONE == GetConversion())
     {
         // conversion of symbol names for 6.0 (XML) file format
-        // (name change on import / export. 
+        // (name change on import / export.
         // UI uses localized names XML file format does not.)
         if (IsImportSymbolNames())
         {
@@ -2325,7 +2326,7 @@ void SmParser::Special()
         else
             DBG_ERROR( "unexpected conversion or data missing" );
     }
-    
+
     if (bReplace  &&  aNewName.Len()  &&  rName != aNewName)
     {
         Replace( GetTokenIndex() + 1, rName.Len(), aNewName );
