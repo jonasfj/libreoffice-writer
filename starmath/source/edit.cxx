@@ -2,9 +2,9 @@
  *
  *  $RCSfile: edit.cxx,v $
  *
- *  $Revision: 1.29 $
+ *  $Revision: 1.30 $
  *
- *  last change: $Author: hr $ $Date: 2003-11-07 15:22:11 $
+ *  last change: $Author: kz $ $Date: 2004-10-04 18:03:16 $
  *
  *  The Contents of this file are made available subject to the terms of
  *  either of the following licenses
@@ -204,7 +204,7 @@ SmEditWindow::~SmEditWindow()
 
 
     // #112565# clean up of classes used for accessibility
-    // must be done before EditView (and thus EditEngine) is no longer 
+    // must be done before EditView (and thus EditEngine) is no longer
     // available for those classes.
     if (pAccessible)
         pAccessible->ClearWin();    // make Accessible defunctional
@@ -497,13 +497,8 @@ void SmEditWindow::KeyInput(const KeyEvent& rKEvt)
         SfxViewShell* pViewShell = SfxViewShell::Current();
         if ( pViewShell && pViewShell->ISA(SmViewShell) )
         {
-            SmDocShell* pDocSh = (SmDocShell*) pViewShell->GetViewFrame()->GetObjectShell();
-            if (pDocSh)
-            {
-                    /* fuert zum (sofortigen) Zerstoeren von this! */
-                pDocSh->DoInPlaceActivate( FALSE );
-                bCallBase = FALSE;
-            }
+            // Terminate possible InPlace mode
+            bCallBase = !pViewShell->Escape();
         }
         if ( bCallBase )
             Window::KeyInput( rKEvt );
