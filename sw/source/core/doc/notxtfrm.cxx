@@ -2,9 +2,9 @@
  *
  *  $RCSfile: notxtfrm.cxx,v $
  *
- *  $Revision: 1.25 $
+ *  $Revision: 1.26 $
  *
- *  last change: $Author: vg $ $Date: 2004-01-06 18:15:02 $
+ *  last change: $Author: rt $ $Date: 2004-05-03 14:22:49 $
  *
  *  The Contents of this file are made available subject to the terms of
  *  either of the following licenses
@@ -455,8 +455,10 @@ void lcl_ClearArea( const SwFrm &rFrm,
                 ::DrawGraphic( pItem, &rOut, aOrigRect, aRegion[i] );
         else
         {
-            rOut.Push( PUSH_FILLCOLOR );
+            // OD 2004-04-23 #116347#
+            rOut.Push( PUSH_FILLCOLOR|PUSH_LINECOLOR );
             rOut.SetFillColor( rFrm.GetShell()->Imp()->GetRetoucheColor());
+            rOut.SetLineColor();
             for( USHORT i = 0; i < aRegion.Count(); ++i )
                 rOut.DrawRect( aRegion[i].SVRect() );
             rOut.Pop();
@@ -1142,10 +1144,10 @@ void SwNoTxtFrm::PaintPicture( OutputDevice* pOut, const SwRect &rGrfArea ) cons
 
         // #114233#
         const sal_Bool bOutToPrinter(OUTDEV_PRINTER == pOut->GetOutDevType());
-        const sal_Bool bOutToRecordingMetaFile(pOut->GetConnectMetaFile() 
+        const sal_Bool bOutToRecordingMetaFile(pOut->GetConnectMetaFile()
             && pOut->GetConnectMetaFile()->IsRecord() && !pOut->GetConnectMetaFile()->IsPause());
         sal_Bool bBufferOLEOutput(!bOutToPrinter && !bOutToRecordingMetaFile);
-        
+
         if(bBufferOLEOutput)
         {
             // needs to be buffered to a VirtualDevice
@@ -1173,11 +1175,11 @@ void SwNoTxtFrm::PaintPicture( OutputDevice* pOut, const SwRect &rGrfArea ) cons
             const sal_Bool bWasEnabled(pOut->IsMapModeEnabled());
             pOut->EnableMapMode(sal_False);
             aBufferDevice.EnableMapMode(sal_False);
-            
+
             pOut->DrawOutDev(
                 aRectPixel.TopLeft(), aRectPixel.GetSize(),
                 Point(), aRectPixel.GetSize(), aBufferDevice);
-            
+
             pOut->EnableMapMode(bWasEnabled);
         }
         else
