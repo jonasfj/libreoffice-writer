@@ -2,9 +2,9 @@
  *
  *  $RCSfile: tblrwcl.cxx,v $
  *
- *  $Revision: 1.11 $
+ *  $Revision: 1.12 $
  *
- *  last change: $Author: rt $ $Date: 2003-12-01 16:37:05 $
+ *  last change: $Author: rt $ $Date: 2004-05-03 13:43:58 $
  *
  *  The Contents of this file are made available subject to the terms of
  *  either of the following licenses
@@ -1314,7 +1314,7 @@ BOOL SwTable::SplitRow( SwDoc* pDoc, const SwSelBoxes& rBoxes, USHORT nCnt,
     delete[] pRowHeights;
 
     GCLines();
-    
+
     aFndBox.MakeFrms( *this );
     aFndBox.RestoreChartData( *this );
     CHECKBOXWIDTH
@@ -2088,8 +2088,9 @@ BOOL SwTable::MakeCopy( SwDoc* pInsDoc, const SwPosition& rPos,
         pInsDoc->CopyTxtColl( *pSrcDoc->GetTxtCollFromPool( RES_POOLCOLL_TABLE_HDLN ) );
     }
 
-    SwTable* pNewTbl = (SwTable*)pInsDoc->InsertTable( rPos, 1, 1,
-                    GetFrmFmt()->GetHoriOrient().GetHoriOrient() );
+    SwTable* pNewTbl = (SwTable*)pInsDoc->InsertTable(
+            SwInsertTableOptions( tabopts::HEADLINE_NO_BORDER, 1 ),
+            rPos, 1, 1, GetFrmFmt()->GetHoriOrient().GetHoriOrient() );
     if( !pNewTbl )
         return FALSE;
 
@@ -2098,7 +2099,7 @@ BOOL SwTable::MakeCopy( SwDoc* pInsDoc, const SwPosition& rPos,
     aIdx++;
     ASSERT( pTblNd, "wo ist denn nun der TableNode?" );
 
-    pTblNd->GetTable().SetHeadlineRepeat( IsHeadlineRepeat() );
+    pTblNd->GetTable().SetRowsToRepeat( GetRowsToRepeat() );
 
     if( IS_TYPE( SwDDETable, this ))
     {
@@ -4232,7 +4233,7 @@ BOOL SwTable::SetRowHeight( SwTableBox& rAktBox, USHORT eType,
 
                         // #110525# delete complete table when last row is
                         // deleted
-                        if( !bBigger && 
+                        if( !bBigger &&
                             aParam.aBoxes.Count() == aSortCntBoxes.Count() )
                         {
                             GetFrmFmt()->GetDoc()->DeleteRowCol( aParam.aBoxes );
