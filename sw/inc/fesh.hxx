@@ -2,9 +2,9 @@
  *
  *  $RCSfile: fesh.hxx,v $
  *
- *  $Revision: 1.28 $
+ *  $Revision: 1.29 $
  *
- *  last change: $Author: hr $ $Date: 2003-04-04 18:09:58 $
+ *  last change: $Author: vg $ $Date: 2003-06-20 09:35:54 $
  *
  *  The Contents of this file are made available subject to the terms of
  *  either of the following licenses
@@ -283,6 +283,11 @@ public:
 
     sal_Bool MoveAnchor( USHORT nDir );
 
+    // Returns if Upper of frame at current position is section frame
+    // Currently only used by the rules. To be replaced by something more
+    // sophisticated one day.
+    bool IsDirectlyInSection() const;
+
     //Returnwerte siehe oben FrmType.
     //pPt: Crsr bzw. DocPos; bStopAtFly: Bei Flys anhalten oder ueber den Anchor weitergehen
     // Obgleich (0,TRUE) eine Art Standard ist, sind die Parameter nicht defaultet, damit
@@ -527,7 +532,7 @@ public:
 
     //convert document position into position relative to the current page
     Point GetRelativePagePosition(const Point& rDocPos);
-    
+
     //Layout-Selektion Hiden/Zeigen und aufruf an die CrsrSh weiterreichen.
     void ShLooseFcs();
     void ShGetFcs( BOOL bUpdate = TRUE );
