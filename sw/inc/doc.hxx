@@ -2,9 +2,9 @@
  *
  *  $RCSfile: doc.hxx,v $
  *
- *  $Revision: 1.77 $
+ *  $Revision: 1.78 $
  *
- *  last change: $Author: rt $ $Date: 2004-06-30 14:02:41 $
+ *  last change: $Author: kz $ $Date: 2004-08-02 13:56:35 $
  *
  *  The Contents of this file are made available subject to the terms of
  *  either of the following licenses
@@ -492,6 +492,10 @@ class SwDoc
 #ifndef PRODUCT
     sal_Bool    bXMLExport : 1;         // TRUE: during XML export
 #endif
+    // OD 2004-05-05 #i28701#
+    // TRUE: object positioning algorithm has consider the wrapping style of
+    //       the floating screen objects as given by its attribute 'WrapInfluenceOnObjPos'
+    sal_Bool mbConsiderWrapOnObjPos : 1;
 
     //
     // COMPATIBILITY FLAGS START
@@ -1621,10 +1625,10 @@ public:
                            - FALSE: search for itemize
        \param bOutline     - TRUE:  search for non-outline numbering rule
                            - FALSE: search for outline numbering rule
-       \param nNonEmptyAllowed   number of non-empty paragraphs allowed between 
+       \param nNonEmptyAllowed   number of non-empty paragraphs allowed between
                                  rPos and found paragraph
      */
-    const SwNumRule * SearchNumRule(SwPosition & rPos, 
+    const SwNumRule * SearchNumRule(SwPosition & rPos,
                                     BOOL bForward,
                                     BOOL bNum,
                                     BOOL bOutline,
@@ -2146,6 +2150,16 @@ public:
         bUseFormerTextWrapping = _bUseFormerTextWrapping;
     };
     // <--
+
+    // OD 2004-05-05 #i28701#
+    inline sal_Bool ConsiderWrapOnObjPos() const
+    {
+        return mbConsiderWrapOnObjPos;
+    }
+    inline void SetConsiderWrapOnObjPos( const sal_Bool _bConsiderWrapOnObjPos )
+    {
+        mbConsiderWrapOnObjPos = _bConsiderWrapOnObjPos;
+    }
 
     //
     // DOCUMENT COMPATIBILITY FLAGS END
