@@ -2,9 +2,9 @@
  *
  *  $RCSfile: accpara.hxx,v $
  *
- *  $Revision: 1.31 $
+ *  $Revision: 1.32 $
  *
- *  last change: $Author: rt $ $Date: 2003-06-12 08:07:44 $
+ *  last change: $Author: vg $ $Date: 2004-12-23 10:02:18 $
  *
  *  The Contents of this file are made available subject to the terms of
  *  either of the following licenses
@@ -60,7 +60,6 @@
  ************************************************************************/
 #ifndef _ACCPARA_HXX
 #define _ACCPARA_HXX
-
 #ifndef _ACCCONTEXT_HXX
 #include "acccontext.hxx"
 #endif
@@ -99,12 +98,12 @@ class SwAccessibleHyperTextData;
 class SwXTextPortion;
 namespace rtl { class OUString; }
 namespace com { namespace sun { namespace star {
-    namespace i18n { struct Boundary; } 
-    namespace accessibility { class XAccessibleHyperlink; } 
+    namespace i18n { struct Boundary; }
+    namespace accessibility { class XAccessibleHyperlink; }
 } } }
 
 
-class SwAccessibleParagraph : 
+class SwAccessibleParagraph :
         public SwAccessibleContext,
         public ::com::sun::star::accessibility::XAccessibleEditableText,
         public com::sun::star::accessibility::XAccessibleSelection,
@@ -117,7 +116,7 @@ class SwAccessibleParagraph :
     /// data for this paragraph's text portions; this contains the
     /// mapping from the core 'model string' to the accessible text
     /// string.
-    /// pPortionData may be NULL; it should only be accessed through the 
+    /// pPortionData may be NULL; it should only be accessed through the
     /// Get/Clear/Has/UpdatePortionData() methods
     SwAccessiblePortionData* pPortionData;
     SwAccessibleHyperTextData *pHyperTextData;
@@ -133,7 +132,7 @@ class SwAccessibleParagraph :
 
 
     /// get the SwTxtNode (requires frame; check before)
-    const SwTxtNode* GetTxtNode() const; 
+    const SwTxtNode* GetTxtNode() const;
 
     /// get the (accessible) text string (requires frame; check before)
     ::rtl::OUString GetString();
@@ -152,7 +151,7 @@ class SwAccessibleParagraph :
     void ExecuteAtViewShell( UINT16 nSlot );
 
     /// helper method for get/setAttributes
-    /// (for the special case of (nEndIndex==-1) a single character will 
+    /// (for the special case of (nEndIndex==-1) a single character will
     ///  be selected)
     SwXTextPortion* CreateUnoPortion( sal_Int32 nStart, sal_Int32 nEnd );
 
@@ -220,25 +219,25 @@ protected:
 
     //=====  helpers for word boundaries  ====================================
 
-    sal_Bool GetCharBoundary( com::sun::star::i18n::Boundary& rBound, 
+    sal_Bool GetCharBoundary( com::sun::star::i18n::Boundary& rBound,
                               const rtl::OUString& rText,
                               sal_Int32 nPos );
-    sal_Bool GetWordBoundary( com::sun::star::i18n::Boundary& rBound, 
+    sal_Bool GetWordBoundary( com::sun::star::i18n::Boundary& rBound,
                               const rtl::OUString& rText,
                               sal_Int32 nPos );
-    sal_Bool GetSentenceBoundary( com::sun::star::i18n::Boundary& rBound, 
+    sal_Bool GetSentenceBoundary( com::sun::star::i18n::Boundary& rBound,
                                   const rtl::OUString& rText,
                                   sal_Int32 nPos );
-    sal_Bool GetLineBoundary( com::sun::star::i18n::Boundary& rBound, 
+    sal_Bool GetLineBoundary( com::sun::star::i18n::Boundary& rBound,
                               const rtl::OUString& rText,
                               sal_Int32 nPos );
-    sal_Bool GetParagraphBoundary( com::sun::star::i18n::Boundary& rBound, 
+    sal_Bool GetParagraphBoundary( com::sun::star::i18n::Boundary& rBound,
                                    const rtl::OUString& rText,
                                    sal_Int32 nPos );
-    sal_Bool GetAttributeBoundary( com::sun::star::i18n::Boundary& rBound, 
+    sal_Bool GetAttributeBoundary( com::sun::star::i18n::Boundary& rBound,
                                    const rtl::OUString& rText,
                                    sal_Int32 nPos );
-    sal_Bool GetGlyphBoundary( com::sun::star::i18n::Boundary& rBound, 
+    sal_Bool GetGlyphBoundary( com::sun::star::i18n::Boundary& rBound,
                                const rtl::OUString& rText,
                                sal_Int32 nPos );
 
@@ -247,13 +246,13 @@ protected:
 
     /// get boundaries of word/sentence/etc. for specified text type
     /// Does all argument checking, and then delegates to helper methods above.
-    sal_Bool GetTextBoundary( com::sun::star::i18n::Boundary& rBound, 
+    sal_Bool GetTextBoundary( com::sun::star::i18n::Boundary& rBound,
                               const rtl::OUString& rText,
                               sal_Int32 nPos,
                               sal_Int16 aTextType )
         throw (
-            ::com::sun::star::lang::IndexOutOfBoundsException, 
-            ::com::sun::star::lang::IllegalArgumentException, 
+            ::com::sun::star::lang::IndexOutOfBoundsException,
+            ::com::sun::star::lang::IllegalArgumentException,
             ::com::sun::star::uno::RuntimeException);
 
 public:
@@ -269,7 +268,7 @@ public:
 
     ///	Return this object's description.
     virtual ::rtl::OUString SAL_CALL
-        getAccessibleDescription (void) 
+        getAccessibleDescription (void)
         throw (com::sun::star::uno::RuntimeException);
 
     /**	Return the parents locale or throw exception if this object has no
@@ -313,11 +312,11 @@ public:
     // between those inherited through SwAcessibleContext and
     // XAccessibleEditableText).
 
-    virtual ::com::sun::star::uno::Any SAL_CALL queryInterface( 
-        const ::com::sun::star::uno::Type& aType ) 
+    virtual ::com::sun::star::uno::Any SAL_CALL queryInterface(
+        const ::com::sun::star::uno::Type& aType )
         throw (::com::sun::star::uno::RuntimeException);
 
-    virtual void SAL_CALL acquire(  ) throw () 
+    virtual void SAL_CALL acquire(  ) throw ()
         { SwAccessibleContext::acquire(); };
 
     virtual void SAL_CALL release(  ) throw ()
@@ -356,38 +355,39 @@ public:
     virtual sal_Bool SAL_CALL setText( const ::rtl::OUString& sText ) throw (::com::sun::star::uno::RuntimeException);
 
     //=====  XAccessibleSelection  ============================================
-    virtual void SAL_CALL selectAccessibleChild( 
-        sal_Int32 nChildIndex ) 
-        throw ( ::com::sun::star::lang::IndexOutOfBoundsException, 
+    virtual void SAL_CALL selectAccessibleChild(
+        sal_Int32 nChildIndex )
+        throw ( ::com::sun::star::lang::IndexOutOfBoundsException,
                 ::com::sun::star::uno::RuntimeException );
 
-    virtual sal_Bool SAL_CALL isAccessibleChildSelected( 
-        sal_Int32 nChildIndex ) 
-        throw ( ::com::sun::star::lang::IndexOutOfBoundsException, 
+    virtual sal_Bool SAL_CALL isAccessibleChildSelected(
+        sal_Int32 nChildIndex )
+        throw ( ::com::sun::star::lang::IndexOutOfBoundsException,
                 ::com::sun::star::uno::RuntimeException );
-    virtual void SAL_CALL clearAccessibleSelection(  ) 
+    virtual void SAL_CALL clearAccessibleSelection(  )
         throw ( ::com::sun::star::uno::RuntimeException );
-    virtual void SAL_CALL selectAllAccessibleChildren(  ) 
+    virtual void SAL_CALL selectAllAccessibleChildren(  )
         throw ( ::com::sun::star::uno::RuntimeException );
-    virtual sal_Int32 SAL_CALL getSelectedAccessibleChildCount(  ) 
+    virtual sal_Int32 SAL_CALL getSelectedAccessibleChildCount(  )
         throw ( ::com::sun::star::uno::RuntimeException );
-    virtual ::com::sun::star::uno::Reference< ::com::sun::star::accessibility::XAccessible > SAL_CALL getSelectedAccessibleChild( 
-        sal_Int32 nSelectedChildIndex ) 
-        throw ( ::com::sun::star::lang::IndexOutOfBoundsException, 
+    virtual ::com::sun::star::uno::Reference< ::com::sun::star::accessibility::XAccessible > SAL_CALL getSelectedAccessibleChild(
+        sal_Int32 nSelectedChildIndex )
+        throw ( ::com::sun::star::lang::IndexOutOfBoundsException,
                 ::com::sun::star::uno::RuntimeException);
 
-    virtual void SAL_CALL deselectAccessibleChild( 
-        sal_Int32 nSelectedChildIndex ) 
-        throw ( ::com::sun::star::lang::IndexOutOfBoundsException, 
+    // --> OD 2004-11-16 #111714# - index has to be treated as global child index.
+    virtual void SAL_CALL deselectAccessibleChild(
+        sal_Int32 nChildIndex )
+        throw ( ::com::sun::star::lang::IndexOutOfBoundsException,
                 ::com::sun::star::uno::RuntimeException );
 
 //=====  XAccessibleHypertext  ============================================
 virtual sal_Int32 SAL_CALL getHyperLinkCount()
      throw (::com::sun::star::uno::RuntimeException);
-virtual ::com::sun::star::uno::Reference< 
-          ::com::sun::star::accessibility::XAccessibleHyperlink > 
+virtual ::com::sun::star::uno::Reference<
+          ::com::sun::star::accessibility::XAccessibleHyperlink >
     SAL_CALL getHyperLink( sal_Int32 nLinkIndex )
-      throw (::com::sun::star::lang::IndexOutOfBoundsException, 
+      throw (::com::sun::star::lang::IndexOutOfBoundsException,
               ::com::sun::star::uno::RuntimeException);
 virtual sal_Int32 SAL_CALL getHyperLinkIndex( sal_Int32 nCharIndex )
     throw (::com::sun::star::lang::IndexOutOfBoundsException,
@@ -397,7 +397,7 @@ virtual sal_Int32 SAL_CALL getHyperLinkIndex( sal_Int32 nCharIndex )
 
 inline SwAccessibleParagraph::operator ::com::sun::star::accessibility::XAccessibleText *()
 {
-    return static_cast< 
+    return static_cast<
         ::com::sun::star::accessibility::XAccessibleEditableText * >( this );
 }
 
