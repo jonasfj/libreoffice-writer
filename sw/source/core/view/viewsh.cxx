@@ -2,9 +2,9 @@
  *
  *  $RCSfile: viewsh.cxx,v $
  *
- *  $Revision: 1.26 $
+ *  $Revision: 1.27 $
  *
- *  last change: $Author: mib $ $Date: 2002-05-29 15:05:09 $
+ *  last change: $Author: os $ $Date: 2002-05-30 10:14:56 $
  *
  *  The Contents of this file are made available subject to the terms of
  *  either of the following licenses
@@ -2202,8 +2202,8 @@ BOOL ViewShell::IsNewLayout() const
     return xAcc;
 }
 
-::com::sun::star::uno::Reference< 
-    ::drafts::com::sun::star::accessibility::XAccessible > 
+::com::sun::star::uno::Reference<
+    ::drafts::com::sun::star::accessibility::XAccessible >
 ViewShell::CreateAccessiblePreview( sal_uInt8 nRow,
                                     sal_uInt8 nColumn,
                                     sal_uInt16 nStartPage,
@@ -2214,8 +2214,8 @@ ViewShell::CreateAccessiblePreview( sal_uInt8 nRow,
 {
     using ::com::sun::star::uno::Reference;
     using ::drafts::com::sun::star::accessibility::XAccessible;
-    
-    DBG_ASSERT( IsPreView(), 
+
+    DBG_ASSERT( IsPreView(),
                 "Can't create accessible preview for non-preview ViewShell" );
 
     // We require a layout and an XModel to be accessible.
@@ -2223,7 +2223,7 @@ ViewShell::CreateAccessiblePreview( sal_uInt8 nRow,
     ASSERT( GetWin(), "no window, no access" );
 
     if( pDoc->GetRootFrm() && GetWin() )
-        return Imp()->GetAccessibleMap().GetDocumentPreview( 
+        return Imp()->GetAccessibleMap().GetDocumentPreview(
                     nRow, nColumn, nStartPage, rPageSize, rFreePoint, rScale,
                     nSelectedPage );
     return NULL;
@@ -2246,12 +2246,14 @@ void ViewShell::ApplyAccessiblityOptions(SvtAccessibilityOptions& rAccessibility
         pOpt->SetAlwaysAutoColor(sal_False);
         pOpt->SetStopAnimatedGraphics(sal_False);
         pOpt->SetStopAnimatedText(sal_False);
+        pOpt->SetUseAutomaticBorderColor(sal_False);
     }
     else
     {
         pOpt->SetAlwaysAutoColor(rAccessibilityOptions.GetIsAutomaticFontColor());
         pOpt->SetStopAnimatedGraphics(! rAccessibilityOptions.GetIsAllowAnimatedGraphics());
         pOpt->SetStopAnimatedText(! rAccessibilityOptions.GetIsAllowAnimatedText());
+        pOpt->SetUseAutomaticBorderColor(rAccessibilityOptions.GetIsForBorders());
     }
 }
 
