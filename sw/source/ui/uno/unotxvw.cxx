@@ -2,9 +2,9 @@
  *
  *  $RCSfile: unotxvw.cxx,v $
  *
- *  $Revision: 1.43 $
+ *  $Revision: 1.44 $
  *
- *  last change: $Author: vg $ $Date: 2003-04-01 15:43:48 $
+ *  last change: $Author: vg $ $Date: 2003-04-15 17:04:36 $
  *
  *  The Contents of this file are made available subject to the terms of
  *  either of the following licenses
@@ -1038,7 +1038,7 @@ SfxObjectShellRef SwXTextView::BuildTmpSelectionDoc( SvEmbeddedObjectRef &rRef )
         }
         pTempPrinter->SetPaperBin(rCurPageDesc.GetMaster().GetPaperBin().GetValue());
     }
-#ifdef DEBUG
+#if OSL_DEBUG_LEVEL > 1
     //pDocFrame->GetFrame()->Appear();
 #endif
     return xDocSh;
@@ -1051,7 +1051,7 @@ void SwXTextView::NotifySelChanged()
 {
     DBG_ASSERT( pView, "view is missing" );
 
-    // destroy temporary document with selected text that is used 
+    // destroy temporary document with selected text that is used
     // in PDF export of (multi-)selections.
     if (pView && pView->GetTmpSelectionDoc().Is())
     {
