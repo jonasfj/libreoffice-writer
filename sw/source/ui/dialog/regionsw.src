@@ -2,9 +2,9 @@
  *
  *  $RCSfile: regionsw.src,v $
  *
- *  $Revision: 1.53 $
+ *  $Revision: 1.54 $
  *
- *  last change: $Author: hr $ $Date: 2004-11-27 12:30:33 $
+ *  last change: $Author: rt $ $Date: 2004-12-03 14:10:09 $
  *
  *  The Contents of this file are made available subject to the terms of
  *  either of the following licenses
@@ -71,66 +71,64 @@
 #define FT_SUBREG_TEXT \
     Text [ de ] = "Berei~ch" ; \
     Text [ en-US ] = "~Section" ; \
-    Text [ x-comment ] = "èë; èëè: Ðàçäåë - -";	
+    Text [ x-comment ] = "èë; èëè: Ðàçäåë - -";
 
 #define CB_HIDE_TEXT \
     Text [ de ] = "Aus~blenden" ; \
-    Text [ en-US ] = "H~ide" ; 
+    Text [ en-US ] = "H~ide" ;
 
 #define FL_HIDE_TEXT \
     Text [ de ] = "Ausblenden" ; \
-    Text [ en-US ] = "Hide" ; 
+    Text [ en-US ] = "Hide" ;
 
 #define CB_CONDITION_TEXT  \
     Text [ de ] = "Mi~t Bedingung" ; \
-    Text [ en-US ] = "~With Condition" ; 
+    Text [ en-US ] = "~With Condition" ;
 
-// --> FME 2004-06-22 #114856# edit in readonly sections
 #define FL_PROPERTIES_TEXT \
-    Text = "Eigenschaften" ; \
+    Text [ de ] = "Eigenschaften" ; \
     Text [ en-US ] = "Properties" ;
 
 #define CB_EDIT_IN_READONLY_TEXT \
-    Text = "E~ditierbar in schreibgeschütztem Dokument" ; \
+    Text [ de ] = "E~ditierbar in schreibgeschütztem Dokument" ; \
     Text [ en-US ] = "E~ditable in read-only document" ;
-// <--
 
 #define FL_FILE_TEXT \
     Text [ de ] = "Verknüpfung" ; \
-    Text [ en-US ] = "Link" ; 
+    Text [ en-US ] = "Link" ;
 
 #define CB_FILE_TEXT\
         Text [ de ] = "~Verknüpfen" ; \
-    Text [ en-US ] = "~Link";	
+    Text [ en-US ] = "~Link";
 
 #define CB_DDE_TEXT \
     Text [ de ] = "~DDE" ; \
-    Text [ en-US ] = "DD~E" ; 
+    Text [ en-US ] = "DD~E" ;
 
 #define FT_DDE_TEXT \
     Text [ de ] = "DDE~-Befehl" ; \
-    Text [ en-US ] = "DDE ~command" ; 
+    Text [ en-US ] = "DDE ~command" ;
 
 #define FT_FILE_TEXT \
     Text [ de ] = "Dateina~me" ; \
-    Text [ en-US ] = "~File name" ; 
+    Text [ en-US ] = "~File name" ;
 
 
 #define GB_HIDE_TEXT \
     Text [ de ] = "Verstecken" ; \
-    Text [ en-US ] = "Hide"; 
+    Text [ en-US ] = "Hide";
 
 #define GB_OPTIONS_TEXT \
     Text [ de ] = "Optionen" ; \
-    Text [ en-US ] = "Options" ; 
+    Text [ en-US ] = "Options" ;
 
 #define FL_PROTECT_TEXT \
         Text [ de ] = "Schreibschutz" ;\
-    Text [ en-US ] = "Write protection";	
+    Text [ en-US ] = "Write protection";
 
 #define CB_PASSWD_TEXT\
         Text [ de ] = "Mit Kenn~wort" ;\
-    Text [ en-US ] = "Wit~h password";	
+    Text [ en-US ] = "Wit~h password";
 
 /*************************************************************************
 
@@ -299,7 +297,6 @@ ModalDialog MD_EDIT_REGION
         Disable = TRUE ;
     };
 
-    // --> FME 2004-06-22 #114856# edit in readonly sections
     FixedLine FL_PROPERTIES
     {
         OutputSize = TRUE ;
@@ -315,7 +312,6 @@ ModalDialog MD_EDIT_REGION
         TriStateDisable = FALSE ;
         CB_EDIT_IN_READONLY_TEXT
     };
-    // <--
 
     OKButton PB_OK
     {
@@ -617,7 +613,6 @@ TabPage TP_INSERT_SECTION
         TabStop = TRUE ;
     };
 
-    // --> FME 2004-06-22 #114856# edit in readonly sections
     FixedLine FL_PROPERTIES
     {
         OutputSize = TRUE ;
@@ -631,7 +626,6 @@ TabPage TP_INSERT_SECTION
         Size = MAP_APPFONT ( 100 , 10 ) ;
         CB_EDIT_IN_READONLY_TEXT
     };
-    // <--
 
 };
 
