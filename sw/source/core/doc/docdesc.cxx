@@ -2,9 +2,9 @@
  *
  *  $RCSfile: docdesc.cxx,v $
  *
- *  $Revision: 1.27 $
+ *  $Revision: 1.28 $
  *
- *  last change: $Author: rt $ $Date: 2005-03-29 14:36:52 $
+ *  last change: $Author: rt $ $Date: 2005-03-30 10:53:06 $
  *
  *  The Contents of this file are made available subject to the terms of
  *  either of the following licenses
@@ -210,7 +210,7 @@ static void lcl_DefaultPageFmt( sal_uInt16 nPoolFmtId,
     const ULONG nAppLanguage = GetAppLanguage();
     switch ( nAppLanguage )
     {
-        case LANGUAGE_ENGLISH_US: 
+        case LANGUAGE_ENGLISH_US:
         case LANGUAGE_ENGLISH_CAN:
         case LANGUAGE_FRENCH_CANADIAN:
             ePaper = SvxPaper( SVX_PAPER_LETTER );
@@ -648,7 +648,7 @@ void SwDoc::BroadcastStyleOperation(String rName, SfxStyleFamily eFamily,
         {
             pPool->SetSearchMask(eFamily, SFXSTYLEBIT_ALL );
             SfxStyleSheetBase * pBase = pPool->Find(rName);
-            
+
             if (pBase != NULL)
                 pPool->Broadcast(SfxStyleSheetHint( nOp, *pBase ));
         }
@@ -1167,4 +1167,31 @@ void SwDoc::ChgPageDesc( const String & rName, const SwPageDesc & rDesc)
 
     if (FindPageDesc(rName, &nI))
         ChgPageDesc(nI, rDesc);
+}
+
+/*
+ * The HTML import cannot resist changing the page descriptions, I don't
+ * know why. This function is meant to check the page descriptors for invalid
+ * values.
+ */
+void SwDoc::CheckDefaultPageFmt()
+{
+    for ( USHORT i = 0; i < GetPageDescCnt(); ++i )
+    {
+        SwPageDesc& rDesc = _GetPageDesc( i );
+
+        SwFrmFmt& rMaster = rDesc.GetMaster();
+        SwFrmFmt& rLeft   = rDesc.GetLeft();
+
+        const SwFmtFrmSize& rMasterSize  = rMaster.GetFrmSize();
+        const SwFmtFrmSize& rLeftSize    = rLeft.GetFrmSize();
+
+        const bool bSetSize = LONG_MAX == rMasterSize.GetWidth() ||
+                              LONG_MAX == rMasterSize.GetHeight() ||
+                              LONG_MAX == rLeftSize.GetWidth() ||
+                              LONG_MAX == rLeftSize.GetHeight();
+
+        if ( bSetSize )
+            lcl_DefaultPageFmt( rDesc.GetPoolFmtId(), rDesc.GetMaster(), rDesc.GetLeft() );
+    }
 }
