@@ -2,9 +2,9 @@
  *
  *  $RCSfile: view.cxx,v $
  *
- *  $Revision: 1.67 $
+ *  $Revision: 1.68 $
  *
- *  last change: $Author: hr $ $Date: 2004-04-07 12:46:12 $
+ *  last change: $Author: svesik $ $Date: 2004-04-21 12:27:42 $
  *
  *  The Contents of this file are made available subject to the terms of
  *  either of the following licenses
@@ -810,7 +810,7 @@ SwView::SwView( SfxViewFrame *pFrame, SfxViewShell* pOldSh )
     pFormShell(0),
     pHScrollbar(0),
     pVScrollbar(0),
-    pScrollFill(new ScrollBarBox( &pFrame->GetWindow(), GetDocShell()->IsInFrame() ? 0 : WB_SIZEABLE )),
+    pScrollFill(new ScrollBarBox( &pFrame->GetWindow(), pFrame->GetFrame()->GetParentFrame() ? 0 : WB_SIZEABLE )),
     pHRuler( new SvxRuler(&GetViewFrame()->GetWindow(), pEditWin,
                     SVXRULER_SUPPORT_TABS |
                     SVXRULER_SUPPORT_PARAGRAPH_MARGINS |
@@ -851,7 +851,7 @@ SwView::SwView( SfxViewFrame *pFrame, SfxViewShell* pOldSh )
 
     RTL_LOGFILE_CONTEXT_AUTHOR( aLog, "SW", "JP93722",  "SwView::SwView" );
 
-    bCenterCrsr = bTopCrsr = bAllwaysShowSel = bTabColFromDoc = bTabRowFromDoc = 
+    bCenterCrsr = bTopCrsr = bAllwaysShowSel = bTabColFromDoc = bTabRowFromDoc =
     bSetTabColFromDoc = bSetTabRowFromDoc = bAttrChgNotified = bAttrChgNotifiedWithRegistrations =
     bVerbsActive = bIsApi = bDrawRotate = bInOuterResizePixel = bInInnerResizePixel =
     bPasteState = bPasteSpecialState = sal_False;
