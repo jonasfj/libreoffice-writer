@@ -2,9 +2,9 @@
  *
  *  $RCSfile: docshini.cxx,v $
  *
- *  $Revision: 1.13 $
+ *  $Revision: 1.14 $
  *
- *  last change: $Author: mib $ $Date: 2001-03-06 11:07:24 $
+ *  last change: $Author: jp $ $Date: 2001-03-23 15:55:21 $
  *
  *  The Contents of this file are made available subject to the terms of
  *  either of the following licenses
@@ -192,8 +192,8 @@
 #ifndef _SHELLIO_HXX
 #include <shellio.hxx>
 #endif
-#ifndef _DATAEX_HXX
-#include <dataex.hxx>
+#ifndef _SWDTFLVR_HXX
+#include <swdtflvr.hxx>
 #endif
 #ifndef _DBMGR_HXX
 #include <dbmgr.hxx>
@@ -353,7 +353,7 @@ sal_Bool SwDocShell::InitNew( SvStorage * pStor )
         {
             // fuer MWERKS (Mac-Compiler): kann nicht selbststaendig casten
             SvEmbeddedObject* pObj = this;
-            SwDataExchange::InitOle( pObj, pDoc );
+            SwTransferable::InitOle( pObj, *pDoc );
         }
         SubInitNew();
     }
@@ -578,7 +578,7 @@ sal_Bool  SwDocShell::Load(SvStorage* pStor)
             {
                 // fuer MWERKS (Mac-Compiler): kann nicht selbststaendig casten
                 SvEmbeddedObject* pObj = this;
-                SwDataExchange::InitOle( pObj, pDoc );
+                SwTransferable::InitOle( pObj, *pDoc );
             }
             // SfxProgress unterdruecken, wenn man Embedded ist
             SW_MOD()->SetEmbeddedLoadSave( sal_True );
@@ -778,15 +778,6 @@ sal_Bool  SwDocShell::LoadFrom(SvStorage* pStor)
 }
 
 
-SvDataMemberObjectRef  SwDocShell::CreateSnapshot()
-{
-    SvDataMemberObjectRef aRef;
-    if( pDoc )
-        aRef = new SwDataExchange( *pDoc );
-    return aRef;
-}
-
-
 void SwDocShell::SubInitNew()
 {
     ASSERT( !pBasePool, "wer hat seinen Pool nicht zerstoert?" );
@@ -858,24 +849,27 @@ void SwDocShell::SubInitNew()
 
 /*------------------------------------------------------------------------
     $Log: not supported by cvs2svn $
+    Revision 1.13  2001/03/06 11:07:24  mib
+    organizer support for XML file format
+
     Revision 1.12  2001/02/26 07:56:31  mib
     xml filters for templates and global docs
-    
+
     Revision 1.11  2001/02/08 15:51:15  mtg
     Added InvalidateModel/ReactivateModel
-    
+
     Revision 1.10  2001/02/06 15:41:26  mib
     real 6.0 file format
-    
+
     Revision 1.9  2001/02/01 14:30:13  mib
     XML files now can be loaded/saved as own format
-    
+
     Revision 1.8  2000/11/20 09:12:09  jp
     should change: use LocaleDataWrapper
-    
+
     Revision 1.7  2000/11/19 11:36:18  tl
     lngprops.hxx include changed
-    
+
     Revision 1.6  2000/10/31 20:32:32  jp
     change usage of filestream to medium
 
