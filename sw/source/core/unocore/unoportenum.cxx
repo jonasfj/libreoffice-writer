@@ -2,9 +2,9 @@
  *
  *  $RCSfile: unoportenum.cxx,v $
  *
- *  $Revision: 1.26 $
+ *  $Revision: 1.27 $
  *
- *  last change: $Author: rt $ $Date: 2003-12-01 09:42:03 $
+ *  last change: $Author: kz $ $Date: 2004-02-26 15:36:02 $
  *
  *  The Contents of this file are made available subject to the terms of
  *  either of the following licenses
@@ -495,16 +495,16 @@ Reference<XTextRange> lcl_ExportHints(SwpHints* pHints,
             {
                 case RES_TXTATR_FIELD:
                     if(!bRightMoveForbidden)
-                    {        
-                        pUnoCrsr->Right(1,CRSR_SKIP_CHARS);
+                    {
+                        pUnoCrsr->Right(1,CRSR_SKIP_CHARS,FALSE,FALSE);
                         bAttrFound = sal_True;
                         ePortionType = PORTION_FIELD;
                     }
                 break;
                 case RES_TXTATR_FLYCNT	 :
                     if(!bRightMoveForbidden)
-                    {        
-                        pUnoCrsr->Right(1,CRSR_SKIP_CHARS);
+                    {
+                        pUnoCrsr->Right(1,CRSR_SKIP_CHARS,FALSE,FALSE);
                         pUnoCrsr->Exchange();
                         bAttrFound = sal_True;
                         ePortionType = PORTION_FRAME;
@@ -513,8 +513,8 @@ Reference<XTextRange> lcl_ExportHints(SwpHints* pHints,
                 case RES_TXTATR_FTN 	 :
                 {
                     if(!bRightMoveForbidden)
-                    {        
-                        pUnoCrsr->Right(1,CRSR_SKIP_CHARS);
+                    {
+                        pUnoCrsr->Right(1,CRSR_SKIP_CHARS,FALSE,FALSE);
                         SwXTextPortion* pPortion;
                         xRef =  pPortion = new SwXTextPortion(pUnoCrsr, rParent, PORTION_FOOTNOTE);
                         Reference<XTextContent> xContent =
@@ -562,12 +562,12 @@ Reference<XTextRange> lcl_ExportHints(SwpHints* pHints,
                     ePortionType = PORTION_TEXT;
                 break;
                 case RES_TXTATR_REFMARK:
-                    
+
                     if(!bRightMoveForbidden || pAttr->GetEnd())
-                    {        
+                    {
                         if(!pAttr->GetEnd())
                         {
-                            pUnoCrsr->Right(1,CRSR_SKIP_CHARS);
+                            pUnoCrsr->Right(1,CRSR_SKIP_CHARS,FALSE,FALSE);
                             bAttrFound = sal_True;
                         }
                         lcl_InsertRefMarkPortion(
@@ -791,7 +791,7 @@ void SwXTextPortionEnumeration::CreatePortions()
         DBG_ASSERT(pUnoCrsr->Start()->nNode.GetNode().GetTxtNode() &&
             nStartPos <= pUnoCrsr->Start()->nNode.GetNode().GetTxtNode()->GetTxt().Len(),
                 "Incorrect start position"  )
-        pUnoCrsr->Right((xub_StrLen)nStartPos,CRSR_SKIP_CHARS);
+        pUnoCrsr->Right((xub_StrLen)nStartPos,CRSR_SKIP_CHARS,FALSE,FALSE);
     }
     if(pUnoCrsr /*&& !bAtEnd*/)
     {
@@ -913,7 +913,7 @@ void SwXTextPortionEnumeration::CreatePortions()
                         }
                         else if(USHRT_MAX != nFirstFrameIndex)
                         {
-                            pUnoCrsr->Right(nFirstFrameIndex - nCurrentIndex,CRSR_SKIP_CHARS);
+                            pUnoCrsr->Right(nFirstFrameIndex - nCurrentIndex,CRSR_SKIP_CHARS,FALSE,FALSE);
                         }
                         else
                         {
@@ -927,9 +927,9 @@ void SwXTextPortionEnumeration::CreatePortions()
                                 sal_Bool bMove = pUnoCrsr->MovePara(fnParaCurr, fnParaEnd);
                             else
                             {
-                                DBG_ASSERT(nNextIndex > nCurrentIndex || nNextIndex == nEndPos, 
+                                DBG_ASSERT(nNextIndex > nCurrentIndex || nNextIndex == nEndPos,
                                     "wrong move index")
-                                pUnoCrsr->Right(nNextIndex - nCurrentIndex,CRSR_SKIP_CHARS);
+                                pUnoCrsr->Right(nNextIndex - nCurrentIndex,CRSR_SKIP_CHARS,FALSE,FALSE);
                             }
                         }
                     }
