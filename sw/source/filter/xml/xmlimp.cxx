@@ -2,9 +2,9 @@
  *
  *  $RCSfile: xmlimp.cxx,v $
  *
- *  $Revision: 1.26 $
+ *  $Revision: 1.27 $
  *
- *  last change: $Author: mtg $ $Date: 2001-03-19 13:48:18 $
+ *  last change: $Author: sab $ $Date: 2001-03-22 12:36:48 $
  *
  *  The Contents of this file are made available subject to the terms of
  *  either of the following licenses
@@ -65,7 +65,7 @@
 
 #pragma hdrstop
 
-#ifndef _COM_SUN_STAR_TEXT_XTEXTDOCUMENT_HPP_ 
+#ifndef _COM_SUN_STAR_TEXT_XTEXTDOCUMENT_HPP_
 #include <com/sun/star/text/XTextDocument.hpp>
 #endif
 #ifndef _COM_SUN_STAR_TEXT_XTEXTRANGE_HPP_
@@ -201,14 +201,14 @@ SwXMLDocContext_Impl::SwXMLDocContext_Impl( SwXMLImport& rImport,
     SvXMLImportContext( rImport, nPrfx, rLName )
 {
     // process document class
-    // global-text, online are handled via document shell; 
+    // global-text, online are handled via document shell;
     // we only handle label documents
     sal_Int16 nLength = xAttrList->getLength();
     for(sal_Int16 nAttr = 0; nAttr < nLength; nAttr++)
     {
         OUString sLocalName;
         sal_uInt16 nPrefix = GetImport().GetNamespaceMap().
-            GetKeyByAttrName( xAttrList->getNameByIndex(nAttr), 
+            GetKeyByAttrName( xAttrList->getNameByIndex(nAttr),
                               &sLocalName );
 
         if ( (XML_NAMESPACE_OFFICE == nPrefix) &&
@@ -219,7 +219,7 @@ SwXMLDocContext_Impl::SwXMLDocContext_Impl( SwXMLImport& rImport,
             {
                 // OK, we need to set label mode. To do this, tunnel
                 // to get the SwDoc, then set label mode.
-                
+
                 Reference<XText> xText(GetImport().GetModel(), UNO_QUERY);
                 Reference<XUnoTunnel> xTunnel(
                     GetImport().GetTextImport()->GetText(), UNO_QUERY);
@@ -381,11 +381,11 @@ SwXMLImport::~SwXMLImport()
     _FinitItemImport();
 }
 
-void SwXMLImport::setTextInsertMode( 
+void SwXMLImport::setTextInsertMode(
          const Reference< XTextRange > & rInsertPos )
 {
-    bInsert = sal_True;	
-    
+    bInsert = sal_True;
+
     Reference < XText > xText = rInsertPos->getText();
     Reference < XTextCursor > xTextCursor =
         xText->createTextCursorByRange( rInsertPos );
@@ -395,19 +395,19 @@ void SwXMLImport::setTextInsertMode(
 void SwXMLImport::setStyleInsertMode( sal_uInt16 nFamilies,
                                       sal_Bool bOverwrite )
 {
-    bInsert = !bOverwrite;	
+    bInsert = !bOverwrite;
     nStyleFamilyMask = nFamilies;
     bLoadDoc = sal_False;
 }
 
 void SwXMLImport::setBlockMode( )
 {
-    bBlock = sal_True;	
+    bBlock = sal_True;
 }
 
 void SwXMLImport::setOrganizerMode( )
 {
-    bOrganizerMode = sal_True;	
+    bOrganizerMode = sal_True;
 }
 
 const Sequence< sal_Int8 > & SwXMLImport::getUnoTunnelId() throw()
@@ -664,7 +664,7 @@ void SwXMLImport::endDocument( void )
 // Locally derive XMLTextShapeImportHelper, so we can take care of the
 // form import This is Writer, but not text specific, so it should go
 // here!
-class SvTextShapeImportHelper : public XMLTextShapeImportHelper 
+class SvTextShapeImportHelper : public XMLTextShapeImportHelper
 {
     // hold own reference form import helper, because the SvxImport
     // stored in the superclass, from whom we originally got the
@@ -683,7 +683,7 @@ SvTextShapeImportHelper::SvTextShapeImportHelper(SvXMLImport& rImp) :
 {
     if (rImp.GetFormImport().is())
     {
-        Reference<drawing::XDrawPageSupplier> xSupplier(rImp.GetModel(), 
+        Reference<drawing::XDrawPageSupplier> xSupplier(rImp.GetModel(),
                                                         UNO_QUERY);
         if (xSupplier.is())
         {
@@ -715,10 +715,10 @@ SvXMLImportContext *SwXMLImport::CreateFontDeclsContext(
     SetFontDecls( pFSContext );
     return pFSContext;
 }
-void SwXMLImport::SetViewSettings(Sequence<beans::PropertyValue> aViewProps)
+void SwXMLImport::SetViewSettings(const Sequence<beans::PropertyValue>& aViewProps)
 {
     sal_Int32 nCount = aViewProps.getLength();
-    beans::PropertyValue *pValue = aViewProps.getArray();
+    const beans::PropertyValue *pValue = aViewProps.getConstArray();
 
     long nTop = 0, nLeft = 0, nWidth = 0, nHeight = 0;
     sal_Bool bShowDeletes = sal_False, bShowInserts = sal_False, bShowFooter = sal_False, bShowHeader = sal_False;
@@ -778,8 +778,8 @@ void SwXMLImport::SetViewSettings(Sequence<beans::PropertyValue> aViewProps)
     Rectangle aRect ( nLeft, nTop, nLeft + nWidth, nTop + nHeight );
     pDoc->GetDocShell()->SetVisArea ( aRect );
 
-    pDoc->SetHeadInBrowse ( bShowHeader ); 
-    pDoc->SetFootInBrowse ( bShowFooter ); 
+    pDoc->SetHeadInBrowse ( bShowHeader );
+    pDoc->SetFootInBrowse ( bShowFooter );
 
     SwRedlineMode eOld = pDoc->GetRedlineMode();
 
@@ -793,7 +793,7 @@ void SwXMLImport::SetViewSettings(Sequence<beans::PropertyValue> aViewProps)
     else if ( bShowDeletes )
         pDoc->SetRedlineMode ( eOld | REDLINE_SHOW_DELETE );
 }
-void SwXMLImport::SetConfigurationSettings(uno::Sequence<beans::PropertyValue> aConfigProps)
+void SwXMLImport::SetConfigurationSettings(const uno::Sequence<beans::PropertyValue>& aConfigProps)
 {
 }
 
@@ -840,7 +840,7 @@ void SwXMLImport::ShowProgress( sal_Int32 nPercent )
 
 OUString SAL_CALL SwXMLImport_getImplementationName() throw()
 {
-    return OUString( RTL_CONSTASCII_USTRINGPARAM( 
+    return OUString( RTL_CONSTASCII_USTRINGPARAM(
         "com.sun.star.comp.Writer.XMLImporter" ) );
 }
 
@@ -861,7 +861,7 @@ uno::Reference< uno::XInterface > SAL_CALL SwXMLImport_createInstance(
 
 OUString SAL_CALL SwXMLImportStyles_getImplementationName() throw()
 {
-    return OUString( RTL_CONSTASCII_USTRINGPARAM( 
+    return OUString( RTL_CONSTASCII_USTRINGPARAM(
         "com.sun.star.comp.Writer.XMLStylesImporter" ) );
 }
 
@@ -884,7 +884,7 @@ uno::Reference< uno::XInterface > SAL_CALL SwXMLImportStyles_createInstance(
 
 OUString SAL_CALL SwXMLImportContent_getImplementationName() throw()
 {
-    return OUString( RTL_CONSTASCII_USTRINGPARAM( 
+    return OUString( RTL_CONSTASCII_USTRINGPARAM(
         "com.sun.star.comp.Writer.XMLContentImporter" ) );
 }
 
@@ -901,13 +901,13 @@ uno::Reference< uno::XInterface > SAL_CALL SwXMLImportContent_createInstance(
     throw( uno::Exception )
 {
     return (cppu::OWeakObject*)new SwXMLImport(
-        IMPORT_AUTOSTYLES |	IMPORT_CONTENT | IMPORT_SCRIPTS | 
+        IMPORT_AUTOSTYLES |	IMPORT_CONTENT | IMPORT_SCRIPTS |
         IMPORT_FONTDECLS );
 }
 
 OUString SAL_CALL SwXMLImportMeta_getImplementationName() throw()
 {
-    return OUString( RTL_CONSTASCII_USTRINGPARAM( 
+    return OUString( RTL_CONSTASCII_USTRINGPARAM(
         "com.sun.star.comp.Writer.XMLMetaImporter" ) );
 }
 
@@ -928,7 +928,7 @@ uno::Reference< uno::XInterface > SAL_CALL SwXMLImportMeta_createInstance(
 
 OUString SAL_CALL SwXMLImportSettings_getImplementationName() throw()
 {
-    return OUString( RTL_CONSTASCII_USTRINGPARAM( 
+    return OUString( RTL_CONSTASCII_USTRINGPARAM(
         "com.sun.star.comp.Writer.XMLSettingsImporter" ) );
 }
 

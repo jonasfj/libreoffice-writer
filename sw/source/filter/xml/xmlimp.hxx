@@ -2,9 +2,9 @@
  *
  *  $RCSfile: xmlimp.hxx,v $
  *
- *  $Revision: 1.16 $
+ *  $Revision: 1.17 $
  *
- *  last change: $Author: mtg $ $Date: 2001-03-19 13:47:48 $
+ *  last change: $Author: sab $ $Date: 2001-03-22 12:36:48 $
  *
  *  The Contents of this file are made available subject to the terms of
  *  either of the following licenses
@@ -62,7 +62,7 @@
 #ifndef _XMLIMP_HXX
 #define _XMLIMP_HXX
 
-#ifndef _SVSTOR_HXX 
+#ifndef _SVSTOR_HXX
 #include <so3/svstor.hxx>
 #endif
 
@@ -101,7 +101,7 @@ class SwXMLImport: public SvXMLImport
     SvXMLItemMapEntriesRef 	xTableRowItemMap;
     SvXMLItemMapEntriesRef 	xTableCellItemMap;
     SvStorageRef			xPackage;
-        
+
     sal_uInt16				nStyleFamilyMask;// Mask of styles to load
     sal_Int32				nProgress;
     sal_Int32				nProgressRef;
@@ -139,7 +139,7 @@ public:
 
     SwXMLImport(sal_uInt16 nImportFlags = IMPORT_ALL);
 #ifdef XML_CORE_API
-    SwXMLImport( SwDoc& rDoc, const SwPaM& rPaM, sal_Bool bLoadDoc, 
+    SwXMLImport( SwDoc& rDoc, const SwPaM& rPaM, sal_Bool bLoadDoc,
                  sal_Bool bInsertMode, sal_uInt16 nStyleFamMask,
                  const ::com::sun::star::uno::Reference<
                      ::com::sun::star::frame::XModel > & rModel,
@@ -150,11 +150,11 @@ public:
 
     ~SwXMLImport();
 
-    void		 setTextInsertMode( 
+    void		 setTextInsertMode(
                      const ::com::sun::star::uno::Reference<
                         ::com::sun::star::text::XTextRange > & rInsertPos );
     void		 setStyleInsertMode( sal_uInt16 nFamilies,
-                                     sal_Bool bOverwrite );	
+                                     sal_Bool bOverwrite );
     void		 setBlockMode();
     void		 setOrganizerMode();
 
@@ -201,18 +201,18 @@ public:
                 const ::com::sun::star::uno::Reference<
                     ::com::sun::star::xml::sax::XAttributeList > & xAttrList,
                 sal_uInt16 nSubFamily, SfxItemSet& rItemSet );
-                                            
+
     const SvXMLTokenMap& GetDocElemTokenMap();
     const SvXMLTokenMap& GetTableElemTokenMap();
-    
+
     sal_Bool FindAutomaticStyle( sal_uInt16 nFamily,
                              const ::rtl::OUString& rName,
                              const SfxItemSet **ppItemSet=0,
                              ::rtl::OUString *pParent=0 ) const;
 
     virtual void SetStatisticAttributes(const ::com::sun::star::uno::Reference< ::com::sun::star::xml::sax::XAttributeList > & xAttribs);
-    virtual void SetViewSettings(com::sun::star::uno::Sequence<com::sun::star::beans::PropertyValue> aViewProps);
-    virtual void SetConfigurationSettings(com::sun::star::uno::Sequence<com::sun::star::beans::PropertyValue> aConfigProps);
+    virtual void SetViewSettings(const com::sun::star::uno::Sequence<com::sun::star::beans::PropertyValue>& aViewProps);
+    virtual void SetConfigurationSettings(const com::sun::star::uno::Sequence<com::sun::star::beans::PropertyValue>& aConfigProps);
 
     SvStorage *GetPackage() { return &xPackage; }
 };
