@@ -2,9 +2,9 @@
  *
  *  $RCSfile: swparrtf.cxx,v $
  *
- *  $Revision: 1.38 $
+ *  $Revision: 1.39 $
  *
- *  last change: $Author: rt $ $Date: 2004-05-03 14:03:43 $
+ *  last change: $Author: hr $ $Date: 2004-05-11 11:53:55 $
  *
  *  The Contents of this file are made available subject to the terms of
  *  either of the following licenses
@@ -303,7 +303,7 @@ ULONG RtfReader::Read( SwDoc &rDoc,SwPaM &rPam, const String &)
 
 SwRTFParser::SwRTFParser(SwDoc* pD, const SwPaM& rCrsr, SvStream& rIn,
     int bReadNewDoc)
-    : SvxRTFParser(pD->GetAttrPool(), rIn, bReadNewDoc), 
+    : SvxRTFParser(pD->GetAttrPool(), rIn, bReadNewDoc),
     maParaStyleMapper(*pD), maCharStyleMapper(*pD), maSegments(*this),
     maInsertedTables(*pD), 
     aMergeBoxes(0, 5), aTblFmts(0, 10), mpBookmarkStart(0), pGrfAttrSet(0),
@@ -365,9 +365,24 @@ void SwRTFParser::Continue( int nToken )
 
         if (IsNewDoc())
         {
-            pDoc->SetParaSpaceMax(true, true);
-            pDoc->SetTabCompat(true);
+            //
+            // COMPATIBILITY FLAGS START
+            //
+
+            pDoc->SetParaSpaceMax( true, true );
+            pDoc->SetTabCompat( true );
             pDoc->_SetUseVirtualDevice(com::sun::star::document::PrinterIndependentLayout::HIGH_RESOLUTION);
+            pDoc->SetAddFlyOffsets( true );
+            pDoc->SetAddExtLeading( true );
+            pDoc->SetOldNumbering( false );
+            pDoc->SetUseFormerLineSpacing( false );
+            pDoc->SetAddParaSpacingToTableCells( true );
+            pDoc->SetUseFormerObjectPositioning( false );
+            pDoc->SetUseFormerTextWrapping( false );
+
+            //
+            // COMPATIBILITY FLAGS END
+            //
         }
 
         // einen temporaeren Index anlegen, auf Pos 0 so wird er nicht bewegt!
@@ -1260,7 +1275,7 @@ void SwRTFParser::NextToken( int nToken )
     case RTF_BKMKSTART:
         if(RTF_TEXTTOKEN == GetNextToken())
             mpBookmarkStart = new BookmarkPosition(*pPam);
-        else 
+        else
             SkipToken(-1);
 
         SkipGroup();
@@ -1274,7 +1289,7 @@ void SwRTFParser::NextToken( int nToken )
             if (mpBookmarkStart)
             {
                 BookmarkPosition aBookmarkEnd(*pPam);
-                SwPaM aBookmarkRegion(	mpBookmarkStart->maMkNode, mpBookmarkStart->mnMkCntnt, 
+                SwPaM aBookmarkRegion(	mpBookmarkStart->maMkNode, mpBookmarkStart->mnMkCntnt,
                                         aBookmarkEnd.maMkNode, aBookmarkEnd.mnMkCntnt);
                 if (*mpBookmarkStart == aBookmarkEnd)
                     aBookmarkRegion.DeleteMark();
@@ -1282,9 +1297,9 @@ void SwRTFParser::NextToken( int nToken )
             }
             delete mpBookmarkStart, mpBookmarkStart = 0;
         }
-        else 
+        else
             SkipToken(-1);
-        
+
         SkipGroup();
         break;
 
@@ -1534,7 +1549,7 @@ SETCHDATEFIELD:
 
 void SwRTFParser::InsertText()
 {
-    bContainsPara = false;      
+    bContainsPara = false;
     // dann fuege den String ein, ohne das Attribute am Ende
     // aufgespannt werden.
     CheckInsNewTblLine();
@@ -1576,7 +1591,7 @@ int SwRTFParser::IsEndPara( SvxNodeIdx* pNd, xub_StrLen nCnt ) const
     return pNode && pNode->Len() == nCnt;
 }
 
-bool SwRTFParser::UncompressableStackEntry(const SvxRTFItemStackType &rSet) 
+bool SwRTFParser::UncompressableStackEntry(const SvxRTFItemStackType &rSet)
     const
 {
     /*
@@ -1591,7 +1606,7 @@ bool SwRTFParser::UncompressableStackEntry(const SvxRTFItemStackType &rSet)
     if (rSet.GetAttrSet().Count())
     {
 
-        if (SFX_ITEM_SET == 
+        if (SFX_ITEM_SET ==
                 rSet.GetAttrSet().GetItemState(RES_TXTATR_CHARFMT, FALSE))
         {
             bRet = true;
@@ -1774,8 +1789,8 @@ DocPageInformation::DocPageInformation()
 SectPageInformation::SectPageInformation(const DocPageInformation &rDoc)
     : maBox(rDoc.maBox), mpTitlePageHdFt(0), mpPageHdFt(0),
     mnPgwsxn(rDoc.mnPaperw), mnPghsxn(rDoc.mnPaperh), mnMarglsxn(rDoc.mnMargl),
-    mnMargrsxn(rDoc.mnMargr), mnMargtsxn(rDoc.mnMargt), 
-    mnMargbsxn(rDoc.mnMargb), mnGutterxsn(rDoc.mnGutter), mnHeadery(720), 
+    mnMargrsxn(rDoc.mnMargr), mnMargtsxn(rDoc.mnMargt),
+    mnMargbsxn(rDoc.mnMargb), mnGutterxsn(rDoc.mnGutter), mnHeadery(720),
     mnFootery(720), mnPgnStarts(rDoc.mnPgnStart), mnCols(1), mnColsx(720),
     mnStextflow(rDoc.mbRTLdoc ? 3 : 0), mnBkc(2), mbLndscpsxn(rDoc.mbLandscape),
     mbTitlepg(false), mbFacpgsxn(rDoc.mbFacingp), mbRTLsection(rDoc.mbRTLdoc),
@@ -1784,19 +1799,19 @@ SectPageInformation::SectPageInformation(const DocPageInformation &rDoc)
 };
 
 SectPageInformation::SectPageInformation(const SectPageInformation &rSect)
-    : maColumns(rSect.maColumns), maBox(rSect.maBox), 
+    : maColumns(rSect.maColumns), maBox(rSect.maBox),
     maNumType(rSect.maNumType), mpTitlePageHdFt(rSect.mpTitlePageHdFt),
     mpPageHdFt(rSect.mpPageHdFt), mnPgwsxn(rSect.mnPgwsxn),
     mnPghsxn(rSect.mnPghsxn), mnMarglsxn(rSect.mnMarglsxn),
     mnMargrsxn(rSect.mnMargrsxn), mnMargtsxn(rSect.mnMargtsxn),
     mnMargbsxn(rSect.mnMargbsxn), mnGutterxsn(rSect.mnGutterxsn),
-    mnHeadery(rSect.mnHeadery), mnFootery(rSect.mnFootery), 
-    mnPgnStarts(rSect.mnPgnStarts), mnCols(rSect.mnCols), 
+    mnHeadery(rSect.mnHeadery), mnFootery(rSect.mnFootery),
+    mnPgnStarts(rSect.mnPgnStarts), mnCols(rSect.mnCols),
     mnColsx(rSect.mnColsx), mnStextflow(rSect.mnStextflow), mnBkc(rSect.mnBkc),
     mbLndscpsxn(rSect.mbLndscpsxn), mbTitlepg(rSect.mbTitlepg),
-    mbFacpgsxn(rSect.mbFacpgsxn), mbRTLsection(rSect.mbRTLsection), 
-    mbPgnrestart(rSect.mbPgnrestart), 
-    mbTitlePageHdFtUsed(rSect.mbTitlePageHdFtUsed), 
+    mbFacpgsxn(rSect.mbFacpgsxn), mbRTLsection(rSect.mbRTLsection),
+    mbPgnrestart(rSect.mbPgnrestart),
+    mbTitlePageHdFtUsed(rSect.mbTitlePageHdFtUsed),
     mbPageHdFtUsed(rSect.mbPageHdFtUsed)
 {
 };
@@ -1866,7 +1881,7 @@ void SwRTFParser::SetPageInformationAsDefault(const DocPageInformation &rInfo)
     }
 }
 
-void SwRTFParser::SetBorderLine(SvxBoxItem& rBox, sal_uInt16 nLine) 
+void SwRTFParser::SetBorderLine(SvxBoxItem& rBox, sal_uInt16 nLine)
 {
     int bWeiter = true;
     int nPageDistance = 0;
@@ -1947,13 +1962,13 @@ void SwRTFParser::SetBorderLine(SvxBoxItem& rBox, sal_uInt16 nLine)
             break;
 
         case RTF_BRDRDOT:			// SO does not have dashed or dotted lines
-        case RTF_BRDRDASH:	
+        case RTF_BRDRDASH:
         case RTF_BRDRDASHSM:
         case RTF_BRDRDASHD:
         case RTF_BRDRDASHDD:
         case RTF_BRDRDASHDOTSTR:
         case RTF_BRDRSH:            // shading not supported
-        case RTF_BRDRCF:            // colors not supported 
+        case RTF_BRDRCF:            // colors not supported
             break;
 
         case RTF_BRDRW:
