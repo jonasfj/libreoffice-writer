@@ -2,9 +2,9 @@
  *
  *  $RCSfile: xmltble.cxx,v $
  *
- *  $Revision: 1.24 $
+ *  $Revision: 1.25 $
  *
- *  last change: $Author: vg $ $Date: 2003-04-17 15:09:03 $
+ *  last change: $Author: obo $ $Date: 2004-01-13 11:26:02 $
  *
  *  The Contents of this file are made available subject to the terms of
  *  either of the following licenses
@@ -105,12 +105,12 @@
 #ifndef _SVX_BOXITEM_HXX
 #include <svx/boxitem.hxx>
 #endif
-#ifndef __SGI_STL_LIST
+#ifndef _FMTROWSPLT_HXX //autogen
+#include <fmtrowsplt.hxx>
+#endif
+
 #include <list>
-#endif
-#ifndef __SGI_STL_HASH_MAP
 #include <hash_map>
-#endif
 
 #ifndef _SWTABLE_HXX
 #include "swtable.hxx"
@@ -327,6 +327,7 @@ sal_Bool SwXMLTableFrmFmtsSort_Impl::AddRow( SwFrmFmt& rFrmFmt,
                                             sal_uInt32 nLine )
 {
     const SwFmtFrmSize *pFrmSize = 0;
+    const SwFmtRowSplit* pRowSplit = 0;
     const SvxBrushItem *pBrush = 0;
 
     const SfxItemSet& rItemSet = rFrmFmt.GetAttrSet();
@@ -334,11 +335,14 @@ sal_Bool SwXMLTableFrmFmtsSort_Impl::AddRow( SwFrmFmt& rFrmFmt,
     if( SFX_ITEM_SET == rItemSet.GetItemState( RES_FRM_SIZE, sal_False, &pItem ) )
         pFrmSize = (const SwFmtFrmSize *)pItem;
 
+    if( SFX_ITEM_SET == rItemSet.GetItemState( RES_ROW_SPLIT, sal_False, &pItem ) )
+        pRowSplit = (const SwFmtRowSplit *)pItem;
+
     if( SFX_ITEM_SET == rItemSet.GetItemState( RES_BACKGROUND, sal_False, &pItem ) )
         pBrush = (const SvxBrushItem *)pItem;
 
     // empty styles have not to be exported
-    if( !pFrmSize && !pBrush )
+    if( !pFrmSize && !pBrush && !pRowSplit )
         return sal_False;
 
     // order is: -/brush, size/-, size/brush
@@ -348,6 +352,7 @@ sal_Bool SwXMLTableFrmFmtsSort_Impl::AddRow( SwFrmFmt& rFrmFmt,
     for( i=0; i<nCount; i++ )
     {
         const SwFmtFrmSize *pTestFrmSize = 0;
+        const SwFmtRowSplit* pTestRowSplit = 0;
         const SvxBrushItem *pTestBrush = 0;
         const SwFrmFmt *pTestFmt = GetObject(i);
         const SfxItemSet& rTestSet = pTestFmt->GetAttrSet();
@@ -379,12 +384,30 @@ sal_Bool SwXMLTableFrmFmtsSort_Impl::AddRow( SwFrmFmt& rFrmFmt,
                 continue;
         }
 
+        if( SFX_ITEM_SET == rTestSet.GetItemState( RES_ROW_SPLIT, sal_False,
+                                                  &pItem ) )
+        {
+            if( !pRowSplit )
+                break;
+
+            pTestRowSplit = (const SwFmtRowSplit *)pItem;
+        }
+        else
+        {
+            if( pRowSplit )
+                continue;
+        }
+
+
         if( pFrmSize &&
             ( pFrmSize->GetSizeType() != pTestFrmSize->GetSizeType() ||
               pFrmSize->GetHeight() != pTestFrmSize->GetHeight() ) )
             continue;
 
         if( pBrush && (*pBrush != *pTestBrush) )
+            continue;
+
+        if( pRowSplit && (!pRowSplit->GetValue() != !pTestRowSplit->GetValue()) )
             continue;
 
         // found!
@@ -528,7 +551,7 @@ sal_Bool SwXMLTableFrmFmtsSort_Impl::AddCell( SwFrmFmt& rFrmFmt,
         {
             if( pNumFmt )
                 continue;
-            
+
         }
 
         if( pVertOrient &&
@@ -757,7 +780,7 @@ void SwXMLExport::ExportTableLinesAutoStyles( const SwTableLines& rLines,
                                        bTop) )
                     ExportFmt( *pFrmFmt, XML_TABLE_CELL );
 
-                Reference < XCell > xCell = SwXCell::CreateXCell( 
+                Reference < XCell > xCell = SwXCell::CreateXCell(
                                                 (SwFrmFmt *)rTblInfo.GetTblFmt(),
                                                   pBox, 0,
                                                  (SwTable *)rTblInfo.GetTable() );
