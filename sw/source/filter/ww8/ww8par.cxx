@@ -2,9 +2,9 @@
  *
  *  $RCSfile: ww8par.cxx,v $
  *
- *  $Revision: 1.108 $
+ *  $Revision: 1.109 $
  *
- *  last change: $Author: vg $ $Date: 2003-05-19 12:27:07 $
+ *  last change: $Author: vg $ $Date: 2003-05-22 09:51:35 $
  *
  *  The Contents of this file are made available subject to the terms of
  *  either of the following licenses
@@ -572,19 +572,19 @@ String lcl_GetSelTxt(const SwPaM &rPaM);
 #endif
 
 Position::Position(const SwPaM &rPaM)
-    : maMkNode(rPaM.GetMark()->nNode), 
+    : maMkNode(rPaM.GetMark()->nNode),
     maPtNode(rPaM.GetPoint()->nNode),
     mnMkCntnt(rPaM.GetMark()->nContent.GetIndex()),
     mnPtCntnt(rPaM.GetPoint()->nContent.GetIndex())
 {
 }
- 
+
 Position::Position(const Position &rEntry)
-    : maMkNode(rEntry.maMkNode), maPtNode(rEntry.maPtNode), 
+    : maMkNode(rEntry.maMkNode), maPtNode(rEntry.maPtNode),
     mnMkCntnt(rEntry.mnMkCntnt), mnPtCntnt(rEntry.mnPtCntnt)
 {
 }
- 
+
 class DeletePaM
 {
 private:
@@ -599,12 +599,12 @@ private:
 
 SwWW8FltRefStack::~SwWW8FltRefStack()
 {
-    std::for_each(maScheduledForDelete.begin(), maScheduledForDelete.end(), 
+    std::for_each(maScheduledForDelete.begin(), maScheduledForDelete.end(),
         DeletePaM(*pDoc));
 }
- 
+
 void DeletePaM::operator()(const Position &rPaM)
-{   
+{
     SwPaM aPaM(rPaM.maMkNode, rPaM.mnMkCntnt, rPaM.maPtNode, rPaM.mnPtCntnt);
 #ifdef DEBUG
     String aStr(lcl_GetSelTxt(aPaM));
@@ -872,6 +872,7 @@ void SwWW8ImplReader::ImportDop()
         SvxLanguageItem( (const LanguageType)pWwFib->lid )  );
 
     rDoc._SetUseVirtualDevice(!pWDop->fUsePrinterMetrics);
+    rDoc.SetAddFlyOffsets( true );
 
     //import magic doptypography information, if its there
     if (pWwFib->nFib > 105)
@@ -1125,7 +1126,7 @@ void SwWW8ImplReader::Read_HdFtText(long nStart, long nLen, SwFrmFmt* pHdFtFmt)
     *pPaM->GetPoint() = aTmpPos;
 }
 
-void SwWW8ImplReader::Read_HdFt(BYTE nWhichItems, int nSect, SwPageDesc* pPD, 
+void SwWW8ImplReader::Read_HdFt(BYTE nWhichItems, int nSect, SwPageDesc* pPD,
     const SwPageDesc *pPrev)
 {
     if( pHdFt )
@@ -1547,7 +1548,7 @@ bool SwWW8ImplReader::ReadPlainChars(long& rPos, long nEnd, long nCpOfs)
     pStrm->Seek( nStreamPos );
 #if 0
     // amount of characters to read == length to next attribute
-    DBG_ASSERT(nEnd - rPos <= (STRING_MAXLEN-1), 
+    DBG_ASSERT(nEnd - rPos <= (STRING_MAXLEN-1),
         "String too long for stringclass!");
 #endif
     xub_StrLen nLen;
@@ -1684,7 +1685,7 @@ bool SwWW8ImplReader::ReadChars(long& rPos, long nNextAttr, long nTextEnd,
     {
         if (ReadPlainChars(rPos, nEnd, nCpOfs))
              return false;					// Fertig
- 
+
         bool bStartLine = ReadChar(rPos, nCpOfs);
         rPos++;
         if (bPgSecBreak || bStartLine || rPos == nEnd)	// CR oder Fertig
@@ -3288,7 +3289,7 @@ BOOL SwMSDffManager::GetOLEStorageName(long nOLEId, String& rStorageName,
                 WW8PLCFxDesc aDesc;
                 pChp->SeekPos( nStartCp );
                 pChp->GetSprms( &aDesc );
-                
+
                 if (aDesc.nSprmsLen && aDesc.pMemPos)	// Attribut(e) vorhanden
                 {
                     long nLen = aDesc.nSprmsLen;
