@@ -2,9 +2,9 @@
  *
  *  $RCSfile: ww8atr.cxx,v $
  *
- *  $Revision: 1.78 $
+ *  $Revision: 1.79 $
  *
- *  last change: $Author: rt $ $Date: 2004-05-17 16:25:00 $
+ *  last change: $Author: kz $ $Date: 2004-05-18 14:56:17 $
  *
  *  The Contents of this file are made available subject to the terms of
  *  either of the following licenses
@@ -642,7 +642,7 @@ bool SwWW8Writer::SetAktPageDescFromNode(const SwNode &rNd)
                 const SwFrmFmt& rTitleFmt = pAktPageDesc->GetMaster();
                 const SwFrmFmt& rFollowFmt = pCurrent->GetMaster();
 
-                bNewPageDesc = !IsPlausableSingleWordSection(rTitleFmt, 
+                bNewPageDesc = !IsPlausableSingleWordSection(rTitleFmt,
                     rFollowFmt);
             }
             pAktPageDesc = pCurrent;
@@ -774,7 +774,7 @@ void SwWW8Writer::Out_SfxBreakItems(const SfxItemSet *pSet, const SwNode& rNd)
 
 void SwWW8Writer::CorrTabStopInSet(SfxItemSet& rSet, USHORT nAbsLeft)
 {
-    const SvxTabStopItem *pItem = 
+    const SvxTabStopItem *pItem =
         sw::util::HasItem<SvxTabStopItem>(rSet, RES_PARATR_TABSTOP);
 
     if (pItem)
@@ -3212,7 +3212,7 @@ static Writer& OutWW8_SwFrmSize( Writer& rWrt, const SfxPoolItem& rHt )
             return rWrt;                // Fly um Grafik -> Auto-Groesse
 
 //???? was ist bei Prozentangaben ???
-        if( rSz.GetWidth() )
+        if( rSz.GetWidth() && rSz.GetWidthSizeType() == ATT_FIX_SIZE)
         {
             //"sprmPDxaWidth"
             if( rWW8Wrt.bWrtWW8 )
@@ -3231,7 +3231,7 @@ static Writer& OutWW8_SwFrmSize( Writer& rWrt, const SfxPoolItem& rHt )
                 rWW8Wrt.pO->Insert( 45, rWW8Wrt.pO->Count() );
 
             USHORT nH = 0;
-            switch( rSz.GetSizeType() )
+            switch( rSz.GetHeightSizeType() )
             {
             case ATT_VAR_SIZE: break;
             case ATT_FIX_SIZE: nH = (USHORT)rSz.GetHeight() & 0x7fff; break;
@@ -4768,7 +4768,7 @@ SwAttrFnTab aWW8AttrFnTab = {
 /* RES_TXTATR_TWO_LINES */          OutWW8_SvxTwoLinesItem,
 /* RES_CHRATR_DUMMY4 */             OutWW8_ScaleWidth,
 /* RES_CHRATR_RELIEF*/              OutWW8_Relief,
-/* RES_CHRATR_HIDDEN */             OutWW8_SvxCharHidden, 
+/* RES_CHRATR_HIDDEN */             OutWW8_SvxCharHidden,
 
 /* RES_TXTATR_INETFMT */            OutSwFmtINetFmt,
 /* RES_TXTATR_DUMMY4 */             0,
