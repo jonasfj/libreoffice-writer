@@ -1,10 +1,10 @@
 /*************************************************************************
  *
- *  $RCSfile: dialog.hrc,v $
+ *  $RCSfile: toolbox.hrc,v $
  *
- *  $Revision: 1.4 $
+ *  $Revision: 1.1 $
  *
- *  last change: $Author: tl $ $Date: 2002-05-24 07:31:49 $
+ *  last change: $Author: tl $ $Date: 2002-05-24 07:27:55 $
  *
  *  The Contents of this file are made available subject to the terms of
  *  either of the following licenses
@@ -59,26 +59,32 @@
  *
  ************************************************************************/
 
-#ifndef _DIALOG_HRC_
-#define _DIALOG_HRC_
+#ifndef _TOOLBOX_HRC_
+#define _TOOLBOX_HRC_
 
 
-#define FL_PRINTOPTIONS         10
-#define CB_TITLEROW             11
-#define CB_EQUATION_TEXT	12
-#define CB_FRAME                13
-
-#define FL_PRINT_FORMAT         20
-#define RB_ORIGINAL_SIZE	21
-#define RB_FIT_TO_PAGE		22
-#define RB_ZOOM                 23
-#define MF_ZOOM                 24
-
-#define FL_MISC_OPTIONS         30
-#define CB_IGNORE_SPACING	31
-
-#define FT_FONTS_SUBSET         110
-#define LB_FONTS_SUBSET         111
+// defines for ImageList's
+//! order and numbering is important
+#define IL_UNOP         1
+#define ILH_UNOP        2
+#define IL_BIOP         3
+#define ILH_BIOP        4
+#define IL_OPER         5
+#define ILH_OPER        6
+#define IL_FUNC         7
+#define ILH_FUNC        8
+#define IL_FORM         9
+#define ILH_FORM       10
+#define IL_ATTR        11
+#define ILH_ATTR       12
+#define IL_ALGN        13
+#define ILH_ALGN       14
+#define IL_COLR        15
+#define ILH_COLR       16
+#define IL_MISC        17
+#define ILH_MISC       18
+#define IL_IMG         19
+#define ILH_IMG        20
 
 
 #endif

@@ -2,9 +2,9 @@
  *
  *  $RCSfile: toolbox.hxx,v $
  *
- *  $Revision: 1.3 $
+ *  $Revision: 1.4 $
  *
- *  last change: $Author: tl $ $Date: 2002-04-24 13:24:47 $
+ *  last change: $Author: tl $ $Date: 2002-05-24 07:30:47 $
  *
  *  The Contents of this file are made available subject to the terms of
  *  either of the following licenses
@@ -78,6 +78,7 @@
 #include "config.hxx"
 #endif
 
+#include "dialog.hrc"
 
 #define NUM_TBX_CATEGORIES	9
 
@@ -88,10 +89,14 @@ protected:
     ToolBox		aToolBoxCat;
     ToolBox	   *pToolBoxCmd;
     ToolBox	   *vToolBoxCategories[NUM_TBX_CATEGORIES];
+    ImageList  *aImageLists [NUM_TBX_CATEGORIES + 1];   /* regular */
+    ImageList  *aImageListsH[NUM_TBX_CATEGORIES + 1];   /* high contrast */
     USHORT		nActiveCategory;
 
     virtual BOOL    Close();
     virtual void    GetFocus();
+
+    void            ApplyImageLists();
 
     DECL_LINK( CategoryClickHdl, ToolBox* );
     DECL_LINK( CmdSelectHdl, ToolBox* );
@@ -104,6 +109,7 @@ public:
 
     // Window
     virtual void	StateChanged( StateChangedType nStateChange );
+    virtual void    DataChanged( const DataChangedEvent &rEvt );
 
     void		AdjustPosition(const Point &rPoint);
     void		SetCategory(USHORT nCategory);
