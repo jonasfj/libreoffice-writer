@@ -2,9 +2,9 @@
  *
  *  $RCSfile: docsh2.cxx,v $
  *
- *  $Revision: 1.69 $
+ *  $Revision: 1.70 $
  *
- *  last change: $Author: obo $ $Date: 2004-11-17 13:16:15 $
+ *  last change: $Author: od $ $Date: 2004-12-03 14:06:36 $
  *
  *  The Contents of this file are made available subject to the terms of
  *  either of the following licenses
@@ -394,9 +394,13 @@ void SwDocShell::Notify( SfxBroadcaster&, const SfxHint& rHint )
             break;
         }
     }
-    else if( rHint.ISA(SfxEventHint) && 
+    else if( rHint.ISA(SfxEventHint) &&
         ((SfxEventHint&) rHint).GetEventId() == SFX_EVENT_LOADFINISHED )
-        nAction = 1;
+    {
+        // --> OD 2004-12-03 #i38126# - own action id
+        nAction = 3;
+        // <--
+    }
 
     if( nAction )
     {
@@ -416,6 +420,22 @@ void SwDocShell::Notify( SfxBroadcaster&, const SfxHint& rHint )
         case 2:
             pDoc->GetSysFldType( RES_FILENAMEFLD )->UpdateFlds();
             break;
+        // --> OD 2004-12-03 #i38126# - own action for event LOADFINISHED
+        // in order to avoid a modified document.
+        // Perform the same as for action id 1, but disable <SetModified>.
+        case 3:
+            {
+                const bool bResetModified = IsEnableSetModified();
+                if ( bResetModified )
+                    EnableSetModified( FALSE );
+
+                pDoc->DocInfoChgd( GetDocInfo() );
+
+                if ( bResetModified )
+                    EnableSetModified( TRUE );
+            }
+            break;
+        // <--
         }
 
         if( pWrtShell )
@@ -506,7 +526,7 @@ BOOL SwDocShell::Insert( SfxObjectShell &rSource,
 
         // dflt. PageDesc und StandardZeichenvorlage nie loeschen !!!
         if( ( SFX_STYLE_FAMILY_PAGE == eOldFamily &&
-              const_cast<const SwDoc *>(pDoc)->GetPageDesc(0).GetName() == 
+              const_cast<const SwDoc *>(pDoc)->GetPageDesc(0).GetName() ==
               rOldName ) ||
               ( SFX_STYLE_FAMILY_CHAR == eOldFamily &&
                 rOldName == *SwStyleNameMapper::GetTextUINameArray()[ RES_POOLCOLL_STANDARD -
