@@ -2,9 +2,9 @@
  *
  *  $RCSfile: ww8par4.cxx,v $
  *
- *  $Revision: 1.47 $
+ *  $Revision: 1.48 $
  *
- *  last change: $Author: rt $ $Date: 2004-09-20 15:20:59 $
+ *  last change: $Author: kz $ $Date: 2004-10-04 19:20:04 $
  *
  *  The Contents of this file are made available subject to the terms of
  *  either of the following licenses
@@ -69,6 +69,10 @@
 #include "writerhelper.hxx"
 #endif
 
+#ifndef _COM_SUN_STAR_EMBED_XCLASSIFIEDOBJECT_HPP_
+#include <com/sun/star/embed/XClassifiedObject.hpp>
+#endif
+
 #ifndef __SGI_STL_ALGORITHM
 #include <algorithm>
 #endif
@@ -84,9 +88,7 @@
 #include <tools/solar.h>
 #endif
 
-#ifndef _SVSTOR_HXX
-#include <so3/svstor.hxx>
-#endif
+#include <sot/storage.hxx>
 
 #ifndef _COM_SUN_STAR_DRAWING_XSHAPE_HPP_
 #include <com/sun/star/drawing/XShape.hpp>
@@ -95,7 +97,7 @@
 #ifndef _HINTIDS_HXX
 #include <hintids.hxx>
 #endif
- 
+
 #ifndef _SVDOOLE2_HXX
 #include <svx/svdoole2.hxx>
 #endif
@@ -156,9 +158,6 @@
 #ifndef _SHELLIO_HXX
 #include <shellio.hxx>
 #endif
-#ifndef _SW3IO_HXX
-#include <sw3io.hxx>
-#endif
 #ifndef _NDOLE_HXX
 #include <ndole.hxx>
 #endif
@@ -202,7 +201,7 @@ static bool SwWw8ReadScaling(long& rX, long& rY, SvStorageRef& rSrc1)
     //      0x2c, 0x30 Skalierung x,y in Promille
     //      0x34, 0x38, 0x3c, 0x40 Crop Left, Top, Right, Bot in tw
 
-    SvStorageStreamRef xSrc3 = rSrc1->OpenStream( CREATE_CONST_ASC( "\3PIC" ),
+    SvStorageStreamRef xSrc3 = rSrc1->OpenSotStream( CREATE_CONST_ASC( "\3PIC" ),
         STREAM_STD_READ | STREAM_NOCREATE);
     SvStorageStream* pS = xSrc3;
     pS->SetNumberFormatInt( NUMBERFORMAT_INT_LITTLEENDIAN );
@@ -244,10 +243,10 @@ static bool SwWw8ReadScaling(long& rX, long& rY, SvStorageRef& rSrc1)
     return true;
 }
 
-static bool SwWw6ReadMetaStream(GDIMetaFile& rWMF, OLE_MFP* pMfp, 
+static bool SwWw6ReadMetaStream(GDIMetaFile& rWMF, OLE_MFP* pMfp,
     SvStorageRef& rSrc1)
 {
-    SvStorageStreamRef xSrc2 = rSrc1->OpenStream( CREATE_CONST_ASC("\3META"),
+    SvStorageStreamRef xSrc2 = rSrc1->OpenSotStream( CREATE_CONST_ASC("\3META"),
         STREAM_STD_READ | STREAM_NOCREATE);
     SvStorageStream* pSt = xSrc2;
     pSt->SetNumberFormatInt( NUMBERFORMAT_INT_LITTLEENDIAN );
@@ -303,7 +302,7 @@ static bool SwWw6ReadMetaStream(GDIMetaFile& rWMF, OLE_MFP* pMfp,
 static bool SwWw6ReadMacPICTStream(Graphic& rGraph, SvStorageRef& rSrc1)
 {
     // 03-META-Stream nicht da. Vielleicht ein 03-PICT ?
-    SvStorageStreamRef xSrc4 = rSrc1->OpenStream( CREATE_CONST_ASC( "\3PICT" ));
+    SvStorageStreamRef xSrc4 = rSrc1->OpenSotStream( CREATE_CONST_ASC( "\3PICT" ));
     SvStorageStream* pStp = xSrc4;
     pStp->SetNumberFormatInt( NUMBERFORMAT_INT_LITTLEENDIAN );
     BYTE aTestA[10];        // Ist der 01Ole-Stream ueberhaupt vorhanden
@@ -328,32 +327,38 @@ static bool SwWw6ReadMacPICTStream(Graphic& rGraph, SvStorageRef& rSrc1)
 SwFlyFrmFmt* SwWW8ImplReader::InsertOle(SdrOle2Obj &rObject,
     const SfxItemSet &rFlySet, const SfxItemSet &rGrfSet)
 {
-    SvPersist *pPersist = rDoc.GetPersist();
+    SfxObjectShell *pPersist = rDoc.GetPersist();
     ASSERT(pPersist, "No persist, cannot insert objects correctly");
     if (!pPersist)
         return 0;
 
     SwFlyFrmFmt *pRet = 0;
-    
+
     SfxItemSet *pMathFlySet = 0;
-    if (SotExchange::IsMath(*rObject.GetObjRef()->GetSvFactory()))
+    com::sun::star::uno::Reference < com::sun::star::embed::XClassifiedObject > xClass( rObject.GetObjRef(), com::sun::star::uno::UNO_QUERY );
+    if( xClass.is() )
     {
-        /*
-        StarMath sets it own fixed size, so its counter productive to use the
-        size word says it is. i.e. Don't attempt to override its size.
-        */
-        pMathFlySet = new SfxItemSet(rFlySet);
-        pMathFlySet->ClearItem(RES_FRM_SIZE);
+        SvGlobalName aClassName( xClass->getClassID() );
+        if (SotExchange::IsMath(aClassName))
+        {
+            /*
+            StarMath sets it own fixed size, so its counter productive to use the
+            size word says it is. i.e. Don't attempt to override its size.
+            */
+            pMathFlySet = new SfxItemSet(rFlySet);
+            pMathFlySet->ClearItem(RES_FRM_SIZE);
+        }
     }
 
-    String sNewName = Sw3Io::UniqueName(mpDocShell->GetStorage(),"Obj");
-    
     /*
     Take complete responsibility of the object away from SdrOle2Obj and to
     me here locally. This utility class now owns the object.
     */
-    sw::hack::DrawingOLEAdaptor aOLEObj(rObject, *pPersist);
 
+    // TODO/MBA: is the object inserted multiple times here? Testing!
+    // And is it a problem that we now use the same naming scheme as in the other apps?
+    sw::hack::DrawingOLEAdaptor aOLEObj(rObject, *pPersist);
+    ::rtl::OUString sNewName;
     bool bSuccess = aOLEObj.TransferToDoc(sNewName);
 
     ASSERT(bSuccess, "Insert OLE failed");
@@ -388,7 +393,7 @@ SwFrmFmt* SwWW8ImplReader::ImportOle(const Graphic* pGrf,
 
         // Abstand/Umrandung raus
         if (!mbNewDoc)
-            Reader::ResetFrmFmtAttrs( *pTempSet );  
+            Reader::ResetFrmFmtAttrs( *pTempSet );
 
         SwFmtAnchor aAnchor( FLY_IN_CNTNT );
         aAnchor.SetAnchor( pPaM->GetPoint() );
@@ -420,11 +425,11 @@ SwFrmFmt* SwWW8ImplReader::ImportOle(const Graphic* pGrf,
             pFmt = rDoc.Insert(*pPaM, *pRet, pFlySet);
     }
     else if (
-                GRAPHIC_GDIMETAFILE == aGraph.GetType() || 
-                GRAPHIC_BITMAP == aGraph.GetType() 
+                GRAPHIC_GDIMETAFILE == aGraph.GetType() ||
+                GRAPHIC_BITMAP == aGraph.GetType()
             )
     {
-        pFmt = rDoc.Insert(*pPaM, aEmptyStr, aEmptyStr, &aGraph, pFlySet, 
+        pFmt = rDoc.Insert(*pPaM, aEmptyStr, aEmptyStr, &aGraph, pFlySet,
             pGrfSet);
     }
     delete pTempSet;
@@ -438,7 +443,7 @@ bool SwWW8ImplReader::ImportOleWMF(SvStorageRef xSrc1,GDIMetaFile &rWMF,
     OLE_MFP aMfp;
     if( SwWw6ReadMetaStream( rWMF, &aMfp, xSrc1 ) )
     {
-        /* 
+        /*
         take scaling factor as found in PIC and apply it to graphic.
         */
         SwWw8ReadScaling( rX, rY, xSrc1 );
@@ -456,7 +461,7 @@ bool SwWW8ImplReader::ImportOleWMF(SvStorageRef xSrc1,GDIMetaFile &rWMF,
     return bOk;
 }
 
-SdrObject* SwWW8ImplReader::ImportOleBase( Graphic& rGraph, 
+SdrObject* SwWW8ImplReader::ImportOleBase( Graphic& rGraph,
     const Graphic* pGrf, const SfxItemSet* pFlySet )
 {
     SdrObject* pRet = 0;
@@ -469,9 +474,9 @@ SdrObject* SwWW8ImplReader::ImportOleBase( Graphic& rGraph,
 
     String aSrcStgName = '_';
     // ergibt Name "_4711"
-    aSrcStgName += String::CreateFromInt32( nObjLocFc );        
+    aSrcStgName += String::CreateFromInt32( nObjLocFc );
 
-    SvStorageRef xSrc0 = pStg->OpenStorage(CREATE_CONST_ASC(SL::aObjectPool));
+    SvStorageRef xSrc0 = pStg->OpenSotStorage(CREATE_CONST_ASC(SL::aObjectPool));
 
     if (pGrf)
     {
@@ -483,7 +488,7 @@ SdrObject* SwWW8ImplReader::ImportOleBase( Graphic& rGraph,
     }
     else
     {
-        SvStorageRef xSrc1 = xSrc0->OpenStorage( aSrcStgName,
+        SvStorageRef xSrc1 = xSrc0->OpenSotStorage( aSrcStgName,
             STREAM_READWRITE| STREAM_SHARE_DENYALL );
 
         GDIMetaFile aWMF;
@@ -514,10 +519,10 @@ SdrObject* SwWW8ImplReader::ImportOleBase( Graphic& rGraph,
         }
     }
 
-    SvStorageRef xSrc1 = xSrc0->OpenStorage( aSrcStgName,
+    SvStorageRef xSrc1 = xSrc0->OpenSotStorage( aSrcStgName,
         STREAM_READWRITE| STREAM_SHARE_DENYALL );
 
-    if (!(bIsHeader || bIsFooter)) 
+    if (!(bIsHeader || bIsFooter))
     {
         //Can't put them in headers/footers :-(
         uno::Reference< drawing::XShape > xRef;
@@ -548,10 +553,9 @@ SdrObject* SwWW8ImplReader::ImportOleBase( Graphic& rGraph,
                 pTmpData->Seek( nObjLocFc );
             }
 
-            SvStorageRef xDst0(mpDocShell->GetStorage());
-
+            ErrCode nError = ERRCODE_NONE;
             pRet = SvxMSDffManager::CreateSdrOLEFromStorage(
-                aSrcStgName, xSrc0, xDst0, rGraph, aRect, pTmpData,
+                aSrcStgName, xSrc0, mpDocShell->GetStorage(), rGraph, aRect, pTmpData, nError,
                 SwMSDffManager::GetFilterFlags());
             pDataStream->Seek( nOldPos );
         }
@@ -584,7 +588,7 @@ void SwWW8ImplReader::ReadRevMarkAuthorStrTabl( SvStream& rStrm,
    Revision Marks ( == Redlining )
 */
 // insert or delete content (change char attributes resp.)
-void SwWW8ImplReader::Read_CRevisionMark(SwRedlineType eType, 
+void SwWW8ImplReader::Read_CRevisionMark(SwRedlineType eType,
     const BYTE* pData, short nLen )
 {
     // there *must* be a SprmCIbstRMark[Del] and a SprmCDttmRMark[Del]
@@ -625,7 +629,7 @@ void SwWW8ImplReader::Read_CRevisionMark(SwRedlineType eType,
     }
 
 #if 0
-    ASSERT(nLen < 0 || (pSprmCIbstRMark || pSprmCDttmRMark), 
+    ASSERT(nLen < 0 || (pSprmCIbstRMark || pSprmCDttmRMark),
         "The wheels have fallen off revision mark import");
 #endif
 
