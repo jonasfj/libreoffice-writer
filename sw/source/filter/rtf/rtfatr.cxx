@@ -2,9 +2,9 @@
  *
  *  $RCSfile: rtfatr.cxx,v $
  *
- *  $Revision: 1.40 $
+ *  $Revision: 1.41 $
  *
- *  last change: $Author: kz $ $Date: 2003-12-09 11:42:36 $
+ *  last change: $Author: obo $ $Date: 2004-01-13 11:23:18 $
  *
  *  The Contents of this file are made available subject to the terms of
  *  either of the following licenses
@@ -364,6 +364,9 @@
 #ifndef _FLTINI_HXX
 #include <fltini.hxx>
 #endif
+#ifndef _FMTROWSPLT_HXX //autogen
+#include <fmtrowsplt.hxx>
+#endif
 
 
 
@@ -463,7 +466,7 @@ void OutRTF_SfxItemSet( SwRTFWriter& rWrt, const SfxItemSet& rSet,
             pOut = aRTFAttrFnTab[ nWhich - RES_CHRATR_BEGIN];
         else
             pOut = 0;
-        
+
         if (!pOut && bDeep)
         {
             switch( nWhich )
@@ -968,7 +971,7 @@ int RTFEndPosLst::Insert( const SfxPoolItem& rAttr, xub_StrLen nStt,
 {
     if (rAttr.Which() == RES_TXTATR_INETFMT)
         return false;
-    
+
     if( nStt == nEnd )
         return FALSE;
 
@@ -1038,21 +1041,21 @@ void RTFEndPosLst::OutFontAttrs( USHORT nScript )
     rWrt.SetAssociatedFlag( FALSE );
 
     // the font MUST be at the first position !!!
-    static const USHORT aLatinIds[] =  
+    static const USHORT aLatinIds[] =
     {
         RES_CHRATR_FONT,
         RES_CHRATR_FONTSIZE, RES_CHRATR_LANGUAGE,
         RES_CHRATR_POSTURE,  RES_CHRATR_WEIGHT,
         0
     };
-    static const USHORT aAsianIds[] =  
+    static const USHORT aAsianIds[] =
     {
         RES_CHRATR_CJK_FONT,
         RES_CHRATR_CJK_FONTSIZE, RES_CHRATR_CJK_LANGUAGE,
         RES_CHRATR_CJK_POSTURE,  RES_CHRATR_CJK_WEIGHT,
         0
     };
-    static const USHORT aCmplxIds[] =  
+    static const USHORT aCmplxIds[] =
     {
         RES_CHRATR_CTL_FONT,
         RES_CHRATR_CTL_FONTSIZE, RES_CHRATR_CTL_LANGUAGE,
@@ -1141,7 +1144,7 @@ void RTFEndPosLst::EndAttrs( xub_StrLen nStrPos )
         while (nSize > 0)
         {
             pSEPos = GetObject(--nSize);
-            if ( pSEPos->GetStart() < nStrPos && 
+            if ( pSEPos->GetStart() < nStrPos &&
                     pSEPos->GetStart() >= nClipStart)
             {
                 rWrt.Strm() << '}';
@@ -1264,21 +1267,21 @@ static void OutSvxFrmDir(SwRTFWriter& rRTFWrt, const SfxPoolItem& rHt )
         case FRMDIR_ENVIRONMENT:
             ASSERT(0, "Not expected to see FRMDIR_ENVIRONMENT here");
             break;
-        case FRMDIR_VERT_TOP_RIGHT:		
-            nVal = 1; 
-            pStr = sRTF_FRMTXTBRLV; 
+        case FRMDIR_VERT_TOP_RIGHT:
+            nVal = 1;
+            pStr = sRTF_FRMTXTBRLV;
             break;
-        case FRMDIR_HORI_RIGHT_TOP: 	
+        case FRMDIR_HORI_RIGHT_TOP:
             bRTL = true;
-//          nVal = 3; 
+//          nVal = 3;
 //          A val of three isn't working as expected in word :-( so leave it
 //          as normal ltr 0 textflow with rtl sect property, neither does
 //          the frame textflow
-//          pStr = sRTF_FRMTXTBRL; 
+//          pStr = sRTF_FRMTXTBRL;
             break;
-        case FRMDIR_VERT_TOP_LEFT:		
-            nVal = 4; 
-            pStr = sRTF_FRMTXLRTBV; 
+        case FRMDIR_VERT_TOP_LEFT:
+            nVal = 4;
+            pStr = sRTF_FRMTXLRTBV;
             break;
     }
 
@@ -1318,7 +1321,7 @@ void OutRTF_SwRTL(SwRTFWriter& rWrt, const SwTxtNode *pNd)
     if (eDir == FRMDIR_ENVIRONMENT)
     {
         SwPosition aPos(*pNd);
-        eDir = 
+        eDir =
             static_cast<SvxFrameDirection>(rWrt.pDoc->GetTextDirection(aPos));
     }
     OutSvxFrmDir(rWrt, SvxFrameDirectionItem(eDir));
@@ -1459,7 +1462,7 @@ static Writer& OutRTF_SwTxtNode( Writer& rWrt, SwCntntNode& rNode )
     // den Format-Pointer auf 0 setzen!
     SwFlyFrmFmt* pSaveFmt = rRTFWrt.pFlyFmt;
 
-    SfxItemSet aMergedSet(rRTFWrt.pDoc->GetAttrPool(), POOLATTR_BEGIN, 
+    SfxItemSet aMergedSet(rRTFWrt.pDoc->GetAttrPool(), POOLATTR_BEGIN,
         POOLATTR_END-1);
     bool bDeep = false;
 
@@ -1805,21 +1808,21 @@ static void OutBorderLine(SwRTFWriter& rWrt, const SvxBorderLine* pLine,
 static void OutSwTblBorder(SwRTFWriter& rWrt, const SvxBoxItem& rBox,
     const SvxBoxItem *pDefault)
 {
-    static const USHORT aBorders[] = 
+    static const USHORT aBorders[] =
     {
-        BOX_LINE_TOP, BOX_LINE_LEFT, BOX_LINE_BOTTOM, BOX_LINE_RIGHT 
+        BOX_LINE_TOP, BOX_LINE_LEFT, BOX_LINE_BOTTOM, BOX_LINE_RIGHT
     };
-    static const char* aBorderNames[] = 
+    static const char* aBorderNames[] =
     {
         sRTF_CLBRDRT, sRTF_CLBRDRL, sRTF_CLBRDRB, sRTF_CLBRDRR
     };
     //Yes left and top are swapped with eachother for cell padding! Because
     //that's what the thunderingly annoying rtf export/import word xp does.
-    static const char* aCellPadNames[] = 
+    static const char* aCellPadNames[] =
     {
         sRTF_CLPADL, sRTF_CLPADT, sRTF_CLPADB, sRTF_CLPADR
     };
-    static const char* aCellPadUnits[] = 
+    static const char* aCellPadUnits[] =
     {
         sRTF_CLPADFL, sRTF_CLPADFT, sRTF_CLPADFB, sRTF_CLPADFR
     };
@@ -1968,6 +1971,7 @@ Writer& OutRTF_SwTblNode( Writer& rWrt, SwTableNode & rNode )
         if( !nLine && rTbl.IsHeadlineRepeat() )
             rWrt.Strm() << sRTF_TRHDR;
 
+        const SwTableLine* pLine = pBoxArr[ 0 ]->GetBox()->GetUpper();
         // Zeilenhoehe ausgeben
         long nHeight = 0;
         if( bFixRowHeight && rWrt.pDoc->GetRootFrm() )
@@ -1975,19 +1979,22 @@ Writer& OutRTF_SwTblNode( Writer& rWrt, SwTableNode & rNode )
             nHeight = -pRow->GetPos();		//neg. => abs. height!
             if( nLine )
                 nHeight += rRows[ nLine - 1 ]->GetPos();
-
-            // merged line -> dont split it
-            rWrt.Strm() << sRTF_TRKEEP;
         }
         else
         {
-            const SwTableLine* pLine = pBoxArr[ 0 ]->GetBox()->GetUpper();
             const SwFmtFrmSize& rLSz = pLine->GetFrmFmt()->GetFrmSize();
             if( ATT_VAR_SIZE != rLSz.GetSizeType() && rLSz.GetHeight() )
                 nHeight = ATT_MIN_SIZE == rLSz.GetSizeType()
                                                 ? rLSz.GetHeight()
                                                 : -rLSz.GetHeight();
         }
+
+        //The rtf default is to allow a row to break, so if we are not
+        //splittable export TRKEEP
+        const SwFrmFmt *pLineFmt = pLine ? pLine->GetFrmFmt() : 0;
+        if (!pLineFmt || pLineFmt->GetRowSplit().GetValue() == 0)
+            rWrt.Strm() << sRTF_TRKEEP;
+
         if( nHeight )
         {
             rWrt.Strm() << sRTF_TRRH;
@@ -1999,15 +2006,15 @@ Writer& OutRTF_SwTblNode( Writer& rWrt, SwTableNode & rNode )
         {
             pDefaultBox = &(pBoxArr[0]->GetBox()->GetFrmFmt()->GetBox());
 
-            static const USHORT aBorders[] = 
+            static const USHORT aBorders[] =
             {
-                BOX_LINE_TOP, BOX_LINE_LEFT, BOX_LINE_BOTTOM, BOX_LINE_RIGHT 
+                BOX_LINE_TOP, BOX_LINE_LEFT, BOX_LINE_BOTTOM, BOX_LINE_RIGHT
             };
-            static const char* aRowPadNames[] = 
+            static const char* aRowPadNames[] =
             {
                 sRTF_TRPADDT, sRTF_TRPADDL, sRTF_TRPADDB, sRTF_TRPADDR
             };
-            static const char* aRowPadUnits[] = 
+            static const char* aRowPadUnits[] =
             {
                 sRTF_TRPADDFT, sRTF_TRPADDFL, sRTF_TRPADDFB, sRTF_TRPADDFR
             };
@@ -2036,7 +2043,7 @@ Writer& OutRTF_SwTblNode( Writer& rWrt, SwTableNode & rNode )
                                 : sRTF_CLVMRG );
 
             const SfxPoolItem* pItem;
-            if (SFX_ITEM_SET == rFmt.GetAttrSet().GetItemState(RES_BOX, TRUE, 
+            if (SFX_ITEM_SET == rFmt.GetAttrSet().GetItemState(RES_BOX, TRUE,
                 &pItem))
             {
                 OutSwTblBorder(rRTFWrt, (SvxBoxItem&)*pItem, pDefaultBox);
@@ -2199,7 +2206,7 @@ static Writer& OutRTF_SwFont( Writer& rWrt, const SfxPoolItem& rHt )
         const SvxFontItem&rFont = (const SvxFontItem&)rHt;
         bool bAssoc = rRTFWrt.IsAssociatedFlag();
         /*
-         #109522# 
+         #109522#
          Word is a bit of a silly bugger of a program when its comes to symbol
          font useage. If a symbol font is actually being used, i.e.  exported
          here with bTxtAttr true then both AF and F must be set to the same
@@ -2948,8 +2955,8 @@ static Writer& OutRTF_SwFtn( Writer& rWrt, const SfxPoolItem& rHt )
 
 static Writer& OutRTF_SwHardBlank( Writer& rWrt, const SfxPoolItem& rHt)
 {
-    RTFOutFuncs::Out_String(rWrt.Strm(), 
-        String(((SwFmtHardBlank&)rHt).GetChar()), DEF_ENCODING, 
+    RTFOutFuncs::Out_String(rWrt.Strm(),
+        String(((SwFmtHardBlank&)rHt).GetChar()), DEF_ENCODING,
         ((SwRTFWriter&)rWrt).bWriteHelpFmt);
     return rWrt;
 }
