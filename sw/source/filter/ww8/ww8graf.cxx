@@ -2,9 +2,9 @@
  *
  *  $RCSfile: ww8graf.cxx,v $
  *
- *  $Revision: 1.20 $
+ *  $Revision: 1.21 $
  *
- *  last change: $Author: cmc $ $Date: 2001-04-11 14:34:22 $
+ *  last change: $Author: jp $ $Date: 2001-04-11 15:08:01 $
  *
  *  The Contents of this file are made available subject to the terms of
  *  either of the following licenses
@@ -558,7 +558,7 @@ void SwWW8ImplReader::InsertObj( SdrObject* pObj, short nWwHeight )
 //		aFlySet.Put( aAnchor );
         pDrawFmt->SetAttr( aAnchor );
 */
-        
+
         pObj->NbcSetAnchorPos( Point( USHRT_MAX, USHRT_MAX ) );
         pContact->ConnectToLayout( &pDrawFmt->GetAnchor() );
 
@@ -1099,7 +1099,7 @@ void SwWW8ImplReader::InsertTxbxAttrs( long nStartCp,
                 GetTxbxPapAndCharAttrs( *pS, aRes );
             }
         }
-    
+
         (*pPlcxMan)++;
         nNext = pPlcxMan->Where();
 
@@ -2181,27 +2181,27 @@ void SwWW8ImplReader::SetAttributesAtGrfNode( SvxMSDffImportRec* pRecord,
         {
             const SfxItemSet& rOldSet = pRecord->pObj->GetItemSet();
             //contrast
-            if (WW8ITEMVALUE(rOldSet, SDRATTR_GRAFCONTRAST, 
+            if (WW8ITEMVALUE(rOldSet, SDRATTR_GRAFCONTRAST,
                 SdrGrafContrastItem))
             {
                 SwContrastGrf aContrast(
-                    WW8ITEMVALUE(rOldSet, 
+                    WW8ITEMVALUE(rOldSet,
                     SDRATTR_GRAFCONTRAST, SdrGrafContrastItem));
                 pGrfNd->SetAttr( aContrast );
             }
 
             //luminance
-            if (WW8ITEMVALUE(rOldSet, SDRATTR_GRAFLUMINANCE, 
+            if (WW8ITEMVALUE(rOldSet, SDRATTR_GRAFLUMINANCE,
                 SdrGrafLuminanceItem))
             {
-                SwLuminanceGrf aLuminance(WW8ITEMVALUE(rOldSet, 
+                SwLuminanceGrf aLuminance(WW8ITEMVALUE(rOldSet,
                     SDRATTR_GRAFLUMINANCE, SdrGrafLuminanceItem));
                 pGrfNd->SetAttr( aLuminance );
             }
             //gamma
             if (WW8ITEMVALUE(rOldSet, SDRATTR_GRAFGAMMA, SdrGrafGamma100Item))
             {
-                SwGammaGrf aGamma(WW8ITEMVALUE(rOldSet, SDRATTR_GRAFGAMMA, 
+                SwGammaGrf aGamma(WW8ITEMVALUE(rOldSet, SDRATTR_GRAFGAMMA,
                     SdrGrafGamma100Item));
                 pGrfNd->SetAttr( aGamma );
             }
@@ -2265,7 +2265,7 @@ void SwWW8ImplReader::ProcessEscherAlign( SvxMSDffImportRec* pRecord,
         // horizontal Adjustment
         static const SwHoriOrient aHoriOriTab[ nCntXAlign ] = {
             HORI_NONE,		// Value of nXPos defined RelPos directly.
-            
+
             HORI_LEFT,		// automatical adjustment
             HORI_CENTER,	// automatical adjustment
             HORI_RIGHT,		// automatical adjustment
@@ -2323,7 +2323,7 @@ void SwWW8ImplReader::ProcessEscherAlign( SvxMSDffImportRec* pRecord,
 
         eAnchor = 3 == nXRelTo  ?  FLY_AUTO_CNTNT
             :  2 <= nYRelTo  ?  FLY_AT_CNTNT :  FLY_PAGE;
-                
+
         SwFmtAnchor aAnchor( eAnchor );
         aAnchor.SetAnchor( pPaM->GetPoint() );
         rFlySet.Put( aAnchor );
@@ -2364,7 +2364,7 @@ void SwWW8ImplReader::ProcessEscherAlign( SvxMSDffImportRec* pRecord,
             SwVertOrient eVertOri;
             eVertOri = aVertOriTab[ nYAlign ];
             SwRelationOrient eVertRel;
-            eVertRel = FLY_AUTO_CNTNT == eAnchor ? REL_CHAR : 
+            eVertRel = FLY_AUTO_CNTNT == eAnchor ? REL_CHAR :
                 aRelOriTab[  nYRelTo ];
 
             rFlySet.Put(SwFmtVertOrient( pFSPA->nYaTop,  eVertOri, eVertRel ));
@@ -2457,18 +2457,18 @@ SwFrmFmt* SwWW8ImplReader::Read_GrafLayer( long nGrafAnchorCp )
             BOOL bDone = FALSE;
             SdrObject* pOurNewObject = 0;
             BOOL bSetAttributes     = FALSE;
-            BOOL bOrgObjectWasReplace = 
-            ( 
-                (SdrInventor == pObject->GetObjInventor()) && 
-                ( 
-                    (UINT16( OBJ_GRAF ) == pObject->GetObjIdentifier()) 
-                    || (UINT16(OBJ_OLE2 ) == pObject->GetObjIdentifier()) 
+            BOOL bOrgObjectWasReplace =
+            (
+                (SdrInventor == pObject->GetObjInventor()) &&
+                (
+                    (UINT16( OBJ_GRAF ) == pObject->GetObjIdentifier())
+                    || (UINT16(OBJ_OLE2 ) == pObject->GetObjIdentifier())
                 )
             );
 
-            
+
             // Umfluss-Modus ermitteln
-            SfxItemSet aFlySet( rDoc.GetAttrPool(), 
+            SfxItemSet aFlySet( rDoc.GetAttrPool(),
                 RES_FRMATR_BEGIN, RES_FRMATR_END-1 );
             SwSurround eSurround = SURROUND_PARALLEL;
             BOOL bContour = FALSE;
@@ -2477,11 +2477,11 @@ SwFrmFmt* SwWW8ImplReader::Read_GrafLayer( long nGrafAnchorCp )
             //0 like 2, but doesn't require absolute object
             case 0: ;
             //2 wrap around absolute object
-            case 2: eSurround = SURROUND_PARALLEL;	break;	
+            case 2: eSurround = SURROUND_PARALLEL;	break;
             //1 no text next to shape
-            case 1: eSurround = SURROUND_NONE;		break;	
+            case 1: eSurround = SURROUND_NONE;		break;
             //3 wrap as if no object present
-            case 3: eSurround = SURROUND_THROUGHT;	break;	
+            case 3: eSurround = SURROUND_THROUGHT;	break;
             //4 wrap tightly around object
             case 4: ;		//Intentional fallthrough ?
             //5 wrap tightly, but allow holes
@@ -2503,13 +2503,13 @@ SwFrmFmt* SwWW8ImplReader::Read_GrafLayer( long nGrafAnchorCp )
                 switch( pF->nwrk )
                 {
                 //0 wrap both sides
-                case 0: eSurround = SURROUND_PARALLEL;	break;	
+                case 0: eSurround = SURROUND_PARALLEL;	break;
                 //1 wrap only on left
-                case 1: eSurround = SURROUND_LEFT;		break;	
+                case 1: eSurround = SURROUND_LEFT;		break;
                 //2 wrap only on right
-                case 2: eSurround = SURROUND_RIGHT;		break;	
+                case 2: eSurround = SURROUND_RIGHT;		break;
                 //3 wrap only on largest side
-                case 3: eSurround = SURROUND_IDEAL;		break;	
+                case 3: eSurround = SURROUND_IDEAL;		break;
                 }
             }
             SwFmtSurround aSur( eSurround );
@@ -2518,7 +2518,7 @@ SwFrmFmt* SwWW8ImplReader::Read_GrafLayer( long nGrafAnchorCp )
             aFlySet.Put( aSur );
 
             //If we are to be "below text" then we are not to be opaque
-            if( pF->bBelowText )	
+            if( pF->bBelowText )
                 aFlySet.Put(SvxOpaqueItem(RES_OPAQUE,FALSE));
 
             if( bOrgObjectWasReplace )
@@ -2551,7 +2551,7 @@ SwFrmFmt* SwWW8ImplReader::Read_GrafLayer( long nGrafAnchorCp )
                 }
 #endif
                 ProcessEscherAlign( pRecord, pF, aFlySet );
-                
+
                 aFlySet.Put(SwFmtFrmSize( ATT_VAR_SIZE, nWidthTw, nHeightTw));
 
                 if( pRecord )
@@ -2576,10 +2576,14 @@ SwFrmFmt* SwWW8ImplReader::Read_GrafLayer( long nGrafAnchorCp )
                     // kein GrafSet uebergeben, da nur fuer Cropping sinnvoll,
                     // was die UI derzeit (27.1.99) noch nicht kann khz.
                     pRetFrmFmt = rDoc.Insert( *pPaM, &xIPRef, &aFlySet );
+                    //JP 10.4.2001: Bug 85614 - don't remove in DTOR the
+                    //				object from	our persist
+                    SvInPlaceObjectRef xEmpty;
+                    ((SdrOle2Obj*)pObject)->SetObjRef( xEmpty );
                 }
-                else 
+                else
                 {
-                    const Graphic& rGraph = 
+                    const Graphic& rGraph =
                         ((SdrGrafObj*)pObject)->GetGraphic();
                     bSetAttributes = TRUE;
                     BOOL bDone2 = FALSE;
@@ -2623,7 +2627,7 @@ SwFrmFmt* SwWW8ImplReader::Read_GrafLayer( long nGrafAnchorCp )
                     if( pRecord )
                     {
                         MatchWrapDistancesIntoFlyFmt( pRecord, pRetFrmFmt );
-                        if( bSetAttributes ) 
+                        if( bSetAttributes )
                             SetAttributesAtGrfNode( pRecord, pRetFrmFmt, pF );
                     }
                     // mehrfaches Auftreten gleicher Grafik-Namen vermeiden
@@ -2656,7 +2660,7 @@ SwFrmFmt* SwWW8ImplReader::Read_GrafLayer( long nGrafAnchorCp )
                 {
                     if( !bHdFtFtnEdn )
                     {
-                        pMSDffManager->StoreShapeOrder(pF->nSpId, 0, 
+                        pMSDffManager->StoreShapeOrder(pF->nSpId, 0,
                             pOurNewObject, 0 );
                     }
                     // Das Kontakt-Objekt MUSS in die Draw-Page gesetzt werden,
@@ -2672,7 +2676,7 @@ SwFrmFmt* SwWW8ImplReader::Read_GrafLayer( long nGrafAnchorCp )
                 pRecord = ( aData.HasRecords() && (1 == aData.GetRecCount() ) )
                     ? aData.GetRecord( 0 ) : 0;
 
-                    
+
                 if( pF->bRcaSimple )
                 {
                     pF->nbx = nbxRelPageBorder;
@@ -2713,7 +2717,7 @@ SwFrmFmt* SwWW8ImplReader::Read_GrafLayer( long nGrafAnchorCp )
 
                 //	Hilfs-Attribute setzen, damit MA die Werte im Layout
                 //	umrechnen kann ( bugdoc:59640 )
-                
+
                 static SwRelationOrient __READONLY_DATA aRelOrientTab[] = {
                         REL_PG_PRTAREA,			// == nbxRelPgMargin
                         REL_PG_FRAME, 			// == nbxRelPageBorder
@@ -2729,7 +2733,7 @@ SwFrmFmt* SwWW8ImplReader::Read_GrafLayer( long nGrafAnchorCp )
 */
 
                 // Wer nicht will, der hat gewollt!
-                if( !(nIniFlags1 & WW8FL_NO_FLY_FOR_TXBX) ) 
+                if( !(nIniFlags1 & WW8FL_NO_FLY_FOR_TXBX) )
                 {
                     BOOL bTextThere = FALSE;
                     long nStartCpFly;
@@ -2813,7 +2817,7 @@ SwFrmFmt* SwWW8ImplReader::Read_GrafLayer( long nGrafAnchorCp )
                                 // setze Pam in den FlyFrame
                                 const SwFmtCntnt& rCntnt =
                                     pRetFrmFmt->GetCntnt();
-                                ASSERT( rCntnt.GetCntntIdx(), 
+                                ASSERT( rCntnt.GetCntntIdx(),
                                     "Kein Inhalt vorbereitet." );
                                 pPaM->GetPoint()->nNode =
                                     rCntnt.GetCntntIdx()->GetIndex() + 1;
@@ -2847,21 +2851,21 @@ SwFrmFmt* SwWW8ImplReader::Read_GrafLayer( long nGrafAnchorCp )
 
                 if ((pObject) && FmFormInventor == pObject->GetObjInventor())
                 {
-                    //#79055# This was a FormControl. This means that the 
-                    //msdffimp ole import has already converted it to the 
-                    //SdrObject that we have in pObject here, *and* has 
-                    //already inserted it as a StarWriter FlyFrm, tragically 
-                    //though it does not have its position set correctly, and 
-                    //the OCXConverter returns a uno XShape so we turn this 
-                    //back into a FlyFrm through the uno api and then set its 
+                    //#79055# This was a FormControl. This means that the
+                    //msdffimp ole import has already converted it to the
+                    //SdrObject that we have in pObject here, *and* has
+                    //already inserted it as a StarWriter FlyFrm, tragically
+                    //though it does not have its position set correctly, and
+                    //the OCXConverter returns a uno XShape so we turn this
+                    //back into a FlyFrm through the uno api and then set its
                     //correct position information.
                     //
                     //cmc
-                    uno::Reference< drawing::XShape > xRef = 
+                    uno::Reference< drawing::XShape > xRef =
                         ((SwMSDffManager*)pMSDffManager)->GetLastOCXShape();
-                    uno::Reference< beans::XPropertySet >  
+                    uno::Reference< beans::XPropertySet >
                         xPropSet( xRef, uno::UNO_QUERY );
-                    uno::Reference< lang::XUnoTunnel> xTunnel( 
+                    uno::Reference< lang::XUnoTunnel> xTunnel(
                         xPropSet, uno::UNO_QUERY);
                     SwXShape *pSwShape = 0;
                     if(xTunnel.is())
@@ -2869,7 +2873,7 @@ SwFrmFmt* SwWW8ImplReader::Read_GrafLayer( long nGrafAnchorCp )
                         pSwShape = (SwXShape*)xTunnel->getSomething(
                             SwXShape::getUnoTunnelId());
                     }
-                    pRetFrmFmt = pSwShape ? 
+                    pRetFrmFmt = pSwShape ?
                         (SwFrmFmt*)(pSwShape->GetRegisteredIn()) : 0;
                     if (pRetFrmFmt)
                     {
@@ -2922,7 +2926,7 @@ SwFrmFmt* SwWW8ImplReader::Read_GrafLayer( long nGrafAnchorCp )
                         if( pTrueObject == pRecord->pObj )
                         {
                             MatchWrapDistancesIntoFlyFmt(pRecord, pRetFrmFmt);
-                            if( bSetAttributes ) 
+                            if( bSetAttributes )
                                 SetAttributesAtGrfNode( pRecord, pRetFrmFmt, pF );
                         }
 
@@ -2976,7 +2980,7 @@ SwFrmFmt* SwWW8ImplReader::Read_GrafLayer( long nGrafAnchorCp )
                             }
                             else
                             {
-                                pSdrTextObj = 
+                                pSdrTextObj =
                                     PTR_CAST(SdrTextObj, pRecord->pObj);
                                 /*
                                     Die Frage: was tun, wenn hier FALSE
@@ -3027,7 +3031,7 @@ SwFrmFmt* SwWW8ImplReader::Read_GrafLayer( long nGrafAnchorCp )
                                         // der Drawing-Page durch ein neues
                                         // SdrGrafObj ersetzt.
 
-                                        SdrObject* pNewObj = pGroupObject ? 
+                                        SdrObject* pNewObj = pGroupObject ?
                                             pGroupObject->GetSubList()->GetObj(
                                                 nOrdNum) : pTrueObject;
                                         // Objekt in der Z-Order-Liste ersetzen
@@ -3041,12 +3045,12 @@ SwFrmFmt* SwWW8ImplReader::Read_GrafLayer( long nGrafAnchorCp )
                                     else
                                     {
                                         // Objekt aus der Z-Order-Liste loeschen
-                                        pMSDffManager->RemoveFromShapeOrder( 
+                                        pMSDffManager->RemoveFromShapeOrder(
                                             pSdrTextObj );
                                         // Objekt aus der Drawing-Page
                                         // rausnehmen
                                         if( pSdrTextObj->GetPage() )
-                                            pDrawPg->RemoveObject( 
+                                            pDrawPg->RemoveObject(
                                             pSdrTextObj->GetOrdNum() );
                                         // und FrameFormat entfernen, da durch
                                         // Grafik ersetzt (dies loescht auch
@@ -3063,13 +3067,13 @@ SwFrmFmt* SwWW8ImplReader::Read_GrafLayer( long nGrafAnchorCp )
                                         pDrawModel->GetItemPool(),
                                         SDRATTR_TEXT_LEFTDIST,
                                         SDRATTR_TEXT_LOWERDIST );
-                                    aItemSet.Put( SdrTextLeftDistItem(  
+                                    aItemSet.Put( SdrTextLeftDistItem(
                                         pRecord->nDxTextLeft ) );
-                                    aItemSet.Put( SdrTextRightDistItem( 
+                                    aItemSet.Put( SdrTextRightDistItem(
                                         pRecord->nDxTextRight  ) );
-                                    aItemSet.Put( SdrTextUpperDistItem( 
+                                    aItemSet.Put( SdrTextUpperDistItem(
                                         pRecord->nDyTextTop    ) );
-                                    aItemSet.Put( SdrTextLowerDistItem( 
+                                    aItemSet.Put( SdrTextLowerDistItem(
                                         pRecord->nDyTextBottom ) );
 //									pSdrTextObj->SetAttributes(aItemSet,FALSE);
                                     pSdrTextObj->SetItemSetAndBroadcast(
@@ -3156,11 +3160,14 @@ void SwWW8ImplReader::EmbeddedFlyFrameSizeLock(SwNodeIndex &rStart,
 
       Source Code Control System - Header
 
-      $Header: /zpool/svn/migration/cvs_rep_09_09_08/code/sw/source/filter/ww8/ww8graf.cxx,v 1.20 2001-04-11 14:34:22 cmc Exp $
+      $Header: /zpool/svn/migration/cvs_rep_09_09_08/code/sw/source/filter/ww8/ww8graf.cxx,v 1.21 2001-04-11 15:08:01 jp Exp $
 
       Source Code Control System - Update
 
       $Log: not supported by cvs2svn $
+      Revision 1.20  2001/04/11 14:34:22  cmc
+      Minor merge error fixes
+    
       Revision 1.19  2001/04/05 14:03:48  cmc
       ##640## Draw objects inside textbox import layout tweaks
     
@@ -3172,69 +3179,69 @@ void SwWW8ImplReader::EmbeddedFlyFrameSizeLock(SwNodeIndex &rStart,
     
       Revision 1.16  2001/03/27 12:01:49  cmc
       brightness, contrast, drawmode {im|ex}port, merge 0x01 and 0x08 graphics systems for escher to replace hack
-    
+
       Revision 1.15  2001/03/20 15:26:15  cmc
       ##572## accumulate escher text correctly, and clear on insertion
-    
+
       Revision 1.14  2001/03/20 12:44:03  cmc
       ##572## stop Escher Text attribute cascade and silence some warnings
-    
+
       Revision 1.13  2001/03/08 10:09:29  cmc
       Reformat unreadable code
-    
+
       Revision 1.12  2001/02/27 12:38:09  cmc
       #74920# enable SdrTextObj to FlyFrame conversion for WW6
-    
+
       Revision 1.11  2001/02/19 18:00:38  cmc
       #74188# Documented FSPA anchor values should override escher attributes when different
-    
+
       Revision 1.10  2001/02/16 15:26:50  cmc
       ##444## Background graphics/objects always infront of text
-    
+
       Revision 1.9  2001/02/07 10:13:02  cmc
       #80372# Paragraph border instead of Paragraph text border == WW edge align
-    
+
       Revision 1.8  2001/01/18 11:47:19  cmc
       #82894# ocx controls 79055 related oversight
-    
+
       Revision 1.7  2000/12/20 16:22:42  khz
       #79453# set Outliner Mode at new OutlinerParaObject (and khz says BYE !)
-    
+
       Revision 1.6  2000/12/15 15:33:06  cmc
       #79055# OCX FormControls changes
-    
+
       Revision 1.5  2000/11/23 16:18:18  sj
       #78880# the SdrTextObjects needs to know the model
-    
+
       Revision 1.4  2000/11/03 09:35:25  khz
       fault tolerant Winword parameter reading
-    
+
       Revision 1.3  2000/10/30 12:07:14  aw
       change SdrObjects to use SfxItemSet instead of SfxSetItems.
       Removed TakeAttributes() and SetAttributes(), new ItemSet
       modification methods (GetItem[Set], SetItem[Set], ClearItem,...)
-    
+
       Revision 1.2  2000/10/16 10:35:05  khz
       read extended WW9-Frame-Alignment (stored in Escher record 0xF122)
-    
+
       Revision 1.1.1.1  2000/09/18 17:14:58  hr
       initial import
-    
+
       Revision 1.93  2000/09/18 16:04:59  willem.vandorp
       OpenOffice header added.
-    
+
       Revision 1.92  2000/08/28 14:55:42  khz
       #64941# store Hd./Ft./Section info to prevent prohibited TxBx linkage
-    
+
       Revision 1.91  2000/08/24 14:39:04  khz
       #78052# don't store SwFlyDrawContact in ShapeOrder array if bHdFtFtnEdn set
-    
+
       Revision 1.90  2000/08/24 12:32:54  os
       Outliner/EditEngine changes
-    
+
       Revision 1.89  2000/08/24 10:48:52  jp
       crop export to svx
-    
+
       Revision 1.88  2000/06/26 12:59:11  os
       INetURLObject::SmartRelToAbs removed
 

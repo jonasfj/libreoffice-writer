@@ -2,9 +2,9 @@
  *
  *  $RCSfile: ww8graf2.cxx,v $
  *
- *  $Revision: 1.6 $
+ *  $Revision: 1.7 $
  *
- *  last change: $Author: cmc $ $Date: 2001-03-27 12:01:49 $
+ *  last change: $Author: jp $ $Date: 2001-04-11 15:08:02 $
  *
  *  The Contents of this file are made available subject to the terms of
  *  either of the following licenses
@@ -639,7 +639,7 @@ int SwWW8ImplReader::WW8QuickHackForMSDFF_DirectBLIPImport(SvStream& rSt,
         pProps = new DffPropSet(TRUE);
         *pDataStream >> *pProps;
     }
-        
+
     rSt.Seek(aObjHd.nRecLen+aObjHd.nFilePos+8);
     rSt >> nCode;
     if(0xF0070000 == (nCode & 0xFFFF0000))
@@ -894,11 +894,11 @@ SwFrmFmt* SwWW8ImplReader::ImportGraf( SdrTextObj* pTextObj,
         {
             // verlinkte Grafik im Escher-Objekt
             pDataStream->SeekRel( 2 );
-            
+
             SdrObject* pObject = 0;
             WW8PicDesc aPD( aPic );
             String aGrName;
-            if( !pDrawModel )	
+            if( !pDrawModel )
                 GrafikCtor();
             if (!pMSDffManager)
                 pMSDffManager = new SwMSDffManager(*this);
@@ -922,8 +922,8 @@ SwFrmFmt* SwWW8ImplReader::ImportGraf( SdrTextObj* pTextObj,
                 SfxItemSet aAttrSet( rDoc.GetAttrPool(), RES_FRMATR_BEGIN,
                     RES_FRMATR_END-1 );
 
-                SvxMSDffImportRec *pRecord = 
-                    (aData.HasRecords() && (1 == aData.GetRecCount() ) ) ? 
+                SvxMSDffImportRec *pRecord =
+                    (aData.HasRecords() && (1 == aData.GetRecCount() ) ) ?
                     aData.GetRecord( 0 ) : 0;
 
                 if( pRecord )
@@ -942,11 +942,11 @@ SwFrmFmt* SwWW8ImplReader::ImportGraf( SdrTextObj* pTextObj,
                         pRecord->nDyTextTop, pRecord->nDxTextRight,
                         pRecord->nDyTextBottom  );
 
-                    MatchSdrItemsIntoFlySet( pObject, aAttrSet, 
-                        pRecord->eLineStyle, aInnerDist, 
+                    MatchSdrItemsIntoFlySet( pObject, aAttrSet,
+                        pRecord->eLineStyle, aInnerDist,
                         !pRecord->bLastBoxInChain );
                 }
-                
+
                 // for the Grafik
                 SfxItemSet aGrSet( rDoc.GetAttrPool(), RES_GRFATR_BEGIN,
                     RES_GRFATR_END-1 );
@@ -959,9 +959,9 @@ SwFrmFmt* SwWW8ImplReader::ImportGraf( SdrTextObj* pTextObj,
 
                 SwFrmFmt* pNewFlyFmt = 0;
                 BOOL bTextObjWasGrouped = FALSE;
-                
+
                 //Groesse aus der WinWord PIC-Struktur als Grafik-Groesse nehmen
-                aAttrSet.Put( SwFmtFrmSize( ATT_FIX_SIZE, 
+                aAttrSet.Put( SwFmtFrmSize( ATT_FIX_SIZE,
                     aPD.nWidth, aPD.nHeight ) );
 
                 // ggfs. altes AttrSet uebernehmen und
@@ -986,6 +986,11 @@ SwFrmFmt* SwWW8ImplReader::ImportGraf( SdrTextObj* pTextObj,
                     // kein GrafSet uebergeben, da nur fuer Cropp sinnvoll,
                     // was die UI derzeit (27.1.99) noch nicht kann khz.
                     pNewFlyFmt = rDoc.Insert( *pPaM, &xIPRef, &aAttrSet );
+
+                    //JP 10.4.2001: Bug 85614 - don't remove in DTOR the
+                    //				object from	our persist
+                    SvInPlaceObjectRef xEmpty;
+                    ((SdrOle2Obj*)pObject)->SetObjRef( xEmpty );
                 }
                 else
                 {
@@ -1004,7 +1009,7 @@ SwFrmFmt* SwWW8ImplReader::ImportGraf( SdrTextObj* pTextObj,
                             if(    aGrfFileEntry.Exists()
                                 || (GRAPHIC_NONE == rGraph.GetType()))
                             {
-                                if( pOldFlyFmt && pTextObj && 
+                                if( pOldFlyFmt && pTextObj &&
                                     pTextObj->GetUpGroup() )
                                 {
                                     bTextObjWasGrouped = TRUE;
@@ -1032,13 +1037,13 @@ SwFrmFmt* SwWW8ImplReader::ImportGraf( SdrTextObj* pTextObj,
                         if( !bDone )
                         {
                             pNewFlyFmt= rDoc.Insert(*pPaM, aEmptyStr,
-                                aEmptyStr, &rGraph, &aAttrSet, &aGrSet );		
+                                aEmptyStr, &rGraph, &aAttrSet, &aGrSet );
                         }
 
                     }
                 }
                 // also nur, wenn wir ein *Insert* gemacht haben
-                if( pNewFlyFmt )  
+                if( pNewFlyFmt )
                 {
                     pRet = pNewFlyFmt;
                     if (pRecord)
@@ -1051,7 +1056,7 @@ SwFrmFmt* SwWW8ImplReader::ImportGraf( SdrTextObj* pTextObj,
                             pNewFlyFmt->SetName( aName );
                     }
                     // Zeiger auf neues Objekt ermitteln und
-                    // Z-Order-Liste entsprechend korrigieren 
+                    // Z-Order-Liste entsprechend korrigieren
                     // (oder Eintrag loeschen)
                     SdrObject* pOurNewObject = pNewFlyFmt->FindSdrObject();
                     if( !pOurNewObject )
@@ -1066,7 +1071,7 @@ SwFrmFmt* SwWW8ImplReader::ImportGraf( SdrTextObj* pTextObj,
                     }
                     if( pOurNewObject )
                     {
-                        pMSDffManager->ExchangeInShapeOrder( pObject, 0, 0, 
+                        pMSDffManager->ExchangeInShapeOrder( pObject, 0, 0,
                             pOurNewObject );
 
                         // Das Kontakt-Objekt MUSS in die Draw-Page gesetzt
@@ -1100,7 +1105,7 @@ SwFrmFmt* SwWW8ImplReader::ImportGraf( SdrTextObj* pTextObj,
                 if(0xF004000F == nCode)
                 {
                     int nOK;
-                    if(!(nOK = WW8QuickHackForMSDFF_DirectBLIPImport( 
+                    if(!(nOK = WW8QuickHackForMSDFF_DirectBLIPImport(
                         *pDataStream, &aPD, aGraph, aGrName) ))
                     {
                         ASSERT( !this, "Wo ist die Grafik ?" );
@@ -1108,9 +1113,9 @@ SwFrmFmt* SwWW8ImplReader::ImportGraf( SdrTextObj* pTextObj,
                     else
                     {
                         //Set position, scaling and cropping of the pictures
-                        SfxItemSet aGrfSet(rDoc.GetAttrPool(), 
+                        SfxItemSet aGrfSet(rDoc.GetAttrPool(),
                                 RES_GRFATR_BEGIN, RES_GRFATR_END-1);
-                        if ((nOK == 1) && 
+                        if ((nOK == 1) &&
                             (aPD.nCL || aPD.nCR || aPD.nCT || aPD.nCB))
                         {
                             SwCropGrf aCrop(aPD.nCL,aPD.nCR,aPD.nCT,aPD.nCB );
@@ -1120,20 +1125,20 @@ SwFrmFmt* SwWW8ImplReader::ImportGraf( SdrTextObj* pTextObj,
                         if( pOldFlyFmt )
                         {
                             pRet = MakeGrafByFlyFmt(pTextObj, *pOldFlyFmt, aPD,
-                                &aGraph, aEmptyStr, aGrName, aGrfSet, 
+                                &aGraph, aEmptyStr, aGrName, aGrfSet,
                                 bSetToBackground);
                         }
                         else
-                        {	
+                        {
                             if( pWFlyPara && pWFlyPara->bGrafApo )
-                                pRet = MakeGrafNotInCntnt( aPD, &aGraph, 
+                                pRet = MakeGrafNotInCntnt( aPD, &aGraph,
                                     aEmptyStr, aGrName, aGrfSet );
                             else
-                                pRet = MakeGrafInCntnt( aPic, aPD, &aGraph, 
+                                pRet = MakeGrafInCntnt( aPic, aPD, &aGraph,
                                     aEmptyStr, aGrName, aGrfSet );
                         }
 
-                        if ((nOK == 2) && 
+                        if ((nOK == 2) &&
                             (aPD.nCL || aPD.nCR || aPD.nCT || aPD.nCB))
                         {
                             WW8_FSPA aDummy = {0};
@@ -1237,17 +1242,20 @@ void WW8FSPAShadowToReal( WW8_FSPA_SHADOW * pFSPAS, WW8_FSPA * pFSPA )
 
       Source Code Control System - Header
 
-      $Header: /zpool/svn/migration/cvs_rep_09_09_08/code/sw/source/filter/ww8/ww8graf2.cxx,v 1.6 2001-03-27 12:01:49 cmc Exp $
+      $Header: /zpool/svn/migration/cvs_rep_09_09_08/code/sw/source/filter/ww8/ww8graf2.cxx,v 1.7 2001-04-11 15:08:02 jp Exp $
 
       Source Code Control System - Update
 
       $Log: not supported by cvs2svn $
+      Revision 1.6  2001/03/27 12:01:49  cmc
+      brightness, contrast, drawmode {im|ex}port, merge 0x01 and 0x08 graphics systems for escher to replace hack
+
       Revision 1.5  2001/02/27 10:59:05  cmc
       #84122# Missing Cropping on DirectBLIP import
-    
+
       Revision 1.4  2000/11/13 13:31:12  jp
       use new method GetStream from TempFile
-    
+
       Revision 1.3  2000/11/06 09:42:28  jp
       must changes: tempfile
 
