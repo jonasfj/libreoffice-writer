@@ -2,9 +2,9 @@
  *
  *  $RCSfile: ww8par6.cxx,v $
  *
- *  $Revision: 1.152 $
+ *  $Revision: 1.153 $
  *
- *  last change: $Author: obo $ $Date: 2004-04-27 14:15:32 $
+ *  last change: $Author: kz $ $Date: 2004-05-18 14:57:19 $
  *
  *  The Contents of this file are made available subject to the terms of
  *  either of the following licenses
@@ -405,7 +405,7 @@ bool wwSection::IsVertical() const
     return false;
 }
 
-/* 
+/*
   #113694#
   This is something of festering mapping, I'm open to better ways of doing it,
   but primarily the grid in writer is different to that in word. In writer the
@@ -539,7 +539,7 @@ bool wwSectionManager::SetCols(SwFrmFmt &rFmt, const wwSection &rSection,
         aCol.SetLineWidth(1);
     }
 
-    aCol.Init(nCols, writer_cast<USHORT>(nColSpace), 
+    aCol.Init(nCols, writer_cast<USHORT>(nColSpace),
         writer_cast<USHORT>(nNettoWidth));
 
     // sprmSFEvenlySpaced
@@ -643,18 +643,18 @@ void SwWW8ImplReader::SetPageBorder(SwFrmFmt &rFmt, const wwSection &rSection) c
         if (aBox.GetLeft())
         {
             nDist = aBox.GetDistance(BOX_LINE_LEFT);
-            aBox.SetDistance(writer_cast<USHORT>(aLR.GetLeft() - nDist), 
+            aBox.SetDistance(writer_cast<USHORT>(aLR.GetLeft() - nDist),
                 BOX_LINE_LEFT);
-            aSizeArray[WW8_LEFT] = 
+            aSizeArray[WW8_LEFT] =
                 aSizeArray[WW8_LEFT] - nDist + aBox.GetDistance(BOX_LINE_LEFT);
         }
 
         if (aBox.GetRight())
         {
             nDist = aBox.GetDistance(BOX_LINE_RIGHT);
-            aBox.SetDistance(writer_cast<USHORT>(aLR.GetRight() - nDist), 
+            aBox.SetDistance(writer_cast<USHORT>(aLR.GetRight() - nDist),
                 BOX_LINE_RIGHT);
-            aSizeArray[WW8_RIGHT] = 
+            aSizeArray[WW8_RIGHT] =
                 aSizeArray[WW8_RIGHT] - nDist + aBox.GetDistance(BOX_LINE_RIGHT);
         }
 
@@ -663,16 +663,16 @@ void SwWW8ImplReader::SetPageBorder(SwFrmFmt &rFmt, const wwSection &rSection) c
             nDist = aBox.GetDistance(BOX_LINE_TOP);
             aBox.SetDistance(writer_cast<USHORT>(aUL.GetUpper() - nDist),
                 BOX_LINE_TOP);
-            aSizeArray[WW8_TOP] = 
+            aSizeArray[WW8_TOP] =
                 aSizeArray[WW8_TOP] - nDist + aBox.GetDistance(BOX_LINE_TOP);
         }
 
         if (aBox.GetBottom())
         {
             nDist = aBox.GetDistance(BOX_LINE_BOTTOM);
-            aBox.SetDistance(writer_cast<USHORT>(aUL.GetLower() - nDist), 
+            aBox.SetDistance(writer_cast<USHORT>(aUL.GetLower() - nDist),
                 BOX_LINE_BOTTOM);
-            aSizeArray[WW8_BOT] = 
+            aSizeArray[WW8_BOT] =
                 aSizeArray[WW8_BOT] - nDist + aBox.GetDistance(BOX_LINE_BOTTOM);
         }
 
@@ -811,7 +811,7 @@ void wwSectionManager::SetPageULSpaceItems(SwFrmFmt &rFmt,
         }
     }
 
-    SvxULSpaceItem aUL(writer_cast<USHORT>(rData.nSwUp), 
+    SvxULSpaceItem aUL(writer_cast<USHORT>(rData.nSwUp),
         writer_cast<USHORT>(rData.nSwLo));
     rFmt.SetAttr(aUL);
 }
@@ -1644,7 +1644,7 @@ bool SwWW8ImplReader::SetShadow(SvxShadowItem& rShadow, const short *pSizeArray,
 {
     bool bRet = (
                 ( bVer67 ? (pbrc[WW8_RIGHT].aBits1[ 1 ] & 0x20 )
-                         : (pbrc[WW8_RIGHT].aBits2[ 1 ] & 0x20 ) ) 
+                         : (pbrc[WW8_RIGHT].aBits2[ 1 ] & 0x20 ) )
                 && (pSizeArray && pSizeArray[WW8_RIGHT])
                 );
     if (bRet)
@@ -2025,7 +2025,7 @@ WW8SwFlyPara::WW8SwFlyPara( SwPaM& rPaM, SwWW8ImplReader& rIo, WW8FlyPara& rWW,
     {
         bAutoWidth = true;
         rIo.maTracer.Log(sw::log::eAutoWidthFrame);
-        nWidth = nNettoWidth = 
+        nWidth = nNettoWidth =
             msword_cast<sal_Int16>((nPgWidth ? nPgWidth : 2268)); // 4 cm
     }
     if( nWidth <= MINFLY )
@@ -2292,7 +2292,7 @@ WW8FlySet::WW8FlySet(SwWW8ImplReader& rReader, const WW8FlyPara* pFW,
         Put(SvxULSpaceItem(pFS->nUpMgn, pFS->nLoMgn));
 #if 0
     //This is only a hack: #110876#
-    if ((rReader.bIsHeader || rReader.bIsFooter)) 
+    if ((rReader.bIsHeader || rReader.bIsFooter))
         Put(SwFmtSurround(SURROUND_THROUGHT));
     else
         Put(SwFmtSurround(pFS->eSurround));
@@ -2379,7 +2379,7 @@ void WW8FlySet::Init(const SwWW8ImplReader& rReader, const SwPaM* pPaM)
         Put(SwFmtVertOrient(0, VERT_TOP, FRAME));
 }
 
-WW8DupProperties::WW8DupProperties(SwDoc &rDoc, SwWW8FltControlStack *pStk) 
+WW8DupProperties::WW8DupProperties(SwDoc &rDoc, SwWW8FltControlStack *pStk)
     : pCtrlStck(pStk),
     aChrSet(rDoc.GetAttrPool(), RES_CHRATR_BEGIN, RES_CHRATR_END - 1 ),
     aParSet(rDoc.GetAttrPool(), RES_PARATR_BEGIN, RES_PARATR_END - 1 )
@@ -2442,7 +2442,7 @@ void SwWW8ImplReader::MoveInsideFly(const SwFrmFmt *pFlyFmt)
     aDup.Insert(*pPaM->GetPoint());
 }
 
-SwTwips SwWW8ImplReader::MoveOutsideFly(SwFrmFmt *pFlyFmt, 
+SwTwips SwWW8ImplReader::MoveOutsideFly(SwFrmFmt *pFlyFmt,
     const SwPosition &rPos, bool bTableJoin)
 {
     SwTwips nRetWidth = 0;
@@ -2481,14 +2481,14 @@ SwTwips SwWW8ImplReader::MoveOutsideFly(SwFrmFmt *pFlyFmt,
                         if (aIdx == aEnd && pNd && !pNd->GetTxt().Len())
                         {
                             rDoc.DelFullPara( *pPaM );
-    
+
                             SwTable& rTable = pTable->GetTable();
                             SwFrmFmt* pTblFmt = rTable.GetFrmFmt();
 
                             if (pTblFmt)
                             {
                                 SwFmtFrmSize aSize = pTblFmt->GetFrmSize();
-                                aSize.SetSizeType(ATT_MIN_SIZE);
+                                aSize.SetHeightSizeType(ATT_MIN_SIZE);
                                 aSize.SetHeight(MINLAY);
                                 pFlyFmt->SetAttr(aSize);
                                 pTblFmt->SetAttr(SwFmtHoriOrient(0,HORI_FULL));
@@ -2506,7 +2506,7 @@ SwTwips SwWW8ImplReader::MoveOutsideFly(SwFrmFmt *pFlyFmt,
     return nRetWidth;
 }
 
-WW8FlyPara *SwWW8ImplReader::ConstructApo(const ApoTestResults &rApo, 
+WW8FlyPara *SwWW8ImplReader::ConstructApo(const ApoTestResults &rApo,
     const WW8_TablePos *pTabPos)
 {
     WW8FlyPara *pRet = 0;
@@ -2526,7 +2526,7 @@ WW8FlyPara *SwWW8ImplReader::ConstructApo(const ApoTestResults &rApo,
     return pRet;
 }
 
-bool SwWW8ImplReader::IsDropCap() 
+bool SwWW8ImplReader::IsDropCap()
 {
     // Find the DCS (Drop Cap Specifier) for the paragraph
     // if does not exist or if the first three bits are 0
@@ -2537,19 +2537,19 @@ bool SwWW8ImplReader::IsDropCap()
         const BYTE *pDCS;
         if (bVer67)
             pDCS = pPap->HasSprm(46);
-        else      
+        else
             pDCS = pPlcxMan->GetPapPLCF()->HasSprm(0x442C);
         if(pDCS)
         {
             short nDCS = SVBT16ToShort( pDCS );
             if((nDCS | 7) != 0)
                 return true;
-        } 
+        }
     }
     return false;
 }
 
-bool SwWW8ImplReader::StartApo(const ApoTestResults &rApo, 
+bool SwWW8ImplReader::StartApo(const ApoTestResults &rApo,
     const WW8_TablePos *pTabPos)
 {
     if (!(pWFlyPara = ConstructApo(rApo, pTabPos)))
@@ -2686,7 +2686,7 @@ void SwWW8ImplReader::StopApo()
         */
         SwNodeIndex aPref(pPaM->GetPoint()->nNode, -1);
 
-        SwTwips nNewWidth = 
+        SwTwips nNewWidth =
             MoveOutsideFly(pSFlyPara->pFlyFmt, *pSFlyPara->pMainTextPos);
         if (nNewWidth)
             pSFlyPara->BoxUpWidth(nNewWidth);
@@ -2731,6 +2731,8 @@ void SwWW8ImplReader::StopApo()
         SwFlyPara reader will have already set a fallback width of the
         printable regions width, so we should reuse it. Despite the related
         problems with layout addressed with a hack in WW8FlyPara's constructor
+        #i27204# Added AutoWidth setting. Left the old CalculateFlySize in place
+        so that if the user unselects autowidth, the width doesn't max out
         */
         else if( !pWFlyPara->nSp28 )
         {
@@ -2738,6 +2740,7 @@ void SwWW8ImplReader::StopApo()
             SfxItemSet aFlySet( pSFlyPara->pFlyFmt->GetAttrSet() );
 
             SwFmtFrmSize aSize(ItemGet<SwFmtFrmSize>(aFlySet, RES_FRM_SIZE));
+            
             aFlySet.ClearItem(RES_FRM_SIZE);
 
             CalculateFlySize(aFlySet, pSFlyPara->pMainTextPos->nNode,
@@ -2746,6 +2749,7 @@ void SwWW8ImplReader::StopApo()
             nNewWidth = ItemGet<SwFmtFrmSize>(aFlySet, RES_FRM_SIZE).GetWidth();
 
             aSize.SetWidth(nNewWidth);
+            aSize.SetWidthSizeType(ATT_VAR_SIZE);
 
             pSFlyPara->pFlyFmt->SetAttr(aSize);
         }
@@ -2767,7 +2771,7 @@ void SwWW8ImplReader::StopApo()
 }
 
 // TestSameApo() beantwortet die Frage, ob es dasselbe APO oder ein neues ist
-bool SwWW8ImplReader::TestSameApo(const ApoTestResults &rApo, 
+bool SwWW8ImplReader::TestSameApo(const ApoTestResults &rApo,
     const WW8_TablePos *pTabPos)
 {
     if( !pWFlyPara )
@@ -2972,7 +2976,7 @@ void SwWW8ImplReader::Read_BoldUsw( USHORT nId, const BYTE* pData, short nLen )
         RES_CHRATR_CROSSEDOUT,      RES_CHRATR_CONTOUR,
         RES_CHRATR_SHADOWED,        RES_CHRATR_CASEMAP,
         RES_CHRATR_CASEMAP,         RES_CHRATR_HIDDEN,
-        
+
         RES_CHRATR_CROSSEDOUT,
 
         RES_CHRATR_CJK_WEIGHT,      RES_CHRATR_CJK_POSTURE
