@@ -2,9 +2,9 @@
  *
  *  $RCSfile: pview.cxx,v $
  *
- *  $Revision: 1.5 $
+ *  $Revision: 1.6 $
  *
- *  last change: $Author: obo $ $Date: 2000-11-09 10:14:21 $
+ *  last change: $Author: os $ $Date: 2001-05-10 08:48:50 $
  *
  *  The Contents of this file are made available subject to the terms of
  *  either of the following licenses
@@ -59,7 +59,7 @@
  *
  ************************************************************************/
 
- 
+
 #ifdef PRECOMPILED
 #include "ui_pch.hxx"
 #endif
@@ -156,6 +156,7 @@
 #endif
 #include "wrtsh.hxx"
 #include "docsh.hxx"
+#include "doc.hxx"
 #include "cmdid.h"
 #include "viewopt.hxx"
 #include "globals.hrc"
@@ -2002,7 +2003,7 @@ USHORT  SwPagePreView::Print( SfxProgress &rProgress, PrintDialog *pDlg )
     SwPrtOptions aOpts( pObjShell->GetTitle(0) );
 
     BOOL bPrtPros;
-    ::MakeOptions( pDlg, aOpts, &bPrtPros, FALSE, GetPrinter() );
+    ::MakeOptions( pDlg, aOpts, &bPrtPros, FALSE, GetPrinter(), GetDocShell()->GetDoc()->GetPrintData() );
 
     if( bNormalPrint )
     {
@@ -2220,15 +2221,18 @@ BOOL SwPagePreView::HandleWheelCommands( const CommandEvent& rCEvt )
 /*************************************************************************
 
       $Log: not supported by cvs2svn $
+      Revision 1.5  2000/11/09 10:14:21  obo
+      Without string include
+
       Revision 1.4  2000/11/07 13:09:54  hjs
       use min/max from stl
-    
+
       Revision 1.3  2000/10/25 12:05:50  jp
       Spellchecker/Hyphenator are not longer member of the shells
-    
+
       Revision 1.2  2000/09/28 15:24:06  os
       use of configuration service in view options
-    
+
       Revision 1.1.1.1  2000/09/18 17:14:48  hr
       initial import
 
