@@ -2,9 +2,9 @@
  *
  *  $RCSfile: undobj.hxx,v $
  *
- *  $Revision: 1.14 $
+ *  $Revision: 1.15 $
  *
- *  last change: $Author: rt $ $Date: 2004-09-20 12:35:05 $
+ *  last change: $Author: rt $ $Date: 2004-09-20 15:13:59 $
  *
  *  The Contents of this file are made available subject to the terms of
  *  either of the following licenses
@@ -188,7 +188,7 @@ protected:
     static BOOL CanRedlineGroup( SwRedlineSaveDatas& rCurr,
                                 const SwRedlineSaveDatas& rCheck,
                                 BOOL bCurrIsEnd );
-    
+
     // #111827#
     /**
        Returns the rewriter for this object.
@@ -467,7 +467,7 @@ public:
     // #111827#
     /**
        Returns rewriter for this undo object.
-       
+
        The rewriter consists of the following rule:
 
            $1 -> '<deleted text>'
@@ -680,6 +680,7 @@ struct _UndoFmtAttr : public SwClient
 
 class SwUndoFmtColl : public SwUndo, private SwUndRng
 {
+    String aFmtName;
     SwHistory* pHistory;
     SwFmtColl* pFmtColl;
 public:
@@ -694,14 +695,14 @@ public:
        Returns the rewriter for this undo object.
 
        The rewriter contains one rule:
-       
+
            $1 -> <name of format collection>
 
        <name of format collection> is the name of the format
        collection that is applied by the action recorded by this undo
        object.
 
-       @return the rewriter for this undo object 
+       @return the rewriter for this undo object
     */
     virtual SwRewriter GetRewriter() const;
 
@@ -1271,7 +1272,7 @@ public:
     // #111827#
     /**
        Returns the rewriter of this undo object.
-       
+
        If this undo object represents several replacements the
        rewriter contains the following rules:
 
@@ -1861,7 +1862,7 @@ const int nUndoStringLength = 20;
 
    If rStr has more than aLength characters the following algorithm
    generates the shortened string:
-   
+
        frontLength = (aLength - length(rFillStr)) / 2
        rearLength = aLength - length(rFillStr) - frontLength
        shortenedString = concat(<first frontLength characters of rStr,
