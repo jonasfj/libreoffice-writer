@@ -2,9 +2,9 @@
  *
  *  $RCSfile: slotadd.cxx,v $
  *
- *  $Revision: 1.4 $
+ *  $Revision: 1.5 $
  *
- *  last change: $Author: tbe $ $Date: 2000-11-10 15:46:52 $
+ *  last change: $Author: jp $ $Date: 2000-12-02 15:23:54 $
  *
  *  The Contents of this file are made available subject to the terms of
  *  either of the following licenses
@@ -272,7 +272,9 @@
 #ifndef _SVX_XFTSFIT_HXX //autogen
 #include <svx/xftsfit.hxx>
 #endif
-
+#ifndef _SVX_GRAFCTRL_HXX
+#include <svx/grafctrl.hxx>
+#endif
 
 #ifndef _FMTORNT_HXX //autogen
 #include <fmtornt.hxx>
@@ -318,24 +320,27 @@
 
 /*-------------------------------------------------------------------------
     $Log: not supported by cvs2svn $
+    Revision 1.4  2000/11/10 15:46:52  tbe
+    removed outcommented basctl include file idetemp.hxx
+
     Revision 1.3  2000/10/31 16:06:37  hr
     #65293#: includes
-    
+
     Revision 1.2  2000/10/23 10:51:17  tbe
     idetemp.hxx include removed
-    
+
     Revision 1.1.1.1  2000/09/18 17:14:47  hr
     initial import
-    
+
     Revision 1.36  2000/09/18 16:06:05  willem.vandorp
     OpenOffice header added.
-    
+
     Revision 1.35  2000/09/04 11:44:07  tbe
     basicide, isetbrw, si, vcdlged moved from svx to basctl
-    
+
     Revision 1.34  2000/08/02 08:04:34  jp
     changes for graphic attributes
-    
+
     Revision 1.33  2000/07/31 19:25:39  jp
     new attributes for CJK/CTL and graphic
 
