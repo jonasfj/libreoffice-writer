@@ -2,9 +2,9 @@
  *
  *  $RCSfile: accdoc.cxx,v $
  *
- *  $Revision: 1.24 $
+ *  $Revision: 1.25 $
  *
- *  last change: $Author: hr $ $Date: 2004-09-08 17:41:25 $
+ *  last change: $Author: vg $ $Date: 2004-12-23 10:01:37 $
  *
  *  The Contents of this file are made available subject to the terms of
  *  either of the following licenses
@@ -59,7 +59,6 @@
  *
  ************************************************************************/
 
-
 #ifndef _SV_WINDOW_HXX
 #include <vcl/window.hxx>
 #endif
@@ -85,7 +84,7 @@
 #ifndef _UTL_ACCESSIBLESTATESETHELPER_HXX_
 #include <unotools/accessiblestatesethelper.hxx>
 #endif
-#ifndef _LINK_HXX 
+#ifndef _LINK_HXX
 #include <tools/link.hxx>
 #endif
 #ifndef _SFXVIEWSH_HXX //autogen
@@ -142,7 +141,7 @@ using ::com::sun::star::lang::IndexOutOfBoundsException;
 //
 // SwAccessibleDocumentBase: base class for SwAccessibleDocument and
 // SwAccessiblePreview
-// 
+//
 
 SwAccessibleDocumentBase::SwAccessibleDocumentBase ( SwAccessibleMap *pMap ) :
     SwAccessibleContext( pMap, AccessibleRole::DOCUMENT,
@@ -218,13 +217,13 @@ sal_Int32 SAL_CALL SwAccessibleDocumentBase::getAccessibleChildCount( void )
     return nChildren;
 }
 
-Reference< XAccessible> SAL_CALL 
+Reference< XAccessible> SAL_CALL
     SwAccessibleDocumentBase::getAccessibleChild( long nIndex )
         throw (::com::sun::star::uno::RuntimeException,
                 ::com::sun::star::lang::IndexOutOfBoundsException)
 {
     vos::OGuard aGuard(Application::GetSolarMutex());
-    
+
     if( pChildWin  )
     {
         CHECK_FOR_DEFUNC( XAccessibleContext )
@@ -292,7 +291,7 @@ awt::Point SAL_CALL SwAccessibleDocumentBase::getLocation()
 
     Point aPixPos( pWin->GetWindowExtentsRelative( pWin->GetAccessibleParentWindow() ).TopLeft() );
     awt::Point aLoc( aPixPos.X(), aPixPos.Y() );
-                         
+
     return aLoc;
 }
 
@@ -362,7 +361,7 @@ Reference< XAccessible > SAL_CALL SwAccessibleDocumentBase::getAccessibleAtPoint
         if( pChildWin->GetWindowExtentsRelative( pWin ).IsInside( aPixPoint ) )
             return pChildWin->GetAccessible();
     }
-    
+
     return SwAccessibleContext::getAccessibleAtPoint( aPoint );
 }
 
@@ -393,7 +392,7 @@ SwAccessibleDocument::SwAccessibleDocument ( SwAccessibleMap *pMap ) :
         for( sal_uInt16 i=0; i < nCount; i++ )
         {
             Window *pChildWin = pWin->GetChild( i );
-            if( pChildWin && 
+            if( pChildWin &&
                 AccessibleRole::EMBEDDED_OBJECT == pChildWin->GetAccessibleRole() )
                 AddChild( pChildWin, sal_False );
         }
@@ -469,9 +468,9 @@ sal_Bool SAL_CALL SwAccessibleDocument::supportsService(
         const ::rtl::OUString& sTestServiceName)
     throw (::com::sun::star::uno::RuntimeException)
 {
-    return sTestServiceName.equalsAsciiL( sServiceName, 
+    return sTestServiceName.equalsAsciiL( sServiceName,
                                           sizeof(sServiceName)-1 ) ||
-           sTestServiceName.equalsAsciiL( sAccessibleServiceName, 
+           sTestServiceName.equalsAsciiL( sAccessibleServiceName,
                                              sizeof(sAccessibleServiceName)-1 );
 }
 
@@ -487,8 +486,8 @@ Sequence< OUString > SAL_CALL SwAccessibleDocument::getSupportedServiceNames()
 
 //=====  XInterface  ======================================================
 
-Any SwAccessibleDocument::queryInterface( 
-    const Type& rType ) 
+Any SwAccessibleDocument::queryInterface(
+    const Type& rType )
     throw ( RuntimeException )
 {
     Any aRet;
@@ -516,7 +515,7 @@ Sequence< Type > SAL_CALL SwAccessibleDocument::getTypes() throw(RuntimeExceptio
     return aTypes;
 }
 
-Sequence< sal_Int8 > SAL_CALL SwAccessibleDocument::getImplementationId() 
+Sequence< sal_Int8 > SAL_CALL SwAccessibleDocument::getImplementationId()
         throw(RuntimeException)
 {
     vos::OGuard aGuard(Application::GetSolarMutex());
@@ -532,52 +531,53 @@ Sequence< sal_Int8 > SAL_CALL SwAccessibleDocument::getImplementationId()
 
 //=====  XAccessibleSelection  ============================================
 
-void SwAccessibleDocument::selectAccessibleChild( 
-    sal_Int32 nChildIndex ) 
-    throw ( IndexOutOfBoundsException, 
+void SwAccessibleDocument::selectAccessibleChild(
+    sal_Int32 nChildIndex )
+    throw ( IndexOutOfBoundsException,
             RuntimeException )
 {
     aSelectionHelper.selectAccessibleChild(nChildIndex);
 }
 
-sal_Bool SwAccessibleDocument::isAccessibleChildSelected( 
-    sal_Int32 nChildIndex ) 
-    throw ( IndexOutOfBoundsException, 
+sal_Bool SwAccessibleDocument::isAccessibleChildSelected(
+    sal_Int32 nChildIndex )
+    throw ( IndexOutOfBoundsException,
             RuntimeException )
 {
     return aSelectionHelper.isAccessibleChildSelected(nChildIndex);
 }
 
-void SwAccessibleDocument::clearAccessibleSelection(  ) 
+void SwAccessibleDocument::clearAccessibleSelection(  )
     throw ( RuntimeException )
 {
     aSelectionHelper.clearAccessibleSelection();
 }
 
-void SwAccessibleDocument::selectAllAccessibleChildren(  ) 
+void SwAccessibleDocument::selectAllAccessibleChildren(  )
     throw ( RuntimeException )
 {
     aSelectionHelper.selectAllAccessibleChildren();
 }
 
-sal_Int32 SwAccessibleDocument::getSelectedAccessibleChildCount(  ) 
+sal_Int32 SwAccessibleDocument::getSelectedAccessibleChildCount(  )
     throw ( RuntimeException )
 {
     return aSelectionHelper.getSelectedAccessibleChildCount();
 }
 
-Reference<XAccessible> SwAccessibleDocument::getSelectedAccessibleChild( 
-    sal_Int32 nSelectedChildIndex ) 
-    throw ( IndexOutOfBoundsException, 
+Reference<XAccessible> SwAccessibleDocument::getSelectedAccessibleChild(
+    sal_Int32 nSelectedChildIndex )
+    throw ( IndexOutOfBoundsException,
             RuntimeException)
 {
     return aSelectionHelper.getSelectedAccessibleChild(nSelectedChildIndex);
 }
 
-void SwAccessibleDocument::deselectAccessibleChild( 
-    sal_Int32 nSelectedChildIndex ) 
-    throw ( IndexOutOfBoundsException, 
+// --> OD 2004-11-16 #111714# - index has to be treated as global child index.
+void SwAccessibleDocument::deselectAccessibleChild(
+    sal_Int32 nChildIndex )
+    throw ( IndexOutOfBoundsException,
             RuntimeException )
 {
-    aSelectionHelper.deselectAccessibleChild(nSelectedChildIndex);
+    aSelectionHelper.deselectAccessibleChild( nChildIndex );
 }
