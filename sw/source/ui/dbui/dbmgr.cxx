@@ -2,9 +2,9 @@
  *
  *  $RCSfile: dbmgr.cxx,v $
  *
- *  $Revision: 1.56 $
+ *  $Revision: 1.57 $
  *
- *  last change: $Author: oj $ $Date: 2002-08-21 12:23:43 $
+ *  last change: $Author: os $ $Date: 2002-09-03 06:28:09 $
  *
  *  The Contents of this file are made available subject to the terms of
  *  either of the following licenses
@@ -327,7 +327,7 @@ const sal_Char cActiveConnection[] = "ActiveConnection";
 // -----------------------------------------------------------------------------
 namespace
 {
-    
+
 }
 // -----------------------------------------------------------------------------
 
@@ -1824,8 +1824,16 @@ BOOL SwNewDBMgr::OpenDataSource(const String& rDataSource, const String& rTableO
         try
         {
             Reference< sdbc::XDatabaseMetaData >  xMetaData = pFound->xConnection->getMetaData();
-            pFound->bScrollable = xMetaData
+            try
+            {
+                pFound->bScrollable = xMetaData
                         ->supportsResultSetType((sal_Int32)ResultSetType::SCROLL_INSENSITIVE);
+            }
+            catch(Exception&)
+            {
+                //#98373# DB driver may not be ODBC 3.0 compliant
+                pFound->bScrollable = TRUE;
+            }
             pFound->xStatement = pFound->xConnection->createStatement();
             rtl::OUString aQuoteChar = xMetaData->getIdentifierQuoteString();
             rtl::OUString sStatement(C2U("SELECT * FROM "));
@@ -2042,7 +2050,7 @@ void SwNewDBMgr::ExecuteFormLetter(	SwWrtShell& rSh,
         return ;
     rtl::OUString sDataSource, sDataTableOrQuery;
     Sequence<Any> aSelection;
-    
+
     sal_Int32 nSelectionPos = 0;
     sal_Int32 nResultSetIdx = -1;
     sal_Int16 nCmdType = CommandType::TABLE;
@@ -2217,7 +2225,7 @@ Reference<XResultSet> SwNewDBMgr::createCursor(const ::rtl::OUString& _sDataSour
                 xRowSetPropSet->setPropertyValue(C2U("CommandType"), makeAny(_nCommandType));
 
                 Reference< XCompletedExecution > xRowSet(xInstance, UNO_QUERY);
-                
+
                 if ( xRowSet.is() )
                 {
                     Reference< XInteractionHandler > xHandler(xMgr->createInstance(C2U("com.sun.star.sdb.InteractionHandler")), UNO_QUERY);
