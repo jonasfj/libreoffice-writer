@@ -2,9 +2,9 @@
  *
  *  $RCSfile: tablemgr.cxx,v $
  *
- *  $Revision: 1.1.1.1 $
+ *  $Revision: 1.2 $
  *
- *  last change: $Author: hr $ $Date: 2000-09-18 17:14:48 $
+ *  last change: $Author: jp $ $Date: 2001-09-26 10:18:31 $
  *
  *  The Contents of this file are made available subject to the terms of
  *  either of the following licenses
@@ -261,14 +261,10 @@ void SwTableFUNC::InsertChart( SchMemChart& rData, const SfxItemSet *pSet )
     pSh->SplitNode();
 
     //Jetzt das CharObject einfuegen.
-        //Wer das nicht versteht ist selber schuld ;-)
+    //Wer das nicht versteht ist selber schuld ;-)
     SvStorageRef aStor = new SvStorage( aEmptyStr );
-    SvInPlaceObjectRef aIPObj;
-#ifndef SO3
-    aIPObj = &SvInPlaceObject::ClassFactory()->CreateAndInit( *SCH_MOD()->pSchChartDocShellFactory, aStor );
-#else
-    aIPObj = &((SvFactory*)SvInPlaceObject::ClassFactory())->CreateAndInit( *SCH_MOD()->pSchChartDocShellFactory, aStor );
-#endif
+    SvInPlaceObjectRef aIPObj( &((SvFactory*)SvInPlaceObject::ClassFactory())
+            ->CreateAndInit( *SCH_MOD()->pSchChartDocShellFactory, aStor ));
     if ( aIPObj.Is() )
     {
         pSh->InsertOle( aIPObj );
@@ -345,15 +341,18 @@ int SwTableFUNC::GetRightSeparator(int nNum) const
 /*------------------------------------------------------------------------
 
     $Log: not supported by cvs2svn $
+    Revision 1.1.1.1  2000/09/18 17:14:48  hr
+    initial import
+
     Revision 1.120  2000/09/18 16:06:09  willem.vandorp
     OpenOffice header added.
-    
+
     Revision 1.119  2000/08/29 14:01:23  ama
     New: Negative margins
-    
+
     Revision 1.118  2000/04/26 14:59:03  os
     GetName() returns const String&
-    
+
     Revision 1.117  2000/03/09 21:54:38  jp
     Changes: SchMemChart in new headerfile
 
