@@ -2,9 +2,9 @@
  *
  *  $RCSfile: rtfatr.cxx,v $
  *
- *  $Revision: 1.47 $
+ *  $Revision: 1.48 $
  *
- *  last change: $Author: rt $ $Date: 2004-05-03 13:49:59 $
+ *  last change: $Author: kz $ $Date: 2004-05-18 14:55:00 $
  *
  *  The Contents of this file are made available subject to the terms of
  *  either of the following licenses
@@ -885,7 +885,7 @@ RTFEndPosLst::RTFEndPosLst(SwRTFWriter& rWriter, const SwTxtNode& rNd,
     {
         if (nSttPos != aI->mnEndPos)
         {
-            SfxPoolItem* pChg = new SfxUInt32Item(RES_FLTR_SCRIPTTYPE, 
+            SfxPoolItem* pChg = new SfxUInt32Item(RES_FLTR_SCRIPTTYPE,
                 (sal_uInt32(aI->mnScript) << 16) | static_cast<sal_uInt32>(aI->mbRTL));
             Insert(*pChg, nSttPos, aI->mnEndPos);
             nSttPos = aI->mnEndPos;
@@ -1025,7 +1025,7 @@ void RTFEndPosLst::OutFontAttrs(USHORT nScript, bool bRTL)
         rWrt.Strm() << ' ';
         rWrt.Strm() << sRTF_LTRCH;
     }
- 
+
     // size/weight/posture optional
     const USHORT* pIdArr = 0;
     ByteString sOut;
@@ -1618,9 +1618,9 @@ bool IsEMF(const sal_uInt8 *pGraphicAry, unsigned long nSize)
     {
         // check the magic number
         if (
-             (pGraphicAry[0x28] == 0x20 ) && (pGraphicAry[0x29] == 0x45) && 
+             (pGraphicAry[0x28] == 0x20 ) && (pGraphicAry[0x29] == 0x45) &&
              (pGraphicAry[0x2a] == 0x4d ) && (pGraphicAry[0x2b] == 0x46)
-           )	
+           )
         {
             //emf detected
             return true;
@@ -1634,7 +1634,7 @@ bool StripMetafileHeader(const sal_uInt8 *&rpGraphicAry, unsigned long &rSize)
     if (rpGraphicAry && (rSize > 0x22))
     {
         if (
-             (rpGraphicAry[0] == 0xd7) && (rpGraphicAry[1] == 0xcd) && 
+             (rpGraphicAry[0] == 0xd7) && (rpGraphicAry[1] == 0xcd) &&
              (rpGraphicAry[2] == 0xc6) && (rpGraphicAry[3] == 0x9a)
            )
         {	// we have to get rid of the metafileheader
@@ -1647,7 +1647,7 @@ bool StripMetafileHeader(const sal_uInt8 *&rpGraphicAry, unsigned long &rSize)
 }
 
 void ExportPICT(const Size &rOrig, const Size &rRendered, const Size &rMapped,
-    const SwCropGrf &rCr, const char *pBLIPType, const sal_uInt8 *pGraphicAry, 
+    const SwCropGrf &rCr, const char *pBLIPType, const sal_uInt8 *pGraphicAry,
     unsigned long nSize, SwRTFWriter &rWrt)
 {
     bool bIsWMF = pBLIPType == sRTF_WMETAFILE ? true : false;
@@ -1684,7 +1684,7 @@ void ExportPICT(const Size &rOrig, const Size &rRendered, const Size &rMapped,
         rWrt.OutLong(rOrig.Width());
         rWrt.Strm() << sRTF_PICHGOAL;
         rWrt.OutLong(rOrig.Height());
-      
+
         rWrt.Strm() << pBLIPType;
         if (bIsWMF)
         {
@@ -1742,7 +1742,7 @@ static Writer& OutRTF_SwGrfNode(Writer& rWrt, SwCntntNode & rNode)
             case GFX_LINK_TYPE_NATIVE_PNG:
                 pBLIPType = sRTF_PNGBLIP;
             case GFX_LINK_TYPE_NATIVE_WMF:
-                pBLIPType = 
+                pBLIPType =
                     IsEMF(pGraphicAry, nSize) ? sRTF_EMFBLIP : sRTF_WMETAFILE;
                 break;
             default:
@@ -1753,10 +1753,10 @@ static Writer& OutRTF_SwGrfNode(Writer& rWrt, SwCntntNode & rNode)
     GraphicType eGraphicType = aGraphic.GetType();
     if (!pGraphicAry)
     {
-        if (ERRCODE_NONE == GraphicConverter::Export(aStream, aGraphic, 
+        if (ERRCODE_NONE == GraphicConverter::Export(aStream, aGraphic,
             (eGraphicType == GRAPHIC_BITMAP) ? CVT_PNG : CVT_WMF))
         {
-            pBLIPType = (eGraphicType == GRAPHIC_BITMAP) ? 
+            pBLIPType = (eGraphicType == GRAPHIC_BITMAP) ?
                 sRTF_PNGBLIP : sRTF_WMETAFILE;
             aStream.Seek(STREAM_SEEK_TO_END);
             nSize = aStream.Tell();
@@ -1779,7 +1779,7 @@ static Writer& OutRTF_SwGrfNode(Writer& rWrt, SwCntntNode & rNode)
     }
 
     /*
-     If the graphic is not of type WMF then we will have to store two 
+     If the graphic is not of type WMF then we will have to store two
      graphics, one in the native format wrapped in shppict, and the other in
      the wmf format wrapped in nonshppict, so as to keep wordpad happy. If its
      a wmf already then we don't need any such wrapping
@@ -1801,7 +1801,7 @@ static Writer& OutRTF_SwGrfNode(Writer& rWrt, SwCntntNode & rNode)
         nSize = aStream.Tell();
         pGraphicAry = (sal_uInt8*)aStream.GetData();
 
-        ExportPICT(aSize, aRendered, aMapped, rCr, pBLIPType, pGraphicAry, nSize, 
+        ExportPICT(aSize, aRendered, aMapped, rCr, pBLIPType, pGraphicAry, nSize,
             rRTFWrt);
 
         rRTFWrt.Strm() << '}';
@@ -2121,8 +2121,8 @@ Writer& OutRTF_SwTblNode(Writer& rWrt, const SwTableNode & rNode)
         else
         {
             const SwFmtFrmSize& rLSz = pLine->GetFrmFmt()->GetFrmSize();
-            if( ATT_VAR_SIZE != rLSz.GetSizeType() && rLSz.GetHeight() )
-                nHeight = ATT_MIN_SIZE == rLSz.GetSizeType()
+            if( ATT_VAR_SIZE != rLSz.GetHeightSizeType() && rLSz.GetHeight() )
+                nHeight = ATT_MIN_SIZE == rLSz.GetHeightSizeType()
                                                 ? rLSz.GetHeight()
                                                 : -rLSz.GetHeight();
         }
@@ -3300,7 +3300,7 @@ static Writer& OutRTF_SwFrmSize( Writer& rWrt, const SfxPoolItem& rHt )
         if( rSz.GetHeight() )
         {
             long nH = rSz.GetHeight();
-            if( ATT_FIX_SIZE == rSz.GetSizeType() )
+            if( ATT_FIX_SIZE == rSz.GetHeightSizeType() )
                 nH = -nH;
             rWrt.Strm() << sRTF_ABSH;
             rWrt.OutLong( nH );
@@ -3414,7 +3414,7 @@ static Writer& OutRTF_SwFmtULSpace( Writer& rWrt, const SfxPoolItem& rHt )
                     else
                     {
                         const SwFmtFrmSize& rSz = pHdr->GetHeaderFmt()->GetFrmSize();
-                        if( ATT_VAR_SIZE != rSz.GetSizeType() )
+                        if( ATT_VAR_SIZE != rSz.GetHeightSizeType() )
                             nValue += rSz.GetHeight();
                         else
                             nValue += 274;		// defaulten fuer 12pt Schrift
@@ -3452,7 +3452,7 @@ static Writer& OutRTF_SwFmtULSpace( Writer& rWrt, const SfxPoolItem& rHt )
                     else
                     {
                         const SwFmtFrmSize& rSz = pFtr->GetFooterFmt()->GetFrmSize();
-                        if( ATT_VAR_SIZE != rSz.GetSizeType() )
+                        if( ATT_VAR_SIZE != rSz.GetHeightSizeType() )
                             nValue += rSz.GetHeight();
                         else
                             nValue += 274;		// defaulten fuer 12pt Schrift
@@ -3518,7 +3518,7 @@ Writer& OutRTF_SwFmtHeader( Writer& rWrt, const SfxPoolItem& rHt )
             rWrt.OutLong( rUL.GetLower() ) << pHdNm << "xl";
             rWrt.OutLong( rLR.GetLeft() ) << pHdNm << "xr";
             rWrt.OutLong( rLR.GetRight() )  << pHdNm << "yh";
-            rWrt.OutLong( ATT_FIX_SIZE  == rSz.GetSizeType()
+            rWrt.OutLong( ATT_FIX_SIZE  == rSz.GetHeightSizeType()
                             ? -rSz.GetHeight()
                             : rSz.GetHeight() ) << '}';
         }
@@ -3598,7 +3598,7 @@ Writer& OutRTF_SwFmtFooter( Writer& rWrt, const SfxPoolItem& rHt )
             rWrt.OutLong( rUL.GetUpper() ) << pFtNm << "xl";
             rWrt.OutLong( rLR.GetLeft() ) << pFtNm << "xr";
             rWrt.OutLong( rLR.GetRight() )  << pFtNm << "yh";
-            rWrt.OutLong( ATT_FIX_SIZE  == rSz.GetSizeType()
+            rWrt.OutLong( ATT_FIX_SIZE  == rSz.GetHeightSizeType()
                             ? -rSz.GetHeight()
                             : rSz.GetHeight() )  << '}';
         }
