@@ -2,9 +2,9 @@
  *
  *  $RCSfile: unoobj.hxx,v $
  *
- *  $Revision: 1.35 $
+ *  $Revision: 1.36 $
  *
- *  last change: $Author: obo $ $Date: 2004-08-12 13:15:54 $
+ *  last change: $Author: rt $ $Date: 2005-01-11 12:17:48 $
  *
  *  The Contents of this file are made available subject to the terms of
  *  either of the following licenses
@@ -582,7 +582,7 @@ public:
 
     static void         SetCrsrAttr(SwPaM& rPam, const SfxItemSet& rSet, USHORT nAttrMode );
     static void			GetCrsrAttr(SwPaM& rPam, SfxItemSet& rSet, BOOL bCurrentAttrOnly = FALSE);
-    static void 		getTextFromPam(SwPaM& aCrsr, rtl::OUString& rBuffer);
+    static void         getTextFromPam(SwPaM& aCrsr, rtl::OUString& rBuffer);
     static SwFmtColl* 	GetCurTxtFmtColl(SwPaM& rPam, BOOL bConditional);
 
     static void 		SelectPam(SwPaM& rCrsr, sal_Bool bExpand);
