@@ -2,9 +2,9 @@
  *
  *  $RCSfile: crstrvl.cxx,v $
  *
- *  $Revision: 1.12 $
+ *  $Revision: 1.13 $
  *
- *  last change: $Author: obo $ $Date: 2004-08-12 12:13:16 $
+ *  last change: $Author: hr $ $Date: 2004-09-08 16:09:05 $
  *
  *  The Contents of this file are made available subject to the terms of
  *  either of the following licenses
@@ -335,7 +335,7 @@ FASTBOOL SwCrsrShell::SetCrsrInHdFt( USHORT nDescNo, FASTBOOL bInHeader )
         const SwPageFrm* pPage = GetCurrFrm()->FindPageFrm();
         if( pPage )
             for( USHORT i = 0; i < pDoc->GetPageDescCnt(); ++i )
-                if( pPage->GetPageDesc() == 
+                if( pPage->GetPageDesc() ==
                     &const_cast<const SwDoc *>(pDoc)->GetPageDesc( i ) )
                 {
                     nDescNo = i;
@@ -1090,7 +1090,7 @@ FASTBOOL SwCrsrShell::GotoRefMark( const String& rRefMark, USHORT nSubType,
 FASTBOOL SwCrsrShell::IsPageAtPos( const Point &rPt ) const
 {
     if( GetLayout() )
-        return GetLayout()->IsPageAtPos( rPt );
+        return 0 != GetLayout()->GetPageAtPos( rPt );
     return FALSE;
 }
 
@@ -1132,10 +1132,10 @@ FASTBOOL SwCrsrShell::GetContentAtPos( const Point& rPt,
             }
         }
         // #i23726#
-        else if( pTxtNd && 
+        else if( pTxtNd &&
                  SwContentAtPos::SW_NUMLABEL & rCntntAtPos.eCntntAtPos)
         {
-            bRet = aTmpState.bInNumPortion;                
+            bRet = aTmpState.bInNumPortion;
             rCntntAtPos.aFnd.pNode = pTxtNd;
 
             Size aSizeLogic(aTmpState.nInNumPostionOffset, 0);
