@@ -2,9 +2,9 @@
  *
  *  $RCSfile: insfnote.cxx,v $
  *
- *  $Revision: 1.1.1.1 $
+ *  $Revision: 1.2 $
  *
- *  last change: $Author: hr $ $Date: 2000-09-18 17:14:45 $
+ *  last change: $Author: fme $ $Date: 2001-06-01 11:04:53 $
  *
  *  The Contents of this file are made available subject to the terms of
  *  either of the following licenses
@@ -284,10 +284,10 @@ SwInsFootNoteDlg::SwInsFootNoteDlg(Window *pParent, SwWrtShell &rShell, BOOL bEd
     aNumberCharBtn	(this,SW_RES(RB_NUMBER_CHAR)),
     aNumberCharEdit	(this,SW_RES(ED_NUMBER_CHAR)),
     aNumberExtChar	(this,SW_RES(BT_NUMBER_CHAR)),
-    aNumberFrm		(this,SW_RES(GB_NUMBER)),
+    aNumberFL      (this,SW_RES(FL_NUMBER)),
     aFtnBtn			(this,SW_RES(RB_TYPE_FTN)),
     aEndNoteBtn		(this,SW_RES(RB_TYPE_ENDNOTE)),
-    aTypeBox		(this,SW_RES(GB_TYPE)),
+    aTypeFL        (this,SW_RES(FL_TYPE)),
 
     aOkBtn			(this,SW_RES(BT_OK)),
     aCancelBtn		(this,SW_RES(BT_CANCEL)),
@@ -400,12 +400,15 @@ void SwInsFootNoteDlg::Init()
 /*------------------------------------------------------------------------
 
     $Log: not supported by cvs2svn $
+    Revision 1.1.1.1  2000/09/18 17:14:45  hr
+    initial import
+
     Revision 1.46  2000/09/18 16:05:57  willem.vandorp
     OpenOffice header added.
-    
+
     Revision 1.45  2000/05/10 11:53:43  os
     Basic API removed
-    
+
     Revision 1.44  2000/02/11 14:56:21  hr
     #70473# changes for unicode ( patched by automated patchtool )
 
