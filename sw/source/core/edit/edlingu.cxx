@@ -2,9 +2,9 @@
  *
  *  $RCSfile: edlingu.cxx,v $
  *
- *  $Revision: 1.9 $
+ *  $Revision: 1.10 $
  *
- *  last change: $Author: hr $ $Date: 2003-09-29 15:05:10 $
+ *  last change: $Author: hr $ $Date: 2004-02-03 16:26:27 $
  *
  *  The Contents of this file are made available subject to the terms of
  *  either of the following licenses
@@ -69,9 +69,6 @@
 #include <hintids.hxx>
 #endif
 
-#ifndef _OFF_APP_HXX //autogen wg. OFF_APP
-#include <offmgr/app.hxx>
-#endif
 #ifndef _LINGUISTIC_LNGPROPS_HHX_
 #include <linguistic/lngprops.hxx>
 #endif
@@ -389,7 +386,7 @@ uno::Any SwSpellIter::Continue( sal_uInt16* pPageCnt, sal_uInt16* pPageSt )
     //!!
     //!! Please check SwConvIter also when modifying this
     //!!
-    
+
     uno::Any    aSpellRet;
     SwEditShell *pSh = GetSh();
     if( !pSh )
@@ -507,10 +504,10 @@ uno::Any SwConvIter::Continue( sal_uInt16* pPageCnt, sal_uInt16* pPageSt )
 
         *pSh->GetCrsr()->GetPoint() = *GetCurr();
         *pSh->GetCrsr()->GetMark() = *GetEnd();
-        
+
         // call function to find next text portion to be converted
         uno::Reference< linguistic2::XSpellChecker1 > xEmpty;
-        pSh->GetDoc()->Spell( *pSh->GetCrsr(), 
+        pSh->GetDoc()->Spell( *pSh->GetCrsr(),
                     xEmpty, pPageCnt, pPageSt, sal_True ) >>= aConvText;
 
         bGoOn = GetCrsrCnt() > 1;
@@ -795,8 +792,8 @@ void SwEditShell::SetLinguRange( SwDocPositions eStart, SwDocPositions eEnd )
  *************************************************************************/
 
 // Selektionen sichern
-void SwEditShell::SpellStart( 
-        SwDocPositions eStart, SwDocPositions eEnd, SwDocPositions eCurr, 
+void SwEditShell::SpellStart(
+        SwDocPositions eStart, SwDocPositions eEnd, SwDocPositions eCurr,
         sal_Bool bIsConversion )
 {
     SwLinguIter *pLinguIter = 0;
@@ -861,12 +858,12 @@ void SwEditShell::SpellEnd( sal_Bool bIsConversion )
 
 // liefert Rueckgabewerte entsprechend SPL_ in splchk.hxx
 
-uno::Any SwEditShell::SpellContinue( 
+uno::Any SwEditShell::SpellContinue(
         sal_uInt16* pPageCnt, sal_uInt16* pPageSt,
         sal_Bool bIsConversion )
 {
     uno::Any aRes;
-    
+
     if ((!bIsConversion && pSpellIter->GetSh() != this) ||
         ( bIsConversion && pConvIter->GetSh() != this))
         return aRes;
@@ -886,7 +883,7 @@ uno::Any SwEditShell::SpellContinue(
     //				KEIN StartAction, da damit auch die Paints abgeschaltet
     //				werden !!!!!
     ++nStartAction;
-    rtl::OUString aRet; 
+    rtl::OUString aRet;
     uno::Reference< uno::XInterface >  xRet;
     if (bIsConversion)
     {
@@ -1102,7 +1099,7 @@ uno::Reference< XSpellAlternatives >
                 pNode->GetWrong()->Invalidate( 0, STRING_LEN );
                 pNode->SetWrongDirty( sal_True );
 #endif
-                // make sure the selection build later from the 
+                // make sure the selection build later from the
                 // data below does not include footnotes and other
                 // "in word" character to the left and right in order
                 // to preserve those. Therefore count those "in words"
