@@ -2,9 +2,9 @@
  *
  *  $RCSfile: rtffly.cxx,v $
  *
- *  $Revision: 1.15 $
+ *  $Revision: 1.16 $
  *
- *  last change: $Author: kz $ $Date: 2004-02-26 12:47:09 $
+ *  last change: $Author: kz $ $Date: 2004-05-18 14:55:13 $
  *
  *  The Contents of this file are made available subject to the terms of
  *  either of the following licenses
@@ -190,8 +190,8 @@ extern SwCntntNode* GoNextNds( SwNodeIndex * pIdx, FASTBOOL bChk );
 SV_IMPL_PTRARR( SwFlySaveArr, SwFlySave* )
 
 inline const SwFmtFrmSize GetFrmSize(const SfxItemSet& rSet, BOOL bInP=TRUE)
-{ 
-    return (const SwFmtFrmSize&)rSet.Get(RES_FRM_SIZE,bInP); 
+{
+    return (const SwFmtFrmSize&)rSet.Get(RES_FRM_SIZE,bInP);
 }
 
 SwFlySave::SwFlySave(const SwPaM& rPam, SfxItemSet& rSet)
@@ -259,7 +259,7 @@ void SwFlySave::SetFlySize( const SwTableNode& rTblNd )
     SwTwips nWidth = rTblNd.GetTable().GetFrmFmt()->GetFrmSize().GetWidth();
     const SwFmtFrmSize& rSz = GetFrmSize( aFlySet );
     if( nWidth > rSz.GetWidth() )
-        aFlySet.Put( SwFmtFrmSize( rSz.GetSizeType(), nWidth, rSz.GetHeight() ));
+        aFlySet.Put( SwFmtFrmSize( rSz.GetHeightSizeType(), nWidth, rSz.GetHeight() ));
 }
 
 BOOL lcl_HasBreakAttrs( const SwCntntNode& rNd )
@@ -646,7 +646,7 @@ void SwRTFParser::ReadFly( int nToken, SfxItemSet* pSet )
                 if( SFX_ITEM_SET == pSet->GetItemState( RES_FRM_SIZE, TRUE,
                     &pItem ))
                 {
-                    aSz.SetSizeType( ((SwFmtFrmSize*)pItem)->GetSizeType() );
+                    aSz.SetHeightSizeType( ((SwFmtFrmSize*)pItem)->GetHeightSizeType() );
                     aSz.SetHeight( ((SwFmtFrmSize*)pItem)->GetHeight() );
                 }
                 if( MINFLY > nTokenValue )	nTokenValue = MINFLY;
@@ -666,7 +666,7 @@ void SwRTFParser::ReadFly( int nToken, SfxItemSet* pSet )
                 if( 0 > nTokenValue )
                 {
                     nTokenValue = -nTokenValue;
-                    aSz.SetSizeType( ATT_FIX_SIZE );
+                    aSz.SetHeightSizeType( ATT_FIX_SIZE );
                 }
                 if( MINFLY > nTokenValue )	nTokenValue = MINFLY;
                 aSz.SetHeight( nTokenValue );
@@ -1040,13 +1040,13 @@ void SwRTFParser::ReadFly( int nToken, SfxItemSet* pSet )
 
     if( pSet != &aSet )			// wurde der Set uebergeben, dann wars das
         return ;
-    
+
     // ein neues FlyFormat anlegen oder das alte benutzen ?
     // (teste ob es die selben Attribute besitzt!)
     SwFlySave* pFlySave;
     USHORT nFlyArrCnt = aFlyArr.Count();
     /*
-    #i5263# 
+    #i5263#
     There were not enough frame properties found to actually justify creating
     an absolutely positioned frame.
     */
@@ -1064,7 +1064,7 @@ void SwRTFParser::ReadFly( int nToken, SfxItemSet* pSet )
             {
                 pFlySave->nDropAnchor = nDropCapAnchor;
                 pFlySave->nDropLines = nDropCapLines;
-            } 
+            }
             if (nFlyArrCnt >0){
                 SwFlySave* pFlySavePrev = aFlyArr[nFlyArrCnt-1];
                 if (pFlySave->nSttNd.GetIndex() < pFlySavePrev->nEndNd.GetIndex())
@@ -1115,7 +1115,7 @@ void SwRTFParser::ReadFly( int nToken, SfxItemSet* pSet )
     }
 
     /*
-    #i5263# 
+    #i5263#
     There were enough frame properties found to actually justify creating
     an absolutely positioned frame.
     */
