@@ -2,9 +2,9 @@
  *
  *  $RCSfile: htmlform.cxx,v $
  *
- *  $Revision: 1.1.1.1 $
+ *  $Revision: 1.2 $
  *
- *  last change: $Author: hr $ $Date: 2000-09-18 17:14:55 $
+ *  last change: $Author: jp $ $Date: 2001-06-28 13:26:36 $
  *
  *  The Contents of this file are made available subject to the terms of
  *  either of the following licenses
@@ -65,11 +65,10 @@
 
 #pragma hdrstop
 
-#include "hintids.hxx"
-
-#ifndef _SV_SYSTEM_HXX //autogen
-#include <vcl/system.hxx>
+#ifndef _HINTIDS_HXX
+#include <hintids.hxx>
 #endif
+
 #ifndef _SV_SVAPP_HXX //autogen
 #include <vcl/svapp.hxx>
 #endif
@@ -765,8 +764,9 @@ void SwHTMLParser::DeleteFormImpl()
 static void lcl_html_setFixedFontProperty(
         const Reference< beans::XPropertySet >& rPropSet )
 {
-    Font aFixedFont( System::GetStandardFont( STDFONT_FIXED ) );
-
+    Font aFixedFont( OutputDevice::GetDefaultFont(
+                                    DEFAULTFONT_FIXED, LANGUAGE_ENGLISH_US,
+                                    DEFAULTFONT_FLAGS_ONLYONE )  );
     Any aTmp;
     aTmp <<= OUString( aFixedFont.GetName() );
     rPropSet->setPropertyValue( OUString::createFromAscii("FontName"), aTmp );
@@ -2800,17 +2800,20 @@ void SwHTMLParser::InsertSelectText()
 
       Source Code Control System - Header
 
-      $Header: /zpool/svn/migration/cvs_rep_09_09_08/code/sw/source/filter/html/htmlform.cxx,v 1.1.1.1 2000-09-18 17:14:55 hr Exp $
+      $Header: /zpool/svn/migration/cvs_rep_09_09_08/code/sw/source/filter/html/htmlform.cxx,v 1.2 2001-06-28 13:26:36 jp Exp $
 
       Source Code Control System - Update
 
       $Log: not supported by cvs2svn $
+      Revision 1.1.1.1  2000/09/18 17:14:55  hr
+      initial import
+
       Revision 1.232  2000/09/18 16:04:44  willem.vandorp
       OpenOffice header added.
-    
+
       Revision 1.231  2000/06/26 09:52:06  jp
       must change: GetAppWindow->GetDefaultDevice
-    
+
       Revision 1.230  2000/06/16 12:28:26  os
       UNO3 error removed
 
