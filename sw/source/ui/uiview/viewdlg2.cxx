@@ -2,9 +2,9 @@
  *
  *  $RCSfile: viewdlg2.cxx,v $
  *
- *  $Revision: 1.7 $
+ *  $Revision: 1.8 $
  *
- *  last change: $Author: kz $ $Date: 2004-10-04 19:33:17 $
+ *  last change: $Author: obo $ $Date: 2005-01-25 14:44:57 $
  *
  *  The Contents of this file are made available subject to the terms of
  *  either of the following licenses
@@ -99,7 +99,7 @@
 
 #include "swabstdlg.hxx" //CHINA001
 #include "frmui.hrc" //CHINA001
-#include "misc.hrc" //CHINA001 
+#include "misc.hrc" //CHINA001
 
 #include "view.hrc"
 
@@ -125,7 +125,7 @@ void SwView::ExecDlgExt(SfxRequest &rReq)
             //CHINA001 pDialog = new SwCaptionDialog( pMDI, *this );
             SwAbstractDialogFactory* pFact = SwAbstractDialogFactory::Create();//CHINA001
             DBG_ASSERT(pFact, "SwAbstractDialogFactory fail!");//CHINA001
-                    
+
             VclAbstractDialog* pDialog = pFact->CreateSwCaptionDialog( pMDI, *this,ResId( DLG_CAPTION ));
             DBG_ASSERT(pDialog, "Dialogdiet fail!");//CHINA001
             if ( pDialog )
@@ -189,7 +189,7 @@ void SwView::InsertCaption(const InsCaptionOpt *pOpt)
     // Existiert Pool-Vorlage gleichen Namens?
     SwWrtShell &rSh = GetWrtShell();
     if(rName.Len())
-    {        
+    {
         USHORT nPoolId = SwStyleNameMapper::GetPoolIdFromUIName(rName, GET_POOLID_TXTCOLL);
         if( USHRT_MAX != nPoolId )
             rSh.GetTxtCollFromPool(nPoolId);
@@ -237,7 +237,7 @@ void SwView::InsertCaption(const InsCaptionOpt *pOpt)
     SwFieldType* pType 	= 0;
     const USHORT nCount = aMgr.GetFldTypeCount();
     if( rName.Len() )
-    {        
+    {
         for (USHORT i = 0; i < nCount; ++i)
         {
             pType = aMgr.GetFldType(USHRT_MAX, i);
@@ -253,6 +253,7 @@ void SwView::InsertCaption(const InsCaptionOpt *pOpt)
 
     GetWrtShell().InsertLabel( (SwLabelType)eT,
                                 pOpt->GetCaption(),
+                                pOpt->GetSeparator(),
                                 !pOpt->GetPos(),
                                 nID,
                                 pOpt->GetCharacterStyle(),
