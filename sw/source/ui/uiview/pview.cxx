@@ -2,9 +2,9 @@
  *
  *  $RCSfile: pview.cxx,v $
  *
- *  $Revision: 1.36 $
+ *  $Revision: 1.37 $
  *
- *  last change: $Author: iha $ $Date: 2002-12-06 15:57:40 $
+ *  last change: $Author: od $ $Date: 2002-12-06 16:18:33 $
  *
  *  The Contents of this file are made available subject to the terms of
  *  either of the following licenses
@@ -964,11 +964,11 @@ void SwPagePreViewWin::CalcWish( BYTE nNewRow, BYTE nNewCol )
     // Sortierung muss eingehalten werden!!
     static USHORT __READONLY_DATA aInval[] =
     {
-        SID_ATTR_ZOOM, SID_ZOOM_OUT, SID_ZOOM_IN, 
-        FN_PREVIEW_ZOOM, 
-        FN_START_OF_DOCUMENT, FN_END_OF_DOCUMENT, FN_PAGEUP, FN_PAGEDOWN, 
-        FN_STAT_ZOOM, 
-        FN_SHOW_TWO_PAGES, FN_SHOW_MULTIPLE_PAGES, 
+        SID_ATTR_ZOOM, SID_ZOOM_OUT, SID_ZOOM_IN,
+        FN_PREVIEW_ZOOM,
+        FN_START_OF_DOCUMENT, FN_END_OF_DOCUMENT, FN_PAGEUP, FN_PAGEDOWN,
+        FN_STAT_ZOOM,
+        FN_SHOW_TWO_PAGES, FN_SHOW_MULTIPLE_PAGES,
         0
     };
     SfxBindings& rBindings = mrView.GetViewFrame()->GetBindings();
@@ -986,8 +986,11 @@ int SwPagePreViewWin::MovePage( int eMoveMode )
     // soviele Seiten hoch
     USHORT nPages = mnRow * mnCol;
     USHORT nNewSttPage = mnSttPage;
-    USHORT nPageCount = mrView.GetPageCount() + 1;
+    // OD 04.12.2002 #103492#
+    USHORT nPageCount = mrView.GetPageCount();
     USHORT nDefSttPg = GetDefSttPage();
+    // OD 06.12.2002 #103492#
+    bool bPaintPageAtFirstCol = true;
 
     switch( eMoveMode )
     {
@@ -999,9 +1002,9 @@ int SwPagePreViewWin::MovePage( int eMoveMode )
         break;
     case MV_PAGE_DOWN:
         // OD 03.12.2002 #103492# - correct calculation of new start page.
-        nNewSttPage = Min( mnSttPage + nPages, nPageCount - 1);
+        nNewSttPage = (mnSttPage + nPages) < nPageCount ? (mnSttPage + nPages) : nPageCount;
         // OD 03.12.2002 #103492# - correct calculation of new selected page.
-        mnSelectedPage = Min( mnSelectedPage + nPages, nPageCount - 1);
+        mnSelectedPage = (mnSelectedPage + nPages) < nPageCount ? (mnSelectedPage + nPages) : nPageCount;
         break;
     case MV_DOC_STT:
         nNewSttPage = nDefSttPg;
@@ -1009,17 +1012,32 @@ int SwPagePreViewWin::MovePage( int eMoveMode )
         break;
     case MV_DOC_END:
         // OD 03.12.2002 #103492# - correct calculation of new start page.
-        nNewSttPage = nPageCount - 1;
-        mnSelectedPage = nPageCount - 1;
+        nNewSttPage = nPageCount;
+        mnSelectedPage = nPageCount;
         break;
     default:
         // OD 03.12.2002 #103492# - correct calculation of new start page.
-        if( nNewSttPage > (nPageCount - 1) )
-            nNewSttPage = nPageCount - 1;
+        if( nNewSttPage > nPageCount )
+        {
+#ifdef DEBUG
+            ASSERT( false, "SwPagePreViewWin::MovePage - start page > page count - OD-DEBUG" );
+#endif
+            nNewSttPage = nPageCount;
+        }
 
         //put the the selected page into the current range
         if(mnSelectedPage < nNewSttPage || mnSelectedPage >= (nNewSttPage + nPages) )
+        {
+#ifdef DEBUG
+            ASSERT( false, "SwPagePreViewWin::MovePage - selected page out of range - OD-DEBUG" );
+#endif
             mnSelectedPage = nNewSttPage ? nNewSttPage : 1;
+        }
+
+        // OD 06.12.2002 #103492#
+        if ( !mpViewShell->DoesPreviewLayoutRowsFitIntoWindow() ||
+             !mpViewShell->DoesPreviewLayoutColsFitIntoWindow() )
+            bPaintPageAtFirstCol = false;
     }
 
     Size aSave( maPgSize );
@@ -1027,7 +1045,8 @@ int SwPagePreViewWin::MovePage( int eMoveMode )
     {
         mpViewShell->PreparePreviewPaint( nNewSttPage, Point(0,0), &maPxWinSize,
                                           nNewSttPage, mnVirtPage,
-                                          maPaintedPreviewDocRect );
+                                          maPaintedPreviewDocRect,
+                                          bPaintPageAtFirstCol );
     }
 #else
     USHORT nRowCol = ( mnRow << 8 ) + mnCol; // Zeilen / DoppelSeiten
@@ -1133,14 +1152,14 @@ void  SwPagePreViewWin::KeyInput( const KeyEvent &rKEvt )
         {
             case KEY_ADD : nSlot = SID_ZOOM_OUT;         break;
             case KEY_SUBTRACT : nSlot = SID_ZOOM_IN;    break;
-        }            
+        }
         if(nSlot)
-        {        
+        {
             bHandled = TRUE;
-            mrView.GetViewFrame()->GetDispatcher()->Execute( 
+            mrView.GetViewFrame()->GetDispatcher()->Execute(
                                 nSlot, SFX_CALLMODE_ASYNCHRON );
         }
-    }        
+    }
     if( !bHandled && !mrView.KeyInput( rKEvt ) )
         Window::KeyInput( rKEvt );
 }
@@ -1256,10 +1275,12 @@ void  SwPagePreView::Execute( SfxRequest &rReq )
     BYTE nRow = 1;
     BOOL bRetVal = FALSE, bRefresh = TRUE;
 
-    USHORT mnSttPage = aViewWin.GetSttPage(),
+    USHORT  nSttPage = aViewWin.GetSttPage(),
             nPages = aViewWin.GetRow() * aViewWin.GetCol(),
             nLineSz = aViewWin.GetCol(),
-            nLastSttPg = nPageCount+1 > nPages ? nPageCount+1 - nPages : 0,
+            // OD 04.12.2002 #103492#
+            //nLastSttPg = nPageCount+1 > nPages ? nPageCount+1 - nPages : 0,
+            nLastSttPg = mnPageCount,
             nDefSttPg = aViewWin.GetDefSttPage();
 
     switch(rReq.GetSlot())
@@ -1344,76 +1365,47 @@ void  SwPagePreView::Execute( SfxRequest &rReq )
         }
         break;
         case FN_CHAR_LEFT:
-            //change the display only when the selection is already at the first position
-            if( aViewWin.GetSelectedPage() < 2 )
-                break;
-            if( aViewWin.GetSelectedPage()-- > mnSttPage )
-            {
-#ifdef ACCESSIBLE_LAYOUT
-                GetViewShell()->ShowPreViewSelection( aViewWin.GetSelectedPage() );
-#endif
-                break;
-            }
-
-            if( nDefSttPg == mnSttPage-- )
-            {
-                break;
-            }
-            aViewWin.SetSttPage( mnSttPage );
-            eMvMode = SwPagePreViewWin::MV_CALC;		goto MOVEPAGE;
-
         case FN_CHAR_RIGHT:
-            //change the display only when the selection is already at the last position
-            if(aViewWin.GetSelectedPage() >= nPageCount)
+        {
+            sal_uInt16 nNewSelectedPage;
+            sal_uInt16 nNewStartPage;
+            Point aNewStartPos;
+            sal_Int16 nHoriMove;
+            if( rReq.GetSlot() == FN_CHAR_LEFT )
+                nHoriMove = -1;
+            else
+                nHoriMove = 1;
+            GetViewShell()->MovePreviewSelectedPage(
+                                aViewWin.GetSelectedPage(), nHoriMove, 0,
+                                nNewSelectedPage, nNewStartPage, aNewStartPos );
+            aViewWin.GetSelectedPage() = nNewSelectedPage;
+            if ( GetViewShell()->IsPageVisibleInCurrPreview( nNewSelectedPage ) )
                 break;
-            if((aViewWin.GetSelectedPage()++ < mnSttPage + nPages - 1) ||
-                nLastSttPg == mnSttPage++ )
-            {
-#ifdef ACCESSIBLE_LAYOUT
-                GetViewShell()->ShowPreViewSelection( aViewWin.GetSelectedPage() );
-#endif
-                break;
-            }
-            aViewWin.SetSttPage( mnSttPage );
-            eMvMode = SwPagePreViewWin::MV_CALC;		goto MOVEPAGE;
-
+            aViewWin.SetSttPage( nNewStartPage );
+            eMvMode = SwPagePreViewWin::MV_CALC;
+            goto MOVEPAGE;
+        }
         case FN_LINE_UP:
         case FN_LINE_DOWN:
         {
-//???       if( !mnSttPage &&  1 < nLineSz )
-//				--nLineSz;
-            USHORT nOldSttPage = mnSttPage;
-            if( FN_LINE_UP == rReq.GetSlot() )
-            {
-                if( mnSttPage > nLineSz )
-
-                    mnSttPage -= nLineSz;
-                else
-                    mnSttPage = nDefSttPg;
-            }
+            sal_uInt16 nNewSelectedPage;
+            sal_uInt16 nNewStartPage;
+            Point aNewStartPos;
+            sal_Int16 nVertMove;
+            if( rReq.GetSlot() == FN_LINE_UP )
+                nVertMove = -1;
             else
-            {
-                if( mnSttPage + nLineSz <= nLastSttPg )
-                    mnSttPage += nLineSz;
-                else
-                    mnSttPage = nLastSttPg;
-            }
-
-            if( mnSttPage == aViewWin.GetSttPage() )
-            {
-                // keine Aenderung
-                bRefresh = FALSE;
+                nVertMove = 1;
+            GetViewShell()->MovePreviewSelectedPage(
+                                aViewWin.GetSelectedPage(), 0, nVertMove,
+                                nNewSelectedPage, nNewStartPage, aNewStartPos );
+            aViewWin.GetSelectedPage() = nNewSelectedPage;
+            if ( GetViewShell()->IsPageVisibleInCurrPreview( nNewSelectedPage ) )
                 break;
-            }
-
-            aViewWin.SetSttPage( mnSttPage );
-            aViewWin.GetSelectedPage() -= (nOldSttPage - mnSttPage);
-            if(!aViewWin.GetSelectedPage())
-                aViewWin.GetSelectedPage() = 1;
+            aViewWin.SetSttPage( nNewStartPage );
             eMvMode = SwPagePreViewWin::MV_CALC;
+            goto MOVEPAGE;
         }
-        goto MOVEPAGE;
-
         case FN_PAGEUP:
             eMvMode = SwPagePreViewWin::MV_PAGE_UP;		goto MOVEPAGE;
         case FN_PAGEDOWN:
@@ -1425,7 +1417,7 @@ void  SwPagePreView::Execute( SfxRequest &rReq )
             eMvMode = SwPagePreViewWin::MV_DOC_STT;	bRetVal = TRUE;	goto MOVEPAGE;
         case FN_END_OF_LINE:
         case FN_END_OF_DOCUMENT:
-            aViewWin.GetSelectedPage() = nPageCount;
+            aViewWin.GetSelectedPage() = mnPageCount;
             eMvMode = SwPagePreViewWin::MV_DOC_END; bRetVal = TRUE; goto MOVEPAGE;
 MOVEPAGE:
             {
@@ -1527,7 +1519,7 @@ void  SwPagePreView::GetState( SfxItemSet& rSet )
                 USHORT nNextPg = ( aViewWin.GetRow() * aViewWin.GetCol() ) +
                                 aViewWin.GetSttPage() - 1;
 
-                if( nNextPg >= nPageCount )
+                if( nNextPg >= mnPageCount )
                     rSet.DisableItem( nWhich );
             }
             break;
@@ -1535,7 +1527,7 @@ void  SwPagePreView::GetState( SfxItemSet& rSet )
         case FN_STAT_PAGE:
             {
                 String aStr( sPageStr );
-                aViewWin.GetStatusStr( aStr, nPageCount );
+                aViewWin.GetStatusStr( aStr, mnPageCount );
                 rSet.Put( SfxStringItem( nWhich, aStr) );
             }
             break;
@@ -1710,7 +1702,7 @@ SwPagePreView::SwPagePreView(SfxViewFrame *pFrame, SfxViewShell* pOldSh):
     pScrollFill(new ScrollBarBox( &pFrame->GetWindow(),
         GetDocShell()->IsInFrame()? 0 : WB_SIZEABLE )),
     sPageStr( SW_RES(STR_PAGE) ),
-    nPageCount( 0 ),
+    mnPageCount( 0 ),
     nNewPage(USHRT_MAX)
 {
     SetName(String::CreateFromAscii("PageView" ));
@@ -1887,7 +1879,7 @@ int SwPagePreView::ChgPage( int eMvMode, int bUpdateScrollbar )
     {
         // Statusleiste updaten
         String aStr( sPageStr );
-        aViewWin.GetStatusStr( aStr, nPageCount );
+        aViewWin.GetStatusStr( aStr, mnPageCount );
         SfxBindings& rBindings = GetViewFrame()->GetBindings();
 
         if( bUpdateScrollbar )
@@ -2037,8 +2029,8 @@ IMPL_LINK( SwPagePreView, ScrollHdl, SwScrollbar *, pScrollbar )
     if(!GetViewShell())
         return 0;
     if( !pScrollbar->IsHoriScroll() &&
-        pScrollbar->GetType() == SCROLL_DRAG && 
-        Help::IsQuickHelpEnabled() && 
+        pScrollbar->GetType() == SCROLL_DRAG &&
+        Help::IsQuickHelpEnabled() &&
         GetViewShell()->DoesPreviewLayoutRowsFitIntoWindow())
     {
         // wieviele Seiten scrollen ??
@@ -2083,11 +2075,11 @@ IMPL_LINK( SwPagePreView, EndScrollHdl, SwScrollbar *, pScrollbar )
         {
             // wieviele Seiten scrollen ??
             USHORT nThmbPos = (USHORT)pScrollbar->GetThumbPos();
-            if( 1 == aViewWin.GetCol() )
-                ++nThmbPos;
-            if( nThmbPos != aViewWin.GetSttPage() )
+            // OD 05.12.2002 #103492# - adjust to new preview functionality
+            if( nThmbPos != aViewWin.GetSelectedPage() )
             {
                 aViewWin.SetSttPage( nThmbPos );
+                aViewWin.GetSelectedPage() = nThmbPos;
                 ChgPage( SwPagePreViewWin::MV_CALC, FALSE );
             }
         }
@@ -2095,13 +2087,13 @@ IMPL_LINK( SwPagePreView, EndScrollHdl, SwScrollbar *, pScrollbar )
         {
             long nThmbPos = pScrollbar->GetThumbPos();
             aViewWin.Scroll(0, nThmbPos - aViewWin.GetPaintedPreviewDocRect().Top());
-        }  
+        }
     }
     else
     {
         long nThmbPos = pScrollbar->GetThumbPos();
         aViewWin.Scroll(nThmbPos - aViewWin.GetPaintedPreviewDocRect().Left(), 0);
-    }        
+    }
     static USHORT __READONLY_DATA aInval[] =
     {
         FN_START_OF_DOCUMENT, FN_END_OF_DOCUMENT, FN_PAGEUP, FN_PAGEDOWN, 0
@@ -2135,11 +2127,11 @@ void SwPagePreView::DocSzChgd( const Size &rSz )
 
     // die neue Anzahl von Seiten bestimmen
     USHORT nNewCnt = GetViewShell()->GetNumPages();
-    if( nNewCnt == nPageCount )
+    if( nNewCnt == mnPageCount )
         return;
 
     // dann eine neue Startseite berechnen
-    nPageCount = nNewCnt;
+    mnPageCount = nNewCnt;
     if( aVisArea.GetWidth() )
     {
         ChgPage( SwPagePreViewWin::MV_CALC, TRUE );
@@ -2159,26 +2151,26 @@ void SwPagePreView::ScrollViewSzChg()
     if(!GetViewShell())
         return ;
     if(pVScrollbar)
-    {        
+    {
         if(GetViewShell()->DoesPreviewLayoutRowsFitIntoWindow())
         {
             //vertical scrolling by row
-            USHORT nVisPage = aViewWin.GetRow() * aViewWin.GetCol(),
-                   nLineSz = 1 < nVisPage ? nVisPage / 2 : 1,
-                   nSttPg = aViewWin.GetSttPage();
-
-            if( nSttPg && 1 == aViewWin.GetCol() )
-                --nSttPg;
-            pVScrollbar->SetVisibleSize( nVisPage );
-            pVScrollbar->SetThumbPos( nSttPg );
-
-            pVScrollbar->SetLineSize( nLineSz );
-            pVScrollbar->SetPageSize( nVisPage );
-            USHORT nPgCnt = nPageCount;
-            if( 1 < aViewWin.GetCol() )
-                ++nPgCnt;	/* die 0. Seite! */
-            pVScrollbar->SetRangeMax( nPgCnt );
-        }            
+            // OD 04.12.2002 #103492# - adjust to new preview functionality
+            USHORT nVisPages = aViewWin.GetRow() * aViewWin.GetCol();
+            pVScrollbar->SetVisibleSize( nVisPages );
+            pVScrollbar->SetThumbPos( aViewWin.GetSttPage() );
+            pVScrollbar->SetLineSize( aViewWin.GetCol() );
+            pVScrollbar->SetPageSize( nVisPages );
+            // calculate and set scrollbar range
+            Range aScrollbarRange( 1, mnPageCount );
+            // increase range by one, because left-top-corner is left blank.
+            ++aScrollbarRange.Max();
+            // increase range by number of blank page places in last layout row.
+            sal_uInt16 nTmp = (mnPageCount+1) % aViewWin.GetCol();
+            if ( nTmp > 0 )
+                aScrollbarRange.Max() += aViewWin.GetCol() - nTmp;
+            pVScrollbar->SetRange( aScrollbarRange );
+        }
         else //vertical scrolling by pixel
         {
             const Rectangle& rDocRect = aViewWin.GetPaintedPreviewDocRect();
@@ -2189,7 +2181,7 @@ void SwPagePreView::ScrollViewSzChg()
             pVScrollbar->SetThumbPos( rDocRect.Top() );
             pVScrollbar->SetLineSize( nVisHeight / 10 );
             pVScrollbar->SetPageSize( nVisHeight / 2 );
-        }    
+        }
     }
     if(pHScrollbar)
     {
@@ -2206,12 +2198,12 @@ void SwPagePreView::ScrollViewSzChg()
             nThumb = rDocRect.Left();
             aRange = Range(0, rPreviewSize.Width());
         }
+        pHScrollbar->SetRange( aRange );
         pHScrollbar->SetVisibleSize( nVisWidth );
         pHScrollbar->SetThumbPos( nThumb );
         pHScrollbar->SetLineSize( nVisWidth / 10 );
         pHScrollbar->SetPageSize( nVisWidth / 2 );
-        pHScrollbar->SetRange( aRange );
-    }            
+    }
 }
 
 /*--------------------------------------------------------------------
@@ -2420,6 +2412,9 @@ Size  SwPagePreView::GetOptimalSizePixel() const
 
 void  SwPagePreViewWin::GetOptimalSize( Size& rSize ) const
 {
+#ifdef DEBUG
+    ASSERT( false, "SwPagePreViewWin called [Debug-Assertion by OD]");
+#endif
     Size aPageSize, aPrevwDocSize;
     USHORT nVirtPage;
     Rectangle aPaintedDocPreviewRect;
@@ -2484,32 +2479,8 @@ void SwPagePreViewWin::AdjustPreviewToNewZoom( const sal_uInt16 nZoomFactor)
 
     // calculate new start position for preview paint
     Size aNewWinSize = PixelToLogic( maPxWinSize );
-    Point aNewPaintStartPos = maPaintedPreviewDocRect.TopLeft();
-    if ( aNewScale < maScale )
-    {
-        // increase paint width by moving start point to left.
-        if ( maPaintedPreviewDocRect.GetWidth() < aNewWinSize.Width() )
-            aNewPaintStartPos.X() -= (aNewWinSize.Width() - maPaintedPreviewDocRect.GetWidth()) / 2;
-        if ( aNewPaintStartPos.X() < 0)
-            aNewPaintStartPos.X() = 0;
-        if ( !mpViewShell->DoesPreviewLayoutRowsFitIntoWindow() )
-        {
-            // increase paint height by moving start point to top.
-            if ( maPaintedPreviewDocRect.GetHeight() < aNewWinSize.Height() )
-                aNewPaintStartPos.Y() -= (aNewWinSize.Height() - maPaintedPreviewDocRect.GetHeight()) / 2;
-            if ( aNewPaintStartPos.Y() < 0)
-                aNewPaintStartPos.Y() = 0;
-        }
-    }
-    else
-    {
-        // decrease paint width by moving start point to right
-        if ( maPaintedPreviewDocRect.GetWidth() > aNewWinSize.Width() )
-            aNewPaintStartPos.X() += (maPaintedPreviewDocRect.GetWidth() - aNewWinSize.Width()) / 2;
-        // decrease paint height by moving start point to bottom
-        if ( maPaintedPreviewDocRect.GetHeight() > aNewWinSize.Height() )
-            aNewPaintStartPos.Y() += (maPaintedPreviewDocRect.GetHeight() - aNewWinSize.Height()) / 2;
-    }
+    Point aNewPaintStartPos =
+            mpViewShell->GetPreviewStartPosForNewScale( aNewScale, maScale, aNewWinSize );
 
     // remember new scaling and prepare preview paint
     // Note: paint of preview will be performed by a corresponding invalidate
@@ -2521,12 +2492,12 @@ void SwPagePreViewWin::AdjustPreviewToNewZoom( const sal_uInt16 nZoomFactor)
 
 }
 /* -----------------04.12.2002 10:46-----------------
- * pixel scrolling - horizontally always or vertically 
- * when less than the desired number of rows fits into 
+ * pixel scrolling - horizontally always or vertically
+ * when less than the desired number of rows fits into
  * the view
  * --------------------------------------------------*/
 void SwPagePreViewWin::Scroll(long nXMove, long nYMove)
-{ 
+{
     maPaintedPreviewDocRect.Move(nXMove, nYMove);
     mpViewShell->PreparePreviewPaint( 0, maPaintedPreviewDocRect.TopLeft(),
                                       &maPxWinSize, mnSttPage, mnVirtPage,
