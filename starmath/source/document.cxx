@@ -2,9 +2,9 @@
  *
  *  $RCSfile: document.cxx,v $
  *
- *  $Revision: 1.49 $
+ *  $Revision: 1.50 $
  *
- *  last change: $Author: tl $ $Date: 2002-01-17 11:56:25 $
+ *  last change: $Author: jp $ $Date: 2002-01-30 11:47:52 $
  *
  *  The Contents of this file are made available subject to the terms of
  *  either of the following licenses
@@ -342,13 +342,20 @@ void SmDocShell::SetText(const String& rBuffer)
 {
     if (rBuffer != aText)
     {
+        BOOL bIsEnabled = IsEnableSetModified();
+        if( bIsEnabled )
+            EnableSetModified( FALSE );
+
         aText = rBuffer;
         Parse();
         SetFormulaArranged(FALSE);
         Resize();
         SmViewShell *pViewSh = SmGetActiveView();
-        if (pViewSh)
+        if( pViewSh )
             pViewSh->GetViewFrame()->GetBindings().Invalidate(SID_TEXT);
+
+        if ( bIsEnabled )
+            EnableSetModified( bIsEnabled );
         SetModified(TRUE);
     }
 }
@@ -415,7 +422,7 @@ EditEngine& SmDocShell::GetEditEngine()
         //!
         //! see also SmEditWindow::DataChanged !
         //!
-        
+
         pEditEngineItemPool = EditEngine::CreatePool();
 
         //
@@ -429,8 +436,8 @@ EditEngine& SmDocShell::GetEditEngine()
             INT16       nLang;
             USHORT      nFontType;
             USHORT      nFontInfoId;
-            } aTable[3] = 
-        { 
+            } aTable[3] =
+        {
             // info to get western font to be used
             {   LANGUAGE_ENGLISH_US,    LANGUAGE_NONE,
                 DEFAULTFONT_SERIF,      EE_CHAR_FONTINFO },
@@ -444,7 +451,7 @@ EditEngine& SmDocShell::GetEditEngine()
         aTable[0].nLang = aOpt.nDefaultLanguage;
         aTable[1].nLang = aOpt.nDefaultLanguage_CJK;
         aTable[2].nLang = aOpt.nDefaultLanguage_CTL;
-        // 
+        //
         for (int i = 0;  i < 3;  ++i)
         {
             const FontDta &rFntDta = aTable[i];
@@ -656,7 +663,7 @@ void SmDocShell::OnDocumentPrinterChanged( Printer *pPrt )
     SM_MOD1()->GetRectCache()->Reset();
     Size aOldSize = GetVisArea().GetSize();
     Resize();
-    if ( aOldSize != GetVisArea().GetSize() )
+    if( aOldSize != GetVisArea().GetSize() && aText.Len() )
         SetModified( TRUE );
     pTmpPrinter = 0;
 }
@@ -727,7 +734,7 @@ BOOL SmDocShell::SetData( const String& rData )
 }
 
 void SmDocShell::ConvertText( String &rText, SmConvert eConv )
-    // adapts the text 'rText' that suits one office version to be 
+    // adapts the text 'rText' that suits one office version to be
     // usable in another office version.
     // Example: "2 over sin x" acts very different in 4.0 and 5.0,
     // and from 5.2 to 6.0 many symbol names were renamed.
@@ -736,13 +743,13 @@ void SmDocShell::ConvertText( String &rText, SmConvert eConv )
         delete pTree;
 
     SmConvert  eTmpConv = aInterpreter.GetConversion();
-    
+
     // parse in old style and make changes for new style
     aInterpreter.SetConversion(eConv);
     pTree = aInterpreter.Parse(rText);
     // get to new version converted text
     rText = aInterpreter.GetText();
-    
+
     aInterpreter.SetConversion(eTmpConv);
 
     // clean up tree parsed in old style
@@ -797,7 +804,7 @@ BOOL SmDocShell::InsertFrom(SfxMedium &rMedium)
     BOOL        bSuccess = FALSE;
     SvStream   *pStream = rMedium.GetInStream();
     String      aTemp = aText;
- 
+
     if (pStream)
     {
         const String& rFltName = rMedium.GetFilter()->GetFilterName();
@@ -1973,7 +1980,8 @@ ULONG SmDocShell::GetMiscStatus() const
 
 void SmDocShell::SetModified(BOOL bModified)
 {
-    SfxObjectShell::SetModified(bModified);
+    if( IsEnableSetModified() )
+        SfxObjectShell::SetModified( bModified );
     Broadcast(SfxSimpleHint(SFX_HINT_DOCCHANGED));
 }
 
