@@ -2,9 +2,9 @@
  *
  *  $RCSfile: wrtww8.cxx,v $
  *
- *  $Revision: 1.57 $
+ *  $Revision: 1.58 $
  *
- *  last change: $Author: rt $ $Date: 2003-09-25 07:42:55 $
+ *  last change: $Author: kz $ $Date: 2003-10-15 09:59:28 $
  *
  *  The Contents of this file are made available subject to the terms of
  *  either of the following licenses
@@ -81,7 +81,7 @@
 
 #define _SVSTDARR_BOOLS
 #include <svtools/svstdarr.hxx>
- 
+
 #ifndef _SV_SALBTYPE_HXX
 #include <vcl/salbtype.hxx>
 #endif
@@ -213,6 +213,9 @@
 
 #ifndef _COM_SUN_STAR_I18N_FORBIDDENCHARACTERS_HPP_
 #include <com/sun/star/i18n/ForbiddenCharacters.hpp>
+#endif
+#ifndef _COM_SUN_STAR_DOCUMENT_PRINTERINDEPENDENTLAYOUT_HPP_
+#include <com/sun/star/document/PrinterIndependentLayout.hpp>
 #endif
 #ifndef _COMPHELPER_EXTRACT_HXX_
 #include <comphelper/extract.hxx>
@@ -350,7 +353,8 @@ static void WriteDop( SwWW8Writer& rWrt )
 {
     WW8Dop& rDop = *rWrt.pDop;
 
-    rDop.fUsePrinterMetrics = !rWrt.pDoc->IsUseVirtualDevice();
+    rDop.fNoLeading = !rWrt.pDoc->IsAddExtLeading();
+    rDop.fUsePrinterMetrics = com::sun::star::document::PrinterIndependentLayout::DISABLED == rWrt.pDoc->IsUseVirtualDevice();
 
     // default TabStop schreiben
     const SvxTabStopItem& rTabStop = 
@@ -459,7 +463,7 @@ Dop Writer. Assumption is that rTypo is cleared to 0 on entry
 */
 void SwWW8Writer::ExportDopTypography(WW8DopTypography &rTypo)
 {
-    static const sal_Unicode aLangNotBegin[4][WW8DopTypography::nMaxFollowing]= 
+    static const sal_Unicode aLangNotBegin[4][WW8DopTypography::nMaxFollowing]=
     {
         //Japanese Level 1
         {
@@ -505,7 +509,7 @@ void SwWW8Writer::ExportDopTypography(WW8DopTypography &rTypo)
         },
     };
 
-    static const sal_Unicode aLangNotEnd[4][WW8DopTypography::nMaxLeading] = 
+    static const sal_Unicode aLangNotEnd[4][WW8DopTypography::nMaxLeading] =
     {
         //Japanese Level 1
         {
@@ -710,7 +714,7 @@ WW8_WrPlc1::~WW8_WrPlc1()
 }
 
 WW8_CP WW8_WrPlc1::Prev() const
-{ 
+{
     USHORT nLen = aPos.Count();
     ASSERT(nLen,"Prev called on empty list");
     return nLen ? aPos[nLen-1] : 0;
