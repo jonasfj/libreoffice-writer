@@ -2,9 +2,9 @@
  *
  *  $RCSfile: unoframe.cxx,v $
  *
- *  $Revision: 1.77 $
+ *  $Revision: 1.78 $
  *
- *  last change: $Author: vg $ $Date: 2003-04-01 15:34:01 $
+ *  last change: $Author: vg $ $Date: 2003-04-15 16:58:20 $
  *
  *  The Contents of this file are made available subject to the terms of
  *  either of the following licenses
@@ -1211,7 +1211,7 @@ void SwXFrame::setPropertyValue(const OUString& rPropertyName, const uno::Any& a
             if( pFrmFmt )
             {
                 UnoActionContext aAction(pFmt->GetDoc());
-                
+
                 // see SwFEShell::SetFrmFmt( SwFrmFmt *pNewFmt, sal_Bool bKeepOrient, Point* pDocPos )
                 SwFlyFrm *pFly = 0;
                 const SwFrmFmt* pFmtXX = pFmt;
@@ -1229,7 +1229,7 @@ void SwXFrame::setPropertyValue(const OUString& rPropertyName, const uno::Any& a
                             delete pSet, pSet = 0;
                     }
                 }
-                
+
                 pFmt->GetDoc()->SetFrmFmtToFly( *pFmt, *pFrmFmt, pSet, FALSE );
                 delete pSet;
             }
@@ -2381,7 +2381,7 @@ uno::Reference< XTextCursor >  SwXTextFrame::createTextCursorByRange(const uno::
     if(pFmt && SwXTextRange::XTextRangeToSwPaM(aPam, aTextPosition))
     {
         SwNode& rNode = pFmt->GetCntnt().GetCntntIdx()->GetNode();
-#ifdef DEBUG
+#if OSL_DEBUG_LEVEL > 1
         const SwStartNode* p1 = aPam.GetNode()->FindFlyStartNode();
         const SwStartNode* p2 = rNode.FindFlyStartNode();
 #endif
