@@ -2,9 +2,9 @@
  *
  *  $RCSfile: unoatxt.cxx,v $
  *
- *  $Revision: 1.4 $
+ *  $Revision: 1.5 $
  *
- *  last change: $Author: dvo $ $Date: 2001-02-14 13:11:14 $
+ *  last change: $Author: os $ $Date: 2001-03-08 15:39:01 $
  *
  *  The Contents of this file are made available subject to the terms of
  *  either of the following licenses
@@ -433,7 +433,7 @@ uno::Sequence< OUString > SwXAutoTextGroup::getTitles(void) throw( uno::RuntimeE
     ::vos::OGuard aGuard(Application::GetSolarMutex());
     sal_uInt16 nCount = 0;
     SwTextBlocks* pGlosGroup = pGlossaries ? pGlossaries->GetGroupDoc(sGroupName, sal_False) : 0;
-    if(pGlosGroup)
+    if(pGlosGroup && !pGlosGroup->GetError())
         nCount = pGlosGroup->GetCount();
     else
         throw uno::RuntimeException();
@@ -459,7 +459,7 @@ void SwXAutoTextGroup::renameByName(const OUString& aElementName,
     if(aNewElementName != aElementName && hasByName(aNewElementName))
         throw container::ElementExistException();
     SwTextBlocks* pGlosGroup = pGlossaries ? pGlossaries->GetGroupDoc(sGroupName, sal_False) : 0;
-    if(pGlosGroup)
+    if(pGlosGroup && !pGlosGroup->GetError())
     {
         sal_uInt16 nIdx = pGlosGroup->GetIndex( aElementName);
         if(USHRT_MAX == nIdx)
@@ -536,15 +536,11 @@ Reference< text::XAutoTextEntry >  SwXAutoTextGroup::insertNewByName(const OUStr
     SwTextBlocks* pGlosGroup = pGlossaries ? pGlossaries->GetGroupDoc(sGroupName, sal_False) : 0;
     String sShortName(aName);
     String sLongName(aTitle);
-    if(pGlosGroup)
+    if(pGlosGroup && !pGlosGroup->GetError())
     {
-        if( pGlosGroup->IsOld() )
+        if( pGlosGroup->IsOld() && pGlosGroup->ConvertToNew())
         {
-            if( pGlosGroup->ConvertToNew() )
-            {
-                throw uno::RuntimeException();
-                return Reference< text::XAutoTextEntry > ();
-            }
+            throw uno::RuntimeException();
         }
         Reference<lang::XUnoTunnel> xRangeTunnel( xTextRange, uno::UNO_QUERY);
         SwXTextRange* pxRange = 0;
@@ -614,7 +610,7 @@ void SwXAutoTextGroup::removeByName(const OUString& aEntryName) throw( container
 {
     ::vos::OGuard aGuard(Application::GetSolarMutex());
     SwTextBlocks* pGlosGroup = pGlossaries ? pGlossaries->GetGroupDoc(sGroupName, sal_False) : 0;
-    if(pGlosGroup)
+    if(pGlosGroup && !pGlosGroup->GetError())
     {
         sal_uInt16 nIdx = pGlosGroup->GetIndex(aEntryName);
         if ( nIdx != USHRT_MAX )
@@ -668,7 +664,7 @@ sal_Int32 SwXAutoTextGroup::getCount(void) throw( uno::RuntimeException )
     ::vos::OGuard aGuard(Application::GetSolarMutex());
     int nCount = 0;
     SwTextBlocks* pGlosGroup = pGlossaries ? pGlossaries->GetGroupDoc(sGroupName, sal_False) : 0;
-    if(pGlosGroup)
+    if(pGlosGroup && !pGlosGroup->GetError())
         nCount = pGlosGroup->GetCount();
     else
         throw uno::RuntimeException();
@@ -685,7 +681,7 @@ uno::Any SwXAutoTextGroup::getByIndex(sal_Int32 nIndex)
     uno::Any aRet;
     sal_uInt16 nCount = 0;
     SwTextBlocks* pGlosGroup = pGlossaries ? pGlossaries->GetGroupDoc(sGroupName, sal_False) : 0;
-    if(pGlosGroup)
+    if(pGlosGroup && !pGlosGroup->GetError())
         nCount = pGlosGroup->GetCount();
     else
         throw uno::RuntimeException();
@@ -712,7 +708,7 @@ sal_Bool SwXAutoTextGroup::hasElements(void) throw( uno::RuntimeException )
     ::vos::OGuard aGuard(Application::GetSolarMutex());
     SwTextBlocks* pGlosGroup = pGlossaries ? pGlossaries->GetGroupDoc(sGroupName, sal_False) : 0;
     sal_uInt16 nCount = 0;
-    if(pGlosGroup)
+    if(pGlosGroup && !pGlosGroup->GetError())
         nCount = pGlosGroup->GetCount();
     else
         throw uno::RuntimeException();
@@ -731,7 +727,7 @@ uno::Any SwXAutoTextGroup::getByName(const OUString& Name)
     sal_Bool bCreate = sGroupName == SwGlossaries::GetDefName();
     SwTextBlocks* pGlosGroup = pGlossaries ?
         pGlossaries->GetGroupDoc(sGroupName, bCreate) : 0;
-    if(pGlosGroup)
+    if(pGlosGroup && !pGlosGroup->GetError())
     {
         sal_uInt16 nIdx = pGlosGroup->GetIndex(Name);
         if( nIdx != USHRT_MAX )
@@ -777,7 +773,7 @@ uno::Sequence< OUString > SwXAutoTextGroup::getElementNames(void)
     ::vos::OGuard aGuard(Application::GetSolarMutex());
     sal_uInt16 nCount = 0;
     SwTextBlocks* pGlosGroup = pGlossaries ? pGlossaries->GetGroupDoc(sGroupName, sal_False) : 0;
-    if(pGlosGroup)
+    if(pGlosGroup && !pGlosGroup->GetError())
         nCount = pGlosGroup->GetCount();
     else
         throw uno::RuntimeException();
@@ -800,7 +796,7 @@ sal_Bool SwXAutoTextGroup::hasByName(const OUString& rName)
     sal_Bool bRet = sal_False;
     sal_uInt16 nCount = 0;
     SwTextBlocks* pGlosGroup = pGlossaries ? pGlossaries->GetGroupDoc(sGroupName, sal_False) : 0;
-    if(pGlosGroup)
+    if(pGlosGroup && !pGlosGroup->GetError())
         nCount = pGlosGroup->GetCount();
     else
         throw uno::RuntimeException();
@@ -843,7 +839,7 @@ void SwXAutoTextGroup::setPropertyValue(
         throw beans::UnknownPropertyException();
 
     SwTextBlocks* pGlosGroup = pGlossaries ? pGlossaries->GetGroupDoc(sGroupName, sal_False) : 0;
-    if(!pGlosGroup)
+    if(!pGlosGroup && !pGlosGroup->GetError())
         throw uno::RuntimeException();
     switch(pMap->nWID)
     {
@@ -874,7 +870,7 @@ uno::Any SwXAutoTextGroup::getPropertyValue(const OUString& rPropertyName)
     if(!pMap)
         throw beans::UnknownPropertyException();
     SwTextBlocks* pGlosGroup = pGlossaries ? pGlossaries->GetGroupDoc(sGroupName, sal_False) : 0;
-    if(!pGlosGroup)
+    if(!pGlosGroup  || pGlosGroup->GetError())
         throw uno::RuntimeException();
 
     uno::Any aAny;
@@ -1146,7 +1142,7 @@ void SwXAutoTextEntry::applyTo(const Reference< text::XTextRange > & xTextRange)
     }
 
     SwTextBlocks* pBlock = pGlossaries->GetGroupDoc(sGroupName);
-    sal_Bool bResult = pBlock &&
+    sal_Bool bResult = pBlock && !pBlock->GetError() &&
                 pDoc->InsertGlossary( *pBlock, sEntryName, *pInsertPaM);
     delete pInsertPaM;
 
@@ -1180,7 +1176,7 @@ Sequence< OUString > SwXAutoTextEntry::getSupportedServiceNames(void) throw( Run
 /* -----------------------------06.04.00 11:11--------------------------------
 
  ---------------------------------------------------------------------------*/
-Reference< container::XNameReplace > SwXAutoTextEntry::getEvents() 
+Reference< container::XNameReplace > SwXAutoTextEntry::getEvents()
     throw( uno::RuntimeException )
 {
     return new SwAutoTextEventDescriptor( *this );
@@ -1189,7 +1185,7 @@ Reference< container::XNameReplace > SwXAutoTextEntry::getEvents()
 
  ---------------------------------------------------------------------------*/
 const USHORT aAutotextEvents[] =
-{ 
+{
     SW_EVENT_START_INS_GLOSSARY,
     SW_EVENT_END_INS_GLOSSARY,
     0
@@ -1197,7 +1193,7 @@ const USHORT aAutotextEvents[] =
 /* -----------------------------30.01.01 18:40--------------------------------
 
  ---------------------------------------------------------------------------*/
-SwAutoTextEventDescriptor::SwAutoTextEventDescriptor( 	
+SwAutoTextEventDescriptor::SwAutoTextEventDescriptor(
     SwXAutoTextEntry& rAutoText ) :
         SwBaseEventDescriptor(aAutotextEvents),
         sSwAutoTextEventDescriptor(RTL_CONSTASCII_USTRINGPARAM(
@@ -1214,7 +1210,7 @@ SwAutoTextEventDescriptor::~SwAutoTextEventDescriptor()
 /* -----------------------------30.01.01 18:40--------------------------------
 
  ---------------------------------------------------------------------------*/
-OUString SwAutoTextEventDescriptor::getImplementationName() 
+OUString SwAutoTextEventDescriptor::getImplementationName()
     throw( uno::RuntimeException )
 {
     return sSwAutoTextEventDescriptor;
@@ -1222,28 +1218,28 @@ OUString SwAutoTextEventDescriptor::getImplementationName()
 /* -----------------------------30.01.01 18:40--------------------------------
 
  ---------------------------------------------------------------------------*/
-void SwAutoTextEventDescriptor::replaceByName( 
+void SwAutoTextEventDescriptor::replaceByName(
     const USHORT nEvent,
     const SvxMacro& rMacro)
             throw(
-                IllegalArgumentException, 
-                NoSuchElementException, 
-                WrappedTargetException, 
+                IllegalArgumentException,
+                NoSuchElementException,
+                WrappedTargetException,
                 RuntimeException)
 {
-    DBG_ASSERT( NULL != rAutoTextEntry.GetGlossaries(), 
+    DBG_ASSERT( NULL != rAutoTextEntry.GetGlossaries(),
                 "Strangely enough, the AutoText vanished!" );
-    DBG_ASSERT( (nEvent == SW_EVENT_END_INS_GLOSSARY) || 
+    DBG_ASSERT( (nEvent == SW_EVENT_END_INS_GLOSSARY) ||
                 (nEvent == SW_EVENT_START_INS_GLOSSARY) ,
                 "Unknown event ID" );
 
     const SwGlossaries* pGlossaries = rAutoTextEntry.GetGlossaries();
-    SwTextBlocks* pBlocks = 
+    SwTextBlocks* pBlocks =
         pGlossaries->GetGroupDoc( rAutoTextEntry.GetGroupName() );
-    DBG_ASSERT( NULL != pBlocks, 
+    DBG_ASSERT( NULL != pBlocks,
                 "can't get autotext group; SwAutoTextEntry has illegal name?");
 
-    if ( NULL != pBlocks )
+    if( pBlocks && !pBlocks->GetError())
     {
         USHORT nIndex = pBlocks->GetIndex( rAutoTextEntry.GetEntryName() );
         if( nIndex != USHRT_MAX )
@@ -1262,29 +1258,29 @@ void SwAutoTextEventDescriptor::replaceByName(
 /* -----------------------------30.01.01 18:40--------------------------------
 
  ---------------------------------------------------------------------------*/
-void SwAutoTextEventDescriptor::getByName( 
+void SwAutoTextEventDescriptor::getByName(
     SvxMacro& rMacro,
     const USHORT nEvent )
             throw(
-                NoSuchElementException, 
-                WrappedTargetException, 
+                NoSuchElementException,
+                WrappedTargetException,
                 RuntimeException)
 {
     DBG_ASSERT( NULL != rAutoTextEntry.GetGlossaries(), "no AutoText" );
-    DBG_ASSERT( (nEvent == SW_EVENT_END_INS_GLOSSARY) || 
+    DBG_ASSERT( (nEvent == SW_EVENT_END_INS_GLOSSARY) ||
                 (nEvent == SW_EVENT_START_INS_GLOSSARY) ,
                 "Unknown event ID" );
 
     const SwGlossaries* pGlossaries = rAutoTextEntry.GetGlossaries();
-    SwTextBlocks* pBlocks = 
+    SwTextBlocks* pBlocks =
         pGlossaries->GetGroupDoc( rAutoTextEntry.GetGroupName() );
-    DBG_ASSERT( NULL != pBlocks, 
+    DBG_ASSERT( NULL != pBlocks,
                 "can't get autotext group; SwAutoTextEntry has illegal name?");
 
     // return empty macro, unless macro is found
     rMacro = aEmptyMacro;
 
-    if ( NULL != pBlocks )
+    if ( pBlocks &&  !pBlocks->GetError())
     {
         USHORT nIndex = pBlocks->GetIndex( rAutoTextEntry.GetEntryName() );
         if( nIndex != USHRT_MAX )
