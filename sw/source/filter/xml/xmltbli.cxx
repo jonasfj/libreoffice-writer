@@ -2,9 +2,9 @@
  *
  *  $RCSfile: xmltbli.cxx,v $
  *
- *  $Revision: 1.44 $
+ *  $Revision: 1.45 $
  *
- *  last change: $Author: rt $ $Date: 2003-12-01 17:30:58 $
+ *  last change: $Author: rt $ $Date: 2004-05-03 13:52:17 $
  *
  *  The Contents of this file are made available subject to the terms of
  *  either of the following licenses
@@ -1255,7 +1255,7 @@ public:
     sal_Int32 mnWidth;
     sal_Bool mbProtected;
 
-    TableBoxIndex( const OUString& rName, sal_Int32 nWidth, 
+    TableBoxIndex( const OUString& rName, sal_Int32 nWidth,
                    sal_Bool bProtected ) :
         msName( rName ),
         mnWidth( nWidth ),
@@ -1311,7 +1311,7 @@ SwXMLTableContext::SwXMLTableContext( SwXMLImport& rImport,
     nWidth( 0UL ),
     bFirstSection( sal_True ),
     bRelWidth( sal_True ),
-    bHasHeading( sal_False ),
+    nHeaderRows( 0 ),
     pDDESource(NULL),
     pSharedBoxFormats(NULL)
 {
@@ -1451,7 +1451,7 @@ SwXMLTableContext::SwXMLTableContext( SwXMLImport& rImport,
     nWidth( 0UL ),
     bFirstSection( sal_False ),
     bRelWidth( sal_True ),
-    bHasHeading( sal_False ),
+    nHeaderRows( 0 ),
     pDDESource(NULL),
     pSharedBoxFormats(NULL)
 {
@@ -1722,8 +1722,8 @@ void SwXMLTableContext::InsertRow( const OUString& rStyleName,
     while( nCurCol<GetColumnCount() && GetCell(nCurRow,nCurCol)->IsUsed() )
         nCurCol++;
 
-    if( 0UL == nCurRow )
-        bHasHeading = bInHead;
+    if( bInHead  &&  nHeaderRows == nCurRow )
+        nHeaderRows++;
 }
 
 void SwXMLTableContext::InsertRepRows( sal_uInt32 nCount )
@@ -1739,7 +1739,7 @@ void SwXMLTableContext::InsertRepRows( sal_uInt32 nCount )
             {
                 const SwXMLTableCell_Impl *pSrcCell =
                     GetCell( nCurRow-1, nCurCol );
-                InsertCell( pSrcCell->GetStyleName(), 1U, 
+                InsertCell( pSrcCell->GetStyleName(), 1U,
                             pSrcCell->GetColSpan(),
                             InsertTableSection(), 0, pSrcCell->IsProtected(),
                             &pSrcCell->GetFormula(),
@@ -1871,7 +1871,7 @@ SwTableBox *SwXMLTableContext::NewTableBox( const SwStartNode *pStNd,
     return pBox;
 }
 
-SwTableBoxFmt* SwXMLTableContext::GetSharedBoxFormat( 
+SwTableBoxFmt* SwXMLTableContext::GetSharedBoxFormat(
     SwTableBox* pBox,
     const OUString& rStyleName,
     sal_Int32 nColumnWidth,
@@ -1891,7 +1891,7 @@ SwTableBoxFmt* SwXMLTableContext::GetSharedBoxFormat(
     {
         // unknown format so far -> construct a new one
 
-        // get the old format, and reset all attributes 
+        // get the old format, and reset all attributes
         // (but preserve FillOrder)
         pBoxFmt = (SwTableBoxFmt*)pBox->ClaimFrmFmt();
         SwFmtFillOrder aFillOrder( pBoxFmt->GetFillOrder() );
@@ -2049,7 +2049,7 @@ SwTableBox *SwXMLTableContext::MakeTableBox(
     OUString sStyleName = pCell->GetStyleName();
     sal_Bool bModifyLocked;
     sal_Bool bNew;
-    SwTableBoxFmt *pBoxFmt = GetSharedBoxFormat( 
+    SwTableBoxFmt *pBoxFmt = GetSharedBoxFormat(
         pBox, sStyleName, nColWidth, pCell->IsProtected(),
         pCell->GetStartNode() && pCell->GetFormula().getLength() == 0 &&
             ! pCell->HasValue(),
@@ -2059,13 +2059,13 @@ SwTableBox *SwXMLTableContext::MakeTableBox(
     if ( bNew )
     {
         // set style
-        const SfxItemSet *pAutoItemSet = 0;	
-        if( pCell->GetStartNode() && sStyleName &&	
-            GetSwImport().FindAutomaticStyle(	
-                XML_STYLE_FAMILY_TABLE_CELL, sStyleName, &pAutoItemSet ) )	
-        {	
-            if( pAutoItemSet )	
-                pBoxFmt->SetAttr( *pAutoItemSet );	
+        const SfxItemSet *pAutoItemSet = 0;
+        if( pCell->GetStartNode() && sStyleName &&
+            GetSwImport().FindAutomaticStyle(
+                XML_STYLE_FAMILY_TABLE_CELL, sStyleName, &pAutoItemSet ) )
+        {
+            if( pAutoItemSet )
+                pBoxFmt->SetAttr( *pAutoItemSet );
         }
     }
 
@@ -2086,10 +2086,10 @@ SwTableBox *SwXMLTableContext::MakeTableBox(
         {
             // default num format?
             const SfxPoolItem* pItem = NULL;
-            if( pBoxFmt->GetItemState( RES_BOXATR_FORMAT, FALSE, &pItem ) 
+            if( pBoxFmt->GetItemState( RES_BOXATR_FORMAT, FALSE, &pItem )
                             == SFX_ITEM_SET )
             {
-                const SwTblBoxNumFormat* pNumFormat = 
+                const SwTblBoxNumFormat* pNumFormat =
                     static_cast<const SwTblBoxNumFormat*>( pItem );
                 if( ( pNumFormat != NULL ) && ( pNumFormat->GetValue() == 0 ) )
                 {
@@ -2115,7 +2115,7 @@ SwTableBox *SwXMLTableContext::MakeTableBox(
                 }
             }
         }
-            
+
         if( bSuppressNumericContent )
         {
             // suppress numeric content? Then reset number format!
@@ -2602,7 +2602,7 @@ void SwXMLTableContext::_MakeTable( SwTableBox *pBox )
 
 void SwXMLTableContext::MakeTable()
 {
-    // this method will modify the document directly -> lock SolarMutex 
+    // this method will modify the document directly -> lock SolarMutex
     // This will call all other MakeTable*(..) methods, so
     // those don't need to be locked separately.
     vos::OGuard aGuard(Application::GetSolarMutex());
@@ -2618,7 +2618,7 @@ void SwXMLTableContext::MakeTable()
     sal_Bool bCalcWidth = sal_False;
     sal_Bool bSetWidth = sal_False;
 
-    pTableNode->GetTable().SetHeadlineRepeat( bHasHeading );
+    pTableNode->GetTable().SetRowsToRepeat( nHeaderRows );
 
     const SfxItemSet *pAutoItemSet = 0;
     if( aStyleName.getLength() &&
@@ -2813,7 +2813,7 @@ const SwStartNode *SwXMLTableContext::InsertTableSection(
                                              : pTableNode->EndOfSectionNode();
         sal_uInt32 nOffset = pPrevSttNd ? 1UL : 0UL;
         SwNodeIndex aIdx( *pEndNd, nOffset );
-        SwTxtFmtColl *pColl = 
+        SwTxtFmtColl *pColl =
             pDoc->GetTxtCollFromPoolSimple( RES_POOLCOLL_STANDARD, FALSE );
         pStNd = pDoc->GetNodes().MakeTextSection( aIdx, SwTableBoxStartNode,
                                                  pColl );
