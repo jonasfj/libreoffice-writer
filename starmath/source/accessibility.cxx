@@ -2,9 +2,9 @@
  *
  *  $RCSfile: accessibility.cxx,v $
  *
- *  $Revision: 1.20 $
+ *  $Revision: 1.21 $
  *
- *  last change: $Author: hr $ $Date: 2003-03-27 11:58:17 $
+ *  last change: $Author: vg $ $Date: 2003-04-15 16:21:33 $
  *
  *  The Contents of this file are made available subject to the terms of
  *  either of the following licenses
@@ -165,9 +165,9 @@ using namespace drafts::com::sun::star::accessibility;
 static awt::Rectangle lcl_GetBounds( Window *pWin )
 {
     // !! see VCLXAccessibleComponent::implGetBounds()
-    
+
     //! the coordinates returned are relativ to the parent window !
-    //! Thus the top-left point may be different from (0, 0) ! 
+    //! Thus the top-left point may be different from (0, 0) !
 
     awt::Rectangle aBounds;
     if (pWin)
@@ -202,7 +202,7 @@ static awt::Point lcl_GetLocationOnScreen( Window *pWin )
     }
     return aPos;
 }
-    
+
 //////////////////////////////////////////////////////////////////////
 
 SmGraphicAccessible::SmGraphicAccessible( SmGraphicWindow *pGraphicWin ) :
@@ -356,7 +356,7 @@ awt::Size SAL_CALL SmGraphicAccessible::getSize()
             "mismatch of window parent and accessible parent" );
 
     Size aSz( pWin->GetSizePixel() );
-#ifdef DEBUG
+#if OSL_DEBUG_LEVEL > 1
     awt::Rectangle aRect( lcl_GetBounds( pWin ) );
     Size aSz2( aRect.Width, aRect.Height );
     DBG_ASSERT( aSz == aSz2, "mismatch in width" );
@@ -388,7 +388,7 @@ sal_Int32 SAL_CALL SmGraphicAccessible::getBackground()
     throw (RuntimeException)
 {
     vos::OGuard aGuard(Application::GetSolarMutex());
-    
+
     if (!pWin)
         throw RuntimeException();
     Wallpaper aWall( pWin->GetDisplayBackground() );
@@ -640,7 +640,7 @@ awt::Rectangle SAL_CALL SmGraphicAccessible::getCharacterBounds( sal_Int32 nInde
                 aSize.Width()  = nNodeIndex > 0 ? pXAry[nNodeIndex] - pXAry[nNodeIndex - 1] : pXAry[nNodeIndex];
                 delete[] pXAry;
 
-#ifdef DEBUG
+#if OSL_DEBUG_LEVEL > 1
     Point aLP00( pWin->LogicToPixel( Point(0,0)) );
     Point aPL00( pWin->PixelToLogic( Point(0,0)) );
 #endif
@@ -697,7 +697,7 @@ sal_Int32 SAL_CALL SmGraphicAccessible::getIndexAtPoint( const awt::Point& aPoin
 //            Size  aSize( pNode->GetItalicSize() );
             aTLPos.X() -= 0;
             Size  aSize( pNode->GetSize() );
-#ifdef DEBUG
+#if OSL_DEBUG_LEVEL > 1
     Point aLP00( pWin->LogicToPixel( Point(0,0)) );
     Point aPL00( pWin->PixelToLogic( Point(0,0)) );
 #endif
@@ -1686,7 +1686,7 @@ awt::Size SAL_CALL SmEditAccessible::getSize(  )
             "mismatch of window parent and accessible parent" );
 
     Size aSz( pWin->GetSizePixel() );
-#ifdef DEBUG
+#if OSL_DEBUG_LEVEL > 1
     awt::Rectangle aRect( lcl_GetBounds( pWin ) );
     Size aSz2( aRect.Width, aRect.Height );
     DBG_ASSERT( aSz == aSz2, "mismatch in width" );
@@ -1718,7 +1718,7 @@ sal_Int32 SAL_CALL SmEditAccessible::getBackground()
     throw (RuntimeException)
 {
     vos::OGuard aGuard(Application::GetSolarMutex());
-    
+
     if (!pWin)
         throw RuntimeException();
     Wallpaper aWall( pWin->GetDisplayBackground() );
