@@ -2,9 +2,9 @@
  *
  *  $RCSfile: editsh.hxx,v $
  *
- *  $Revision: 1.44 $
+ *  $Revision: 1.45 $
  *
- *  last change: $Author: kz $ $Date: 2004-10-04 18:58:12 $
+ *  last change: $Author: rt $ $Date: 2005-02-09 14:50:08 $
  *
  *  The Contents of this file are made available subject to the terms of
  *  either of the following licenses
@@ -169,9 +169,9 @@ class SwRewriter;
 namespace com { namespace sun { namespace star { namespace uno {
     template < class > class Sequence;
 }}}};
-namespace svx{ 
-struct SpellPortion; 
-typedef std::vector<SpellPortion> SpellPortions;    
+namespace svx{
+struct SpellPortion;
+typedef std::vector<SpellPortion> SpellPortions;
 }
 
 // Flags for GetScriptType - to define how handle weak - scripts (b.e.
@@ -566,7 +566,7 @@ public:
     // liefert die Id der letzten Repeatfaehigen Aktion zurueck
     // fuellt ggf. VARARR mit RedoIds
     USHORT GetRepeatIds( String* pRepeatStr = 0, SwUndoIds *pRedoIds = 0) const;
-    String GetRepeatIdsStr( String* pRepeatStr = 0, 
+    String GetRepeatIdsStr( String* pRepeatStr = 0,
                             SwUndoIds *pRedoIds = 0) const;
 
     // 0 letzte Aktion, sonst Aktionen bis zum Start der Klammerung nUndoId
@@ -602,8 +602,10 @@ public:
      * SwGrfNode zeigt (und Mark nicht gesetzt ist oder auf die
      * gleiche Graphic zeigt), sonst gibt's was auf die Finger
      */
-    const Graphic &GetGraphic( BOOL bWait = TRUE ) const;
-    const GraphicObject &GetGraphicObj() const;
+    // --> OD 2005-02-09 #119353# - robust
+    const Graphic* GetGraphic( BOOL bWait = TRUE ) const;
+    const GraphicObject* GetGraphicObj() const;
+    // <--
     BOOL IsGrfSwapOut( BOOL bOnlyLinked = FALSE ) const;
     USHORT GetGraphicType() const;
 
