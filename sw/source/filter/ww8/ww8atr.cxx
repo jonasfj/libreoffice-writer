@@ -2,9 +2,9 @@
  *
  *  $RCSfile: ww8atr.cxx,v $
  *
- *  $Revision: 1.71 $
+ *  $Revision: 1.72 $
  *
- *  last change: $Author: obo $ $Date: 2004-01-13 17:10:11 $
+ *  last change: $Author: hr $ $Date: 2004-02-02 18:35:21 $
  *
  *  The Contents of this file are made available subject to the terms of
  *  either of the following licenses
@@ -341,7 +341,7 @@
 #ifndef SW_WRITERWORDGLUE
 #include "writerwordglue.hxx"
 #endif
- 
+
 #ifndef _WRTWW8_HXX
 #include "wrtww8.hxx"
 #endif
@@ -572,7 +572,7 @@ void SwWW8Writer::GatherChapterFields()
 }
 
 bool SwWW8Writer::CntntContainsChapterField(const SwFmtCntnt &rCntnt) const
-{   
+{
     bool bRet = false;
     if (const SwNodeIndex* pSttIdx = rCntnt.GetCntntIdx())
     {
@@ -595,7 +595,7 @@ bool SwWW8Writer::CntntContainsChapterField(const SwFmtCntnt &rCntnt) const
 }
 
 bool SwWW8Writer::FmtHdFtContainsChapterField(const SwFrmFmt &rFmt) const
-{   
+{
     if (maChapterFieldLocs.empty())
         return false;
     bool bRet = false;
@@ -660,7 +660,7 @@ void SwWW8Writer::Out_SfxBreakItems(const SfxItemSet *pSet, const SwNode& rNd)
     bool bNewPageDesc = false;
     const SfxPoolItem* pItem=0;
     const SwFmtPageDesc *pPgDesc=0;
- 
+
     //Output a sectionbreak if theres a new pagedesciptor.  otherwise output a
     //pagebreak if there is a pagebreak here, unless the new page (follow
     //style) is different to the current one, in which case plump for a
@@ -668,7 +668,7 @@ void SwWW8Writer::Out_SfxBreakItems(const SfxItemSet *pSet, const SwNode& rNd)
     bool bBreakSet = false;
     if (pSet && pSet->Count())
     {
-        if (SFX_ITEM_SET == pSet->GetItemState(RES_PAGEDESC, false, &pItem) 
+        if (SFX_ITEM_SET == pSet->GetItemState(RES_PAGEDESC, false, &pItem)
             && ((SwFmtPageDesc*)pItem)->GetRegisteredIn())
         {
             bBreakSet = true;
@@ -707,7 +707,7 @@ void SwWW8Writer::Out_SfxBreakItems(const SfxItemSet *pSet, const SwNode& rNd)
     {
         if (const SwCntntNode *pNd = rNd.GetCntntNode())
         {
-            const SvxFmtBreakItem &rBreak = 
+            const SvxFmtBreakItem &rBreak =
                 ItemGet<SvxFmtBreakItem>(*pNd, RES_BREAK);
             if (rBreak.GetBreak() == SVX_BREAK_PAGE_BEFORE)
                 bHackInBreak = true;
@@ -745,7 +745,7 @@ void SwWW8Writer::Out_SfxBreakItems(const SfxItemSet *pSet, const SwNode& rNd)
             else if (const SwCntntNode *pNd = rNd.GetCntntNode())
                 pNItem = &(ItemGet<SwFmtLineNumber>(*pNd,RES_LINENUMBER));
             ULONG nLnNm = pNItem ? pNItem->GetStartValue() : 0;
-            
+
             if (pPgDesc)
                 pSepx->AppendSep(Fc2Cp(nFcPos), *pPgDesc, rNd, pFmt, nLnNm);
             else
@@ -759,7 +759,7 @@ void SwWW8Writer::CorrTabStopInSet(SfxItemSet& rSet, USHORT nAbsLeft)
 {
     const SvxTabStopItem *pItem =
         sw::util::HasItem<SvxTabStopItem>(rSet, RES_PARATR_TABSTOP);
-    
+
     if (pItem)
     {
         // dann muss das fuer die Ausgabe korrigiert werden
@@ -841,7 +841,7 @@ void SwWW8Writer::Out_SwFmt(const SwFmt& rFmt, bool bPapFmt, bool bChpFmt,
                         if (rNFmt.GetAbsLSpace())
                         {
                             SwNumFmt aNumFmt(rNFmt);
-                            const SvxLRSpaceItem& rLR = 
+                            const SvxLRSpaceItem& rLR =
                                 ItemGet<SvxLRSpaceItem>(rFmt, RES_LR_SPACE);
                             aNumFmt.SetAbsLSpace(writer_cast<short>(
                                     aNumFmt.GetAbsLSpace() + rLR.GetLeft()));
@@ -883,7 +883,7 @@ void SwWW8Writer::Out_SwFmt(const SwFmt& rFmt, bool bPapFmt, bool bChpFmt,
             if (mpParentFrame)
             {
                 const SwFrmFmt &rFmt = mpParentFrame->GetFrmFmt();
-                
+
                 SfxItemSet aSet(pDoc->GetAttrPool(), RES_FRMATR_BEGIN,
                     RES_FRMATR_END-1);
                 aSet.Set(rFmt.GetAttrSet());
@@ -1214,7 +1214,7 @@ static Writer& OutWW8_SwUnderline( Writer& rWrt, const SfxPoolItem& rHt )
     switch (rAttr.GetUnderline())
     {
         case UNDERLINE_SINGLE:
-            b = ( bWord ) ? 2 : 1;          
+            b = ( bWord ) ? 2 : 1;
             break;
         case UNDERLINE_BOLD:
             b = rWrtWW8.bWrtWW8 ?  6 : 1;
@@ -1664,7 +1664,7 @@ String lcl_GetExpandedField(const SwField &rFld)
 
     //replace LF 0x0A with VT 0x0B
     sRet.SearchAndReplaceAll(0x0A, 0x0B);
-    
+
     return sRet;
 }
 
@@ -2155,7 +2155,7 @@ bool SwWW8Writer::GetNumberFmt(const SwField& rFld, String& rStr)
             rKeyMap[ NF_KEY_GGG     ].ASSIGN_CONST_ASC( "ggg" );
         }
 
-        String sFmt(pNumFmt->GetMappedFormatstring(*(NfKeywordTable*)pKeyMap, 
+        String sFmt(pNumFmt->GetMappedFormatstring(*(NfKeywordTable*)pKeyMap,
             aLocDat));
         if (sFmt.Len())
         {
@@ -2229,7 +2229,7 @@ String FieldString(ww::eField eIndex)
     return sRet;
 }
 
-void OutWW8_RefField(SwWW8Writer& rWW8Wrt, const SwField &rFld, 
+void OutWW8_RefField(SwWW8Writer& rWW8Wrt, const SwField &rFld,
     const String &rRef)
 {
     using namespace ww;
@@ -2352,7 +2352,7 @@ static Writer& OutWW8_SwField( Writer& rWrt, const SfxPoolItem& rHt )
                 }
             }
             rWW8Wrt.OutField(pFld, eFieldNo, sStr, WRITEFIELD_CLOSE);
-            
+
             if (bShowAsWell)
                 OutWW8_RefField(rWW8Wrt, *pSet, pSet->GetPar1());
         }
@@ -2560,7 +2560,7 @@ static Writer& OutWW8_SwField( Writer& rWrt, const SfxPoolItem& rHt )
                             eFld = eREF;
                             break;
                         default:
-                            eFld = 
+                            eFld =
                                 REF_ENDNOTE == nSubType ? eNOTEREF : eFOOTREF;
                             break;
                     }
@@ -2641,7 +2641,7 @@ static Writer& OutWW8_SwField( Writer& rWrt, const SfxPoolItem& rHt )
         if (rWW8Wrt.bWrtWW8)
         {
             const SwDropDownField& rFld = *(SwDropDownField*)pFld;
-            com::sun::star::uno::Sequence<rtl::OUString> aItems = 
+            com::sun::star::uno::Sequence<rtl::OUString> aItems =
                 rFld.GetItemSequence();
             rWW8Wrt.DoComboBox(rFld.GetName(), rFld.GetSelectedItem(), aItems);
         }
@@ -3226,7 +3226,7 @@ ULONG SwWW8Writer::ReplaceCr( BYTE nChar )
         }
         else if ((nUCode == 0x0c) && (nChar == 0x0e))
         {
-            //#108854# a column break after a section has 
+            //#108854# a column break after a section has
             //no effect in writer
             bReplaced = true;
         }
@@ -3296,7 +3296,7 @@ static Writer& OutWW8_SwFmtBreak( Writer& rWrt, const SfxPoolItem& rHt )
                 rWW8Wrt.InsUInt16(0x2407);
             else
                 rWW8Wrt.pO->Insert(9, rWW8Wrt.pO->Count());
-            rWW8Wrt.pO->Insert(rBreak.GetValue() ? 1 : 0, 
+            rWW8Wrt.pO->Insert(rBreak.GetValue() ? 1 : 0,
                 rWW8Wrt.pO->Count());
             break;
         default:
@@ -4230,7 +4230,7 @@ static Writer& OutWW8_SvxAdjust(Writer& rWrt, const SfxPoolItem& rHt)
                 {
                     const SwTxtFmtColl* pC =
                         (const SwTxtFmtColl*)rWrtWW8.pOutFmtNode;
-                    const SvxFrameDirectionItem &rItem = 
+                    const SvxFrameDirectionItem &rItem =
                         ItemGet<SvxFrameDirectionItem>(*pC, RES_FRAMEDIR);
                     nDirection = rItem.GetValue();
                 }
@@ -4388,7 +4388,7 @@ SwWW8WrTabu::~SwWW8WrTabu()
 void SwWW8WrTabu::Add(const SvxTabStop & rTS, long nAdjustment)
 {
     // Tab-Position eintragen
-    ShortToSVBT16(msword_cast<sal_Int16>(rTS.GetTabPos() + nAdjustment), 
+    ShortToSVBT16(msword_cast<sal_Int16>(rTS.GetTabPos() + nAdjustment),
         pAddPos + (nAdd * 2));
 
     // Tab-Typ eintragen
@@ -4398,7 +4398,7 @@ void SwWW8WrTabu::Add(const SvxTabStop & rTS, long nAdjustment)
         case SVX_TAB_ADJUST_RIGHT:
             nPara = 2;
             break;
-        case SVX_TAB_ADJUST_CENTER:     
+        case SVX_TAB_ADJUST_CENTER:
             nPara = 1;
             break;
         case SVX_TAB_ADJUST_DECIMAL:
@@ -4439,7 +4439,7 @@ void SwWW8WrTabu::Add(const SvxTabStop & rTS, long nAdjustment)
 void SwWW8WrTabu::Del(const SvxTabStop &rTS, long nAdjustment)
 {
     // Tab-Position eintragen
-    ShortToSVBT16(msword_cast<sal_Int16>(rTS.GetTabPos() + nAdjustment), 
+    ShortToSVBT16(msword_cast<sal_Int16>(rTS.GetTabPos() + nAdjustment),
         pDel + (nDel * 2));
     ++nDel;
 }
@@ -4489,7 +4489,7 @@ static void OutWW8_SwTabStopAdd(Writer& rWrt, const SvxTabStopItem& rTStops,
     aTab.PutAll( (SwWW8Writer&)rWrt );
 }
 
-bool lcl_IsEqual(long nOneLeft, const SvxTabStop &rOne, 
+bool lcl_IsEqual(long nOneLeft, const SvxTabStop &rOne,
     long nTwoLeft, const SvxTabStop &rTwo)
 {
     return(
@@ -4586,7 +4586,7 @@ static Writer& OutWW8_SwTabStop(Writer& rWrt, const SfxPoolItem& rHt)
     const SvxTabStopItem* pStyleTabs = 0;
     if (!rWW8Wrt.bStyDef && rWW8Wrt.pStyAttr)
     {
-        pStyleTabs = 
+        pStyleTabs =
             HasItem<SvxTabStopItem>(*rWW8Wrt.pStyAttr, RES_PARATR_TABSTOP);
     }
 
@@ -4594,11 +4594,11 @@ static Writer& OutWW8_SwTabStop(Writer& rWrt, const SfxPoolItem& rHt)
         OutWW8_SwTabStopAdd(rWW8Wrt, rTStops, nCurrentLeft);
     else
     {
-        const SvxLRSpaceItem &rStyleLR = 
+        const SvxLRSpaceItem &rStyleLR =
             ItemGet<SvxLRSpaceItem>(*rWW8Wrt.pStyAttr, RES_LR_SPACE);
         long nStyleLeft = rStyleLR.GetTxtLeft();
 
-        OutWW8_SwTabStopDelAdd(rWW8Wrt, *pStyleTabs, nStyleLeft, rTStops, 
+        OutWW8_SwTabStopDelAdd(rWW8Wrt, *pStyleTabs, nStyleLeft, rTStops,
             nCurrentLeft);
     }
     return rWrt;
@@ -4727,7 +4727,12 @@ SwAttrFnTab aWW8AttrFnTab = {
 /* RES_FRAMEDIR*/                   OutWW8_SvxFrameDirection,
 /* RES_FRMATR_DUMMY8 */             0, // Dummy:
 /* RES_FRMATR_DUMMY9 */             0, // Dummy:
-
+/* RES_FOLLOW_TEXT_FLOW */          0,
+/* RES_FRMATR_DUMMY1 */             0, // Dummy:
+/* RES_FRMATR_DUMMY2 */             0, // Dummy:
+/* RES_FRMATR_DUMMY3 */             0, // Dummy:
+/* RES_FRMATR_DUMMY4 */             0, // Dummy:
+/* RES_FRMATR_DUMMY5 */             0, // Dummy:
 
 /* RES_GRFATR_MIRRORGRF */          0, // OutW4W_SwMirrorGrf,
 /* RES_GRFATR_CROPGRF   */          0, // OutW4W_SwCropGrf
