@@ -2,9 +2,9 @@
  *
  *  $RCSfile: ww8par.hxx,v $
  *
- *  $Revision: 1.16 $
+ *  $Revision: 1.17 $
  *
- *  last change: $Author: cmc $ $Date: 2001-03-13 16:21:22 $
+ *  last change: $Author: jp $ $Date: 2001-03-16 17:16:00 $
  *
  *  The Contents of this file are made available subject to the terms of
  *  either of the following licenses
@@ -532,7 +532,7 @@ friend class WW8FormulaControl;
     SwFlyFrmFmt* pFlyFmtOfJustInsertedGraphic;
     SwFrmFmt* pFmtOfJustInsertedGraphicOrOLE;
     //Keep track of generated Ruby character formats
-    SwCharFmtPtrArray aRubyCharFmts;	
+    SwCharFmtPtrArray aRubyCharFmts;
 
     WW8Fib* pWwFib;
     WW8Fonts* pFonts;
@@ -1005,6 +1005,7 @@ public:		// eigentlich private, geht aber leider nur public
     void Read_Invisible(		USHORT, BYTE* pData, short nLen );
     void Read_Emphasis(			USHORT, BYTE* pData, short nLen );
     void Read_ScaleWidth(		USHORT, BYTE* pData, short nLen );
+    void Read_Relief( 			USHORT, BYTE* pData, short nLen);
 
     void Read_NoLineNumb(		USHORT nId, BYTE* pData, short nLen );
 
@@ -1150,23 +1151,26 @@ public:		// eigentlich private, geht aber leider nur public
 
     Source Code Control System - Header
 
-      $Header: /zpool/svn/migration/cvs_rep_09_09_08/code/sw/source/filter/ww8/ww8par.hxx,v 1.16 2001-03-13 16:21:22 cmc Exp $
+      $Header: /zpool/svn/migration/cvs_rep_09_09_08/code/sw/source/filter/ww8/ww8par.hxx,v 1.17 2001-03-16 17:16:00 jp Exp $
 
       Source Code Control System - Update
 
       $Log: not supported by cvs2svn $
+      Revision 1.16  2001/03/13 16:21:22  cmc
+      ##503##, #84126#. Incorrect endnote setting, and duplicate code
+    
       Revision 1.15  2001/02/27 10:59:05  cmc
       #84122# Missing Cropping on DirectBLIP import
-    
+
       Revision 1.14  2001/02/26 13:44:24  cmc
       Ruby Text Import
-    
+
       Revision 1.13  2001/02/21 13:49:03  cmc
       Combined Characters Field Import
-    
+
       Revision 1.12  2001/02/15 20:08:10  jp
       im-/export the Rotate-/ScaleWidth-Character attribut
-    
+
       Revision 1.11  2001/02/06 17:28:21  cmc
       #83581# CJK Two Lines in One {Im|Ex}port for Word
 
