@@ -2,9 +2,9 @@
  *
  *  $RCSfile: doc.hxx,v $
  *
- *  $Revision: 1.97 $
+ *  $Revision: 1.98 $
  *
- *  last change: $Author: rt $ $Date: 2005-01-05 15:47:18 $
+ *  last change: $Author: kz $ $Date: 2005-01-21 10:27:28 $
  *
  *  The Contents of this file are made available subject to the terms of
  *  either of the following licenses
@@ -540,7 +540,7 @@ class SwDoc
     // COMPATIBILITY FLAGS END
     //
 
-    sal_Bool    bWinEncryption                      ;    // imported document password encrypted? 
+    sal_Bool    bWinEncryption                      ;    // imported document password encrypted?
 
     static SwAutoCompleteWord *pACmpltWords;	// Liste aller Worte fuers AutoComplete
     static sal_uInt16 nUndoActions; 	// anzahl von Undo ::com::sun::star::chaos::Action
@@ -587,7 +587,9 @@ class SwDoc
                         sal_Bool bCopyFlyAtFly = sal_False ) const;	// steht im ndcopy.cxx
     sal_Int8 SetFlyFrmAnchor( SwFrmFmt& rFlyFmt, SfxItemSet& rSet, sal_Bool bNewFrms );
 
-    typedef SwFmt* (SwDoc:: *FNCopyFmt)( const String&, SwFmt*, BOOL );
+    // --> OD 2005-01-13 #i40550#
+    typedef SwFmt* (SwDoc:: *FNCopyFmt)( const String&, SwFmt*, BOOL, BOOL );
+    // <--
     SwFmt* CopyFmt( const SwFmt& rFmt, const SvPtrarr& rFmtArr,
                         FNCopyFmt fnCopyFmt, const SwFmt& rDfltFmt );
     void CopyFmtArr( const SvPtrarr& rSourceArr, SvPtrarr& rDestArr,
@@ -1286,8 +1288,11 @@ public:
     SwFrmFmt* FindSpzFrmFmtByName( const String& rName ) const
         {	return (SwFrmFmt*)FindFmtByName( (SvPtrarr&)*pSpzFrmFmtTbl, rName ); }
 
+    // --> OD 2005-01-13 #i40550#
     SwCharFmt *MakeCharFmt(const String &rFmtName, SwCharFmt *pDerivedFrom,
-                           BOOL bBroadcast = FALSE);
+                           BOOL bBroadcast = FALSE,
+                           BOOL bAuto = TRUE );
+    // <--
     void	   DelCharFmt(sal_uInt16 nFmt, BOOL bBroadcast = FALSE);
     void	   DelCharFmt(SwCharFmt* pFmt, BOOL bBroadcast = FALSE);
     SwCharFmt* FindCharFmtByName( const String& rName ) const
@@ -1297,9 +1302,12 @@ public:
     // TXT
     const SwTxtFmtColl* GetDfltTxtFmtColl() const { return pDfltTxtFmtColl; }
     const SwTxtFmtColls *GetTxtFmtColls() const { return pTxtFmtCollTbl; }
+    // --> OD 2005-01-13 #i40550#
     SwTxtFmtColl *MakeTxtFmtColl( const String &rFmtName,
                                   SwTxtFmtColl *pDerivedFrom,
-                                  BOOL bBroadcast = FALSE);
+                                  BOOL bBroadcast = FALSE,
+                                  BOOL bAuto = TRUE );
+    // <--
     SwConditionTxtFmtColl* MakeCondTxtFmtColl( const String &rFmtName,
                                                SwTxtFmtColl *pDerivedFrom,
                                                BOOL bBroadcast = FALSE);
@@ -1620,7 +1628,7 @@ public:
 
     // #i36749#
     /**
-       Add numbering rule to document. 
+       Add numbering rule to document.
 
        @param pRule    rule to add
     */
@@ -1822,7 +1830,7 @@ public:
     // returne dieses.
     SwFlyFrmFmt* InsertLabel( const SwLabelType eType, const String &rTxt,
                     const sal_Bool bBefore, const sal_uInt16 nId, const sal_uInt32 nIdx,
-                    const String& rCharacterStyle, 
+                    const String& rCharacterStyle,
                     const sal_Bool bCpyBrd = sal_True );
     SwFlyFrmFmt* InsertDrawLabel( const String &rTxt, const sal_uInt16 nId,
                                   SdrObject& rObj );
@@ -2268,7 +2276,7 @@ public:
     // Change a format undoable.
     void ChgFmt(SwFmt & rFmt, const SfxItemSet & rSet);
     void ChgFmt(SwFmt & rFmt, const SfxPoolItem & rItem);
-    
+
     // #i36903#
     /**
        Propagates numbering rule from a SwFmt to all text nodes
@@ -2332,7 +2340,7 @@ public:
     // <- #i23726#
 
 
-    void RemoveLeadingChars(const SwPosition & rPos, sal_Unicode sChar);
+    void RemoveLeadingWhiteSpace(const SwPosition & rPos );
 
     // --> #i31958# access methods for XForms model(s)
 
