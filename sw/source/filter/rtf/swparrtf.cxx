@@ -2,9 +2,9 @@
  *
  *  $RCSfile: swparrtf.cxx,v $
  *
- *  $Revision: 1.21 $
+ *  $Revision: 1.22 $
  *
- *  last change: $Author: hr $ $Date: 2003-03-27 15:41:59 $
+ *  last change: $Author: vg $ $Date: 2003-04-01 10:00:18 $
  *
  *  The Contents of this file are made available subject to the terms of
  *  either of the following licenses
@@ -298,7 +298,7 @@ ULONG RtfReader::Read( SwDoc &rDoc,SwPaM &rPam, const String &)
 SwRTFParser::SwRTFParser( SwDoc* pD, const SwPaM& rCrsr, SvStream& rIn,
     int bReadNewDoc )
     : SvxRTFParser( pD->GetAttrPool(), rIn, bReadNewDoc ),
-    maSegments(*this), 
+    maSegments(*this),
     pDoc( pD ),
     pTableNode( 0 ), pOldTblNd( 0 ), nAktBox( 0 ), nNewNumSectDef( USHRT_MAX ),
     nAktPageDesc( 0 ), nAktFirstPageDesc( 0 ),
@@ -352,7 +352,7 @@ bool lcl_UsedPara(SwPaM &rPam)
            SFX_ITEM_SET == pSet->GetItemState( RES_PAGEDESC, FALSE ))))
         return true;
     return false;
-} 
+}
 
 void SwRTFParser::Continue( int nToken )
 {
@@ -364,6 +364,7 @@ void SwRTFParser::Continue( int nToken )
         {
             pDoc->SetParaSpaceMax(true, true);
             pDoc->SetTabCompat(true);
+            pDoc->_SetUseVirtualDevice(true);
         }
 
         // einen temporaeren Index anlegen, auf Pos 0 so wird er nicht bewegt!
@@ -609,7 +610,7 @@ bool rtfSections::SetCols(SwFrmFmt &rFmt, const rtfSection &rSection,
             USHORT nSp = rSection.maPageInfo.maColumns[ n+1 ];
             nHalfPrev = nSp / 2;
             pCol->SetRight( nSp - nHalfPrev );
-            pCol->SetWishWidth(rSection.maPageInfo.maColumns[ n ] + 
+            pCol->SetWishWidth(rSection.maPageInfo.maColumns[ n ] +
                 pCol->GetLeft() + pCol->GetRight());
             nWishWidth += pCol->GetWishWidth();
         }
@@ -637,12 +638,12 @@ void rtfSections::SetPage(SwPageDesc &rInPageDesc, SwFrmFmt &rFmt,
 
     if (!bIgnoreCols)
     {
-        SetCols(rFmt, rSection, rSection.GetPageWidth() - 
+        SetCols(rFmt, rSection, rSection.GetPageWidth() -
             rSection.GetPageLeft() - rSection.GetPageRight());
     }
 }
 
-void rtfSections::GetPageULData(const rtfSection &rSection, bool bFirst, 
+void rtfSections::GetPageULData(const rtfSection &rSection, bool bFirst,
     rtfSections::wwULSpaceData& rData)
 {
     short nWWUp = rSection.maPageInfo.mnMargtsxn;
@@ -656,10 +657,10 @@ void rtfSections::GetPageULData(const rtfSection &rSection, bool bFirst,
     gutter distance and set it to the top margin. When we are "two pages
     in one" the gutter is put at the top of odd pages, and bottom of
     even pages, something we cannot do. So we will put it on top of all
-    pages, that way the pages are at least the right size. 
+    pages, that way the pages are at least the right size.
     */
-    if ( mrReader.pWDop->doptypography.f2on1 || 
-        (!mrReader.bVer67 && mrReader.pWDop->iGutterPos && 
+    if ( mrReader.pWDop->doptypography.f2on1 ||
+        (!mrReader.bVer67 && mrReader.pWDop->iGutterPos &&
          rSection.maSep.fRTLGutter)
        )
     {
@@ -736,7 +737,7 @@ void rtfSections::GetPageULData(const rtfSection &rSection, bool bFirst,
         rData.nSwLo = nWWLo;
 }
 
-void rtfSections::SetPageULSpaceItems(SwFrmFmt &rFmt, 
+void rtfSections::SetPageULSpaceItems(SwFrmFmt &rFmt,
     rtfSections::wwULSpaceData& rData)
 {
     if (rData.bHasHeader)				// ... und Header-Lower setzen
@@ -844,7 +845,7 @@ SwSectionFmt *rtfSections::InsertSection(SwPaM& rMyPaM, rtfSection &rSection)
 
     if (!pPage)
         return 0;
-    
+
     SwFrmFmt& rFmt = pPage->GetMaster();
     const SwFmtFrmSize&   rSz = rFmt.GetFrmSize();
     const SvxLRSpaceItem& rLR = rFmt.GetLRSpace();
@@ -861,7 +862,7 @@ SwSectionFmt *rtfSections::InsertSection(SwPaM& rMyPaM, rtfSection &rSection)
 #if 0
     //Set the columns to be UnBalanced if compatability option is set
     if (mrReader.pWDop->fNoColumnBalance  )
-    { 
+    {
         SwSectionFmt *pFmt = rSection.mpSection->GetFmt();
         pFmt->SetAttr(SwFmtNoBalancedColumns(true));
     }
@@ -874,7 +875,7 @@ void rtfSections::InsertSegments(bool bNewDoc)
 {
     sal_uInt16 nDesc(0);
     mySegIter aEnd = maSegments.end();
-    mySegIter aStart = maSegments.begin(); 
+    mySegIter aStart = maSegments.begin();
     for (mySegIter aIter = aStart; aIter != aEnd; ++aIter)
     {
         mySegIter aNext = aIter+1;
@@ -891,9 +892,9 @@ void rtfSections::InsertSegments(bool bNewDoc)
              we are forced to insert a section here as well as a page
              descriptor.
             */
-            
+
             /*
-             Note for the future: 
+             Note for the future:
              If we want to import "protected sections" the here is
              where we would also test for that and force a section
              insertion if that was true.
@@ -910,7 +911,7 @@ void rtfSections::InsertSegments(bool bNewDoc)
             {
                 if (bNewDoc && aIter == aStart)
                 {
-                    aIter->mpTitlePage = 
+                    aIter->mpTitlePage =
                         mrReader.pDoc->GetPageDescFromPool(RES_POOLPAGE_FIRST);
                 }
                 else
@@ -926,17 +927,17 @@ void rtfSections::InsertSegments(bool bNewDoc)
 
                 SetSegmentToPageDesc(*aIter, true, bIgnoreCols);
             }
-            
+
             if (bNewDoc && aIter == aStart)
             {
-                aIter->mpPage = 
+                aIter->mpPage =
                     mrReader.pDoc->GetPageDescFromPool(RES_POOLPAGE_STANDARD);
             }
             else
             {
-                USHORT nPos = mrReader.pDoc->MakePageDesc( 
-                    ViewShell::GetShellRes()->GetPageDescName(nDesc, 
-                        false, aIter->HasTitlePage()), 
+                USHORT nPos = mrReader.pDoc->MakePageDesc(
+                    ViewShell::GetShellRes()->GetPageDescName(nDesc,
+                        false, aIter->HasTitlePage()),
                         aIter->mpTitlePage, false);
                 aIter->mpPage = &mrReader.pDoc->_GetPageDesc(nPos);
             }
@@ -950,7 +951,7 @@ void rtfSections::InsertSegments(bool bNewDoc)
                 SetSegmentToPageDesc(*aIter, true, bIgnoreCols);
             SetSegmentToPageDesc(*aIter, false, bIgnoreCols);
 
-            SwFmtPageDesc aPgDesc(aIter->HasTitlePage() ? 
+            SwFmtPageDesc aPgDesc(aIter->HasTitlePage() ?
                     aIter->mpTitlePage : aIter->mpPage);
 
             if (aIter->mpTitlePage)
@@ -966,7 +967,7 @@ void rtfSections::InsertSegments(bool bNewDoc)
             */
             if (aIter->maStart.GetNode().IsTableNode())
             {
-                SwTable& rTable = 
+                SwTable& rTable =
                     aIter->maStart.GetNode().GetTableNode()->GetTable();
                 SwFrmFmt* pApply = rTable.GetFrmFmt();
                 ASSERT(pApply, "impossible");
@@ -1000,12 +1001,12 @@ void rtfSections::InsertSegments(bool bNewDoc)
             }
 
             const SwPosition* pPos  = aSectPaM.GetPoint();
-            const SwTxtNode* pSttNd = 
+            const SwTxtNode* pSttNd =
                 mrReader.pDoc->GetNodes()[ pPos->nNode ]->GetTxtNode();
             const SwTableNode* pTableNd = pSttNd ? pSttNd->FindTableNode() : 0;
             if (pTableNd)
             {
-                pTxtNd = 
+                pTxtNd =
                     mrReader.pDoc->GetNodes().MakeTxtNode(aAnchor,
                     mrReader.pDoc->GetTxtCollFromPool( RES_POOLCOLL_TEXT ));
 
@@ -1053,7 +1054,7 @@ SwRTFParser::~SwRTFParser()
         pTable->DelFrms();
         pTable->MakeFrms(pIndex);
     }
-    
+
     delete pSttNdIdx;
     delete pRegionEndIdx;
     delete pPam;
@@ -1111,7 +1112,7 @@ void SwRTFParser::NextToken( int nToken )
             }
         }
         break;
-    
+
     case RTF_PNSECLVL:
         if( bNewNumList )
             SkipGroup();
@@ -1296,7 +1297,10 @@ SETCHDATEFIELD:
         if( IsNewDoc() && nTokenValue && -1 != nTokenValue )
             ((SwDocStat&)pDoc->GetDocStat()).nChar = (USHORT)nTokenValue;
         break;
-
+    case RTF_LYTPRTMET:
+        if (IsNewDoc())
+            pDoc->_SetUseVirtualDevice(false);
+        break;
     case RTF_U:
         {
             CheckInsNewTblLine();
@@ -1528,19 +1532,19 @@ void SwRTFParser::SetAttrInDoc( SvxRTFItemStackType &rSet )
 
 DocPageInformation::DocPageInformation()
     : mnPaperw(12240), mnPaperh(15840), mnMargl(1800), mnMargr(1800),
-    mnMargt(1440), mnMargb(1440), mnGutter(0), mnPgnStart(1), mbFacingp(false), 
+    mnMargt(1440), mnMargb(1440), mnGutter(0), mnPgnStart(1), mbFacingp(false),
     mbLandscape(false), mbRTLdoc(false)
 {
 }
 
 SectPageInformation::SectPageInformation(const DocPageInformation &rDoc)
-    : 
+    :
     mpTitlePageHdFt(0), mpPageHdFt(0),
-    mnPgwsxn(rDoc.mnPaperw), mnPghsxn(rDoc.mnPaperh), 
-    mnMarglsxn(rDoc.mnMargl), mnMargrsxn(rDoc.mnMargr), 
+    mnPgwsxn(rDoc.mnPaperw), mnPghsxn(rDoc.mnPaperh),
+    mnMarglsxn(rDoc.mnMargl), mnMargrsxn(rDoc.mnMargr),
     mnMargtsxn(rDoc.mnMargt), mnMargbsxn(rDoc.mnMargb),
     mnGutterxsn(rDoc.mnGutter), mnHeadery(720), mnFootery(720), mnPgnStarts(1),
-    mnCols(1), mnColsx(720), mnStextflow(rDoc.mbRTLdoc ? 3 : 0), mnBkc(2), 
+    mnCols(1), mnColsx(720), mnStextflow(rDoc.mbRTLdoc ? 3 : 0), mnBkc(2),
     mbLndscpsxn(rDoc.mbLandscape), mbTitlepg(false), mbFacpgsxn(rDoc.mbFacingp),
     mbRTLsection(rDoc.mbRTLdoc), mbPgnrestart(false)
 {
@@ -1549,20 +1553,20 @@ SectPageInformation::SectPageInformation(const DocPageInformation &rDoc)
 SectPageInformation::SectPageInformation(const SectPageInformation &rSect)
     : maColumns(rSect.maColumns), maNumType(rSect.maNumType),
     mpTitlePageHdFt(rSect.mpTitlePageHdFt), mpPageHdFt(rSect.mpPageHdFt),
-    mnPgwsxn(rSect.mnPgwsxn), mnPghsxn(rSect.mnPghsxn), 
-    mnMarglsxn(rSect.mnMarglsxn), mnMargrsxn(rSect.mnMargrsxn), 
-    mnMargtsxn(rSect.mnMargtsxn), mnMargbsxn(rSect.mnMargbsxn), 
-    mnGutterxsn(rSect.mnGutterxsn), mnHeadery(rSect.mnHeadery), 
-    mnFootery(rSect.mnFootery), mnPgnStarts(rSect.mnPgnStarts), 
-    mnCols(rSect.mnCols), mnColsx(rSect.mnColsx), 
-    mnStextflow(rSect.mnStextflow), mnBkc(rSect.mnBkc), 
-    mbLndscpsxn(rSect.mbLndscpsxn), mbTitlepg(rSect.mbTitlepg), 
+    mnPgwsxn(rSect.mnPgwsxn), mnPghsxn(rSect.mnPghsxn),
+    mnMarglsxn(rSect.mnMarglsxn), mnMargrsxn(rSect.mnMargrsxn),
+    mnMargtsxn(rSect.mnMargtsxn), mnMargbsxn(rSect.mnMargbsxn),
+    mnGutterxsn(rSect.mnGutterxsn), mnHeadery(rSect.mnHeadery),
+    mnFootery(rSect.mnFootery), mnPgnStarts(rSect.mnPgnStarts),
+    mnCols(rSect.mnCols), mnColsx(rSect.mnColsx),
+    mnStextflow(rSect.mnStextflow), mnBkc(rSect.mnBkc),
+    mbLndscpsxn(rSect.mbLndscpsxn), mbTitlepg(rSect.mbTitlepg),
     mbFacpgsxn(rSect.mbFacpgsxn), mbRTLsection(rSect.mbRTLsection),
     mbPgnrestart(rSect.mbPgnrestart)
 {
 };
 
-rtfSection::rtfSection(const SwPosition &rPos, 
+rtfSection::rtfSection(const SwPosition &rPos,
     const SectPageInformation &rPageInfo)
     : maStart(rPos.nNode), maPageInfo(rPageInfo), mpSection(0), mpTitlePage(0),
     mpPage(0)
@@ -1579,9 +1583,9 @@ void rtfSections::push_back(const rtfSection &rSect)
 // lese alle Dokument-Controls ein
 void SwRTFParser::SetPageInformationAsDefault(const DocPageInformation &rInfo)
 {
-    maSegments.push_back(rtfSection(*pPam->GetPoint(), 
+    maSegments.push_back(rtfSection(*pPam->GetPoint(),
         SectPageInformation(rInfo)));
-    
+
     if (!bSwPageDesc && IsNewDoc())
     {
         SwFmtFrmSize aFrmSize(ATT_FIX_SIZE, rInfo.mnPaperw, rInfo.mnPaperh);
@@ -1597,7 +1601,7 @@ void SwRTFParser::SetPageInformationAsDefault(const DocPageInformation &rInfo)
 
         USHORT nPgStart(rInfo.mnPgnStart);
 
-        SvxFrameDirectionItem aFrmDir(rInfo.mbRTLdoc ? 
+        SvxFrameDirectionItem aFrmDir(rInfo.mbRTLdoc ?
             FRMDIR_HORI_RIGHT_TOP : FRMDIR_HORI_LEFT_TOP);
 
         // direkt an der Standartseite drehen
@@ -1606,7 +1610,7 @@ void SwRTFParser::SetPageInformationAsDefault(const DocPageInformation &rInfo)
 
         if (rInfo.mbLandscape)
             rPg.SetLandscape(true);
-        
+
         SwFrmFmt &rFmt1 = rPg.GetMaster(), &rFmt2 = rPg.GetLeft();
 
         rFmt1.SetAttr( aFrmSize );	rFmt2.SetAttr( aFrmSize );
@@ -1735,24 +1739,24 @@ void SwRTFParser::ReadDocControls( int nToken )
         case RTF_AFTNNAR:
             aEndInfo.aFmt.SetNumberingType(SVX_NUM_ARABIC); bEndInfoChgd = TRUE; break;
         case RTF_AFTNNALC:
-            aEndInfo.aFmt.SetNumberingType(SVX_NUM_CHARS_LOWER_LETTER_N); 
-            bEndInfoChgd = TRUE; 
+            aEndInfo.aFmt.SetNumberingType(SVX_NUM_CHARS_LOWER_LETTER_N);
+            bEndInfoChgd = TRUE;
             break;
         case RTF_AFTNNAUC:
-            aEndInfo.aFmt.SetNumberingType(SVX_NUM_CHARS_UPPER_LETTER_N); 
-            bEndInfoChgd = TRUE; 
+            aEndInfo.aFmt.SetNumberingType(SVX_NUM_CHARS_UPPER_LETTER_N);
+            bEndInfoChgd = TRUE;
             break;
         case RTF_AFTNNRLC:
-            aEndInfo.aFmt.SetNumberingType(SVX_NUM_ROMAN_LOWER); 
-            bEndInfoChgd = TRUE; 
+            aEndInfo.aFmt.SetNumberingType(SVX_NUM_ROMAN_LOWER);
+            bEndInfoChgd = TRUE;
             break;
         case RTF_AFTNNRUC:
-            aEndInfo.aFmt.SetNumberingType(SVX_NUM_ROMAN_UPPER); 
-            bEndInfoChgd = TRUE; 
+            aEndInfo.aFmt.SetNumberingType(SVX_NUM_ROMAN_UPPER);
+            bEndInfoChgd = TRUE;
             break;
         case RTF_AFTNNCHI:
-            aEndInfo.aFmt.SetNumberingType(SVX_NUM_CHAR_SPECIAL); 
-            bEndInfoChgd = TRUE; 
+            aEndInfo.aFmt.SetNumberingType(SVX_NUM_CHAR_SPECIAL);
+            bEndInfoChgd = TRUE;
             break;
         case RTF_HYPHAUTO:
             if (nTokenValue)
