@@ -2,9 +2,9 @@
  *
  *  $RCSfile: glosdoc.cxx,v $
  *
- *  $Revision: 1.1.1.1 $
+ *  $Revision: 1.2 $
  *
- *  last change: $Author: hr $ $Date: 2000-09-18 17:14:44 $
+ *  last change: $Author: jp $ $Date: 2000-10-06 13:35:57 $
  *
  *  The Contents of this file are made available subject to the terms of
  *  either of the following licenses
@@ -110,6 +110,9 @@
 #ifndef SVTOOLS_URIHELPER_HXX
 #include <svtools/urihelper.hxx>
 #endif
+#ifndef INCLUDED_SVTOOLS_PATHOPTIONS_HXX
+#include <svtools/pathoptions.hxx>
+#endif
 #ifndef __RSC //autogen
 #include <tools/errinf.hxx>
 #endif
@@ -118,9 +121,6 @@
 #endif
 #ifndef _TOOLS_DEBUG_HXX //autogen
 #include <tools/debug.hxx>
-#endif
-#ifndef _SFX_INIMGR_HXX
-#include <sfx2/inimgr.hxx>
 #endif
 
 #ifndef _UNOATXT_HXX
@@ -812,7 +812,8 @@ sal_Bool lcl_FindSameEntry(const SvStrings& rDirArr, const String& rEntryURL)
 
 void SwGlossaries::UpdateGlosPath(sal_Bool bFull)
 {
-    String aNewPath( SFX_INIMANAGER()->Get( SFX_KEY_GLOSSARY_PATH ) );
+    SvtPathOptions aPathOpt;
+    String aNewPath( aPathOpt.GetGlossaryPath() );
     sal_Bool bPathChanged = aPath != aNewPath;
     if (bFull || bPathChanged)
     {
@@ -910,27 +911,30 @@ String	SwGlossaries::GetExtension()
 /*------------------------------------------------------------------------
 
     $Log: not supported by cvs2svn $
+    Revision 1.1.1.1  2000/09/18 17:14:44  hr
+    initial import
+
     Revision 1.115  2000/09/18 16:05:56  willem.vandorp
     OpenOffice header added.
-    
+
     Revision 1.114  2000/08/08 10:37:27  os
     #77403# rename of AutoText category repaired
-    
+
     Revision 1.113  2000/08/08 10:14:48  os
     ucb transfer command used
-    
+
     Revision 1.112  2000/08/07 08:52:02  os
     #77227# '_' allowed in glossary names
-    
+
     Revision 1.111  2000/07/20 15:24:37  jp
     Bug #77040#: don't create references with stack objects, must always created on the heap
-    
+
     Revision 1.110  2000/07/13 13:39:40  os
     #76805# ignore case of .bau extension
-    
+
     Revision 1.109  2000/06/26 13:16:26  os
     INetURLObject::SmartRelToAbs removed
-    
+
     Revision 1.108  2000/06/20 14:51:24  os
     SUPD removed
 
