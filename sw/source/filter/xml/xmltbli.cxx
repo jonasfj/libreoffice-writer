@@ -2,9 +2,9 @@
  *
  *  $RCSfile: xmltbli.cxx,v $
  *
- *  $Revision: 1.26 $
+ *  $Revision: 1.27 $
  *
- *  last change: $Author: mib $ $Date: 2001-05-15 08:01:31 $
+ *  last change: $Author: jp $ $Date: 2001-06-14 17:38:05 $
  *
  *  The Contents of this file are made available subject to the terms of
  *  either of the following licenses
@@ -676,7 +676,7 @@ void SwXMLTableCellContext_Impl::EndElement()
             {
                 // The original text is is invalid after deleting the last
                 // paragraph
-                Reference < XTextCursor > xSrcTxtCursor = 
+                Reference < XTextCursor > xSrcTxtCursor =
                     GetImport().GetTextImport()->GetText()->createTextCursor();
                 xSrcTxtCursor->gotoEnd( sal_True );
 
@@ -1394,6 +1394,7 @@ SwXMLTableContext::SwXMLTableContext( SwXMLImport& rImport,
     XMLTextTableContext( rImport, nPrfx, rLName ),
     xParentTable( pTable ),
     pRows( new SwXMLTableRows_Impl ),
+    pColumnDefaultCellStyleNames( 0 ),
     pTableNode( pTable->pTableNode ),
     pBox1( 0 ),
     pSttNd1( 0 ),
@@ -1499,7 +1500,7 @@ void SwXMLTableContext::InsertColumn( sal_Int32 nWidth, sal_Bool bRelWidth,
                     pColumnDefaultCellStyleNames->Count() );
         }
 
-        pColumnDefaultCellStyleNames->Insert( 
+        pColumnDefaultCellStyleNames->Insert(
             pDfltCellStyleName ? new String( *pDfltCellStyleName ) : new String,
             pColumnDefaultCellStyleNames->Count() );
     }
@@ -2256,7 +2257,7 @@ void SwXMLTableContext::_MakeTable( SwTableBox *pBox )
             // In this case, the columns get the correct width even if the
             // the sum of the relative withs is smaller than the available
             // width in TWIP. Therfore, we can use the relative width.
-            // 
+            //
             nWidth = nRelWidth > USHRT_MAX ? USHRT_MAX : nRelWidth;
         }
         if( nRelWidth != nWidth )
