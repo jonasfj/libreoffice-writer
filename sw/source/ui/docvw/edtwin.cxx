@@ -2,9 +2,9 @@
  *
  *  $RCSfile: edtwin.cxx,v $
  *
- *  $Revision: 1.63 $
+ *  $Revision: 1.64 $
  *
- *  last change: $Author: hr $ $Date: 2003-04-04 18:15:29 $
+ *  last change: $Author: vg $ $Date: 2003-04-15 17:02:21 $
  *
  *  The Contents of this file are made available subject to the terms of
  *  either of the following licenses
@@ -330,7 +330,7 @@
 #include <pagedesc.hxx>
 
 //JP 11.10.2001: enable test code for bug fix 91313
-#if !defined( PRODUCT ) && defined( DEBUG )
+#if !defined( PRODUCT ) && (OSL_DEBUG_LEVEL > 1)
 //#define TEST_FOR_BUG91313
 #endif
 
@@ -597,8 +597,8 @@ void SwEditWin::UpdatePointer(const Point &rLPt, USHORT nModifier )
                             // ARROW by default. We only show a MOVE if 1) the
                             // object is selected, and 2) it may be moved
                             // (i.e., position is not protected).
-                            bool bMovable = 
-                                (!bNotInSelObj) && 
+                            bool bMovable =
+                                (!bNotInSelObj) &&
                                 (rSh.IsObjSelected() || rSh.IsFrmSelected()) &&
                                 (!rSh.IsSelObjProtected(FLYPROTECT_POS));
 
