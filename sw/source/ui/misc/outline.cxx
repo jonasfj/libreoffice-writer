@@ -2,9 +2,9 @@
  *
  *  $RCSfile: outline.cxx,v $
  *
- *  $Revision: 1.19 $
+ *  $Revision: 1.20 $
  *
- *  last change: $Author: os $ $Date: 2002-11-07 14:42:23 $
+ *  last change: $Author: fme $ $Date: 2002-12-10 09:46:06 $
  *
  *  The Contents of this file are made available subject to the terms of
  *  either of the following licenses
@@ -139,6 +139,9 @@
 #endif
 #ifndef _DOCSTYLE_HXX //autogen
 #include <docstyle.hxx>
+#endif
+#ifndef _VIEWOPT_HXX
+#include <viewopt.hxx>
 #endif
 
 #ifndef _HELPID_H
@@ -1002,13 +1005,13 @@ SfxTabPage*	SwOutlineSettingsTabPage::Create( Window* pParent,
     return new SwOutlineSettingsTabPage(pParent, rAttrSet);
 }
 /* -----------------07.11.2002 15:13-----------------
- * 
+ *
  * --------------------------------------------------*/
 void SwOutlineSettingsTabPage::CheckForStartValue_Impl(sal_uInt16 nNumberingType)
-{        
+{
     BOOL bIsNull = aStartEdit.GetValue() == 0;
-    BOOL bNoZeroAllowed = nNumberingType < SVX_NUM_ARABIC || 
-                        SVX_NUM_CHARS_UPPER_LETTER_N == nNumberingType || 
+    BOOL bNoZeroAllowed = nNumberingType < SVX_NUM_ARABIC ||
+                        SVX_NUM_CHARS_UPPER_LETTER_N == nNumberingType ||
                         SVX_NUM_CHARS_LOWER_LETTER_N == nNumberingType;
     aStartEdit.SetMin(bNoZeroAllowed ? 1 : 0);
     if(bIsNull && bNoZeroAllowed)
@@ -1099,7 +1102,7 @@ void	NumberingPreview::Paint( const Rectangle& rRect )
                                     DEFAULTFONT_UI_SANS, GetAppLanguage(),
                                     DEFAULTFONT_FLAGS_ONLYONE, this );
         // #101524# OJ
-        aStdFont.SetColor(GetSettings().GetStyleSettings().GetWindowTextColor());
+        aStdFont.SetColor( SwViewOption::GetFontColor() );
 
         //
         USHORT nFontHeight = nYStep * 6 / 10;
