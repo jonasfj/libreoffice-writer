@@ -2,9 +2,9 @@
  *
  *  $RCSfile: htmlatr.cxx,v $
  *
- *  $Revision: 1.20 $
+ *  $Revision: 1.21 $
  *
- *  last change: $Author: rt $ $Date: 2003-12-01 17:25:36 $
+ *  last change: $Author: hr $ $Date: 2004-02-02 18:32:25 $
  *
  *  The Contents of this file are made available subject to the terms of
  *  either of the following licenses
@@ -164,7 +164,7 @@
 #ifndef _SVX_LANGITEM_HXX
 #include <svx/langitem.hxx>
 #endif
-#ifndef _SVX_FRMDIRITEM_HXX 
+#ifndef _SVX_FRMDIRITEM_HXX
 #include <svx/frmdiritem.hxx>
 #endif
 
@@ -355,7 +355,7 @@ void SwHTMLWriter::OutAndSetDefList( USHORT nNewLvl )
         // Preferable, the <pre> is exported by OutHTML_SwFmtOff for the
            // previous	paragraph already, but that's not possible, because a very
         // deep look at the next paragraph (this one) is required to figure
-        // out that a def list starts here. 
+        // out that a def list starts here.
 
         ChangeParaToken( 0 );
 
@@ -508,7 +508,7 @@ struct SwHTMLFmtInfo
 SV_IMPL_OP_PTRARR_SORT( SwHTMLFmtInfos, SwHTMLFmtInfo* )
 
 SwHTMLFmtInfo::SwHTMLFmtInfo( const SwFmt *pF, SwDoc *pDoc, SwDoc *pTemplate,
-                              BOOL bOutStyles, 
+                              BOOL bOutStyles,
                               LanguageType eDfltLang,
                               sal_uInt16 nCSS1Script, BOOL bHardDrop ) :
     pFmt( pF ), pItemSet( 0 ), bScriptDependent( sal_False )
@@ -597,7 +597,7 @@ SwHTMLFmtInfo::SwHTMLFmtInfo( const SwFmt *pF, SwDoc *pDoc, SwDoc *pTemplate,
     if( bTxtColl )
     {
         if( bOutStyles )
-        {	
+        {
             // We have to add hard attributes for any script dependent
             // item that is not accessed by the style
             static sal_uInt16 aWhichIds[3][4] =
@@ -1170,8 +1170,8 @@ void OutHTML_SwFmt( Writer& rWrt, const SwFmt& rFmt,
     }
 
     // and the text direction
-    sal_uInt16 nDir = rHWrt.GetHTMLDirection( 
-            (pNodeItemSet ? static_cast < const SvxFrameDirectionItem& >( 
+    sal_uInt16 nDir = rHWrt.GetHTMLDirection(
+            (pNodeItemSet ? static_cast < const SvxFrameDirectionItem& >(
                                     pNodeItemSet->Get( RES_FRAMEDIR ) )
                           : rFmt.GetFrmDir() ).GetValue() );
 
@@ -1218,7 +1218,7 @@ void OutHTML_SwFmt( Writer& rWrt, const SwFmt& rFmt,
             rHWrt.OutDirection( nDir );
         }
 
-        if( rHWrt.bCfgOutStyles && 
+        if( rHWrt.bCfgOutStyles &&
             (pFmtInfo->aClass.Len() || pFmtInfo->bScriptDependent) )
         {
             ((sOut += ' ') += sHTML_O_class) += "=\"";
@@ -1466,7 +1466,7 @@ class HTMLEndPosLst
 
     // Insert without taking care of script
     void InsertNoScript( const SfxPoolItem& rItem, xub_StrLen nStart,
-                          xub_StrLen nEnd, SwHTMLFmtInfos& rFmtInfos, 
+                          xub_StrLen nEnd, SwHTMLFmtInfos& rFmtInfos,
                          BOOL bParaAttrs=FALSE );
 
     const SwHTMLFmtInfo *GetFmtInfo( const SwFmt& rFmt,
@@ -3583,6 +3583,12 @@ SwAttrFnTab aHTMLAttrFnTab = {
 /* RES_FRMATR_DUMMY7 */        	    0, // Dummy:
 /* RES_FRMATR_DUMMY8 */        	    0, // Dummy:
 /* RES_FRMATR_DUMMY9 */        	    0, // Dummy:
+/* RES_FOLLOW_TEXT_FLOW */          0,
+/* RES_FRMATR_DUMMY1 */             0, // Dummy:
+/* RES_FRMATR_DUMMY2 */             0, // Dummy:
+/* RES_FRMATR_DUMMY3 */             0, // Dummy:
+/* RES_FRMATR_DUMMY4 */             0, // Dummy:
+/* RES_FRMATR_DUMMY5 */             0, // Dummy:
 
 /* RES_GRFATR_MIRRORGRF	*/			0,
 /* RES_GRFATR_CROPGRF	*/			0,
