@@ -2,9 +2,9 @@
  *
  *  $RCSfile: column.src,v $
  *
- *  $Revision: 1.28 $
+ *  $Revision: 1.29 $
  *
- *  last change: $Author: dr $ $Date: 2001-06-22 16:14:15 $
+ *  last change: $Author: kz $ $Date: 2001-06-29 02:19:42 $
  *
  *  The Contents of this file are made available subject to the terms of
  *  either of the following licenses
@@ -169,7 +169,7 @@ TabPage TP_COLUMN
         Text = "Vorgaben" ;
         Text [ ENGLISH ] = "Columns" ;
         Text[ language_user1 ] = " ";
-        Text[ english_us ] = "Columns";
+        Text[ english_us ] = "Settings";
         Text[ portuguese ] = "PredefiniÁıes";
         Text[ russian ] = "«‡‰‡ÌÌ˚Â ÁÌ‡˜ÂÌËˇ";
         Text[ greek ] = "–ÒÔÂÈÎÔ„ﬁ";
@@ -945,27 +945,27 @@ ModalDialog DLG_COLUMN
         Text = "~Anwenden auf" ;
         Text [ English ] = "~Apply to" ;
         Left = TRUE ;
-        Text[ english_us ] = "~Apply to";
-        Text[ portuguese ] = "~Aplicar a";
-        Text[ greek ] = "≈ˆ~·ÒÏÔ„ﬁ ÛÂ";
-        Text[ dutch ] = "~Toepassen op";
-        Text[ french ] = "~Appliquer ‡";
-        Text[ spanish ] = "~Aplicar a";
-        Text[ swedish ] = "~Anv‰nd pÂ";
-        Text[ russian ] = "œËÏÂÌËÚ¸ Í";
-        Text[ italian ] = "~Applica a";
-        Text[ danish ] = "Anvend pÂ";
+        Text[ english_us ] = "~Apply to:";
+        Text[ portuguese ] = "~Aplicar a:";
+        Text[ greek ] = "≈ˆ~·ÒÏÔ„ﬁ ÛÂ:";
+        Text[ dutch ] = "~Toepassen op:";
+        Text[ french ] = "~Appliquer ‡ :";
+        Text[ spanish ] = "~Aplicar a:";
+        Text[ swedish ] = "~Anv‰nd pÂ:";
+        Text[ russian ] = "œËÏÂÌËÚ¸ Í:";
+        Text[ italian ] = "~Applica a:";
+        Text[ danish ] = "Anvend pÂ:";
         Text[ polish ] = "Zastosuj w";
-        Text[ portuguese_brazilian ] = "~Apply to";
-        Text[ japanese ] = "ê›íËëŒè€(~A)";
-        Text[ korean ] = "¿˚øÎ(~A)";
+        Text[ portuguese_brazilian ] = "~Apply to:";
+        Text[ japanese ] = "ê›íËëŒè€(~A):";
+        Text[ korean ] = "¿˚øÎ(~A):";
         Text[ chinese_simplified ] = "Ã◊”√µΩ(~A)£∫";
         Text[ chinese_traditional ] = "ÆM•Œ®Ï(~A)°G";
-        Text[ arabic ] = " ÿ»Ìﬁ ⁄·Ï";
+        Text[ arabic ] = " ÿ»Ìﬁ ⁄·Ï:";
         Text[ language_user1 ] = " ";
-        Text[ turkish ] = "~Uygulanaca˝ yer";
-        Text[ catalan ] = "~Aplicar a";
-        Text[ finnish ] = "~K‰yt‰";
+        Text[ turkish ] = "~Uygulanaca˝ yer:";
+        Text[ catalan ] = "~Aplicar a:";
+        Text[ finnish ] = "~K‰yt‰:";
     };
     ListBox LB_APPLY_TO
     {
@@ -992,170 +992,170 @@ ModalDialog DLG_COLUMN
         StringList [ language_user1 ] =
         {
             < "Selektion" ;  			LISTBOX_SELECTION; > ;
-            < " " ;     LISTBOX_SECTION     ; > ;
-            < "Selektierte Bereiche" ;  LISTBOX_SECTIONS    ; > ;
-            < "Rahmen" ;                LISTBOX_FRAME       ; > ;
-            < "Seitenvorlage:" ;        LISTBOX_PAGE        ; > ;
+            < " " ;  	LISTBOX_SECTION		; > ;
+            < "Selektierte Bereiche" ;  LISTBOX_SECTIONS	; > ;
+            < "Rahmen" ;  				LISTBOX_FRAME		; > ;
+            < "Seitenvorlage:" ;  		LISTBOX_PAGE		; > ;
         };
         StringList [ english_us ] =
         {
             < "Selection" ;  			LISTBOX_SELECTION; > ;
-            < "Current Section" ;   LISTBOX_SECTION     ; > ;
-            < "Selected section" ;  LISTBOX_SECTIONS    ; > ;
-            < "Frame" ;                 LISTBOX_FRAME       ; > ;
-            < "Page Style: " ;          LISTBOX_PAGE        ; > ;
+            < "Current Section" ;  	LISTBOX_SECTION		; > ;
+            < "Selected section" ;  LISTBOX_SECTIONS	; > ;
+            < "Frame" ;  				LISTBOX_FRAME		; > ;
+            < "Page Style: " ;  		LISTBOX_PAGE		; > ;
         };
         StringList [ portuguese ] =
         {
             < "SelecÁ„o" ;  			LISTBOX_SELECTION; > ;
-            < "SecÁ„o activa" ;     LISTBOX_SECTION     ; > ;
-            < "SecÁıes seleccionadas" ;  LISTBOX_SECTIONS   ; > ;
-            < "Moldura" ;               LISTBOX_FRAME       ; > ;
-            < "Estilo de p·gina: " ;        LISTBOX_PAGE        ; > ;
+            < "SecÁ„o activa" ;  	LISTBOX_SECTION		; > ;
+            < "SecÁıes seleccionadas" ;  LISTBOX_SECTIONS	; > ;
+            < "Moldura" ;  				LISTBOX_FRAME		; > ;
+            < "Estilo de p·gina: " ;  		LISTBOX_PAGE		; > ;
         };
         StringList [ greek ] =
         {
             < "≈ÈÎÔ„ﬁ" ;  			LISTBOX_SELECTION; > ;
-            < "‘Ò›˜˘Ì ÂÒÈÔ˜ﬁ" ;    LISTBOX_SECTION     ; > ;
-            < "≈ÈÎÂ„Ï›ÌÂÚ ÂÒÈÔ˜›Ú" ;  LISTBOX_SECTIONS    ; > ;
-            < "–ÂÒﬂ„Ò·ÏÏ·" ;                LISTBOX_FRAME       ; > ;
-            < "–Ò¸ÙıÔ ÛÂÎﬂ‰·Ú: " ;         LISTBOX_PAGE        ; > ;
+            < "‘Ò›˜˘Ì ÂÒÈÔ˜ﬁ" ;  	LISTBOX_SECTION		; > ;
+            < "≈ÈÎÂ„Ï›ÌÂÚ ÂÒÈÔ˜›Ú" ;  LISTBOX_SECTIONS	; > ;
+            < "–ÂÒﬂ„Ò·ÏÏ·" ;  				LISTBOX_FRAME		; > ;
+            < "–Ò¸ÙıÔ ÛÂÎﬂ‰·Ú: " ;  		LISTBOX_PAGE		; > ;
         };
         StringList [ dutch ] =
         {
             < "Selectie" ;  			LISTBOX_SELECTION; > ;
-            < "Actueel bereik" ;    LISTBOX_SECTION     ; > ;
-            < "Geselecteerd bereik" ;  LISTBOX_SECTIONS ; > ;
-            < "Kader" ;                 LISTBOX_FRAME       ; > ;
-            < "Pagina-opmaakprofiel:  " ;       LISTBOX_PAGE        ; > ;
+            < "Actueel bereik" ;  	LISTBOX_SECTION		; > ;
+            < "Geselecteerd bereik" ;  LISTBOX_SECTIONS	; > ;
+            < "Kader" ;  				LISTBOX_FRAME		; > ;
+            < "Pagina-opmaakprofiel:  " ;  		LISTBOX_PAGE		; > ;
         };
         StringList [ french ] =
         {
             < "SÈlection" ;  			LISTBOX_SELECTION; > ;
-            < "Section active" ;    LISTBOX_SECTION     ; > ;
-            < "Sections sÈlectionnÈes" ;  LISTBOX_SECTIONS  ; > ;
-            < "Cadre" ;                 LISTBOX_FRAME       ; > ;
-            < "Style de page :  " ;         LISTBOX_PAGE        ; > ;
+            < "Section active" ;  	LISTBOX_SECTION		; > ;
+            < "Sections sÈlectionnÈes" ;  LISTBOX_SECTIONS	; > ;
+            < "Cadre" ;  				LISTBOX_FRAME		; > ;
+            < "Style de page :  " ;  		LISTBOX_PAGE		; > ;
         };
         StringList [ spanish ] =
         {
             < "SelecciÛn" ;  			LISTBOX_SELECTION; > ;
-            < "¡rea actual" ;   LISTBOX_SECTION     ; > ;
-            < "¡reas seleccionadas" ;  LISTBOX_SECTIONS ; > ;
-            < "Marco" ;                 LISTBOX_FRAME       ; > ;
-            < "Estilo de p·gina: " ;        LISTBOX_PAGE        ; > ;
+            < "¡rea actual" ;  	LISTBOX_SECTION		; > ;
+            < "¡reas seleccionadas" ;  LISTBOX_SECTIONS	; > ;
+            < "Marco" ;  				LISTBOX_FRAME		; > ;
+            < "Estilo de p·gina: " ;  		LISTBOX_PAGE		; > ;
         };
         StringList [ swedish ] =
         {
             < "Markering" ;  			LISTBOX_SELECTION; > ;
-            < "Aktuellt omrÂde" ;   LISTBOX_SECTION     ; > ;
-            < "Markerade omrÂden" ;  LISTBOX_SECTIONS   ; > ;
-            < "Ram" ;               LISTBOX_FRAME       ; > ;
-            < "Sidformatmall:  " ;          LISTBOX_PAGE        ; > ;
+            < "Aktuellt omrÂde" ;  	LISTBOX_SECTION		; > ;
+            < "Markerade omrÂden" ;  LISTBOX_SECTIONS	; > ;
+            < "Ram" ;  				LISTBOX_FRAME		; > ;
+            < "Sidformatmall:  " ;  		LISTBOX_PAGE		; > ;
         };
         StringList [ russian ] =
         {
             < "¬˚‰ÂÎÂÌË˛" ;  			LISTBOX_SELECTION; > ;
-            < "“ÂÍÛ˘ÂÈ Ó·Î‡ÒÚË" ;   LISTBOX_SECTION     ; > ;
-            < "¬˚‰ÂÎÂÌÌÓÈ Ó·Î‡ÒÚË" ;  LISTBOX_SECTIONS  ; > ;
-            < "–‡ÏÍÂ" ;                 LISTBOX_FRAME       ; > ;
-            < "—ÚËÎ˛ ÒÚ‡ÌËˆ˚:  " ;         LISTBOX_PAGE        ; > ;
+            < "“ÂÍÛ˘ÂÈ Ó·Î‡ÒÚË" ;  	LISTBOX_SECTION		; > ;
+            < "¬˚‰ÂÎÂÌÌÓÈ Ó·Î‡ÒÚË" ;  LISTBOX_SECTIONS	; > ;
+            < "–‡ÏÍÂ" ;  				LISTBOX_FRAME		; > ;
+            < "—ÚËÎ˛ ÒÚ‡ÌËˆ˚:  " ;  		LISTBOX_PAGE		; > ;
         };
         StringList [ italian ] =
         {
             < "Selezione" ;  			LISTBOX_SELECTION; > ;
-            < "Sezione corrente" ;      LISTBOX_SECTION     ; > ;
-            < "Aree contrassegnate" ;  LISTBOX_SECTIONS ; > ;
-            < "Cornice" ;               LISTBOX_FRAME       ; > ;
-            < "Modello di pagina: " ;       LISTBOX_PAGE        ; > ;
+            < "Sezione corrente" ;  	LISTBOX_SECTION		; > ;
+            < "Aree contrassegnate" ;  LISTBOX_SECTIONS	; > ;
+            < "Cornice" ;  				LISTBOX_FRAME		; > ;
+            < "Modello di pagina: " ;  		LISTBOX_PAGE		; > ;
         };
         StringList [ danish ] =
         {
             < "Markering" ;  			LISTBOX_SELECTION; > ;
-            < "Aktuelt omrÂde" ;    LISTBOX_SECTION     ; > ;
-            < "Markeret omrÂde" ;  LISTBOX_SECTIONS ; > ;
-            < "Ramme" ;                 LISTBOX_FRAME       ; > ;
-            < "Sidetypografi: " ;       LISTBOX_PAGE        ; > ;
+            < "Aktuelt omrÂde" ;  	LISTBOX_SECTION		; > ;
+            < "Markeret omrÂde" ;  LISTBOX_SECTIONS	; > ;
+            < "Ramme" ;  				LISTBOX_FRAME		; > ;
+            < "Sidetypografi: " ;  		LISTBOX_PAGE		; > ;
         };
         StringList [ polish ] =
         {
             < "Selekcja" ;  			LISTBOX_SELECTION; > ;
-            < "Aktualny obszar" ;   LISTBOX_SECTION     ; > ;
-            < "Zaznaczone obszary" ;  LISTBOX_SECTIONS  ; > ;
-            < "Ramka" ;                 LISTBOX_FRAME       ; > ;
-            < "Styl strony: " ;         LISTBOX_PAGE        ; > ;
+            < "Aktualny obszar" ;  	LISTBOX_SECTION		; > ;
+            < "Zaznaczone obszary" ;  LISTBOX_SECTIONS	; > ;
+            < "Ramka" ;  				LISTBOX_FRAME		; > ;
+            < "Styl strony: " ;  		LISTBOX_PAGE		; > ;
         };
         StringList [ portuguese_brazilian ] =
         {
             < "Selektion" ;  			LISTBOX_SELECTION; > ;
-            < "Aktuellen Bereich" ;     LISTBOX_SECTION     ; > ;
-            < "Selektierte Bereiche" ;  LISTBOX_SECTIONS    ; > ;
-            < "Rahmen" ;                LISTBOX_FRAME       ; > ;
-            < "Seitenvorlage: " ;       LISTBOX_PAGE        ; > ;
+            < "Aktuellen Bereich" ;  	LISTBOX_SECTION		; > ;
+            < "Selektierte Bereiche" ;  LISTBOX_SECTIONS	; > ;
+            < "Rahmen" ;  				LISTBOX_FRAME		; > ;
+            < "Seitenvorlage: " ;  		LISTBOX_PAGE		; > ;
         };
         StringList [ japanese ] =
         {
             < "ëIëîÕàÕ" ;  			LISTBOX_SELECTION; > ;
-            < "åªç›ÇÃîÕàÕ" ;    LISTBOX_SECTION     ; > ;
-            < "ëIëîÕàÕ" ;  LISTBOX_SECTIONS    ; > ;
-            < "äOòg" ;                  LISTBOX_FRAME       ; > ;
-            < "Õﬂ∞ºﬁΩ¿≤Ÿ: " ;       LISTBOX_PAGE        ; > ;
+            < "åªç›ÇÃîÕàÕ" ;  	LISTBOX_SECTION		; > ;
+            < "ëIëîÕàÕ" ;  LISTBOX_SECTIONS	; > ;
+            < "äOòg" ;  				LISTBOX_FRAME		; > ;
+            < "Õﬂ∞ºﬁΩ¿≤Ÿ: " ;  		LISTBOX_PAGE		; > ;
         };
         StringList [ korean ] =
         {
             < "º±≈√" ;  			LISTBOX_SELECTION; > ;
-            < "«ˆ¿Á ±∏ø™" ;     LISTBOX_SECTION     ; > ;
-            < "º±≈√µ» ±∏ø™" ;  LISTBOX_SECTIONS ; > ;
-            < "«¡∑π¿”" ;                LISTBOX_FRAME       ; > ;
-            < "¬  ¿Ø«¸: " ;         LISTBOX_PAGE        ; > ;
+            < "«ˆ¿Á ±∏ø™" ;  	LISTBOX_SECTION		; > ;
+            < "º±≈√µ» ±∏ø™" ;  LISTBOX_SECTIONS	; > ;
+            < "«¡∑π¿”" ;  				LISTBOX_FRAME		; > ;
+            < "¬  ¿Ø«¸: " ;  		LISTBOX_PAGE		; > ;
         };
         StringList [ chinese_simplified ] =
         {
             < "—°÷–" ;  			LISTBOX_SELECTION; > ;
-            < "µ±«∞µƒ«¯”Ú" ;    LISTBOX_SECTION     ; > ;
-            < "—°÷–µƒ«¯”Ú" ;  LISTBOX_SECTIONS  ; > ;
-            < "øÚ" ;                LISTBOX_FRAME       ; > ;
-            < "“≥√Ê—˘ Ω£∫ " ;       LISTBOX_PAGE        ; > ;
+            < "µ±«∞µƒ«¯”Ú" ;  	LISTBOX_SECTION		; > ;
+            < "—°÷–µƒ«¯”Ú" ;  LISTBOX_SECTIONS	; > ;
+            < "øÚ" ;  				LISTBOX_FRAME		; > ;
+            < "“≥√Ê—˘ Ω£∫ " ;  		LISTBOX_PAGE		; > ;
         };
         StringList [ chinese_traditional ] =
         {
             < "øÔ®˙" ;  			LISTBOX_SELECTION; > ;
-            < "∑Ì´e™∫∞œ∞Ï" ;    LISTBOX_SECTION     ; > ;
-            < "øÔæ‹™∫∞œ∞Ï" ;  LISTBOX_SECTIONS  ; > ;
-            < "Æÿ" ;                LISTBOX_FRAME       ; > ;
-            < "≠∂≠±ºÀ¶°°G " ;       LISTBOX_PAGE        ; > ;
+            < "∑Ì´e™∫∞œ∞Ï" ;  	LISTBOX_SECTION		; > ;
+            < "øÔæ‹™∫∞œ∞Ï" ;  LISTBOX_SECTIONS	; > ;
+            < "Æÿ" ;  				LISTBOX_FRAME		; > ;
+            < "≠∂≠±ºÀ¶°°G " ;  		LISTBOX_PAGE		; > ;
         };
         StringList [ arabic ] =
         {
             < "«· ÕœÌœ" ;  			LISTBOX_SELECTION; > ;
-            < "«·‰ÿ«ﬁ «·Õ«·Ì" ;     LISTBOX_SECTION     ; > ;
-            < "«·‰ÿ«ﬁ«  «·„Õœœ…" ;  LISTBOX_SECTIONS    ; > ;
-            < "ﬂ«œ—" ;                  LISTBOX_FRAME       ; > ;
-            < "ﬁ«·» «·’›Õ…: " ;         LISTBOX_PAGE        ; > ;
+            < "«·‰ÿ«ﬁ «·Õ«·Ì" ;  	LISTBOX_SECTION		; > ;
+            < "«·‰ÿ«ﬁ«  «·„Õœœ…" ;  LISTBOX_SECTIONS	; > ;
+            < "ﬂ«œ—" ;  				LISTBOX_FRAME		; > ;
+            < "ﬁ«·» «·’›Õ…: " ;  		LISTBOX_PAGE		; > ;
         };
         StringList [ turkish ] =
         {
             < "SeÁim" ;  			LISTBOX_SELECTION; > ;
-            < "Y¸r¸rl¸kteki bˆl¸m" ;    LISTBOX_SECTION     ; > ;
-            < "SeÁilen bˆl¸m" ;  LISTBOX_SECTIONS   ; > ;
-            < "«erÁeve" ;               LISTBOX_FRAME       ; > ;
-            < "Sayfa biÁimi: " ;        LISTBOX_PAGE        ; > ;
+            < "Y¸r¸rl¸kteki bˆl¸m" ;  	LISTBOX_SECTION		; > ;
+            < "SeÁilen bˆl¸m" ;  LISTBOX_SECTIONS	; > ;
+            < "«erÁeve" ;  				LISTBOX_FRAME		; > ;
+            < "Sayfa biÁimi: " ;  		LISTBOX_PAGE		; > ;
         };
         StringList [ catalan ] =
         {
             < "SelecciÛn" ;  			LISTBOX_SELECTION; > ;
-            < "¡rea actual" ;   LISTBOX_SECTION     ; > ;
-            < "¡reas seleccionadas" ;  LISTBOX_SECTIONS ; > ;
-            < "Marco" ;                 LISTBOX_FRAME       ; > ;
-            < "Estilo de p·gina: " ;        LISTBOX_PAGE        ; > ;
+            < "¡rea actual" ;  	LISTBOX_SECTION		; > ;
+            < "¡reas seleccionadas" ;  LISTBOX_SECTIONS	; > ;
+            < "Marco" ;  				LISTBOX_FRAME		; > ;
+            < "Estilo de p·gina: " ;  		LISTBOX_PAGE		; > ;
         };
         StringList [ finnish ] =
         {
             < "Valinta" ;  			LISTBOX_SELECTION; > ;
-            < "Nykyinen osio" ;     LISTBOX_SECTION     ; > ;
-            < "Valittu osio" ;  LISTBOX_SECTIONS    ; > ;
-            < "Kehys" ;                 LISTBOX_FRAME       ; > ;
-            < "Sivun tyyli:" ;          LISTBOX_PAGE        ; > ;
+            < "Nykyinen osio" ;  	LISTBOX_SECTION		; > ;
+            < "Valittu osio" ;  LISTBOX_SECTIONS	; > ;
+            < "Kehys" ;  				LISTBOX_FRAME		; > ;
+            < "Sivun tyyli:" ;  		LISTBOX_PAGE		; > ;
         };
     };
     Text[ english_us ] = "Columns";
@@ -1180,6 +1180,7 @@ ModalDialog DLG_COLUMN
     Text[ catalan ] = "Columnas";
     Text[ finnish ] = "Sarakkeet";
 };
+
 
 
 
