@@ -2,9 +2,9 @@
  *
  *  $RCSfile: accdoc.hxx,v $
  *
- *  $Revision: 1.16 $
+ *  $Revision: 1.17 $
  *
- *  last change: $Author: vg $ $Date: 2003-05-22 12:50:53 $
+ *  last change: $Author: vg $ $Date: 2004-12-23 10:01:52 $
  *
  *  The Contents of this file are made available subject to the terms of
  *  either of the following licenses
@@ -60,7 +60,6 @@
  ************************************************************************/
 #ifndef _ACCDOC_HXX
 #define _ACCDOC_HXX
-
 #ifndef _ACCCONTEXT_HXX
 #include "acccontext.hxx"
 #endif
@@ -78,7 +77,7 @@ class SwFEShell;
 class SwFlyFrm;
 class VclSimpleEvent;
 
-/** 
+/**
  * base class for SwAccessibleDocument (in this same header file) and
  * SwAccessiblePreview
  */
@@ -205,11 +204,11 @@ public:
     // XAccessibleSelection. These methods are needed to avoid
     // ambigiouties.
 
-    virtual ::com::sun::star::uno::Any SAL_CALL queryInterface( 
-        const ::com::sun::star::uno::Type& aType ) 
+    virtual ::com::sun::star::uno::Any SAL_CALL queryInterface(
+        const ::com::sun::star::uno::Type& aType )
         throw (::com::sun::star::uno::RuntimeException);
 
-    virtual void SAL_CALL acquire(  ) throw () 
+    virtual void SAL_CALL acquire(  ) throw ()
         { SwAccessibleContext::acquire(); };
 
     virtual void SAL_CALL release(  ) throw ()
@@ -221,29 +220,30 @@ public:
 
     //=====  XAccessibleSelection  ============================================
 
-    virtual void SAL_CALL selectAccessibleChild( 
-        sal_Int32 nChildIndex ) 
-        throw ( ::com::sun::star::lang::IndexOutOfBoundsException, 
+    virtual void SAL_CALL selectAccessibleChild(
+        sal_Int32 nChildIndex )
+        throw ( ::com::sun::star::lang::IndexOutOfBoundsException,
                 ::com::sun::star::uno::RuntimeException );
 
-    virtual sal_Bool SAL_CALL isAccessibleChildSelected( 
-        sal_Int32 nChildIndex ) 
-        throw ( ::com::sun::star::lang::IndexOutOfBoundsException, 
+    virtual sal_Bool SAL_CALL isAccessibleChildSelected(
+        sal_Int32 nChildIndex )
+        throw ( ::com::sun::star::lang::IndexOutOfBoundsException,
                 ::com::sun::star::uno::RuntimeException );
-    virtual void SAL_CALL clearAccessibleSelection(  ) 
+    virtual void SAL_CALL clearAccessibleSelection(  )
         throw ( ::com::sun::star::uno::RuntimeException );
-    virtual void SAL_CALL selectAllAccessibleChildren(  ) 
+    virtual void SAL_CALL selectAllAccessibleChildren(  )
         throw ( ::com::sun::star::uno::RuntimeException );
-    virtual sal_Int32 SAL_CALL getSelectedAccessibleChildCount(  ) 
+    virtual sal_Int32 SAL_CALL getSelectedAccessibleChildCount(  )
         throw ( ::com::sun::star::uno::RuntimeException );
-    virtual ::com::sun::star::uno::Reference< ::com::sun::star::accessibility::XAccessible > SAL_CALL getSelectedAccessibleChild( 
-        sal_Int32 nSelectedChildIndex ) 
-        throw ( ::com::sun::star::lang::IndexOutOfBoundsException, 
+    virtual ::com::sun::star::uno::Reference< ::com::sun::star::accessibility::XAccessible > SAL_CALL getSelectedAccessibleChild(
+        sal_Int32 nSelectedChildIndex )
+        throw ( ::com::sun::star::lang::IndexOutOfBoundsException,
                 ::com::sun::star::uno::RuntimeException);
 
-    virtual void SAL_CALL deselectAccessibleChild( 
-        sal_Int32 nSelectedChildIndex ) 
-        throw ( ::com::sun::star::lang::IndexOutOfBoundsException, 
+    // --> OD 2004-11-16 #111714# - index has to be treated as global child index.
+    virtual void SAL_CALL deselectAccessibleChild(
+        sal_Int32 nChildIndex )
+        throw ( ::com::sun::star::lang::IndexOutOfBoundsException,
                 ::com::sun::star::uno::RuntimeException );
 
     //====== thread safe C++ interface ========================================
