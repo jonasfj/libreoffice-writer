@@ -2,9 +2,9 @@
  *
  *  $RCSfile: document.cxx,v $
  *
- *  $Revision: 1.28 $
+ *  $Revision: 1.29 $
  *
- *  last change: $Author: jp $ $Date: 2001-05-21 07:48:57 $
+ *  last change: $Author: jp $ $Date: 2001-05-22 15:20:15 $
  *
  *  The Contents of this file are made available subject to the terms of
  *  either of the following licenses
@@ -300,7 +300,7 @@ SmSymSetManager & SmDocShell::GetSymSetManager()
         pSymSetMgr = new SmSymSetManager;
         pSymSetMgr->Load();
     }
-    return *pSymSetMgr;		
+    return *pSymSetMgr;
 }
 
 
@@ -1316,8 +1316,9 @@ void SmDocShell::Execute(SfxRequest& rReq)
 
     case SID_PASTEOBJECT:
         {
-            TransferableDataHelper aData(
-                        TransferableDataHelper::CreateFromSystemClipboard() );
+            TransferableDataHelper aData( TransferableDataHelper::
+                CreateFromSystemClipboard(pViewSh ? pViewSh->GetEditWindow()
+                                                  : 0) );
             SotStorageStreamRef xStrm;
             SotFormatStringId nId;
             if( aData.GetTransferable().is() &&
