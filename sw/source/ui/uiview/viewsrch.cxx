@@ -2,9 +2,9 @@
  *
  *  $RCSfile: viewsrch.cxx,v $
  *
- *  $Revision: 1.17 $
+ *  $Revision: 1.18 $
  *
- *  last change: $Author: vg $ $Date: 2003-05-22 08:49:31 $
+ *  last change: $Author: hr $ $Date: 2004-02-03 16:59:24 $
  *
  *  The Contents of this file are made available subject to the terms of
  *  either of the following licenses
@@ -96,10 +96,7 @@
 #ifndef _SFXSTRITEM_HXX //autogen
 #include <svtools/stritem.hxx>
 #endif
-#ifndef _OFF_APP_HXX //autogen
-#include <offmgr/app.hxx>
-#endif
-#ifndef _TXTCMP_HXX //autogen
+#ifndef _T2XTCMP_HXX //autogen
 #include <svtools/txtcmp.hxx>
 #endif
 #ifndef _SFX_BINDINGS_HXX //autogen
@@ -207,7 +204,7 @@ void SwView::ExecSearch(SfxRequest& rReq, BOOL bNoMessage)
     BOOL bQuiet = FALSE;
     if(pArgs && SFX_ITEM_SET == pArgs->GetItemState(SID_SEARCH_QUIET, FALSE, &pItem))
         bQuiet = ((const SfxBoolItem*) pItem)->GetValue();
-    
+
     BOOL bApi = bQuiet | bNoMessage;
     BOOL bSrchList = TRUE;
 
@@ -265,7 +262,7 @@ void SwView::ExecSearch(SfxRequest& rReq, BOOL bNoMessage)
 
         case FN_REPEAT_SEARCH:
         case FID_SEARCH_NOW:
-        {    
+        {
             {
                 if(FID_SEARCH_NOW == nSlot && !rReq.IsAPI())
                     SwView::SetMoveType(NID_SRCH_REP);
@@ -429,7 +426,7 @@ void SwView::ExecSearch(SfxRequest& rReq, BOOL bNoMessage)
                 rReq.AppendItem(SfxBoolItem(SID_SEARCH_QUIET, sal_True));
 
             rReq.Done();
-        }    
+        }
         break;
         case FID_SEARCH_SEARCHSET:
         case FID_SEARCH_REPLACESET:
