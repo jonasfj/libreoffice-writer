@@ -2,9 +2,9 @@
  *
  *  $RCSfile: ww8par6.cxx,v $
  *
- *  $Revision: 1.142 $
+ *  $Revision: 1.143 $
  *
- *  last change: $Author: obo $ $Date: 2003-09-01 12:44:35 $
+ *  last change: $Author: rt $ $Date: 2003-09-25 07:46:00 $
  *
  *  The Contents of this file are made available subject to the terms of
  *  either of the following licenses
@@ -225,7 +225,7 @@
 #include <doc.hxx>
 #endif
 #ifndef _PAGEDESC_HXX
-#include <pagedesc.hxx>			// class SwPageDesc
+#include <pagedesc.hxx>         // class SwPageDesc
 #endif
 #ifndef _FMTANCHR_HXX //autogen
 #include <fmtanchr.hxx>
@@ -291,7 +291,7 @@
 #include "ww8scan.hxx"
 #endif
 #ifndef _WW8PAR2_HXX
-#include "ww8par2.hxx"			// class WW8RStyle, class WwAnchorPara
+#include "ww8par2.hxx"          // class WW8RStyle, class WwAnchorPara
 #endif
 #ifndef _WW8GRAF_HXX
 #include "ww8graf.hxx"
@@ -300,11 +300,11 @@
 using namespace sw::util;
 using namespace sw::types;
 //-----------------------------------------
-//				diverses
+//              diverses
 //-----------------------------------------
 
-#define MM_250 1417				// WW-Default fuer Hor. Seitenraender: 2.5 cm
-#define MM_200 1134				// WW-Default fuer u.Seitenrand: 2.0 cm
+#define MM_250 1417             // WW-Default fuer Hor. Seitenraender: 2.5 cm
+#define MM_200 1134             // WW-Default fuer u.Seitenrand: 2.0 cm
 
 BYTE lcl_ReadBorders(bool bVer67, WW8_BRC* brc, WW8PLCFx_Cp_FKP* pPap,
     const WW8RStyle* pSty = 0, const WW8PLCFx_SEPX* pSep = 0);
@@ -338,36 +338,36 @@ inline short MSRoundTweak(short x)
 
 /***************************************************************************
 #  Seiten - Attribute, die nicht ueber die Attribut-Verwaltung, sondern
-#	ueber ...->HasSprm abgearbeitet werden
-#	( ausser OLST, dass weiterhin ein normales Attribut ist )
+#   ueber ...->HasSprm abgearbeitet werden
+#   ( ausser OLST, dass weiterhin ein normales Attribut ist )
 #**************************************************************************/
 
 static short ReadSprm( const WW8PLCFx_SEPX* pSep, USHORT nId, short nDefaultVal )
 {
-    const BYTE* pS = pSep->HasSprm( nId );			// sprm da ?
+    const BYTE* pS = pSep->HasSprm( nId );          // sprm da ?
     short nVal = ( pS ) ? SVBT16ToShort( pS ) : nDefaultVal;
     return nVal;
 }
 
 static USHORT ReadUSprm( const WW8PLCFx_SEPX* pSep, USHORT nId, short nDefaultVal )
 {
-    const BYTE* pS = pSep->HasSprm( nId );			// sprm da ?
+    const BYTE* pS = pSep->HasSprm( nId );          // sprm da ?
     USHORT nVal = ( pS ) ? SVBT16ToShort( pS ) : nDefaultVal;
     return nVal;
 }
 
 static BYTE ReadBSprm( const WW8PLCFx_SEPX* pSep, USHORT nId, BYTE nDefaultVal )
 {
-    const BYTE* pS = pSep->HasSprm( nId );			// sprm da ?
+    const BYTE* pS = pSep->HasSprm( nId );          // sprm da ?
     BYTE nVal = ( pS ) ? SVBT8ToByte( pS ) : nDefaultVal;
     return nVal;
 }
 
 static short ReadULSprm( const WW8PLCFx_SEPX* pSep, USHORT nId, short nDefaultVal )
 {
-    const BYTE* pS = pSep->HasSprm( nId );			// sprm da ?
+    const BYTE* pS = pSep->HasSprm( nId );          // sprm da ?
     short nVal = ( pS ) ? SVBT16ToShort( pS ) : nDefaultVal;
-    if( nVal < 0 )		// < 0 bedeutet: nicht verschieben, wenns nicht passt
+    if( nVal < 0 )      // < 0 bedeutet: nicht verschieben, wenns nicht passt
         nVal = -nVal;
     return nVal;
 }
@@ -529,21 +529,21 @@ void SwWW8ImplReader::Read_ParaBiDi(USHORT, const BYTE* pData, short nLen)
 bool wwSectionManager::SetCols(SwFrmFmt &rFmt, const wwSection &rSection,
     USHORT nNettoWidth)
 {
-    //sprmSCcolumns	- Anzahl der Spalten - 1
+    //sprmSCcolumns - Anzahl der Spalten - 1
     USHORT nCols = rSection.NoCols();
 
     if (nCols < 2)
-        return false;					// keine oder bloedsinnige Spalten
+        return false;                   // keine oder bloedsinnige Spalten
 
-    SwFmtCol aCol;						// Erzeuge SwFmtCol
+    SwFmtCol aCol;                      // Erzeuge SwFmtCol
 
-    //sprmSDxaColumns	- Default-Abstand 1.25 cm
+    //sprmSDxaColumns   - Default-Abstand 1.25 cm
     USHORT nColSpace = rSection.StandardColSeperation();
 
     // sprmSLBetween
     if (rSection.maSep.fLBetween)
     {
-        aCol.SetLineAdj( COLADJ_TOP );		// Line
+        aCol.SetLineAdj( COLADJ_TOP );      // Line
         aCol.SetLineHeight( 100 );
         aCol.SetLineColor( Color( COL_BLACK ));
         aCol.SetLineWidth( 1 );
@@ -668,7 +668,7 @@ void wwSectionManager::GetPageULData(const wwSection &rSection, bool bFirst,
 
     if( rData.bHasHeader )
     {
-        rData.nSwUp  = nWWHTop;				// Header -> umrechnen
+        rData.nSwUp  = nWWHTop;             // Header -> umrechnen
         rData.nSwHLo = nWWUp - nWWHTop;
 
         if (rData.nSwHLo < MM50)
@@ -687,7 +687,7 @@ void wwSectionManager::GetPageULData(const wwSection &rSection, bool bFirst,
 
     if( rData.bHasFooter )
     {
-        rData.nSwLo = nWWFBot;				// Footer -> Umrechnen
+        rData.nSwLo = nWWFBot;              // Footer -> Umrechnen
         rData.nSwFUp = nWWLo - nWWFBot;
 
         if (rData.nSwFUp < MM50)
@@ -700,7 +700,7 @@ void wwSectionManager::GetPageULData(const wwSection &rSection, bool bFirst,
 void wwSectionManager::SetPageULSpaceItems(SwFrmFmt &rFmt,
     wwSectionManager::wwULSpaceData& rData)
 {
-    if (rData.bHasHeader)				// ... und Header-Lower setzen
+    if (rData.bHasHeader)               // ... und Header-Lower setzen
     {
         //Kopfzeilenhoehe minimal sezten
         if (SwFrmFmt* pHdFmt = (SwFrmFmt*)rFmt.GetHeader().GetHeaderFmt())
@@ -714,7 +714,7 @@ void wwSectionManager::SetPageULSpaceItems(SwFrmFmt &rFmt,
         }
     }
 
-    if (rData.bHasFooter)				// ... und Footer-Upper setzen
+    if (rData.bHasFooter)               // ... und Footer-Upper setzen
     {
         if (SwFrmFmt* pFtFmt = (SwFrmFmt*)rFmt.GetFooter().GetFooterFmt())
         {
@@ -925,7 +925,7 @@ void wwSectionManager::CreateSep(const long nTxtPos, bool bMustHaveBreak)
 
     aNewSection.maSep.ccolM1 = ReadSprm(pSep, (bVer67 ? 144 : 0x500B), 0 );
 
-    //sprmSDxaColumns	- Default-Abstand 1.25 cm
+    //sprmSDxaColumns   - Default-Abstand 1.25 cm
     aNewSection.maSep.dxaColumns =
         ReadUSprm( pSep, (bVer67 ? 145 : 0x900C), 708 );
 
@@ -972,22 +972,22 @@ void wwSectionManager::CreateSep(const long nTxtPos, bool bMustHaveBreak)
 
     static const USHORT aVer67Ids[] =
     {
-        /*sprmSBOrientation*/	162,
-        /*sprmSXaPage*/			164,
-        /*sprmSYaPage*/			165,
-        /*sprmSDxaLeft*/		166,
-        /*sprmSDxaRight*/		167,
-        /*sprmSDzaGutter*/		170
+        /*sprmSBOrientation*/   162,
+        /*sprmSXaPage*/         164,
+        /*sprmSYaPage*/         165,
+        /*sprmSDxaLeft*/        166,
+        /*sprmSDxaRight*/       167,
+        /*sprmSDzaGutter*/      170
     };
 
     static const USHORT aVer8Ids[] =
     {
-        /*sprmSBOrientation*/	0x301d,
-        /*sprmSXaPage*/			0xB01F,
-        /*sprmSYaPage*/			0xB020,
-        /*sprmSDxaLeft*/		0xB021,
-        /*sprmSDxaRight*/		0xB022,
-        /*sprmSDzaGutter*/		0xB025
+        /*sprmSBOrientation*/   0x301d,
+        /*sprmSXaPage*/         0xB01F,
+        /*sprmSYaPage*/         0xB020,
+        /*sprmSDxaLeft*/        0xB021,
+        /*sprmSDxaRight*/       0xB022,
+        /*sprmSDzaGutter*/      0xB025
     };
 
     const USHORT* pIds = bVer67 ? aVer67Ids : aVer8Ids;
@@ -1031,12 +1031,12 @@ void wwSectionManager::CreateSep(const long nTxtPos, bool bMustHaveBreak)
     static const BYTE aPaperBinIds[17] = {5,2,4,0,3,0,0,0,0,0,0,0,0,0,0,0,1};
         // WW                          SW
         // ------------------------------
-        //  0 == default				5
-        //  1 == Upper paper tray	    2
-        //  2 == Lower paper tray		4
-        //  4 == Manual paper feed		3
-        // 15 == Automatically select	0
-        // 16 == First tray available	1
+        //  0 == default                5
+        //  1 == Upper paper tray       2
+        //  2 == Lower paper tray       4
+        //  4 == Manual paper feed      3
+        // 15 == Automatically select   0
+        // 16 == First tray available   1
 
     if(const BYTE* pSprmSDmBinFirst = pSep->HasSprm( bVer67 ? 140 : 0x5007 ))
         aNewSection.maSep.dmBinFirst = *pSprmSDmBinFirst;
@@ -1049,17 +1049,17 @@ void wwSectionManager::CreateSep(const long nTxtPos, bool bMustHaveBreak)
 
     static const USHORT aVer67Ids2[] =
     {
-        /*sprmSDyaTop*/		    168,
-        /*sprmSDyaBottom*/		169,
-        /*sprmSDyaHdrTop*/		156,
-        /*sprmSDyaHdrBottom*/	157
+        /*sprmSDyaTop*/         168,
+        /*sprmSDyaBottom*/      169,
+        /*sprmSDyaHdrTop*/      156,
+        /*sprmSDyaHdrBottom*/   157
     };
     static const USHORT aVer8Ids2[] =
     {
-        /*sprmSDyaTop*/			0x9023,
-        /*sprmSDyaBottom*/		0x9024,
-        /*sprmSDyaHdrTop*/		0xB017,
-        /*sprmSDyaHdrBottom*/	0xB018
+        /*sprmSDyaTop*/         0x9023,
+        /*sprmSDyaBottom*/      0x9024,
+        /*sprmSDyaHdrTop*/      0xB017,
+        /*sprmSDyaHdrBottom*/   0xB018
     };
 
     pIds = bVer67 ? aVer67Ids2 : aVer8Ids2;
@@ -1189,7 +1189,7 @@ void SwWW8ImplReader::CopyPageDescHdFt(const SwPageDesc* pOrgPageDesc,
 }
 
 //------------------------------------------------------
-//	 Hilfsroutinen fuer Grafiken und Apos und Tabellen
+//   Hilfsroutinen fuer Grafiken und Apos und Tabellen
 //------------------------------------------------------
 
 static bool _SetWW8_BRC(bool bVer67, WW8_BRC& rVar, const BYTE* pS)
@@ -1209,11 +1209,11 @@ BYTE lcl_ReadBorders(bool bVer67, WW8_BRC* brc, WW8PLCFx_Cp_FKP* pPap,
     const WW8RStyle* pSty, const WW8PLCFx_SEPX* pSep)
 {
 // Ausgegend von diesen defines:
-//		#define WW8_TOP 0
-//		#define WW8_LEFT 1
-//		#define WW8_BOT 2
-//		#define WW8_RIGHT 3
-//		#define WW8_BETW 4
+//      #define WW8_TOP 0
+//      #define WW8_LEFT 1
+//      #define WW8_BOT 2
+//      #define WW8_RIGHT 3
+//      #define WW8_BETW 4
 
 //returns a BYTE filled with a bit for each position that had a sprm
 //setting that border
@@ -1456,8 +1456,8 @@ void Set1Border(bool bVer67, SvxBoxItem &rBox, const WW8_BRC& rBor,
 
 bool lcl_IsBorder(bool bVer67, const WW8_BRC* pbrc, bool bChkBtwn = false)
 {
-    if( bVer67	)
-        return ( pbrc[WW8_TOP  ].aBits1[0] & 0x18 ) ||	// brcType  != 0
+    if( bVer67  )
+        return ( pbrc[WW8_TOP  ].aBits1[0] & 0x18 ) ||  // brcType  != 0
                ( pbrc[WW8_LEFT ].aBits1[0] & 0x18 ) ||
                ( pbrc[WW8_BOT  ].aBits1[0] & 0x18 ) ||
                ( pbrc[WW8_RIGHT].aBits1[0] & 0x18 ) ||
@@ -1472,7 +1472,7 @@ bool lcl_IsBorder(bool bVer67, const WW8_BRC* pbrc, bool bChkBtwn = false)
                 // Abfrage auf 0x1f statt 0x18 ist noetig, da zumindest einige
                 // WW-Versionen ( 6.0 US ) bei dotted brcType auf 0 setzen
     else
-        return pbrc[WW8_TOP  ].aBits1[1] ||			// brcType  != 0
+        return pbrc[WW8_TOP  ].aBits1[1] ||         // brcType  != 0
                pbrc[WW8_LEFT ].aBits1[1] ||
                pbrc[WW8_BOT  ].aBits1[1] ||
                pbrc[WW8_RIGHT].aBits1[1] ||
@@ -1505,11 +1505,11 @@ bool SwWW8ImplReader::SetBorder(SvxBoxItem& rBox, const WW8_BRC* pbrc,
     bool bChange = false;
     static const USHORT aIdArr[ 10 ] =
     {
-        WW8_TOP, 	BOX_LINE_TOP,
-        WW8_LEFT,	BOX_LINE_LEFT,
-        WW8_RIGHT,	BOX_LINE_RIGHT,
-        WW8_BOT,	BOX_LINE_BOTTOM,
-        WW8_BETW, 	BOX_LINE_BOTTOM
+        WW8_TOP,    BOX_LINE_TOP,
+        WW8_LEFT,   BOX_LINE_LEFT,
+        WW8_RIGHT,  BOX_LINE_RIGHT,
+        WW8_BOT,    BOX_LINE_BOTTOM,
+        WW8_BETW,   BOX_LINE_BOTTOM
     };
 
     for( int i = 0, nEnd = 8; i < nEnd; i += 2 )
@@ -1536,7 +1536,7 @@ bool SwWW8ImplReader::SetBorder(SvxBoxItem& rBox, const WW8_BRC* pbrc,
             */
             rBox.SetLine( 0, aIdArr[ i+1 ] );
         }
-        else if( 6 == i && bChkBtwn )	// wenn Botton nichts war,
+        else if( 6 == i && bChkBtwn )   // wenn Botton nichts war,
             nEnd += 2;                  // dann ggfs. auch Between befragen
     }
     return bChange;
@@ -1553,7 +1553,7 @@ bool SwWW8ImplReader::SetShadow(SvxShadowItem& rShadow, const SvxBoxItem& rBox,
     {
         rShadow.SetColor( Color( COL_BLACK ));
 
-//			aS.SetWidth( 28 );
+//          aS.SetWidth( 28 );
 // JP 19.11.98: abhaengig von der Breite der rechten Kante der Box
         const SvxBorderLine& rLine = *rBox.GetRight();
         rShadow.SetWidth( ( rLine.GetOutWidth() + rLine.GetInWidth() +
@@ -1578,7 +1578,7 @@ void SwWW8ImplReader::GetBorderDistance(const WW8_BRC* pbrc,
     }
     else
     {
-        rInnerDist = Rectangle(	(pbrc[ 1 ].aBits2[1]       & 0x1f) * 20,
+        rInnerDist = Rectangle( (pbrc[ 1 ].aBits2[1]       & 0x1f) * 20,
                                 (pbrc[ 0 ].aBits2[1]       & 0x1f) * 20,
                                 (pbrc[ 3 ].aBits2[1]       & 0x1f) * 20,
                                 (pbrc[ 2 ].aBits2[1]       & 0x1f) * 20 );
@@ -1609,11 +1609,11 @@ bool SwWW8ImplReader::SetFlyBordersShadow(SfxItemSet& rFlySet,
 }
 
 //-----------------------------------------
-//				APOs
+//              APOs
 //-----------------------------------------
                             // fuer Berechnung der minimalen FrameSize
-#define MAX_BORDER_SIZE 210			// so breit ist max. der Border
-#define MAX_EMPTY_BORDER 10			// fuer +-1-Fehler, mindestens 1
+#define MAX_BORDER_SIZE 210         // so breit ist max. der Border
+#define MAX_EMPTY_BORDER 10         // fuer +-1-Fehler, mindestens 1
 
 static void FlySecur1(short& rSize, const bool bBorder)
 {
@@ -1662,11 +1662,11 @@ void WW8FlyPara::ApplyTabPos(WW8_TablePos *pTabPos)
 WW8FlyPara::WW8FlyPara(bool bIsVer67, const WW8FlyPara* pSrc /* = 0 */)
 {
     if ( pSrc )
-        memcpy( this, pSrc, sizeof( WW8FlyPara ) );	// Copy-Ctor
+        memcpy( this, pSrc, sizeof( WW8FlyPara ) ); // Copy-Ctor
     else
     {
-        memset( this, 0, sizeof( WW8FlyPara ) );	// Default-Ctor
-        nSp37 = 2;									// Default: Umfluss
+        memset( this, 0, sizeof( WW8FlyPara ) );    // Default-Ctor
+        nSp37 = 2;                                  // Default: Umfluss
     }
     bVer67 = bIsVer67;
 }
@@ -1698,43 +1698,43 @@ void WW8FlyPara::Read(const BYTE* pSprm29, WW8PLCFx_Cp_FKP* pPap)
 {
     sal_uInt8 nOrigSp29 = nSp29;
     if (pSprm29)
-        nOrigSp29 = *pSprm29;							// PPC ( Bindung )
+        nOrigSp29 = *pSprm29;                           // PPC ( Bindung )
 
     const BYTE* pS = 0;
     if( bVer67 )
     {
-        SetValSprm( &nSp26, pPap, 26 );	// X-Position	//sprmPDxaAbs
+        SetValSprm( &nSp26, pPap, 26 ); // X-Position   //sprmPDxaAbs
         //set in me or in parent style
-        mbVertSet |= SetValSprm( &nSp27, pPap, 27 );	// Y-Position	//sprmPDyaAbs
-        SetValSprm( &nSp45, pPap, 45 );	// Hoehe		//sprmPWHeightAbs
-        SetValSprm( &nSp28, pPap, 28 );	// Breite		//sprmPDxaWidth
-        SetValSprm( &nLeMgn, pPap, 49 ); // L-Raender	//sprmPDxaFromText
-        SetValSprm( &nRiMgn, pPap, 49 ); // R-Raender	//sprmPDxaFromText
-        SetValSprm( &nUpMgn, pPap, 48 ); // U-Raender	//sprmPDyaFromText
-        SetValSprm( &nLoMgn, pPap, 48 ); // D-Raender	//sprmPDyaFromText
+        mbVertSet |= SetValSprm( &nSp27, pPap, 27 );    // Y-Position   //sprmPDyaAbs
+        SetValSprm( &nSp45, pPap, 45 ); // Hoehe        //sprmPWHeightAbs
+        SetValSprm( &nSp28, pPap, 28 ); // Breite       //sprmPDxaWidth
+        SetValSprm( &nLeMgn, pPap, 49 ); // L-Raender   //sprmPDxaFromText
+        SetValSprm( &nRiMgn, pPap, 49 ); // R-Raender   //sprmPDxaFromText
+        SetValSprm( &nUpMgn, pPap, 48 ); // U-Raender   //sprmPDyaFromText
+        SetValSprm( &nLoMgn, pPap, 48 ); // D-Raender   //sprmPDyaFromText
 
-        pS = pPap->HasSprm( 37 );						//sprmPWr
+        pS = pPap->HasSprm( 37 );                       //sprmPWr
         if( pS )
             nSp37 = *pS;
     }
     else
     {
-        SetValSprm( &nSp26, pPap, 0x8418 );	// X-Position
+        SetValSprm( &nSp26, pPap, 0x8418 ); // X-Position
         //set in me or in parent style
-        mbVertSet |= SetValSprm( &nSp27, pPap, 0x8419 );	// Y-Position
-        SetValSprm( &nSp45, pPap, 0x442B );	// Hoehe
-        SetValSprm( &nSp28, pPap, 0x841A );	// Breite
-        SetValSprm( &nLeMgn, pPap, 0x842F );	// L-Raender
-        SetValSprm( &nRiMgn, pPap, 0x842F );	// R-Raender
-        SetValSprm( &nUpMgn, pPap, 0x842E );	// U-Raender
-        SetValSprm( &nLoMgn, pPap, 0x842E );	// D-Raender
+        mbVertSet |= SetValSprm( &nSp27, pPap, 0x8419 );    // Y-Position
+        SetValSprm( &nSp45, pPap, 0x442B ); // Hoehe
+        SetValSprm( &nSp28, pPap, 0x841A ); // Breite
+        SetValSprm( &nLeMgn, pPap, 0x842F );    // L-Raender
+        SetValSprm( &nRiMgn, pPap, 0x842F );    // R-Raender
+        SetValSprm( &nUpMgn, pPap, 0x842E );    // U-Raender
+        SetValSprm( &nLoMgn, pPap, 0x842E );    // D-Raender
 
-        pS = pPap->HasSprm( 0x2423 );								// Umfluss
+        pS = pPap->HasSprm( 0x2423 );                               // Umfluss
         if( pS )
             nSp37 = *pS;
     }
 
-    if( ::lcl_ReadBorders( bVer67, brc, pPap ))		// Umrandung
+    if( ::lcl_ReadBorders( bVer67, brc, pPap ))     // Umrandung
         bBorderLines = ::lcl_IsBorder( bVer67, brc );
 
     /*
@@ -1755,29 +1755,29 @@ void WW8FlyPara::ReadFull(const BYTE* pSprm29, SwWW8ImplReader* pIo)
     WW8PLCFMan* pPlcxMan = pIo->pPlcxMan;
     WW8PLCFx_Cp_FKP* pPap = pPlcxMan->GetPapPLCF();
 
-    Read(pSprm29, pPap);	// Lies Apo-Parameter
+    Read(pSprm29, pPap);    // Lies Apo-Parameter
 
-    do{				// Block zum rausspringen
+    do{             // Block zum rausspringen
         if( nSp45 != 0 /* || nSp28 != 0 */ )
-            break;                  // bGrafApo nur bei Hoehe automatisch
+            break;                      // bGrafApo nur bei Hoehe automatisch
         if( pIo->pWwFib->fComplex )
-            break;					// (*pPap)++ geht bei FastSave schief
-                                    // -> bei FastSave kein Test auf Grafik-APO
+            break;                      // (*pPap)++ geht bei FastSave schief
+                                        // -> bei FastSave kein Test auf Grafik-APO
         SvStream* pIoStrm = pIo->pStrm;
         ULONG nPos = pIoStrm->Tell();
         WW8PLCFxSave1 aSave;
         pPlcxMan->GetPap()->Save( aSave );
         bGrafApo = false;
 
-        do{				// Block zum rausspringen
+        do{             // Block zum rausspringen
 
             BYTE nTxt[2];
 
-            pIoStrm->Read( nTxt, 2 );					// lies Text
+            pIoStrm->Read( nTxt, 2 );                   // lies Text
             if( nTxt[0] != 0x01 || nTxt[1] != 0x0d )// nur Grafik + CR ?
-                break;								// Nein
+                break;                              // Nein
 
-            (*pPap)++;								// Naechste Zeile
+            (*pPap)++;                              // Naechste Zeile
 
             // In APO ?
             //sprmPPc
@@ -1786,7 +1786,7 @@ void WW8FlyPara::ReadFull(const BYTE* pSprm29, SwWW8ImplReader* pIo)
             // Nein -> Grafik-Apo
             if( !pS ){
                 bGrafApo = true;
-                break;								// Ende des APO
+                break;                              // Ende des APO
             }
             USHORT nColl = pPap->GetIstd();
             WW8FlyPara *pNowStyleApo=0;
@@ -1798,12 +1798,12 @@ void WW8FlyPara::ReadFull(const BYTE* pSprm29, SwWW8ImplReader* pIo)
 
             WW8FlyPara aF(bVer67, pNowStyleApo);
                                                 // Neuer FlaPara zum Vergleich
-            aF.Read( pS, pPap );				// WWPara fuer neuen Para
-            if( !( aF == *this ) )				// selber APO ? ( oder neuer ? )
-                bGrafApo = true;				// nein -> 1-zeiliger APO
-                                                //		-> Grafik-APO
+            aF.Read( pS, pPap );                // WWPara fuer neuen Para
+            if( !( aF == *this ) )              // selber APO ? ( oder neuer ? )
+                bGrafApo = true;                // nein -> 1-zeiliger APO
+                                                //      -> Grafik-APO
         }
-        while( 0 );								// Block zum rausspringen
+        while( 0 );                             // Block zum rausspringen
 
         pPlcxMan->GetPap()->Restore( aSave );
         pIoStrm->Seek( nPos );
@@ -1816,43 +1816,43 @@ void WW8FlyPara::Read(const BYTE* pSprm29, WW8RStyle* pStyle)
 {
     sal_uInt8 nOrigSp29 = 0;
     if (pSprm29)
-        nOrigSp29 = *pSprm29;							// PPC ( Bindung )
+        nOrigSp29 = *pSprm29;                           // PPC ( Bindung )
 
     const BYTE* pS = 0;
     if (bVer67)
     {
-        SetValSprm( &nSp26,	pStyle, 26 );	// X-Position
+        SetValSprm( &nSp26, pStyle, 26 );   // X-Position
         //set in me or in parent style
-        mbVertSet |= SetValSprm(&nSp27, pStyle, 27);	// Y-Position
-        SetValSprm( &nSp45, pStyle, 45 );	// Hoehe
-        SetValSprm( &nSp28, pStyle, 28 );	// Breite
-        SetValSprm( &nLeMgn,	pStyle, 49 );	// L-Raender
-        SetValSprm( &nRiMgn,	pStyle, 49 );	// R-Raender
-        SetValSprm( &nUpMgn,	pStyle, 48 );	// U-Raender
-        SetValSprm( &nLoMgn,	pStyle, 48 );	// D-Raender
+        mbVertSet |= SetValSprm(&nSp27, pStyle, 27);    // Y-Position
+        SetValSprm( &nSp45, pStyle, 45 );   // Hoehe
+        SetValSprm( &nSp28, pStyle, 28 );   // Breite
+        SetValSprm( &nLeMgn,    pStyle, 49 );   // L-Raender
+        SetValSprm( &nRiMgn,    pStyle, 49 );   // R-Raender
+        SetValSprm( &nUpMgn,    pStyle, 48 );   // U-Raender
+        SetValSprm( &nLoMgn,    pStyle, 48 );   // D-Raender
 
-        pS = pStyle->HasParaSprm( 37 );				// Umfluss
+        pS = pStyle->HasParaSprm( 37 );             // Umfluss
         if( pS )
             nSp37 = *pS;
     }
     else
     {
-        SetValSprm( &nSp26, pStyle, 0x8418 );	// X-Position
+        SetValSprm( &nSp26, pStyle, 0x8418 );   // X-Position
         //set in me or in parent style
-        mbVertSet |= SetValSprm(&nSp27, pStyle, 0x8419);	// Y-Position
-        SetValSprm( &nSp45, pStyle, 0x442B );	// Hoehe
-        SetValSprm( &nSp28, pStyle, 0x841A );	// Breite
-        SetValSprm( &nLeMgn, pStyle, 0x842F );	// L-Raender
-        SetValSprm( &nRiMgn, pStyle, 0x842F );	// R-Raender
-        SetValSprm( &nUpMgn, pStyle, 0x842E );	// U-Raender
-        SetValSprm( &nLoMgn, pStyle, 0x842E );	// D-Raender
+        mbVertSet |= SetValSprm(&nSp27, pStyle, 0x8419);    // Y-Position
+        SetValSprm( &nSp45, pStyle, 0x442B );   // Hoehe
+        SetValSprm( &nSp28, pStyle, 0x841A );   // Breite
+        SetValSprm( &nLeMgn, pStyle, 0x842F );  // L-Raender
+        SetValSprm( &nRiMgn, pStyle, 0x842F );  // R-Raender
+        SetValSprm( &nUpMgn, pStyle, 0x842E );  // U-Raender
+        SetValSprm( &nLoMgn, pStyle, 0x842E );  // D-Raender
 
-        pS = pStyle->HasParaSprm( 0x2423 );				// Umfluss
+        pS = pStyle->HasParaSprm( 0x2423 );             // Umfluss
         if( pS )
             nSp37 = *pS;
     }
 
-    if (::lcl_ReadBorders(bVer67, brc, 0, pStyle))		// Umrandung
+    if (::lcl_ReadBorders(bVer67, brc, 0, pStyle))      // Umrandung
         bBorderLines = ::lcl_IsBorder(bVer67, brc);
 
     /*
@@ -1887,8 +1887,8 @@ bool WW8FlyPara::IsEmpty() const
 WW8SwFlyPara::WW8SwFlyPara( SwPaM& rPaM, SwWW8ImplReader& rIo, WW8FlyPara& rWW,
     short nPgLeft, short nPgWidth, INT32 nIniFlyDx, INT32 nIniFlyDy )
 {
-    memset( this, 0, sizeof( WW8SwFlyPara ) );	// Initialisieren
-    nNewNettoWidth = MINFLY;					// Minimum
+    memset( this, 0, sizeof( WW8SwFlyPara ) );  // Initialisieren
+    nNewNettoWidth = MINFLY;                    // Minimum
 
     eSurround = ( rWW.nSp37 > 1 ) ? SURROUND_IDEAL : SURROUND_NONE;
 
@@ -1920,22 +1920,22 @@ WW8SwFlyPara::WW8SwFlyPara( SwPaM& rPaM, SwWW8ImplReader& rIo, WW8FlyPara& rWW,
         eHeightFix = ATT_FIX_SIZE;
 
     if( nHeight <= MINFLY )
-    {							// keine Angabe oder Stuss
+    {                           // keine Angabe oder Stuss
         eHeightFix = ATT_MIN_SIZE;
         nHeight = MINFLY;
     }
 
     nWidth = nNettoWidth = rWW.nSp28;
-    if( nWidth <= 10 )								// Auto-Breite
+    if( nWidth <= 10 )                              // Auto-Breite
     {
         bAutoWidth = true;
         rIo.maTracer.Log(sw::log::eAutoWidthFrame);
         nWidth = nNettoWidth = (nPgWidth ? nPgWidth : 2268); // 4 cm
     }
     if( nWidth <= MINFLY )
-        nWidth = nNettoWidth = MINFLY;				// Minimale Breite
+        nWidth = nNettoWidth = MINFLY;              // Minimale Breite
 
-    eVAlign = VERT_NONE;							// Defaults
+    eVAlign = VERT_NONE;                            // Defaults
     eHAlign = HORI_NONE;
     nYPos = 0;
     nXPos = 0;
@@ -1958,44 +1958,44 @@ WW8SwFlyPara::WW8SwFlyPara( SwPaM& rPaM, SwWW8ImplReader& rIo, WW8FlyPara& rWW,
     // Bindung
     nYBind = (( rWW.nSp29 & 0x30 ) >> 4);
     switch ( nYBind )
-    {										// Y - Bindung bestimmt Sw-Bindung
+    {                                       // Y - Bindung bestimmt Sw-Bindung
         case 0:
-            eAnchor = FLY_PAGE;				// Vert Margin
+            eAnchor = FLY_PAGE;             // Vert Margin
             eVRel = REL_PG_PRTAREA;
             break;
         case 1:
-            eAnchor = FLY_PAGE;				// Vert Page
+            eAnchor = FLY_PAGE;             // Vert Page
             eVRel = REL_PG_FRAME;
-            break;							// 2=Vert. Paragraph, 3=Use Default
+            break;                          // 2=Vert. Paragraph, 3=Use Default
         default:
             eAnchor = FLY_AT_CNTNT;
             eVRel = PRTAREA;
             if( nYPos < 0 )
-                nYPos = 0;					// koennen wir nicht
+                nYPos = 0;                  // koennen wir nicht
             break;
     }
 
-    switch( rWW.nSp27 )				// besondere Y-Positionen ?
+    switch( rWW.nSp27 )             // besondere Y-Positionen ?
     {
         case -4:
             eVAlign = VERT_TOP;
             if (eAnchor == FLY_PAGE)
                 nUpMgn = 0;
-            break;	// oben
+            break;  // oben
         case -8:
             eVAlign = VERT_CENTER;
-            break;	// zentriert
+            break;  // zentriert
         case -12:
             eVAlign = VERT_BOTTOM;
             if (eAnchor == FLY_PAGE)
                 nLoMgn = 0;
-            break;	// unten
+            break;  // unten
         default:
             nYPos = rWW.nSp27 + (short)nIniFlyDy;
-            break;	// Korrekturen per Ini-Datei
+            break;  // Korrekturen per Ini-Datei
     }
 
-    switch( rWW.nSp26 )					// besondere X-Positionen ?
+    switch( rWW.nSp26 )                 // besondere X-Positionen ?
     {
         case 0:
             eHAlign = HORI_LEFT;
@@ -2003,35 +2003,35 @@ WW8SwFlyPara::WW8SwFlyPara( SwPaM& rPaM, SwWW8ImplReader& rIo, WW8FlyPara& rWW,
             break;  // links
         case -4:
             eHAlign = HORI_CENTER;
-            break; 	// zentriert
+            break;  // zentriert
         case -8:
             eHAlign = HORI_RIGHT;
             nRiMgn = 0;
-            break;	// rechts
+            break;  // rechts
         case -12:
             eHAlign = HORI_LEFT;
             bToggelPos = true;
-            break;	// innen
+            break;  // innen
         case -16:
             eHAlign = HORI_RIGHT;
             bToggelPos = true;
             break;  // aussen
         default:
             nXPos = rWW.nSp26 + (short)nIniFlyDx;
-            break;	// Korrekturen per Ini-Datei
+            break;  // Korrekturen per Ini-Datei
     }
 
     nXBind = ( rWW.nSp29 & 0xc0 ) >> 6;
-    switch ( nXBind )			// X - Bindung -> Koordinatentransformation
+    switch ( nXBind )           // X - Bindung -> Koordinatentransformation
     {
         case 0:
             eHRel = (FLY_PAGE == eAnchor) ? REL_PG_PRTAREA : PRTAREA;
             break;
-        case 1: 								// Hor. Absatz
+        case 1:                                 // Hor. Absatz
             eHRel = REL_PG_PRTAREA;
             break;
-    /*	case 2:*/								// Hor. Seite
-    /*	case 3:*/								// Use Default
+    /*  case 2:*/                               // Hor. Seite
+    /*  case 3:*/                               // Use Default
         default:
             eHRel = (FLY_AT_CNTNT== eAnchor) ? REL_PG_FRAME : FRAME;
 
@@ -2073,7 +2073,7 @@ WW8SwFlyPara::WW8SwFlyPara( SwPaM& rPaM, SwWW8ImplReader& rIo, WW8FlyPara& rWW,
         }
     }
 
-    FlySecur1( nWidth, rWW.bBorderLines );			// passen Raender ?
+    FlySecur1( nWidth, rWW.bBorderLines );          // passen Raender ?
     FlySecur1( nHeight, rWW.bBorderLines );
 
     /*
@@ -2111,7 +2111,7 @@ WW8FlySet::WW8FlySet(SwWW8ImplReader& rReader, const WW8FlyPara* pFW,
     : SfxItemSet(rReader.rDoc.GetAttrPool(),RES_FRMATR_BEGIN,RES_FRMATR_END-1)
 {
     if (!rReader.mbNewDoc)
-        Reader::ResetFrmFmtAttrs(*this);	// Abstand/Umrandung raus
+        Reader::ResetFrmFmtAttrs(*this);    // Abstand/Umrandung raus
                                             // Position
 /*Below can all go when we have from left in rtl mode*/
     long nXPos = pFS->nXPos;
@@ -2123,7 +2123,7 @@ WW8FlySet::WW8FlySet(SwWW8ImplReader& rReader, const WW8FlyPara* pFW,
     Put( SwFmtHoriOrient(nXPos, pFS->eHAlign, pFS->eHRel, pFS->bToggelPos ));
     Put( SwFmtVertOrient( pFS->nYPos, pFS->eVAlign, pFS->eVRel ) );
 
-    if (pFS->nLeMgn || pFS->nRiMgn)		// Raender setzen
+    if (pFS->nLeMgn || pFS->nRiMgn)     // Raender setzen
         Put(SvxLRSpaceItem(pFS->nLeMgn, pFS->nRiMgn));
 
     if (pFS->nUpMgn || pFS->nLoMgn)
@@ -2162,7 +2162,7 @@ WW8FlySet::WW8FlySet( SwWW8ImplReader& rReader, const SwPaM* pPaM,
     : SfxItemSet(rReader.rDoc.GetAttrPool(),RES_FRMATR_BEGIN,RES_FRMATR_END-1)
 {
     if (!rReader.mbNewDoc)
-        Reader::ResetFrmFmtAttrs( *this );	// Abstand/Umrandung raus
+        Reader::ResetFrmFmtAttrs( *this );  // Abstand/Umrandung raus
 
     Put( SvxLRSpaceItem() ); //inline writer ole2 objects start with 0.2cm l/r
     SwFmtAnchor aAnchor( FLY_IN_CNTNT );
@@ -2305,7 +2305,7 @@ sal_uInt16 SwWW8ImplReader::MoveOutsideFly(SwFrmFmt *pFlyFmt,
                         if (aIdx == aEnd && pNd && !pNd->GetTxt().Len())
                         {
                             rDoc.DelFullPara( *pPaM );
-
+    
                             SwTable& rTable = pTable->GetTable();
                             SwFrmFmt* pTblFmt = rTable.GetFrmFmt();
 
@@ -2350,7 +2350,27 @@ WW8FlyPara *SwWW8ImplReader::ConstructApo(const ApoTestResults &rApo,
     return pRet;
 }
 
-bool SwWW8ImplReader::StartApo(const ApoTestResults &rApo, WW8_TablePos *pTabPos)
+bool SwWW8ImplReader::IsDropCap() 
+{
+    // Find the DCS (Drop Cap Specifier) for the paragraph
+    // if does not exist or if the first three bits are 0
+    // then there is no dropcap on the paragraph
+    WW8PLCFx_Cp_FKP *pPap = pPlcxMan ? pPlcxMan->GetPapPLCF() : 0;
+    if (pPap)
+    {
+        const BYTE *pDCS = pPlcxMan->GetPapPLCF()->HasSprm(0x442C);
+        if(pDCS)
+        {
+            short nDCS = SVBT16ToShort( pDCS );
+            if((nDCS | 7) != 0)
+                return true;
+        } 
+    }
+    return false;
+}
+
+bool SwWW8ImplReader::StartApo(const ApoTestResults &rApo, 
+    WW8_TablePos *pTabPos)
 {
     if (!(pWFlyPara = ConstructApo(rApo, pTabPos)))
         return false;
@@ -2359,6 +2379,13 @@ bool SwWW8ImplReader::StartApo(const ApoTestResults &rApo, WW8_TablePos *pTabPos
         maSectionManager.GetPageLeft(),
         (maSectionManager.GetPageWidth() - maSectionManager.GetPageRight() -
          maSectionManager.GetPageLeft()), nIniFlyDx, nIniFlyDy );
+
+    // If this paragraph is a Dropcap set the flag and we will deal with it later
+    if (IsDropCap())
+    {
+        bDropCap = true;
+        return false;
+    }
 
     if( !pWFlyPara->bGrafApo )
     {
@@ -2422,7 +2449,7 @@ void wwSectionManager::JoinNode(const SwPosition &rPos, const SwNode &rNode)
 bool SwWW8ImplReader::JoinNode(SwPaM &rPam, bool bStealAttr)
 {
     bool bRet = false;
-    rPam.GetPoint()->nContent = 0;			// an den Anfang der Zeile gehen
+    rPam.GetPoint()->nContent = 0;          // an den Anfang der Zeile gehen
 
     SwNodeIndex aPref(rPam.GetPoint()->nNode, -1);
 
@@ -2503,10 +2530,10 @@ void SwWW8ImplReader::StopApo()
         // worden ( bei automatischer Breite des Flys ), dann muss die Breite
         // des SW-Flys entsprechend umgesetzt werden, da der SW keine
         // automatische Breite kennt.
-        if( pSFlyPara->nNewNettoWidth > MINFLY )	// BoxUpWidth ?
+        if( pSFlyPara->nNewNettoWidth > MINFLY )    // BoxUpWidth ?
         {
             long nW = pSFlyPara->nNewNettoWidth;
-            nW += pSFlyPara->nWidth - pSFlyPara->nNettoWidth;	// Rand dazu
+            nW += pSFlyPara->nWidth - pSFlyPara->nNettoWidth;   // Rand dazu
             pSFlyPara->pFlyFmt->SetAttr(
                 SwFmtFrmSize( pSFlyPara->eHeightFix, nW, pSFlyPara->nHeight ) );
         }
@@ -2545,7 +2572,7 @@ void SwWW8ImplReader::StopApo()
 bool SwWW8ImplReader::TestSameApo(const ApoTestResults &rApo, 
     WW8_TablePos *pTabPos)
 {
-    if (!pWFlyPara)
+    if( !pWFlyPara )
     {
         ASSERT( pWFlyPara, " Wo ist mein pWFlyPara ? " );
         return true;
@@ -2567,7 +2594,7 @@ bool SwWW8ImplReader::TestSameApo(const ApoTestResults &rApo,
 }
 
 /***************************************************************************
-#		Attribut - Verwaltung
+#       Attribut - Verwaltung
 #**************************************************************************/
 
 void SwWW8ImplReader::NewAttr( const SfxPoolItem& rAttr )
@@ -2591,17 +2618,20 @@ void SwWW8ImplReader::NewAttr( const SfxPoolItem& rAttr )
 // holt Attribut aus der FmtColl / Stack / Doc
 const SfxPoolItem* SwWW8ImplReader::GetFmtAttr( USHORT nWhich )
 {
+    const SfxPoolItem* pRet = 0;
     if (pAktColl)
-        return &pAktColl->GetAttr( nWhich );
+        pRet = &(pAktColl->GetAttr(nWhich));
     else if (pAktItemSet)
     {
-        const SfxPoolItem* pRet = pAktItemSet->GetItem(nWhich);
-        return pRet ? pRet : &pStandardFmtColl->GetAttr(nWhich);
+        pRet = pAktItemSet->GetItem(nWhich);
+        if (!pRet)
+            pRet = pStandardFmtColl ? &(pStandardFmtColl->GetAttr(nWhich)) : 0;
+        if (!pRet)
+            pRet = &rDoc.GetAttrPool().GetDefaultItem(nWhich);
     }
     else if (pPlcxMan && pPlcxMan->GetDoingDrawTextBox())
     {
-        const SfxPoolItem* pRet = pCtrlStck->GetStackAttr(*pPaM->GetPoint(),
-            nWhich);
+        pRet = pCtrlStck->GetStackAttr(*pPaM->GetPoint(), nWhich);
         if (!pRet)
         {
             if (nAktColl < nColls && pCollA[nAktColl].pFmt &&
@@ -2610,14 +2640,18 @@ const SfxPoolItem* SwWW8ImplReader::GetFmtAttr( USHORT nWhich )
                 pRet = &(pCollA[nAktColl].pFmt->GetAttr(nWhich));
             }
         }
-        return pRet ? pRet : &pStandardFmtColl->GetAttr(nWhich);
+        if (!pRet)
+            pRet = pStandardFmtColl ? &(pStandardFmtColl->GetAttr(nWhich)) : 0;
+        if (!pRet)
+            pRet = &rDoc.GetAttrPool().GetDefaultItem(nWhich);
     }
     else
-        return pCtrlStck->GetFmtAttr( *pPaM->GetPoint(), nWhich );
+        pRet = pCtrlStck->GetFmtAttr(*pPaM->GetPoint(), nWhich);
+    return pRet;
 }
 
 /***************************************************************************
-#		eigentliche Attribute
+#       eigentliche Attribute
 #
 # Die Methoden erhalten die Token-Id und die Laenge der noch folgenden
 # Parameter gemaess Tabelle in WWScan.cxx als Parameter
@@ -2656,7 +2690,7 @@ void SwWW8ImplReader::Read_PicLoc(USHORT , const BYTE* pData, short nLen )
     if( nLen < 0 )
     {
         nPicLocFc = 0;
-        bSpec = false;	// Stimmt das immer ?
+        bSpec = false;  // Stimmt das immer ?
     }
     else
     {
@@ -2675,7 +2709,7 @@ void SwWW8ImplReader::Read_POutLvl(USHORT, const BYTE* pData, short nLen )
         if (SwWW8StyInf* pSI = GetStyle(nAktColl))
         {
             pSI->nOutlineLevel =
-            ( (1 <= pSI->GetWWStyleId()) && (9 >= pSI->GetWWStyleId()) )
+                ( (1 <= pSI->GetWWStyleId()) && (9 >= pSI->GetWWStyleId()) )
             ? pSI->GetWWStyleId()-1
             : (pData ? *pData : 0);
         }
@@ -2732,20 +2766,20 @@ void SwWW8ImplReader::Read_BoldUsw( USHORT nId, const BYTE* pData, short nLen )
 {
     static const USHORT nEndIds[ 8 + 2 ] =
     {
-        RES_CHRATR_WEIGHT,			RES_CHRATR_POSTURE,
-        RES_CHRATR_CROSSEDOUT,		RES_CHRATR_CONTOUR,
-        RES_CHRATR_SHADOWED, 		RES_CHRATR_CASEMAP,
-        RES_CHRATR_CASEMAP, 		RES_CHRATR_CROSSEDOUT,
+        RES_CHRATR_WEIGHT,          RES_CHRATR_POSTURE,
+        RES_CHRATR_CROSSEDOUT,      RES_CHRATR_CONTOUR,
+        RES_CHRATR_SHADOWED,        RES_CHRATR_CASEMAP,
+        RES_CHRATR_CASEMAP,         RES_CHRATR_CROSSEDOUT,
 
-        RES_CHRATR_CJK_WEIGHT,		RES_CHRATR_CJK_POSTURE
+        RES_CHRATR_CJK_WEIGHT,      RES_CHRATR_CJK_POSTURE
     };
 
     BYTE nI;
     // die Attribut-Nr fuer "doppelt durchgestrichen" tanzt aus der Reihe
     if( 0x2A53 != nId )
-        nI = bVer67 ? nId - 85 : nId - 0x0835;	// Index 0..6
+        nI = bVer67 ? nId - 85 : nId - 0x0835;  // Index 0..6
     else
-        nI = 7;							// Index 7 (Doppelt durchgestrichen)
+        nI = 7;                         // Index 7 (Doppelt durchgestrichen)
 
     BYTE nMask = 1 << nI;
 
@@ -2769,7 +2803,7 @@ void SwWW8ImplReader::Read_BoldUsw( USHORT nId, const BYTE* pData, short nLen )
             pSI = GetStyle(SVBT16ToShort(pCharIstd));
     }
 
-    if( pAktColl )							// StyleDef -> Flags merken
+    if( pAktColl )                          // StyleDef -> Flags merken
     {
         if (pSI)
         {
@@ -2779,23 +2813,23 @@ void SwWW8ImplReader::Read_BoldUsw( USHORT nId, const BYTE* pData, short nLen )
                 (pCollA[pSI->nBase].n81Flags & nMask)
                )
             {
-                bOn = !bOn;						// umdrehen
+                bOn = !bOn;                     // umdrehen
             }
 
             if (bOn)
-                pSI->n81Flags |= nMask;			// Flag setzen
+                pSI->n81Flags |= nMask;         // Flag setzen
             else
-                pSI->n81Flags &= ~nMask;		// Flag loeschen
+                pSI->n81Flags &= ~nMask;        // Flag loeschen
        }
     }
     else
     {
 
         // im Text -> Flags abfragen
-        if (*pData & 0x80)					// Bit 7 gesetzt ?
+        if( *pData & 0x80 )                 // Bit 7 gesetzt ?
         {
-            if (pSI && pSI->n81Flags & nMask) // und in StyleDef an ?
-                bOn = !bOn;					  // dann invertieren
+            if (pSI && pSI->n81Flags & nMask)       // und in StyleDef an ?
+                bOn = !bOn;                 // dann invertieren
             // am Stack vermerken, das dieses ein Toggle-Attribut ist
             pCtrlStck->SetToggleAttr(nI, true);
         }
@@ -2837,29 +2871,29 @@ void SwWW8ImplReader::Read_BoldBiDiUsw(USHORT nId, const BYTE* pData,
             pSI = GetStyle(SVBT16ToShort(pCharIstd));
     }
 
-    if (pAktColl)							// StyleDef -> Flags merken
+    if (pAktColl)                           // StyleDef -> Flags merken
     {
         if (pSI)
         {
-            if( pSI->nBase < nColls 			// Style Based on
-                && ( *pData & 0x80 )			// Bit 7 gesetzt ?
+            if( pSI->nBase < nColls             // Style Based on
+                && ( *pData & 0x80 )            // Bit 7 gesetzt ?
                 && ( pCollA[pSI->nBase].n81BiDiFlags & nMask ) ) // BasisMaske ?
-                    bOn = !bOn;						// umdrehen
+                    bOn = !bOn;                     // umdrehen
 
             if( bOn )
-                pSI->n81BiDiFlags |= nMask;			// Flag setzen
+                pSI->n81BiDiFlags |= nMask;         // Flag setzen
             else
-                pSI->n81BiDiFlags &= ~nMask;		// Flag loeschen
+                pSI->n81BiDiFlags &= ~nMask;        // Flag loeschen
         }
     }
     else
     {
 
         // im Text -> Flags abfragen
-        if (*pData & 0x80)					// Bit 7 gesetzt ?
+        if (*pData & 0x80)                  // Bit 7 gesetzt ?
         {
             if (pSI && pSI->n81BiDiFlags & nMask) // und in StyleDef an ?
-                bOn = !bOn;						// dann invertieren
+                bOn = !bOn;                     // dann invertieren
             // am Stack vermerken, das dieses ein Toggle-Attribut ist
             pCtrlStck->SetToggleBiDiAttr(nI, true);
         }
@@ -3063,12 +3097,12 @@ void SwWW8ImplReader::Read_SubSuperProp( USHORT, const BYTE* pData, short nLen )
         return;
     }
 
-    short nPos = SVBT16ToShort( pData );	// Font-Position in HalfPoints
-    INT32 nPos2 = nPos * ( 10 * 100 );	 	// HalfPoints in 100 * tw
+    short nPos = SVBT16ToShort( pData );    // Font-Position in HalfPoints
+    INT32 nPos2 = nPos * ( 10 * 100 );      // HalfPoints in 100 * tw
     const SvxFontHeightItem* pF
         = (const SvxFontHeightItem*)GetFmtAttr( RES_CHRATR_FONTSIZE );
-    nPos2 /= (INT32)pF->GetHeight();		// ... nun in % ( gerundet )
-    if( nPos2 > 100 )						// zur Sicherheit
+    nPos2 /= (INT32)pF->GetHeight();        // ... nun in % ( gerundet )
+    if( nPos2 > 100 )                       // zur Sicherheit
         nPos2 = 100;
     if( nPos2 < -100 )
         nPos2 = -100;
@@ -3084,7 +3118,7 @@ void SwWW8ImplReader::Read_Underline( USHORT, const BYTE* pData, short nLen )
     {
         // Parameter:  0 = none,    1 = single,  2 = by Word,
                     // 3 = double,  4 = dotted,  5 = hidden
-                    // 6 = thick, 	7 = dash,	 8 = dot(not used)
+                    // 6 = thick,   7 = dash,    8 = dot(not used)
                     // 9 = dotdash 10 = dotdotdash 11 = wave
 
 
@@ -3101,23 +3135,23 @@ void SwWW8ImplReader::Read_Underline( USHORT, const BYTE* pData, short nLen )
         {
             switch( *pData )
             {
-            case 2:	bWordLine = true;		// no break;
-            case 1:	eUnderline = (FontUnderline)UNDERLINE_SINGLE;		break;
-            case 3: eUnderline = (FontUnderline)UNDERLINE_DOUBLE;		break;
-            case 4:	eUnderline = (FontUnderline)UNDERLINE_DOTTED;		break;
-            case 7:	eUnderline = (FontUnderline)UNDERLINE_DASH;			break;
-            case 9:	eUnderline = (FontUnderline)UNDERLINE_DASHDOT;		break;
-            case 10:eUnderline = (FontUnderline)UNDERLINE_DASHDOTDOT;	break;
-            case 6:	eUnderline = (FontUnderline)UNDERLINE_BOLD;			break;
-            case 11:eUnderline = (FontUnderline)UNDERLINE_WAVE;			break;
-            case 20:eUnderline = (FontUnderline)UNDERLINE_BOLDDOTTED;	break;
-            case 23:eUnderline = (FontUnderline)UNDERLINE_BOLDDASH;		break;
-            case 39:eUnderline = (FontUnderline)UNDERLINE_LONGDASH;		break;
-            case 55:eUnderline = (FontUnderline)UNDERLINE_BOLDLONGDASH;	break;
-            case 25:eUnderline = (FontUnderline)UNDERLINE_BOLDDASHDOT;	break;
+            case 2: bWordLine = true;       // no break;
+            case 1: eUnderline = (FontUnderline)UNDERLINE_SINGLE;       break;
+            case 3: eUnderline = (FontUnderline)UNDERLINE_DOUBLE;       break;
+            case 4: eUnderline = (FontUnderline)UNDERLINE_DOTTED;       break;
+            case 7: eUnderline = (FontUnderline)UNDERLINE_DASH;         break;
+            case 9: eUnderline = (FontUnderline)UNDERLINE_DASHDOT;      break;
+            case 10:eUnderline = (FontUnderline)UNDERLINE_DASHDOTDOT;   break;
+            case 6: eUnderline = (FontUnderline)UNDERLINE_BOLD;         break;
+            case 11:eUnderline = (FontUnderline)UNDERLINE_WAVE;         break;
+            case 20:eUnderline = (FontUnderline)UNDERLINE_BOLDDOTTED;   break;
+            case 23:eUnderline = (FontUnderline)UNDERLINE_BOLDDASH;     break;
+            case 39:eUnderline = (FontUnderline)UNDERLINE_LONGDASH;     break;
+            case 55:eUnderline = (FontUnderline)UNDERLINE_BOLDLONGDASH; break;
+            case 25:eUnderline = (FontUnderline)UNDERLINE_BOLDDASHDOT;  break;
             case 26:eUnderline = (FontUnderline)UNDERLINE_BOLDDASHDOTDOT;break;
-            case 27:eUnderline = (FontUnderline)UNDERLINE_BOLDWAVE;		break;
-            case 43:eUnderline = (FontUnderline)UNDERLINE_DOUBLEWAVE;	break;
+            case 27:eUnderline = (FontUnderline)UNDERLINE_BOLDWAVE;     break;
+            case 43:eUnderline = (FontUnderline)UNDERLINE_DOUBLEWAVE;   break;
             }
         }
     }
@@ -3138,11 +3172,11 @@ void SwWW8ImplReader::Read_Underline( USHORT, const BYTE* pData, short nLen )
 
 /*
 //The last three vary, measurements, rotation ? ?
-NoBracket 	78 CA 06 -	02 00 00 02 34 52
-()			78 CA 06 -	02 01 00 02 34 52
-[]			78 CA 06 -	02 02 00 02 34 52
-<>			78 CA 06 -	02 03 00 02 34 52
-{}			78 CA 06 -	02 04 00 02 34 52
+NoBracket   78 CA 06 -  02 00 00 02 34 52
+()          78 CA 06 -  02 01 00 02 34 52
+[]          78 CA 06 -  02 02 00 02 34 52
+<>          78 CA 06 -  02 03 00 02 34 52
+{}          78 CA 06 -  02 04 00 02 34 52
 */
 void SwWW8ImplReader::Read_DoubleLine_Rotate( USHORT, const BYTE* pData,
     short nLen )
@@ -3156,21 +3190,21 @@ void SwWW8ImplReader::Read_DoubleLine_Rotate( USHORT, const BYTE* pData,
     {
         switch( *pData )
         {
-        case 2:				        // double line
+        case 2:                     // double line
             {
                 sal_Unicode cStt = 0, cEnd = 0;
                 switch( SVBT16ToShort( pData+1 ) )
                 {
-                case 1:	cStt = '(', cEnd = ')'; break;
-                case 2:	cStt = '[', cEnd = ']';	break;
-                case 3:	cStt = '<', cEnd = '>';	break;
-                case 4:	cStt = '{', cEnd = '}';	break;
+                case 1: cStt = '(', cEnd = ')'; break;
+                case 2: cStt = '[', cEnd = ']'; break;
+                case 3: cStt = '<', cEnd = '>'; break;
+                case 4: cStt = '{', cEnd = '}'; break;
                 }
                 NewAttr( SvxTwoLinesItem( sal_True, cStt, cEnd ));
             }
             break;
 
-        case 1:		                    // rotated characters
+        case 1:                         // rotated characters
             {
                 bool bFitToLine = 0 != *(pData+1);
                 NewAttr( SvxCharRotateItem( 900, bFitToLine ));
@@ -3190,9 +3224,9 @@ void SwWW8ImplReader::Read_TxtColor( USHORT, const BYTE* pData, short nLen )
         pCtrlStck->SetAttr( *pPaM->GetPoint(), RES_CHRATR_COLOR );
     else
     {
-        BYTE b = *pData;			// Parameter: 0 = Auto, 1..16 Farben
+        BYTE b = *pData;            // Parameter: 0 = Auto, 1..16 Farben
 
-        if( b > 16 )				// unbekannt -> Black
+        if( b > 16 )                // unbekannt -> Black
             b = 0;
 
         NewAttr( SvxColorItem(Color(GetCol(b))));
@@ -3240,9 +3274,9 @@ bool SwWW8ImplReader::GetFontParams( USHORT nFCode, FontFamily& reFamily,
         FAMILY_SCRIPT, FAMILY_DECORATIVE
     };
 
-    const WW8_FFN* pF = pFonts->GetFont( nFCode );	// Info dazu
-    if( !pF )									// FontNummer unbekannt ?
-        return false;							// dann ignorieren
+    const WW8_FFN* pF = pFonts->GetFont( nFCode );  // Info dazu
+    if( !pF )                                   // FontNummer unbekannt ?
+        return false;                           // dann ignorieren
 
     rName = String( pF->sFontname );
 
@@ -3250,8 +3284,8 @@ bool SwWW8ImplReader::GetFontParams( USHORT nFCode, FontFamily& reFamily,
     rePitch = ePitchA[pF->prg];
 
     // pF->chs: Charset
-    if( 77 == pF->chs )				// Mac-Font im Mac-Charset oder
-        reCharSet = eTextCharSet;	// auf ANSI-Charset uebersetzt
+    if( 77 == pF->chs )             // Mac-Font im Mac-Charset oder
+        reCharSet = eTextCharSet;   // auf ANSI-Charset uebersetzt
     else
         reCharSet = rtl_getTextEncodingFromWindowsCharset( pF->chs );
 
@@ -3368,7 +3402,7 @@ bool SwWW8ImplReader::SetNewFontAttr(USHORT nFCode, bool bSetEnums,
         }
     }
 
-    NewAttr( aFont );						// ...und 'reinsetzen
+    NewAttr( aFont );                       // ...und 'reinsetzen
 
     return true;
 }
@@ -3386,10 +3420,10 @@ void SwWW8ImplReader::ResetCharSetVars()
 void SwWW8ImplReader::Read_FontCode( USHORT nId, const BYTE* pData, short nLen )
 {
     if (!bSymbol)           // falls bSymbol, gilt der am Symbol
-    {						// (siehe sprmCSymbol) gesetzte Font !
+    {                       // (siehe sprmCSymbol) gesetzte Font !
         switch( nId )
         {
-    //		case 0x4a51:    //font to bias towards all else being equal ?
+    //      case 0x4a51:    //font to bias towards all else being equal ?
             case 113:
             case 0x4a5E:
                 nId = RES_CHRATR_CTL_FONT;
@@ -3412,9 +3446,9 @@ void SwWW8ImplReader::Read_FontCode( USHORT nId, const BYTE* pData, short nLen )
         }
         else
         {
-            USHORT nFCode = SVBT16ToShort( pData ); 	// Font-Nummer
-            if (SetNewFontAttr(nFCode, true, nId) 	// Lies Inhalt
-                && pAktColl && pStyles )	 			// Style-Def ?
+            USHORT nFCode = SVBT16ToShort( pData );     // Font-Nummer
+            if (SetNewFontAttr(nFCode, true, nId)   // Lies Inhalt
+                && pAktColl && pStyles )                // Style-Def ?
             {
                 // merken zur Simulation Default-Font
                 if (RES_CHRATR_CJK_FONT == nId)
@@ -3444,7 +3478,7 @@ void SwWW8ImplReader::Read_FontSize( USHORT nId, const BYTE* pData, short nLen )
             return ;
     }
 
-    if( nLen < 0 )			// Ende des Attributes
+    if( nLen < 0 )          // Ende des Attributes
     {
         pCtrlStck->SetAttr( *pPaM->GetPoint(), nId  );
         if( RES_CHRATR_FONTSIZE == nId )  // reset additional the CJK size
@@ -3462,7 +3496,7 @@ void SwWW8ImplReader::Read_FontSize( USHORT nId, const BYTE* pData, short nLen )
             aSz.SetWhich( RES_CHRATR_CJK_FONTSIZE );
             NewAttr( aSz );
         }
-        if (pAktColl && pStyles)	 		// Style-Def ?
+        if (pAktColl && pStyles)            // Style-Def ?
         {
             // merken zur Simulation Default-FontSize
             if (nId == RES_CHRATR_CTL_FONTSIZE)
@@ -3478,7 +3512,7 @@ void SwWW8ImplReader::Read_FontSize( USHORT nId, const BYTE* pData, short nLen )
 void SwWW8ImplReader::Read_CharSet(USHORT , const BYTE* pData, short nLen)
 {
     if( nLen < 0 )
-    {					// Ende des Attributes
+    {                   // Ende des Attributes
         eHardCharSet = RTL_TEXTENCODING_DONTKNOW;
         return;
     }
@@ -3509,7 +3543,7 @@ void SwWW8ImplReader::Read_Language( USHORT nId, const BYTE* pData, short nLen )
             return ;
     }
 
-    if( nLen < 0 )					// Ende des Attributes
+    if( nLen < 0 )                  // Ende des Attributes
         pCtrlStck->SetAttr( *pPaM->GetPoint(), nId );
     else
     {
@@ -3523,16 +3557,16 @@ void SwWW8ImplReader::Read_Language( USHORT nId, const BYTE* pData, short nLen )
 */
 void SwWW8ImplReader::Read_CColl( USHORT, const BYTE* pData, short nLen )
 {
-    if( nLen < 0 ){					// Ende des Attributes
+    if( nLen < 0 ){                 // Ende des Attributes
         pCtrlStck->SetAttr( *pPaM->GetPoint(), RES_TXTATR_CHARFMT );
         nCharFmt = -1;
         return;
     }
     USHORT nId = SVBT16ToShort( pData );    // Style-Id (NICHT Sprm-Id!)
 
-    if( nId >= nColls || !pCollA[nId].pFmt	// ungueltige Id ?
-        || pCollA[nId].bColl )				// oder Para-Style ?
-        return;								// dann ignorieren
+    if( nId >= nColls || !pCollA[nId].pFmt  // ungueltige Id ?
+        || pCollA[nId].bColl )              // oder Para-Style ?
+        return;                             // dann ignorieren
 
     NewAttr( SwFmtCharFmt( (SwCharFmt*)pCollA[nId].pFmt ) );
     nCharFmt = (short) nId;
@@ -3544,7 +3578,7 @@ void SwWW8ImplReader::Read_CColl( USHORT, const BYTE* pData, short nLen )
 */
 void SwWW8ImplReader::Read_Kern( USHORT, const BYTE* pData, short nLen )
 {
-    if( nLen < 0 ){					// Ende des Attributes
+    if( nLen < 0 ){                 // Ende des Attributes
         pCtrlStck->SetAttr( *pPaM->GetPoint(), RES_CHRATR_KERNING );
         return;
     }
@@ -3560,7 +3594,7 @@ void SwWW8ImplReader::Read_FontKern( USHORT, const BYTE* , short nLen )
         NewAttr(SvxAutoKernItem(true));
 }
 
-void SwWW8ImplReader::Read_CharShadow(	USHORT, const BYTE* pData, short nLen )
+void SwWW8ImplReader::Read_CharShadow(  USHORT, const BYTE* pData, short nLen )
 {
     //Has newer colour varient, ignore this old varient
     if (!bVer67 && pPlcxMan && pPlcxMan->GetChpPLCF()->HasSprm(0xCA71))
@@ -3580,7 +3614,7 @@ void SwWW8ImplReader::Read_CharShadow(	USHORT, const BYTE* pData, short nLen )
     {
         WW8_SHD aSHD;
         aSHD.SetWWValue( *(SVBT16*)pData );
-        SwWW8Shade aSh( bVer67,	aSHD );
+        SwWW8Shade aSh( bVer67, aSHD );
 
         NewAttr( SvxBrushItem( aSh.aColor, RES_CHRATR_BACKGROUND ));
     }
@@ -3615,16 +3649,16 @@ void SwWW8ImplReader::Read_CharHighlight(USHORT, const BYTE* pData, short nLen)
         pCtrlStck->SetAttr( *pPaM->GetPoint(), RES_CHRATR_BACKGROUND );
         if( bCharShdTxtCol )
         {
-            pCtrlStck->SetAttr( *pPaM->GetPoint(), RES_CHRATR_COLOR );	// Zeichenfarbe auch
+            pCtrlStck->SetAttr( *pPaM->GetPoint(), RES_CHRATR_COLOR );  // Zeichenfarbe auch
             bCharShdTxtCol = false;
         }
     }
     else
     {
-        BYTE b = *pData;			// Parameter: 0 = Auto, 1..16 Farben
+        BYTE b = *pData;            // Parameter: 0 = Auto, 1..16 Farben
 
-        if( b > 16 )				// unbekannt -> Black
-            b = 0;					// Auto -> Black
+        if( b > 16 )                // unbekannt -> Black
+            b = 0;                  // Auto -> Black
 
         Color aCol(GetCol(b));
         NewAttr( SvxBrushItem( aCol , RES_CHRATR_BACKGROUND ));
@@ -3638,7 +3672,7 @@ void SwWW8ImplReader::Read_CharHighlight(USHORT, const BYTE* pData, short nLen)
 
 void SwWW8ImplReader::Read_NoLineNumb(USHORT , const BYTE* pData, short nLen)
 {
-    if( nLen < 0 )	// Ende des Attributes
+    if( nLen < 0 )  // Ende des Attributes
     {
         pCtrlStck->SetAttr( *pPaM->GetPoint(), RES_LINENUMBER );
         return;
@@ -3648,69 +3682,26 @@ void SwWW8ImplReader::Read_NoLineNumb(USHORT , const BYTE* pData, short nLen)
     NewAttr( aLN );
 }
 
-static bool lcl_AdjustTabs(short nLeft, short nFirstLineOfst,
-    long nOldLeft, SvxTabStopItem &rTStop)
+bool sw::util::AdjustTabs(long nDestLeft, long nSrcLeft, SvxTabStopItem &rTStop)
 {
     bool bChanged = false;
-    for (USHORT nCnt = 0; nCnt < rTStop.Count(); ++nCnt)
+    if (nDestLeft != nSrcLeft)
     {
-        SvxTabStop& rTab = (SvxTabStop&)(rTStop[ nCnt ]);
-        if(SVX_TAB_ADJUST_DEFAULT != rTab.GetAdjustment())
+        for (USHORT nCnt = 0; nCnt < rTStop.Count(); ++nCnt)
         {
-            bChanged = true;
-
-            rTab.GetTabPos() += nOldLeft;
-
-            if (rTab.GetTabPos() >= nLeft+nFirstLineOfst)
-                rTab.GetTabPos() -= nLeft;
-            else
+            SvxTabStop& rTab = const_cast<SvxTabStop&>(rTStop[nCnt]);
+            if (SVX_TAB_ADJUST_DEFAULT != rTab.GetAdjustment())
             {
-                rTStop.Remove( nCnt );
-                --nCnt;
+                rTab.GetTabPos() += nSrcLeft;
+                rTab.GetTabPos() -= nDestLeft;
+                bChanged = true;
             }
         }
     }
     return bChanged;
 }
 
-void SwWW8ImplReader::NeedAdjustTextTabStops(short nLeft, short nFirstLineOfst,
-    SwNodeIndex *pPosition,xub_StrLen nIndex)
-{
-    SwTxtNode* pNode = pPosition->GetNode().GetTxtNode();
-    SwPosition *pPos = new SwPosition(*pPosition);
-    pPos->nContent.Assign(pNode, nIndex);
-
-    const SvxTabStopItem* pTStop =
-        (const SvxTabStopItem*)GetFmtAttr( RES_PARATR_TABSTOP );
-
-    if (pTStop)
-    {
-        SvxTabStopItem aTStop(*pTStop);
-        long nOldLeft = 0;
-
-        if (SwCntntNode *pNd = rDoc.GetNodes()[pPos->nNode]->GetCntntNode())
-        {
-            nOldLeft = 
-                ItemGet<SvxLRSpaceItem>(*pNd, RES_LR_SPACE).GetTxtLeft();
-        }
-        else // No ContentNode
-        {
-            nOldLeft = 
-                DefaultItemGet<SvxLRSpaceItem>(rDoc, RES_LR_SPACE).GetTxtLeft();
-        }
-
-        if (lcl_AdjustTabs(nLeft, nFirstLineOfst, nOldLeft, aTStop))
-        {
-            pCtrlStck->NewAttr(*pPos, aTStop);
-            pCtrlStck->SetAttr(*pPaM->GetPoint(), RES_PARATR_TABSTOP);
-        }
-    }
-
-    delete pPos;
-}
-
-void SwWW8ImplReader::NeedAdjustStyleTabStops(short nLeft, short nFirstLineOfst,
-    SwWW8StyInf *pWWSty)
+void SwWW8ImplReader::AdjustStyleTabStops(short nLeft, SwWW8StyInf *pWWSty)
 {
     const SfxPoolItem* pTabs=0;
     bool bOnMarginStyle(false);
@@ -3730,7 +3721,7 @@ void SwWW8ImplReader::NeedAdjustStyleTabStops(short nLeft, short nFirstLineOfst,
         if (nTabBase < nColls)              // Based On
             pSty = (const SwTxtFmtColl*)pCollA[nTabBase].pFmt;
 
-        while( pSty && !bOnMarginStyle)
+        while (pSty && !bOnMarginStyle)
         {
             bOnMarginStyle = pSty->GetAttrSet().GetItemState(RES_PARATR_TABSTOP,
                 false, &pTabs ) == SFX_ITEM_SET;
@@ -3751,7 +3742,7 @@ void SwWW8ImplReader::NeedAdjustStyleTabStops(short nLeft, short nFirstLineOfst,
             }
         }
 
-        if (lcl_AdjustTabs(nLeft, nFirstLineOfst, nOldLeft, aTStop))
+        if (sw::util::AdjustTabs(nLeft, nOldLeft, aTStop))
             pWWSty->pFmt->SetAttr(aTStop);
     }
 }
@@ -3763,7 +3754,12 @@ bool lcl_HasExplicitLeft(const WW8RStyle *pStyles, bool bVer67)
         if (bVer67)
             return pStyles->HasParaSprm(17);
         else
-            return (pStyles->HasParaSprm(0x840F) || pStyles->HasParaSprm(0x845E));
+        {
+            return (
+                    pStyles->HasParaSprm(0x840F) || 
+                    pStyles->HasParaSprm(0x845E)
+                   );
+        }
     }
     return false;
 }
@@ -3784,35 +3780,18 @@ bool lcl_HasExplicitLeft(const WW8PLCFMan *pPlcxMan, bool bVer67)
 // Sprm 16, 17
 void SwWW8ImplReader::Read_LR( USHORT nId, const BYTE* pData, short nLen )
 {
-    if( nIniFlags & WW8FL_NO_LRUL )
-        return;
-
-    if( nLen < 0 )	// Ende des Attributes
+    if (nLen < 0)  // End of the Attributes
     {
-        if (pTabNode)
-        {
-            NeedAdjustTextTabStops(nLeftParaMgn, nTxtFirstLineOfst, pTabNode,
-                nTabCntnt);
-            delete pTabNode, pTabNode=0;
-            pCtrlStck->SetAttr( *pPaM->GetPoint(), RES_PARATR_TABSTOP );
-        }
-        pCtrlStck->SetAttr( *pPaM->GetPoint(), RES_LR_SPACE );
+        pCtrlStck->SetAttr(*pPaM->GetPoint(), RES_LR_SPACE);
         return;
     }
 
     short nPara = SVBT16ToShort( pData );
 
     SvxLRSpaceItem aLR;
-    const SfxPoolItem* pLR = GetFmtAttr( RES_LR_SPACE );
+    const SfxPoolItem* pLR = GetFmtAttr(RES_LR_SPACE);
     if( pLR )
         aLR = *(const SvxLRSpaceItem*)pLR;
-
-    if (!pAktColl && !pTabNode)
-    {
-        SwPosition aPos( *pPaM->GetPoint() );
-        pTabNode = new SwNodeIndex (aPos.nNode);
-        nTabCntnt = aPos.nContent.GetIndex();
-    }
 
     /*
     The older word sprms mean left/right, while the new ones mean before/after.
@@ -3847,17 +3826,8 @@ void SwWW8ImplReader::Read_LR( USHORT nId, const BYTE* pData, short nLen )
         case 0x840F:
         case 0x845E:
             aLR.SetTxtLeft( nPara );
-            if( pAktColl )
-            {
+            if (pAktColl)
                 pCollA[nAktColl].bListReleventIndentSet = true;
-                pCollA[nAktColl].nLeftParaMgn      = nPara; // fuer Tabs merken
-                pCollA[nAktColl].nTxtFirstLineOfst = aLR.GetTxtFirstLineOfst();
-            }
-            else
-            {
-                nLeftParaMgn = nPara; // fuer Tabs merken
-                nTxtFirstLineOfst = aLR.GetTxtFirstLineOfst();
-            }
             break;
         //sprmPDxaLeft1
         case     19:
@@ -3887,27 +3857,9 @@ void SwWW8ImplReader::Read_LR( USHORT nId, const BYTE* pData, short nLen )
                 }
             }
 
-            //Setting hanging implies a body of 0 e.g. #109702# when numbered paragraph
             aLR.SetTxtFirstLineOfst(nPara);
-            if (!pAktColl)
-            {
-                if (const SwTxtNode* pNode = pPaM->GetNode()->GetTxtNode())
-                {
-                    if (GetNumFmtFromTxtNode(*pNode, rDoc))
-                    {
-                        if (!lcl_HasExplicitLeft(pPlcxMan, bVer67))
-                            aLR.SetTxtLeft(-nPara);
-                    }
-                }
-            }
-
-            if( pAktColl )
-            {
+            if (pAktColl)
                 pCollA[nAktColl].bListReleventIndentSet = true;
-                pCollA[nAktColl].nTxtFirstLineOfst = nPara; // fuer Tabs merken
-            }
-            else
-                nTxtFirstLineOfst = nPara; // fuer Tabs merken
             break;
         //sprmPDxaRight
         case     16:
@@ -3918,7 +3870,8 @@ void SwWW8ImplReader::Read_LR( USHORT nId, const BYTE* pData, short nLen )
         default:
             return;
     }
-    NewAttr( aLR );
+
+    NewAttr(aLR);
 }
 
 // Sprm 20
@@ -3965,12 +3918,12 @@ void SwWW8ImplReader::Read_LineSpace( USHORT, const BYTE* pData, short nLen )
 
     SvxLineSpacingItem aLSpc;
 
-    if( 1 == nMulti )				// MultilineSpace ( proportional )
+    if( 1 == nMulti )               // MultilineSpace ( proportional )
     {
-        long n = nSpace * 10 / 24;	// WW: 240 = 100%, SW: 100 = 100%
+        long n = nSpace * 10 / 24;  // WW: 240 = 100%, SW: 100 = 100%
 
 //JP 03.12.98: nach Absprache mit AMA ist die Begrenzung unsinnig
-        if( n>200 ) n = 200;		// SW_UI-Maximum
+        if( n>200 ) n = 200;        // SW_UI-Maximum
         aLSpc.SetPropLineSpace( (const BYTE)n );
         const SvxFontHeightItem* pH = (const SvxFontHeightItem*)
             GetFmtAttr( RES_CHRATR_FONTSIZE );
@@ -3980,7 +3933,7 @@ void SwWW8ImplReader::Read_LineSpace( USHORT, const BYTE* pData, short nLen )
             nWwPost = nSwPre = nSwPost = (USHORT)( ( n - 100 )
                                                     * pH->GetHeight() / 100 );
     }
-    else							// Fixed / Minimum
+    else                            // Fixed / Minimum
     {
         // bei negativen Space ist der Abstand exakt, sonst minimum
         nSpaceTw = (USHORT)nSpace;
@@ -3988,13 +3941,13 @@ void SwWW8ImplReader::Read_LineSpace( USHORT, const BYTE* pData, short nLen )
         aLSpc.GetLineSpaceRule() = eLnSpc;
         nSwPre = nSpace;
 
-        if( SVX_LINE_SPACE_FIX == eLnSpc )			  		// Genau
+        if( SVX_LINE_SPACE_FIX == eLnSpc )                  // Genau
         {
             nWwPre = (USHORT)( 8L * nSpace / 10 );
             nWwPost = (USHORT)( 2L * nSpace / 10 );
             nSwPre = nSpace;
         }
-        else												// Minimum
+        else                                                // Minimum
         {
             nWwPre = (USHORT)( 129L * nSpace / 100 - 95 );// erst bei groesseren
                                                           // Zeilenabstaenden
@@ -4002,7 +3955,7 @@ void SwWW8ImplReader::Read_LineSpace( USHORT, const BYTE* pData, short nLen )
     }
     NewAttr( aLSpc );
     if( pSFlyPara )
-        pSFlyPara->nLineSpace = nSpaceTw;	// LineSpace fuer Graf-Apos
+        pSFlyPara->nLineSpace = nSpaceTw;   // LineSpace fuer Graf-Apos
 #if 0
     if( ( nWwPre > nSwPre || nWwPost > nSwPost )
             && !( nIniFlags & WW8FL_NO_IMPLPASP ) )
@@ -4022,6 +3975,15 @@ void SwWW8ImplReader::Read_LineSpace( USHORT, const BYTE* pData, short nLen )
 #endif
 }
 
+//#i18519# AutoSpace value depends on Dop fDontUseHTMLAutoSpacing setting
+sal_uInt16 SwWW8ImplReader::GetParagraphAutoSpace(bool fDontUseHTMLAutoSpacing)
+{
+    if (fDontUseHTMLAutoSpacing)
+        return 100;  //Seems to be always 5points in this case
+    else
+        return 280;  //Seems to be always 14points in this case
+}
+
 void SwWW8ImplReader::Read_ParaAutoBefore(USHORT, const BYTE *pData, short nLen)
 {
     if (nLen < 0)
@@ -4033,8 +3995,19 @@ void SwWW8ImplReader::Read_ParaAutoBefore(USHORT, const BYTE *pData, short nLen)
     if (*pData)
     {
         SvxULSpaceItem aUL(*(const SvxULSpaceItem*)GetFmtAttr(RES_UL_SPACE));
-        aUL.SetUpper(280);  //Seems to be always 14points
+        aUL.SetUpper(GetParagraphAutoSpace(pWDop->fDontUseHTMLAutoSpacing));
         NewAttr(aUL);
+        if (pAktColl)
+            pCollA[nAktColl].bParaAutoBefore = true;
+        else
+            bParaAutoBefore = true;
+    }
+    else
+    {
+        if (pAktColl)   
+            pCollA[nAktColl].bParaAutoBefore = false;
+        else
+            bParaAutoBefore = false;
     }
 }
 
@@ -4049,23 +4022,31 @@ void SwWW8ImplReader::Read_ParaAutoAfter(USHORT, const BYTE *pData, short nLen)
     if (*pData)
     {
         SvxULSpaceItem aUL(*(const SvxULSpaceItem*)GetFmtAttr(RES_UL_SPACE));
-        aUL.SetLower(280);  //Seems to be always 14points
+        aUL.SetLower(GetParagraphAutoSpace(pWDop->fDontUseHTMLAutoSpacing));
         NewAttr(aUL);
+        if (pAktColl)
+            pCollA[nAktColl].bParaAutoAfter = true;
+        else
+            bParaAutoAfter = true;
+    }
+    else
+    {
+        if (pAktColl)   
+            pCollA[nAktColl].bParaAutoAfter = false;
+        else
+            bParaAutoAfter = false;
     }
 }
 
 // Sprm 21, 22
 void SwWW8ImplReader::Read_UL( USHORT nId, const BYTE* pData, short nLen )
 {
-    if( nIniFlags & WW8FL_NO_LRUL )
-        return;
-
 // Nun eine Umpopelung eines WW-Fehlers: Bei nProduct == 0c03d wird
 // faelschlicherweise ein DyaAfter 240 ( delta y abstand after, amn.d.Åb.)
 // im Style "Normal" eingefuegt, der
 // gar nicht da ist. Ueber das IniFlag WW8FL_NO_STY_DYA laesst sich dieses
 // Verhalten auch fuer andere WW-Versionen erzwingen
-//	ASSERT( !bStyNormal || bWWBugNormal, "+Dieses Doc deutet evtl. auf einen
+//  ASSERT( !bStyNormal || bWWBugNormal, "+Dieses Doc deutet evtl. auf einen
 // Fehler in der benutzten WW-Version hin. Wenn sich die Styles <Standard> bzw.
 // <Normal> zwischen WW und SW im Absatz- oder Zeilenabstand unterscheiden,
 // dann bitte dieses Doc SH zukommen lassen." );
@@ -4309,14 +4290,14 @@ void SwWW8ImplReader::Read_Relief( USHORT nId, const BYTE* pData, short nLen )
         if( *pData )
         {
 // JP 16.03.2001 - not so eays because this is also a toggle attribute!
-// 	2 x emboss on -> no emboss !!!
+//  2 x emboss on -> no emboss !!!
 // the actual value must be searched over the stack / template
 
             const SvxCharReliefItem* pOld = (const SvxCharReliefItem*)
                                             GetFmtAttr( RES_CHRATR_RELIEF );
             FontRelief nNewValue = 0x854 == nId ? RELIEF_ENGRAVED
-                                         : ( 0x858 == nId ? RELIEF_EMBOSSED
-                                                            : RELIEF_NONE );
+                                        : ( 0x858 == nId ? RELIEF_EMBOSSED
+                                                         : RELIEF_NONE );
             if( pOld->GetValue() == nNewValue )
             {
                 if( RELIEF_NONE != nNewValue )
@@ -4379,22 +4360,22 @@ void SwWW8Shade::SetShade(ColorData nFore, ColorData nBack, sal_uInt16 nIndex)
     static const ULONG eMSGrayScale[] =
     {
         // Nul-Brush
-           0,	// 0
+           0,   // 0
         // Solid-Brush
-        1000,	// 1
+        1000,   // 1
         // promillemaessig abgestufte Schattierungen
-          50,	// 2
-         100,	// 3
-         200,	// 4
-         250,	// 5
-         300,	// 6
-         400,	// 7
-         500,	// 8
-         600,	// 9
-         700,	// 10
-         750,	// 11
-         800,	// 12
-         900,	// 13
+          50,   // 2
+         100,   // 3
+         200,   // 4
+         250,   // 5
+         300,   // 6
+         400,   // 7
+         500,   // 8
+         600,   // 9
+         700,   // 10
+         750,   // 11
+         800,   // 12
+         900,   // 13
          333, // 14 Dark Horizontal
          333, // 15 Dark Vertical
          333, // 16 Dark Forward Diagonal
@@ -4418,33 +4399,33 @@ void SwWW8Shade::SetShade(ColorData nFore, ColorData nBack, sal_uInt16 nIndex)
          500, // 33
          500, // 34
          // und weiter gehts mit tollen Schattierungen ;-)
-          25,	// 35
-          75,	// 36
-         125,	// 37
-         150,	// 38
-         175,	// 39
-         225,	// 40
-         275,	// 41
-         325,	// 42
-         350,	// 43
-         375,	// 44
-         425,	// 45
-         450,	// 46
-         475,	// 47
-         525,	// 48
-         550,	// 49
-         575,	// 50
-         625,	// 51
-         650,	// 52
-         675,	// 53
-         725,	// 54
-         775,	// 55
-         825,	// 56
-         850,	// 57
-         875,	// 58
-         925,	// 59
-         950,	// 60
-         975,	// 61
+          25,   // 35
+          75,   // 36
+         125,   // 37
+         150,   // 38
+         175,   // 39
+         225,   // 40
+         275,   // 41
+         325,   // 42
+         350,   // 43
+         375,   // 44
+         425,   // 45
+         450,   // 46
+         475,   // 47
+         525,   // 48
+         550,   // 49
+         575,   // 50
+         625,   // 51
+         650,   // 52
+         675,   // 53
+         725,   // 54
+         775,   // 55
+         825,   // 56
+         850,   // 57
+         875,   // 58
+         925,   // 59
+         950,   // 60
+         975,   // 61
          // und zu guter Letzt:
          970
     };// 62
@@ -4467,7 +4448,7 @@ void SwWW8Shade::SetShade(ColorData nFore, ColorData nBack, sal_uInt16 nIndex)
 
     switch (nWW8BrushStyle)
     {
-        case 0:	// Null-Brush
+        case 0: // Null-Brush
             aColor.SetColor( nBack );
             break;
         default:
@@ -4515,7 +4496,7 @@ void SwWW8ImplReader::Read_Shade( USHORT, const BYTE* pData, short nLen )
     {
         WW8_SHD aSHD;
         aSHD.SetWWValue( *(SVBT16*)pData );
-        SwWW8Shade aSh( bVer67,	aSHD );
+        SwWW8Shade aSh( bVer67, aSHD );
 
         NewAttr(SvxBrushItem(aSh.aColor));
     }
@@ -4589,7 +4570,7 @@ void SwWW8ImplReader::Read_Border(USHORT , const BYTE* , short nLen)
         else
             nBorder = ::lcl_ReadBorders(bVer67, aBrcs, pPlcxMan->GetPapPLCF());
 
-        if( nBorder )									// Border
+        if( nBorder )                                   // Border
         {
             bool bIsB = IsBorder(aBrcs, true);
             if (!InLocalApo() || !bIsB ||
@@ -4598,8 +4579,8 @@ void SwWW8ImplReader::Read_Border(USHORT , const BYTE* , short nLen)
                 // in Apo keine Umrandungen *ein*-schalten, da ich
                 // sonst die Flyumrandungen doppelt bekomme
                 // JP 04.12.98: aber nur wenn am Fly ein gesetzt ist, keine
-                //				uebernehmen. Sonst wird gar keine gesetzt!
-                //				Bug #59619#
+                //              uebernehmen. Sonst wird gar keine gesetzt!
+                //              Bug #59619#
 
                 // auch wenn kein Rand gesetzt ist, muss das Attribut gesetzt
                 // werden, sonst ist kein hartes Ausschalten von Style-Attrs
@@ -4663,11 +4644,11 @@ void SwWW8ImplReader::Read_WidowControl( USHORT, const BYTE* pData, short nLen )
     {
         BYTE nL = ( *pData & 1 ) ? 2 : 0;
 
-        NewAttr( SvxWidowsItem( nL ) );		// Aus -> nLines = 0
+        NewAttr( SvxWidowsItem( nL ) );     // Aus -> nLines = 0
         NewAttr( SvxOrphansItem( nL ) );
 
-        if( pAktColl && pStyles )		 	// Style-Def ?
-            pStyles->bWidowsChanged = true;	// merken zur Simulation
+        if( pAktColl && pStyles )           // Style-Def ?
+            pStyles->bWidowsChanged = true; // merken zur Simulation
                                             // Default-Widows
     }
 }
@@ -4779,21 +4760,21 @@ bool SwWW8ImplReader::ParseTabPos(WW8_TablePos *pTabPos, WW8PLCFx_Cp_FKP* pPap)
 
 /***************************************************************************
 #  Seiten - Attribute werden nicht mehr als Attribute gehandhabt
-#	( ausser OLST )
+#   ( ausser OLST )
 #**************************************************************************/
 
 
 long SwWW8ImplReader::ImportExtSprm(WW8PLCFManResult* pRes)
 {
     /*************************************************************************
-    #		Arrays zum Lesen der erweiterten ( selbstdefinierten ) SPRMs
+    #       Arrays zum Lesen der erweiterten ( selbstdefinierten ) SPRMs
     #*************************************************************************/
     typedef long (SwWW8ImplReader:: *FNReadRecordExt)(WW8PLCFManResult*);
 
     static const FNReadRecordExt aWwSprmTab[] =
     {
-        /* 0 (256) */   &SwWW8ImplReader::Read_Ftn,		// FootNote
-        /* 1 (257) */   &SwWW8ImplReader::Read_Ftn,		// EndNote
+        /* 0 (256) */   &SwWW8ImplReader::Read_Ftn,     // FootNote
+        /* 1 (257) */   &SwWW8ImplReader::Read_Ftn,     // EndNote
         /* 2 (258) */   &SwWW8ImplReader::Read_Field,  // Feld
         /* 3 (259) */   &SwWW8ImplReader::Read_Book,   // Bookmark
         /* 4 (260) */   &SwWW8ImplReader::Read_And     // Annotation
@@ -4818,14 +4799,12 @@ void SwWW8ImplReader::EndExtSprm(USHORT nSprmId)
 
     static const FNReadRecordExt aWwSprmTab[] =
     {
-        /* 0 (256) */   &SwWW8ImplReader::End_Ftn,		// FootNote
-        /* 1 (257) */   &SwWW8ImplReader::End_Ftn,		// EndNote
+        /* 0 (256) */   &SwWW8ImplReader::End_Ftn,      // FootNote
+        /* 1 (257) */   &SwWW8ImplReader::End_Ftn,      // EndNote
         /* 2 (258) */   &SwWW8ImplReader::End_Field,  // Feld
         /* 3 (259) */   0,   // Bookmark
         /* 4 (260) */   0     // Annotation
     };
-
-
 
     BYTE nIdx = nSprmId - eFTN;
     if( nIdx < sizeof( aWwSprmTab ) / sizeof( *aWwSprmTab )
@@ -4834,7 +4813,7 @@ void SwWW8ImplReader::EndExtSprm(USHORT nSprmId)
 }
 
 /***************************************************************************
-#		Arrays zum Lesen der SPRMs
+#       Arrays zum Lesen der SPRMs
 #**************************************************************************/
 
 // Funktion zum Einlesen von Sprms. Par1: SprmId
@@ -5784,7 +5763,7 @@ SprmReadInfo aSprmReadTab[] = {
 };
 
 //-----------------------------------------
-//		Hilfsroutinen : SPRM finden
+//      Hilfsroutinen : SPRM finden
 //-----------------------------------------
 
 extern "C"
@@ -5820,11 +5799,11 @@ SprmReadInfo& WW8GetSprmReadInfo( USHORT nId )
 }
 
 //-----------------------------------------
-//		Hilfsroutinen : SPRMs
+//      Hilfsroutinen : SPRMs
 //-----------------------------------------
 void SwWW8ImplReader::EndSprm( USHORT nId )
 {
-    if( ( nId > 255 ) && ( nId < 0x0800 ) )	return;
+    if( ( nId > 255 ) && ( nId < 0x0800 ) ) return;
 
     SprmReadInfo& rSprm = WW8GetSprmReadInfo( nId );
     /*
