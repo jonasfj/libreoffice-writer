@@ -2,9 +2,9 @@
  *
  *  $RCSfile: fecopy.cxx,v $
  *
- *  $Revision: 1.29 $
+ *  $Revision: 1.30 $
  *
- *  last change: $Author: pjunck $ $Date: 2004-11-03 09:51:59 $
+ *  last change: $Author: rt $ $Date: 2005-02-09 14:50:41 $
  *
  *  The Contents of this file are made available subject to the terms of
  *  either of the following licenses
@@ -1101,7 +1101,7 @@ BOOL SwFEShell::Paste( SwDoc* pClpDoc, BOOL bIncludingPageFrames )
                 //remove the paragraph in front of the table
                 SwPaM aPara(aInsertPosition);
                 GetDoc()->DelFullPara(aPara);
-            }            
+            }
             //additionally copy page bound frames
             if( bIncludingPageFrames && pClpDoc->GetSpzFrmFmts()->Count() )
             {
@@ -1164,14 +1164,14 @@ BOOL SwFEShell::Paste( SwDoc* pClpDoc, BOOL bIncludingPageFrames )
 BOOL SwFEShell::PastePages( SwFEShell& rToFill, USHORT nStartPage, USHORT nEndPage)
 {
     if(!GotoPage(nStartPage))
-        return FALSE;            
+        return FALSE;
     MovePage( fnPageCurr, fnPageStart );
-    SwPaM aCpyPam( *GetCrsr()->GetPoint() ); 
+    SwPaM aCpyPam( *GetCrsr()->GetPoint() );
     String sStartingPageDesc = GetPageDesc( GetCurPageDesc()).GetName();
     SwPageDesc* pDesc = rToFill.FindPageDescByName( sStartingPageDesc, TRUE );
     if( pDesc )
         rToFill.ChgCurPageDesc( *pDesc );
-    
+
     if(!GotoPage(nEndPage))
         return FALSE;
     //if the page starts with a table a paragraph has to be inserted before
@@ -1186,14 +1186,14 @@ BOOL SwFEShell::PastePages( SwFEShell& rToFill, USHORT nStartPage, USHORT nEndPa
         {
             SwPaM aTmp(aBefore);
             aCpyPam = aTmp;
-        }            
+        }
         EndUndo(UNDO_INSERT);
-    }            
-    
+    }
+
     MovePage( fnPageCurr, fnPageEnd );
     aCpyPam.SetMark();
     *aCpyPam.GetMark() = *GetCrsr()->GetPoint();
-    
+
     SET_CURR_SHELL( this );
 
     StartAllAction();
@@ -1211,8 +1211,8 @@ BOOL SwFEShell::PastePages( SwFEShell& rToFill, USHORT nStartPage, USHORT nEndPa
         SwNodeIndex aIdx( rToFill.GetDoc()->GetNodes().GetEndOfExtras(), 2 );
         SwPaM aPara( aIdx ); //DocStart
         rToFill.GetDoc()->DelFullPara(aPara);
-    }            
-    // now the page bound objects 
+    }
+    // now the page bound objects
     //additionally copy page bound frames
     if( GetDoc()->GetSpzFrmFmts()->Count() )
     {
@@ -1226,7 +1226,7 @@ BOOL SwFEShell::PastePages( SwFEShell& rToFill, USHORT nStartPage, USHORT nEndPa
         {
             const SwFrmFmt& rCpyFmt = *(*GetDoc()->GetSpzFrmFmts())[i];
             SwFmtAnchor aAnchor( rCpyFmt.GetAnchor() );
-            if( FLY_PAGE == aAnchor.GetAnchorId() && 
+            if( FLY_PAGE == aAnchor.GetAnchorId() &&
                     aAnchor.GetPageNum() >= nStartPage && aAnchor.GetPageNum() <= nEndPage)
             {
                 aAnchor.SetPageNum( aAnchor.GetPageNum() - nStartPage + 1);
@@ -1236,14 +1236,14 @@ BOOL SwFEShell::PastePages( SwFEShell& rToFill, USHORT nStartPage, USHORT nEndPa
             SwFrmFmt * pNew = rToFill.GetDoc()->CopyLayoutFmt( rCpyFmt, aAnchor );
         }
     }
-    
-    Pop();    
+
+    Pop();
     GetDoc()->UnlockExpFlds();
     GetDoc()->UpdateFlds();
     EndAllAction();
-    
+
     return TRUE;
-}            
+}
 
 BOOL SwFEShell::GetDrawObjGraphic( ULONG nFmt, Graphic& rGrf ) const
 {
@@ -1258,62 +1258,68 @@ BOOL SwFEShell::GetDrawObjGraphic( ULONG nFmt, Graphic& rGrf ) const
             // Rahmen selektiert
             if( CNT_GRF == GetCntType() )
             {
-                Graphic aGrf( GetGraphic() );
-                if( SOT_FORMAT_GDIMETAFILE == nFmt )
+                // --> OD 2005-02-09 #119353# - robust
+                const Graphic* pGrf( GetGraphic() );
+                if ( pGrf )
                 {
-                    if( GRAPHIC_BITMAP != aGrf.GetType() )
+                    Graphic aGrf( *pGrf );
+                    if( SOT_FORMAT_GDIMETAFILE == nFmt )
+                    {
+                        if( GRAPHIC_BITMAP != aGrf.GetType() )
+                        {
+                            rGrf = aGrf;
+                            bConvert = FALSE;
+                        }
+                        else if( GetWin() )
+                        {
+                            Size aSz;
+                            Point aPt;
+                            GetGrfSize( aSz );
+
+                            VirtualDevice aVirtDev;
+                            aVirtDev.EnableOutput( FALSE );
+
+                            MapMode aTmp( GetWin()->GetMapMode() );
+                            aTmp.SetOrigin( aPt );
+                            aVirtDev.SetMapMode( aTmp );
+
+                            GDIMetaFile aMtf;
+                            aMtf.Record( &aVirtDev );
+                            aGrf.Draw( &aVirtDev, aPt, aSz );
+                            aMtf.Stop();
+                            aMtf.SetPrefMapMode( aTmp );
+                            aMtf.SetPrefSize( aSz );
+                            rGrf = aMtf;
+                        }
+                    }
+                    else if( GRAPHIC_BITMAP == aGrf.GetType() )
                     {
                         rGrf = aGrf;
                         bConvert = FALSE;
-                    }
-                    else if( GetWin() )
-                    {
-                        Size aSz;
-                        Point aPt;
-                        GetGrfSize( aSz );
-
-                        VirtualDevice aVirtDev;
-                        aVirtDev.EnableOutput( FALSE );
-
-                        MapMode aTmp( GetWin()->GetMapMode() );
-                        aTmp.SetOrigin( aPt );
-                        aVirtDev.SetMapMode( aTmp );
-
-                        GDIMetaFile aMtf;
-                        aMtf.Record( &aVirtDev );
-                        aGrf.Draw( &aVirtDev, aPt, aSz );
-                        aMtf.Stop();
-                        aMtf.SetPrefMapMode( aTmp );
-                        aMtf.SetPrefSize( aSz );
-                        rGrf = aMtf;
-                    }
-                }
-                else if( GRAPHIC_BITMAP == aGrf.GetType() )
-                {
-                    rGrf = aGrf;
-                    bConvert = FALSE;
-                }
-                else
-                {
-                    //fix(23806): Nicht die Originalgroesse, sondern die
-                    //aktuelle. Anderfalls kann es passieren, dass z.B. bei
-                    //Vektorgrafiken mal eben zig MB angefordert werden.
-                    const Size aSz( FindFlyFrm()->Prt().SSize() );
-                    VirtualDevice aVirtDev( *GetWin() );
-
-                    MapMode aTmp( MAP_TWIP );
-                    aVirtDev.SetMapMode( aTmp );
-                    if( aVirtDev.SetOutputSize( aSz ) )
-                    {
-                        aGrf.Draw( &aVirtDev, Point(), aSz );
-                        rGrf = aVirtDev.GetBitmap( Point(), aSz );
                     }
                     else
                     {
-                        rGrf = aGrf;
-                        bConvert = FALSE;
+                        //fix(23806): Nicht die Originalgroesse, sondern die
+                        //aktuelle. Anderfalls kann es passieren, dass z.B. bei
+                        //Vektorgrafiken mal eben zig MB angefordert werden.
+                        const Size aSz( FindFlyFrm()->Prt().SSize() );
+                        VirtualDevice aVirtDev( *GetWin() );
+
+                        MapMode aTmp( MAP_TWIP );
+                        aVirtDev.SetMapMode( aTmp );
+                        if( aVirtDev.SetOutputSize( aSz ) )
+                        {
+                            aGrf.Draw( &aVirtDev, Point(), aSz );
+                            rGrf = aVirtDev.GetBitmap( Point(), aSz );
+                        }
+                        else
+                        {
+                            rGrf = aGrf;
+                            bConvert = FALSE;
+                        }
                     }
                 }
+                // <--
             }
         }
         else if( SOT_FORMAT_GDIMETAFILE == nFmt )
@@ -1348,7 +1354,7 @@ void SwFEShell::Paste( SvStream& rStrm, USHORT nAction, const Point* pPt )
     SdrView *pView = Imp()->GetDrawView();
 
     //Drop auf bestehendes Objekt: Objekt ersetzen oder neu Attributieren.
-    if( pModel->GetPageCount() > 0 && 
+    if( pModel->GetPageCount() > 0 &&
         1 == pModel->GetPage(0)->GetObjCount() &&
         1 == pView->GetMarkedObjectList().GetMarkCount() )
     {
