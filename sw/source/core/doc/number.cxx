@@ -2,9 +2,9 @@
  *
  *  $RCSfile: number.cxx,v $
  *
- *  $Revision: 1.21 $
+ *  $Revision: 1.22 $
  *
- *  last change: $Author: obo $ $Date: 2004-08-12 12:19:02 $
+ *  last change: $Author: kz $ $Date: 2004-08-31 13:52:44 $
  *
  *  The Contents of this file are made available subject to the terms of
  *  either of the following licenses
@@ -194,7 +194,7 @@ USHORT SwNumRule::GetBullIndent( BYTE nLvl )
 }
 
 SwNodeNum::SwNodeNum( BYTE nLevel, USHORT nSetVal )
-    : nSetValue( nSetVal ), nMyLevel( nLevel ), bStartNum( FALSE ), 
+    : nSetValue( nSetVal ), nMyLevel( nLevel ), bStartNum( FALSE ),
       bContNum(FALSE)
 {
     memset( nLevelVal, 0, sizeof( nLevelVal ) );
@@ -285,6 +285,13 @@ void SwNumFmt::NotifyGraphicArrived()
 // #i22362#
 BOOL SwNumFmt::IsEnumeration() const
 {
+    // --> FME 2004-08-12 #i30655# native numbering did not work any longer
+    // using this code. Therefore HBRINKM and I agreed upon defining
+    // IsEnumeration() as !IsItemize()
+    return !IsItemize();
+    // <--
+
+    /*
     BOOL bResult;
 
     switch(GetNumberingType())
@@ -294,8 +301,8 @@ BOOL SwNumFmt::IsEnumeration() const
     case SVX_NUM_ROMAN_UPPER:
     case SVX_NUM_ROMAN_LOWER:
     case SVX_NUM_ARABIC:
-    case SVX_NUM_PAGEDESC:   	
-    case SVX_NUM_CHARS_UPPER_LETTER_N: 
+    case SVX_NUM_PAGEDESC:
+    case SVX_NUM_CHARS_UPPER_LETTER_N:
     case SVX_NUM_CHARS_LOWER_LETTER_N:
         bResult = TRUE;
 
@@ -306,7 +313,7 @@ BOOL SwNumFmt::IsEnumeration() const
     }
 
     return bResult;
-
+     */
 }
 
 // #i29560#
@@ -316,7 +323,7 @@ BOOL SwNumFmt::IsItemize() const
 
     switch(GetNumberingType())
     {
-    case SVX_NUM_CHAR_SPECIAL: 
+    case SVX_NUM_CHAR_SPECIAL:
     case SVX_NUM_BITMAP:
         bResult = TRUE;
 
@@ -498,7 +505,7 @@ void SwNumFmt::UpdateNumNodes( SwDoc* pDoc )
                                 pNd; pNd = (SwTxtNode*)aIter.Next() )
                             if( pNd->GetNodes().IsDocNodes() &&
                                 nStt < pNd->GetIndex() &&
-                                pNd->GetOutlineNum() && i == 
+                                pNd->GetOutlineNum() && i ==
                                 pNd->GetOutlineNum()->GetRealLevel() )
                                     pNd->NumRuleChgd();
                         break;
@@ -530,7 +537,7 @@ const SwFmtVertOrient*      SwNumFmt::GetGraphicOrientation() const
 
 BOOL SwNodeNum::operator==( const SwNodeNum& rNum ) const
 {
-    return 
+    return
         nMyLevel == rNum.nMyLevel &&
         nSetValue == rNum.nSetValue &&
         bStartNum == rNum.bStartNum &&
@@ -664,11 +671,11 @@ BOOL SwNumRule::IsRuleLSpace( SwTxtNode& rNd ) const
     const SwAttrSet* pASet = rNd.GetpSwAttrSet();
 
     BOOL bRet = FALSE;
-    if (rNd.GetNum() && pASet && 
+    if (rNd.GetNum() && pASet &&
         SFX_ITEM_SET == pASet->GetItemState(RES_LR_SPACE, FALSE, &pItem ))
     {
         nLvl = rNd.GetNum()->GetRealLevel();
-        
+
         if (nLvl < MAXLEVEL)
             bRet = Get( nLvl ).GetAbsLSpace() == ((SvxLRSpaceItem*)pItem)->GetTxtLeft();
     }
