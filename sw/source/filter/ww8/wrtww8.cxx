@@ -2,9 +2,9 @@
  *
  *  $RCSfile: wrtww8.cxx,v $
  *
- *  $Revision: 1.2 $
+ *  $Revision: 1.3 $
  *
- *  last change: $Author: cmc $ $Date: 2000-10-10 16:54:06 $
+ *  last change: $Author: jp $ $Date: 2000-11-13 17:30:15 $
  *
  *  The Contents of this file are made available subject to the terms of
  *  either of the following licenses
@@ -100,14 +100,11 @@
 #ifndef _SVX_HYZNITEM_HXX //autogen
 #include <svx/hyznitem.hxx>
 #endif
-
-#if SUPD>593
 #ifndef _MSOLEEXP_HXX
 #include <svx/msoleexp.hxx>
 #endif
 #ifndef _MSOCXIMEX_HXX
 #include <svx/msocximex.hxx>
-#endif
 #endif
 
 #ifndef _OFA_FLTRCFG_HXX
@@ -1732,7 +1729,6 @@ ULONG SwWW8Writer::StoreDoc()
     if( aTOXArr.Count() )
         aTOXArr.Remove( 0, aTOXArr.Count() );
 
-#if SUPD>593
     if( !pOLEExp )
     {
         UINT32 nSvxMSDffOLEConvFlags = 0;
@@ -1751,12 +1747,12 @@ ULONG SwWW8Writer::StoreDoc()
 
     if( !pOCXExp )
         pOCXExp = new SwMSConvertControls(pDoc->GetDocShell(),pCurPam);
-#endif
 
     PrepareStorage();
 
     PutNumFmtFontsInAttrPool();
     PutEditEngFontsInAttrPool();
+    PutCJKandCTLFontsInAttrPool();
 
     pFib = new WW8Fib( bWrtWW8 ? 8 : 6 );
 
@@ -2029,10 +2025,7 @@ ULONG SwWW8Writer::WriteStorage()
 SwWW8Writer::SwWW8Writer( const String& rFltName )
     : pChpIter( 0 ), aMainStg( sMainStream ), pPapPlc( 0 ), pChpPlc( 0 ),
     pO( 0 ), pAktPageDesc( 0 ),	pISet( 0 ), pUsedNumTbl( 0 ), pBmpPal( 0 ),
-    pKeyMap( 0 )
-#if SUPD>593
-    , pOLEExp( 0 ), pOCXExp(0)
-#endif
+    pKeyMap( 0 ), pOLEExp( 0 ), pOCXExp(0)
 {
     bWrtWW8 = rFltName.EqualsAscii( FILTER_WW8 );
 }
@@ -2046,13 +2039,10 @@ SwWW8Writer::~SwWW8Writer()
         NfKeywordTable* pDel = (NfKeywordTable*)pKeyMap;
         delete [] pDel;
     }
-#if SUPD>593
     if( pOLEExp )
         delete pOLEExp;
     if( pOCXExp )
         delete pOCXExp;
-
-#endif
 }
 
 void GetWW8Writer( const String& rFltName, WriterRef& xRet )
@@ -2066,29 +2056,32 @@ void GetWW8Writer( const String& rFltName, WriterRef& xRet )
 
       Source Code Control System - Header
 
-      $Header: /zpool/svn/migration/cvs_rep_09_09_08/code/sw/source/filter/ww8/wrtww8.cxx,v 1.2 2000-10-10 16:54:06 cmc Exp $
+      $Header: /zpool/svn/migration/cvs_rep_09_09_08/code/sw/source/filter/ww8/wrtww8.cxx,v 1.3 2000-11-13 17:30:15 jp Exp $
 
       Source Code Control System - Update
 
       $Log: not supported by cvs2svn $
+      Revision 1.2  2000/10/10 16:54:06  cmc
+      MSOffice 97/2000 Controls {Im|Ex}port
+
       Revision 1.1.1.1  2000/09/18 17:14:58  hr
       initial import
-    
+
       Revision 1.54  2000/09/18 16:04:58  willem.vandorp
       OpenOffice header added.
-    
+
       Revision 1.53  2000/08/21 10:14:06  khz
       Export Line Numbering (restart on new section)
-    
+
       Revision 1.52  2000/07/25 15:16:21  khz
       #76811# read/write AutoHyphenation flag from/into Document Properties
-    
+
       Revision 1.51  2000/07/06 15:55:55  khz
       Document Statistics
-    
+
       Revision 1.50  2000/07/05 16:07:30  jp
       new MS Filteroptions - change StarOffice Objects to OLE-Objects
-    
+
       Revision 1.49  2000/05/15 16:40:34  jp
       Changes for Unicode
 
