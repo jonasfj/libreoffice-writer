@@ -2,9 +2,9 @@
  *
  *  $RCSfile: ww8struc.hxx,v $
  *
- *  $Revision: 1.28 $
+ *  $Revision: 1.29 $
  *
- *  last change: $Author: rt $ $Date: 2004-06-17 13:49:42 $
+ *  last change: $Author: rt $ $Date: 2004-07-12 13:35:53 $
  *
  *  The Contents of this file are made available subject to the terms of
  *  either of the following licenses
@@ -87,21 +87,21 @@
 #endif
 
 inline void Set_UInt8( BYTE *& p, UINT8 n )
-{ 
-    ByteToSVBT8( n, *(SVBT8*)p );  
-    p+= 1; 
+{
+    ByteToSVBT8( n, *(SVBT8*)p );
+    p+= 1;
 }
 
 inline void Set_UInt16( BYTE *& p, UINT16 n )
-{ 
-    ShortToSVBT16( n, *(SVBT16*)p );  
-    p+= 2; 
+{
+    ShortToSVBT16( n, *(SVBT16*)p );
+    p+= 2;
 }
 
 inline void Set_UInt32( BYTE *& p, UINT32 n )
-{ 
-    LongToSVBT32( n, *(SVBT32*)p );  
-    p+= 4; 
+{
+    LongToSVBT32( n, *(SVBT32*)p );
+    p+= 4;
 }
 
 typedef sal_Int16 WW8_PN;
@@ -239,9 +239,9 @@ public:
 public:
     enum eBorderCode
     {
-        single0, single1, single2, single3, single4,
+        single0, single1, single2, single3, single4, single5,
         double0, double1, double2, double3, double4, double5, double6,
-        double7, double8, double9, double10, 
+        double7, double8, double9, double10,
         none
     };
     static const WW8_BordersSO &Get0x01LineMatch(eBorderCode nIdx);
@@ -467,7 +467,7 @@ public:
 
     BYTE GetFore() const { return (BYTE)( maBits & 0x1f); }
     BYTE GetBack() const { return (BYTE)((maBits >> 5 ) & 0x1f); }
-    BYTE GetStyle(bool bVer67)  const 
+    BYTE GetStyle(bool bVer67)  const
         { return (BYTE)((maBits >> 10) & ( bVer67 ? 0x1f : 0x3f ) ); }
 
     UINT16 GetValue() const { return maBits; }
@@ -475,27 +475,27 @@ public:
     void SetValue(UINT16 nVal) { maBits = nVal; }
     void SetWWValue(SVBT16 nVal) { maBits = SVBT16ToShort(nVal); }
 
-    void SetFore(BYTE nVal) 
-    { 
+    void SetFore(BYTE nVal)
+    {
         maBits &= 0xffe0;
-        maBits |= (nVal & 0x1f); 
+        maBits |= (nVal & 0x1f);
     }
-    void SetBack(BYTE nVal) 
+    void SetBack(BYTE nVal)
     {
         maBits &= 0xfc1f;
-        maBits |= (nVal & 0x1f) << 5; 
+        maBits |= (nVal & 0x1f) << 5;
     }
     void SetStyle(bool bVer67, BYTE nVal)
     {
         if (bVer67)
         {
             maBits &= 0x83ff;
-            maBits |= (nVal & 0x1f) << 10; 
+            maBits |= (nVal & 0x1f) << 10;
         }
         else
         {
             maBits &= 0x03ff;
-            maBits |= (nVal & 0x2f) << 10; 
+            maBits |= (nVal & 0x2f) << 10;
         }
     }
 };
@@ -562,7 +562,7 @@ struct ANLV
     void ReadFromMem(const sal_uInt8 *&pData);
     sal_uInt8 nfc;
     sal_uInt8 cbTextBefore;
-    sal_uInt8 cbTextAfter;  
+    sal_uInt8 cbTextAfter;
     sal_uInt8 jc : 2;
     sal_uInt8 fPrev : 1;
     sal_uInt8 fHang : 1;
@@ -889,7 +889,7 @@ struct WW8_STRINGID
     SVBT16 reserved3;
 };
 
-struct WW8_WKB 
+struct WW8_WKB
 {
     // M.M. This is the WkbPLCF struct
     // For now I only need the Link Id
