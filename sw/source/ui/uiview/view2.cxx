@@ -2,9 +2,9 @@
  *
  *  $RCSfile: view2.cxx,v $
  *
- *  $Revision: 1.41 $
+ *  $Revision: 1.42 $
  *
- *  last change: $Author: hjs $ $Date: 2003-08-19 12:00:51 $
+ *  last change: $Author: rt $ $Date: 2003-09-19 08:47:54 $
  *
  *  The Contents of this file are made available subject to the terms of
  *  either of the following licenses
@@ -88,7 +88,7 @@
 #ifndef _SFX_PASSWD_HXX
 #include <sfx2/passwd.hxx>
 #endif
-#ifndef _SFX_HELP_HXX 
+#ifndef _SFX_HELP_HXX
 #include <sfx2/sfxhelp.hxx>
 #endif
 #ifndef _SVX_LANGITEM_HXX //autogen
@@ -292,7 +292,7 @@
 #include <fmtclds.hxx>
 #endif
 #include <helpid.h>
-#ifndef _SVTOOLS_TEMPLDLG_HXX 
+#ifndef _SVTOOLS_TEMPLDLG_HXX
 #include <svtools/templdlg.hxx>
 #endif
 #ifndef _DBCONFIG_HXX
@@ -792,7 +792,7 @@ void __EXPORT SwView::Execute(SfxRequest &rReq)
             //GetViewFrame()->ShowChildWindow(nSlot, bShow && bInMailMerge);
             if((bShow && bInMailMerge) != GetViewFrame()->HasChildWindow(nSlot))
                 GetViewFrame()->ToggleChildWindow(nSlot);
-            //if fields have been succesfully inserted call the "real" 
+            //if fields have been succesfully inserted call the "real"
             //mail merge dialog
             SwWrtShell &rSh = GetWrtShell();
             if(bInMailMerge && rSh.IsAnyDatabaseFieldInDoc())
@@ -817,7 +817,7 @@ void __EXPORT SwView::Execute(SfxRequest &rReq)
                     pValues[2].Value <<= aData.nCommandType;
                     pNewDBMgr->ExecuteFormLetter(rSh, aProperties, TRUE);
                 }
-            }        
+            }
             bInMailMerge &= bShow;
             GetViewFrame()->GetBindings().Invalidate(FN_INSERT_FIELD);
         }
@@ -829,7 +829,7 @@ void __EXPORT SwView::Execute(SfxRequest &rReq)
             if(bQuery)
             {
                 SfxViewFrame* pFrame = GetViewFrame();
-                SfxHelp::OpenHelpAgent( pFrame->GetFrame(), HID_MAIL_MERGE_SELECT ); 
+                SfxHelp::OpenHelpAgent( pFrame->GetFrame(), HID_MAIL_MERGE_SELECT );
                 SwMailMergeCreateFromDlg* pDlg = new SwMailMergeCreateFromDlg(
                         &pFrame->GetWindow());
                 if(RET_OK == pDlg->Execute())
@@ -1017,10 +1017,10 @@ void SwView::StateStatusLine(SfxItemSet &rSet)
                             rShell.GetAttr(aSet);
                             const SfxPoolItem* pItem;
                             if(SFX_ITEM_AVAILABLE <=
-                               aSet.GetItemState(RES_PARATR_NUMRULE, TRUE 
+                               aSet.GetItemState(RES_PARATR_NUMRULE, TRUE
                                                  /*, &pItem */ ))
                             {
-                                const String& rNumStyle = 
+                                const String& rNumStyle =
                                     ((const SfxStringItem &)
                                      aSet.Get(RES_PARATR_NUMRULE)).GetValue();
                                 /* #i5116# GetItemState does not necessarily
@@ -1449,11 +1449,11 @@ long SwView::InsertDoc( USHORT nSlotId, const String& rFileName,
     if( rFileName.Len() )
     {
         SfxObjectFactory& rFact = pDocSh->GetFactory();
-        const SfxFilter* pFilter = rFact.GetFilterContainer()->GetFilter( rFilterName );
+        const SfxFilter* pFilter = rFact.GetFilterContainer()->GetFilter4FilterName( rFilterName );
         if ( !pFilter )
         {
             pMed = new SfxMedium(rFileName, STREAM_READ, TRUE, 0, 0 );
-            SfxFilterMatcher aMatcher( rFact.GetFilterContainer() );
+            SfxFilterMatcher aMatcher( rFact.GetFilterContainer()->GetName() );
             ErrCode nErr = aMatcher.GuessFilter( *pMed, &pFilter, FALSE );
             if ( nErr )
                 DELETEZ(pMed);
@@ -1465,7 +1465,7 @@ long SwView::InsertDoc( USHORT nSlotId, const String& rFileName,
     }
     else
     {
-        pMed = SFX_APP()->InsertDocumentDialog(0, pDocSh->GetFactory(), HID_INSERT_FILE );
+        pMed = SFX_APP()->InsertDocumentDialog(0, String::CreateFromAscii(pDocSh->GetFactory().GetShortName()), HID_INSERT_FILE );
     }
     if( !pMed )
         return -1;
@@ -1584,7 +1584,7 @@ extern int lcl_FindDocShell( SfxObjectShellRef& xDocSh,
     return nFound;
 }
 /* -----------------05.02.2003 12:06-----------------
- * 
+ *
  * --------------------------------------------------*/
 void SwView::EnableMailMerge(BOOL bEnable )
 {
@@ -1592,7 +1592,7 @@ void SwView::EnableMailMerge(BOOL bEnable )
     SfxBindings& rBind = GetViewFrame()->GetBindings();
     rBind.Invalidate(FN_INSERT_FIELD_DATA_ONLY);
     rBind.Update(FN_INSERT_FIELD_DATA_ONLY);
-}        
+}
 /*
 */
 namespace
@@ -1610,7 +1610,7 @@ namespace
 }
 
 /* -----------------27.11.2002 12:12-----------------
- * 
+ *
  * --------------------------------------------------*/
 void SwView::GenerateFormLetter(BOOL bUseCurrentDocument)
 {
@@ -1623,7 +1623,7 @@ void SwView::GenerateFormLetter(BOOL bUseCurrentDocument)
             Reference<XNameAccess>  xDBContext;
             if( xMgr.is() )
             {
-                Reference<XInterface> xInstance = xMgr->createInstance( 
+                Reference<XInterface> xInstance = xMgr->createInstance(
                     OUString::createFromAscii( "com.sun.star.sdb.DatabaseContext" ));
                 xDBContext = Reference<XNameAccess>(xInstance, UNO_QUERY) ;
             }
@@ -1634,7 +1634,7 @@ void SwView::GenerateFormLetter(BOOL bUseCurrentDocument)
             {
                 // no data sources are available - create a new one
                 WarningBox aWarning(
-                            &GetViewFrame()->GetWindow(), 
+                            &GetViewFrame()->GetWindow(),
                             SW_RES(MSG_DATA_SOURCES_UNAVAILABLE));
                 // no cancel allowed
                 if ( RET_OK != aWarning.Execute() )
@@ -1650,38 +1650,38 @@ void SwView::GenerateFormLetter(BOOL bUseCurrentDocument)
                         bCallAddressPilot = !pConnectionsDlg->IsUseExistingConnections();
                     else
                         return;
-                
-            }            
+
+            }
             if(bCallAddressPilot)
             {
-                GetViewFrame()->GetDispatcher()->Execute( 
+                GetViewFrame()->GetDispatcher()->Execute(
                                 SID_ADDRESS_DATA_SOURCE, SFX_CALLMODE_SYNCHRON);
                 if ( lcl_NeedAdditionalDataSource( xDBContext ) )
                     // no additional data source has been created
                     // -> assume that the user has cancelled the pilot
                     return;
             }
-            
+
             //call insert fields with database field page available, only
             SfxViewFrame* pVFrame = GetViewFrame();
             //at first hide the default field dialog if currently visible
             pVFrame->SetChildWindow(FN_INSERT_FIELD, FALSE);
-            //enable the status of the db field dialog - it is disabled in the status method 
+            //enable the status of the db field dialog - it is disabled in the status method
             //to prevent creation of the dialog without mail merge active
             EnableMailMerge();
             //then show the "Data base only" field dialog
             SfxBoolItem aOn(FN_INSERT_FIELD_DATA_ONLY, TRUE);
-            pVFrame->GetDispatcher()->Execute(FN_INSERT_FIELD_DATA_ONLY, 
+            pVFrame->GetDispatcher()->Execute(FN_INSERT_FIELD_DATA_ONLY,
                                                 SFX_CALLMODE_SYNCHRON, &aOn, 0);
             return;
-        }        
+        }
         else
         {
-            // check whether the 
+            // check whether the
             String sSource;
             if(!GetWrtShell().IsFieldDataSourceAvailable(sSource))
-            {        
-                WarningBox aWarning( &GetViewFrame()->GetWindow(), 
+            {
+                WarningBox aWarning( &GetViewFrame()->GetWindow(),
                             SW_RES(MSG_MERGE_SOURCE_UNAVAILABLE));
                 String sTmp(aWarning.GetMessText());
                 sTmp.SearchAndReplaceAscii("%1", sSource);
@@ -1689,9 +1689,9 @@ void SwView::GenerateFormLetter(BOOL bUseCurrentDocument)
                 aWarning.Execute();
                 return ;
             }
-        }        
+        }
         SwNewDBMgr* pNewDBMgr = GetWrtShell().GetNewDBMgr();
-        
+
         SwDBData aData;
         SwWrtShell &rSh = GetWrtShell();
         aData = rSh.GetDBData();
@@ -1712,7 +1712,7 @@ void SwView::GenerateFormLetter(BOOL bUseCurrentDocument)
             pValues[2].Value <<= aData.nCommandType;
             pNewDBMgr->ExecuteFormLetter(GetWrtShell(), aProperties, TRUE);
         }
-    }        
+    }
     else
     {
         //call documents and template dialog
@@ -1741,6 +1741,6 @@ void SwView::GenerateFormLetter(BOOL bUseCurrentDocument)
 
 //        return;
     }
-}            
+}
 
 
