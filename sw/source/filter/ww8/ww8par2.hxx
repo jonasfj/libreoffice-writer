@@ -2,9 +2,9 @@
  *
  *  $RCSfile: ww8par2.hxx,v $
  *
- *  $Revision: 1.37 $
+ *  $Revision: 1.38 $
  *
- *  last change: $Author: kz $ $Date: 2004-02-26 15:40:42 $
+ *  last change: $Author: obo $ $Date: 2005-01-05 14:34:08 $
  *
  *  The Contents of this file are made available subject to the terms of
  *  either of the following licenses
@@ -159,7 +159,7 @@ struct WW8SwFlyPara
     bool bToggelPos;
 
     WW8SwFlyPara(SwPaM& rPaM, SwWW8ImplReader& rIo, WW8FlyPara& rWW,
-        sal_uInt32 nPgLeft, sal_uInt32 nPgWidth, INT32 nIniFlyDx, 
+        sal_uInt32 nPgLeft, sal_uInt32 nPgWidth, INT32 nIniFlyDx,
         INT32 nIniFlyDy);
 
     void BoxUpWidth( long nWidth );
@@ -192,7 +192,7 @@ public:
     bool bImportSkipped;    // nur true bei !bNewDoc && vorh. Style
     bool bHasStyNumRule;    // true-> Benannter NumRule in Style
     bool bHasBrokenWW6List; // true-> WW8+ style has a WW7- list
-    bool bListReleventIndentSet; //true if this style's indent has 
+    bool bListReleventIndentSet; //true if this style's indent has
                                  //been explicitly set, it's set to the value
                                  //of pFmt->GetItemState(RES_LR_SPACE, false)
                                  //if it was possible to get the ItemState
@@ -225,7 +225,7 @@ public:
         bHasBrokenWW6List(false),
         bListReleventIndentSet(false),
         bParaAutoBefore(false),
-        bParaAutoAfter(false)    
+        bParaAutoAfter(false)
 
     {}
 
@@ -251,6 +251,10 @@ public:
     bool IsOutlineNumbered() const
     {
         return pOutlineNumrule && IsOutline();
+    }
+    const SwNumRule* GetOutlineNumrule() const
+    {
+        return pOutlineNumrule;
     }
     CharSet GetCharSet() const;
 };
@@ -303,7 +307,7 @@ private:
     const WW8FlySet& operator=(const WW8FlySet&);
     void Init(const SwWW8ImplReader& rReader, const SwPaM* pPaM);
 public:
-    WW8FlySet(SwWW8ImplReader& rReader, const WW8FlyPara* pFW, 
+    WW8FlySet(SwWW8ImplReader& rReader, const WW8FlyPara* pFW,
         const WW8SwFlyPara* pFS, bool bGraf);
     WW8FlySet(SwWW8ImplReader& rReader, const SwPaM* pPaM, const WW8_PIC& rPic,
         long nWidth, long nHeight);
