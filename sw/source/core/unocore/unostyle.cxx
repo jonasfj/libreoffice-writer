@@ -2,9 +2,9 @@
  *
  *  $RCSfile: unostyle.cxx,v $
  *
- *  $Revision: 1.38 $
+ *  $Revision: 1.39 $
  *
- *  last change: $Author: mtg $ $Date: 2001-11-28 20:36:01 $
+ *  last change: $Author: os $ $Date: 2002-05-13 12:13:09 $
  *
  *  The Contents of this file are made available subject to the terms of
  *  either of the following licenses
@@ -209,7 +209,7 @@
 #ifndef _FMTFSIZE_HXX
 #include <fmtfsize.hxx>
 #endif
-#define STYLE_FAMILY_COUNT 5            // we have 5 style families 
+#define STYLE_FAMILY_COUNT 5            // we have 5 style families
 #define TYPE_BOOL       0
 #define TYPE_SIZE       1
 #define TYPE_BRUSH      2
@@ -281,15 +281,15 @@ SwGetPoolIdFromName lcl_GetSwEnumFromSfxEnum ( SfxStyleFamily eFamily )
 {
     switch ( eFamily )
     {
-        case SFX_STYLE_FAMILY_CHAR: 
+        case SFX_STYLE_FAMILY_CHAR:
             return GET_POOLID_CHRFMT;
-        case SFX_STYLE_FAMILY_PARA: 
+        case SFX_STYLE_FAMILY_PARA:
             return GET_POOLID_TXTCOLL;
-        case SFX_STYLE_FAMILY_FRAME: 
+        case SFX_STYLE_FAMILY_FRAME:
             return GET_POOLID_FRMFMT;
-        case SFX_STYLE_FAMILY_PAGE: 
+        case SFX_STYLE_FAMILY_PAGE:
             return GET_POOLID_PAGEDESC;
-        case SFX_STYLE_FAMILY_PSEUDO: 
+        case SFX_STYLE_FAMILY_PSEUDO:
             return GET_POOLID_NUMRULE;
         default:
             DBG_ASSERT(sal_False, "someone asking for all styles in unostyle.cxx!" );
@@ -643,9 +643,9 @@ sal_Int32 lcl_GetCountOrName ( const SwDoc &rDoc, SfxStyleFamily eFamily, String
     sal_Int32 nCount = 0;
     switch( eFamily )
     {
-        case SFX_STYLE_FAMILY_CHAR: 
+        case SFX_STYLE_FAMILY_CHAR:
         {
-            sal_uInt16 nBaseCount =  RES_POOLCHR_HTML_END - RES_POOLCHR_HTML_BEGIN  + 
+            sal_uInt16 nBaseCount =  RES_POOLCHR_HTML_END - RES_POOLCHR_HTML_BEGIN  +
                                      RES_POOLCHR_NORMAL_END - RES_POOLCHR_NORMAL_BEGIN;
             nIndex -= nBaseCount;
             const sal_uInt16 nArrLen = rDoc.GetCharFmts()->Count();
@@ -792,14 +792,14 @@ Any SwXStyleFamily::getByIndex(sal_Int32 nTempIndex)
             String sStyleName;
             switch( eFamily )
             {
-                case SFX_STYLE_FAMILY_CHAR: 
+                case SFX_STYLE_FAMILY_CHAR:
                 {
                     if ( nIndex < ( RES_POOLCHR_NORMAL_END - RES_POOLCHR_NORMAL_BEGIN ) )
                         SwStyleNameMapper::FillUIName ( RES_POOLCHR_NORMAL_BEGIN + nIndex, sStyleName );
-                    else if ( nIndex < ( RES_POOLCHR_HTML_END - RES_POOLCHR_HTML_BEGIN  + 
+                    else if ( nIndex < ( RES_POOLCHR_HTML_END - RES_POOLCHR_HTML_BEGIN  +
                                          RES_POOLCHR_NORMAL_END - RES_POOLCHR_NORMAL_BEGIN ) )
-                        SwStyleNameMapper::FillUIName ( RES_POOLCHR_HTML_BEGIN 
-                                                        - RES_POOLCHR_NORMAL_END + RES_POOLCHR_NORMAL_BEGIN 
+                        SwStyleNameMapper::FillUIName ( RES_POOLCHR_HTML_BEGIN
+                                                        - RES_POOLCHR_NORMAL_END + RES_POOLCHR_NORMAL_BEGIN
                                                         + nIndex, sStyleName );
                 }
                 break;
@@ -809,35 +809,35 @@ Any SwXStyleFamily::getByIndex(sal_Int32 nTempIndex)
                         SwStyleNameMapper::FillUIName ( RES_POOLCOLL_TEXT_BEGIN + nIndex, sStyleName );
                     else if ( nIndex < ( RES_POOLCOLL_LISTS_END - RES_POOLCOLL_LISTS_BEGIN +
                                          RES_POOLCOLL_TEXT_END  - RES_POOLCOLL_TEXT_BEGIN ) )
-                        SwStyleNameMapper::FillUIName ( RES_POOLCOLL_LISTS_BEGIN 
-                                                        - RES_POOLCOLL_TEXT_END + RES_POOLCOLL_TEXT_BEGIN 
+                        SwStyleNameMapper::FillUIName ( RES_POOLCOLL_LISTS_BEGIN
+                                                        - RES_POOLCOLL_TEXT_END + RES_POOLCOLL_TEXT_BEGIN
                                                         + nIndex, sStyleName );
                     else if ( nIndex < ( RES_POOLCOLL_EXTRA_END - RES_POOLCOLL_EXTRA_BEGIN +
                                          RES_POOLCOLL_LISTS_END - RES_POOLCOLL_LISTS_BEGIN +
                                          RES_POOLCOLL_TEXT_END  - RES_POOLCOLL_TEXT_BEGIN ) )
-                        SwStyleNameMapper::FillUIName ( RES_POOLCOLL_EXTRA_BEGIN 
-                                                         - RES_POOLCOLL_LISTS_END + RES_POOLCOLL_LISTS_BEGIN 
-                                                         - RES_POOLCOLL_TEXT_END  + RES_POOLCOLL_TEXT_BEGIN 
+                        SwStyleNameMapper::FillUIName ( RES_POOLCOLL_EXTRA_BEGIN
+                                                         - RES_POOLCOLL_LISTS_END + RES_POOLCOLL_LISTS_BEGIN
+                                                         - RES_POOLCOLL_TEXT_END  + RES_POOLCOLL_TEXT_BEGIN
                                                          + nIndex, sStyleName );
                     else if ( nIndex < ( RES_POOLCOLL_REGISTER_END - RES_POOLCOLL_REGISTER_BEGIN +
                                          RES_POOLCOLL_EXTRA_END - RES_POOLCOLL_EXTRA_BEGIN +
                                          RES_POOLCOLL_LISTS_END - RES_POOLCOLL_LISTS_BEGIN +
                                          RES_POOLCOLL_TEXT_END  - RES_POOLCOLL_TEXT_BEGIN ) )
-                        SwStyleNameMapper::FillUIName ( RES_POOLCOLL_REGISTER_BEGIN 
-                                                         - RES_POOLCOLL_EXTRA_END + RES_POOLCOLL_EXTRA_BEGIN 
-                                                         - RES_POOLCOLL_LISTS_END + RES_POOLCOLL_LISTS_BEGIN 
-                                                         - RES_POOLCOLL_TEXT_END  + RES_POOLCOLL_TEXT_BEGIN 
+                        SwStyleNameMapper::FillUIName ( RES_POOLCOLL_REGISTER_BEGIN
+                                                         - RES_POOLCOLL_EXTRA_END + RES_POOLCOLL_EXTRA_BEGIN
+                                                         - RES_POOLCOLL_LISTS_END + RES_POOLCOLL_LISTS_BEGIN
+                                                         - RES_POOLCOLL_TEXT_END  + RES_POOLCOLL_TEXT_BEGIN
                                                          + nIndex, sStyleName );
                     else if ( nIndex < ( RES_POOLCOLL_DOC_END - RES_POOLCOLL_DOC_BEGIN +
                                          RES_POOLCOLL_REGISTER_END - RES_POOLCOLL_REGISTER_BEGIN +
                                          RES_POOLCOLL_EXTRA_END - RES_POOLCOLL_EXTRA_BEGIN +
                                          RES_POOLCOLL_LISTS_END - RES_POOLCOLL_LISTS_BEGIN +
                                          RES_POOLCOLL_TEXT_END  - RES_POOLCOLL_TEXT_BEGIN ) )
-                        SwStyleNameMapper::FillUIName ( RES_POOLCOLL_DOC_BEGIN 
-                                                         - RES_POOLCOLL_REGISTER_END + RES_POOLCOLL_REGISTER_BEGIN 
-                                                         - RES_POOLCOLL_EXTRA_END + RES_POOLCOLL_EXTRA_BEGIN 
-                                                         - RES_POOLCOLL_LISTS_END + RES_POOLCOLL_LISTS_BEGIN 
-                                                         - RES_POOLCOLL_TEXT_END  + RES_POOLCOLL_TEXT_BEGIN 
+                        SwStyleNameMapper::FillUIName ( RES_POOLCOLL_DOC_BEGIN
+                                                         - RES_POOLCOLL_REGISTER_END + RES_POOLCOLL_REGISTER_BEGIN
+                                                         - RES_POOLCOLL_EXTRA_END + RES_POOLCOLL_EXTRA_BEGIN
+                                                         - RES_POOLCOLL_LISTS_END + RES_POOLCOLL_LISTS_BEGIN
+                                                         - RES_POOLCOLL_TEXT_END  + RES_POOLCOLL_TEXT_BEGIN
                                                          + nIndex, sStyleName );
                     else if ( nIndex < ( RES_POOLCOLL_HTML_END - RES_POOLCOLL_HTML_BEGIN +
                                          RES_POOLCOLL_DOC_END - RES_POOLCOLL_DOC_BEGIN +
@@ -845,12 +845,12 @@ Any SwXStyleFamily::getByIndex(sal_Int32 nTempIndex)
                                          RES_POOLCOLL_EXTRA_END - RES_POOLCOLL_EXTRA_BEGIN +
                                          RES_POOLCOLL_LISTS_END - RES_POOLCOLL_LISTS_BEGIN +
                                          RES_POOLCOLL_TEXT_END  - RES_POOLCOLL_TEXT_BEGIN ) )
-                        SwStyleNameMapper::FillUIName ( RES_POOLCOLL_HTML_BEGIN 
-                                                         - RES_POOLCOLL_DOC_END + RES_POOLCOLL_DOC_BEGIN 
-                                                         - RES_POOLCOLL_REGISTER_END + RES_POOLCOLL_REGISTER_BEGIN 
-                                                         - RES_POOLCOLL_EXTRA_END + RES_POOLCOLL_EXTRA_BEGIN 
-                                                         - RES_POOLCOLL_LISTS_END + RES_POOLCOLL_LISTS_BEGIN 
-                                                         - RES_POOLCOLL_TEXT_END  + RES_POOLCOLL_TEXT_BEGIN 
+                        SwStyleNameMapper::FillUIName ( RES_POOLCOLL_HTML_BEGIN
+                                                         - RES_POOLCOLL_DOC_END + RES_POOLCOLL_DOC_BEGIN
+                                                         - RES_POOLCOLL_REGISTER_END + RES_POOLCOLL_REGISTER_BEGIN
+                                                         - RES_POOLCOLL_EXTRA_END + RES_POOLCOLL_EXTRA_BEGIN
+                                                         - RES_POOLCOLL_LISTS_END + RES_POOLCOLL_LISTS_BEGIN
+                                                         - RES_POOLCOLL_TEXT_END  + RES_POOLCOLL_TEXT_BEGIN
                                                          + nIndex, sStyleName );
                 }
                 break;
@@ -1202,7 +1202,7 @@ SwStyleProperties_Impl::~SwStyleProperties_Impl()
 {
     for ( sal_uInt16 i =0 ; i < nArrLen; i++ )
         delete pAnyArr[i];
-    delete pAnyArr;
+    delete[] pAnyArr;
 }
 
 //--------------------------------------------------------------------
@@ -1389,14 +1389,14 @@ SwXStyle::SwXStyle( SwDoc *pDoc, SfxStyleFamily eFam, BOOL bConditional) :
     sal_uInt16 nMapId;
     switch( eFamily )
     {
-        case SFX_STYLE_FAMILY_CHAR:   
+        case SFX_STYLE_FAMILY_CHAR:
         {
-            nMapId = PROPERTY_MAP_CHAR_STYLE;       
+            nMapId = PROPERTY_MAP_CHAR_STYLE;
         }
         break;
-        case SFX_STYLE_FAMILY_PARA: 
+        case SFX_STYLE_FAMILY_PARA:
         {
-            nMapId = PROPERTY_MAP_PARA_STYLE;       
+            nMapId = PROPERTY_MAP_PARA_STYLE;
             aAny = xFamilies->getByName ( OUString ( RTL_CONSTASCII_USTRINGPARAM ( "ParagraphStyles" ) ) );
             // Get the Frame family (and keep it for later)
             aAny >>= mxStyleFamily;
@@ -1404,22 +1404,22 @@ SwXStyle::SwXStyle( SwDoc *pDoc, SfxStyleFamily eFam, BOOL bConditional) :
             aAny >>= mxStyleData;
         }
         break;
-        case SFX_STYLE_FAMILY_PAGE: 
+        case SFX_STYLE_FAMILY_PAGE:
         {
-            nMapId = PROPERTY_MAP_PAGE_STYLE;       
-            aAny = xFamilies->getByName ( OUString ( RTL_CONSTASCII_USTRINGPARAM ( "PageStyles" ) ) ); 
+            nMapId = PROPERTY_MAP_PAGE_STYLE;
+            aAny = xFamilies->getByName ( OUString ( RTL_CONSTASCII_USTRINGPARAM ( "PageStyles" ) ) );
             // Get the Frame family (and keep it for later)
             aAny >>= mxStyleFamily;
             aAny = mxStyleFamily->getByName ( OUString ( RTL_CONSTASCII_USTRINGPARAM ( "Standard" ) ) );
             aAny >>= mxStyleData;
         }
         break;
-        case SFX_STYLE_FAMILY_FRAME :   
+        case SFX_STYLE_FAMILY_FRAME :
         {
-            nMapId = PROPERTY_MAP_FRAME_STYLE;  
+            nMapId = PROPERTY_MAP_FRAME_STYLE;
         }
         break;
-        case SFX_STYLE_FAMILY_PSEUDO:   
+        case SFX_STYLE_FAMILY_PSEUDO:
         {
             nMapId = PROPERTY_MAP_NUM_STYLE;
         }
@@ -1607,7 +1607,7 @@ void SwXStyle::setParentStyle(const OUString& rParentStyle)
     else if(bIsDescriptor)
     {
         sParentStyleName = String(sParentStyle);
-        try 
+        try
         {
             Any aAny = mxStyleFamily->getByName ( sParentStyle );
             aAny >>= mxStyleData;
@@ -2389,22 +2389,22 @@ Sequence< Any > SwXStyle::getPropertyValues(
                 sal_Bool bExcept = sal_False;
                 switch( eFamily )
                 {
-                    case SFX_STYLE_FAMILY_PSEUDO: 
+                    case SFX_STYLE_FAMILY_PSEUDO:
                         bExcept = sal_True;
                     break;
-                    case SFX_STYLE_FAMILY_PARA: 
-                    case SFX_STYLE_FAMILY_PAGE: 
+                    case SFX_STYLE_FAMILY_PARA:
+                    case SFX_STYLE_FAMILY_PAGE:
                         pPropImpl->GetProperty ( pNames[nProp], mxStyleData, pRet[ nProp ] );
                     break;
-                    case SFX_STYLE_FAMILY_CHAR:   
-                    case SFX_STYLE_FAMILY_FRAME :   
+                    case SFX_STYLE_FAMILY_CHAR:
+                    case SFX_STYLE_FAMILY_FRAME :
                     {
                         if (pMap->nWID >= POOLATTR_BEGIN && pMap->nWID < RES_UNKNOWNATR_END )
                         {
                             SwFmt * pFmt;
                             if ( eFamily == SFX_STYLE_FAMILY_CHAR )
                                 pFmt = m_pDoc->GetDfltCharFmt();
-                            else 
+                            else
                                 pFmt = m_pDoc->GetDfltFrmFmt();
                             const SwAttrPool * pPool = pFmt->GetAttrSet().GetPool();
                             const SfxPoolItem & rItem = pPool->GetDefaultItem ( pMap->nWID );
@@ -2422,7 +2422,7 @@ Sequence< Any > SwXStyle::getPropertyValues(
                     throw aExcept;
                 }
             }
-            else 
+            else
                 pRet [ nProp ] = *pAny;
         }
         else
@@ -2618,7 +2618,7 @@ void SwXStyle::setPropertyToDefault(const OUString& rPropertyName)
     setPropertiesToDefault ( aSequence );
 }
 
-void SAL_CALL SwXStyle::setPropertiesToDefault( const Sequence< OUString >& aPropertyNames ) 
+void SAL_CALL SwXStyle::setPropertiesToDefault( const Sequence< OUString >& aPropertyNames )
     throw (UnknownPropertyException, RuntimeException)
 {
     vos::OGuard aGuard(Application::GetSolarMutex());
@@ -2638,7 +2638,7 @@ void SAL_CALL SwXStyle::setPropertiesToDefault( const Sequence< OUString >& aPro
                 case SFX_STYLE_FAMILY_CHAR: pTargetFmt = aStyle.GetCharFmt(); break;
                 case SFX_STYLE_FAMILY_PARA: pTargetFmt = aStyle.GetCollection(); break;
                 case SFX_STYLE_FAMILY_FRAME: pTargetFmt = aStyle.GetFrmFmt(); break;
-                case SFX_STYLE_FAMILY_PAGE: 
+                case SFX_STYLE_FAMILY_PAGE:
                     {
                         sal_uInt16 nPgDscPos = USHRT_MAX;
                         SwPageDesc *pDesc = m_pDoc->FindPageDescByName( aStyle.GetPageDesc()->GetName(), &nPgDscPos );
@@ -2646,7 +2646,7 @@ void SAL_CALL SwXStyle::setPropertiesToDefault( const Sequence< OUString >& aPro
                             pTargetFmt = &pDesc->GetMaster();
                     }
                     break;
-                case SFX_STYLE_FAMILY_PSEUDO: 
+                case SFX_STYLE_FAMILY_PSEUDO:
                     break;
             }
         }
@@ -2685,7 +2685,7 @@ void SAL_CALL SwXStyle::setPropertiesToDefault( const Sequence< OUString >& aPro
     }
 }
 
-void SAL_CALL SwXStyle::setAllPropertiesToDefault(  ) 
+void SAL_CALL SwXStyle::setAllPropertiesToDefault(  )
     throw (RuntimeException)
 {
     vos::OGuard aGuard(Application::GetSolarMutex());
@@ -2733,14 +2733,14 @@ void SAL_CALL SwXStyle::setAllPropertiesToDefault(  )
                     pTargetFmt->ResetAttr( RES_PAGEDESC, RES_FRMATR_END-1 );
                     SvxLRSpaceItem aLR;
                     sal_Int32 nSize = GetMetricVal ( CM_1) * 2;
-                    aLR.SetLeft ( nSize ); 
-                    aLR.SetLeft ( nSize ); 
+                    aLR.SetLeft ( nSize );
+                    aLR.SetLeft ( nSize );
                     SvxULSpaceItem aUL;
-                    aUL.SetUpper ( static_cast < sal_uInt16 > ( nSize ) ); 
-                    aUL.SetLower ( static_cast < sal_uInt16 > ( nSize ) ); 
+                    aUL.SetUpper ( static_cast < sal_uInt16 > ( nSize ) );
+                    aUL.SetLower ( static_cast < sal_uInt16 > ( nSize ) );
                     pTargetFmt->SetAttr ( aLR );
                     pTargetFmt->SetAttr ( aUL );
-                    
+
                     SwPageDesc* pStdPgDsc = m_pDoc->GetPageDescFromPool( RES_POOLPAGE_STANDARD );
                     SwFmtFrmSize aFrmSz( pStdPgDsc->GetMaster().GetFrmSize() );
                     if( pStdPgDsc->GetLandscape() )
@@ -2768,7 +2768,7 @@ void SAL_CALL SwXStyle::setAllPropertiesToDefault(  )
         throw RuntimeException();
 }
 
-Sequence< Any > SAL_CALL SwXStyle::getPropertyDefaults( const Sequence< OUString >& aPropertyNames ) 
+Sequence< Any > SAL_CALL SwXStyle::getPropertyDefaults( const Sequence< OUString >& aPropertyNames )
     throw (UnknownPropertyException, WrappedTargetException, RuntimeException)
 {
     vos::OGuard aGuard(Application::GetSolarMutex());
@@ -2801,7 +2801,7 @@ Sequence< Any > SAL_CALL SwXStyle::getPropertyDefaults( const Sequence< OUString
                 for ( sal_Int32 i = 0 ; i < nCount; i++)
                 {
                     pMap = SfxItemPropertyMap::GetByName( pMap, pNames[i]);
-                
+
                     if ( !pMap )
                         throw UnknownPropertyException ( OUString ( RTL_CONSTASCII_USTRINGPARAM ( "Unknown property: " ) ) + pNames[i], static_cast < cppu::OWeakObject * > ( this ) );
                     if ( pMap->nFlags & PropertyAttribute::READONLY )
