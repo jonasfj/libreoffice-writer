@@ -2,9 +2,9 @@
  *
  *  $RCSfile: apphdl.cxx,v $
  *
- *  $Revision: 1.1.1.1 $
+ *  $Revision: 1.2 $
  *
- *  last change: $Author: hr $ $Date: 2000-09-18 17:14:31 $
+ *  last change: $Author: os $ $Date: 2000-09-28 15:22:17 $
  *
  *  The Contents of this file are made available subject to the terms of
  *  either of the following licenses
@@ -721,13 +721,11 @@ void SwModule::ExecViewOptions(SfxRequest &rReq)
                 // fuer die Initialisierung
                 if(!pWebUsrPref)
                     GetUsrPref(sal_True);
-                pWebUsrPref->SetDefault( sal_False );
             }
             else
             {
                 if(!pUsrPref)
                     GetUsrPref(sal_False);
-                pUsrPref->SetDefault( sal_False );
             }
             SW_MOD()->CheckSpellChanges( pOpt->IsOnlineSpell(), sal_False, sal_False );
 
@@ -1075,31 +1073,33 @@ SwSrcViewConfig* SwModule::GetSourceViewConfig()
 /*-----------------30.01.97 08.30-------------------
 
 --------------------------------------------------*/
-const SwMasterUsrPref *SwModule::GetUsrPref(sal_Bool bWeb)
+const SwMasterUsrPref *SwModule::GetUsrPref(sal_Bool bWeb) const
 {
+    SwModule* pNonConstModule = (SwModule*)this;
     if(bWeb && !pWebUsrPref)
     {
         // im Load der SwMasterUsrPref wird der SpellChecker gebraucht, dort darf
         // er aber nicht angelegt werden #58256#
-        pWebUsrPref = new SwMasterUsrPref(CFG_SWWEB_USRPREF);
-        pWebUsrPref->Initialize();
+        pNonConstModule->pWebUsrPref = new SwMasterUsrPref(TRUE);
     }
     else if(!bWeb && !pUsrPref)
     {
-        pUsrPref = new SwMasterUsrPref(CFG_USERPREF_ITEM);
-        pUsrPref->Initialize();
+        pNonConstModule->pUsrPref = new SwMasterUsrPref(FALSE);
     }
     return  bWeb ? pWebUsrPref : pUsrPref;
 }
 
 /*-------------------------------------------------------------------------
     $Log: not supported by cvs2svn $
+    Revision 1.1.1.1  2000/09/18 17:14:31  hr
+    initial import
+
     Revision 1.289  2000/09/18 16:05:09  willem.vandorp
     OpenOffice header added.
-    
+
     Revision 1.288  2000/09/08 15:11:56  os
     use configuration service
-    
+
     Revision 1.287  2000/07/18 12:50:07  os
     replace ofadbmgr
 
