@@ -2,9 +2,9 @@
  *
  *  $RCSfile: unoatxt.cxx,v $
  *
- *  $Revision: 1.11 $
+ *  $Revision: 1.12 $
  *
- *  last change: $Author: mtg $ $Date: 2001-08-31 15:11:03 $
+ *  last change: $Author: os $ $Date: 2001-09-28 06:44:10 $
  *
  *  The Contents of this file are made available subject to the terms of
  *  either of the following licenses
@@ -669,13 +669,13 @@ void SwXAutoTextGroup::setName(const OUString& rName) throw( uno::RuntimeExcepti
     // check value after delimiter...
     OUString aNewSuffix (rName.copy ( 1 + rName.lastIndexOf ( GLOS_DELIM ) ) );
     OUString aOldSuffix (sName.copy ( 1 + sName.lastIndexOf ( GLOS_DELIM ) ) );
-    
+
     sal_Int32 nNewNumeric = aNewSuffix.toInt32();
     sal_Int32 nOldNumeric = aOldSuffix.toInt32();
 
     OUString aNewPrefix (rName.copy ( 0, rName.lastIndexOf ( GLOS_DELIM ) ) );
     OUString aOldPrefix (sName.copy ( 0, sName.lastIndexOf ( GLOS_DELIM ) ) );
-    
+
     if ( sName == rName ||
        ( nNewNumeric == nOldNumeric && aNewPrefix == aOldPrefix ) )
         return;
@@ -882,10 +882,11 @@ void SwXAutoTextGroup::setPropertyValue(
     {
         case  WID_GROUP_TITLE:
         {
-            if(aValue.getValueType() != ::getCppuType((OUString*)0))
+            OUString sNewTitle;
+            aValue >>= sNewTitle;
+            if(!sNewTitle.getLength())
                 throw lang::IllegalArgumentException();
-            String sNewTitle = *(OUString*)aValue.getValue();
-            sal_Bool bChanged = sNewTitle != pGlosGroup->GetName();
+            sal_Bool bChanged = !sNewTitle.equals(pGlosGroup->GetName());
             pGlosGroup->SetName(sNewTitle);
             if(bChanged && HasGlossaryList())
                 GetGlossaryList()->ClearGroups();
@@ -1151,11 +1152,11 @@ void SwXAutoTextEntry::applyTo(const Reference< text::XTextRange > & xTextRange)
 
     if(xTunnel.is())
     {
-        pRange = reinterpret_cast < SwXTextRange* > 
+        pRange = reinterpret_cast < SwXTextRange* >
                 ( xTunnel->getSomething( SwXTextRange::getUnoTunnelId() ) );
-        pCursor = reinterpret_cast < SwXTextCursor*> 
+        pCursor = reinterpret_cast < SwXTextCursor*>
                 ( xTunnel->getSomething( SwXTextCursor::getUnoTunnelId() ) );
-        pText = reinterpret_cast < SwXText* > 
+        pText = reinterpret_cast < SwXText* >
                 ( xTunnel->getSomething( SwXText::getUnoTunnelId() ) );
     }
 
@@ -1169,7 +1170,7 @@ void SwXAutoTextEntry::applyTo(const Reference< text::XTextRange > & xTextRange)
         xTunnel = Reference < lang::XUnoTunnel > (pText->getStart(), uno::UNO_QUERY);
         if (xTunnel.is())
         {
-            pCursor = reinterpret_cast < SwXTextCursor* > 
+            pCursor = reinterpret_cast < SwXTextCursor* >
                 ( xTunnel->getSomething( SwXTextCursor::getUnoTunnelId() ) );
             if (pCursor)
                 pDoc = pText->GetDoc();
@@ -1240,7 +1241,7 @@ Reference< container::XNameReplace > SwXAutoTextEntry::getEvents()
 
  ---------------------------------------------------------------------------*/
 const struct SvEventDescription aAutotextEvents[] =
-{ 
+{
     { SW_EVENT_START_INS_GLOSSARY,	"OnInsertStart" },
     { SW_EVENT_END_INS_GLOSSARY,	"OnInsertDone" },
     { 0, NULL }
