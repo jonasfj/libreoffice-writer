@@ -2,9 +2,9 @@
  *
  *  $RCSfile: ww8graf.cxx,v $
  *
- *  $Revision: 1.123 $
+ *  $Revision: 1.124 $
  *
- *  last change: $Author: rt $ $Date: 2004-10-28 13:06:28 $
+ *  last change: $Author: obo $ $Date: 2004-11-16 15:56:03 $
  *
  *  The Contents of this file are made available subject to the terms of
  *  either of the following licenses
@@ -1931,11 +1931,11 @@ void SwWW8ImplReader::MatchSdrItemsIntoFlySet( SdrObject* pSdrObj,
     else //If a size is set, adjust it to consider border thickness
     {
         SwFmtFrmSize aSize = (const SwFmtFrmSize &)(rFlySet.Get(RES_FRM_SIZE));
-        
+
         SwFmtFrmSize aNewSize = SwFmtFrmSize(bFixSize ? ATT_FIX_SIZE : ATT_VAR_SIZE,
             aSize.GetWidth()  + 2*nOutside,
             aSize.GetHeight() + 2*nOutside);
-        aNewSize.SetWidthSizeType(aSize.GetWidthSizeType()); 
+        aNewSize.SetWidthSizeType(aSize.GetWidthSizeType());
         rFlySet.Put( aNewSize );
     }
 
@@ -2747,8 +2747,10 @@ SwFrmFmt* SwWW8ImplReader::Read_GrafLayer( long nGrafAnchorCp )
 
     //cmc: We're in a table, and the element has the magic Word XP bit set
     //to enable layout inside a cell
-    bool bLayoutInTableCell =
-        (nInTable && pRecord->nLayoutInTableCell & 0x00008000);
+    // --> OD, MM 2004-10-15 #i33442#
+    bool bLayoutInTableCell = ( nInTable &&
+                                pRecord->nLayoutInTableCell != 0x80000000 );
+    // <--
 
     // OD 14.10.2003 #i18732#
     // Switch on 'follow text flow',
