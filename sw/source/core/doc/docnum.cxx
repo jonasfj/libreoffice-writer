@@ -2,9 +2,9 @@
  *
  *  $RCSfile: docnum.cxx,v $
  *
- *  $Revision: 1.44 $
+ *  $Revision: 1.45 $
  *
- *  last change: $Author: rt $ $Date: 2005-02-04 11:14:52 $
+ *  last change: $Author: vg $ $Date: 2005-02-21 16:15:34 $
  *
  *  The Contents of this file are made available subject to the terms of
  *  either of the following licenses
@@ -174,7 +174,7 @@ SwNumRule * SwDoc::GetOutlineNumRule() const
     if (pNumRuleTbl)
     {
         for (ULONG nI = 0; nI < pNumRuleTbl->Count(); nI++)
-            if ((*pNumRuleTbl)[nI]->GetName() == 
+            if ((*pNumRuleTbl)[nI]->GetName() ==
                 String(SwNumRule::GetOutlineRuleName(),
                        RTL_TEXTENCODING_ASCII_US))
             {
@@ -188,30 +188,11 @@ SwNumRule * SwDoc::GetOutlineNumRule() const
 void SwDoc::SetOutlineNumRule( const SwNumRule& rRule )
 {
     USHORT nChkLevel = 0, nChgFmtLevel = 0;
+
     if( pOutlineRule )
-    {
-        USHORT nMask = 1;
-        for( BYTE n = 0; n < MAXLEVEL; ++n, nMask <<= 1 )
-        {
-            const SwNumFmt& rOld = pOutlineRule->Get( n ),
-                          & rNew = rRule.Get( n );
-            if( rOld != rNew )
-            {
-                nChgFmtLevel |= nMask;
-                if( rOld.GetAbsLSpace() != rNew.GetAbsLSpace() ||
-                    rOld.GetFirstLineOffset() != rNew.GetFirstLineOffset() )
-                    nChkLevel |= nMask;
-            }
-            else if( SVX_NUM_NUMBER_NONE > rNew.GetNumberingType() && 1 < rNew.GetIncludeUpperLevels() &&
-                    0 != (nChgFmtLevel & GetUpperLvlChg( n,
-                                            rNew.GetIncludeUpperLevels(), nMask )) )
-                nChgFmtLevel |= nMask;
-        }
         (*pOutlineRule) = rRule;
-    }
     else
     {
-        nChgFmtLevel = nChkLevel = 0xffff;
         pOutlineRule = new SwNumRule( rRule );
 
         AddNumRule(pOutlineRule); // #i36749#
@@ -225,91 +206,8 @@ void SwDoc::SetOutlineNumRule( const SwNumRule& rRule )
     // definiert sind
     pOutlineRule->CheckCharFmts( this );
 
-    // losche aus dem Array alle Nodes, die ohne Outline Nummerierung sind
-    SwOutlineNodes& rArr = (SwOutlineNodes&)GetNodes().GetOutLineNds();
-    {
-        SwNodeNum aNoNum( NO_NUMBERING );
-        for( USHORT n = 0; n < rArr.Count(); ++n )
-        {
-            SwTxtNode* pTxtNd = rArr[n]->GetTxtNode();
-            if (pTxtNd)
-            {
-                if( NO_NUMBERING == pTxtNd->GetTxtColl()->GetOutlineLevel() )
-                {
-                    pTxtNd->UpdateNum( aNoNum );
-                    rArr.Remove( n-- );
-                }
-                else
-                {
-                    SwPaM aPam(*pTxtNd);
-                    SwNumRuleItem aItem(pOutlineRule->GetName());
-
-                    Insert(aPam, aItem);
-                }
-            }
-        }
-    }
-
-    // suche alle Nodes, die neu aufgenommen werden muessen !!
-    // (eigentlich koennte das auch per Modify am die Nodes propagiert
-    // werden !! )
-    ULONG nStt = GetNodes().GetEndOfContent().StartOfSectionIndex();
-    USHORT n;
-
-    for( n = 0; n < pTxtFmtCollTbl->Count(); ++n )
-    {
-        SwTxtFmtColl* pColl = (*pTxtFmtCollTbl)[ n ];
-        BYTE nLevel = pColl->GetOutlineLevel();
-        if( NO_NUMBERING != nLevel )
-        {
-#ifndef NUM_RELSPACE
-            // JP 08.07.98: Einzuege aus der Outline uebernehmen.
-            // 				??Aber nur wenn sie veraendert wurden??
-            if( ( nLevel = GetRealLevel( nLevel )) < MAXLEVEL
-                /*&& 0 != (nChkLevel & (1 << nLevel ))*/ )
-            {
-                SvxLRSpaceItem aLR( (SvxLRSpaceItem&)pColl->GetAttr( RES_LR_SPACE ) );
-                const SwNumFmt& rNFmt = pOutlineRule->Get( nLevel );
-
-                // ohne Nummer immer ohne FirstLineOffset!!!!
-                short nFOfst;
-                if( ! IsNum(pColl->GetOutlineLevel()) )
-                    nFOfst = 0;
-                else
-                    nFOfst = rNFmt.GetFirstLineOffset();
-
-                if( aLR.GetTxtLeft() != rNFmt.GetAbsLSpace() ||
-                    aLR.GetTxtFirstLineOfst() != nFOfst )
-                {
-                    aLR.SetTxtFirstLineOfstValue( nFOfst );
-                    aLR.SetTxtLeft( rNFmt.GetAbsLSpace() );
-
-                    pColl->SetAttr( aLR );
-                }
-            }
-#endif
-            SwClientIter aIter( *pColl );
-            for( SwTxtNode* pNd = (SwTxtNode*)aIter.First( TYPE( SwTxtNode ));
-                    pNd; pNd = (SwTxtNode*)aIter.Next() )
-                if( pNd->GetNodes().IsDocNodes() && nStt < pNd->GetIndex() )
-                    rArr.Insert( pNd );
-        }
-    }
-
-    for( n = 0; n < rArr.Count(); ++n )
-    {
-        SwTxtNode* pNd = rArr[ n ]->GetTxtNode();
-        ASSERT( pNd, "was ist das fuer ein Node?" );
-        if( ( 1 << (GetRealLevel(pNd->GetTxtColl()->GetOutlineLevel()))
-            & nChgFmtLevel ))
-            pNd->NumRuleChgd();
-    }
-    GetNodes().UpdateOutlineNodes();        // update der Nummern
-
-    // gibt es Fussnoten && gilt Kapitelweises Nummerieren, dann updaten
-    if( GetFtnIdxs().Count() && FTNNUM_CHAPTER == GetFtnInfo().eNum )
-        GetFtnIdxs().UpdateAllFtn();
-
+    PropagateOutlineRule();
+    UpdateNumRule();
     UpdateExpFlds();
 
     SetModified();
@@ -329,14 +227,14 @@ void SwDoc::PropagateOutlineRule()
             while (pClient)
             {
                 SwTxtNode * pTxtNode = ((SwTxtNode *) pClient);
-                
+
                 const SwPaM aPam(*pTxtNode);
                 SetNumRule(aPam, *GetOutlineNumRule());
 
                 pTxtNode->SetLevel(pColl->GetOutlineLevel());
 
                 pClient = aIter.Next();
-            }            
+            }
         }
     }
 }
@@ -1005,7 +903,7 @@ void lcl_ChgNumRule( SwDoc& rDoc, const SwNumRule& rRule, SwHistory* pHist,
 }
 
 void SwDoc::SetNumRule( const SwPaM& rPam, const SwNumRule& rRule,
-                        sal_Bool bSetAbsLSpace, sal_Bool bCalledFromShell )
+                        sal_Bool bSetAbsLSpace )
 {
     SwUndoInsNum* pUndo;
     if( DoesUndo() )
@@ -1024,63 +922,6 @@ void SwDoc::SetNumRule( const SwPaM& rPam, const SwNumRule& rRule,
     if( !pNew )
     {
         pNew = (*pNumRuleTbl)[ MakeNumRule( rRule.GetName(), &rRule ) ];
-
-        /* #109308# ATTENTION THIS IS NOW PARTLY WRONG! SEE #111078#.
-
-            If called from a shell propagate an existing
-            adjust item at the beginning am rPam into the new
-            numbering rule. */
-        if (bCalledFromShell)
-        {
-            SwCntntNode * pCntntNode = rPam.GetCntntNode();
-
-            if (pCntntNode)
-            {
-                SwAttrSet & rAttrSet = pCntntNode->GetSwAttrSet();
-
-                /* #111078# Do not propagate the adjustment but set
-                    the adjustment according to the text direction of
-                    the paragraph. */
-
-                SvxFrameDirection aDir = (SvxFrameDirection)
-                    rAttrSet.GetFrmDir().GetValue();
-
-                switch (aDir)
-                {
-                case FRMDIR_HORI_LEFT_TOP:
-                    pNew->SetNumAdjust(SVX_ADJUST_LEFT);
-
-                    break;
-
-                case FRMDIR_HORI_RIGHT_TOP:
-                    pNew->SetNumAdjust(SVX_ADJUST_RIGHT);
-
-                    break;
-
-                case FRMDIR_ENVIRONMENT :
-                    // --> FME 2004-08-06 #i32203# If the direction attribute
-                    // has not been set directly, we have to get it from the
-                    // layout:
-                    {
-                        SwClientIter aClientIter( *pCntntNode );
-                        SwClient* pLast = aClientIter.GoStart();
-                        if ( pLast && pLast->ISA( SwTxtFrm ) )
-                        {
-                            if ( static_cast<const SwTxtFrm*>(pLast)->IsRightToLeft() )
-                                pNew->SetNumAdjust(SVX_ADJUST_RIGHT);
-                            else
-                                pNew->SetNumAdjust(SVX_ADJUST_LEFT);
-                        }
-                    }
-
-                    break;
-
-                default:
-                    break;
-                }
-            }
-        }
-
     }
     else if( rRule.IsAutoRule() && !(*pNew == rRule) )
     {
@@ -1504,13 +1345,14 @@ BOOL SwDoc::ReplaceNumRule( const SwPosition& rPos,
     return bRet;
 }
 
-
 void SwDoc::MakeUniqueNumRules(const SwPaM & rPaM)
 {
     map<SwNumRule *, SwNumRule *> aNumRuleMap;
 
      ULONG nStt = rPaM.Start()->nNode.GetIndex();
     ULONG nEnd = rPaM.End()->nNode.GetIndex();
+
+    bool bFirst = true;
 
     for (ULONG n = nStt; n <= nEnd; n++)
     {
@@ -1526,15 +1368,30 @@ void SwDoc::MakeUniqueNumRules(const SwPaM & rPaM)
 
                 if (! pReplaceNumRule)
                 {
-                    pReplaceNumRule = new SwNumRule(*pRule);
-                    pReplaceNumRule->SetName(GetUniqueNumRuleName());
-
+                    if (bFirst)
+                    {
+                        SwPosition aPos(*pCNd);
+                        pReplaceNumRule = 
+                            const_cast<SwNumRule *>
+                            (SearchNumRule(aPos, FALSE, pCNd->HasNumber(), 
+                                           FALSE, 0));
+                    }
+                    
+                    if (! pReplaceNumRule)
+                    {
+                        pReplaceNumRule = new SwNumRule(*pRule);
+                        pReplaceNumRule->SetName(GetUniqueNumRuleName());
+                        
+                    }
+                    
                     aNumRuleMap[pRule] = pReplaceNumRule;
                 }
 
                 SwPaM aPam(*pCNd);
 
                 SetNumRule(aPam, *pReplaceNumRule);
+
+                bFirst = false;
             }
         }
     }
@@ -2434,7 +2291,7 @@ SwNumRule* SwDoc::FindNumRulePtr( const String& rName ) const
             if ((*pNumRuleTbl)[n]->GetName() == rName)
             {
                 pResult = (*pNumRuleTbl)[n];
-                
+
                 break;
             }
         }
@@ -2446,7 +2303,7 @@ SwNumRule* SwDoc::FindNumRulePtr( const String& rName ) const
 // #i36749#
 void SwDoc::AddNumRule(SwNumRule * pRule)
 {
-    pNumRuleTbl->Insert(pRule, pNumRuleTbl->Count());    
+    pNumRuleTbl->Insert(pRule, pNumRuleTbl->Count());
     aNumRuleMap[pRule->GetName()] = pRule;
     pRule->SetNumRuleMap(&aNumRuleMap);
 }
@@ -2846,7 +2703,7 @@ void lcl_UpdateNumRuleRange( SwNumRule & rRule,
     @param rRule        the SwNumRule we wish to update
     @param rNumRuleInfo contains the list of nodes using rRule to be updated
     @param rNode        SwNode whose section will be updated
-                        Note: the entire section from rNode.FindStartNode() 
+                        Note: the entire section from rNode.FindStartNode()
                         will be updated (see also nUpdatePos)
     @param nUpdatePos   update nodes >= rNumRuleInfo.GetList()[nUpdatePos]
 */
@@ -2871,7 +2728,7 @@ void lcl_UpdateNumRuleSection( SwNumRule& rRule,
         // restart numbering unless nUpdatePos forces an update into the
         // middle of a section
         BOOL bInit = ( nUpdatePos <= nStartPos );
-        lcl_UpdateNumRuleRange( rRule, rNumRuleInfo, 
+        lcl_UpdateNumRuleRange( rRule, rNumRuleInfo,
                                 nStartPos, nEndPos, bInit );
     }
 }
@@ -2950,17 +2807,17 @@ void SwDoc::UpdateNumRule( SwNumRule & rRule, ULONG nUpdatePos)
     }
 
     /* number each range (frames, redlines, footnotes, etc.) seperately */
-    lcl_UpdateNumRuleSectionOfSections( 
+    lcl_UpdateNumRuleSectionOfSections(
         rRule, aNumRuleInfo, aNodes.GetEndOfPostIts(), nUpdatePos );
-    lcl_UpdateNumRuleSectionOfSections( 
+    lcl_UpdateNumRuleSectionOfSections(
         rRule, aNumRuleInfo, aNodes.GetEndOfInserts(), nUpdatePos );
-    lcl_UpdateNumRuleSectionOfSections( 
+    lcl_UpdateNumRuleSectionOfSections(
         rRule, aNumRuleInfo, aNodes.GetEndOfAutotext(), nUpdatePos );
-    lcl_UpdateNumRuleSectionOfSections( 
+    lcl_UpdateNumRuleSectionOfSections(
         rRule, aNumRuleInfo, aNodes.GetEndOfRedlines(), nUpdatePos );
-    lcl_UpdateNumRuleSectionOfSections( 
+    lcl_UpdateNumRuleSectionOfSections(
         rRule, aNumRuleInfo, aNodes.GetEndOfExtras(), nUpdatePos );
-    lcl_UpdateNumRuleSection( 
+    lcl_UpdateNumRuleSection(
         rRule, aNumRuleInfo, aNodes.GetEndOfContent(), nUpdatePos );
 }
 
@@ -3066,7 +2923,7 @@ void SwDoc::UpdateNumRuleOld( SwNumRule & rRule, ULONG nUpdPos )
                 {
                     aNum.SetStart( TRUE );
                     // OD 10.12.2002 #106111# - correct reset of level numbers
-                    for ( int nSubLvl = GetRealLevel(nLevel); 
+                    for ( int nSubLvl = GetRealLevel(nLevel);
                           nSubLvl < MAXLEVEL; ++nSubLvl)
                         aNum.GetLevelVal()[ nSubLvl ] = 0;
                     if( pRule->IsContinusNum() )
@@ -3138,7 +2995,7 @@ void SwDoc::UpdateNumRuleOld( SwNumRule & rRule, ULONG nUpdPos )
                             if( !(nInitLevels & ( 1 << nPrevLvl )) )
                                 ++nPrevLvl;
 
-                            for( int ii = nPrevLvl; ii < GetRealLevel(nLevel); 
+                            for( int ii = nPrevLvl; ii < GetRealLevel(nLevel);
                                  ++ii )
                             {
                                 nInitLevels &= ~( 1 << ii );
@@ -3151,14 +3008,14 @@ void SwDoc::UpdateNumRuleOld( SwNumRule & rRule, ULONG nUpdPos )
                                 : aNum.GetSetValue();
                         }
                         else if( USHRT_MAX != aNum.GetSetValue() )
-                            aNum.GetLevelVal()[ GetRealLevel(nLevel) ] = 
+                            aNum.GetLevelVal()[ GetRealLevel(nLevel) ] =
                                 aNum.GetSetValue();
                         else if( nInitLevels & ( 1 << GetRealLevel(nLevel) ))
                             aNum.GetLevelVal()[ GetRealLevel(nLevel) ] =
                                 pRule->Get( GetRealLevel(nLevel) ).GetStart();
                         else
                         {
-                            const SwNumFmt * pTmpNumFmt = 
+                            const SwNumFmt * pTmpNumFmt =
                                 pRule->GetNumFmt(GetRealLevel(nLevel));
 
                             if (pTmpNumFmt &&
@@ -3175,7 +3032,7 @@ void SwDoc::UpdateNumRuleOld( SwNumRule & rRule, ULONG nUpdPos )
                     // OD 10.12.2002 #106111# - reset numbers of all sublevels and
                     // note in <nInitLevels> that numbering of all sublevels have
                     // to be restarted.
-                    for ( int nSubLvl = GetRealLevel(nLevel)+1; 
+                    for ( int nSubLvl = GetRealLevel(nLevel)+1;
                           nSubLvl < MAXLEVEL; ++nSubLvl)
                     {
                         aNum.GetLevelVal()[ nSubLvl ] = 0;
