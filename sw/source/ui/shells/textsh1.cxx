@@ -2,9 +2,9 @@
  *
  *  $RCSfile: textsh1.cxx,v $
  *
- *  $Revision: 1.32 $
+ *  $Revision: 1.33 $
  *
- *  last change: $Author: vg $ $Date: 2003-07-21 11:23:04 $
+ *  last change: $Author: hr $ $Date: 2004-02-03 16:55:25 $
  *
  *  The Contents of this file are made available subject to the terms of
  *  either of the following licenses
@@ -95,12 +95,6 @@
 #endif
 #ifndef _SFX_OBJITEM_HXX //autogen
 #include <sfx2/objitem.hxx>
-#endif
-#ifndef _OFF_APP_HXX //autogen
-#include <offmgr/app.hxx>
-#endif
-#ifndef _OFAACCFG_HXX //autogen
-#include <offmgr/ofaaccfg.hxx>
 #endif
 #ifndef _MSGBOX_HXX //autogen
 #include <vcl/msgbox.hxx>
@@ -270,6 +264,9 @@
 #ifndef _CRSSKIP_HXX
 #include <crsskip.hxx>
 #endif
+
+#include <svx/acorrcfg.hxx>
+
 /*--------------------------------------------------------------------
     Beschreibung:
  --------------------------------------------------------------------*/
@@ -493,7 +490,7 @@ void SwTextShell::Execute(SfxRequest &rReq)
         }
         case FN_AUTOFORMAT_REDLINE_APPLY:
         {
-            SvxSwAutoFmtFlags aFlags(OFF_APP()->GetAutoCorrect()->GetSwFlags());
+            SvxSwAutoFmtFlags aFlags(SvxAutoCorrCfg::Get()->GetAutoCorrect()->GetSwFlags());
             // das muss fuer die Nachbearbeitung immer FALSE sein
             aFlags.bAFmtByInput = FALSE;
             aFlags.bWithRedlining = TRUE;
@@ -532,7 +529,7 @@ void SwTextShell::Execute(SfxRequest &rReq)
 
         case FN_AUTOFORMAT_APPLY:
         {
-            SvxSwAutoFmtFlags aFlags(OFF_APP()->GetAutoCorrect()->GetSwFlags());
+            SvxSwAutoFmtFlags aFlags(SvxAutoCorrCfg::Get()->GetAutoCorrect()->GetSwFlags());
             // das muss fuer die Nachbearbeitung immer FALSE sein
             aFlags.bAFmtByInput = FALSE;
             rWrtSh.AutoFormat( &aFlags );
@@ -541,7 +538,7 @@ void SwTextShell::Execute(SfxRequest &rReq)
         break;
         case FN_AUTOFORMAT_AUTO:
         {
-            OfaAutoCorrCfg*	pACfg = OFF_APP()->GetAutoCorrConfig();
+            SvxAutoCorrCfg*	pACfg = SvxAutoCorrCfg::Get();
             BOOL bSet = pItem ? ((const SfxBoolItem*)pItem)->GetValue() : !pACfg->IsAutoFmtByInput();
             if( bSet != pACfg->IsAutoFmtByInput() )
             {
@@ -557,7 +554,7 @@ void SwTextShell::Execute(SfxRequest &rReq)
         {
             // erstmal auf Blank defaulten
             sal_Unicode cChar = ' ';
-            rWrtSh.AutoCorrect( *OFF_APP()->GetAutoCorrect(), cChar );
+            rWrtSh.AutoCorrect( *SvxAutoCorrCfg::Get()->GetAutoCorrect(), cChar );
         }
         break;
 
@@ -956,7 +953,7 @@ void SwTextShell::Execute(SfxRequest &rReq)
                     //that is defined at the starting point of the numbering level
                     //otherwise the SetNodeNumStart() value determines the start
                     //if it's set to something different than USHRT_MAX
-                    
+
                     BOOL bStart = ((SfxBoolItem&)pSet->Get(FN_NUMBER_NEWSTART)).GetValue();
                     USHORT nNumStart = USHRT_MAX;
                     if( SFX_ITEM_SET == pSet->GetItemState(FN_NUMBER_NEWSTART_AT) )
@@ -1148,13 +1145,13 @@ void SwTextShell::Execute(SfxRequest &rReq)
                         RES_TXTATR_INETFMT);
         rWrtSh.GetAttr(aSet);
         if(SFX_ITEM_SET <= aSet.GetItemState( RES_TXTATR_INETFMT, TRUE ))
-        {        
+        {
             const SfxPoolItem& rItem = aSet.Get(RES_TXTATR_INETFMT, TRUE);
             rWrtSh.ClickToINetAttr((const SwFmtINetFmt&)rItem, URLLOAD_NOFILTER);
         }
     }
 
-    break;        
+    break;
 
     case SID_OPEN_XML_FILTERSETTINGS:
     {
@@ -1247,8 +1244,7 @@ void SwTextShell::GetState( SfxItemSet &rSet )
             break;
         case FN_AUTOFORMAT_AUTO:
             {
-                rSet.Put( SfxBoolItem( nWhich, OFF_APP()->
-                                GetAutoCorrConfig()->IsAutoFmtByInput() ));
+                rSet.Put( SfxBoolItem( nWhich, SvxAutoCorrCfg::Get()->IsAutoFmtByInput() ));
             }
             break;
         case FN_GLOSSARY_DLG:
@@ -1395,7 +1391,7 @@ void SwTextShell::GetState( SfxItemSet &rSet )
                 rSh.GetAttr(aSet);
                 if(SFX_ITEM_SET > aSet.GetItemState( RES_TXTATR_INETFMT, FALSE ))
                     rSet.DisableItem(nWhich);
-            }        
+            }
             break;
         }
         nWhich = aIter.NextWhich();
