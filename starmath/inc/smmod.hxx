@@ -2,9 +2,9 @@
  *
  *  $RCSfile: smmod.hxx,v $
  *
- *  $Revision: 1.10 $
+ *  $Revision: 1.11 $
  *
- *  last change: $Author: hr $ $Date: 2003-03-27 11:58:12 $
+ *  last change: $Author: rt $ $Date: 2003-09-19 08:51:40 $
  *
  *  The Contents of this file are made available subject to the terms of
  *  either of the following licenses
@@ -72,17 +72,15 @@
 #include <svtools/colorcfg.hxx>
 #endif
 
-#ifndef _SMDLL_HXX
-#define _SM_DLL             // fuer SD_MOD()
-#include "smdll.hxx"        // fuer SdModuleDummy
-#endif
+#include <tools/shl.hxx>
+#include <sfx2/module.hxx>
+
 #ifndef _STARMATH_HRC
 #include "starmath.hrc"
 #endif
 
 class SvxErrorHandler;
-class SvFactory;
-
+class SfxObjectFactory;
 class SmConfig;
 class SmModule;
 
@@ -104,6 +102,12 @@ class VirtualDevice;
 
 /////////////////////////////////////////////////////////////////
 
+class SmResId : public ResId
+{
+public:
+    SmResId(USHORT nId);
+};
+
 class SmNamesArray : public Resource
 {
     ResStringArray      aNamesAry;
@@ -117,7 +121,7 @@ public:
     {
         FreeResource();
     }
-    
+
     LanguageType            GetLanguage() const     { return nLanguage; }
     const ResStringArray&   GetNamesArray() const   { return aNamesAry; }
 };
@@ -152,10 +156,10 @@ public:
     const ResStringArray* Get50NamesArray( LanguageType nLang );
     const ResStringArray* Get60NamesArray( LanguageType nLang );
 };
-    
+
 /////////////////////////////////////////////////////////////////
 
-class SmModule : public SmModuleDummy, public SfxListener
+class SmModule : public SfxModule, public SfxListener
 {
     svtools::ColorConfig        *pColorConfig;
     SmConfig                *pConfig;
@@ -174,11 +178,8 @@ public:
     TYPEINFO();
     SFX_DECL_INTERFACE(SFX_INTERFACE_SMA_START + 0);
 
-    SmModule(SvFactory* pObjFact);
+    SmModule(SfxObjectFactory* pObjFact);
     virtual ~SmModule();
-
-    virtual SfxModule *	Load();
-    virtual void		Free();
 
     // SfxListener
     virtual void        Notify( SfxBroadcaster& rBC, const SfxHint& rHint );
@@ -187,7 +188,7 @@ public:
 
     SmConfig *          GetConfig();
     SmRectCache *		GetRectCache()	   { return pRectCache; }
-    
+
     SmLocalizedSymbolData &   GetLocSymbolData() const;
 
     void GetState(SfxItemSet&);
@@ -212,9 +213,8 @@ public:
     virtual	SfxTabPage*	 CreateTabPage( USHORT nId, Window* pParent, const SfxItemSet& rSet );
 };
 
-
+#define SM_MOD() ( *(SmModule**) GetAppData(SHL_SM) )
 #define SM_MOD1() ( *(SmModule**) GetAppData(SHL_SM) )
-
 
 #endif                                 // _SDMOD_HXX
 
