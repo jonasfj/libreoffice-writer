@@ -2,9 +2,9 @@
  *
  *  $RCSfile: SwXMLTextBlocks.cxx,v $
  *
- *  $Revision: 1.18 $
+ *  $Revision: 1.19 $
  *
- *  last change: $Author: mtg $ $Date: 2001-07-11 14:05:05 $
+ *  last change: $Author: jp $ $Date: 2001-08-31 11:13:43 $
  *
  *  The Contents of this file are made available subject to the terms of
  *  either of the following licenses
@@ -163,9 +163,9 @@
 #include <SwXMLBlockExport.hxx>
 #endif
 
-#ifndef _SFXMACITEM_HXX 
-#include <svtools/macitem.hxx> 
-#endif 
+#ifndef _SFXMACITEM_HXX
+#include <svtools/macitem.hxx>
+#endif
 
 #ifndef _SVTOOLS_UNOEVENT_HXX_
 #include <svtools/unoevent.hxx>
@@ -463,14 +463,14 @@ ULONG SwXMLTextBlocks::GetDoc( USHORT nIdx )
         {
             // Throw an exception ?
         }
-    
+
         xml::sax::InputSource aParserInput;
         aParserInput.sSystemId = aNames [ nIdx ] ->aPackageName;
-    
+
         xContents->Seek( 0L );
         xContents->SetBufferSize( 16*1024 );
         aParserInput.aInputStream = new utl::OInputStreamWrapper( *xContents );
-    
+
         // get parser
         Reference< XInterface > xXMLParser = xServiceFactory->createInstance(
                 OUString::createFromAscii("com.sun.star.xml.sax.Parser") );
@@ -480,14 +480,14 @@ ULONG SwXMLTextBlocks::GetDoc( USHORT nIdx )
         {
             // Maybe throw an exception?
         }
-    
+
         // get filter
-        Reference< xml::sax::XDocumentHandler > xFilter = new SwXMLTextBlockImport( *this, aCur, sal_True ); 
-    
+        Reference< xml::sax::XDocumentHandler > xFilter = new SwXMLTextBlockImport( *this, aCur, sal_True );
+
         // connect parser and filter
         Reference< xml::sax::XParser > xParser( xXMLParser, UNO_QUERY );
         xParser->setDocumentHandler( xFilter );
-    
+
         // parse
         try
         {
@@ -707,17 +707,17 @@ BOOL SwXMLTextBlocks::IsOnlyTextBlock( USHORT nIdx ) const
     return aNames[nIdx]->bIsOnlyTxt;
 }
 
-// event description for autotext events; this constant should really be 
+// event description for autotext events; this constant should really be
 // taken from unocore/unoevents.cxx or ui/unotxt.cxx
 const struct SvEventDescription aAutotextEvents[] =
-{ 
+{
     { SW_EVENT_START_INS_GLOSSARY,	"OnInsertStart" },
     { SW_EVENT_END_INS_GLOSSARY,	"OnInsertDone" },
     { 0, NULL }
 };
 
-ULONG SwXMLTextBlocks::GetMacroTable( USHORT nIdx, 
-                                      SvxMacroTableDtor& rMacroTbl, 
+ULONG SwXMLTextBlocks::GetMacroTable( USHORT nIdx,
+                                      SvxMacroTableDtor& rMacroTbl,
                                       sal_Bool bFileAlreadyOpen )
 {
     // set current auto text
@@ -739,19 +739,19 @@ ULONG SwXMLTextBlocks::GetMacroTable( USHORT nIdx,
         xRoot = xBlkRoot->OpenUCBStorage( aPackageName, STREAM_STGREAD );
 
         OUString sStreamName = OUString::createFromAscii("atevent.xml");
-        SvStorageStreamRef xDocStream = xRoot->OpenStream( 
+        SvStorageStreamRef xDocStream = xRoot->OpenStream(
             sStreamName, STREAM_WRITE | STREAM_SHARE_DENYWRITE );
         DBG_ASSERT(xDocStream.Is(), "Can't create output stream");
         if ( xDocStream.Is() )
         {
             xDocStream->SetBufferSize( 16*1024 );
-            Reference<io::XInputStream> xInputStream = 
+            Reference<io::XInputStream> xInputStream =
                 new utl::OInputStreamWrapper( *xDocStream );
 
             // prepare ParserInputSrouce
             xml::sax::InputSource aParserInput;
             aParserInput.sSystemId = aName;
-            aParserInput.aInputStream = xInputStream; 
+            aParserInput.aInputStream = xInputStream;
 
             // get service factory
             Reference< lang::XMultiServiceFactory > xServiceFactory =
@@ -762,8 +762,8 @@ ULONG SwXMLTextBlocks::GetMacroTable( USHORT nIdx,
                 // get parser
                 OUString sParserService( RTL_CONSTASCII_USTRINGPARAM(
                     "com.sun.star.xml.sax.Parser" ) );
-                Reference< xml::sax::XParser > xParser( 
-                    xServiceFactory->createInstance(sParserService), 
+                Reference< xml::sax::XParser > xParser(
+                    xServiceFactory->createInstance(sParserService),
                     UNO_QUERY );
                 DBG_ASSERT( xParser.is(), "Can't create parser" );
                 if( xParser.is() )
@@ -771,20 +771,20 @@ ULONG SwXMLTextBlocks::GetMacroTable( USHORT nIdx,
                     // create descriptor and reference to it. Either
                     // both or neither must be kept because of the
                     // reference counting!
-                    SvMacroTableEventDescriptor* pDescriptor = 
+                    SvMacroTableEventDescriptor* pDescriptor =
                         new SvMacroTableEventDescriptor(aAutotextEvents);
                     Reference<XNameReplace> xReplace = pDescriptor;
                     Sequence<Any> aFilterArguments( 1 );
                     aFilterArguments[0] <<= xReplace;
-                    
+
                     // get filter
-                    OUString sFilterComponent( RTL_CONSTASCII_USTRINGPARAM( 
+                    OUString sFilterComponent( RTL_CONSTASCII_USTRINGPARAM(
                         "com.sun.star.comp.Writer.XMLAutotextEventsImporter"));
                     Reference< xml::sax::XDocumentHandler > xFilter(
                         xServiceFactory->createInstanceWithArguments(
                             sFilterComponent, aFilterArguments),
                         UNO_QUERY );
-                    DBG_ASSERT( xFilter.is(), 
+                    DBG_ASSERT( xFilter.is(),
                                 "can't instantiate atevents filter");
                     if ( xFilter.is() )
                     {
@@ -792,7 +792,7 @@ ULONG SwXMLTextBlocks::GetMacroTable( USHORT nIdx,
                         xParser->setDocumentHandler( xFilter );
 
                         // connect model and filter
-                        Reference<document::XImporter> xImporter( xFilter, 
+                        Reference<document::XImporter> xImporter( xFilter,
                                                                   UNO_QUERY );
 
                         // we don't need a model
@@ -826,7 +826,7 @@ ULONG SwXMLTextBlocks::GetMacroTable( USHORT nIdx,
                 }
                 else
                     nRet = ERR_SWG_READ_ERROR;
-                
+
             }
             else
                 nRet = ERR_SWG_READ_ERROR;
@@ -851,7 +851,7 @@ BOOL SwXMLTextBlocks::IsFileUCBStorage( const String & rFileName)
         String aURL;
         ::utl::LocalFileHelper::ConvertPhysicalNameToURL( aName, aURL );
         aObj.SetURL( aURL );
-        aName = aObj.GetMainURL();
+        aName = aObj.GetMainURL( INetURLObject::NO_DECODE );
     }
 
     SvStream * pStm = ::utl::UcbStreamHelper::CreateStream( aName, STREAM_STD_READ );
@@ -905,7 +905,7 @@ ULONG SwXMLTextBlocks::GetBlockText( const String& rShort, String& rText )
         }
 
         // get filter
-        Reference< xml::sax::XDocumentHandler > xFilter = new SwXMLTextBlockImport( *this, rText, bTextOnly ); 
+        Reference< xml::sax::XDocumentHandler > xFilter = new SwXMLTextBlockImport( *this, rText, bTextOnly );
 
         // connect parser and filter
         Reference< xml::sax::XParser > xParser( xXMLParser, UNO_QUERY );
@@ -954,7 +954,7 @@ ULONG SwXMLTextBlocks::PutBlockText( const String& rShort, const String& rName,
     */
     String aFolderName( rPackageName );
     String aStreamName = aFolderName + String::CreateFromAscii(".xml");
-    
+
     Reference< lang::XMultiServiceFactory > xServiceFactory =
         comphelper::getProcessServiceFactory();
     ASSERT( xServiceFactory.is(),
@@ -974,7 +974,7 @@ ULONG SwXMLTextBlocks::PutBlockText( const String& rShort, const String& rName,
     xDocStream->SetSize ( 0L );
     xDocStream->SetBufferSize( 2*1024 );
     String aPropName( String::CreateFromAscii( RTL_CONSTASCII_STRINGPARAM("MediaType") ) );
-    OUString aMime ( RTL_CONSTASCII_USTRINGPARAM ( "text/xml") ); 
+    OUString aMime ( RTL_CONSTASCII_USTRINGPARAM ( "text/xml") );
     Any aAny;
     aAny <<= aMime;
     xDocStream->SetProperty( aPropName, aAny );
@@ -982,7 +982,7 @@ ULONG SwXMLTextBlocks::PutBlockText( const String& rShort, const String& rName,
        uno::Reference<io::XActiveDataSource> xSrc(xWriter, uno::UNO_QUERY);
        xSrc->setOutputStream(xOut);
 
-       uno::Reference<xml::sax::XDocumentHandler> xHandler(xWriter, 
+       uno::Reference<xml::sax::XDocumentHandler> xHandler(xWriter,
         uno::UNO_QUERY);
 
        SwXMLTextBlockExport aExp(*this, GetXMLToken ( XML_UNFORMATTED_TEXT ), xHandler);
@@ -992,7 +992,7 @@ ULONG SwXMLTextBlocks::PutBlockText( const String& rShort, const String& rName,
     xDocStream.Clear();
     xRoot->Commit();
     xRoot.Clear();
-    
+
     if (! (nFlags & SWXML_NOROOTCOMMIT) )
         xBlkRoot->Commit();
 
@@ -1023,7 +1023,7 @@ void SwXMLTextBlocks::GeneratePackageName ( const String& rShort, String& rPacka
     }
 #if 0
     /*
-     * We can assume that if the package name we generate is already in the storage, 
+     * We can assume that if the package name we generate is already in the storage,
      * then we are over-writing it...*/
     if (xBlkRoot.Is() || 0 == OpenFile ( FALSE ) )
     {
@@ -1043,7 +1043,7 @@ void SwXMLTextBlocks::GeneratePackageName ( const String& rShort, String& rPacka
         */
     }
 #endif
-    
+
 }
 ULONG SwXMLTextBlocks::PutText( const String& rShort, const String& rName,
                                 const String& rText )
@@ -1092,7 +1092,7 @@ void SwXMLTextBlocks::ReadInfo( void )
         }
 
         // get filter
-        Reference< xml::sax::XDocumentHandler > xFilter = new SwXMLBlockListImport( *this ); 
+        Reference< xml::sax::XDocumentHandler > xFilter = new SwXMLBlockListImport( *this );
 
         // connect parser and filter
         Reference< xml::sax::XParser > xParser( xXMLParser, UNO_QUERY );
@@ -1147,11 +1147,11 @@ void SwXMLTextBlocks::WriteInfo( void )
         xDocStream->SetSize ( 0L );
         xDocStream->SetBufferSize( 16*1024 );
         String aPropName( String::CreateFromAscii( RTL_CONSTASCII_STRINGPARAM("MediaType") ) );
-        OUString aMime ( RTL_CONSTASCII_USTRINGPARAM ( "text/xml") ); 
+        OUString aMime ( RTL_CONSTASCII_USTRINGPARAM ( "text/xml") );
         Any aAny;
         aAny <<= aMime;
         xDocStream->SetProperty( aPropName, aAny );
-        
+
         Reference < io::XOutputStream> xOut = new utl::OOutputStreamWrapper(*xDocStream);
         uno::Reference<io::XActiveDataSource> xSrc(xWriter, uno::UNO_QUERY);
         xSrc->setOutputStream(xOut);
@@ -1207,8 +1207,8 @@ void SwXMLTextBlocks::AddTextNode ( const OUString & rText )
     pTxtNode->Insert ( rText, aIdx );
 }
 
-ULONG SwXMLTextBlocks::SetMacroTable( 
-    USHORT nIdx, 
+ULONG SwXMLTextBlocks::SetMacroTable(
+    USHORT nIdx,
     const SvxMacroTableDtor& rMacroTbl,
     sal_Bool bFileAlreadyOpen )
 {
@@ -1256,25 +1256,25 @@ ULONG SwXMLTextBlocks::SetMacroTable(
             xBlkRoot->Commit();
         }
         */
-        
 
-        SvStorageStreamRef xDocStream = xRoot->OpenStream( 
+
+        SvStorageStreamRef xDocStream = xRoot->OpenStream(
             sStreamName, STREAM_WRITE | STREAM_SHARE_DENYWRITE );
         DBG_ASSERT(xDocStream.Is(), "Can't create output stream");
         if ( xDocStream.Is() )
         {
             String aPropName( String::CreateFromAscii( RTL_CONSTASCII_STRINGPARAM("MediaType") ) );
-            OUString aMime ( RTL_CONSTASCII_USTRINGPARAM ( "text/xml") ); 
+            OUString aMime ( RTL_CONSTASCII_USTRINGPARAM ( "text/xml") );
             Any aAny;
             aAny <<= aMime;
             xDocStream->SetProperty( aPropName, aAny );
             xDocStream->SetSize( 0 );
             xDocStream->SetBufferSize( 16*1024 );
-            Reference<io::XOutputStream> xOutputStream = 
+            Reference<io::XOutputStream> xOutputStream =
                 new utl::OOutputStreamWrapper( *xDocStream );
 
             // get XML writer
-            Reference< io::XActiveDataSource > xSaxWriter( 
+            Reference< io::XActiveDataSource > xSaxWriter(
                 xServiceFactory->createInstance(
                     OUString::createFromAscii("com.sun.star.xml.sax.Writer") ),
                 UNO_QUERY );
@@ -1284,11 +1284,11 @@ ULONG SwXMLTextBlocks::SetMacroTable(
 
                 // connect XML writer to output stream
                 xSaxWriter->setOutputStream( xOutputStream );
-                Reference<xml::sax::XDocumentHandler> xDocHandler( 
+                Reference<xml::sax::XDocumentHandler> xDocHandler(
                     xSaxWriter, UNO_QUERY);
 
                 // construct events object
-                Reference<XNameAccess> xEvents = 
+                Reference<XNameAccess> xEvents =
                     new SvMacroTableEventDescriptor(rMacroTbl,aAutotextEvents);
 
                 // prepare arguments (prepend doc handler to given arguments)
@@ -1311,7 +1311,7 @@ ULONG SwXMLTextBlocks::SetMacroTable(
 
                     // filter!
                     Sequence<beans::PropertyValue> aFilterProps( 0 );
-                    Reference < document::XFilter > xFilter( xExporter, 
+                    Reference < document::XFilter > xFilter( xExporter,
                                                              UNO_QUERY );
                     xFilter->filter( aFilterProps );
                 }
