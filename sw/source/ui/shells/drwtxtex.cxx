@@ -2,9 +2,9 @@
  *
  *  $RCSfile: drwtxtex.cxx,v $
  *
- *  $Revision: 1.14 $
+ *  $Revision: 1.15 $
  *
- *  last change: $Author: cl $ $Date: 2002-04-25 10:47:00 $
+ *  last change: $Author: os $ $Date: 2002-05-27 13:02:32 $
  *
  *  The Contents of this file are made available subject to the terms of
  *  either of the following licenses
@@ -378,7 +378,10 @@ void SwDrawTextShell::Execute( SfxRequest &rReq )
                 SwCharDlg* pDlg = new SwCharDlg(pView->GetWindow(), *pView, aDlgAttr, 0, sal_True);
                 USHORT nRet = pDlg->Execute();
                 if(RET_OK == nRet )
+                {
+                    rReq.Done( *( pDlg->GetOutputItemSet() ) );
                     aNewAttr.Put(*pDlg->GetOutputItemSet());
+                }
                 delete( pDlg );
                 if(RET_OK != nRet)
                     return ;
@@ -421,7 +424,10 @@ void SwDrawTextShell::Execute( SfxRequest &rReq )
 
                 USHORT nRet = pDlg->Execute();
                 if(RET_OK == nRet)
+                {
+                    rReq.Done( *( pDlg->GetOutputItemSet() ) );
                     aNewAttr.Put(*pDlg->GetOutputItemSet());
+                }
                 delete( pDlg );
                 if(RET_OK != nRet)
                     return;
@@ -498,9 +504,9 @@ void SwDrawTextShell::Execute( SfxRequest &rReq )
                             SDRATTR_TEXTDIRECTION,
                             SDRATTR_TEXTDIRECTION );
 
-                aAttr.Put( SvxWritingModeItem( 
-                    nSlot == SID_TEXTDIRECTION_LEFT_TO_RIGHT ? 
-                        com::sun::star::text::WritingMode_LR_TB 
+                aAttr.Put( SvxWritingModeItem(
+                    nSlot == SID_TEXTDIRECTION_LEFT_TO_RIGHT ?
+                        com::sun::star::text::WritingMode_LR_TB
                         : com::sun::star::text::WritingMode_TB_RL ) );
                 pTmpView->SetAttributes( aAttr );
 
@@ -621,7 +627,7 @@ ASK_ESCAPE:
             {
                 com::sun::star::text::WritingMode eMode = (com::sun::star::text::WritingMode)
                                 ( (const SvxWritingModeItem&) aEditAttr.Get( SDRATTR_TEXTDIRECTION ) ).GetValue();
-                
+
                 if( nSlotId == SID_TEXTDIRECTION_LEFT_TO_RIGHT )
                 {
                     bFlag = eMode == com::sun::star::text::WritingMode_LR_TB;
