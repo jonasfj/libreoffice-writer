@@ -2,9 +2,9 @@
  *
  *  $RCSfile: unoframe.cxx,v $
  *
- *  $Revision: 1.16 $
+ *  $Revision: 1.17 $
  *
- *  last change: $Author: mib $ $Date: 2000-12-06 14:24:31 $
+ *  last change: $Author: jp $ $Date: 2000-12-07 15:11:35 $
  *
  *  The Contents of this file are made available subject to the terms of
  *  either of the following licenses
@@ -1065,9 +1065,9 @@ SdrObject *lcl_GetOrCreateSdrObject( SwFlyFrmFmt *pFmt )
         pObject = pContactObject->GetMaster();
 
         const SwFmtSurround& rSurround = pFmt->GetSurround();
-        pObject->SetLayer( 
+        pObject->SetLayer(
             ( SURROUND_THROUGHT == rSurround.GetSurround() &&
-              !pFmt->GetOpaque().GetValue() ) ? pDoc->GetHellId() 
+              !pFmt->GetOpaque().GetValue() ) ? pDoc->GetHellId()
                                              : pDoc->GetHeavenId() );
 
         pDrawModel->GetPage(0)->InsertObject( pObject );
@@ -1368,7 +1368,7 @@ uno::Any SwXFrame::getPropertyValue(const OUString& rPropertyName)
                 }
                 else
                 {
-                    String sPrefix( RTL_CONSTASCII_STRINGPARAM(sGraphicObjectProtocol) );	
+                    String sPrefix( RTL_CONSTASCII_STRINGPARAM(sGraphicObjectProtocol) );
                     String sId( pGrfNode->GetGrfObj().GetUniqueID(),
                                 RTL_TEXTENCODING_ASCII_US );
                     (sGrfName = sPrefix) += sId;
@@ -1847,7 +1847,7 @@ void SwXFrame::attachToRange(const uno::Reference< XTextRange > & xTextRange)
                 sFltName = String(uTemp);
             }
 
-            pFmt = 
+            pFmt =
                 pGrfObj ? pDoc->Insert( aPam, *pGrfObj, &aFrmSet, &aGrSet)
                          : pDoc->Insert( aPam, sGraphicURL, sFltName, 0,
                                         &aFrmSet, &aGrSet );
@@ -2549,8 +2549,9 @@ uno::Reference< XComponent >  SwXTextEmbeddedObject::getEmbeddedObject(void) thr
                     uno::Reference< util::XModifyBroadcaster >  xBrdcst(xModel, uno::UNO_QUERY);
                     if( xBrdcst.is() )
                     {
-                        SwXOLEListener* pSwOLEListener = 0;
-                        if( !xSwXOLEListener.is() )
+                        SwXOLEListener* pSwOLEListener = (SwXOLEListener*)
+                                                        xSwXOLEListener.get();
+                        if( !pSwOLEListener )
                             xSwXOLEListener = pSwOLEListener = new SwXOLEListener;
                         if( pSwOLEListener->AddOLEFmt( *pFmt ) )
                             xBrdcst->addModifyListener( xSwXOLEListener );
