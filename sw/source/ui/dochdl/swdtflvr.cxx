@@ -2,9 +2,9 @@
  *
  *  $RCSfile: swdtflvr.cxx,v $
  *
- *  $Revision: 1.72 $
+ *  $Revision: 1.73 $
  *
- *  last change: $Author: rt $ $Date: 2003-12-01 09:44:19 $
+ *  last change: $Author: hr $ $Date: 2004-02-03 16:38:51 $
  *
  *  The Contents of this file are made available subject to the terms of
  *  either of the following licenses
@@ -118,9 +118,6 @@
 #endif
 #ifndef _MIECLIP_HXX
 #include <sfx2/mieclip.hxx>
-#endif
-#ifndef _OFF_APP_HXX
-#include <offmgr/app.hxx>
 #endif
 #ifndef _SVDETC_HXX
 #include <svx/svdetc.hxx>
@@ -304,7 +301,7 @@
 #include <svx/svdpage.hxx>
 #endif
 
-// #109590# 
+// #109590#
 #ifndef _SWCRSR_HXX
 #include <swcrsr.hxx>
 #endif
@@ -469,7 +466,7 @@ SwTransferable::~SwTransferable()
 
     SwModule* pMod = SW_MOD();
     if(pMod)
-    {        
+    {
         if ( pMod->pClipboard == this )
             pMod->pClipboard = 0;
         else if ( pMod->pDragDrop == this )
@@ -772,15 +769,15 @@ sal_Bool SwTransferable::WriteObject( SotStorageStreamRef& xStream,
             // attributes as hard attributes to preserve them for saving
             const SfxItemPool& rItemPool = pModel->GetItemPool();
             const SvxFontHeightItem& rDefaultFontHeight = (const SvxFontHeightItem&)rItemPool.GetDefaultItem(EE_CHAR_FONTHEIGHT);
-            
+
             // SW should have no MasterPages
             DBG_ASSERT(0L == pModel->GetMasterPageCount(), "SW with MasterPages (!)");
 
-            for(sal_uInt16 a(0); a < pModel->GetPageCount(); a++) 
+            for(sal_uInt16 a(0); a < pModel->GetPageCount(); a++)
             {
                 const SdrPage* pPage = pModel->GetPage(a);
                 SdrObjListIter aIter(*pPage, IM_DEEPNOGROUPS);
-                
+
                 while(aIter.IsMore())
                 {
                     SdrObject* pObj = aIter.Next();
@@ -3436,7 +3433,7 @@ int SwTransferable::PrivateDrop( SwWrtShell& rSh, const Point& rDragPt,
         rSrcSh.Pop( FALSE );
 
         /* #109590# after dragging a table selection inside one shell
-            set cursor to the drop position. */ 
+            set cursor to the drop position. */
         if (bTblSel && &rSh == &rSrcSh)
         {
             rSrcSh.SwCrsrShell::SetCrsr(rDragPt);
@@ -3504,7 +3501,7 @@ int SwTransferable::PrivateDrop( SwWrtShell& rSh, const Point& rDragPt,
 }
 
 // Interfaces for Selection
-void SwTransferable::CreateSelection( SwWrtShell& rSh, 
+void SwTransferable::CreateSelection( SwWrtShell& rSh,
                                       const ViewShell * _pCreatorView )
 {
     SwModule *pMod = SW_MOD();
@@ -3519,11 +3516,11 @@ void SwTransferable::CreateSelection( SwWrtShell& rSh,
     pNew->CopyToSelection( rSh.GetWin() );
 }
 
-void SwTransferable::ClearSelection( SwWrtShell& rSh, 
+void SwTransferable::ClearSelection( SwWrtShell& rSh,
                                      const ViewShell * _pCreatorView)
 {
     SwModule *pMod = SW_MOD();
-    if( pMod->pXSelection && 
+    if( pMod->pXSelection &&
         ((!pMod->pXSelection->pWrtShell) || (pMod->pXSelection->pWrtShell == &rSh)) &&
         /* #96392# */
         (!_pCreatorView || (pMod->pXSelection->pCreatorView == _pCreatorView)) )
@@ -3545,22 +3542,22 @@ const Sequence< sal_Int8 >& SwTransferable::getUnoTunnelId()
         rtl_createUuid( reinterpret_cast< sal_uInt8* >( aSeq.getArray() ), 0, sal_True );
     }
     return aSeq;
-}        
+}
 /* -----------------3/31/2003 11:46AM----------------
 
  --------------------------------------------------*/
 sal_Int64 SwTransferable::getSomething( const Sequence< sal_Int8 >& rId ) throw( RuntimeException )
 {
     sal_Int64 nRet;
-    if( ( rId.getLength() == 16 ) && 
+    if( ( rId.getLength() == 16 ) &&
         ( 0 == rtl_compareMemory( getUnoTunnelId().getConstArray(), rId.getConstArray(), 16 ) ) )
     {
         nRet = (sal_Int64) this;
     }
-    else 
+    else
         nRet = TransferableHelper::getSomething(rId);
     return nRet;
-}        
+}
 
 /*  */
 
