@@ -2,9 +2,9 @@
  *
  *  $RCSfile: accpara.cxx,v $
  *
- *  $Revision: 1.57 $
+ *  $Revision: 1.58 $
  *
- *  last change: $Author: rt $ $Date: 2003-09-19 10:55:34 $
+ *  last change: $Author: hr $ $Date: 2004-11-09 13:43:28 $
  *
  *  The Contents of this file are made available subject to the terms of
  *  either of the following licenses
@@ -255,35 +255,9 @@ OUString SwAccessibleParagraph::GetString()
 
 OUString SwAccessibleParagraph::GetDescription()
 {
-    const OUString& rText = GetString();
-
-    // the description contains the first sentence up to
-    // MAX_DESC_TEXT_LEN characters (including the next full word)
-    Boundary aBound;
-    if( rText.getLength() > 0 )
-    {
-        GetSentenceBoundary( aBound, rText, 0 );
-        if( aBound.endPos > MAX_DESC_TEXT_LEN )
-        {
-            GetWordBoundary( aBound, rText, MAX_DESC_TEXT_LEN );
-            aBound.startPos = 0;
-        }
-    }
-    else
-        GetEmptyBoundary( aBound );
-    OUString sArg1( rText.copy( aBound.startPos, aBound.endPos ) );
-
-    sal_Int16 nResId;
-    if( IsHeading() )
-    {
-        nResId = STR_ACCESS_HEADING_DESC;
-    }
-    else
-    {
-        nResId = STR_ACCESS_PARAGRAPH_DESC;
-    }
-
-    return GetResource( nResId, &sArg1 );
+    // --> OD 2004-09-29 #117933# - provide empty description for paragraphs
+    return OUString();
+    // <--
 }
 
 sal_Int32 SwAccessibleParagraph::GetCaretPos()
@@ -635,10 +609,9 @@ SwAccessibleParagraph::SwAccessibleParagraph(
     vos::OGuard aGuard(Application::GetSolarMutex());
 
     bIsHeading = IsHeading();
-    sal_uInt16 nResId = bIsHeading ? STR_ACCESS_HEADING_NAME
-                                   : STR_ACCESS_PARAGRAPH_NAME;
-    OUString sArg( OUString::valueOf( nPara ) );
-    SetName( GetResource( nResId, &sArg ) );
+    // --> OD 2004-09-27 #117970# - set an empty accessibility name for paragraphs
+    SetName( OUString() );
+    // <--
 
     // If this object has the focus, then it is remembered by the map itself.
     nOldCaretPos = GetCaretPos();
@@ -913,11 +886,11 @@ sal_Bool SwAccessibleParagraph::GetTextBoundary(
     sal_Int16 nTextType )
     throw (
         IndexOutOfBoundsException,
-        IllegalArgumentException, 
+        IllegalArgumentException,
         RuntimeException)
 {
     // error checking
-    if( !( AccessibleTextType::LINE == nTextType 
+    if( !( AccessibleTextType::LINE == nTextType
                 ? IsValidPosition( nPos, rText.getLength() )
                 : IsValidChar( nPos, rText.getLength() ) ) )
         throw IndexOutOfBoundsException();
@@ -1298,8 +1271,8 @@ com::sun::star::awt::Rectangle SwAccessibleParagraph::getCharacterBounds(
 
     CHECK_FOR_DEFUNC_THIS( XAccessibleText, *this );
 
-    
-    /*  #i12332# The position after the string needs special treatment. 
+
+    /*  #i12332# The position after the string needs special treatment.
         IsValidChar -> IsValidPosition
     */
     if( ! (IsValidPosition( nIndex, GetString().getLength() ) ) )
@@ -1331,7 +1304,7 @@ com::sun::star::awt::Rectangle SwAccessibleParagraph::getCharacterBounds(
     else
         nPos = GetPortionData().FillSpecialPos
             (nIndex, aSpecialPos, aMoveState.pSpecialPos );
-    
+
     // call GetCharRect
     SwRect aCoreRect;
     SwIndex aIndex( pNode, nPos );
@@ -1391,11 +1364,11 @@ sal_Int32 SwAccessibleParagraph::getIndexAtPoint( const com::sun::star::awt::Poi
     {
         /* #i12332# rPoint is may also be in rectangle returned by
             getCharacterBounds(getCharacterCount() */
- 
-        com::sun::star::awt::Rectangle aRectEndPos = 
+
+        com::sun::star::awt::Rectangle aRectEndPos =
             getCharacterBounds(getCharacterCount());
 
-        if (rPoint.X - aRectEndPos.X >= 0 && 
+        if (rPoint.X - aRectEndPos.X >= 0 &&
             rPoint.X - aRectEndPos.X < aRectEndPos.Width &&
             rPoint.Y - aRectEndPos.Y >= 0 &&
             rPoint.Y - aRectEndPos.Y < aRectEndPos.Height)
@@ -1550,7 +1523,7 @@ OUString SwAccessibleParagraph::getTextRange(
         aResult.SegmentStart = aBound.startPos;
         aResult.SegmentEnd = aBound.endPos;
     }
-    
+
     return aResult;
 }
 
@@ -1960,7 +1933,7 @@ sal_Int32 SAL_CALL SwAccessibleParagraph::getHyperLinkCount()
     return nCount;
 }
 
-Reference< XAccessibleHyperlink > SAL_CALL 
+Reference< XAccessibleHyperlink > SAL_CALL
     SwAccessibleParagraph::getHyperLink( sal_Int32 nLinkIndex )
     throw (IndexOutOfBoundsException, RuntimeException)
 {
@@ -1981,7 +1954,7 @@ Reference< XAccessibleHyperlink > SAL_CALL
         {
             if( !pHyperTextData )
                 pHyperTextData = new SwAccessibleHyperTextData;
-            SwAccessibleHyperTextData::iterator aIter = 
+            SwAccessibleHyperTextData::iterator aIter =
                 pHyperTextData ->find( pHt );
             if( aIter != pHyperTextData->end() )
             {
@@ -1989,11 +1962,11 @@ Reference< XAccessibleHyperlink > SAL_CALL
             }
             if( !xRet.is() )
             {
-                sal_Int32 nHStt= GetPortionData().GetAccessiblePosition( 
+                sal_Int32 nHStt= GetPortionData().GetAccessiblePosition(
                                 max( aHIter.startIdx(), *pHt->GetStart() ) );
-                sal_Int32 nHEnd= GetPortionData().GetAccessiblePosition( 
+                sal_Int32 nHEnd= GetPortionData().GetAccessiblePosition(
                                 min( aHIter.endIdx(), *pHt->GetAnyEnd() ) );
-                xRet = new SwAccessibleHyperlink( aHIter.getCurrHintPos(), 
+                xRet = new SwAccessibleHyperlink( aHIter.getCurrHintPos(),
                                                   this, nHStt, nHEnd );
                 if( aIter != pHyperTextData->end() )
                 {
