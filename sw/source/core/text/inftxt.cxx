@@ -2,9 +2,9 @@
  *
  *  $RCSfile: inftxt.cxx,v $
  *
- *  $Revision: 1.67 $
+ *  $Revision: 1.68 $
  *
- *  last change: $Author: os $ $Date: 2002-04-25 13:54:47 $
+ *  last change: $Author: fme $ $Date: 2002-05-07 10:57:47 $
  *
  *  The Contents of this file are made available subject to the terms of
  *  either of the following licenses
@@ -694,13 +694,18 @@ void SwTxtPaintInfo::_DrawText( const XubString &rText, const SwLinePortion &rPo
 {
     if( !nLen )
         return;
-    if(	GetFont()->IsBlink() && OnWin() && rPor.Width() )
+    if( GetFont()->IsBlink() && OnWin() && rPor.Width() )
     {
-        if( !pBlink )
-            pBlink = new SwBlink();
-        pBlink->Insert( &rPor, aPos, GetTxtFrm() );
-        if( !pBlink->IsVisible() )
-            return;
+        // check if accessibility options allow blinking portions:
+        const ViewShell* pSh = GetTxtFrm()->GetShell();
+        if ( pSh && ! pSh->GetViewOptions()->IsStopAnimatedText() )
+        {
+            if( !pBlink )
+                pBlink = new SwBlink();
+            pBlink->Insert( &rPor, aPos, GetTxtFrm() );
+            if( !pBlink->IsVisible() )
+                return;
+        }
     }
 
     short nSpaceAdd = ( rPor.IsBlankPortion() || rPor.IsDropPortion() ||
