@@ -2,9 +2,9 @@
  *
  *  $RCSfile: wrtw8esh.cxx,v $
  *
- *  $Revision: 1.55 $
+ *  $Revision: 1.56 $
  *
- *  last change: $Author: cmc $ $Date: 2002-11-22 12:13:12 $
+ *  last change: $Author: dr $ $Date: 2002-11-29 11:54:46 $
  *
  *  The Contents of this file are made available subject to the terms of
  *  either of the following licenses
@@ -327,13 +327,13 @@ void PlcDrawObj::WritePlc(SwWW8Writer& rWrt) const
             //xaLeft/yaTop/xaRight/yaBottom - rel. to anchor
             //(most of) the border is outside the graphic is word, so
             //change dimensions to fit
-            SwWW8Writer::WriteLong(*rWrt.pTableStrm,aRect.Left() + 
+            SwWW8Writer::WriteLong(*rWrt.pTableStrm,aRect.Left() +
                 aIter->mnThick);
-            SwWW8Writer::WriteLong(*rWrt.pTableStrm,aRect.Top() + 
+            SwWW8Writer::WriteLong(*rWrt.pTableStrm,aRect.Top() +
                 aIter->mnThick);
-            SwWW8Writer::WriteLong(*rWrt.pTableStrm,aRect.Right() - 
+            SwWW8Writer::WriteLong(*rWrt.pTableStrm,aRect.Right() -
                 aIter->mnThick);
-            SwWW8Writer::WriteLong(*rWrt.pTableStrm,aRect.Bottom() - 
+            SwWW8Writer::WriteLong(*rWrt.pTableStrm,aRect.Bottom() -
                 aIter->mnThick);
 
             //fHdr/bx/by/wr/wrk/fRcaSimple/fBelowText/fAnchorLock
@@ -380,7 +380,7 @@ void PlcDrawObj::WritePlc(SwWW8Writer& rWrt) const
     }
 }
 
-void MainTxtPlcDrawObj::RegisterWithFib(WW8Fib &rFib, sal_uInt32 nStart, 
+void MainTxtPlcDrawObj::RegisterWithFib(WW8Fib &rFib, sal_uInt32 nStart,
     sal_uInt32 nLen) const
 {
     rFib.fcPlcfspaMom = nStart;
@@ -392,7 +392,7 @@ WW8_CP MainTxtPlcDrawObj::GetCpOffset(const WW8Fib &) const
     return 0;
 }
 
-void HdFtPlcDrawObj::RegisterWithFib(WW8Fib &rFib, sal_uInt32 nStart, 
+void HdFtPlcDrawObj::RegisterWithFib(WW8Fib &rFib, sal_uInt32 nStart,
     sal_uInt32 nLen) const
 {
     rFib.fcPlcfspaHdr = nStart;
@@ -404,7 +404,7 @@ WW8_CP HdFtPlcDrawObj::GetCpOffset(const WW8Fib &rFib) const
     return rFib.ccpText + rFib.ccpFtn;
 }
 
-bool PlcDrawObj::Append(SwWW8Writer& rWrt, WW8_CP nCp, const SwFrmFmt& rFmt, 
+bool PlcDrawObj::Append(SwWW8Writer& rWrt, WW8_CP nCp, const SwFrmFmt& rFmt,
     const Point& rNdTopLeft)
 {
     bool bRet = false;
@@ -527,7 +527,7 @@ static bool lcl_IsFlyInFlyHere(const SwFrmFmt* pFmt, ULONG nStart, ULONG nEnd)
     return bRet;
 }
 
-void SwWW8Writer::AppendFlyInFlys(WW8_CP& rCP, const SwFrmFmt& rFrmFmt, 
+void SwWW8Writer::AppendFlyInFlys(WW8_CP& rCP, const SwFrmFmt& rFrmFmt,
     const Point& rNdTopLeft)
 {
     ASSERT(!pEscher, "der EscherStream wurde schon geschrieben!");
@@ -593,7 +593,7 @@ void SwWW8Writer::AppendFlyInFlys(WW8_CP& rCP, const SwFrmFmt& rFrmFmt,
 
         const SwNodeIndex* pNodeIndex = rFrmFmt.GetCntnt().GetCntntIdx();
         ULONG nNodeStt = pNodeIndex ? pNodeIndex->GetIndex()+1 : 0;
-        ULONG nNodeEnd = pNodeIndex ? 
+        ULONG nNodeEnd = pNodeIndex ?
             pNodeIndex->GetNode().EndOfSectionIndex() : 0;
 
         WW8SaveData aSaveData(*this,nNodeStt,nNodeEnd);
@@ -657,7 +657,7 @@ void SwWW8Writer::AppendFlyInFlys(WW8_CP& rCP, const SwFrmFmt& rFrmFmt,
     else
     {
         PlcDrawObj *pDrwO;
-        if (TXT_HDFT == nTxtTyp) 
+        if (TXT_HDFT == nTxtTyp)
             pDrwO = pHFSdrObjs;
         else
             pDrwO = pSdrObjs;
@@ -665,7 +665,7 @@ void SwWW8Writer::AppendFlyInFlys(WW8_CP& rCP, const SwFrmFmt& rFrmFmt,
         if (pDrwO->Append( *this, rCP, rFrmFmt, rNdTopLeft))
         {
             static BYTE __READONLY_DATA aSpec8[] = {
-                0x03, 0x6a, 0, 0, 0, 0,	// sprmCObjLocation 
+                0x03, 0x6a, 0, 0, 0, 0,	// sprmCObjLocation
                 0x55, 0x08, 1			// sprmCFSpec
             };
                                                     // fSpec-Attribut true
@@ -715,7 +715,7 @@ private:
     WW8_SdrAttrIter(const WW8_SdrAttrIter&);
     WW8_SdrAttrIter& operator=(const WW8_SdrAttrIter&);
 public:
-    WW8_SdrAttrIter(SwWW8Writer& rWr, const EditTextObject& rEditObj, 
+    WW8_SdrAttrIter(SwWW8Writer& rWr, const EditTextObject& rEditObj,
         BYTE nType);
     void NextPara( USHORT nPar );
     void OutParaAttr(bool bCharAttr);
@@ -735,7 +735,7 @@ public:
 };
 
 
-WW8_SdrAttrIter::WW8_SdrAttrIter(SwWW8Writer& rWr, 
+WW8_SdrAttrIter::WW8_SdrAttrIter(SwWW8Writer& rWr,
     const EditTextObject& rEditObj, BYTE nTyp)
     : WW8_AttrIter( rWr ), pEditObj(&rEditObj), pEditPool(0),
     aTxtAtrArr( 0, 4 ), aChrTxtAtrArr( 0, 4 ), aChrSetArr( 0, 4 ),
@@ -857,7 +857,7 @@ void WW8_SdrAttrIter::OutEEField(const SfxPoolItem& rHt)
 
         const String &rStr = pURL->GetRepresentation();
         rWrt.OutSwString(rStr, 0, rStr.Len(), true, GetNodeCharSet());
-        
+
         EndURL();
         rWrt.nTxtTyp = nOldTxtTyp;
     }
@@ -1158,7 +1158,7 @@ void SwEscherEx::WritePictures()
 
 // Output- Routines for Escher Export
 
-SwBasicEscherEx::SwBasicEscherEx(SvStream* pStrm, SwWW8Writer& rWW8Wrt, 
+SwBasicEscherEx::SwBasicEscherEx(SvStream* pStrm, SwWW8Writer& rWW8Wrt,
     UINT32 nDrawings)
     : EscherEx(*pStrm, nDrawings), rWrt(rWW8Wrt), pEscherStrm(pStrm),
     pPictStrm(0)
@@ -1245,7 +1245,7 @@ INT32 SwBasicEscherEx::WriteGrfFlyFrame(const SwFrmFmt& rFmt, UINT32 nShapeId)
     aPropOpt.AddOpt( ESCHER_Prop_pibFlags, nFlags );
     nBorderThick = WriteFlyFrameAttr(rFmt,mso_sptPictureFrame,aPropOpt);
     WriteGrfAttr( rGrfNd, aPropOpt );
-    
+
     aPropOpt.Commit( GetStream() );
 
     // store anchor attribute
@@ -1360,7 +1360,7 @@ void SwBasicEscherEx::SetPicId(const SdrObject &, UINT32,
 {
 }
 
-void SwEscherEx::SetPicId(const SdrObject &rSdrObj, UINT32 nShapeId, 
+void SwEscherEx::SetPicId(const SdrObject &rSdrObj, UINT32 nShapeId,
     EscherPropertyContainer &rPropOpt)
 {
     pTxtBxs->Append(rSdrObj, nShapeId);
@@ -1496,7 +1496,7 @@ INT32 SwBasicEscherEx::WriteFlyFrameAttr(const SwFrmFmt& rFmt, MSO_SPT eShapeTyp
         const SvxBrushItem *pBrush= (const SvxBrushItem*)pItem;
         bool bSetOpacity = false;
         sal_uInt32 nOpaque = 0;
-        
+
         if (const GraphicObject *pGraphicObject = pBrush->GetGraphicObject())
         {
             ByteString aUniqueId = pGraphicObject->GetUniqueID();
@@ -1519,7 +1519,7 @@ INT32 SwBasicEscherEx::WriteFlyFrameAttr(const SwFrmFmt& rFmt, MSO_SPT eShapeTyp
                 Point aEmptyPoint = Point();
                 Rectangle aRect(aEmptyPoint, aSize);
 
-                sal_uInt32 nBlibId = GetBlibID(*QueryPicStream(), aUniqueId, 
+                sal_uInt32 nBlibId = GetBlibID(*QueryPicStream(), aUniqueId,
                     aRect, 0);
                 if (nBlibId)
                     rPropOpt.AddOpt(ESCHER_Prop_fillBlip,nBlibId,sal_True);
@@ -1733,7 +1733,7 @@ SwEscherEx::SwEscherEx(SvStream* pStrm, SwWW8Writer& rWW8Wrt)
 
         EndSdrObjectPage();		    // ???? Bugfix for 74724
 
-        LeaveGroup();
+//        LeaveGroup();             // done in EndSdrObjectPage()
 
         if( nSecondShapeId )
         {
@@ -1800,8 +1800,8 @@ extern "C"
 {
     static int CompUINT32( const void *pFirst, const void *pSecond)
     {
-        return( 
-            (*((UINT32*)pFirst ) & 0xFFFFFF00) - 
+        return(
+            (*((UINT32*)pFirst ) & 0xFFFFFF00) -
             (*((UINT32*)pSecond) & 0xFFFFFF00) );
     }
 }
