@@ -2,9 +2,9 @@
  *
  *  $RCSfile: swdtflvr.hxx,v $
  *
- *  $Revision: 1.4 $
+ *  $Revision: 1.5 $
  *
- *  last change: $Author: tl $ $Date: 2001-03-30 15:06:18 $
+ *  last change: $Author: jp $ $Date: 2001-04-30 15:48:43 $
  *
  *  The Contents of this file are made available subject to the terms of
  *  either of the following licenses
@@ -126,7 +126,6 @@ class SwTransferable : public TransferableHelper
     void DeleteSelection();
 
     // helper methods for the paste
-    static USHORT GetSotDestination( const SwWrtShell& rSh, const Point* = 0 );
     static void SetSelInShell( SwWrtShell& , BOOL , const Point* );
     static BOOL _CheckForURLOrLNKFile( TransferableDataHelper& rData,
                                 String& rFileName, String* pTitle = 0 );
@@ -192,6 +191,8 @@ public:
     SwTransferable( SwWrtShell& );
     virtual ~SwTransferable();
 
+    static USHORT GetSotDestination( const SwWrtShell& rSh, const Point* = 0 );
+
     // set properties on the document, like PageMargin, VisArea.
     // And set real Size
     static void InitOle( SvEmbeddedObjectRef rRef, SwDoc& rDoc );
@@ -219,7 +220,7 @@ public:
     static int PasteFormat( SwWrtShell& rSh, TransferableDataHelper& rData,
                              ULONG nFormat );
 
-    static void FillClipFmtItem( SwWrtShell& rSh, 
+    static void FillClipFmtItem( SwWrtShell& rSh,
                                 const TransferableDataHelper& rData,
                                 SvxClipboardFmtItem & rToFill );
 
