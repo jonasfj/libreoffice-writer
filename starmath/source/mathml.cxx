@@ -2,9 +2,9 @@
  *
  *  $RCSfile: mathml.cxx,v $
  *
- *  $Revision: 1.72 $
+ *  $Revision: 1.73 $
  *
- *  last change: $Author: obo $ $Date: 2004-11-15 16:50:39 $
+ *  last change: $Author: rt $ $Date: 2005-01-11 13:08:41 $
  *
  *  The Contents of this file are made available subject to the terms of
  *  either of the following licenses
@@ -407,17 +407,8 @@ ULONG SmXMLWrapper::Import(SfxMedium &rMedium)
                             new comphelper::PropertySetInfo( aInfoMap ) ) );
 
     // Set base URI
-    ::rtl::OUString aBaseURL( INetURLObject::GetBaseURL() ); 
-    if ( rMedium.GetItemSet() )
-    {
-        const SfxStringItem* pBaseURLItem = static_cast<const SfxStringItem*>(
-                rMedium.GetItemSet()->GetItem(SID_DOC_BASEURL) );
-        if ( pBaseURLItem )
-            aBaseURL = pBaseURLItem->GetValue();
-    }
-
     OUString sPropName( RTL_CONSTASCII_USTRINGPARAM("BaseURI") );
-    xInfoSet->setPropertyValue( sPropName, makeAny( aBaseURL ) );
+    xInfoSet->setPropertyValue( sPropName, makeAny( rMedium.GetBaseURL() ) );
 
     sal_Int32 nSteps=3;
     if( !(rMedium.IsStorage()))
@@ -450,8 +441,8 @@ ULONG SmXMLWrapper::Import(SfxMedium &rMedium)
 
             if( aName.getLength() )
             {
-                sPropName = OUString(RTL_CONSTASCII_USTRINGPARAM("StreamRelPath")); 
-                xInfoSet->setPropertyValue( sPropName, makeAny( aName ) ); 
+                sPropName = OUString(RTL_CONSTASCII_USTRINGPARAM("StreamRelPath"));
+                xInfoSet->setPropertyValue( sPropName, makeAny( aName ) );
             }
         }
 
@@ -460,7 +451,7 @@ ULONG SmXMLWrapper::Import(SfxMedium &rMedium)
             xStatusIndicator->setValue(nSteps++);
 
         ULONG nWarn = ReadThroughComponent(
-            rMedium.GetStorage(), xModelComp, "meta.xml", "Meta.xml", 
+            rMedium.GetStorage(), xModelComp, "meta.xml", "Meta.xml",
             xServiceFactory, xInfoSet,
                 (bOASIS ? "com.sun.star.comp.Math.XMLOasisMetaImporter"
                         : "com.sun.star.comp.Math.XMLMetaImporter")	);
@@ -469,9 +460,9 @@ ULONG SmXMLWrapper::Import(SfxMedium &rMedium)
         {
             if (xStatusIndicator.is())
                 xStatusIndicator->setValue(nSteps++);
-    
+
             nWarn = ReadThroughComponent(
-                rMedium.GetStorage(), xModelComp, "settings.xml", 0, 
+                rMedium.GetStorage(), xModelComp, "settings.xml", 0,
                 xServiceFactory, xInfoSet,
                 (bOASIS ? "com.sun.star.comp.Math.XMLOasisSettingsImporter"
                         : "com.sun.star.comp.Math.XMLSettingsImporter" ) );
@@ -482,7 +473,7 @@ ULONG SmXMLWrapper::Import(SfxMedium &rMedium)
                     xStatusIndicator->setValue(nSteps++);
 
                 nError = ReadThroughComponent(
-                    rMedium.GetStorage(), xModelComp, "content.xml", "Content.xml", 
+                    rMedium.GetStorage(), xModelComp, "content.xml", "Content.xml",
                     xServiceFactory, xInfoSet, "com.sun.star.comp.Math.XMLImporter" );
             }
             else
@@ -510,11 +501,11 @@ ULONG SmXMLWrapper::Import(SfxMedium &rMedium)
 
 SmXMLImport::SmXMLImport(
     const ::com::sun::star::uno::Reference< ::com::sun::star::lang::XMultiServiceFactory > xServiceFactory,
-    sal_uInt16 nImportFlags) 
+    sal_uInt16 nImportFlags)
 :	SvXMLImport( xServiceFactory, nImportFlags ),
-    pPresLayoutElemTokenMap(0), 
+    pPresLayoutElemTokenMap(0),
     pPresElemTokenMap(0),
-    pPresScriptEmptyElemTokenMap(0), 
+    pPresScriptEmptyElemTokenMap(0),
     pPresTableElemTokenMap(0),
     pPresLayoutAttrTokenMap(0),
     pFencedAttrTokenMap(0),
@@ -528,11 +519,11 @@ SmXMLImport::SmXMLImport(
 SmXMLImport::SmXMLImport(
     const ::com::sun::star::uno::Reference< ::com::sun::star::lang::XMultiServiceFactory > xServiceFactory,
     com::sun::star::uno::Reference<com::sun::star::frame::XModel> &rModel,
-    const rtl::OUString &rFileName) 
+    const rtl::OUString &rFileName)
 :	SvXMLImport( xServiceFactory, rModel ) ,
-    pPresLayoutElemTokenMap(0), 
+    pPresLayoutElemTokenMap(0),
     pPresElemTokenMap(0),
-    pPresScriptEmptyElemTokenMap(0), 
+    pPresScriptEmptyElemTokenMap(0),
     pPresTableElemTokenMap(0),
     pPresLayoutAttrTokenMap(0),
     pFencedAttrTokenMap(0),
@@ -562,7 +553,7 @@ const uno::Sequence< sal_Int8 > & SmXMLImport::getUnoTunnelId() throw()
 // #110680#
 SmXMLExport::SmXMLExport(
     const ::com::sun::star::uno::Reference< ::com::sun::star::lang::XMultiServiceFactory > xServiceFactory,
-    sal_uInt16 nExportFlags) 
+    sal_uInt16 nExportFlags)
 :	SvXMLExport( xServiceFactory, MAP_INCH, XML_MATH, nExportFlags ) ,
     pTree(0) ,
     bSuccess(sal_False)
@@ -574,10 +565,10 @@ SmXMLExport::SmXMLExport(
     const ::com::sun::star::uno::Reference< ::com::sun::star::lang::XMultiServiceFactory > xServiceFactory,
     const SmNode *pIn,
     const rtl::OUString &rFileName,
-    com::sun::star::uno::Reference<	com::sun::star::xml::sax::XDocumentHandler> &rHandler) 
-:	SvXMLExport( xServiceFactory, rFileName, rHandler ), 
-    pTree(pIn), 
-    bSuccess(sal_False) 
+    com::sun::star::uno::Reference<	com::sun::star::xml::sax::XDocumentHandler> &rHandler)
+:	SvXMLExport( xServiceFactory, rFileName, rHandler ),
+    pTree(pIn),
+    bSuccess(sal_False)
 {
 }
 
@@ -1146,16 +1137,8 @@ sal_Bool SmXMLWrapper::Export(SfxMedium &rMedium)
     xInfoSet->setPropertyValue( sUsePrettyPrinting, aAny );
 
     // Set base URI
-    ::rtl::OUString aBaseURL;
-    if ( rMedium.GetItemSet() )
-    {
-        const SfxStringItem* pBaseURLItem = static_cast<const SfxStringItem*>(
-                rMedium.GetItemSet()->GetItem(SID_DOC_BASEURL) );
-        if ( pBaseURLItem )
-            aBaseURL = pBaseURLItem->GetValue();
-    }
     OUString sPropName( RTL_CONSTASCII_USTRINGPARAM("BaseURI") );
-    xInfoSet->setPropertyValue( sPropName, makeAny( aBaseURL ) );
+    xInfoSet->setPropertyValue( sPropName, makeAny( rMedium.GetBaseURL( true ) ) );
 
     sal_Int32 nSteps=0;
     if (xStatusIndicator.is())
@@ -1179,8 +1162,8 @@ sal_Bool SmXMLWrapper::Export(SfxMedium &rMedium)
 
             if( aName.getLength() )
             {
-                sPropName = OUString(RTL_CONSTASCII_USTRINGPARAM("StreamRelPath")); 
-                xInfoSet->setPropertyValue( sPropName, makeAny( aName ) ); 
+                sPropName = OUString(RTL_CONSTASCII_USTRINGPARAM("StreamRelPath"));
+                xInfoSet->setPropertyValue( sPropName, makeAny( aName ) );
             }
         }
 
