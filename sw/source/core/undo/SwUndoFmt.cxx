@@ -2,9 +2,9 @@
  *
  *  $RCSfile: SwUndoFmt.cxx,v $
  *
- *  $Revision: 1.2 $
+ *  $Revision: 1.3 $
  *
- *  last change: $Author: hr $ $Date: 2004-09-08 14:57:44 $
+ *  last change: $Author: rt $ $Date: 2004-10-22 08:14:11 $
  *
  *  The Contents of this file are made available subject to the terms of
  *  either of the following licenses
@@ -74,8 +74,8 @@
 
 SwUndoFmtCreate::SwUndoFmtCreate
 (USHORT nUndoId, SwFmt * _pNew, SwFmt * _pDerivedFrom, SwDoc * _pDoc)
-    : SwUndo(nUndoId), pNew(_pNew), 
-      sDerivedFrom(_pDerivedFrom->GetName()), 
+    : SwUndo(nUndoId), pNew(_pNew),
+      sDerivedFrom(_pDerivedFrom->GetName()),
       pDoc(_pDoc), pNewSet(NULL), nId(0), bAuto(FALSE)
 {
 }
@@ -101,7 +101,7 @@ void SwUndoFmtCreate::Undo(SwUndoIter & rIter)
             bAuto = pNew->IsAuto();
 
             BOOL bDoesUndo = pDoc->DoesUndo();
-            
+
             pDoc->DoUndo(FALSE);
             Delete();
             pDoc->DoUndo(bDoesUndo);
@@ -115,13 +115,13 @@ void SwUndoFmtCreate::Redo(SwUndoIter & rIter)
 
     pDoc->DoUndo(FALSE);
     SwFmt * pDerivedFrom = Find(sDerivedFrom);
-    SwFmt * pFmt = Create(pDerivedFrom); 
+    SwFmt * pFmt = Create(pDerivedFrom);
 
     if (pFmt && pNewSet)
     {
         pFmt->SetAuto(bAuto);
         pDoc->ChgFmt(*pFmt, *pNewSet);
-        pFmt->SetPoolFmtId((pFmt->GetPoolFmtId() 
+        pFmt->SetPoolFmtId((pFmt->GetPoolFmtId()
                             & ~COLL_GET_RANGE_BITS)
                            | nId);
 
@@ -129,8 +129,8 @@ void SwUndoFmtCreate::Redo(SwUndoIter & rIter)
     }
     else
         pNew = NULL;
-    
-    pDoc->DoUndo(bDoesUndo);    
+
+    pDoc->DoUndo(bDoesUndo);
 }
 
 SwRewriter SwUndoFmtCreate::GetRewriter() const
@@ -150,7 +150,7 @@ SwUndoFmtDelete::SwUndoFmtDelete
     : SwUndo(nUndoId),
       pDoc(_pDoc), sOldName(_pOld->GetName()),
       aOldSet(_pOld->GetAttrSet())
-{   
+{
     sDerivedFrom = _pOld->DerivedFrom()->GetName();
     nId = _pOld->GetPoolFmtId() & COLL_GET_RANGE_BITS;
     bAuto = _pOld->IsAuto();
@@ -175,7 +175,7 @@ void SwUndoFmtDelete::Undo(SwUndoIter & rIter)
         pDoc->ChgFmt(*pFmt, aOldSet);
         pFmt->SetAuto(bAuto);
         pFmt->SetPoolFmtId((pFmt->GetPoolFmtId() &
-                                ~COLL_GET_RANGE_BITS) 
+                                ~COLL_GET_RANGE_BITS)
                                | nId);
 
     }
@@ -190,7 +190,7 @@ void SwUndoFmtDelete::Redo(SwUndoIter & rIter)
     if (pOld)
     {
         BOOL bDoesUndo = pDoc->DoesUndo();
-        
+
         pDoc->DoUndo(FALSE);
         Delete(pOld);
         pDoc->DoUndo(bDoesUndo);
