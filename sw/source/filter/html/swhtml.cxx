@@ -2,9 +2,9 @@
  *
  *  $RCSfile: swhtml.cxx,v $
  *
- *  $Revision: 1.21 $
+ *  $Revision: 1.22 $
  *
- *  last change: $Author: vg $ $Date: 2003-04-01 15:37:34 $
+ *  last change: $Author: vg $ $Date: 2003-04-15 16:59:26 $
  *
  *  The Contents of this file are made available subject to the terms of
  *  either of the following licenses
@@ -420,7 +420,7 @@ ULONG HTMLReader::Read( SwDoc &rDoc,SwPaM &rPam, const String & rName )
     ULONG nRet = 0;
     SvParserRef xParser = new SwHTMLParser( &rDoc, rPam, *pStrm,
                                             rName, !bInsertMode, pMedium,
-                                            IsReadUTF8(), 
+                                            IsReadUTF8(),
                                             bIgnoreHTMLComments );
 
     SvParserState eState = xParser->CallParser();
@@ -927,7 +927,7 @@ if( pSttNdIdx->GetIndex()+1 == pPam->GetBound( FALSE ).nNode.GetIndex() )
                 const SwNode *pPrev = pDoc->GetNodes()[nNodeIdx -1];
                 if( !pPam->GetPoint()->nContent.GetIndex() &&
                     ( pPrev->IsCntntNode() ||
-                      (pPrev->IsEndNode() && 
+                      (pPrev->IsEndNode() &&
                       pPrev->StartOfSectionNode()->IsSectionNode()) ) )
                 {
                     SwCntntNode* pCNd = pPam->GetCntntNode();
@@ -938,7 +938,7 @@ if( pSttNdIdx->GetIndex()+1 == pPam->GetBound( FALSE ).nNode.GetIndex() )
                         SwCrsrShell *pCrsrSh = pVSh && pVSh->ISA(SwCrsrShell)
                                         ? static_cast < SwCrsrShell * >( pVSh )
                                         : 0;
-                        if( pCrsrSh && 
+                        if( pCrsrSh &&
                             pCrsrSh->GetCrsr()->GetPoint()
                                    ->nNode.GetIndex() == nNodeIdx )
                         {
@@ -2052,11 +2052,11 @@ void __EXPORT SwHTMLParser::NextToken( int nToken )
                 if( HTML_O_DIR == pOption->GetToken() )
                 {
                     const String& rDir = pOption->GetString();
-                    SfxItemSet aItemSet( pDoc->GetAttrPool(), 
+                    SfxItemSet aItemSet( pDoc->GetAttrPool(),
                                          pCSS1Parser->GetWhichMap() );
                     SvxCSS1PropertyInfo aPropInfo;
                     String aDummy;
-                    ParseStyleOptions( aDummy, aDummy, aDummy, aItemSet, 
+                    ParseStyleOptions( aDummy, aDummy, aDummy, aItemSet,
                                        aPropInfo, 0, &rDir );
 
                     pCSS1Parser->SetPageDescAttrs( 0, &aItemSet );
@@ -2610,7 +2610,7 @@ ViewShell *SwHTMLParser::CallStartAction( ViewShell *pVSh, BOOL bChkPtr )
         pDoc->GetEditShell( &pVSh );
         ASSERT( !pVSh || !pOldVSh || pOldVSh == pVSh,
                 "CallStartAction: Wer hat die ViewShell ausgetauscht?" );
-#ifdef DEBUG
+#if OSL_DEBUG_LEVEL > 1
         if( pOldVSh && !pVSh )
             pVSh = 0;
 #endif
@@ -2636,7 +2636,7 @@ ViewShell *SwHTMLParser::CallEndAction( BOOL bChkAction, BOOL bChkPtr )
         pDoc->GetEditShell( &pVSh );
         ASSERT( !pVSh || pActionViewShell == pVSh,
                 "CallEndAction: Wer hat die ViewShell ausgetauscht?" );
-#ifdef DEBUG
+#if OSL_DEBUG_LEVEL > 1
         if( pActionViewShell && !pVSh )
             pVSh = 0;
 #endif
@@ -2702,7 +2702,7 @@ ViewShell *SwHTMLParser::CheckActionViewShell()
     pDoc->GetEditShell( &pVSh );
     ASSERT( !pVSh || pActionViewShell == pVSh,
             "CheckActionViewShell: Wer hat die ViewShell ausgetauscht?" );
-#ifdef DEBUG
+#if OSL_DEBUG_LEVEL > 1
     if( pActionViewShell && !pVSh )
         pVSh = 0;
 #endif
