@@ -2,9 +2,9 @@
  *
  *  $RCSfile: ww8scan.cxx,v $
  *
- *  $Revision: 1.94 $
+ *  $Revision: 1.95 $
  *
- *  last change: $Author: hr $ $Date: 2003-03-27 15:42:14 $
+ *  last change: $Author: vg $ $Date: 2003-04-01 10:11:19 $
  *
  *  The Contents of this file are made available subject to the terms of
  *  either of the following licenses
@@ -166,7 +166,7 @@ public:
 #ifdef DEBUG
         bool bBroken=false;
         rtl::OUString sError;
-        const C *pIter = mpWwSprmTab; 
+        const C *pIter = mpWwSprmTab;
         const C *pBeforeEnd = mpWwSprmTab + mnNoElems - 1;
         while (pIter < pBeforeEnd)
         {
@@ -182,7 +182,7 @@ public:
                 }
 
                 size_t nSize = sizeof(C);
-                const sal_uInt8 *pHack = 
+                const sal_uInt8 *pHack =
                     reinterpret_cast<const sal_uInt8 *>(&(*pIter));
                 for (size_t i=0; i < nSize; ++i)
                 {
@@ -208,7 +208,7 @@ public:
 
 template<class C> const C *wwSortedArray<C>::search(C aSrch) const
 {
-    std::pair<C *, C *> aPair = 
+    std::pair<C *, C *> aPair =
         std::equal_range(mpWwSprmTab, mpWwSprmTab + mnNoElems, aSrch);
     if (aPair.first != aPair.second)
         return aPair.first;
@@ -230,7 +230,7 @@ const wwSprmSearcher *wwSprmParser::GetWW6SprmSearcher()
 {
     //double lock me
     // WW7- Sprms
-    static SprmInfo aSprms[] = 
+    static SprmInfo aSprms[] =
     {
         {  0, 0, L_FIX}, // "Default-sprm",  wird uebersprungen
         {  2, 2, L_FIX}, // "sprmPIstd",  pap.istd (style code)
@@ -293,39 +293,39 @@ const wwSprmSearcher *wwSprmParser::GetWW6SprmSearcher()
         { 70, 4, L_FIX}, // "sprmCDttmRMark" chp.dttm DTTM long
         { 71, 1, L_FIX}, // "sprmCFData" chp.fData 1 or 0 bit
         { 72, 2, L_FIX}, // "sprmCRMReason" chp.idslRMReason an index to a table
-        { 73, 3, L_FIX}, // "sprmCChse" chp.fChsDiff and chp.chse 
+        { 73, 3, L_FIX}, // "sprmCChse" chp.fChsDiff and chp.chse
         { 74, 0, L_VAR}, // "sprmCSymbol" chp.fSpec, chp.chSym and chp.ftcSym
         { 75, 1, L_FIX}, // "sprmCFOle2" chp.fOle2 1 or 0	bit
         { 79, 0, L_VAR}, // unknown
         { 80, 2, L_FIX}, // "sprmCIstd" chp.istd istd, see stylesheet definition
-        { 81, 0, L_VAR}, // "sprmCIstdPermute" chp.istd permutation vector 
-        { 82, 0, L_VAR}, // "sprmCDefault" whole CHP 
-        { 83, 0, L_FIX}, // "sprmCPlain" whole CHP 
-        { 85, 1, L_FIX}, // "sprmCFBold" chp.fBold 0,1, 128, or 129 
-        { 86, 1, L_FIX}, // "sprmCFItalic" chp.fItalic 0,1, 128, or 129 
-        { 87, 1, L_FIX}, // "sprmCFStrike" chp.fStrike 0,1, 128, or 129 
+        { 81, 0, L_VAR}, // "sprmCIstdPermute" chp.istd permutation vector
+        { 82, 0, L_VAR}, // "sprmCDefault" whole CHP
+        { 83, 0, L_FIX}, // "sprmCPlain" whole CHP
+        { 85, 1, L_FIX}, // "sprmCFBold" chp.fBold 0,1, 128, or 129
+        { 86, 1, L_FIX}, // "sprmCFItalic" chp.fItalic 0,1, 128, or 129
+        { 87, 1, L_FIX}, // "sprmCFStrike" chp.fStrike 0,1, 128, or 129
         { 88, 1, L_FIX}, // "sprmCFOutline" chp.fOutline 0,1, 128, or 129
-        { 89, 1, L_FIX}, // "sprmCFShadow" chp.fShadow 0,1, 128, or 129 
-        { 90, 1, L_FIX}, // "sprmCFSmallCaps" chp.fSmallCaps 0,1, 128, or 129 
-        { 91, 1, L_FIX}, // "sprmCFCaps" chp.fCaps 0,1, 128, or 129 
-        { 92, 1, L_FIX}, // "sprmCFVanish" chp.fVanish 0,1, 128, or 129 
+        { 89, 1, L_FIX}, // "sprmCFShadow" chp.fShadow 0,1, 128, or 129
+        { 90, 1, L_FIX}, // "sprmCFSmallCaps" chp.fSmallCaps 0,1, 128, or 129
+        { 91, 1, L_FIX}, // "sprmCFCaps" chp.fCaps 0,1, 128, or 129
+        { 92, 1, L_FIX}, // "sprmCFVanish" chp.fVanish 0,1, 128, or 129
         { 93, 2, L_FIX}, // "sprmCFtc" chp.ftc ftc word
         { 94, 1, L_FIX}, // "sprmCKul" chp.kul kul byte
-        { 95, 3, L_FIX}, // "sprmCSizePos" chp.hps, chp.hpsPos 
-        { 96, 2, L_FIX}, // "sprmCDxaSpace" chp.dxaSpace dxa 
-        { 97, 2, L_FIX}, // "sprmCLid" chp.lid LID 
+        { 95, 3, L_FIX}, // "sprmCSizePos" chp.hps, chp.hpsPos
+        { 96, 2, L_FIX}, // "sprmCDxaSpace" chp.dxaSpace dxa
+        { 97, 2, L_FIX}, // "sprmCLid" chp.lid LID
         { 98, 1, L_FIX}, // "sprmCIco" chp.ico ico byte
         { 99, 2, L_FIX}, // "sprmCHps" chp.hps hps !word!
-        {100, 1, L_FIX}, // "sprmCHpsInc" chp.hps 
+        {100, 1, L_FIX}, // "sprmCHpsInc" chp.hps
         {101, 2, L_FIX}, // "sprmCHpsPos" chp.hpsPos hps !word!
-        {102, 1, L_FIX}, // "sprmCHpsPosAdj" chp.hpsPos hps 
+        {102, 1, L_FIX}, // "sprmCHpsPosAdj" chp.hpsPos hps
         {103, 0, L_VAR}, // "?sprmCMajority" chp.fBold, chp.fItalic, ...
-        {104, 1, L_FIX}, // "sprmCIss" chp.iss iss 
+        {104, 1, L_FIX}, // "sprmCIss" chp.iss iss
         {105, 0, L_VAR}, // "sprmCHpsNew50" chp.hps hps variable width
-        {106, 0, L_VAR}, // "sprmCHpsInc1" chp.hps complex 
+        {106, 0, L_VAR}, // "sprmCHpsInc1" chp.hps complex
         {107, 2, L_FIX}, // "sprmCHpsKern" chp.hpsKern hps
         {108, 0, L_VAR}, // "sprmCMajority50" chp.fBold, chp.fItalic, ...
-        {109, 2, L_FIX}, // "sprmCHpsMul" chp.hps percentage to grow hps 
+        {109, 2, L_FIX}, // "sprmCHpsMul" chp.hps percentage to grow hps
         {110, 2, L_FIX}, // "sprmCCondHyhen" chp.ysri ysri
         {111, 2, L_FIX}, // unknown
         {112, 2, L_FIX}, // unknown
@@ -341,11 +341,11 @@ const wwSprmSearcher *wwSprmParser::GetWW6SprmSearcher()
         {123, 2, L_FIX}, // "sprmPicBrcBottom" pic.brcBottom BRC word
         {124, 2, L_FIX}, // "sprmPicBrcRight" pic.brcRight BRC word
         {131, 1, L_FIX}, // "sprmSScnsPgn" sep.cnsPgn cns byte
-        {132, 1, L_FIX}, // "sprmSiHeadingPgn" sep.iHeadingPgn 
+        {132, 1, L_FIX}, // "sprmSiHeadingPgn" sep.iHeadingPgn
         {133, 0, L_VAR}, // "sprmSOlstAnm" sep.olstAnm OLST variable length
-        {136, 3, L_FIX}, // "sprmSDxaColWidth" sep.rgdxaColWidthSpacing complex 
+        {136, 3, L_FIX}, // "sprmSDxaColWidth" sep.rgdxaColWidthSpacing complex
         {137, 3, L_FIX}, // "sprmSDxaColSpacing" sep.rgdxaColWidthSpacing
-        {138, 1, L_FIX}, // "sprmSFEvenlySpaced" sep.fEvenlySpaced 1 or 0 
+        {138, 1, L_FIX}, // "sprmSFEvenlySpaced" sep.fEvenlySpaced 1 or 0
         {139, 1, L_FIX}, // "sprmSFProtected" sep.fUnlocked 1 or 0 byte
         {140, 2, L_FIX}, // "sprmSDmBinFirst" sep.dmBinFirst  word
         {141, 2, L_FIX}, // "sprmSDmBinOther" sep.dmBinOther  word
@@ -360,7 +360,7 @@ const wwSprmSearcher *wwSprmParser::GetWW6SprmSearcher()
         {150, 1, L_FIX}, // "sprmSFPgnRestart" sep.fPgnRestart 0 or 1 byte
         {151, 1, L_FIX}, // "sprmSFEndnote" sep.fEndnote 0 or 1 byte
         {152, 1, L_FIX}, // "sprmSLnc" sep.lnc lnc byte
-        {153, 1, L_FIX}, // "sprmSGprfIhdt" sep.grpfIhdt grpfihdt 
+        {153, 1, L_FIX}, // "sprmSGprfIhdt" sep.grpfIhdt grpfihdt
         {154, 2, L_FIX}, // "sprmSNLnnMod" sep.nLnnMod non-neg int. word
         {155, 2, L_FIX}, // "sprmSDxaLnn" sep.dxaLnn dxa word
         {156, 2, L_FIX}, // "sprmSDyaHdrTop" sep.dyaHdrTop dya word
@@ -383,21 +383,21 @@ const wwSprmSearcher *wwSprmParser::GetWW6SprmSearcher()
         {181, 0, L_VAR}, // rtl property ?
         {182, 2, L_FIX}, // "sprmTJc" tap.jc jc (low order byte is significant)
         {183, 2, L_FIX}, // "sprmTDxaLeft" tap.rgdxaCenter dxa word
-        {184, 2, L_FIX}, // "sprmTDxaGapHalf" tap.dxaGapHalf, tap.rgdxaCenter 
+        {184, 2, L_FIX}, // "sprmTDxaGapHalf" tap.dxaGapHalf, tap.rgdxaCenter
         {185, 1, L_FIX}, // "sprmTFCantSplit" tap.fCantSplit 1 or 0 byte
         {186, 1, L_FIX}, // "sprmTTableHeader" tap.fTableHeader 1 or 0 byte
         {187,12, L_FIX}, // "sprmTTableBorders" tap.rgbrcTable complex 12 bytes
-        {188, 0, L_VAR}, // "sprmTDefTable10" tap.rgdxaCenter, tap.rgtc complex 
+        {188, 0, L_VAR}, // "sprmTDefTable10" tap.rgdxaCenter, tap.rgtc complex
         {189, 2, L_FIX}, // "sprmTDyaRowHeight" tap.dyaRowHeight dya word
-        {190, 0, L_VAR2},// "sprmTDefTable" tap.rgtc complex 
-        {191, 1, L_VAR}, // "sprmTDefTableShd" tap.rgshd complex 
+        {190, 0, L_VAR2},// "sprmTDefTable" tap.rgtc complex
+        {191, 1, L_VAR}, // "sprmTDefTableShd" tap.rgshd complex
         {192, 4, L_FIX}, // "sprmTTlp" tap.tlp TLP 4 bytes
         {193, 5, L_FIX}, // "sprmTSetBrc" tap.rgtc[].rgbrc complex 5 bytes
         {194, 4, L_FIX}, // "sprmTInsert" tap.rgdxaCenter,tap.rgtc complex
-        {195, 2, L_FIX}, // "sprmTDelete" tap.rgdxaCenter, tap.rgtc complex 
-        {196, 4, L_FIX}, // "sprmTDxaCol" tap.rgdxaCenter complex 
-        {197, 2, L_FIX}, // "sprmTMerge" tap.fFirstMerged, tap.fMerged complex 
-        {198, 2, L_FIX}, // "sprmTSplit" tap.fFirstMerged, tap.fMerged complex 
+        {195, 2, L_FIX}, // "sprmTDelete" tap.rgdxaCenter, tap.rgtc complex
+        {196, 4, L_FIX}, // "sprmTDxaCol" tap.rgdxaCenter complex
+        {197, 2, L_FIX}, // "sprmTMerge" tap.fFirstMerged, tap.fMerged complex
+        {198, 2, L_FIX}, // "sprmTSplit" tap.fFirstMerged, tap.fMerged complex
         {199, 5, L_FIX}, // "sprmTSetBrc10" tap.rgtc[].rgbrc complex 5 bytes
         {200, 4, L_FIX}  // "sprmTSetShd", tap.rgshd complex 4 bytes
     };
@@ -414,10 +414,10 @@ const wwSprmSearcher *wwSprmParser::GetWW8SprmSearcher()
     {
         {     0, 0, L_FIX}, // "Default-sprm"/ wird uebersprungen
         {0x4600, 2, L_FIX}, // "sprmPIstd" pap.istd;istd (style code);short;
-        {0xC601, 0, L_VAR}, // "sprmPIstdPermute" pap.istd;permutation vector 
+        {0xC601, 0, L_VAR}, // "sprmPIstdPermute" pap.istd;permutation vector
         {0x2602, 1, L_FIX}, // "sprmPIncLvl" pap.istd, pap.lvl;difference
                             // between istd of base PAP and istd of PAP to be
-                            // produced 
+                            // produced
         {0x2403, 1, L_FIX}, // "sprmPJc" pap.jc;jc (justification);byte;
         {0x2404, 1, L_FIX}, // "sprmPFSideBySide" pap.fSideBySide;0 or 1;byte;
         {0x2405, 1, L_FIX}, // "sprmPFKeep" pap.fKeep;0 or 1;byte;
@@ -440,7 +440,7 @@ const wwSprmSearcher *wwSprmParser::GetWW8SprmSearcher()
                             // followed by a short of fMultLinespace
         {0xA413, 2, L_FIX}, // "sprmPDyaBefore" pap.dyaBefore;dya;word;
         {0xA414, 2, L_FIX}, // "sprmPDyaAfter" pap.dyaAfter;dya;word;
-        {0xC615, 0, L_VAR}, // "sprmPChgTabs" pap.itbdMac, pap.rgdxaTab, 
+        {0xC615, 0, L_VAR}, // "sprmPChgTabs" pap.itbdMac, pap.rgdxaTab,
                             // pap.rgtbd;complex
         {0x2416, 1, L_FIX}, // "sprmPFInTable" pap.fInTable;0 or 1;byte;
         {0x2417, 1, L_FIX}, // "sprmPFTtp" pap.fTtp;0 or 1;byte;
@@ -455,7 +455,7 @@ const wwSprmSearcher *wwSprmParser::GetWW8SprmSearcher()
         {0x4620, 2, L_FIX}, // "sprmPBrcBetween10" pap.brcBetween;BRC10;word;
         {0x4621, 2, L_FIX}, // "sprmPBrcBar10" pap.brcBar;BRC10;word;
         {0x4622, 2, L_FIX}, // "sprmPDxaFromText10" pap.dxaFromText;dxa;word;
-        {0x2423, 1, L_FIX}, // "sprmPWr" pap.wr;wr 
+        {0x2423, 1, L_FIX}, // "sprmPWr" pap.wr;wr
         {0x6424, 4, L_FIX}, // "sprmPBrcTop" pap.brcTop;BRC;long;
         {0x6425, 4, L_FIX}, // "sprmPBrcLeft" pap.brcLeft;BRC;long;
         {0x6426, 4, L_FIX}, // "sprmPBrcBottom" pap.brcBottom;BRC;long;
@@ -477,13 +477,13 @@ const wwSprmSearcher *wwSprmParser::GetWW8SprmSearcher()
         {0x2436, 1, L_FIX}, // "sprmPFTopLinePunct" pap.fTopLinePunct;0 or 1
         {0x2437, 1, L_FIX}, // "sprmPFAutoSpaceDE" pap.fAutoSpaceDE;0 or 1
         {0x2438, 1, L_FIX}, // "sprmPFAutoSpaceDN" pap.fAutoSpaceDN;0 or 1
-        {0x4439, 2, L_FIX}, // "sprmPWAlignFont" pap.wAlignFont;iFa 
+        {0x4439, 2, L_FIX}, // "sprmPWAlignFont" pap.wAlignFont;iFa
         {0x443A, 2, L_FIX}, // "sprmPFrameTextFlow" pap.fVertical pap.fBackward
-                            // pap.fRotateFont;complex 
+                            // pap.fRotateFont;complex
         {0x243B, 1, L_FIX}, // "sprmPISnapBaseLine" obsolete: not applicable in
                             // Word97 and later versions;
         {0xC63E, 0, L_VAR}, // "sprmPAnld" pap.anld;;variable length;
-        {0xC63F, 0, L_VAR}, // "sprmPPropRMark" pap.fPropRMark;complex 
+        {0xC63F, 0, L_VAR}, // "sprmPPropRMark" pap.fPropRMark;complex
         {0x2640, 1, L_FIX}, // "sprmPOutLvl" pap.lvl;has no effect if pap.istd
                             // is < 1 or is > 9
         {0x2441, 1, L_FIX}, // "sprmPFBiDi" ;;byte;
@@ -501,7 +501,7 @@ const wwSprmSearcher *wwSprmParser::GetWW8SprmSearcher()
         {0x0801, 1, L_FIX}, // "sprmCFRMark" chp.fRMark;1 or 0;bit;
         {0x0802, 1, L_FIX}, // "sprmCFFldVanish" chp.fFldVanish;1 or 0;bit;
         {0x6A03, 4, L_FIX}, // "sprmCPicLocation" chp.fcPic and chp.fSpec;
-        {0x4804, 2, L_FIX}, // "sprmCIbstRMark" chp.ibstRMark;index into 
+        {0x4804, 2, L_FIX}, // "sprmCIbstRMark" chp.ibstRMark;index into
                             // sttbRMark
         {0x6805, 4, L_FIX}, // "sprmCDttmRMark" chp.dttmRMark;DTTM;long;
         {0x0806, 1, L_FIX}, // "sprmCFData" chp.fData;1 or 0;bit;
@@ -509,7 +509,7 @@ const wwSprmSearcher *wwSprmParser::GetWW8SprmSearcher()
                             // table of strings defined in Word 6.0
                             // executables;short;
         {0xEA08, 1, L_FIX}, // "sprmCChs" chp.fChsDiff and chp.chse;
-        {0x6A09, 4, L_FIX}, // "sprmCSymbol" chp.fSpec, chp.xchSym and 
+        {0x6A09, 4, L_FIX}, // "sprmCSymbol" chp.fSpec, chp.xchSym and
                             // chp.ftcSym
         {0x080A, 1, L_FIX}, // "sprmCFOle2" chp.fOle2;1 or 0;bit;
         {0x480B, 0, L_FIX}, // "sprmCIdCharType" obsolete: not applicable in
@@ -552,7 +552,7 @@ const wwSprmSearcher *wwSprmParser::GetWW8SprmSearcher()
         {0xCA49, 0, L_VAR}, // "sprmCHpsNew50" chp.hps;hps;variable width
         {0xCA4A, 0, L_VAR}, // "sprmCHpsInc1" chp.hps;complex
         {0x484B, 2, L_FIX}, // "sprmCHpsKern" chp.hpsKern;hps;short;
-        {0xCA4C, 2, L_FIX}, // "sprmCMajority50" chp.fBold, chp.fItalic, 
+        {0xCA4C, 2, L_FIX}, // "sprmCMajority50" chp.fBold, chp.fItalic,
                             // chp.fSmallCaps, chp.fVanish, chp.fStrike,
                             // chp.fCaps, chp.ftc, chp.hps, chp.hpsPos, chp.kul,
                             // chp.dxaSpace, chp.ico,;complex
@@ -574,11 +574,11 @@ const wwSprmSearcher *wwSprmParser::GetWW8SprmSearcher()
         {0x085B, 1, L_FIX}, // "sprmCFDiacColor" ;;;
         {0x085C, 1, L_FIX}, // "sprmCFBoldBi" ;;;
         {0x085D, 1, L_FIX}, // "sprmCFItalicBi" ;;;
-        {0x4A5E, 2, L_FIX}, 
+        {0x4A5E, 2, L_FIX},
         {0x485F, 2, L_FIX}, // "sprmCLidBi" ;;;
         {0x4A60, 1, L_FIX}, // "sprmCIcoBi" ;;;
         {0x4A61, 2, L_FIX}, // "sprmCHpsBi" ;;;
-        {0xCA62, 0, L_VAR}, // "sprmCDispFldRMark" chp.fDispFldRMark, 
+        {0xCA62, 0, L_VAR}, // "sprmCDispFldRMark" chp.fDispFldRMark,
                             // chp.ibstDispFldRMark, chp.dttmDispFldRMark ;
         {0x4863, 2, L_FIX}, // "sprmCIbstRMarkDel" chp.ibstRMarkDel;index into
                             // sttbRMark;short;
@@ -588,16 +588,16 @@ const wwSprmSearcher *wwSprmParser::GetWW8SprmSearcher()
         {0x4867, 2, L_FIX}, // "sprmCIdslRMarkDel" chp.idslRMReasonDel;an index
                             // to a table of strings defined in Word 6.0
                             // executables;short;
-        {0x0868, 1, L_FIX}, // "sprmCFUsePgsuSettings" 
+        {0x0868, 1, L_FIX}, // "sprmCFUsePgsuSettings"
                             // chp.fUsePgsuSettings;1 or 0
         {0x486B, 2, L_FIX}, // "sprmCCpg" ;;word;
         {0x486D, 2, L_FIX}, // "sprmCRgLid0" chp.rglid[0];LID: for non-FE text
         {0x486E, 2, L_FIX}, // "sprmCRgLid1" chp.rglid[1];LID: for Far East text
         {0x286F, 1, L_FIX}, // "sprmCIdctHint" chp.idctHint;IDCT:
         {0x2E00, 1, L_FIX}, // "sprmPicBrcl" pic.brcl;brcl (see PIC definition)
-        {0xCE01, 0, L_VAR}, // "sprmPicScale" pic.mx, pic.my, pic.dxaCropleft, 
+        {0xCE01, 0, L_VAR}, // "sprmPicScale" pic.mx, pic.my, pic.dxaCropleft,
                             // pic.dyaCropTop pic.dxaCropRight,
-                            // pic.dyaCropBottom;Complex 
+                            // pic.dyaCropBottom;Complex
         {0x6C02, 4, L_FIX}, // "sprmPicBrcTop" pic.brcTop;BRC;long;
         {0x6C03, 4, L_FIX}, // "sprmPicBrcLeft" pic.brcLeft;BRC;long;
         {0x6C04, 4, L_FIX}, // "sprmPicBrcBottom" pic.brcBottom;BRC;long;
@@ -607,8 +607,8 @@ const wwSprmSearcher *wwSprmParser::GetWW8SprmSearcher()
                             // level;byte;
         {0xD202, 0, L_VAR}, // "sprmSOlstAnm" sep.olstAnm;OLST;variable length;
         {0xF203, 3, L_FIX}, // "sprmSDxaColWidth" sep.rgdxaColWidthSpacing;
-        {0xF204, 3, L_FIX}, // "sprmSDxaColSpacing" sep.rgdxaColWidthSpacing; 
-                            // complex 
+        {0xF204, 3, L_FIX}, // "sprmSDxaColSpacing" sep.rgdxaColWidthSpacing;
+                            // complex
         {0x3005, 1, L_FIX}, // "sprmSFEvenlySpaced" sep.fEvenlySpaced;1 or 0
         {0x3006, 1, L_FIX}, // "sprmSFProtected" sep.fUnlocked;1 or 0;byte;
         {0x5007, 2, L_FIX}, // "sprmSDmBinFirst" sep.dmBinFirst;;word;
@@ -644,10 +644,10 @@ const wwSprmSearcher *wwSprmParser::GetWW8SprmSearcher()
         {0xB025, 2, L_FIX}, // "sprmSDzaGutter" sep.dzaGutter;dza;word;
         {0x5026, 2, L_FIX}, // "sprmSDmPaperReq" sep.dmPaperReq;dm;word;
         {0xD227, 0, L_VAR}, // "sprmSPropRMark" sep.fPropRMark,
-                            // sep.ibstPropRMark, sep.dttmPropRMark ;complex 
+                            // sep.ibstPropRMark, sep.dttmPropRMark ;complex
         {0x3228, 1, L_FIX}, // "sprmSFBiDi" ;;;
         {0x3229, 1, L_FIX}, // "sprmSFFacingCol" ;;;
-        {0x322A, 1, L_FIX}, // "sprmSFRTLGutter", set to one if gutter is on 
+        {0x322A, 1, L_FIX}, // "sprmSFRTLGutter", set to one if gutter is on
                             // right
         {0x702B, 4, L_FIX}, // "sprmSBrcTop" sep.brcTop;BRC;long;
         {0x702C, 4, L_FIX}, // "sprmSBrcLeft" sep.brcLeft;BRC;long;
@@ -658,16 +658,16 @@ const wwSprmSearcher *wwSprmParser::GetWW8SprmSearcher()
         {0x9031, 2, L_FIX}, // "sprmSDyaLinePitch"
                             // sep.dyaLinePitch;dya; WRONG:long; RIGHT:short; !
         {0x5032, 1, L_FIX}, // "sprmSClm" ;;;
-        {0x5033, 2, L_FIX}, // "sprmSTextFlow" sep.wTextFlow;complex 
+        {0x5033, 2, L_FIX}, // "sprmSTextFlow" sep.wTextFlow;complex
         {0x5400, 2, L_FIX}, // "sprmTJc" tap.jc;jc;word (low order byte is
                             // significant);
-        {0x9601, 2, L_FIX}, // "sprmTDxaLeft" tap.rgdxaCenter 
-        {0x9602, 2, L_FIX}, // "sprmTDxaGapHalf" tap.dxaGapHalf, 
-                            // tap.rgdxaCenter 
+        {0x9601, 2, L_FIX}, // "sprmTDxaLeft" tap.rgdxaCenter
+        {0x9602, 2, L_FIX}, // "sprmTDxaGapHalf" tap.dxaGapHalf,
+                            // tap.rgdxaCenter
         {0x3403, 1, L_FIX}, // "sprmTFCantSplit" tap.fCantSplit;1 or 0;byte;
         {0x3404, 1, L_FIX}, // "sprmTTableHeader" tap.fTableHeader;1 or 0;byte;
         {0xD605, 0, L_VAR}, // "sprmTTableBorders" tap.rgbrcTable;complex
-        {0xD606, 0, L_VAR}, // "sprmTDefTable10" tap.rgdxaCenter, 
+        {0xD606, 0, L_VAR}, // "sprmTDefTable10" tap.rgdxaCenter,
                             // tap.rgtc;complex
         {0x9407, 2, L_FIX}, // "sprmTDyaRowHeight" tap.dyaRowHeight;dya;word;
         {0xD608, 0, L_VAR}, // "sprmTDefTable" tap.rgtc;complex
@@ -675,15 +675,15 @@ const wwSprmSearcher *wwSprmParser::GetWW8SprmSearcher()
         {0x740A, 4, L_FIX}, // "sprmTTlp" tap.tlp;TLP;4 bytes;
         {0x560B, 1, L_FIX}, // "sprmTFBiDi" ;;;
         {0x740C, 1, L_FIX}, // "sprmTHTMLProps" ;;;
-        {0xD620, 0, L_VAR}, // "sprmTSetBrc" tap.rgtc[].rgbrc;complex 
-        {0x7621, 4, L_FIX}, // "sprmTInsert" tap.rgdxaCenter, tap.rgtc;complex 
-        {0x5622, 2, L_FIX}, // "sprmTDelete" tap.rgdxaCenter, tap.rgtc;complex 
-        {0x7623, 4, L_FIX}, // "sprmTDxaCol" tap.rgdxaCenter;complex 
+        {0xD620, 0, L_VAR}, // "sprmTSetBrc" tap.rgtc[].rgbrc;complex
+        {0x7621, 4, L_FIX}, // "sprmTInsert" tap.rgdxaCenter, tap.rgtc;complex
+        {0x5622, 2, L_FIX}, // "sprmTDelete" tap.rgdxaCenter, tap.rgtc;complex
+        {0x7623, 4, L_FIX}, // "sprmTDxaCol" tap.rgdxaCenter;complex
         {0x5624, 0, L_VAR}, // "sprmTMerge" tap.fFirstMerged, tap.fMerged;
         {0x5625, 0, L_VAR}, // "sprmTSplit" tap.fFirstMerged, tap.fMerged;
-        {0xD626, 0, L_VAR}, // "sprmTSetBrc10" tap.rgtc[].rgbrc;complex 
-        {0x7627, 0, L_VAR}, // "sprmTSetShd" tap.rgshd;complex 
-        {0x7628, 0, L_VAR}, // "sprmTSetShdOdd" tap.rgshd;complex 
+        {0xD626, 0, L_VAR}, // "sprmTSetBrc10" tap.rgtc[].rgbrc;complex
+        {0x7627, 0, L_VAR}, // "sprmTSetShd" tap.rgshd;complex
+        {0x7628, 0, L_VAR}, // "sprmTSetShdOdd" tap.rgshd;complex
         {0x7629, 0, L_VAR}, // "sprmTTextFlow" tap.rgtc[].fVerticaltap,
                             // rgtc[].fBackwardtap, rgtc[].fRotateFont;0 or 10
                             // or 10 or 1;word;
@@ -809,36 +809,36 @@ SprmInfo wwSprmParser::GetSprmInfo(sal_uInt16 nId) const
 
 inline BYTE Get_Byte( BYTE *& p )
 {
-    BYTE n = SVBT8ToByte( *(SVBT8*)p );		
-    p += 1; 
+    BYTE n = SVBT8ToByte( *(SVBT8*)p );
+    p += 1;
     return n;
 }
 
 inline USHORT Get_UShort( BYTE *& p )
-{ 
-    USHORT n = SVBT16ToShort( *(SVBT16*)p );	
-    p += 2; 
-    return n; 
+{
+    USHORT n = SVBT16ToShort( *(SVBT16*)p );
+    p += 2;
+    return n;
 }
 
 inline short Get_Short( BYTE *& p )
-{ 
+{
     return Get_UShort(p);
 }
 
 inline ULONG Get_ULong( BYTE *& p )
-{ 
-    ULONG n = SVBT32ToLong( *(SVBT32*)p );		
-    p += 4; 
-    return n; 
+{
+    ULONG n = SVBT32ToLong( *(SVBT32*)p );
+    p += 4;
+    return n;
 }
 
 inline long Get_Long( BYTE *& p )
-{ 
+{
     return Get_ULong(p);
 }
 
-WW8SprmIter::WW8SprmIter(const BYTE* pSprms_, long nLen_, 
+WW8SprmIter::WW8SprmIter(const BYTE* pSprms_, long nLen_,
     const wwSprmParser &rParser)
     :  mrSprmParser(rParser), pSprms( pSprms_), nRemLen( nLen_)
 {
@@ -901,8 +901,8 @@ const BYTE* WW8SprmIter::FindSprm(USHORT nId)
 
 WW8PLCFx_PCDAttrs::WW8PLCFx_PCDAttrs(BYTE nVersion, WW8PLCFx_PCD* pPLCFx_PCD,
     const WW8ScannerBase* pBase)
-    : WW8PLCFx(nVersion, true), pPcdI(pPLCFx_PCD->GetPLCFIter()), 
-    pPcd(pPLCFx_PCD), pGrpprls(pBase->pPieceGrpprls), 
+    : WW8PLCFx(nVersion, true), pPcdI(pPLCFx_PCD->GetPLCFIter()),
+    pPcd(pPLCFx_PCD), pGrpprls(pBase->pPieceGrpprls),
     nGrpprls(pBase->nPieceGrpprls)
 {
 }
@@ -947,7 +947,7 @@ void WW8PLCFx_PCDAttrs::GetSprms(WW8PLCFxDesc* p)
 
     UINT16 nPrm = SVBT16ToShort( ( (WW8_PCD*)pData )->prm );
     if ( nPrm & 1 )
-    {	
+    {
         // PRM Variant 2
         UINT16 nSprmIdx = nPrm >> 1;
 
@@ -966,7 +966,7 @@ void WW8PLCFx_PCDAttrs::GetSprms(WW8PLCFxDesc* p)
         p->pMemPos = pSprms;					// Position
     }
     else
-    {	
+    {
         // PRM Variante 1:  Sprm wird direkt in Member-Var abgelegt
         /*
             Dies sind die Attr, die in der Piece-Table stehen, statt im Text !
@@ -994,7 +994,7 @@ void WW8PLCFx_PCDAttrs::GetSprms(WW8PLCFxDesc* p)
                 // see file: s62f39.htm
                 //
                 // Since isprm is 7 bits, rgsprmPrm can hold 0x80 entries.
-                static const USHORT aSprmId[0x80] = 
+                static const USHORT aSprmId[0x80] =
                 {
                     // sprmNoop, sprmNoop, sprmNoop, sprmNoop
                     0x0000,0x0000,0x0000,0x0000,
@@ -1063,7 +1063,7 @@ void WW8PLCFx_PCDAttrs::GetSprms(WW8PLCFxDesc* p)
                     0x2640,0x2441,0x0000,0x0000,
                     // sprmNoop, sprmNoop, sprmPPnbrRMarkNot
                     0x0000,0x0000,0x0000,0x0000
-                };								
+                };
 
                 // find real Sprm Id:
                 USHORT nSprmId = aSprmId[ nSprmListIdx ];
@@ -1088,7 +1088,7 @@ void WW8PLCFx_PCDAttrs::GetSprms(WW8PLCFxDesc* p)
 
 //------------------------------------------------------------------------
 
-WW8PLCFx_PCD::WW8PLCFx_PCD(BYTE nVersion, WW8PLCFpcd* pPLCFpcd, 
+WW8PLCFx_PCD::WW8PLCFx_PCD(BYTE nVersion, WW8PLCFpcd* pPLCFpcd,
     WW8_CP nStartCp, bool bVer67P)
     : WW8PLCFx(nVersion, false), nClipStart(-1)
 {
@@ -1269,7 +1269,7 @@ short WW8_BRC::DetermineBorderProperties(bool bVer67, short *pSpace,
         UINT16 aBrc1 = SVBT16ToShort(aBits1);
         nCol = ((aBrc1 >> 6) & 0x1f);	// aBor.ico
         nSpace = (aBrc1 & 0xF800) >> 11;
-        
+
         nMSTotalWidth = aBrc1 & 0x07;
         nIdx = (aBrc1 & 0x18) >> 3;
         //Dashed/Dotted unsets double/thick
@@ -1286,7 +1286,7 @@ short WW8_BRC::DetermineBorderProperties(bool bVer67, short *pSpace,
         nIdx = aBits1[1];
         nCol = aBits2[0];	// aBor.ico
         nSpace = aBits2[1] & 0x1F; //space between line and object
-        
+
         //Specification in 8ths of a point, 1 Point = 20 Twips, so by 2.5
         nMSTotalWidth  = aBits1[ 0 ] * 20 / 8;
 
@@ -1315,7 +1315,7 @@ short WW8_BRC::DetermineBorderProperties(bool bVer67, short *pSpace,
                 exactly the same total border width as a 1/2 point size
                 ordinary line, i.e. twice the nominal line width
                 */
-                nMSTotalWidth = (nMSTotalWidth == 5) ? 
+                nMSTotalWidth = (nMSTotalWidth == 5) ?
                     nMSTotalWidth*2 : nMSTotalWidth*3;
                 break;
             case 10:
@@ -1379,11 +1379,11 @@ short WW8_BRC::DetermineBorderProperties(bool bVer67, short *pSpace,
                 break;
             case 16:
                 /*
-                medium gap thin thick thin appears to have a line 
-                50% of the thick line, and an equal sized gap and then the 
+                medium gap thin thick thin appears to have a line
+                50% of the thick line, and an equal sized gap and then the
                 thick line of the specified width. But it appears to only
                 use one of the existing predefined widths for the thin
-                line, so the closest smallest existing border to the halved 
+                line, so the closest smallest existing border to the halved
                 thick line is used. Though some fudging at smaller sizes is
                 still required.
                 */
@@ -1396,8 +1396,8 @@ short WW8_BRC::DetermineBorderProperties(bool bVer67, short *pSpace,
                     case 15:
                         nMSTotalWidth += nMSTotalWidth + 7 * 2;
                         break;
-                    case 10:   
-                    case 5:    
+                    case 10:
+                    case 5:
                         nMSTotalWidth += 5 + 4;
                         break;
                     default:
@@ -1596,7 +1596,7 @@ WW8_FC WW8ScannerBase::WW8Cp2Fc(WW8_CP nCpPos, bool* pIsUnicode,
 
 WW8PLCFpcd* WW8ScannerBase::OpenPieceTable( SvStream* pStr, const WW8Fib* pWwF )
 {
-    if ( ((8 > pWw8Fib->nVersion) && !pWwF->fComplex) || !pWwF->lcbClx ) 
+    if ( ((8 > pWw8Fib->nVersion) && !pWwF->fComplex) || !pWwF->lcbClx )
         return 0;
 
     WW8_FC nClxPos = pWwF->fcClx;
@@ -1666,10 +1666,10 @@ void WW8ScannerBase::DeletePieceTable()
     }
 }
 
-WW8ScannerBase::WW8ScannerBase( SvStream* pSt, SvStream* pTblSt, 
+WW8ScannerBase::WW8ScannerBase( SvStream* pSt, SvStream* pTblSt,
     SvStream* pDataSt, const WW8Fib* pWwFib )
-    : pWw8Fib(pWwFib), pMainFdoa(0), pHdFtFdoa(0), pMainTxbx(0), 
-    pMainTxbxBkd(0), pHdFtTxbx(0), pHdFtTxbxBkd(0), pMagicTables(0), 
+    : pWw8Fib(pWwFib), pMainFdoa(0), pHdFtFdoa(0), pMainTxbx(0),
+    pMainTxbxBkd(0), pHdFtTxbx(0), pHdFtTxbxBkd(0), pMagicTables(0),
     pPieceGrpprls(0)
 {
     pPiecePLCF = OpenPieceTable( pTblSt, pWw8Fib );				// Complex
@@ -1678,7 +1678,7 @@ WW8ScannerBase::WW8ScannerBase( SvStream* pSt, SvStream* pTblSt,
         pPieceIter = new WW8PLCFpcd_Iter( *pPiecePLCF );
         pPLCFx_PCD = new WW8PLCFx_PCD( pWwFib->nVersion, pPiecePLCF, 0,
             8 > pWw8Fib->nVersion );
-        pPLCFx_PCDAttrs = new WW8PLCFx_PCDAttrs( pWwFib->nVersion, pPLCFx_PCD, 
+        pPLCFx_PCDAttrs = new WW8PLCFx_PCDAttrs( pWwFib->nVersion, pPLCFx_PCD,
             this);
     }
     else
@@ -1696,15 +1696,15 @@ WW8ScannerBase::WW8ScannerBase( SvStream* pSt, SvStream* pTblSt,
 
     // Footnotes
     pFtnPLCF = new WW8PLCFx_SubDoc( pTblSt, pWwFib->nVersion, 0,
-        pWwFib->fcPlcffndRef, pWwFib->lcbPlcffndRef, pWwFib->fcPlcffndTxt, 
+        pWwFib->fcPlcffndRef, pWwFib->lcbPlcffndRef, pWwFib->fcPlcffndTxt,
         pWwFib->lcbPlcffndTxt, 2 );
     // Endnotes
     pEdnPLCF = new WW8PLCFx_SubDoc( pTblSt, pWwFib->nVersion, 0,
-        pWwFib->fcPlcfendRef, pWwFib->lcbPlcfendRef, pWwFib->fcPlcfendTxt, 
+        pWwFib->fcPlcfendRef, pWwFib->lcbPlcfendRef, pWwFib->fcPlcfendTxt,
         pWwFib->lcbPlcfendTxt, 2 );
     // Anmerkungen
     pAndPLCF = new WW8PLCFx_SubDoc( pTblSt, pWwFib->nVersion, 0,
-        pWwFib->fcPlcfandRef, pWwFib->lcbPlcfandRef, pWwFib->fcPlcfandTxt, 
+        pWwFib->fcPlcfandRef, pWwFib->lcbPlcfandRef, pWwFib->fcPlcfandTxt,
         pWwFib->lcbPlcfandTxt, (8 > pWwFib->nVersion) ? 20 : 30 );
 
     // Fields Main Text
@@ -1723,10 +1723,10 @@ WW8ScannerBase::WW8ScannerBase( SvStream* pSt, SvStream* pTblSt,
     pFldTxbxHdFtPLCF = new WW8PLCFx_FLD(pTblSt,*pWwFib,MAN_TXBX_HDFT);
 
     // Note: 6 stands for "6 OR 7",  7 stands for "ONLY 7"
-    switch( pWw8Fib->nVersion )	
+    switch( pWw8Fib->nVersion )
     {
         case 6:
-        case 7: 
+        case 7:
             if( pWwFib->fcPlcfdoaMom && pWwFib->lcbPlcfdoaMom )
             {
                 pMainFdoa = new WW8PLCFspecial( pTblSt, pWwFib->fcPlcfdoaMom,
@@ -1752,13 +1752,13 @@ WW8ScannerBase::WW8ScannerBase( SvStream* pSt, SvStream* pTblSt,
             // PLCF fuer TextBox-Break-Deskriptoren im Maintext
             if( pWwFib->fcPlcftxbxBkd && pWwFib->lcbPlcftxbxBkd )
             {
-                pMainTxbxBkd = new WW8PLCFspecial( pTblSt, 
+                pMainTxbxBkd = new WW8PLCFspecial( pTblSt,
                     pWwFib->fcPlcftxbxBkd, pWwFib->lcbPlcftxbxBkd, 0);
             }
             // PLCF fuer TextBox-Break-Deskriptoren im Header-/Footer-Bereich
             if( pWwFib->fcPlcfHdrtxbxBkd && pWwFib->lcbPlcfHdrtxbxBkd )
             {
-                pHdFtTxbxBkd = new WW8PLCFspecial( pTblSt, 
+                pHdFtTxbxBkd = new WW8PLCFspecial( pTblSt,
                     pWwFib->fcPlcfHdrtxbxBkd, pWwFib->lcbPlcfHdrtxbxBkd, 0);
             }
             // Sub table cp positions
@@ -1843,7 +1843,7 @@ static bool WW8SkipField(WW8PLCFspecial& rPLCF)
 
 
     while((((BYTE*)pData)[0] & 0x1f ) == 0x13 )
-    {	
+    {
         // immer noch neue (nested) Anfaenge ?
         WW8SkipField( rPLCF );				// nested Field im Beschreibungsteil
         if( !rPLCF.Get( nP, pData ) )
@@ -1953,7 +1953,7 @@ Err:
 // WW8ReadPString liest einen Pascal-String ein und gibt ihn zurueck. Der
 // Pascal- String hat am Ende ein \0, der aber im Laengenbyte nicht
 // mitgezaehlt wird.  Der Speicher fuer den Pascalstring wird alloziert.
-String WW8ReadPString(SvStream& rStrm, rtl_TextEncoding eEnc, 
+String WW8ReadPString(SvStream& rStrm, rtl_TextEncoding eEnc,
     bool bAtEndSeekRel1)
 {
     ByteString aByteStr;
@@ -2035,21 +2035,21 @@ USHORT WW8ScannerBase::WW8ReadString( SvStream& rStrm, String& rStr,
     long nTotalRead = 0;
     WW8_CP nBehindTextCp = nAktStartCp + nTotalLen;
     WW8_CP nNextPieceCp	 = nBehindTextCp; // Initialisierung wichtig fuer Ver6
-    do 
+    do
     {
         bool bIsUnicode, bPosOk;
         WW8_FC fcAct = WW8Cp2Fc(nAktStartCp,&bIsUnicode,&nNextPieceCp,&bPosOk);
 
         // vermutlich uebers Dateiende hinaus gezielt, macht nix!
-        if( !bPosOk ) 
-            break;  
+        if( !bPosOk )
+            break;
 
         rStrm.Seek( fcAct );
 
-        long nLen = ( (nNextPieceCp < nBehindTextCp) ? nNextPieceCp 
+        long nLen = ( (nNextPieceCp < nBehindTextCp) ? nNextPieceCp
             : nBehindTextCp ) - nAktStartCp;
 
-        if( 0 >= nLen ) 
+        if( 0 >= nLen )
             break;
 
         if( nLen > USHRT_MAX - 1 )
@@ -2060,13 +2060,13 @@ USHORT WW8ScannerBase::WW8ReadString( SvStream& rStrm, String& rStr,
         else
         {
             // Alloc method automatically sets Zero at the end
-            ByteString aByteStr;	
+            ByteString aByteStr;
             SafeReadString(aByteStr,(USHORT)nLen,rStrm);
             rStr += String( aByteStr, eEnc );
         }
         nTotalRead  += nLen;
         nAktStartCp += nLen;
-        if ( nTotalRead != rStr.Len() ) 
+        if ( nTotalRead != rStr.Len() )
             break;
     }
     while( nTotalRead < nTotalLen );
@@ -2080,7 +2080,7 @@ USHORT WW8ScannerBase::WW8ReadString( SvStream& rStrm, String& rStr,
 
 // Bei nStartPos < 0 wird das erste Element des PLCFs genommen
 WW8PLCFspecial::WW8PLCFspecial(SvStream* pSt, long nFilePos, long nPLCF,
-    long nStruct, long nStartPos, bool bNoEnd) 
+    long nStruct, long nStartPos, bool bNoEnd)
     : nIdx(0), nStru(nStruct)
 {
     nIMax = ( nPLCF - 4 ) / ( 4 + nStruct );
@@ -2096,10 +2096,10 @@ WW8PLCFspecial::WW8PLCFspecial(SvStream* pSt, long nFilePos, long nPLCF,
         pPLCF_PosArray[nIdx] = SWAPLONG( pPLCF_PosArray[nIdx] );
     nIdx = 0;
 #endif // __BIGENDIAN
-    if( bNoEnd ) 
+    if( bNoEnd )
         nIMax++;
     if( nStruct ) // Pointer auf Inhalts-Array
-        pPLCF_Contents = (BYTE*)&pPLCF_PosArray[nIMax + 1];		
+        pPLCF_Contents = (BYTE*)&pPLCF_PosArray[nIMax + 1];
     else
         pPLCF_Contents = 0;							// kein Inhalt
     if( nStartPos >= 0 )
@@ -2202,7 +2202,7 @@ bool WW8PLCFspecial::GetData(long nInIdx, long& rPos, void*& rpValue) const
 
 // Ctor fuer *andere* als Fkps
 // Bei nStartPos < 0 wird das erste Element des PLCFs genommen
-WW8PLCF::WW8PLCF( SvStream* pSt, long nFilePos, long nPLCF, long nStruct, 
+WW8PLCF::WW8PLCF( SvStream* pSt, long nFilePos, long nPLCF, long nStruct,
     long nStartPos ) :nIdx( 0 ), nStru( nStruct )
 {
     ASSERT( nPLCF, "WW8PLCF: nPLCF ist Null!" );
@@ -2220,7 +2220,7 @@ WW8PLCF::WW8PLCF( SvStream* pSt, long nFilePos, long nPLCF, long nStruct,
 // != 0, dann wird ein unvollstaendiger PLCF vervollstaendigt.  Das ist bei
 // WW6 bei Resourcenmangel und bei WordPad (W95) immer noetig.  Bei nStartPos
 // < 0 wird das erste Element des PLCFs genommen
-WW8PLCF::WW8PLCF( SvStream* pSt, long nFilePos, long nPLCF, long nStruct, 
+WW8PLCF::WW8PLCF( SvStream* pSt, long nFilePos, long nPLCF, long nStruct,
     long nStartPos, long nPN, long ncpN ) :nIdx( 0 ), nStru( nStruct )
 {
     nIMax = ( nPLCF - 4 ) / ( 4 + nStruct );
@@ -2279,7 +2279,7 @@ void WW8PLCF::GeneratePLCF( SvStream* pSt, long nPN, long ncpN )
     pPLCF_PosArray[nIMax] = nFc;		// Ende des letzten Fkp
 
     // Pointer auf Inhalts-Array
-    pPLCF_Contents = (BYTE*)&pPLCF_PosArray[nIMax + 1];	
+    pPLCF_Contents = (BYTE*)&pPLCF_PosArray[nIMax + 1];
     BYTE* p = pPLCF_Contents;
 
     for( i = 0; i < ncpN; i++ )			// Baue PNs
@@ -2366,7 +2366,7 @@ WW8PLCFpcd::WW8PLCFpcd( SvStream* pSt, long nFilePos, long nPLCF, long nStruct )
 #endif // __BIGENDIAN
 
     // Pointer auf Inhalts-Array
-    pPLCF_Contents = (BYTE*)&pPLCF_PosArray[nIMax + 1];	
+    pPLCF_Contents = (BYTE*)&pPLCF_PosArray[nIMax + 1];
 
     pSt->Seek( nOldPos );
 }
@@ -2524,8 +2524,8 @@ WW8PLCFx_Fc_FKP::WW8Fkp::WW8Fkp(BYTE nFibVer, SvStream* pSt, SvStream* pDataSt,
     pSt->Seek(nOldPos);
 }
 
-WW8PLCFx_Fc_FKP::WW8Fkp::Entry::Entry(const Entry &rEntry) 
-    : mnFC(rEntry.mnFC), mnLen(rEntry.mnLen), mnIStd(rEntry.mnIStd), 
+WW8PLCFx_Fc_FKP::WW8Fkp::Entry::Entry(const Entry &rEntry)
+    : mnFC(rEntry.mnFC), mnLen(rEntry.mnLen), mnIStd(rEntry.mnIStd),
     mbMustDelete(rEntry.mbMustDelete)
 {
     if (mbMustDelete)
@@ -2533,12 +2533,12 @@ WW8PLCFx_Fc_FKP::WW8Fkp::Entry::Entry(const Entry &rEntry)
         mpData = new sal_uInt8[mnLen];
         memcpy(mpData, rEntry.mpData, mnLen);
     }
-    else 
+    else
         mpData = rEntry.mpData;
 }
 
-WW8PLCFx_Fc_FKP::WW8Fkp::Entry& 
-    WW8PLCFx_Fc_FKP::WW8Fkp::Entry::operator=(const Entry &rEntry) 
+WW8PLCFx_Fc_FKP::WW8Fkp::Entry&
+    WW8PLCFx_Fc_FKP::WW8Fkp::Entry::operator=(const Entry &rEntry)
 {
     if (mbMustDelete)
         delete[] mpData;
@@ -2547,13 +2547,13 @@ WW8PLCFx_Fc_FKP::WW8Fkp::Entry&
     mnLen = rEntry.mnLen;
     mnIStd = rEntry.mnIStd;
     mbMustDelete = rEntry.mbMustDelete;
-    
+
     if (mbMustDelete)
     {
         mpData = new sal_uInt8[mnLen];
         memcpy(mpData, rEntry.mpData, mnLen);
     }
-    else 
+    else
         mpData = rEntry.mpData;
     return *this;
 }
@@ -2603,7 +2603,7 @@ bool WW8PLCFx_Fc_FKP::WW8Fkp::SeekPos(WW8_FC nFc)
 }
 
 BYTE* WW8PLCFx_Fc_FKP::WW8Fkp::Get( WW8_FC& rStart, WW8_FC& rEnd, long& rLen )
-    const 
+    const
 {
     rLen = 0;
 
@@ -2622,7 +2622,7 @@ BYTE* WW8PLCFx_Fc_FKP::WW8Fkp::Get( WW8_FC& rStart, WW8_FC& rEnd, long& rLen )
 
 void WW8PLCFx_Fc_FKP::WW8Fkp::SetIdx( ULONG nI )
 {
-    if( nI < nIMax) 
+    if( nI < nIMax)
         nIdx = (short)nI;
 }
 
@@ -2693,14 +2693,14 @@ void WW8PLCFx::SetIdx2(ULONG )
 {
 }
 
-class SamePos : 
+class SamePos :
     public std::unary_function<const WW8PLCFx_Fc_FKP::WW8Fkp *, bool>
 {
 private:
     long mnPo;
 public:
     SamePos(long nPo) : mnPo(nPo) {};
-    bool operator()(const WW8PLCFx_Fc_FKP::WW8Fkp *pFkp) 
+    bool operator()(const WW8PLCFx_Fc_FKP::WW8Fkp *pFkp)
         {return mnPo == pFkp->GetFilePos();}
 };
 
@@ -2710,22 +2710,22 @@ bool WW8PLCFx_Fc_FKP::NewFkp()
     long nPLCFStart, nPLCFEnd;
     void* pPage;
 
-    static const int WW8FkpSizeTabVer6[ PLCF_END ] = 
+    static const int WW8FkpSizeTabVer6[ PLCF_END ] =
     {
-        1,  7, 0 /*, 0, 0, 0*/ 
+        1,  7, 0 /*, 0, 0, 0*/
     };
-    static const int WW8FkpSizeTabVer8[ PLCF_END ] = 
+    static const int WW8FkpSizeTabVer8[ PLCF_END ] =
     {
-        1, 13, 0 /*, 0, 0, 0*/ 
+        1, 13, 0 /*, 0, 0, 0*/
     };
     const int* pFkpSizeTab;
     switch (GetVersion())
     {
         case 6:
-        case 7: 
+        case 7:
             pFkpSizeTab = WW8FkpSizeTabVer6;
             break;
-        case 8: 
+        case 8:
             pFkpSizeTab = WW8FkpSizeTabVer8;
             break;
         default:
@@ -2748,7 +2748,7 @@ bool WW8PLCFx_Fc_FKP::NewFkp()
         pFkp->Reset(GetStartFc()); // #79464# //
     else
     {
-        myiter aIter = 
+        myiter aIter =
             std::find_if(maFkpCache.begin(), maFkpCache.end(), SamePos(nPo));
         if (aIter != maFkpCache.end())
         {
@@ -2767,7 +2767,7 @@ bool WW8PLCFx_Fc_FKP::NewFkp()
             }
         }
     }
-    
+
     SetStartFc( -1 );									// Nur das erste Mal
     return true;
 }
@@ -2786,7 +2786,7 @@ WW8PLCFx_Fc_FKP::WW8PLCFx_Fc_FKP(SvStream* pSt, SvStream* pTblSt,
     }
     else
     {
-        pPLCF = new WW8PLCF(pTblSt, rFib.fcPlcfbtePapx, rFib.lcbPlcfbtePapx, 
+        pPLCF = new WW8PLCF(pTblSt, rFib.fcPlcfbtePapx, rFib.lcbPlcfbtePapx,
             nLenStruct, GetStartFc(), rFib.pnPapFirst, rFib.cpnBtePap);
     }
 }
@@ -2868,7 +2868,7 @@ BYTE* WW8PLCFx_Fc_FKP::GetSprmsAndPos(WW8_FC& rStart, WW8_FC& rEnd, long& rLen)
     rStart = rEnd = LONG_MAX;
 
     if( !pFkp )     // Fkp not there ?
-    {							
+    {
         if( !NewFkp() )
             return 0;
     }
@@ -2937,7 +2937,7 @@ const BYTE* WW8PLCFx_Fc_FKP::HasSprm( USHORT nId )
 
         if (aDesc.pMemPos)
         {
-            WW8SprmIter aIter(aDesc.pMemPos, aDesc.nSprmsLen, 
+            WW8SprmIter aIter(aDesc.pMemPos, aDesc.nSprmsLen,
                 pFkp->GetSprmParser());
             pRes = aIter.FindSprm(nId);
         }
@@ -2982,8 +2982,8 @@ bool WW8PLCFx_Fc_FKP::HasSprm(USHORT nId, std::vector<const BYTE *> &rResult)
 WW8PLCFx_Cp_FKP::WW8PLCFx_Cp_FKP( SvStream* pSt, SvStream* pTblSt,
     SvStream* pDataSt, const WW8ScannerBase& rBase, ePLCFT ePl )
     : WW8PLCFx_Fc_FKP(pSt, pTblSt, pDataSt, *rBase.pWw8Fib, ePl,
-    rBase.WW8Cp2Fc(0)), rSBase(rBase), nAttrStart(-1), nAttrEnd(-1), 
-    bLineEnd(false), 
+    rBase.WW8Cp2Fc(0)), rSBase(rBase), nAttrStart(-1), nAttrEnd(-1),
+    bLineEnd(false),
     bComplex( (7 < rBase.pWw8Fib->nVersion) || (0 != rBase.pWw8Fib->fComplex) )
 {
     ResetAttrStartEnd();
@@ -3063,7 +3063,7 @@ void WW8PLCFx_Cp_FKP::GetSprms(WW8PLCFxDesc* p)
 
     if (!GetDirty())        //Normal case
     {
-        p->pMemPos = WW8PLCFx_Fc_FKP::GetSprmsAndPos(p->nStartPos, p->nEndPos, 
+        p->pMemPos = WW8PLCFx_Fc_FKP::GetSprmsAndPos(p->nStartPos, p->nEndPos,
             p->nSprmsLen);
     }
     else
@@ -3075,7 +3075,7 @@ void WW8PLCFx_Cp_FKP::GetSprms(WW8PLCFxDesc* p)
         piece, or perhaps the cp just doesn't exist at all in this document.
         AdvSprm doesn't know so it sets the PLCF as dirty and we figure out
         in this method what the situation is
-        
+
         It doesn't exist then the piece iterator will not be able to find it.
         Otherwise our cool fastsave algorithm can be brought to bear on the
         problem.
@@ -3121,7 +3121,7 @@ void WW8PLCFx_Cp_FKP::GetSprms(WW8PLCFxDesc* p)
                 that is larger than the character FC.
                 */
                 //But the search has already been done, the next largest FC is
-                //p->nEndPos. 
+                //p->nEndPos.
                 WW8_FC nOldEndPos = p->nEndPos;
 
                 /*
@@ -3200,7 +3200,7 @@ void WW8PLCFx_Cp_FKP::GetSprms(WW8PLCFxDesc* p)
                                 continue;
 
                             WW8_FC nOne,nSmallest;
-                            p->pMemPos = WW8PLCFx_Fc_FKP::GetSprmsAndPos(nOne, 
+                            p->pMemPos = WW8PLCFx_Fc_FKP::GetSprmsAndPos(nOne,
                                 nSmallest, p->nSprmsLen);
 
                             if (nSmallest <= nLimitFC)
@@ -3257,8 +3257,8 @@ WW8PLCFx& WW8PLCFx_Cp_FKP::operator ++( int )
 //-----------------------------------------
 //-----------------------------------------
 
-WW8PLCFx_SEPX::WW8PLCFx_SEPX(SvStream* pSt, SvStream* pTblSt, 
-    const WW8Fib& rFib, WW8_CP nStartCp) 
+WW8PLCFx_SEPX::WW8PLCFx_SEPX(SvStream* pSt, SvStream* pTblSt,
+    const WW8Fib& rFib, WW8_CP nStartCp)
     : WW8PLCFx(rFib.nVersion, true), maSprmParser(rFib.nVersion), pStrm(pSt),
     nArrMax(256), nSprmSiz(0)
 {
@@ -3363,7 +3363,7 @@ const BYTE* WW8PLCFx_SEPX::HasSprm( USHORT nId, const BYTE*  pOtherSprms,
 bool WW8PLCFx_SEPX::Find4Sprms(USHORT nId1,USHORT nId2,USHORT nId3,USHORT nId4,
     BYTE*& p1, BYTE*& p2, BYTE*& p3, BYTE*& p4) const
 {
-    if( !pPLCF ) 
+    if( !pPLCF )
         return 0;
 
     bool bFound = false;
@@ -3400,7 +3400,7 @@ bool WW8PLCFx_SEPX::Find4Sprms(USHORT nId1,USHORT nId2,USHORT nId3,USHORT nId4,
 
 const BYTE* WW8PLCFx_SEPX::HasSprm( USHORT nId, BYTE n2nd ) const
 {
-    if( !pPLCF ) 
+    if( !pPLCF )
         return 0;
 
     BYTE* pSp = pSprms;
@@ -3527,23 +3527,23 @@ WW8PLCFx_FLD::WW8PLCFx_FLD( SvStream* pSt, const WW8Fib& rMyFib, short nType)
 
     switch( nType )
     {
-    case MAN_HDFT: 
+    case MAN_HDFT:
         nFc = rFib.fcPlcffldHdr;
         nLen = rFib.lcbPlcffldHdr;
         break;
-    case MAN_FTN:  
+    case MAN_FTN:
         nFc = rFib.fcPlcffldFtn;
         nLen = rFib.lcbPlcffldFtn;
         break;
-    case MAN_EDN:  
+    case MAN_EDN:
         nFc = rFib.fcPlcffldEdn;
         nLen = rFib.lcbPlcffldEdn;
         break;
-    case MAN_AND:  
+    case MAN_AND:
         nFc = rFib.fcPlcffldAtn;
         nLen = rFib.lcbPlcffldAtn;
         break;
-    case MAN_TXBX: 
+    case MAN_TXBX:
         nFc = rFib.fcPlcffldTxbx;
         nLen = rFib.lcbPlcffldTxbx;
         break;
@@ -3551,7 +3551,7 @@ WW8PLCFx_FLD::WW8PLCFx_FLD( SvStream* pSt, const WW8Fib& rMyFib, short nType)
         nFc = rFib.fcPlcffldHdrTxbx;
         nLen = rFib.lcbPlcffldHdrTxbx;
         break;
-    default:  	   
+    default:
         nFc = rFib.fcPlcffldMom;
         nLen = rFib.lcbPlcffldMom;
         break;
@@ -3592,7 +3592,7 @@ bool WW8PLCFx_FLD::StartPosIsFieldStart()
     void* pData;
     long nTest;
     if (
-         (!pPLCF || !pPLCF->Get(nTest, pData) || 
+         (!pPLCF || !pPLCF->Get(nTest, pData) ||
          ((((BYTE*)pData)[0] & 0x1f) != 0x13))
        )
         return false;
@@ -3778,10 +3778,10 @@ void WW8ReadSTTBF(bool bVer8, SvStream& rStrm, UINT32 nStart, INT32 nLen,
     rStrm.Seek( nOldPos );
 }
 
-WW8PLCFx_Book::WW8PLCFx_Book(SvStream* pTblSt, const WW8Fib& rFib) 
+WW8PLCFx_Book::WW8PLCFx_Book(SvStream* pTblSt, const WW8Fib& rFib)
     : WW8PLCFx(rFib.nVersion, false), pStatus(0), nIsEnd(0)
 {
-    if( !rFib.fcPlcfbkf || !rFib.lcbPlcfbkf || !rFib.fcPlcfbkl || 
+    if( !rFib.fcPlcfbkf || !rFib.lcbPlcfbkf || !rFib.fcPlcfbkl ||
         !rFib.lcbPlcfbkl || !rFib.fcSttbfbkmk || !rFib.lcbSttbfbkmk )
     {
         pBook[0] = pBook[1] = 0;
@@ -3796,7 +3796,7 @@ WW8PLCFx_Book::WW8PLCFx_Book(SvStream* pTblSt, const WW8Fib& rFib)
 
         rtl_TextEncoding eStructChrSet = WW8Fib::GetFIBCharset(rFib.chseTables);
 
-        WW8ReadSTTBF( (7 < rFib.nVersion), *pTblSt, rFib.fcSttbfbkmk, 
+        WW8ReadSTTBF( (7 < rFib.nVersion), *pTblSt, rFib.fcSttbfbkmk,
             rFib.lcbSttbfbkmk, 0, eStructChrSet, aBookNames );
 
         nIMax = aBookNames.size();
@@ -3976,7 +3976,7 @@ String WW8PLCFx_Book::GetBookmark(long nStart,long nEnd, USHORT &nIndex)
             }
 
             nEndAkt = pBook[1]->GetPos( nEndIdx );
-           
+
             if ((nStartAkt >= nStart) && (nEndAkt <= nEnd))
             {
                 nIndex = i;
@@ -4023,7 +4023,7 @@ bool WW8PLCFx_Book::MapName(String& rName)
 }
 
 const String* WW8PLCFx_Book::GetName() const
-{ 
+{
     const String *pRet = 0;
     if (!nIsEnd && (pBook[0]->GetIdx() < nIMax))
         pRet = &(aBookNames[pBook[0]->GetIdx()]);
@@ -4065,17 +4065,17 @@ void WW8PLCFMan::AdjustEnds( WW8PLCFxDesc& rDesc )
 
             // gibt es bereits ein CharAttr-Ende das auf das jetzige
             // Absatzende zeigt ?  ... dann auch um 1 Zeichen verkuerzen
-            if (pChp->nEndPos == nLineEnd) 
-                pChp->nEndPos--;    
+            if (pChp->nEndPos == nLineEnd)
+                pChp->nEndPos--;
 
             // gibt es bereits ein Sep-Ende, das auf das jetzige Absatzende
             // zeigt ?  ... dann auch um 1 Zeichen verkuerzen
-            if( pSep->nEndPos == nLineEnd )	
+            if( pSep->nEndPos == nLineEnd )
                 pSep->nEndPos--;
         }
     }
     else if ( (&rDesc == pChp) || (&rDesc == pSep) )
-    {		
+    {
         // Char Adjust oder Sep Adjust Wenn Ende Char-Attr == Absatzende ...
         if( (rDesc.nEndPos == nLineEnd)	&& (rDesc.nEndPos > rDesc.nStartPos) )
             rDesc.nEndPos--;			// ... dann um 1 Zeichen verkuerzen
@@ -4146,9 +4146,9 @@ USHORT WW8PLCFMan::GetId(const WW8PLCFxDesc* p) const
     return nId;
 }
 
-WW8PLCFMan::WW8PLCFMan(WW8ScannerBase* pBase, short nType, long nStartCp, 
+WW8PLCFMan::WW8PLCFMan(WW8ScannerBase* pBase, short nType, long nStartCp,
     bool bDoingDrawTextBox)
-    : maSprmParser(pBase->pWw8Fib->nVersion), 
+    : maSprmParser(pBase->pWw8Fib->nVersion),
     mbDoingDrawTextBox(bDoingDrawTextBox)
 {
     pWwFib = pBase->pWw8Fib;
@@ -4215,32 +4215,32 @@ WW8PLCFMan::WW8PLCFMan(WW8ScannerBase* pBase, short nType, long nStartCp,
 
     switch( nType )					// Feld-Initialisierung
     {
-        case MAN_HDFT: 
+        case MAN_HDFT:
             pFld->pPLCFx = pBase->pFldHdFtPLCF;
             nCpO = pWwFib->ccpText + pWwFib->ccpFtn;
             pFdoa = pBase->pHdFtFdoa;
             pTxbx = pBase->pHdFtTxbx;
             pTxbxBkd = pBase->pHdFtTxbxBkd;
             break;
-        case MAN_FTN:  
+        case MAN_FTN:
             pFld->pPLCFx = pBase->pFldFtnPLCF;
             nCpO = pWwFib->ccpText;
             pFdoa = pTxbx = pTxbxBkd = 0;
             break;
-        case MAN_EDN:  
+        case MAN_EDN:
             pFld->pPLCFx = pBase->pFldEdnPLCF;
-            nCpO = pWwFib->ccpText + pWwFib->ccpFtn + pWwFib->ccpHdr + 
+            nCpO = pWwFib->ccpText + pWwFib->ccpFtn + pWwFib->ccpHdr +
                 pWwFib->ccpAtn;
             pFdoa = pTxbx = pTxbxBkd = 0;
             break;
-        case MAN_AND:  
+        case MAN_AND:
             pFld->pPLCFx = pBase->pFldAndPLCF;
             nCpO = pWwFib->ccpText + pWwFib->ccpFtn + pWwFib->ccpHdr;
             pFdoa = pTxbx = pTxbxBkd = 0;
             break;
-        case MAN_TXBX: 
+        case MAN_TXBX:
             pFld->pPLCFx = pBase->pFldTxbxPLCF;
-            nCpO = pWwFib->ccpText + pWwFib->ccpFtn + pWwFib->ccpHdr + 
+            nCpO = pWwFib->ccpText + pWwFib->ccpFtn + pWwFib->ccpHdr +
                 pWwFib->ccpMcr + pWwFib->ccpAtn + pWwFib->ccpEdn;
             pTxbx = pBase->pMainTxbx;
             pTxbxBkd = pBase->pMainTxbxBkd;
@@ -4248,14 +4248,14 @@ WW8PLCFMan::WW8PLCFMan(WW8ScannerBase* pBase, short nType, long nStartCp,
             break;
         case MAN_TXBX_HDFT:
             pFld->pPLCFx = pBase->pFldTxbxHdFtPLCF;
-            nCpO = pWwFib->ccpText + pWwFib->ccpFtn + pWwFib->ccpHdr + 
-                pWwFib->ccpMcr + pWwFib->ccpAtn + pWwFib->ccpEdn + 
+            nCpO = pWwFib->ccpText + pWwFib->ccpFtn + pWwFib->ccpHdr +
+                pWwFib->ccpMcr + pWwFib->ccpAtn + pWwFib->ccpEdn +
                 pWwFib->ccpTxbx;
             pTxbx = pBase->pHdFtTxbx;
             pTxbxBkd = pBase->pHdFtTxbxBkd;
             pFdoa = 0;
             break;
-        default: 
+        default:
             pFld->pPLCFx = pBase->pFldPLCF;
             nCpO = 0;
             pFdoa = pBase->pMainFdoa;
@@ -4350,7 +4350,7 @@ USHORT WW8PLCFMan::WhereIdx(bool* pbStart, long* pPos) const
         if (pD != pPcdA)
         {
             if(	(pD->nEndPos < nNext) && (pD->nStartPos == LONG_MAX) )
-            {	
+            {
                 // sonst ist Anfang = Ende
                 nNext = pD->nEndPos;
                 nNextIdx = i;
@@ -4577,7 +4577,7 @@ void WW8PLCFMan::AdvSprm(short nIdx, bool bStart)
                 p->nStartPos = p->nOrigEndPos+p->nCpOfs;
 
                 /*
-                #93702# 
+                #93702#
                 On failed seek we have run out of sprms, probably.  But if its
                 a fastsaved file (has pPcd) then we may be just in a sprm free
                 gap between pieces that have them, so set dirty flag in sprm
@@ -4602,9 +4602,9 @@ void WW8PLCFMan::AdvSprm(short nIdx, bool bStart)
                 we must force a restart of the pPcd on that pap/chp starting
                 boundary. Doing that effectively means that the pPcd sprms will
                 be applied to the new range. Not doing it means that the pPcd
-                sprms will only be applied to the first pap/chp set of 
+                sprms will only be applied to the first pap/chp set of
                 properties contained in the pap/chp range.
-                
+
                 So we bring the pPcd to a halt on this location here, by
                 settings its end to the current start, then store the starting
                 position of the current range to clipstart. The pPcd sprms
@@ -4615,8 +4615,8 @@ void WW8PLCFMan::AdvSprm(short nIdx, bool bStart)
                 position which will force them to be applied directly after
                 the pap and chps.
                 */
-                if (pPcd && ((p->nStartPos > pPcd->nStartPos) || 
-                    (pPcd->nStartPos == LONG_MAX)) && 
+                if (pPcd && ((p->nStartPos > pPcd->nStartPos) ||
+                    (pPcd->nStartPos == LONG_MAX)) &&
                     (pPcd->nEndPos != p->nStartPos))
                 {
                     pPcd->nEndPos = p->nStartPos;
@@ -4902,20 +4902,20 @@ WW8Fib::WW8Fib( SvStream& rSt, BYTE nWantedVersion,UINT32 nOffset )
         INT16 nFibMin;
         INT16 nFibMax;
         // note: 6 stands for "6 OR 7",  7 stands for "ONLY 7"
-        switch( nVersion )	
+        switch( nVersion )
         {
-            case 6: 
+            case 6:
                 nFibMin = 0x0065;	// von 101 WinWord 6.0
                                     //     102    "
                                     // und 103 WinWord 6.0 fuer Macintosh
                                     //     104    "
                 nFibMax = 0x0069;	// bis 105 WinWord 95
                 break;
-            case 7: 
+            case 7:
                 nFibMin = 0x0069;	// von 105 WinWord 95
                 nFibMax = 0x0069;	// bis 105 WinWord 95
                 break;
-            case 8: 
+            case 8:
                 nFibMin = 0x006A;	// von 106 WinWord 97
                 nFibMax = 0x00c1;	// bis 193 WinWord 97 (?)
                 break;
@@ -5362,7 +5362,7 @@ bool WW8Fib::Write(SvStream& rStrm)
     pData += 2 * sizeof( INT32);
 
     // weitere 2 Longs nur bei Ver67 ueberspringen
-    if( !bVer8 ) 
+    if( !bVer8 )
         pData += 2 * sizeof( INT32);
 
     Set_UInt32( pData, ccpText );
@@ -5375,7 +5375,7 @@ bool WW8Fib::Write(SvStream& rStrm)
     Set_UInt32( pData, ccpHdrTxbx );
 
         // weiteres Long nur bei Ver67 ueberspringen
-    if( !bVer8 ) 
+    if( !bVer8 )
         pData += 1 * sizeof( INT32);
 
 // Einschub fuer WW8 *****************************************************
@@ -5564,15 +5564,15 @@ bool WW8Fib::Write(SvStream& rStrm)
 rtl_TextEncoding WW8Fib::GetFIBCharset(UINT16 chs)
 {
     ASSERT(chs <= 0x100, "overflowed winword charset set");
-    rtl_TextEncoding eCharSet = 
+    rtl_TextEncoding eCharSet =
         (0x0100 == chs)
-        ? RTL_TEXTENCODING_APPLE_ROMAN 
+        ? RTL_TEXTENCODING_APPLE_ROMAN
         : rtl_getTextEncodingFromWindowsCharset( static_cast<BYTE>(chs) );
     return eCharSet;
 }
 
 WW8Style::WW8Style(SvStream& rStream, WW8Fib& rFibPara)
-    : rFib(rFibPara), rSt(rStream), cstd(0), cbSTDBaseInFile(0), 
+    : rFib(rFibPara), rSt(rStream), cstd(0), cbSTDBaseInFile(0),
     stiMaxWhenSaved(0), istdMaxFixedWhenSaved(0), nVerBuiltInNamesWhenSaved(0),
     ftcStandardChpStsh(0), ftcStandardChpCJKStsh(0), ftcStandardChpCTLStsh(0)
 {
@@ -5723,16 +5723,16 @@ WW8_STD* WW8Style::Read1Style( short& rSkip, String* pString, short* pcbStd )
     {	// echter Style ?
         if ( pStd )
         {
-            switch( rFib.nVersion )	
+            switch( rFib.nVersion )
             {
                 case 6:
-                case 7: 
+                case 7:
                     // lies Pascal-String
                     *pString = WW8ReadPString( rSt, RTL_TEXTENCODING_MS_1252 );
                     // leading len and trailing zero --> 2
                     rSkip -= 2+ pString->Len();
                     break;
-                case 8: 
+                case 8:
                     // handle Unicode-String with leading length short and
                     // trailing zero
                     if (ww8String::TestBeltAndBraces(rSt))
@@ -5743,7 +5743,7 @@ WW8_STD* WW8Style::Read1Style( short& rSkip, String* pString, short* pcbStd )
                     else
                     {
                         /*
-                        #i8114# 
+                        #i8114#
                         This is supposed to be impossible, its just supposed
                         to be 16 bit count followed by the string and ending
                         in a 0 short. But "Lotus SmartSuite Product: Word Pro"
@@ -5992,7 +5992,7 @@ WW8PLCF_HdFt::WW8PLCF_HdFt( SvStream* pSt, WW8Fib& rFib, WW8Dop& rDop )
                                             // und der Fussnoten
 }
 
-bool WW8PLCF_HdFt::GetTextPos(BYTE grpfIhdt, BYTE nWhich, WW8_CP& rStart, 
+bool WW8PLCF_HdFt::GetTextPos(BYTE grpfIhdt, BYTE nWhich, WW8_CP& rStart,
     long& rLen)
 {
     BYTE nI = 0x01;
@@ -6033,7 +6033,7 @@ bool WW8PLCF_HdFt::GetTextPosExact(short nIdx, WW8_CP& rStart, long& rLen)
 void WW8PLCF_HdFt::UpdateIndex( BYTE grpfIhdt )
 {
     // Caution: Description is not correct
-    for( BYTE nI = 0x01; nI <= 0x20; nI <<= 1 )	
+    for( BYTE nI = 0x01; nI <= 0x20; nI <<= 1 )
         if( nI & grpfIhdt )
             nIdxOffset++;
 }
@@ -6192,7 +6192,7 @@ WW8Dop::WW8Dop( SvStream& rSt, INT16 nFib, INT32 nPos, INT32 nSize )
             fNoLeading					= ( a32Bit &  0x00080000 ) >> 19 ;
             fMWSmallCaps				= ( a32Bit &  0x00200000 ) >> 21 ;
 
-            fUsePrinterMetrics			= ( a32Bit &  0x00200000 ) >> 31 ;
+            fUsePrinterMetrics          = ( a32Bit &  0x80000000 ) >> 31 ;
         }
 
         /*
