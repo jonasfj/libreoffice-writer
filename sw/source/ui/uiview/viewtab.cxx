@@ -2,9 +2,9 @@
  *
  *  $RCSfile: viewtab.cxx,v $
  *
- *  $Revision: 1.27 $
+ *  $Revision: 1.28 $
  *
- *  last change: $Author: rt $ $Date: 2004-06-17 16:07:28 $
+ *  last change: $Author: vg $ $Date: 2005-03-08 11:17:58 $
  *
  *  The Contents of this file are made available subject to the terms of
  *  either of the following licenses
@@ -142,7 +142,7 @@
 #include "section.hxx"
 
 // -> #i23726#
-#include "ndtxt.hxx" 
+#include "ndtxt.hxx"
 #include "pam.hxx"
 // <- #i23726#
 
@@ -689,13 +689,18 @@ void SwView::ExecTabWin( SfxRequest& rReq )
         aParaMargin.SetTxtLeft(aParaMargin.GetTxtLeft() - nLeftBorderDistance );
 
         aParaMargin.SetWhich( RES_LR_SPACE );
-        SwTxtFmtColl* pColl = rSh.GetCurTxtFmtColl();        
+        SwTxtFmtColl* pColl = rSh.GetCurTxtFmtColl();
 
         // #i23726#
         if (pNumRuleNodeFromDoc)
         {
             SwPosition aPos(*pNumRuleNodeFromDoc);
             rSh.NumIndent(aParaMargin.GetTxtLeft(), aPos);
+            // --> OD 2005-02-18 #i42921# - invalidate state of indent in order
+            // to get a ruler update.
+            aParaMargin.SetWhich( nSlot );
+            GetViewFrame()->GetBindings().SetState( aParaMargin );
+            // <--
         }
         else if(	pColl && pColl->IsAutoUpdateFmt() )
         {
@@ -1242,7 +1247,7 @@ void SwView::StateTabWin(SfxItemSet& rSet)
                     SvxLRSpaceItem aDistLR(SID_RULER_BORDER_DISTANCE);
                     aDistLR.SetLeft((USHORT)rBox.GetDistance(BOX_LINE_LEFT ));
                     aDistLR.SetRight((USHORT)rBox.GetDistance(BOX_LINE_RIGHT));
-                    
+
                     //add the border distance of the paragraph
                     SfxItemSet aCoreSet1( GetPool(),
                                             RES_BOX, RES_BOX,
@@ -1257,23 +1262,23 @@ void SwView::StateTabWin(SfxItemSet& rSet)
                 }
                 else if ( !rSh.IsDirectlyInSection() )
                 {
-                    //get the page/header/footer border distance 
+                    //get the page/header/footer border distance
                     const SwFrmFmt& rMaster = rDesc.GetMaster();
                     const SvxBoxItem& rBox = (const SvxBoxItem&)rMaster.GetAttrSet().Get(RES_BOX);
                     SvxLRSpaceItem aDistLR(SID_RULER_BORDER_DISTANCE);
                     aDistLR.SetLeft((USHORT)rBox.GetDistance(BOX_LINE_LEFT ));
                     aDistLR.SetRight((USHORT)rBox.GetDistance(BOX_LINE_RIGHT));
-                    
+
                     const SvxBoxItem* pBox = 0;
                     if(nFrmType & FRMTYPE_HEADER)
-                    {        
+                    {
                         rMaster.GetHeader();
                         const SwFmtHeader& rHeaderFmt = rMaster.GetHeader();
                         SwFrmFmt *pHeaderFmt = (SwFrmFmt*)rHeaderFmt.GetHeaderFmt();
                         pBox = & (const SvxBoxItem&)pHeaderFmt->GetBox();
                     }
                     else if(nFrmType & FRMTYPE_FOOTER )
-                    {        
+                    {
                         const SwFmtFooter& rFooterFmt = rMaster.GetFooter();
                         SwFrmFmt *pFooterFmt = (SwFrmFmt*)rFooterFmt.GetFooterFmt();
                         pBox = & (const SvxBoxItem&)pFooterFmt->GetBox();
@@ -1282,8 +1287,8 @@ void SwView::StateTabWin(SfxItemSet& rSet)
                     {
                         aDistLR.SetLeft((USHORT)pBox->GetDistance(BOX_LINE_LEFT ));
                         aDistLR.SetRight((USHORT)pBox->GetDistance(BOX_LINE_RIGHT));
-                    }            
-                    
+                    }
+
                     //add the border distance of the paragraph
                     SfxItemSet aCoreSet( GetPool(),
                                             RES_BOX, RES_BOX,
@@ -1295,7 +1300,7 @@ void SwView::StateTabWin(SfxItemSet& rSet)
                     rSet.Put(aDistLR);
                     nLeftBorderDistance = aDistLR.GetLeft();
                     nRightBorderDistance = aDistLR.GetRight();
-                }        
+                }
             }
         }
         break;
@@ -1318,7 +1323,7 @@ void SwView::StateTabWin(SfxItemSet& rSet)
         {
             BOOL bFrameRTL;
             BOOL bFrameHasVerticalColumns =  rSh.IsFrmVertical(FALSE, bFrameRTL) && bFrmSelection;
-            BOOL bHasTable = ( IsTabColFromDoc() || 
+            BOOL bHasTable = ( IsTabColFromDoc() ||
                     ( rSh.GetTableFmt() && !bFrmSelection &&
                     !(nFrmType & FRMTYPE_COLSECT ) ) );
 
@@ -1379,7 +1384,7 @@ void SwView::StateTabWin(SfxItemSet& rSet)
                         nEnd  = (USHORT)aTabCols.GetRight();
                         nEnd  -=  (USHORT)rEntry.nPos;
                         SvxColumnDescription aColDesc( nStart, nEnd,
-                                    (USHORT(aTabCols.GetRight() - rEntry.nMax)), 
+                                    (USHORT(aTabCols.GetRight() - rEntry.nMax)),
                                     (USHORT(aTabCols.GetRight() - rEntry.nMin)),
                                                     !aTabCols.IsHidden(i - 1) );
                         aColItem.Append(aColDesc);
@@ -1396,12 +1401,12 @@ void SwView::StateTabWin(SfxItemSet& rSet)
                         const SwTabColsEntry& rEntry = aTabCols.GetEntry( i );
                         nEnd  = rEntry.nPos - aTabCols.GetLeft();
                         SvxColumnDescription aColDesc( nStart, nEnd,
-                                rEntry.nMin - aTabCols.GetLeft(), rEntry.nMax - aTabCols.GetLeft(), 
+                                rEntry.nMin - aTabCols.GetLeft(), rEntry.nMax - aTabCols.GetLeft(),
                                                     !aTabCols.IsHidden(i) );
                         aColItem.Append(aColDesc);
                         nStart = nEnd;
                     }
-                    SvxColumnDescription aColDesc(nStart, aTabCols.GetRight() - aTabCols.GetLeft(), 
+                    SvxColumnDescription aColDesc(nStart, aTabCols.GetRight() - aTabCols.GetLeft(),
                                 0, 0,
                                     TRUE);
                     aColItem.Append(aColDesc);
@@ -1472,7 +1477,7 @@ void SwView::StateTabWin(SfxItemSet& rSet)
                         const SwFmtCol& rCol = pFmt->GetCol();
                         if(rSh.IsInRightToLeftText())
                             nNum = rCol.GetColumns().Count() - nNum;
-                        else 
+                        else
                             nNum--;
                         SvxColumnItem aColItem(nNum);
                         const SwRect &rSizeRect = rSh.GetAnyCurRect(RECT_FLY_PRT_EMBEDDED, pPt);
@@ -1541,9 +1546,9 @@ void SwView::StateTabWin(SfxItemSet& rSet)
                 rSet.DisableItem(nWhich);
             break;
         }
-        case SID_RULER_ROWS : 
+        case SID_RULER_ROWS :
         case SID_RULER_ROWS_VERTICAL:
-        {    
+        {
             BOOL bFrameRTL;
             BOOL bFrameHasVerticalColumns =  rSh.IsFrmVertical(FALSE, bFrameRTL) && bFrmSelection;
 
@@ -1591,15 +1596,15 @@ void SwView::StateTabWin(SfxItemSet& rSet)
                     if(bVerticalWriting)
                     {
                         nEnd  = USHORT(aTabCols.GetRight() - rEntry.nPos);
-                        SvxColumnDescription aColDesc( nStart, nEnd, 
-                            aTabCols.GetRight() - rEntry.nMax, aTabCols.GetRight() - rEntry.nMin, 
+                        SvxColumnDescription aColDesc( nStart, nEnd,
+                            aTabCols.GetRight() - rEntry.nMax, aTabCols.GetRight() - rEntry.nMin,
                                                     !aTabCols.IsHidden(i) );
                         aColItem.Append(aColDesc);
                     }
                     else
                     {
                         nEnd  = USHORT(rEntry.nPos - aTabCols.GetLeft());
-                        SvxColumnDescription aColDesc( nStart, nEnd, 
+                        SvxColumnDescription aColDesc( nStart, nEnd,
                                 USHORT(rEntry.nMin - aTabCols.GetLeft()), USHORT(rEntry.nMax - aTabCols.GetLeft()),
                                                     !aTabCols.IsHidden(i) );
                         aColItem.Append(aColDesc);
@@ -1614,12 +1619,12 @@ void SwView::StateTabWin(SfxItemSet& rSet)
                 // due to a page break inside of a row
                 if(!aTabCols.IsLastRowAllowedToChange())
                     bPutContentProtection = sal_True;
-                        
-                SvxColumnDescription aColDesc( nStart, nEnd, 
-                    aTabCols.GetRight(), aTabCols.GetRight(), 
+
+                SvxColumnDescription aColDesc( nStart, nEnd,
+                    aTabCols.GetRight(), aTabCols.GetRight(),
                                             FALSE );
                 aColItem.Append(aColDesc);
-                            
+
                 rSet.Put(aColItem, nWhich);
             }
             else
@@ -1896,7 +1901,7 @@ void SwView::StateTabWin(SfxItemSet& rSet)
         nWhich = aIter.NextWhich();
     }
     if(bPutContentProtection)
-    {        
+    {
         SvxProtectItem aProtect(SID_RULER_PROTECT);
         aProtect.SetCntntProtect(TRUE);
         rSet.Put(aProtect);
