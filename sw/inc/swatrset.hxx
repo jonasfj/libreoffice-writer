@@ -2,9 +2,9 @@
  *
  *  $RCSfile: swatrset.hxx,v $
  *
- *  $Revision: 1.1.1.1 $
+ *  $Revision: 1.2 $
  *
- *  last change: $Author: hr $ $Date: 2000-09-18 17:14:28 $
+ *  last change: $Author: jp $ $Date: 2000-10-30 12:49:30 $
  *
  *  The Contents of this file are made available subject to the terms of
  *  either of the following licenses
@@ -97,6 +97,7 @@ class SvxEscapementItem;
 class SvxCaseMapItem;
 class SvxNoHyphenItem;
 class SvxBlinkItem;
+class SvxEmphasisMarkItem;
 
 // Frame-Attribute
 class SwFmtFillOrder;
@@ -268,6 +269,7 @@ public:
     inline const SvxPostureItem      	&GetCTLPosture( BOOL = TRUE ) const;
     inline const SvxWeightItem       	&GetCTLWeight( BOOL = TRUE ) const;
     inline const SfxBoolItem       		&GetWritingDirection( BOOL = TRUE ) const;
+    inline const SvxEmphasisMarkItem	&GetEmphasisMark( BOOL = TRUE ) const;
 
     // Frame-Attribute	- impl. steht im frmatr.hxx
     inline const SwFmtFillOrder 		&GetFillOrder( BOOL = TRUE ) const;
@@ -340,15 +342,18 @@ public:
 /*************************************************************************
 
       $Log: not supported by cvs2svn $
+      Revision 1.1.1.1  2000/09/18 17:14:28  hr
+      initial import
+
       Revision 1.48  2000/09/18 16:03:29  willem.vandorp
       OpenOffice header added.
-    
+
       Revision 1.47  2000/09/08 13:24:27  willem.vandorp
       Header and footer replaced
-    
+
       Revision 1.46  2000/07/31 19:23:08  jp
       new attributes for CJK/CTL and graphic
-    
+
       Revision 1.45  2000/05/26 07:08:20  os
       old SW Basic API Slots removed
 
