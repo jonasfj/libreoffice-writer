@@ -2,9 +2,9 @@
  *
  *  $RCSfile: unoatxt.cxx,v $
  *
- *  $Revision: 1.24 $
+ *  $Revision: 1.25 $
  *
- *  last change: $Author: vg $ $Date: 2003-05-22 08:49:52 $
+ *  last change: $Author: rt $ $Date: 2003-09-19 08:48:47 $
  *
  *  The Contents of this file are made available subject to the terms of
  *  either of the following licenses
@@ -89,7 +89,7 @@
 #ifndef _OFAACCFG_HXX //autogen
 #include <offmgr/ofaaccfg.hxx>
 #endif
-#ifndef _SFXEVENT_HXX 
+#ifndef _SFXEVENT_HXX
 #include <sfx2/event.hxx>
 #endif
 #ifndef _SWTYPES_HXX
@@ -191,7 +191,7 @@ Reference< uno::XInterface > SAL_CALL SwXAutoTextContainer_createInstance(
 {
     //the module may not be loaded
     ::vos::OGuard aGuard(Application::GetSolarMutex());
-    SW_MOD()->Load();
+    SwDLL::Init();
     static Reference< uno::XInterface > xAText = (cppu::OWeakObject*)new SwXAutoTextContainer();;
     return xAText;
 }
@@ -1059,7 +1059,7 @@ void SwXAutoTextEntry::Notify( SfxBroadcaster& _rBC, const SfxHint& _rHint )
                 xBodyText = 0;
                 xDocSh.Clear();
             }
-        }            
+        }
     }
 }
 
