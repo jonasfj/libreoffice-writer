@@ -2,9 +2,9 @@
  *
  *  $RCSfile: idxmrk.hxx,v $
  *
- *  $Revision: 1.5 $
+ *  $Revision: 1.6 $
  *
- *  last change: $Author: iha $ $Date: 2002-08-08 13:09:46 $
+ *  last change: $Author: os $ $Date: 2002-09-05 09:47:02 $
  *
  *  The Contents of this file are made available subject to the terms of
  *  either of the following licenses
@@ -197,9 +197,9 @@ class SwIndexMarkDlg : public Window //SvxStandardDialog
     //this method updates the values from 'nLangForPhoneticReading' and 'bIsPhoneticReadingEnabled'
     //it needs to be called ones if this dialog is opened to create a new entry (in InitControls),
     //or otherwise it has to be called for each changed TOXMark (in UpdateDialog)
-    void			UpdateLanguageDependenciesForPhoneticReading(); 
+    void			UpdateLanguageDependenciesForPhoneticReading();
     String			GetDefaultPhoneticReading( const String& rText );
-    
+
     void 			UpdateKeyBoxes();
 
     void			UpdateDialog();
@@ -276,7 +276,9 @@ class SwAuthMarkDlg : public Window
     static sal_Bool 	bIsFromComponent;
 
     friend class SwAuthMarkModalDlg;
-    RadioButton		aFromComponentRB;
+    friend class SwAuthMarkFloatDlg;
+
+    RadioButton     aFromComponentRB;
     RadioButton		aFromDocContentRB;
     FixedText		aAuthorFT;
     FixedInfo		aAuthorFI;
@@ -315,6 +317,7 @@ class SwAuthMarkDlg : public Window
     DECL_LINK(IsEntryAllowedHdl, Edit*);
 
     void InitControls();
+    virtual void    Activate();
 public:
 
     SwAuthMarkDlg( Window *pParent,
