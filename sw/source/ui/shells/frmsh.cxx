@@ -2,9 +2,9 @@
  *
  *  $RCSfile: frmsh.cxx,v $
  *
- *  $Revision: 1.10 $
+ *  $Revision: 1.11 $
  *
- *  last change: $Author: vg $ $Date: 2003-04-17 15:41:59 $
+ *  last change: $Author: hr $ $Date: 2004-02-03 16:51:39 $
  *
  *  The Contents of this file are made available subject to the terms of
  *  either of the following licenses
@@ -71,9 +71,6 @@
 
 #ifndef _SFX_WHITER_HXX //autogen
 #include <svtools/whiter.hxx>
-#endif
-#ifndef _OFF_APP_HXX //autogen
-#include <offmgr/app.hxx>
 #endif
 #ifndef _GOODIES_IMAPOBJ_HXX
 #include <svtools/imapobj.hxx>
@@ -539,19 +536,19 @@ void SwFrameShell::Execute(SfxRequest &rReq)
                             aMgr.SetAttrSet( *pOutSet );
 
                         const SwFrmFmt* pCurrFlyFmt = rSh.GetFlyFrmFmt();
-                        if(SFX_ITEM_SET == 
-                           pOutSet->GetItemState(FN_PARAM_CHAIN_PREVIOUS, 
+                        if(SFX_ITEM_SET ==
+                           pOutSet->GetItemState(FN_PARAM_CHAIN_PREVIOUS,
                                                  FALSE, &pItem))
                         {
                             rSh.HideChainMarker();
 
-                            String sPrevName = 
+                            String sPrevName =
                                 ((const SfxStringItem*)pItem)->GetValue();
                             const SwFmtChain &rChain = pCurrFlyFmt->GetChain();
                             //needs cast - no non-const method available
-                            SwFlyFrmFmt* pFlyFmt = 
+                            SwFlyFrmFmt* pFlyFmt =
                                 (SwFlyFrmFmt*)rChain.GetPrev();
-                            if(pFlyFmt) 
+                            if(pFlyFmt)
                             {
                                 if (pFlyFmt->GetName() != sPrevName)
                                 {
@@ -574,18 +571,18 @@ void SwFrameShell::Execute(SfxRequest &rReq)
                             }
                             rSh.SetChainMarker();
                         }
-                        if(SFX_ITEM_SET == 
-                           pOutSet->GetItemState(FN_PARAM_CHAIN_NEXT, FALSE, 
+                        if(SFX_ITEM_SET ==
+                           pOutSet->GetItemState(FN_PARAM_CHAIN_NEXT, FALSE,
                                                  &pItem))
                         {
                             rSh.HideChainMarker();
-                            String sNextName = 
+                            String sNextName =
                                 ((const SfxStringItem*)pItem)->GetValue();
                             const SwFmtChain &rChain = pCurrFlyFmt->GetChain();
                             //needs cast - no non-const method available
-                            SwFlyFrmFmt* pFlyFmt = 
+                            SwFlyFrmFmt* pFlyFmt =
                                 (SwFlyFrmFmt*)rChain.GetNext();
-                            if(pFlyFmt) 
+                            if(pFlyFmt)
                             {
                                 if (pFlyFmt->GetName() != sNextName)
                                 {
