@@ -2,9 +2,9 @@
  *
  *  $RCSfile: unomap.cxx,v $
  *
- *  $Revision: 1.124 $
+ *  $Revision: 1.125 $
  *
- *  last change: $Author: os $ $Date: 2002-03-19 08:58:26 $
+ *  last change: $Author: os $ $Date: 2002-03-20 08:49:29 $
  *
  *  The Contents of this file are made available subject to the terms of
  *  either of the following licenses
@@ -919,6 +919,7 @@ const SfxItemPropertyMap* SwUnoPropertyMapProvider::GetPropertyMap(sal_uInt16 nP
                     { SW_PROP_NMID(UNO_NAME_TEXT_SECTION), FN_UNO_TEXT_SECTION,	CPPU_E2T(CPPUTYPE_REFTEXTSECTION),	PropertyAttribute::MAYBEVOID|PropertyAttribute::READONLY ,0 },
                     { SW_PROP_NMID(UNO_NAME_IS_PROTECTED), RES_PROTECT,            CPPU_E2T(CPPUTYPE_BOOLEAN), 0, MID_PROTECT_CONTENT},
                     { SW_PROP_NMID(UNO_NAME_CELL_NAME), FN_UNO_CELL_NAME,            CPPU_E2T(CPPUTYPE_OUSTRING), PropertyAttribute::READONLY,0},
+                    _REDLINE_NODE_PROPERTIES
                     {0,0,0,0,0}
                 };
                 aMapArr[nPropertyId] = aCellMap_Impl;
@@ -1066,7 +1067,8 @@ const SfxItemPropertyMap* SwUnoPropertyMapProvider::GetPropertyMap(sal_uInt16 nP
                 static SfxItemPropertyMap aFramePropertyMap_Impl[] =
                 {
                     COMMON_FRAME_PROPERTIES
-                    { SW_PROP_NMID(UNO_NAME_CHAIN_NEXT_NAME), RES_CHAIN,				CPPU_E2T(CPPUTYPE_OUSTRING),			PropertyAttribute::MAYBEVOID ,MID_CHAIN_NEXTNAME},
+                    _REDLINE_NODE_PROPERTIES
+                    { SW_PROP_NMID(UNO_NAME_CHAIN_NEXT_NAME), RES_CHAIN,                CPPU_E2T(CPPUTYPE_OUSTRING),            PropertyAttribute::MAYBEVOID ,MID_CHAIN_NEXTNAME},
                     { SW_PROP_NMID(UNO_NAME_CHAIN_PREV_NAME), RES_CHAIN,				CPPU_E2T(CPPUTYPE_OUSTRING),			PropertyAttribute::MAYBEVOID ,MID_CHAIN_PREVNAME},
                 /*not impl*/	{ SW_PROP_NMID(UNO_NAME_CLIENT_MAP), RES_URL, 				CPPU_E2T(CPPUTYPE_BOOLEAN),			PROPERTY_NONE ,MID_URL_CLIENTMAP		 },
                     { SW_PROP_NMID(UNO_NAME_EDIT_IN_READONLY), RES_EDIT_IN_READONLY,	CPPU_E2T(CPPUTYPE_BOOLEAN),			PROPERTY_NONE, 0},
@@ -1617,6 +1619,7 @@ const SfxItemPropertyMap* SwUnoPropertyMapProvider::GetPropertyMap(sal_uInt16 nP
                 {
                     {SW_PROP_NMID(UNO_NAME_REFERENCE_ID), 0, CPPU_E2T(CPPUTYPE_INT16),PropertyAttribute::READONLY|PropertyAttribute::MAYBEVOID,	0},
                     COMMON_TEXT_CONTENT_PROPERTIES
+                    _REDLINE_NODE_PROPERTIES
                     {0,0,0,0,0}
                 };
                 aMapArr[nPropertyId] = aFootnoteMap_Impl;
