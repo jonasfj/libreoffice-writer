@@ -2,9 +2,9 @@
  *
  *  $RCSfile: tox.hxx,v $
  *
- *  $Revision: 1.11 $
+ *  $Revision: 1.12 $
  *
- *  last change: $Author: hr $ $Date: 2004-11-27 11:39:53 $
+ *  last change: $Author: obo $ $Date: 2005-01-05 14:28:51 $
  *
  *  The Contents of this file are made available subject to the terms of
  *  either of the following licenses
@@ -280,7 +280,7 @@ struct SW_DLLPUBLIC SwFormToken
 };
 
 // -> #i21237#
-/** 
+/**
     Functor that is true when a given token has a certain token type.
 
     @param _eType  the type to check for
@@ -294,9 +294,9 @@ struct SwFormTokenEqualToFormTokenType
     FormTokenType eType;
 
     SwFormTokenEqualToFormTokenType(FormTokenType _eType) : eType(_eType) {}
-    bool operator()(const SwFormToken & rToken) 
-    { 
-        return rToken.eTokenType == eType; 
+    bool operator()(const SwFormToken & rToken)
+    {
+        return rToken.eTokenType == eType;
     }
 };
 
@@ -358,7 +358,7 @@ class SW_DLLPUBLIC SwFormTokensHelper
 
        @return the type of the token
     */
-    SW_DLLPRIVATE FormTokenType GetTokenType(const String & sToken, 
+    SW_DLLPRIVATE FormTokenType GetTokenType(const String & sToken,
                                              xub_StrLen * pTokenLen) const;
 
 public:
@@ -418,8 +418,8 @@ public:
 
     // fill tab stop positions from template to pattern
     // #i21237#
-    void					AdjustTabStops(SwDoc& rDoc, 
-                                           BOOL bDefaultRightTabStop = FALSE);
+    void					AdjustTabStops(SwDoc& rDoc,
+                                           BOOL bInsertNewTabStops = FALSE);
 
     inline USHORT	GetTOXType() const;
     inline USHORT	GetFormMax() const;
