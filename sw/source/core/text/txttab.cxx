@@ -2,9 +2,9 @@
  *
  *  $RCSfile: txttab.cxx,v $
  *
- *  $Revision: 1.18 $
+ *  $Revision: 1.19 $
  *
- *  last change: $Author: kz $ $Date: 2004-03-25 12:53:39 $
+ *  last change: $Author: hr $ $Date: 2004-11-09 13:49:10 $
  *
  *  The Contents of this file are made available subject to the terms of
  *  either of the following licenses
@@ -212,8 +212,10 @@ SwTabPortion *SwTxtFormatter::NewTabPortion( SwTxtFormatInfo &rInf, bool bAuto )
                 nCount = 0;
 
             nCount /= nDefTabDist;
-            nNextPos = ( nCount + 1 ) * nDefTabDist ; 
-            const SwTwips nMinimumTabWidth = rInf.GetVsh()->IsTabCompat() ? 1 : 50;
+            nNextPos = ( nCount + 1 ) * nDefTabDist ;
+            // --> FME 2004-09-21 #117919 Minimum tab stop width is 1 or 51 twips:
+            const SwTwips nMinimumTabWidth = rInf.GetVsh()->IsTabCompat() ? 0 : 50;
+            // <--
             if( nNextPos + nTabLeft <= nLineTab + nMinimumTabWidth )
                 nNextPos += nDefTabDist;
             cFill = 0;
@@ -355,7 +357,7 @@ sal_Bool SwTabPortion::PreFormat( SwTxtFormatInfo &rInf )
     // Break tab stop to next line if:
     // 1. Minmal width does not fit to line anymore.
     // 2. An underflow event was called for the tab portion.
-    sal_Bool bFull = ( bTabCompat && rInf.IsUnderFlow() ) || 
+    sal_Bool bFull = ( bTabCompat && rInf.IsUnderFlow() ) ||
                        rInf.Width() <= rInf.X() + PrtWidth();
 
     // #95477# Rotated tab stops get the width of one blank
@@ -388,7 +390,7 @@ sal_Bool SwTabPortion::PreFormat( SwTxtFormatInfo &rInf )
                      rInf.GetIdx() + GetLen() == rInf.GetTxt().Len() &&
                      GetTabPos() >= rInf.GetTxtFrm()->Frm().Width() )
                     bFull = sal_False;
-                            
+
                 break;
             }
             default: ASSERT( !this, "SwTabPortion::PreFormat: unknown adjustment" );
