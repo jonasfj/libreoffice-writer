@@ -2,9 +2,9 @@
  *
  *  $RCSfile: editsh.cxx,v $
  *
- *  $Revision: 1.34 $
+ *  $Revision: 1.35 $
  *
- *  last change: $Author: kz $ $Date: 2004-10-04 19:05:55 $
+ *  last change: $Author: rt $ $Date: 2004-11-26 16:26:27 $
  *
  *  The Contents of this file are made available subject to the terms of
  *  either of the following licenses
@@ -329,7 +329,7 @@ sal_Bool SwEditShell::AppendTxtNode()
     EndAllAction();
     return bRet;
 }
-        
+
 /******************************************************************************
  *		  liefert einen Pointer auf einen SwGrfNode; dieser wird von
  *		  		GetGraphic() und GetGraphicSize() verwendet.
@@ -566,7 +566,6 @@ const String& SwEditShell::GetChartName( const uno::Reference < embed::XEmbedded
         if( 0 != (pCli = aIter.First( TYPE(SwCntntNode) )) )
             do{
                 if( ((SwCntntNode*)pCli)->IsOLENode() &&
-                    ((SwOLENode*)pCli)->GetOLEObj().IsOleRef() &&
                     xObj == ((SwOLENode*)pCli)->GetOLEObj().GetOleRef() )
                 {
                     return ((SwOLENode*)pCli)->GetChartTblName();
@@ -962,7 +961,7 @@ BOOL SwEditShell::ConvertFieldsToText()
     EndAllAction();
     return bRet;
 }
-            
+
 BOOL SwEditShell::EmbedAllLinks()
 {
     StartAllAction();
