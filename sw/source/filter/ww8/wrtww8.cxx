@@ -2,9 +2,9 @@
  *
  *  $RCSfile: wrtww8.cxx,v $
  *
- *  $Revision: 1.61 $
+ *  $Revision: 1.62 $
  *
- *  last change: $Author: obo $ $Date: 2004-01-13 17:08:39 $
+ *  last change: $Author: hr $ $Date: 2004-02-03 16:28:11 $
  *
  *  The Contents of this file are made available subject to the terms of
  *  either of the following licenses
@@ -81,6 +81,8 @@
 #define _SVSTDARR_BOOLS
 #include <svtools/svstdarr.hxx>
 
+#include <svtools/fltrcfg.hxx>
+
 #ifndef _SV_SALBTYPE_HXX
 #include <vcl/salbtype.hxx>
 #endif
@@ -118,14 +120,6 @@
 #ifndef _MSOCXIMEX_HXX
 #include <svx/msocximex.hxx>
 #endif
-
-#ifndef _OFA_FLTRCFG_HXX
-#include <offmgr/fltrcfg.hxx>
-#endif
-#ifndef _OFF_APP_HXX //autogen
-#include <offmgr/app.hxx>
-#endif
-
 #ifndef _SWTYPES_HXX
 #include <swtypes.hxx>
 #endif
@@ -355,7 +349,7 @@ static void WriteDop( SwWW8Writer& rWrt )
     rDop.fUsePrinterMetrics = com::sun::star::document::PrinterIndependentLayout::DISABLED == rWrt.pDoc->IsUseVirtualDevice();
 
     // default TabStop schreiben
-    const SvxTabStopItem& rTabStop = 
+    const SvxTabStopItem& rTabStop =
         DefaultItemGet<SvxTabStopItem>(*rWrt.pDoc, RES_PARATR_TABSTOP);
     rDop.dxaTab = (USHORT)rTabStop[0].GetTabPos();
 
@@ -812,10 +806,10 @@ void WW8_WrMagicTable::Append( WW8_CP nCp, ULONG nData)
 
 void SwWW8Writer::FillCount( SvStream& rStrm, ULONG nCount )
 {
-    static const UINT32 aNulls[16] = 
+    static const UINT32 aNulls[16] =
     {
         0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0 // 64 Byte
-    }; 
+    };
 
     while (nCount > 64)
     {
@@ -968,7 +962,7 @@ void WW8_WrPlcPn::WritePlc()
 /*  */
 
 WW8_WrFkp::WW8_WrFkp(ePLCFT ePl, WW8_FC nStartFc, bool bWrtWW8)
-    : ePlc(ePl), nStartGrp(511), nOldStartGrp(511), 
+    : ePlc(ePl), nStartGrp(511), nOldStartGrp(511),
     nItemSize( ( CHP == ePl ) ? 1 : ( bWrtWW8 ? 13 : 7 )),
     nIMax(0), nOldVarLen(0), nMark(0), bCombined(false)
 {
@@ -1027,7 +1021,7 @@ BYTE *WW8_WrFkp::CopyLastSprms(BYTE &rLen, bool bVer8)
     BYTE nStart = *(pStart + (nIMax-1) * nItemSize);
 
     const BYTE* p = pFkp + ( (USHORT)nStart << 1 );
-    
+
     if (!*p && bVer8)
         p++;
 
@@ -1221,7 +1215,7 @@ WW8_FC WW8_WrFkp::GetEndFc() const
 //--------------------------------------------------------------------------
 
 WW8_WrPct::WW8_WrPct(WW8_FC nfcMin, bool bSaveUniCode)
-    : pPcts(new WW8_WrPcPtrs), nOldFc(nfcMin), bIsUni(bSaveUniCode) 
+    : pPcts(new WW8_WrPcPtrs), nOldFc(nfcMin), bIsUni(bSaveUniCode)
 {
     AppendPc( nOldFc, bIsUni );
 }
@@ -1574,7 +1568,7 @@ void SwWW8Writer::WriteAsStringTable(const std::vector<String>& rStrings,
             {
                 const String aNm(rStrings[n].Copy(0, 255));
                 rStrm << (BYTE)aNm.Len();
-                SwWW8Writer::WriteString8(rStrm, aNm, false, 
+                SwWW8Writer::WriteString8(rStrm, aNm, false,
                     RTL_TEXTENCODING_MS_1252);
                 if (nExtraLen)
                     SwWW8Writer::FillCount(rStrm, nExtraLen);
@@ -1924,7 +1918,7 @@ void SwWW8Writer::WriteText()
         {
             SwCntntNode* pCNd = (SwCntntNode*)pNd;
 
-            const SwPageDesc* pTemp = 
+            const SwPageDesc* pTemp =
                 pCNd->GetSwAttrSet().GetPageDesc().GetPageDesc();
             if (pTemp)
                 pAktPageDesc = pTemp;
@@ -2004,7 +1998,7 @@ void SwWW8Writer::WriteFkpPlcUsw()
 {
     if( !bWrtWW8 )
     {
-        static const BYTE aSpec[2] = 
+        static const BYTE aSpec[2] =
         {
             117, 1
         };
@@ -2136,7 +2130,7 @@ void SwWW8Writer::StoreDoc1()
     WriteMainText();                    // HauptText
     BYTE nSprmsLen;
     BYTE *pLastSprms = pPapPlc->CopyLastSprms(nSprmsLen);
-    
+
     bNeedsFinalPara |= pFtn->WriteTxt( *this );         // Footnote-Text
     bNeedsFinalPara |= pSepx->WriteKFTxt( *this );          // K/F-Text
     bNeedsFinalPara |= pAtn->WriteTxt( *this );         // Annotation-Text
@@ -2198,7 +2192,7 @@ ULONG SwWW8Writer::StoreDoc()
     if( !pOLEExp )
     {
         UINT32 nSvxMSDffOLEConvFlags = 0;
-        const OfaFilterOptions* pOpt = OFF_APP()->GetFilterOptions();
+        const SvtFilterOptions* pOpt = SvtFilterOptions::Get();
         if( pOpt->IsMath2MathType() )
             nSvxMSDffOLEConvFlags |= OLE_STARMATH_2_MATHTYPE;
         if( pOpt->IsWriter2WinWord() )
@@ -2254,7 +2248,7 @@ ULONG SwWW8Writer::StoreDoc()
         pFib->fWhichTblStm = 1;
         xTableStrm = pStg->OpenStream(CREATE_CONST_ASC(SL::a1Table),
             STREAM_STD_WRITE );
-        xDataStrm = pStg->OpenStream(CREATE_CONST_ASC(SL::aData), 
+        xDataStrm = pStg->OpenStream(CREATE_CONST_ASC(SL::aData),
             STREAM_STD_WRITE );
 
         xDataStrm->SetBufferSize( 32768 );  // fuer Grafiken
@@ -2357,7 +2351,7 @@ ULONG SwWW8Writer::StoreDoc()
 
     // set AutoHyphenation flag if found in default para style
     const SfxPoolItem* pItem;
-    SwTxtFmtColl* pStdTxtFmtColl = 
+    SwTxtFmtColl* pStdTxtFmtColl =
         pDoc->GetTxtCollFromPoolSimple(RES_POOLCOLL_STANDARD, false);
     if (pStdTxtFmtColl && SFX_ITEM_SET == pStdTxtFmtColl->GetItemState(
         RES_PARATR_HYPHENZONE, false, &pItem))
@@ -2439,7 +2433,7 @@ void SwWW8Writer::PrepareStorage()
     if (bWrtWW8)
     {
         static const char aUserName[] = "Microsoft Word-Document";
-        static const BYTE aCompObj[] = 
+        static const BYTE aCompObj[] =
         {
             0x01, 0x00, 0xFE, 0xFF, 0x03, 0x0A, 0x00, 0x00,
             0xFF, 0xFF, 0xFF, 0xFF, 0x06, 0x09, 0x02, 0x00,
@@ -2454,7 +2448,7 @@ void SwWW8Writer::PrepareStorage()
             0x6F, 0x63, 0x75, 0x6D, 0x65, 0x6E, 0x74, 0x2E,
             0x38, 0x00, 0xF4, 0x39, 0xB2, 0x71, 0x00, 0x00,
             0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-            0x00, 0x00 
+            0x00, 0x00
         };
 
         pName = aUserName;
@@ -2465,7 +2459,7 @@ void SwWW8Writer::PrepareStorage()
     else
     {
         static const char aUserName[] = "Microsoft Word 6.0 Document";
-        static const BYTE aCompObj[] = 
+        static const BYTE aCompObj[] =
         {
             0x01, 0x00, 0xFE, 0xFF, 0x03, 0x0A, 0x00, 0x00,
             0xFF, 0xFF, 0xFF, 0xFF, 0x00, 0x09, 0x02, 0x00,
@@ -2479,7 +2473,7 @@ void SwWW8Writer::PrepareStorage()
             0x63, 0x00, 0x10, 0x00, 0x00, 0x00, 0x57, 0x6F,
             0x72, 0x64, 0x2E, 0x44, 0x6F, 0x63, 0x75, 0x6D,
             0x65, 0x6E, 0x74, 0x2E, 0x36, 0x00, 0x00, 0x00,
-            0x00, 0x00 
+            0x00, 0x00
         };
 
         pName = aUserName;
@@ -2518,7 +2512,7 @@ ULONG SwWW8Writer::WriteStorage()
 }
 
 SwWW8Writer::SwWW8Writer(const String& rFltName)
-    : aMainStg(sMainStream), pISet(0), pUsedNumTbl(0), mpTopNodeOfHdFtPage(0), 
+    : aMainStg(sMainStream), pISet(0), pUsedNumTbl(0), mpTopNodeOfHdFtPage(0),
     pBmpPal(0), pKeyMap(0), pOLEExp(0), pOCXExp(0), pOleMap(0), nUniqueList(0),
     pAktPageDesc(0), pPapPlc(0), pChpPlc(0), pChpIter(0), pO(0)
 {
@@ -2563,14 +2557,14 @@ void WW8_WrPlcFtnEdn::WritePlc( SwWW8Writer& rWrt ) const
 {
     if( TXT_FTN == nTyp )
     {
-        WriteGenericPlc( rWrt, TXT_FTN, rWrt.pFib->fcPlcffndTxt, 
-            rWrt.pFib->lcbPlcffndTxt, rWrt.pFib->fcPlcffndRef, 
+        WriteGenericPlc( rWrt, TXT_FTN, rWrt.pFib->fcPlcffndTxt,
+            rWrt.pFib->lcbPlcffndTxt, rWrt.pFib->fcPlcffndRef,
             rWrt.pFib->lcbPlcffndRef );
     }
     else
     {
-        WriteGenericPlc( rWrt, TXT_EDN, rWrt.pFib->fcPlcfendTxt, 
-            rWrt.pFib->lcbPlcfendTxt, rWrt.pFib->fcPlcfendRef, 
+        WriteGenericPlc( rWrt, TXT_EDN, rWrt.pFib->fcPlcfendTxt,
+            rWrt.pFib->lcbPlcfendTxt, rWrt.pFib->fcPlcfendRef,
             rWrt.pFib->lcbPlcfendRef );
     }
 }
@@ -2583,8 +2577,8 @@ bool WW8_WrPlcPostIt::WriteTxt(SwWW8Writer& rWrt)
 
 void WW8_WrPlcPostIt::WritePlc( SwWW8Writer& rWrt ) const
 {
-    WriteGenericPlc( rWrt, TXT_ATN, rWrt.pFib->fcPlcfandTxt, 
-        rWrt.pFib->lcbPlcfandTxt, rWrt.pFib->fcPlcfandRef, 
+    WriteGenericPlc( rWrt, TXT_ATN, rWrt.pFib->fcPlcfandTxt,
+        rWrt.pFib->lcbPlcfandTxt, rWrt.pFib->fcPlcfandRef,
         rWrt.pFib->lcbPlcfandRef );
 }
 
@@ -2593,13 +2587,13 @@ void WW8_WrPlcTxtBoxes::WritePlc( SwWW8Writer& rWrt ) const
     if( TXT_TXTBOX == nTyp )
     {
         WriteGenericPlc( rWrt, nTyp, rWrt.pFib->fcPlcftxbxBkd,
-            rWrt.pFib->lcbPlcftxbxBkd, rWrt.pFib->fcPlcftxbxTxt, 
+            rWrt.pFib->lcbPlcftxbxBkd, rWrt.pFib->fcPlcftxbxTxt,
             rWrt.pFib->lcbPlcftxbxTxt );
     }
     else
     {
-        WriteGenericPlc( rWrt, nTyp, rWrt.pFib->fcPlcfHdrtxbxBkd, 
-            rWrt.pFib->lcbPlcfHdrtxbxBkd, rWrt.pFib->fcPlcfHdrtxbxTxt, 
+        WriteGenericPlc( rWrt, nTyp, rWrt.pFib->fcPlcfHdrtxbxBkd,
+            rWrt.pFib->lcbPlcfHdrtxbxBkd, rWrt.pFib->fcPlcfHdrtxbxTxt,
             rWrt.pFib->lcbPlcfHdrtxbxTxt );
     }
 }
