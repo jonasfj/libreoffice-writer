@@ -2,9 +2,9 @@
  *
  *  $RCSfile: fltini.cxx,v $
  *
- *  $Revision: 1.27 $
+ *  $Revision: 1.28 $
  *
- *  last change: $Author: obo $ $Date: 2004-01-13 16:38:40 $
+ *  last change: $Author: kz $ $Date: 2004-01-28 19:37:08 $
  *
  *  The Contents of this file are made available subject to the terms of
  *  either of the following licenses
@@ -193,8 +193,8 @@ using namespace com::sun::star::uno;
 SwRead ReadRtf = 0, ReadAscii = 0, ReadSwg = 0, ReadSw3 = 0,
         ReadHTML = 0, ReadXML = 0;
 
-bool IsDocShellRegistered() 
-{ 
+bool IsDocShellRegistered()
+{
     return 0 != SwDocShell::_GetInterface();
 }
 
@@ -305,11 +305,15 @@ const SfxFilter* SwIoSystem::GetFilterOfFilterTxt( const String& rFilterNm,
     do {
         if( pFltCnt )
         {
-            const SfxFilter* pFilter;
-            USHORT nCount = pFltCnt->GetFilterCount();
-            for( USHORT i = 0; i < nCount; ++i )
-                if( ( pFilter = pFltCnt->GetFilter( i ))->GetFilterName() == rFilterNm )
+            SfxFilterMatcher aMatcher( pFltCnt->GetName() );
+            SfxFilterMatcherIter aIter( &aMatcher );
+            const SfxFilter* pFilter = aIter.First();
+            while ( pFilter )
+            {
+                if( pFilter->GetFilterName() == rFilterNm )
                     return pFilter;
+                pFilter = aIter.Next();
+            }
         }
         if( pCnt || pFltCnt == SwWebDocShell::Factory().GetFilterContainer())
             break;
