@@ -2,9 +2,9 @@
  *
  *  $RCSfile: wrtw8num.cxx,v $
  *
- *  $Revision: 1.22 $
+ *  $Revision: 1.23 $
  *
- *  last change: $Author: obo $ $Date: 2003-09-01 12:40:46 $
+ *  last change: $Author: rt $ $Date: 2003-09-25 07:42:30 $
  *
  *  The Contents of this file are made available subject to the terms of
  *  either of the following licenses
@@ -194,7 +194,7 @@ sal_uInt16 GetWordFirstLineOffset(const SwNumFmt &rFmt)
 void SwWW8Writer::OutListTab()
 {
     if( !pUsedNumTbl )
-        return ;			// no numbering is used
+        return ;            // no numbering is used
 
     USHORT nCount = pUsedNumTbl->Count();
 
@@ -230,8 +230,8 @@ void SwWW8Writer::OutListTab()
         aNdNum.GetLevelVal()[ n ] = n;
 
     BYTE aPapSprms [] = {
-        0x0f, 0x84, 0, 0, 				// sprmPDxaLeft
-        0x11, 0x84, 0, 0,				// sprmPDxaLeft1
+        0x0f, 0x84, 0, 0,               // sprmPDxaLeft
+        0x11, 0x84, 0, 0,               // sprmPDxaLeft1
         0x15, 0xc6, 0x05, 0x00, 0x01, 0, 0, 0x06
     };
 
@@ -319,7 +319,7 @@ void SwWW8Writer::OutListTab()
             // write the rgbxchNums[9]
             pTableStrm->Write(aNumLvlPos, WW8ListManager::nMaxLevel);
 
-            nFlags = 0;		// ixchFollow: 0 - tab, 1 - blank, 2 - nothing
+            nFlags = 0;     // ixchFollow: 0 - tab, 1 - blank, 2 - nothing
             *pTableStrm << nFlags;
             // dxaSoace/dxaIndent (Word 6 compatibility)
             SwWW8Writer::WriteLong( *pTableStrm, 0 );
@@ -404,7 +404,7 @@ void SwWW8Writer::OutListTab()
 void SwWW8Writer::OutOverrideListTab()
 {
     if( !pUsedNumTbl )
-        return ;			// no numbering is used
+        return ;            // no numbering is used
 
     // write the "list format override" - LFO
     USHORT nCount = pUsedNumTbl->Count();
@@ -418,7 +418,7 @@ void SwWW8Writer::OutOverrideListTab()
         SwWW8Writer::FillCount( *pTableStrm, 12 );
     }
     for( n = 0; n < nCount; ++n )
-        SwWW8Writer::WriteLong( *pTableStrm, -1 );	// no overwrite
+        SwWW8Writer::WriteLong( *pTableStrm, -1 );  // no overwrite
 
     // set len to FIB
     pFib->lcbPlfLfo = pTableStrm->Tell() - pFib->fcPlfLfo;
@@ -427,7 +427,7 @@ void SwWW8Writer::OutOverrideListTab()
 void SwWW8Writer::OutListNamesTab()
 {
     if( !pUsedNumTbl )
-        return ;			// no numbering is used
+        return ;            // no numbering is used
 
     // write the "list format override" - LFO
     USHORT nNms = 0, nCount = pUsedNumTbl->Count();
@@ -459,9 +459,9 @@ void SwWW8Writer::OutListNamesTab()
 
 void SwWW8Writer::Out_Olst( const SwNumRule& rRule )
 {
-    static BYTE __READONLY_DATA aAnlvBase[] = {	// Defaults
-                                1,0,0,     		// Upper Roman
-                                0x0C,			// Hanging Indent, fPrev
+    static BYTE __READONLY_DATA aAnlvBase[] = { // Defaults
+                                1,0,0,          // Upper Roman
+                                0x0C,           // Hanging Indent, fPrev
                                 0,0,1,0x80,0,0,1,0,0x1b,1,0,0 };
 
     static BYTE __READONLY_DATA aSprmOlstHdr[] = { 133, 212 };
@@ -473,9 +473,9 @@ void SwWW8Writer::Out_Olst( const SwNumRule& rRule )
     BYTE* pChars = (BYTE*)pC;
     USHORT nCharLen = 64;
 
-    for (USHORT j = 0; j < WW8ListManager::nMaxLevel; j++ )	// 9 variable ANLVs
+    for (USHORT j = 0; j < WW8ListManager::nMaxLevel; j++ ) // 9 variable ANLVs
     {
-        memcpy( &aOlst.rganlv[j], aAnlvBase, sizeof( WW8_ANLV ) );	// Defaults
+        memcpy( &aOlst.rganlv[j], aAnlvBase, sizeof( WW8_ANLV ) );  // Defaults
 
         const SwNumFmt* pFmt = rRule.GetNumFmt( j );
         if( pFmt )
@@ -503,23 +503,23 @@ void SwWW8Writer::BuildAnlvBulletBase(WW8_ANLV& rAnlv, BYTE*& rpCh,
 {
     ByteToSVBT8(11, rAnlv.nfc);
 
-    BYTE nb = 0;								// Zahlentyp
+    BYTE nb = 0;                                // Zahlentyp
     switch (rFmt.GetNumAdjust())
     {
         case SVX_ADJUST_RIGHT:
             nb = 2; 
             break;
-        case SVX_ADJUST_CENTER: 	
+        case SVX_ADJUST_CENTER:     
             nb = 1; 
             break;
         case SVX_ADJUST_BLOCK:
-        case SVX_ADJUST_BLOCKLINE: 	
+        case SVX_ADJUST_BLOCKLINE:  
             nb = 3; 
             break;
     }
 
     if (GetWordFirstLineOffset(rFmt) < 0)
-        nb |= 0x8;			// number will be displayed using a hanging indent
+        nb |= 0x8;          // number will be displayed using a hanging indent
     ByteToSVBT8(nb, rAnlv.aBits1);
    
     if (1 < rCharLen)
@@ -623,7 +623,7 @@ void SwWW8Writer::SubstituteBullet(String& rNumStr,
         */
         rFontName.ASSIGN_CONST_ASC("Wingdings");
         rNumStr = 0x6C;
-     }		
+     }      
      delete pConvert;
 }
 
@@ -662,21 +662,21 @@ void SwWW8Writer::BuildAnlvBase( WW8_ANLV& rAnlv, BYTE*& rpCh,
 
     bool bInclUpper = rFmt.GetIncludeUpperLevels() > 0;
     if( bInclUpper )
-        nb |= 0x4;			// include previous levels
+        nb |= 0x4;          // include previous levels
 
     if( GetWordFirstLineOffset(rFmt) < 0 )
-        nb |= 0x8;			// number will be displayed using a hanging indent
+        nb |= 0x8;          // number will be displayed using a hanging indent
     ByteToSVBT8( nb, rAnlv.aBits1 );
 
     if( bInclUpper && !rRul.IsContinusNum() )
     {
         if( (nSwLevel >= WW8ListManager::nMinLevel )
             && (nSwLevel<= WW8ListManager::nMaxLevel )
-            && (rFmt.GetNumberingType() != SVX_NUM_NUMBER_NONE ) )	// UEberhaupt Nummerierung ?
-        {												// -> suche, ob noch Zahlen davor
+            && (rFmt.GetNumberingType() != SVX_NUM_NUMBER_NONE ) )  // UEberhaupt Nummerierung ?
+        {                                               // -> suche, ob noch Zahlen davor
             BYTE nUpper = rFmt.GetIncludeUpperLevels();
             if( (nUpper <= WW8ListManager::nMaxLevel) &&
-                (rRul.Get(nUpper).GetNumberingType() != SVX_NUM_NUMBER_NONE ) )	// Nummerierung drueber ?
+                (rRul.Get(nUpper).GetNumberingType() != SVX_NUM_NUMBER_NONE ) ) // Nummerierung drueber ?
             {
                                                     // dann Punkt einfuegen
                 SwWw8_InsertAnlText( aDotStr, rpCh, rCharLen,
@@ -710,7 +710,7 @@ void SwWW8Writer::Out_NumRuleAnld( const SwNumRule& rRul, const SwNumFmt& rFmt,
     BYTE aSprmAnld[54];
 
     memcpy( aSprmAnld, aSprmAnldDefault, sizeof( aSprmAnld ) );
-    WW8_ANLD* pA = (WW8_ANLD*)(aSprmAnld + 2);	// handlicher Pointer
+    WW8_ANLD* pA = (WW8_ANLD*)(aSprmAnld + 2);  // handlicher Pointer
 
     BYTE* pChars = (BYTE*)(pA->rgchAnld);
     USHORT nCharLen = 31;
@@ -735,10 +735,10 @@ bool SwWW8Writer::Out_SwNum(const SwTxtNode* pNd)
 
     bool bNoNum = false;
     if( nSwLevel == NO_NUM )
-        nSwLevel = NO_NUMLEVEL | 0 ;	// alte Codierung...
+        nSwLevel = NO_NUMLEVEL | 0 ;    // alte Codierung...
     if( ( nSwLevel & NO_NUMLEVEL ) != 0 )
     {
-        nSwLevel &= ~NO_NUMLEVEL;		// 0..WW8ListManager::nMaxLevel
+        nSwLevel &= ~NO_NUMLEVEL;       // 0..WW8ListManager::nMaxLevel
         bNoNum = true;
     }
 
