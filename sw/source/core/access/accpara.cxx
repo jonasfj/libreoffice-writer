@@ -2,9 +2,9 @@
  *
  *  $RCSfile: accpara.cxx,v $
  *
- *  $Revision: 1.48 $
+ *  $Revision: 1.49 $
  *
- *  last change: $Author: hr $ $Date: 2003-03-27 15:39:21 $
+ *  last change: $Author: vg $ $Date: 2003-04-17 10:09:21 $
  *
  *  The Contents of this file are made available subject to the terms of
  *  either of the following licenses
@@ -350,28 +350,28 @@ sal_Bool SwAccessibleParagraph::GetSelection(
                     }
                     else
                     {
-                        DBG_ASSERT( nHere == nStartIndex, 
+                        DBG_ASSERT( nHere == nStartIndex,
                                     "miscalculated index" );
 
                         // selection starts in this node:
                         // then check whether it's before or inside our part of
                         // the paragraph, and if so, get the proper position
                         USHORT nCoreStart = pStart->nContent.GetIndex();
-                        if( nCoreStart < 
+                        if( nCoreStart <
                             GetPortionData().GetFirstValidCorePosition() )
                         {
                             nLocalStart = 0;
                         }
-                        else if( nCoreStart <= 
+                        else if( nCoreStart <=
                                  GetPortionData().GetLastValidCorePosition() )
                         {
                             DBG_ASSERT(
                                 GetPortionData().IsValidCorePosition(
                                                                   nCoreStart ),
                                  "problem determining valid core position" );
-                         
-                            nLocalStart = 
-                                GetPortionData().GetAccessiblePosition( 
+
+                            nLocalStart =
+                                GetPortionData().GetAccessiblePosition(
                                                                   nCoreStart );
                         }
                     }
@@ -380,14 +380,14 @@ sal_Bool SwAccessibleParagraph::GetSelection(
                     sal_Int32 nLocalEnd = -1;
                     if( nHere < nEndIndex )
                     {
-                        // selection ends in following node: 
+                        // selection ends in following node:
                         // then our local selection extends to the end
                         nLocalEnd = GetPortionData().GetAccessibleString().
                                                                    getLength();
                     }
                     else
                     {
-                        DBG_ASSERT( nHere == nStartIndex, 
+                        DBG_ASSERT( nHere == nStartIndex,
                                     "miscalculated index" );
 
                         // selection ends in this node: then select everything
@@ -400,7 +400,7 @@ sal_Bool SwAccessibleParagraph::GetSelection(
                             nLocalEnd = GetPortionData().GetAccessibleString().
                                                                    getLength();
                         }
-                        else if( nCoreEnd >= 
+                        else if( nCoreEnd >=
                                  GetPortionData().GetFirstValidCorePosition() )
                         {
                             // selection is inside our part of this para
@@ -420,7 +420,7 @@ sal_Bool SwAccessibleParagraph::GetSelection(
                         nEnd = nLocalEnd;
                         bRet = sal_True;
                     }
-                }   
+                }
                 // else: this PaM doesn't point to this paragraph
             }
             // else: this PaM is collapsed and doesn't select anything
@@ -599,7 +599,7 @@ void SwAccessibleParagraph::_InvalidateFocus()
         }
         ASSERT( nPos != -1, "focus object should be selected" );
 
-        FireStateChangedEvent( AccessibleStateType::FOCUSED, 
+        FireStateChangedEvent( AccessibleStateType::FOCUSED,
                                pWin->HasFocus() && nPos != -1 );
     }
 }
@@ -820,8 +820,8 @@ sal_Bool SwAccessibleParagraph::GetAttributeBoundary(
     return sal_True;
 }
 
-sal_Bool SwAccessibleParagraph::GetGlyphBoundary( 
-    Boundary& rBound, 
+sal_Bool SwAccessibleParagraph::GetGlyphBoundary(
+    Boundary& rBound,
     const OUString& rText,
     sal_Int32 nPos )
 {
@@ -966,13 +966,13 @@ void SAL_CALL SwAccessibleParagraph::grabFocus()
     SwPaM *pCrsr = GetCrsr();
     const SwTxtFrm *pTxtFrm = static_cast<const SwTxtFrm*>( GetFrm() );
     const SwTxtNode* pTxtNd = pTxtFrm->GetTxtNode();
-    if( pCrsrSh != 0 && pTxtNd != 0 && 
+    if( pCrsrSh != 0 && pTxtNd != 0 &&
         ( pCrsr == 0 ||
            pCrsr->GetPoint()->nNode.GetIndex() != pTxtNd->GetIndex() ||
           !pTxtFrm->IsInside( pCrsr->GetPoint()->nContent.GetIndex()) ) )
     {
         // create pam for selection
-        SwIndex aIndex( const_cast< SwTxtNode * >( pTxtNd ), 
+        SwIndex aIndex( const_cast< SwTxtNode * >( pTxtNd ),
                         pTxtFrm->GetOfst() );
         SwPosition aStartPos( *pTxtNd, aIndex );
         SwPaM aPaM( aStartPos );
@@ -992,9 +992,9 @@ sal_Bool SAL_CALL SwAccessibleParagraph::supportsService(
         const ::rtl::OUString& sTestServiceName)
     throw (::com::sun::star::uno::RuntimeException)
 {
-    return sTestServiceName.equalsAsciiL( sServiceName, 
+    return sTestServiceName.equalsAsciiL( sServiceName,
                                           sizeof(sServiceName)-1 ) ||
-           sTestServiceName.equalsAsciiL( sAccessibleServiceName, 
+           sTestServiceName.equalsAsciiL( sAccessibleServiceName,
                                              sizeof(sAccessibleServiceName)-1 );
 }
 
@@ -1096,7 +1096,7 @@ Sequence< Type > SAL_CALL SwAccessibleParagraph::getTypes() throw(RuntimeExcepti
     return aTypes;
 }
 
-Sequence< sal_Int8 > SAL_CALL SwAccessibleParagraph::getImplementationId() 
+Sequence< sal_Int8 > SAL_CALL SwAccessibleParagraph::getImplementationId()
         throw(RuntimeException)
 {
     vos::OGuard aGuard(Application::GetSolarMutex());
@@ -1121,7 +1121,7 @@ sal_Int32 SwAccessibleParagraph::getCaretPosition()
     vos::OGuard aGuard(Application::GetSolarMutex());
 
     CHECK_FOR_DEFUNC( XAccessibleText );
-    
+
     sal_Int32 nRet = GetCaretPos();
     {
         vos::OGuard aGuard( aMutex );
@@ -1176,7 +1176,7 @@ sal_Unicode SwAccessibleParagraph::getCharacter( sal_Int32 nIndex )
     vos::OGuard aGuard(Application::GetSolarMutex());
 
     CHECK_FOR_DEFUNC( XAccessibleText );
-    
+
     OUString sText( GetString() );
 
     // return character (if valid)
@@ -1282,7 +1282,7 @@ sal_Int32 SwAccessibleParagraph::getCharacterCount()
     vos::OGuard aGuard(Application::GetSolarMutex());
 
     CHECK_FOR_DEFUNC( XAccessibleText );
-    
+
     return GetString().getLength();
 }
 
@@ -1316,7 +1316,9 @@ sal_Int32 SwAccessibleParagraph::getIndexAtPoint( const com::sun::star::awt::Poi
     DBG_ASSERT( GetFrm() != NULL, "The text frame has vanished!" );
     DBG_ASSERT( GetFrm()->IsTxtFrm(), "The text frame has mutated!" );
     const SwTxtFrm* pFrm = static_cast<const SwTxtFrm*>( GetFrm() );
-    sal_Bool bSuccess = pFrm->GetCrsrOfst( &aPos, aCorePoint );
+    SwCrsrMoveState aMoveState;
+    aMoveState.bPosMatchesBounds = TRUE;
+    sal_Bool bSuccess = pFrm->GetCrsrOfst( &aPos, aCorePoint, &aMoveState );
 
     return bSuccess ?
         GetPortionData().GetAccessiblePosition( aPos.nContent.GetIndex() )
@@ -1401,7 +1403,7 @@ OUString SwAccessibleParagraph::getText()
     vos::OGuard aGuard(Application::GetSolarMutex());
 
     CHECK_FOR_DEFUNC( XAccessibleText );
-    
+
     return GetString();
 }
 
@@ -1412,7 +1414,7 @@ OUString SwAccessibleParagraph::getTextRange(
     vos::OGuard aGuard(Application::GetSolarMutex());
 
     CHECK_FOR_DEFUNC( XAccessibleText );
-    
+
     OUString sText( GetString() );
 
     if ( IsValidRange( nStartIndex, nEndIndex, sText.getLength() ) )
@@ -1431,7 +1433,7 @@ OUString SwAccessibleParagraph::getTextAtIndex(
     vos::OGuard aGuard(Application::GetSolarMutex());
 
     CHECK_FOR_DEFUNC( XAccessibleText );
-    
+
     const OUString rText = GetString();
 
     // implement the silly specification that first position after
@@ -1460,7 +1462,7 @@ OUString SwAccessibleParagraph::getTextBeforeIndex(
     vos::OGuard aGuard(Application::GetSolarMutex());
 
     CHECK_FOR_DEFUNC( XAccessibleText );
-    
+
     const OUString rText = GetString();
 
     // get starting pos
@@ -1498,7 +1500,7 @@ OUString SwAccessibleParagraph::getTextBehindIndex(
     vos::OGuard aGuard(Application::GetSolarMutex());
 
     CHECK_FOR_DEFUNC( XAccessibleText );
-    
+
     const OUString rText = GetString();
 
     // implement the silly specification that first position after
