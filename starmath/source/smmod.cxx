@@ -2,9 +2,9 @@
  *
  *  $RCSfile: smmod.cxx,v $
  *
- *  $Revision: 1.11 $
+ *  $Revision: 1.12 $
  *
- *  last change: $Author: hr $ $Date: 2003-03-27 11:58:20 $
+ *  last change: $Author: rt $ $Date: 2003-09-19 08:53:40 $
  *
  *  The Contents of this file are made available subject to the terms of
  *  either of the following licenses
@@ -128,11 +128,16 @@
 #endif
 #include "starmath.hrc"
 
-TYPEINIT1( SmModuleDummy, SfxModule );
-TYPEINIT1( SmModule, SmModuleDummy );
+TYPEINIT1( SmModule, SfxModule );
 
 #define SmModule
 #include "smslots.hxx"
+
+
+SmResId::SmResId( USHORT nId )
+    : ResId(nId, SM_MOD()->GetResMgr())
+{
+}
 
 /////////////////////////////////////////////////////////////////
 
@@ -161,7 +166,7 @@ SmLocalizedSymbolData::~SmLocalizedSymbolData()
 const String SmLocalizedSymbolData::GetUiSymbolName( const String &rExportName ) const
 {
     String aRes;
-    
+
     const SmLocalizedSymbolData &rData = SM_MOD1()->GetLocSymbolData();
     const ResStringArray &rUiNames = rData.GetUiSymbolNamesArray();
     const ResStringArray &rExportNames = rData.GetExportSymbolNamesArray();
@@ -182,7 +187,7 @@ const String SmLocalizedSymbolData::GetUiSymbolName( const String &rExportName )
 const String SmLocalizedSymbolData::GetExportSymbolName( const String &rUiName ) const
 {
     String aRes;
-    
+
     const SmLocalizedSymbolData &rData = SM_MOD1()->GetLocSymbolData();
     const ResStringArray &rUiNames = rData.GetUiSymbolNamesArray();
     const ResStringArray &rExportNames = rData.GetExportSymbolNamesArray();
@@ -203,7 +208,7 @@ const String SmLocalizedSymbolData::GetExportSymbolName( const String &rUiName )
 const String SmLocalizedSymbolData::GetUiSymbolSetName( const String &rExportName ) const
 {
     String aRes;
-    
+
     const SmLocalizedSymbolData &rData = SM_MOD1()->GetLocSymbolData();
     const ResStringArray &rUiNames = rData.GetUiSymbolSetNamesArray();
     const ResStringArray &rExportNames = rData.GetExportSymbolSetNamesArray();
@@ -224,7 +229,7 @@ const String SmLocalizedSymbolData::GetUiSymbolSetName( const String &rExportNam
 const String SmLocalizedSymbolData::GetExportSymbolSetName( const String &rUiName ) const
 {
     String aRes;
-    
+
     const SmLocalizedSymbolData &rData = SM_MOD1()->GetLocSymbolData();
     const ResStringArray &rUiNames = rData.GetUiSymbolSetNamesArray();
     const ResStringArray &rExportNames = rData.GetExportSymbolSetNamesArray();
@@ -264,7 +269,7 @@ const ResStringArray* SmLocalizedSymbolData::Get50NamesArray( LanguageType nLang
 
     return p50NamesAry ? &p50NamesAry->GetNamesArray() : 0;
 }
-    
+
 
 const ResStringArray* SmLocalizedSymbolData::Get60NamesArray( LanguageType nLang )
 {
@@ -297,8 +302,8 @@ SFX_IMPL_INTERFACE(SmModule, SfxModule, SmResId(RID_APPLICATION))
 }
 
 
-SmModule::SmModule(SvFactory* pObjFact) :
-    SmModuleDummy(SFX_APP()->CreateResManager("sm"), FALSE, pObjFact),
+SmModule::SmModule(SfxObjectFactory* pObjFact) :
+    SfxModule(SFX_APP()->CreateResManager("sm"), FALSE, pObjFact, NULL),
     pConfig( 0 ),
     pColorConfig( 0 ),
     pLocSymbolData( 0 ),
@@ -406,20 +411,6 @@ void SmModule::FillStatusBar(StatusBar &rBar)
     rBar.InsertItem(SID_MODIFYSTATUS, rBar.GetTextWidth(C2S(" * ")));
 }
 
-SfxModule *SmModule::Load()
-{
-    return this;
-}
-
-void SmModule::Free()
-{
-}
-
-
-SfxModule *SmModuleDummy::Load()
-{
-    return 0;
-}
 /* -----------------15.02.99 12:45-------------------
  *
  * --------------------------------------------------*/
@@ -463,6 +454,3 @@ SfxTabPage*	 SmModule::CreateTabPage( USHORT nId, Window* pParent, const SfxItem
     return pRet;
 
 }
-
-
-
