@@ -2,9 +2,9 @@
  *
  *  $RCSfile: viewopt.hxx,v $
  *
- *  $Revision: 1.21 $
+ *  $Revision: 1.22 $
  *
- *  last change: $Author: rt $ $Date: 2004-08-23 08:42:25 $
+ *  last change: $Author: obo $ $Date: 2004-11-16 10:20:10 $
  *
  *  The Contents of this file are made available subject to the terms of
  *  either of the following licenses
@@ -203,6 +203,9 @@ protected:
     BOOL			bStarOneSetting : 1;// prevent from UI automatics (no scrollbars in readonly documents)
     BOOL            bIsPagePreview : 1; // the preview mustn't print field/footnote/... shadings
     BOOL            bSelectionInReadonly : 1; //determines whether selection is switched on in readonly documents
+    // --> FME 2004-06-29 #114856# Formular view
+    BOOL            bFormView : 1;
+    // <--
     BOOL            bBookview : 1;      // view mode for page preview
 
     // Maszstab
@@ -317,11 +320,11 @@ public:
         { return !bReadonly && (nCoreOptions & VIEWOPT_1_CHAR_HIDDEN) &&
                             ((nCoreOptions & VIEWOPT_1_VIEWMETACHARS)||bHard)
                                     ? TRUE : FALSE; }
-    
+
     inline void SetShowHiddenChar( BOOL b )
         { (b != 0) ? (nCoreOptions |= VIEWOPT_1_CHAR_HIDDEN ) : ( nCoreOptions &= ~VIEWOPT_1_CHAR_HIDDEN); }
 
-    
+
     inline BOOL IsShowHiddenField() const
         { return !bReadonly && (nCoreOptions & VIEWOPT_1_FLD_HIDDEN) ? TRUE : FALSE; }
     inline void SetShowHiddenField( BOOL b )
@@ -452,6 +455,11 @@ public:
 
     BOOL         IsSelectionInReadonly() const {return bSelectionInReadonly;}
     void         SetSelectionInReadonly(BOOL bSet) {bSelectionInReadonly = bSet;}
+
+    // --> FME 2004-06-29 #114856# Formular view
+    BOOL         IsFormView() const { return bFormView; }
+    void         SetFormView( BOOL bSet ) { bFormView = bSet; }
+    // <--
 
     inline BOOL  IsPagePrevBookview() const { return bBookview; }
     inline void  SetPagePrevBookview(BOOL bSet) { bBookview = bSet; }
