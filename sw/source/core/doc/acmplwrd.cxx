@@ -2,9 +2,9 @@
  *
  *  $RCSfile: acmplwrd.cxx,v $
  *
- *  $Revision: 1.8 $
+ *  $Revision: 1.9 $
  *
- *  last change: $Author: kz $ $Date: 2003-09-11 09:39:27 $
+ *  last change: $Author: hr $ $Date: 2004-02-03 14:35:24 $
  *
  *  The Contents of this file are made available subject to the terms of
  *  either of the following licenses
@@ -103,15 +103,11 @@
 #ifndef _HINTS_HXX
 #include <hints.hxx>
 #endif
-#ifndef _OFF_APP_HXX //autogen
-#include <offmgr/app.hxx>
-#endif
-#ifndef _OFAACCFG_HXX //autogen
-#include <offmgr/ofaaccfg.hxx>
-#endif
 #ifndef _MySVXACORR_HXX
 #include <svx/svxacorr.hxx>
 #endif
+
+#include <svx/acorrcfg.hxx>
 
 #include <vector>
 /* -----------------------------05.08.2002 12:43------------------------------
@@ -222,7 +218,7 @@ SwAutoCompleteClient& SwAutoCompleteClient::operator=(const SwAutoCompleteClient
     if(rClient.GetRegisteredIn())
         rClient.pRegisteredIn->Add(this);
     else if(GetRegisteredIn())
-        pRegisteredIn->Remove(this); 
+        pRegisteredIn->Remove(this);
     return *this;
 }
 /* -----------------------------05.08.2002 12:49------------------------------
@@ -351,7 +347,7 @@ BOOL SwAutoCompleteWord::InsertWord( const String& rWord, SwDoc& rDoc )
     String aNewWord(rWord);
     aNewWord.EraseAllChars( CH_TXTATR_INWORD );
     aNewWord.EraseAllChars( CH_TXTATR_BREAKWORD );
-    
+
     pImpl->AddDocument(rDoc);
     BOOL bRet = FALSE;
     xub_StrLen nWrdLen = aNewWord.Len();
@@ -557,7 +553,7 @@ void SwAutoCompleteWord::DocumentDying(const SwDoc& rDoc)
 {
     pImpl->RemoveDocument(rDoc);
 
-    SvxAutoCorrect* pACorr = OFF_APP()->GetAutoCorrConfig()->GetAutoCorrect();
+    SvxAutoCorrect* pACorr = SvxAutoCorrCfg::Get()->GetAutoCorrect();
     const sal_Bool bDelete = !pACorr->GetSwFlags().bAutoCmpltKeepList;
     for(USHORT nPos = aWordLst.Count(); nPos; nPos--)
     {
