@@ -2,9 +2,9 @@
  *
  *  $RCSfile: regionsw.cxx,v $
  *
- *  $Revision: 1.16 $
+ *  $Revision: 1.17 $
  *
- *  last change: $Author: os $ $Date: 2001-08-07 09:27:19 $
+ *  last change: $Author: os $ $Date: 2001-10-09 14:40:52 $
  *
  *  The Contents of this file are made available subject to the terms of
  *  either of the following licenses
@@ -596,7 +596,26 @@ SwEditRegionDlg::~SwEditRegionDlg( )
 
     aSectReprArr.DeleteAndDestroy( 0, aSectReprArr.Count() );
 }
+/* -----------------------------09.10.2001 15:41------------------------------
 
+ ---------------------------------------------------------------------------*/
+void    SwEditRegionDlg::SelectSection(const String& rSectionName)
+{
+    SvLBoxEntry* pEntry = aTree.First();
+    while(pEntry)
+    {
+        SectReprPtr pRepr = (SectReprPtr)pEntry->GetUserData();
+        if(pRepr->GetSection().GetName() == rSectionName)
+            break;
+        pEntry = aTree.Next(pEntry);
+    }
+    if(pEntry)
+    {
+        aTree.SelectAll( FALSE);
+        aTree.Select(pEntry);
+        aTree.MakeVisible(pEntry);
+    }
+}
 /*---------------------------------------------------------------------
     Beschreibung: 	Selektierte Eintrag in der TreeListBox wird im
                     Edit-Fenster angezeigt
@@ -1488,6 +1507,10 @@ void SwBaseShell::EditRegionDialog(SfxRequest& rReq)
             {
                 SwEditRegionDlg* pEditRegionDlg = new SwEditRegionDlg(
                                         pParentWin, rWrtShell );
+                if(pItem && pItem->ISA(SfxStringItem))
+                {
+                    pEditRegionDlg->SelectSection(((const SfxStringItem*)pItem)->GetValue());
+                }
                 pEditRegionDlg->Execute();
                 delete pEditRegionDlg;
             }
@@ -2370,15 +2393,18 @@ void SwSectionPropertyTabDialog::PageCreated( USHORT nId, SfxTabPage &rPage )
 
 /*-------------------------------------------------------------------------
     $Log: not supported by cvs2svn $
+    Revision 1.16  2001/08/07 09:27:19  os
+    #90616# reset password checkbox after cancel
+
     Revision 1.15  2001/07/05 13:43:00  ama
     Chg #89181#: New data exchange
-    
+
     Revision 1.14  2001/07/05 13:26:33  ama
     Chg #89181#: New data exchange
-    
+
     Revision 1.13  2001/07/04 09:02:45  os
     #89021# redesign
-    
+
     Revision 1.12  2001/06/20 11:20:01  os
     #87139# use default font for tree
 
