@@ -2,9 +2,9 @@
  *
  *  $RCSfile: wrtw8nds.cxx,v $
  *
- *  $Revision: 1.4 $
+ *  $Revision: 1.5 $
  *
- *  last change: $Author: cmc $ $Date: 2001-02-23 09:55:06 $
+ *  last change: $Author: jp $ $Date: 2001-03-14 10:22:09 $
  *
  *  The Contents of this file are made available subject to the terms of
  *  either of the following licenses
@@ -237,7 +237,7 @@ class WW8_SwAttrIter : public WW8_AttrIter
     xub_StrLen nTmpSwPos;					// fuer HasItem()
     USHORT nCurRedlinePos;
     rtl_TextEncoding eNdChrSet;
-    
+
     xub_StrLen SearchNext( xub_StrLen nStartPos );
     void SetCharSet( const SwTxtAttr& rTxtAttr, BOOL bStart );
     void FieldVanish( const String& rTxt );
@@ -252,7 +252,7 @@ public:
 
     BOOL IsTxtAttr( xub_StrLen nSwPos );
     BOOL IsRedlineAtEnd( xub_StrLen nPos ) const;
-    
+
     void NextPos() { nAktSwPos = SearchNext( nAktSwPos + 1 ); }
 
     void OutAttr( xub_StrLen nSwPos );
@@ -633,28 +633,28 @@ void WW8_SwAttrIter::OutSwFmtRuby( const SwFmtRuby& rRuby, BOOL bStart)
             "\" \\* hps"));
         aStr += String::CreateFromInt32(nHeight);
         aStr.AppendAscii(RTL_CONSTASCII_STRINGPARAM(
-            " \\o")); 
+            " \\o"));
         if (cDirective)
         {
-            aStr.AppendAscii(RTL_CONSTASCII_STRINGPARAM("\\a")); 
-            aStr.Append(cDirective); 
+            aStr.AppendAscii(RTL_CONSTASCII_STRINGPARAM("\\a"));
+            aStr.Append(cDirective);
         }
-        aStr.AppendAscii(RTL_CONSTASCII_STRINGPARAM("(\\s\\up ")); 
+        aStr.AppendAscii(RTL_CONSTASCII_STRINGPARAM("(\\s\\up "));
 
 
         if( pBreakIt->xBreak.is() )
-            nScript = pBreakIt->xBreak->getScriptType( rNd.GetTxt(), 
+            nScript = pBreakIt->xBreak->getScriptType( rNd.GetTxt(),
                 *(pRubyTxt->GetStart()));
         else
             nScript = ScriptType::ASIAN;
 
         const SwAttrSet& rSet = rNd.GetSwAttrSet();
-        const SvxFontHeightItem &rHeightItem  = 
+        const SvxFontHeightItem &rHeightItem  =
             (const SvxFontHeightItem&)rSet.Get(
             GetWhichOfScript(RES_CHRATR_FONTSIZE,nScript));
         nHeight = (rHeightItem.GetHeight() + 10)/20-1;
         aStr += String::CreateFromInt32(nHeight);
-        aStr += '('; 
+        aStr += '(';
         aStr += rRuby.GetText();
         aStr.AppendAscii(RTL_CONSTASCII_STRINGPARAM("),"));
         rWrt.OutField( 0, 49, aStr, WRITEFIELD_START | WRITEFIELD_CMD_START);
@@ -1842,7 +1842,8 @@ void SwWW8Writer::OutWW8FlyFrm( const SwFrmFmt& rFrmFmt,
                 pFlyFmt = (SwFlyFrmFmt*)&rFrmFmt;
                 if( pFlyFmt )
                 {
-                    if( bIsInTable && (FLY_PAGE != rAnch.GetAnchorId()) )
+                    if( bIsInTable && (FLY_PAGE != rAnch.GetAnchorId()) &&
+                        !pDoc->GetNodes()[ nStt ]->IsNoTxtNode() )
                     {
                         // Beachten: Flag  bOutTable  wieder setzen,
                         //           denn wir geben ja ganz normalen Content der
@@ -1851,8 +1852,7 @@ void SwWW8Writer::OutWW8FlyFrm( const SwFrmFmt& rFrmFmt,
                         bOutTable = TRUE;
                         const String& rName = pFlyFmt->GetName();
                         StartCommentOutput( rName );
-                        if( !pDoc->GetNodes()[ nStt ]->IsNoTxtNode() )
-                            WriteText();
+                        WriteText();
                         EndCommentOutput( rName );
                     }
                     else
@@ -2005,14 +2005,17 @@ SwNodeFnTab aWW8NodeFnTab = {
 
       Source Code Control System - Header
 
-      $Header: /zpool/svn/migration/cvs_rep_09_09_08/code/sw/source/filter/ww8/wrtw8nds.cxx,v 1.4 2001-02-23 09:55:06 cmc Exp $
+      $Header: /zpool/svn/migration/cvs_rep_09_09_08/code/sw/source/filter/ww8/wrtw8nds.cxx,v 1.5 2001-03-14 10:22:09 jp Exp $
 
       Source Code Control System - Update
 
       $Log: not supported by cvs2svn $
+      Revision 1.4  2001/02/23 09:55:06  cmc
+      CJK MSWord Ruby Export
+
       Revision 1.3  2000/10/20 13:43:39  jp
       use correct INetURL-Decode enum
-    
+
       Revision 1.2  2000/10/09 17:58:48  jp
       Bug #78395#: don't write UniCode by a W95 export
 
