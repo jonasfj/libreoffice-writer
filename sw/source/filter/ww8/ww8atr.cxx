@@ -2,9 +2,9 @@
  *
  *  $RCSfile: ww8atr.cxx,v $
  *
- *  $Revision: 1.1.1.1 $
+ *  $Revision: 1.2 $
  *
- *  last change: $Author: hr $ $Date: 2000-09-18 17:14:58 $
+ *  last change: $Author: er $ $Date: 2000-11-04 21:49:59 $
  *
  *  The Contents of this file are made available subject to the terms of
  *  either of the following licenses
@@ -282,6 +282,9 @@
 #include <fmtftntx.hxx>
 #endif
 
+#ifndef _UNOTOOLS_LOCALEDATAWRAPPER_HXX
+#include <unotools/localedatawrapper.hxx>
+#endif
 
 #ifdef DEBUG
 # ifndef _FMTCNTNT_HXX
@@ -1404,7 +1407,8 @@ BOOL SwWW8Writer::GetNumberFmt( const SwField& rFld, String& rStr )
     if( pNumFmt )
     {
         USHORT nLng = rFld.GetLanguage();
-        const International aIntl( nLng );
+        LocaleDataWrapper aLocDat( pNFmtr->GetServiceManager(),
+            SvNumberFormatter::ConvertLanguageToLocale( nLng ) );
         if( !pKeyMap )
         {
             pKeyMap = new NfKeywordTable;
@@ -1444,7 +1448,7 @@ BOOL SwWW8Writer::GetNumberFmt( const SwField& rFld, String& rStr )
         }
 
         String sFmt( pNumFmt->GetMappedFormatstring(
-                        *(NfKeywordTable*)pKeyMap, aIntl, TRUE ));
+                        *(NfKeywordTable*)pKeyMap, aLocDat, TRUE ));
         if( sFmt.Len() )
         {
             (( rStr.APP_ASC( "\\@\"" )) += sFmt ).APP_ASC( "\" " );
@@ -3407,15 +3411,18 @@ SwAttrFnTab aWW8AttrFnTab = {
 /*************************************************************************
 
       $Log: not supported by cvs2svn $
+      Revision 1.1.1.1  2000/09/18 17:14:58  hr
+      initial import
+
       Revision 1.51  2000/09/18 16:04:58  willem.vandorp
       OpenOffice header added.
-    
+
       Revision 1.50  2000/08/21 10:14:14  khz
       Export Line Numbering (restart on new section)
-    
+
       Revision 1.49  2000/08/04 10:56:44  jp
       Soft-/HardHyphens & HardBlanks changed from attribute to unicode character
-    
+
       Revision 1.48  2000/07/31 19:24:54  jp
       new attributes for CJK/CTL and graphic
 
