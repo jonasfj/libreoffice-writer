@@ -2,9 +2,9 @@
  *
  *  $RCSfile: edtwin.cxx,v $
  *
- *  $Revision: 1.83 $
+ *  $Revision: 1.84 $
  *
- *  last change: $Author: svesik $ $Date: 2004-04-21 12:27:05 $
+ *  last change: $Author: rt $ $Date: 2004-05-03 14:25:10 $
  *
  *  The Contents of this file are made available subject to the terms of
  *  either of the following licenses
@@ -1189,7 +1189,7 @@ void SwEditWin::KeyInput(const KeyEvent &rKEvt)
         {
             // In general, we want to map the direction keys if we are inside
             // some vertical formatted text.
-            // 1. Exception: For a table cursor in a horizontal table, the 
+            // 1. Exception: For a table cursor in a horizontal table, the
             //               directions should never be mapped.
             // 2. Exception: For a table cursor in a vertical table, the
             //               directions should always be mapped.
@@ -1325,7 +1325,7 @@ void SwEditWin::KeyInput(const KeyEvent &rKEvt)
                        KS_CellLeftSmall, KS_CellRightSmall,
                        KS_CellTopBig, KS_CellBottomBig,
                        KS_CellTopSmall, KS_CellBottomSmall,
-                       
+
                        KS_InsDel_ColLeftBig, KS_InsDel_ColRightBig,
                        KS_InsDel_ColLeftSmall, KS_InsDel_ColRightSmall,
                        KS_InsDel_ColTopBig, KS_InsDel_ColBottomBig,
@@ -1335,7 +1335,7 @@ void SwEditWin::KeyInput(const KeyEvent &rKEvt)
                        KS_InsDel_CellTopBig, KS_InsDel_CellBottomBig,
                        KS_InsDel_CellTopSmall, KS_InsDel_CellBottomSmall,
                        KS_TblColCellInsDel,
-                       
+
                        KS_Fly_Change, KS_Draw_Change,
                        KS_SpecialInsert,
                        KS_EnterCharCell,
@@ -1646,7 +1646,7 @@ KEYINPUT_CHECKTABLE_INSDEL:
                                     KEY_BACKSPACE != rKeyCode.GetFullCode(),
                                     TRUE))
                             eKeyState = KS_NumOrNoNum;
-                        
+
                         BOOL bOutline = FALSE;
 #ifdef TASK_59308
                         const SwTxtFmtColl* pColl;
@@ -1658,7 +1658,7 @@ KEYINPUT_CHECKTABLE_INSDEL:
 #endif
                         // #i23725#
                         BOOL bDone = FALSE;
-                        if (rSh.IsSttPara() && 
+                        if (rSh.IsSttPara() &&
                             NULL == rSh.GetCurNumRule())
                             bDone = rSh.TryRemoveIndent();
 
@@ -1667,22 +1667,22 @@ KEYINPUT_CHECKTABLE_INSDEL:
                             eKeyState = KS_Ende;
                         else
                         {
-                            if (rSh.IsSttPara() && 
+                            if (rSh.IsSttPara() &&
                                 ! rSh.IsNoNum())
                             {
-                                if (nKS_NUMDOWN_Count > 0 && 
+                                if (nKS_NUMDOWN_Count > 0 &&
                                     0 < rSh.GetNumLevel())
                                 {
                                     eKeyState = KS_NumUp;
                                     nKS_NUMDOWN_Count = 2;
                                     bDone = TRUE;
-                                }  
+                                }
                                 else if (nKS_NUMINDENTINC_Count > 0)
                                 {
                                     eKeyState = KS_NumIndentDec;
                                     nKS_NUMINDENTINC_Count = 2;
                                     bDone = TRUE;
-                                }                      
+                                }
                             }
                             // <- #i23725#
                             if( ! bDone && rSh.NumOrNoNum
@@ -1748,7 +1748,7 @@ KEYINPUT_CHECKTABLE_INSDEL:
                         if( rSh.IsSttOfPara() && !rSh.HasReadonlySel() )
                         {
                             SwTxtFmtColl* pColl = rSh.GetCurTxtFmtColl();
-                            if( pColl && 
+                            if( pColl &&
                                 //0 <= pColl->GetOutlineLevel() && #i24560#
                                 MAXLEVEL - 1 > pColl->GetOutlineLevel() )
                                 eKeyState = KS_OutlineDown;
@@ -1828,7 +1828,7 @@ KEYINPUT_CHECKTABLE_INSDEL:
                             else
                             {
                                 SwTxtFmtColl* pColl = rSh.GetCurTxtFmtColl();
-                                if( pColl && 
+                                if( pColl &&
                                     //0 <= pColl->GetOutlineLevel() &&  #i24560#
                                     MAXLEVEL - 1 > pColl->GetOutlineLevel() )
                                     eKeyState = KS_InsTab;
@@ -2414,7 +2414,7 @@ void SwEditWin::MouseButtonDown(const MouseEvent& rMEvt)
         rView.InvalidateRulerPos();
         SfxBindings& rBind = rView.GetViewFrame()->GetBindings();
         rBind.Update();
-        
+
         if (RulerMarginDrag( rView , rMEvt))
         {
             rView.SetNumRuleNodeFromDoc( NULL );
@@ -2444,7 +2444,7 @@ void SwEditWin::MouseButtonDown(const MouseEvent& rMEvt)
         BOOL bOnlyText = FALSE;
         bMBPressed = bNoInterrupt = TRUE;
         nKS_NUMDOWN_Count = 0; // #i23725#
-        
+
         CaptureMouse();
 
         //ggf. Cursorpositionen zuruecksetzen
@@ -3132,18 +3132,19 @@ void SwEditWin::MouseMove(const MouseEvent& rMEvt)
     }
 
     BYTE nMouseTabCol;
-    if( !bIsDocReadOnly && bInsWin && !pApplyTempl && !rSh.IsInSelect() && 
+    if( !bIsDocReadOnly && bInsWin && !pApplyTempl && !rSh.IsInSelect() &&
         !rSh.IsTableMode())
     {
         if (0 != (nMouseTabCol = rSh.WhichMouseTabCol( aDocPt )))
         {
             //Zuppeln von Tabellenspalten aus dem Dokument heraus.
-            
-            SetPointer( SW_TABCOL_VERT == nMouseTabCol ? POINTER_VSIZEBAR : POINTER_HSIZEBAR );
+
+            SetPointer( SW_TABCOL_VERT == nMouseTabCol || SW_TABROW_HORI == nMouseTabCol ?
+                    POINTER_VSIZEBAR : POINTER_HSIZEBAR );
             return;
         }
         // #i23726#
-        else if (rSh.IsNumLabel(aDocPt, RULER_MOUSE_MARGINWIDTH)) 
+        else if (rSh.IsNumLabel(aDocPt, RULER_MOUSE_MARGINWIDTH))
         {
             SetPointer( POINTER_HSIZEBAR );
 
