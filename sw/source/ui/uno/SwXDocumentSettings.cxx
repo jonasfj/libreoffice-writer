@@ -2,9 +2,9 @@
  *
  *  $RCSfile: SwXDocumentSettings.cxx,v $
  *
- *  $Revision: 1.3 $
+ *  $Revision: 1.4 $
  *
- *  last change: $Author: mtg $ $Date: 2001-06-05 14:58:02 $
+ *  last change: $Author: jp $ $Date: 2001-06-26 14:18:12 $
  *
  *  The Contents of this file are made available subject to the terms of
  *  either of the following licenses
@@ -66,10 +66,10 @@
 #ifndef _SW_XDOCUMENT_SETTINGS_HXX
 #include <SwXDocumentSettings.hxx>
 #endif
-#ifndef _COMPHELPER_PROPERTSETINFO_HXX_ 
+#ifndef _COMPHELPER_PROPERTSETINFO_HXX_
 #include <comphelper/propertysetinfo.hxx>
 #endif
-#ifndef _COM_SUN_STAR_I18N_XFORBIDDENCHARACTERS_HPP_ 
+#ifndef _COM_SUN_STAR_I18N_XFORBIDDENCHARACTERS_HPP_
 #include <com/sun/star/i18n/XForbiddenCharacters.hpp>
 #endif
 #ifndef _DOC_HXX
@@ -158,7 +158,7 @@ PropertySetInfo * lcl_createSettingsInfo()
         { RTL_CONSTASCII_STRINGPARAM("CurrentDatabaseCommandType"),HANDLE_CURRENT_DATABASE_COMMAND_TYPE, 	&::getCppuType((const sal_Int16*)0),	0,   0},
         { NULL, 0, 0, NULL, 0, 0 }
     };
-    
+
     PropertySetInfo *pInfo = new PropertySetInfo ( aWriterSettingsInfoMap );
     return pInfo;
 }
@@ -173,7 +173,7 @@ SwXDocumentSettings::SwXDocumentSettings ( SwXTextDocument * pModel )
 SwXDocumentSettings::~SwXDocumentSettings()
 {
 }
-Any SAL_CALL SwXDocumentSettings::queryInterface( const Type& rType ) 
+Any SAL_CALL SwXDocumentSettings::queryInterface( const Type& rType )
     throw(RuntimeException)
 {
         return ::cppu::queryInterface ( rType										,
@@ -196,7 +196,7 @@ void SwXDocumentSettings::release ()
     OWeakObject::release();
 }
 
-void SwXDocumentSettings::_setPropertyValues( const PropertyMapEntry** ppEntries, const Any* pValues ) 
+void SwXDocumentSettings::_setPropertyValues( const PropertyMapEntry** ppEntries, const Any* pValues )
     throw(UnknownPropertyException, PropertyVetoException, IllegalArgumentException, WrappedTargetException )
 {
     SwDocShell* pDocSh = mpModel->GetDocShell();
@@ -335,9 +335,6 @@ void SwXDocumentSettings::_setPropertyValues( const PropertyMapEntry** ppEntries
                         throw IllegalArgumentException();
                 }
                 pDoc->SetCharCompressType(static_cast < SwCharCompressType > (nMode) );
-                SwEditShell* pEditSh = pDoc->GetEditShell();
-                if(pEditSh)
-                    pEditSh->ChgHyphenation();
             }
             break;
             case HANDLE_APPLY_USER_DATA:
@@ -379,7 +376,7 @@ void SwXDocumentSettings::_setPropertyValues( const PropertyMapEntry** ppEntries
         }
     }
 }
-void SwXDocumentSettings::_getPropertyValues( const PropertyMapEntry** ppEntries, Any* pValue ) 
+void SwXDocumentSettings::_getPropertyValues( const PropertyMapEntry** ppEntries, Any* pValue )
     throw(UnknownPropertyException, WrappedTargetException )
 {
     SwDocShell* pDocSh = mpModel->GetDocShell();
