@@ -2,9 +2,9 @@
  *
  *  $RCSfile: swxml.cxx,v $
  *
- *  $Revision: 1.19 $
+ *  $Revision: 1.20 $
  *
- *  last change: $Author: dvo $ $Date: 2001-03-09 14:58:43 $
+ *  last change: $Author: mtg $ $Date: 2001-03-19 13:44:54 $
  *
  *  The Contents of this file are made available subject to the terms of
  *  either of the following licenses
@@ -436,6 +436,13 @@ sal_uInt32 XMLReader::Read( SwDoc &rDoc, SwPaM &rPaM, const String & rName )
             aOpt.IsFmtsOnly(), nStyleFamilyMask, !aOpt.IsMerge(),
             IsOrganizerMode() );
 
+        ReadThroughComponent(
+            pStorage, xModelComp, "settings.xml", NULL, xServiceFactory,
+            "com.sun.star.comp.Writer.XMLSettingsImporter",
+            aFilterArgs, rName, IsBlockMode(), xInsertTextRange,
+            aOpt.IsFmtsOnly(), nStyleFamilyMask, !aOpt.IsMerge(),
+            IsOrganizerMode() );
+
         if( !IsOrganizerMode() )
             nRet = ReadThroughComponent(
                pStorage, xModelComp, "content.xml", "Content.xml", xServiceFactory,
@@ -449,7 +456,7 @@ sal_uInt32 XMLReader::Read( SwDoc &rDoc, SwPaM &rPaM, const String & rName )
     {
         // read plain file
         
-        // parse
+        // parse    
         if( xSource.is() )
         {
             Reference< io::XActiveDataControl > xSourceControl( xSource, 
