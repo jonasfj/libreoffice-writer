@@ -2,9 +2,9 @@
  *
  *  $RCSfile: edit.cxx,v $
  *
- *  $Revision: 1.21 $
+ *  $Revision: 1.22 $
  *
- *  last change: $Author: tl $ $Date: 2002-05-24 07:48:49 $
+ *  last change: $Author: tl $ $Date: 2002-06-13 14:41:41 $
  *
  *  The Contents of this file are made available subject to the terms of
  *  either of the following licenses
@@ -60,6 +60,19 @@
  ************************************************************************/
 
 #pragma hdrstop
+
+#ifndef _DRAFTS_COM_SUN_STAR_ACCESSIBILITY_XACCESSIBLE_HPP_
+#include <drafts/com/sun/star/accessibility/XAccessible.hpp>
+#endif
+#ifndef _DRAFTS_COM_SUN_STAR_ACCESSIBILITY_ACCESSIBLEEVENTOBJECT_HPP_
+#include <drafts/com/sun/star/accessibility/AccessibleEventObject.hpp>
+#endif
+#ifndef _DRAFTS_COM_SUN_STAR_ACCESSIBILITY_ACCESSIBLEEVENTID_HPP_
+#include <drafts/com/sun/star/accessibility/AccessibleEventId.hpp>
+#endif
+#ifndef _DRAFTS_COM_SUN_STAR_ACCESSIBILITY_ACCESSIBLESTATETYPE_HPP_
+#include <drafts/com/sun/star/accessibility/AccessibleStateType.hpp>
+#endif
 
 #include "starmath.hrc"
 #define ITEMID_FONT 		1
@@ -125,6 +138,10 @@
 #define SPLITTERWIDTH	2
 
 
+using namespace drafts::com::sun::star::accessibility;
+using namespace com::sun::star;
+using namespace com::sun::star::uno;
+
 ////////////////////////////////////////
 
 
@@ -147,6 +164,7 @@ void SmGetLeftSelectionPart(const ESelection aSel,
 ////////////////////////////////////////
 
 SmEditWindow::SmEditWindow( SmCmdBoxWindow &rMyCmdBoxWin ) :
+    pAccessible         (0),
     Window              (&rMyCmdBoxWin),
     DropTargetHelper    ( this ),
     rCmdBox             (rMyCmdBoxWin),
@@ -170,6 +188,7 @@ SmEditWindow::SmEditWindow( SmCmdBoxWindow &rMyCmdBoxWin ) :
     Show();
 }
 
+
 SmEditWindow::~SmEditWindow()
 {
     aCursorMoveTimer.Stop();
@@ -188,6 +207,17 @@ SmEditWindow::~SmEditWindow()
     delete pHScrollBar;
     delete pVScrollBar;
     delete pScrollBox;
+
+    if (pAccessible)
+        pAccessible->ClearWin();    // make Accessible defunctional
+    // Note: memory for pAccessible will be freed when the reference
+    // xAccessible is released.
+}
+
+
+SmViewShell * SmEditWindow::GetView()
+{
+    return rCmdBox.GetView();
 }
 
 
@@ -224,7 +254,7 @@ void SmEditWindow::DataChanged( const DataChangedEvent& )
 {
     const StyleSettings aSettings( GetSettings().GetStyleSettings() );
     SetBackground( aSettings.GetWindowColor() );
-    // edit fields in other Applications use this font instead of 
+    // edit fields in other Applications use this font instead of
     // the application font thus we use this one too
     SetPointFont( aSettings.GetFieldFont() /*aSettings.GetAppFont()*/ );
     SetTextColor( aSettings.GetWindowTextColor() );
@@ -237,10 +267,10 @@ void SmEditWindow::DataChanged( const DataChangedEvent& )
         //!
         //! see also SmDocShell::GetEditEngine() !
         //!
-        
+
         pEditEngine->SetDefTab( USHORT( GetTextWidth( C2S("XXXX") ) ) );
 
-        USHORT aFntInfoId[3] = { 
+        USHORT aFntInfoId[3] = {
                 EE_CHAR_FONTINFO, EE_CHAR_FONTINFO_CJK, EE_CHAR_FONTINFO_CTL };
         for (int i = 0;  i < 3;  ++i)
         {
@@ -257,7 +287,7 @@ void SmEditWindow::DataChanged( const DataChangedEvent& )
             }
         }
 
-        SvxFontHeightItem aItem( GetFont().GetSize().Height(), 100, 
+        SvxFontHeightItem aItem( GetFont().GetSize().Height(), 100,
                                  EE_CHAR_FONTHEIGHT );
         pEditEngineItemPool->SetPoolDefaultItem( aItem );
         aItem.SetWhich( EE_CHAR_FONTHEIGHT_CJK );
@@ -448,7 +478,7 @@ void SmEditWindow::KeyInput(const KeyEvent& rKEvt)
             SmDocShell *pDocShell = GetDoc();
             if (pDocShell)
                 pDocShell->SetModified( GetEditEngine()->IsModified() );
-            
+
             aModifyTimer.Start();
         }
     }
@@ -464,7 +494,7 @@ void SmEditWindow::Paint(const Rectangle& rRect)
 void SmEditWindow::CreateEditView()
 {
     EditEngine *pEditEngine = GetEditEngine();
-    
+
     //! pEditEngine and pEditView may be 0.
     //! For example when the program is used by the document-converter
     if (!pEditView && pEditEngine)
@@ -624,6 +654,14 @@ void SmEditWindow::GetFocus()
 {
     Window::GetFocus();
 
+    if (xAccessible.is())
+    {
+        // Note: will implicitly send the AccessibleStateType::FOCUSED event
+        accessibility::AccessibleTextHelper *pHelper = pAccessible->GetTextHelper();
+        if (pHelper)
+            pHelper->SetFocus( sal_True );
+    }
+
     if (!pEditView)
          CreateEditView();
     EditEngine *pEditEngine = GetEditEngine();
@@ -643,6 +681,14 @@ void SmEditWindow::LoseFocus()
         pEditEngine->SetStatusEventHdl( Link() );
 
     Window::LoseFocus();
+
+    if (xAccessible.is())
+    {
+        // Note: will implicitly send the AccessibleStateType::FOCUSED event
+        accessibility::AccessibleTextHelper *pHelper = pAccessible->GetTextHelper();
+        if (pHelper)
+            pHelper->SetFocus( sal_False );
+    }
 }
 
 
@@ -917,4 +963,15 @@ void SmEditWindow::DeleteEditView( SmViewShell &rView )
     }
 }
 
+
+uno::Reference< XAccessible > SmEditWindow::CreateAccessible()
+{
+    if (!pAccessible)
+    {
+        pAccessible = new SmEditAccessible( this );
+        xAccessible = pAccessible;
+        pAccessible->Init();
+    }
+    return xAccessible;
+}
 
