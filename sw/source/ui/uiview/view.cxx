@@ -2,9 +2,9 @@
  *
  *  $RCSfile: view.cxx,v $
  *
- *  $Revision: 1.22 $
+ *  $Revision: 1.23 $
  *
- *  last change: $Author: mtg $ $Date: 2001-05-16 17:08:38 $
+ *  last change: $Author: jp $ $Date: 2001-05-22 16:41:30 $
  *
  *  The Contents of this file are made available subject to the terms of
  *  either of the following licenses
@@ -1190,19 +1190,19 @@ void SwView::ReadUserData( const String &rUserData, sal_Bool bBrowse )
 void SwView::ReadUserDataSequence ( const com::sun::star::uno::Sequence < com::sun::star::beans::PropertyValue >& rSequence, sal_Bool bBrowse )
 {
     sal_Int32 nLength = rSequence.getLength();
-    if (nLength && (!pWrtShell->IsNewLayout() || pWrtShell->IsBrowseMode() || bBrowse) ) 
+    if (nLength && (!pWrtShell->IsNewLayout() || pWrtShell->IsBrowseMode() || bBrowse) )
     {
         SET_CURR_SHELL(pWrtShell);
         const com::sun::star::beans::PropertyValue *pValue = rSequence.getConstArray();
         const SwRect& rRect = pWrtShell->GetCharRect();
         const Rectangle &rVis = GetVisArea();
 
-        long nX = rRect.Left(), nY = rRect.Top(), nLeft = rVis.Left(), nTop = rVis.Top(); 
+        long nX = rRect.Left(), nY = rRect.Top(), nLeft = rVis.Left(), nTop = rVis.Top();
         long nRight = bBrowse ? LONG_MIN : rVis.Right(), nBottom = bBrowse ? LONG_MIN : rVis.Bottom();
-        sal_Int16 nZoomType = pWrtShell->GetViewOptions()->GetZoomType(); 
+        sal_Int16 nZoomType = pWrtShell->GetViewOptions()->GetZoomType();
         sal_Int16 nZoomFactor = static_cast < sal_Int16 > (pWrtShell->GetViewOptions()->GetZoom());
         sal_Bool bSelectedFrame = pWrtShell->GetSelFrmType(), bGotViewLeft = sal_False, bGotViewTop = sal_False,
-                 bGotVisibleLeft = sal_False, bGotVisibleTop = sal_False, bGotVisibleRight = sal_False, 
+                 bGotVisibleLeft = sal_False, bGotVisibleTop = sal_False, bGotVisibleRight = sal_False,
                  bGotVisibleBottom = sal_False, bGotZoomType = sal_False, bGotZoomFactor = sal_False,
                  bGotIsSelectedFrame = sal_False;
 
@@ -1279,7 +1279,7 @@ void SwView::ReadUserDataSequence ( const com::sun::star::uno::Sequence < com::s
                     eZoom = SVX_ZOOM_PERCENT;
                     ++nOff;
                 }
-                if (bGotIsSelectedFrame) 
+                if (bGotIsSelectedFrame)
                 {
                     sal_Bool bSelectObj = (sal_False != bSelectedFrame )
                                         && pWrtShell->IsObjSelectable( aCrsrPos );
@@ -1295,7 +1295,7 @@ void SwView::ReadUserDataSequence ( const com::sun::star::uno::Sequence < com::s
 
                 pWrtShell->StartAction();
                 const SwViewOption* pVOpt = pWrtShell->GetViewOptions();
-                if ( bGotZoomType && bGotZoomFactor && 
+                if ( bGotZoomType && bGotZoomFactor &&
                    ( pVOpt->GetZoom() != nZoomFactor || pVOpt->GetZoomType() != eZoom ) )
                     SetZoom( eZoom, nZoomFactor);
                 if ( bBrowse && bGotVisibleLeft && bGotVisibleTop )
@@ -1630,7 +1630,8 @@ BOOL SwView::IsPasteAllowed()
     if( nLastPasteDestination != nPasteDestination )
     {
         TransferableDataHelper aDataHelper(
-                        TransferableDataHelper::CreateFromSystemClipboard() );
+                        TransferableDataHelper::CreateFromSystemClipboard(
+                                                        &GetEditWin()) );
         if( aDataHelper.GetTransferable().is() )
         {
             bPasteState = SwTransferable::IsPaste( *pWrtShell, aDataHelper );
@@ -1653,7 +1654,8 @@ BOOL SwView::IsPasteSpecialAllowed()
     if( nLastPasteDestination != nPasteDestination )
     {
         TransferableDataHelper aDataHelper(
-                        TransferableDataHelper::CreateFromSystemClipboard() );
+                        TransferableDataHelper::CreateFromSystemClipboard(
+                                                        &GetEditWin()) );
         if( aDataHelper.GetTransferable().is() )
         {
             bPasteState = SwTransferable::IsPaste( *pWrtShell, aDataHelper );
