@@ -2,9 +2,9 @@
  *
  *  $RCSfile: ww8par.cxx,v $
  *
- *  $Revision: 1.1.1.1 $
+ *  $Revision: 1.2 $
  *
- *  last change: $Author: hr $ $Date: 2000-09-18 17:14:58 $
+ *  last change: $Author: jp $ $Date: 2000-11-15 14:31:46 $
  *
  *  The Contents of this file are made available subject to the terms of
  *  either of the following licenses
@@ -255,27 +255,25 @@ SwMSDffManager::SwMSDffManager( SwWW8ImplReader& rRdr )
                         rRdr.pStrm ),
     rReader( rRdr )
 {
-    const OfaFilterOptions* pOpt = OFF_APP()->GetFilterOptions();
-#if SUPD>593
-    nSvxMSDffOLEConvFlags = GetFilterFlags();
-#endif
+    nSvxMSDffOLEConvFlags = SwMSDffManager::GetFilterFlags();
 }
 
 UINT32 SwMSDffManager::GetFilterFlags()
 {
-#if SUPD>593
-    UINT32 nFlags;
+    UINT32 nFlags = 0;
     const OfaFilterOptions* pOpt = OFF_APP()->GetFilterOptions();
     if( pOpt->IsMathType2StarMath() )
         nFlags |= OLE_MATHTYPE_2_STARMATH;
+/*
+    // !! don't convert the OLE-Object into the own format
     if( pOpt->IsWinWord2StarWriter() )
         nFlags |= OLE_WINWORD_2_STARWRITER;
+*/
     if( pOpt->IsExcel2StarCalc() )
         nFlags |= OLE_EXCEL_2_STARCALC;
     if( pOpt->IsPowerPoint2StarImpress() )
         nFlags |= OLE_POWERPOINT_2_STARIMPRESS;
     return nFlags;
-#endif
 }
 /***************************************************************************
 #  Spezial FastSave - Attribute
@@ -2472,7 +2470,7 @@ ULONG SwWW8ImplReader::LoadDoc1( SwPaM& rPaM ,WW8Glossary *pGloss)
 
     // NumRules koennen erst nach dem setzen aller Attribute korrgiert werden
 #ifdef DEBUG
-    {	
+    {
     ULONG nN = rDoc.GetNodes().Count();
     for( ULONG iN = 0; iN < nN; ++iN )
     {
@@ -2489,17 +2487,17 @@ ULONG SwWW8ImplReader::LoadDoc1( SwPaM& rPaM ,WW8Glossary *pGloss)
 #endif
 
 #ifdef DEBUG
-    {	
+    {
     const SwSpzFrmFmts& rFmts = *rDoc.GetSpzFrmFmts();
     for( ULONG iN = 0, nN = rFmts.Count(); iN < nN; ++iN )
     {
         const SwFmtAnchor& rA = rFmts[ iN ]->GetAnchor();
-        if( FLY_IN_CNTNT == rA.GetAnchorId() && 
+        if( FLY_IN_CNTNT == rA.GetAnchorId() &&
             !rA.GetCntntAnchor())
         {
-            int x = 0;	
+            int x = 0;
         }
-    }		
+    }
     }
 #endif
 
@@ -2853,68 +2851,71 @@ void SwMSDffManager::ProcessClientAnchor2( SvStream& rSt, DffRecordHeader& rHd, 
 
       Source Code Control System - Header
 
-      $Header: /zpool/svn/migration/cvs_rep_09_09_08/code/sw/source/filter/ww8/ww8par.cxx,v 1.1.1.1 2000-09-18 17:14:58 hr Exp $
+      $Header: /zpool/svn/migration/cvs_rep_09_09_08/code/sw/source/filter/ww8/ww8par.cxx,v 1.2 2000-11-15 14:31:46 jp Exp $
 
       Source Code Control System - Update
 
       $Log: not supported by cvs2svn $
+      Revision 1.1.1.1  2000/09/18 17:14:58  hr
+      initial import
+
       Revision 1.143  2000/09/18 16:04:59  willem.vandorp
       OpenOffice header added.
-    
+
       Revision 1.142  2000/08/28 14:54:44  khz
       #64941# compare Hd./Ft./Section info to prevent prohibited TxBx linkage
-    
+
       Revision 1.141  2000/08/22 17:08:54  cmc
       #77743# OLE Import, bad seek & bad FilterOptions
-    
+
       Revision 1.140  2000/08/18 09:48:24  khz
       Import Line Numbering (restart on new section)
-    
+
       Revision 1.139  2000/08/18 06:47:22  khz
       Import Line Numbering
-    
+
       Revision 1.138  2000/08/04 10:56:49  jp
       Soft-/HardHyphens & HardBlanks changed from attribute to unicode character
-    
+
       Revision 1.137  2000/07/28 15:37:14  khz
       #73796# don't delete NumRule from Attr but set it into pDoc
-    
+
       Revision 1.136  2000/07/27 10:21:30  khz
       #73796# stop ANList when opening next cell in a row and !pAktANLD->fNumberAcross
-    
+
       Revision 1.135  2000/07/17 13:47:00  khz
       #73987# check if sprmSNfcPgn should cause section change or not
-    
+
       Revision 1.134  2000/07/12 12:20:30  khz
       #76503# use SwFltStackEntry.bOld to mark attributes before skipping field
-    
+
       Revision 1.133  2000/07/10 12:52:37  jp
       new Errormessage
 
       Revision 1.132  2000/06/29 20:59:03  jp
       new MS Filteroptions - change OLE-Objects to StarOffice Objects
-    
+
       Revision 1.131  2000/06/28 08:07:44  khz
       #70915# Insert Section if end-note with flag 'on end of section' found
-    
+
       Revision 1.130  2000/06/23 10:30:01  khz
       #71707# Make sure pNdNum is set to zero when no numbering on node
-    
+
       Revision 1.129  2000/06/21 12:19:15  khz
       Task #74876 teilbehoben.
-    
+
       Revision 1.128  2000/05/31 12:22:50  khz
       Changes for Unicode
-    
+
       Revision 1.127  2000/05/25 08:06:41  khz
       Piece Table optimization, Unicode changes, Bugfixes
-    
+
       Revision 1.126  2000/05/18 10:58:55  jp
       Changes for Unicode
-    
+
       Revision 1.125  2000/05/16 12:13:01  jp
       ASS_FALSE define removed
-    
+
       Revision 1.124  2000/05/16 11:21:54  khz
       Unicode code-conversion
 
