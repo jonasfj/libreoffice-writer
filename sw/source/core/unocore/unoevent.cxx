@@ -2,9 +2,9 @@
  *
  *  $RCSfile: unoevent.cxx,v $
  *
- *  $Revision: 1.2 $
+ *  $Revision: 1.3 $
  *
- *  last change: $Author: dvo $ $Date: 2000-12-20 15:16:41 $
+ *  last change: $Author: os $ $Date: 2000-12-22 09:52:39 $
  *
  *  The Contents of this file are made available subject to the terms of
  *  either of the following licenses
@@ -59,7 +59,13 @@
  *
  ************************************************************************/
 
-// HINTIDs must be on top; it is required for the macitem.hxx header 
+#ifdef PRECOMPILED
+#include "core_pch.hxx"
+#endif
+
+#pragma hdrstop
+
+// HINTIDs must be on top; it is required for the macitem.hxx header
 #ifndef _HINTIDS_HXX
 #include "hintids.hxx"
 #endif
@@ -125,7 +131,7 @@ const sal_Char sImplementationName[] = "SwEventDescriptor";
 // careful: keep aKnownEventIDs and aKnownEventNames in sync!
 
 const USHORT aKnownEventIDs[] =
-{ 
+{
     SW_EVENT_OBJECT_SELECT,
     SW_EVENT_START_INS_GLOSSARY,
     SW_EVENT_END_INS_GLOSSARY,
@@ -158,12 +164,12 @@ const USHORT aKnownEventIDs[] =
      SFX_EVENT_SAVEDOCDONE,
      SFX_EVENT_SAVEASDOCDONE,
 
-// ??? graphics load faulty, terminated, success	
+// ??? graphics load faulty, terminated, success
     0
 };
 
 const sal_Char* aKnownEventNames[] =
-{ 
+{
     "OnSelect",
     "OnInsertStart",
     "OnInsertDone",
@@ -191,7 +197,7 @@ const sal_Char* aKnownEventNames[] =
     "OnPrint",
     "OnError",
     "OnLoadFinished",
-    "OnSaveFinished",	
+    "OnSaveFinished",
     "OnModifyChanged",
     "OnPrepareUnload",
     "OnNewMail",
