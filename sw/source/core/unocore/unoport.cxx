@@ -2,9 +2,9 @@
  *
  *  $RCSfile: unoport.cxx,v $
  *
- *  $Revision: 1.22 $
+ *  $Revision: 1.23 $
  *
- *  last change: $Author: tl $ $Date: 2002-02-07 16:33:58 $
+ *  last change: $Author: tl $ $Date: 2002-08-14 11:06:48 $
  *
  *  The Contents of this file are made available subject to the terms of
  *  either of the following licenses
@@ -153,11 +153,11 @@ SwFmtFld* 	SwXTextPortion::GetFldFmt(sal_Bool bInit)
 /*-- 11.12.98 09:56:55---------------------------------------------------
 
   -----------------------------------------------------------------------*/
-SwXTextPortion::SwXTextPortion(const SwUnoCrsr* pPortionCrsr, 
+SwXTextPortion::SwXTextPortion(const SwUnoCrsr* pPortionCrsr,
         uno::Reference< XText > & rParent,
         SwTextPortionType eType) :
     aPropSet(aSwMapProvider.GetPropertyMap(
-                (PORTION_REDLINE_START == eType || 
+                (PORTION_REDLINE_START == eType ||
                  PORTION_REDLINE_END   == eType) ?
                     PROPERTY_MAP_REDLINE_PORTION : PROPERTY_MAP_TEXTPORTION_EXTENSIONS)),
     aLstnrCntnr( (XTextRange*)this),
@@ -310,16 +310,16 @@ void SwXTextPortion::setString(const OUString& aString) throw( uno::RuntimeExcep
 uno::Reference< beans::XPropertySetInfo >  SwXTextPortion::getPropertySetInfo(void) throw( uno::RuntimeException )
 {
     //! PropertySetInfo for text portion extensions
-    static uno::Reference< beans::XPropertySetInfo >  
-            xTxtPorExtRef = SfxItemPropertySet( aSwMapProvider.GetPropertyMap( 
+    static uno::Reference< beans::XPropertySetInfo >
+            xTxtPorExtRef = SfxItemPropertySet( aSwMapProvider.GetPropertyMap(
                     PROPERTY_MAP_TEXTPORTION_EXTENSIONS) ).getPropertySetInfo();
     //! PropertySetInfo for redline portions
-    static uno::Reference< beans::XPropertySetInfo >  
-            xRedlPorRef = SfxItemPropertySet( aSwMapProvider.GetPropertyMap( 
+    static uno::Reference< beans::XPropertySetInfo >
+            xRedlPorRef = SfxItemPropertySet( aSwMapProvider.GetPropertyMap(
                     PROPERTY_MAP_REDLINE_PORTION) ).getPropertySetInfo();
-    
-                
-    return (PORTION_REDLINE_START == ePortionType || 
+
+
+    return (PORTION_REDLINE_START == ePortionType ||
             PORTION_REDLINE_END   == ePortionType) ? xRedlPorRef : xTxtPorExtRef;
 }
 /*-- 11.12.98 09:56:57---------------------------------------------------
@@ -531,7 +531,7 @@ void SwXTextPortion::setPropertyValues(
             if (!pMap)
                 throw UnknownPropertyException(OUString ( RTL_CONSTASCII_USTRINGPARAM ( "Unknown property: " ) ) + pPropertyNames[nProp], static_cast < cppu::OWeakObject * > ( this ) );
             if ( pMap->nFlags & PropertyAttribute::READONLY)
-                throw IllegalArgumentException ( OUString ( RTL_CONSTASCII_USTRINGPARAM ( "Property is read-only: " ) ) + pPropertyNames[nProp], static_cast < cppu::OWeakObject * > ( this ), nProp );
+                throw PropertyVetoException( OUString ( RTL_CONSTASCII_USTRINGPARAM ( "Property is read-only: " ) ) + pPropertyNames[nProp], static_cast < cppu::OWeakObject * > ( this ) );
 
             SwXTextCursor::SetPropertyValue( *pUnoCrsr, aPropSet, sTmp, pValues[nProp], pMap);
         }
