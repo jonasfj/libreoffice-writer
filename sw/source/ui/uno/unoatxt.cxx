@@ -2,9 +2,9 @@
  *
  *  $RCSfile: unoatxt.cxx,v $
  *
- *  $Revision: 1.19 $
+ *  $Revision: 1.20 $
  *
- *  last change: $Author: vg $ $Date: 2003-04-01 15:42:55 $
+ *  last change: $Author: obo $ $Date: 2003-04-02 16:40:17 $
  *
  *  The Contents of this file are made available subject to the terms of
  *  either of the following licenses
@@ -141,7 +141,7 @@
 #ifndef _SWMODULE_HXX
 #include <swmodule.hxx>
 #endif
-#ifndef _SFXSMPLHINT_HXX 
+#ifndef _SFXSMPLHINT_HXX
 #include <svtools/smplhint.hxx>
 #endif
 
@@ -1054,7 +1054,7 @@ void SwXAutoTextEntry::Notify( SfxBroadcaster& _rBC, const SfxHint& _rHint )
     }
 }
 
-void SwXAutoTextEntry::GetBodyText () 
+void SwXAutoTextEntry::GetBodyText ()
 {
     ::vos::OGuard aGuard(Application::GetSolarMutex());
 
@@ -1449,7 +1449,7 @@ void SwGlossaries::RemoveFileFromList( const String& rGroup )
 
                         SwXAutoTextEntry* pEntry = NULL;
                         if ( xEntryTunnel.is() )
-                            pEntry = reinterpret_cast< SwXAutoTextEntry* >( 
+                            pEntry = reinterpret_cast< SwXAutoTextEntry* >(
                                 xEntryTunnel->getSomething( SwXAutoTextEntry::getUnoTunnelId() ) );
 
                         if ( pEntry && ( pEntry->GetGroupName() == rGroup ) )
@@ -1482,7 +1482,8 @@ void SwGlossaries::InvalidateUNOOjects()
         if ( xGroup.is() )
             static_cast< SwXAutoTextGroup* >( xGroup.get() )->Invalidate();
     }
-    aGlossaryGroups.swap( UnoAutoTextGroups() );
+    UnoAutoTextGroups aTmpg() = UnoAutoTextGroups();
+    aGlossaryGroups.swap( aTmpg );
 
     // invalidate all the AutoTextEntry-objects
     for	(	UnoAutoTextEntries::const_iterator aEntryLoop = aGlossaryEntries.begin();
@@ -1493,13 +1494,14 @@ void SwGlossaries::InvalidateUNOOjects()
         Reference< lang::XUnoTunnel > xEntryTunnel( aEntryLoop->get(), UNO_QUERY );
         SwXAutoTextEntry* pEntry = NULL;
         if ( xEntryTunnel.is() )
-            pEntry = reinterpret_cast< SwXAutoTextEntry* >( 
+            pEntry = reinterpret_cast< SwXAutoTextEntry* >(
                 xEntryTunnel->getSomething( SwXAutoTextEntry::getUnoTunnelId() ) );
 
         if ( pEntry )
             pEntry->Invalidate();
     }
-    aGlossaryEntries.swap( UnoAutoTextEntries() );
+    UnoAutoTextEntries aTmpe = UnoAutoTextEntries();
+    aGlossaryEntries.swap( aTmpe );
 }
 
 //-----------------------------------------------------------------------
