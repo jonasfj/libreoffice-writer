@@ -2,9 +2,9 @@
  *
  *  $RCSfile: css1atr.cxx,v $
  *
- *  $Revision: 1.21 $
+ *  $Revision: 1.22 $
  *
- *  last change: $Author: rt $ $Date: 2003-12-01 17:25:23 $
+ *  last change: $Author: hr $ $Date: 2004-02-02 18:31:58 $
  *
  *  The Contents of this file are made available subject to the terms of
  *  either of the following licenses
@@ -150,7 +150,7 @@
 #ifndef _SVX_LANGITEM_HXX
 #include <svx/langitem.hxx>
 #endif
-#ifndef _SVX_FRMDIRITEM_HXX 
+#ifndef _SVX_FRMDIRITEM_HXX
 #include <svx/frmdiritem.hxx>
 #endif
 #ifndef _HTMLOUT_HXX //autogen
@@ -1966,7 +1966,7 @@ static Writer& OutCSS1_SwFmt( Writer& rWrt, const SwFmt& rFmt,
             if( nPoolFmtId==RES_POOLCOLL_TEXT )
                 rHTMLWrt.aScriptParaStyles.Insert
                     (new String( pDoc->GetTxtCollFromPoolSimple
-                                 ( RES_POOLCOLL_STANDARD, FALSE )->GetName() 
+                                 ( RES_POOLCOLL_STANDARD, FALSE )->GetName()
                                  ) );
             rHTMLWrt.aScriptParaStyles.Insert( new String( rFmt.GetName() ) );
         }
@@ -3797,7 +3797,7 @@ static Writer& OutCSS1_SvxFrameDirection( Writer& rWrt, const SfxPoolItem& rHt )
     if( !rHTMLWrt.IsCSS1Source( CSS1_OUTMODE_TEMPLATE ) )
         return rWrt;
 
-    sal_uInt16 nDir = 
+    sal_uInt16 nDir =
         static_cast< const SvxFrameDirectionItem& >( rHt ).GetValue();
     sal_Char *pStr = 0;
     switch( nDir )
@@ -3943,8 +3943,14 @@ SwAttrFnTab aCSS1AttrFnTab = {
 /* RES_FRAMEDIR */        	    	OutCSS1_SvxFrameDirection,
 /* RES_HEADER_FOOTER_EAT_SPACING */ 0,
 /* RES_FRMATR_DUMMY9 */        	    0, // Dummy:
+/* RES_FOLLOW_TEXT_FLOW */          0,
+/* RES_FRMATR_DUMMY1 */             0, // Dummy:
+/* RES_FRMATR_DUMMY2 */             0, // Dummy:
+/* RES_FRMATR_DUMMY3 */             0, // Dummy:
+/* RES_FRMATR_DUMMY4 */             0, // Dummy:
+/* RES_FRMATR_DUMMY5 */             0, // Dummy:
 
-/* RES_GRFATR_MIRRORGRF	*/			0,
+/* RES_GRFATR_MIRRORGRF */          0,
 /* RES_GRFATR_CROPGRF	*/			0,
 /* RES_GRFATR_ROTATION */			0,
 /* RES_GRFATR_LUMINANCE */			0,
