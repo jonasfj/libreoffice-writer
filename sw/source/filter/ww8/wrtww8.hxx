@@ -2,9 +2,9 @@
  *
  *  $RCSfile: wrtww8.hxx,v $
  *
- *  $Revision: 1.51 $
+ *  $Revision: 1.52 $
  *
- *  last change: $Author: obo $ $Date: 2003-09-01 12:41:27 $
+ *  last change: $Author: rt $ $Date: 2003-09-25 07:43:04 $
  *
  *  The Contents of this file are made available subject to the terms of
  *  either of the following licenses
@@ -65,7 +65,7 @@
 #define _WRTWW8_HXX
 
 #ifndef _SOLAR_H
-#include <tools/solar.h>		// UINTXX
+#include <tools/solar.h>        // UINTXX
 #endif
 #ifndef _SV_GEN_HXX //autogen
 #include <tools/gen.hxx>
@@ -104,10 +104,13 @@
 #ifndef _WW8SCAN_HXX
 #include "ww8scan.hxx"
 #endif
+#ifndef WW_FIELDS_HXX
+#include "fields.hxx"
+#endif
 
 // einige Forward Deklarationen
 class BitmapPalette;
-class Brush;				//JP 04.06.99: die Brush obsolete!!
+class Brush;                //JP 04.06.99: die Brush obsolete!!
 class SwEscherEx;
 class DateTime;
 class Font;
@@ -167,7 +170,7 @@ class WW8_WrPlcPn;
 class WW8_WrPlcPostIt;
 class WW8_WrPlcSepx;
 class WW8_WrPlcTxtBoxes;
-class WW8_WrPct;			// Verwaltung
+class WW8_WrPct;            // Verwaltung
 class WW8_WrPcPtrs;
 class WW8_WrtBookmarks;
 class WW8_WrtRedlineAuthor;
@@ -178,11 +181,11 @@ class SvStorageRef;
 struct WW8_PdAttrDesc;
 class SvxBrushItem;
 
-#define WWFL_ULSPACE_LIKE_SWG 	0x00000001
-#define WWFL_NO_GRAF 			0x00000080
-#define WWFL_NO_OLE 			0x00020000
+#define WWFL_ULSPACE_LIKE_SWG   0x00000001
+#define WWFL_NO_GRAF            0x00000080
+#define WWFL_NO_OLE             0x00020000
 
-#define GRF_MAGIC_1 0x12	// 3 magic Bytes fuer PicLocFc-Attribute
+#define GRF_MAGIC_1 0x12    // 3 magic Bytes fuer PicLocFc-Attribute
 #define GRF_MAGIC_2 0x34
 #define GRF_MAGIC_3 0x56
 #define GRF_MAGIC_321 0x563412L
@@ -230,13 +233,13 @@ struct WW8_SepInfo
 SV_DECL_VARARR( WW8_WrSepInfoPtrs, WW8_SepInfo, 4, 4 )
 
 
-class WW8_WrPlcSepx		// Plc fuer PageDescs -> Sepx ( Section Extensions )
+class WW8_WrPlcSepx     // Plc fuer PageDescs -> Sepx ( Section Extensions )
 {
 private:
-    WW8_WrSepInfoPtrs aSects;	// PTRARR von SwPageDesc und SwSectionFmt
-    SvULongs aCps;				// PTRARR von CPs
+    WW8_WrSepInfoPtrs aSects;   // PTRARR von SwPageDesc und SwSectionFmt
+    SvULongs aCps;              // PTRARR von CPs
     WW8_PdAttrDesc* pAttrs;
-    WW8_WrPlc0* pTxtPos;		// Pos der einzelnen Header / Footer
+    WW8_WrPlc0* pTxtPos;        // Pos der einzelnen Header / Footer
 
     void CheckForFacinPg( SwWW8Writer& rWrt ) const;
     void WriteOlst( SwWW8Writer& rWrt, USHORT i );
@@ -288,7 +291,7 @@ public:
     void AppendPc(WW8_FC nStartFc, bool bIsUnicode);
     void WritePc(SwWW8Writer& rWrt);
     void SetParaBreak();
-    bool IsUnicode() const	{ return bIsUni; }
+    bool IsUnicode() const  { return bIsUni; }
     ULONG Fc2Cp( ULONG nFc ) const;
 };
 
@@ -332,11 +335,11 @@ public:
 class DrawObj
 {
 public:
-    WW8_CP mnCp;				// CP-Pos der Verweise
-    UINT32 mnShapeId;			// ShapeId for the SwFrmFmts
-    const SwFrmFmt &mrCntnt;	// SwFrmFmt
-    Point maParentPos;			// Points
-    INT32 mnThick;	            // Border Thicknesses
+    WW8_CP mnCp;                // CP-Pos der Verweise
+    UINT32 mnShapeId;           // ShapeId for the SwFrmFmts
+    const SwFrmFmt &mrCntnt;    // SwFrmFmt
+    Point maParentPos;          // Points
+    INT32 mnThick;              // Border Thicknesses
     short mnDirection;               // If BiDi or not
 
     DrawObj(const SwFrmFmt &rCntnt, WW8_CP nCp, Point aParentPos, short nDir) 
@@ -350,7 +353,7 @@ private:
 class PlcDrawObj // PC for DrawObjects and Text-/OLE-/GRF-Boxes
 {
 private:
-    ::std::vector<DrawObj> maDrawObjs;	// vector of drawobjs
+    ::std::vector<DrawObj> maDrawObjs;  // vector of drawobjs
 protected:
     virtual void RegisterWithFib(WW8Fib &rFib, sal_uInt32 nStart, 
         sal_uInt32 nLen) const = 0;
@@ -370,7 +373,7 @@ private:
     PlcDrawObj& operator=(const PlcDrawObj&);
 };
 
-class MainTxtPlcDrawObj : public PlcDrawObj		
+class MainTxtPlcDrawObj : public PlcDrawObj     
 {
 public:
     MainTxtPlcDrawObj() {}
@@ -384,7 +387,7 @@ private:
     MainTxtPlcDrawObj& operator=(const MainTxtPlcDrawObj&);
 };
 
-class HdFtPlcDrawObj : public PlcDrawObj		
+class HdFtPlcDrawObj : public PlcDrawObj        
 {
 public:
     HdFtPlcDrawObj() {}
@@ -413,9 +416,9 @@ friend Writer& OutWW8_SwTxtNode( Writer& rWrt, SwCntntNode& rNode );
     wwFontHelper maFontHelper;
     String aMainStg;
     SvPtrarr aTOXArr;
-    const SfxItemSet* pISet;	// fuer Doppel-Attribute
-    WW8_WrPct*	pPiece;			// Pointer auf Piece-Table
-    SwNumRuleTbl* pUsedNumTbl;	// alle used NumRules
+    const SfxItemSet* pISet;    // fuer Doppel-Attribute
+    WW8_WrPct*  pPiece;         // Pointer auf Piece-Table
+    SwNumRuleTbl* pUsedNumTbl;  // alle used NumRules
     std::map<USHORT, USHORT> aRuleDuplicates; //map to Duplicated numrules
     std::stack<xub_StrLen> maCurrentCharPropStarts;
     WW8_WrtBookmarks* pBkmks;
@@ -426,12 +429,12 @@ friend Writer& OutWW8_SwTxtNode( Writer& rWrt, SwCntntNode& rNode );
     SwMSConvertControls* pOCXExp;
     WW8OleMaps* pOleMap;
 
-    ULONG nIniFlags;			// Flags aus der writer.ini
+    ULONG nIniFlags;            // Flags aus der writer.ini
     USHORT nCharFmtStart;
     USHORT nFmtCollStart;
-    USHORT nStyleBeforeFly;		// Style-Nummer des Nodes,
+    USHORT nStyleBeforeFly;     // Style-Nummer des Nodes,
                                 //       in/an dem ein Fly verankert ist
-    USHORT nLastFmtId;			// Style of last TxtNode in normal range
+    USHORT nLastFmtId;          // Style of last TxtNode in normal range
     USHORT nUniqueList;         // current number for creating unique list names
 
     virtual ULONG WriteStorage();
@@ -469,7 +472,7 @@ friend Writer& OutWW8_SwTxtNode( Writer& rWrt, SwCntntNode& rNode );
     void DoComboBox(com::sun::star::uno::Reference<com::sun::star::beans::XPropertySet> xPropSet);
     void DoCheckBox(com::sun::star::uno::Reference<com::sun::star::beans::XPropertySet> xPropSet);
 public:
-    SwPosFlyFrms maFlyPos;		// Pointer auf die aktuelle "FlyFrmTabelle"
+    SwPosFlyFrms maFlyPos;      // Pointer auf die aktuelle "FlyFrmTabelle"
     const SwPageDesc* pAktPageDesc;
     WW8Fib* pFib;
     WW8Dop* pDop;
@@ -483,63 +486,63 @@ public:
     WW8_WrPlcPostIt* pAtn;
     WW8_WrPlcTxtBoxes *pTxtBxs, *pHFTxtBxs;
 
-    SwFlyFrmFmt* pFlyFmt;			// liegt der Node in einem FlyFrame, ist
+    SwFlyFrmFmt* pFlyFmt;           // liegt der Node in einem FlyFrame, ist
                                     // das Format gesetzt, sonst 0
 
-    Point* pFlyOffset;				// zur Justierung eines im Writer als
+    Point* pFlyOffset;              // zur Justierung eines im Writer als
     RndStdIds eNewAnchorType;       // Zeichen gebundenen Flys, der im WW
                                     // Absatzgebunden wird.
 
-    WW8_WrPlcFld* pFldMain;			// Felder im Haupttext
-    WW8_WrPlcFld* pFldHdFt;			// Felder in Header/Footer
-    WW8_WrPlcFld* pFldFtn;			// Felder in FootNotes
-    WW8_WrPlcFld* pFldEdn;			// Felder in EndNotes
-    WW8_WrPlcFld* pFldTxtBxs;		// fields in textboxes
-    WW8_WrPlcFld* pFldHFTxtBxs;		// fields in header/footer textboxes
+    WW8_WrPlcFld* pFldMain;         // Felder im Haupttext
+    WW8_WrPlcFld* pFldHdFt;         // Felder in Header/Footer
+    WW8_WrPlcFld* pFldFtn;          // Felder in FootNotes
+    WW8_WrPlcFld* pFldEdn;          // Felder in EndNotes
+    WW8_WrPlcFld* pFldTxtBxs;       // fields in textboxes
+    WW8_WrPlcFld* pFldHFTxtBxs;     // fields in header/footer textboxes
     WW8_WrMagicTable *pMagicTable;  // keeps track of table cell positions, and
                                     // marks those that contain graphics,
                                     // which is required to make word display
                                     // graphics inside tables
     SwWW8WrGrf* pGrf;
-    const SwAttrSet* pStyAttr;		// StyleAttr fuer Tabulatoren
-    const SwModify* pOutFmtNode;	// write Format or Node
+    const SwAttrSet* pStyAttr;      // StyleAttr fuer Tabulatoren
+    const SwModify* pOutFmtNode;    // write Format or Node
 
     MainTxtPlcDrawObj *pSdrObjs;   // Draw-/Fly-Objects
-    HdFtPlcDrawObj *pHFSdrObjs;	    // Draw-/Fly-Objects in header or footer
+    HdFtPlcDrawObj *pHFSdrObjs;     // Draw-/Fly-Objects in header or footer
 
     WW8Bytes* pO;
 
-    SvStream *pTableStrm, *pDataStrm;	// Streams fuer WW97 Export
+    SvStream *pTableStrm, *pDataStrm;   // Streams fuer WW97 Export
 
-    SwEscherEx* pEscher;			// escher export class
-    SwTwips nFlyWidth, nFlyHeight;	// Fuer Anpassung Graphic
+    SwEscherEx* pEscher;            // escher export class
+    SwTwips nFlyWidth, nFlyHeight;  // Fuer Anpassung Graphic
 
     BYTE nTxtTyp;
 
-    BYTE bStyDef : 1;			// wird Style geschrieben ?
-    BYTE bBreakBefore : 1;	 	// Breaks werden 2mal ausgegeben
-    BYTE bOutKF : 1;		 	// Kopf/Fusstexte werden ausgegeben
-    BYTE bOutFlyFrmAttrs : 1;	// Rahmen-Attr von Flys werden ausgegeben
-    BYTE bOutPageDescs : 1;	 	// PageDescs werden ausgegeben ( am Doc-Ende )
-    BYTE bOutFirstPage : 1;		// write Attrset of FirstPageDesc
-    BYTE bOutTable : 1;			// Tabelle wird ausgegeben
+    BYTE bStyDef : 1;           // wird Style geschrieben ?
+    BYTE bBreakBefore : 1;      // Breaks werden 2mal ausgegeben
+    BYTE bOutKF : 1;            // Kopf/Fusstexte werden ausgegeben
+    BYTE bOutFlyFrmAttrs : 1;   // Rahmen-Attr von Flys werden ausgegeben
+    BYTE bOutPageDescs : 1;     // PageDescs werden ausgegeben ( am Doc-Ende )
+    BYTE bOutFirstPage : 1;     // write Attrset of FirstPageDesc
+    BYTE bOutTable : 1;         // Tabelle wird ausgegeben
                                 //    ( wird zB bei Flys in Tabelle zurueckgesetzt )
-    BYTE bIsInTable : 1;		// wird sind innerhalb der Ausgabe einer Tabelle
+    BYTE bIsInTable : 1;        // wird sind innerhalb der Ausgabe einer Tabelle
                                 //    ( wird erst nach der Tabelle zurueckgesetzt )
-    BYTE bOutGrf : 1;			// Grafik wird ausgegeben
-    BYTE bWrtWW8 : 1;			// Schreibe WW95 oder WW97 FileFormat
-    BYTE bInWriteEscher : 1;	// in write textboxes
-    BYTE bStartTOX : 1;			// true: a TOX is startet
-    BYTE bInWriteTOX : 1;		// true: all content are in a TOX
-    BYTE bFtnAtTxtEnd : 1;		// true: all FTN at Textend
-    BYTE bEndAtTxtEnd : 1;		// true: all END at Textend
+    BYTE bOutGrf : 1;           // Grafik wird ausgegeben
+    BYTE bWrtWW8 : 1;           // Schreibe WW95 oder WW97 FileFormat
+    BYTE bInWriteEscher : 1;    // in write textboxes
+    BYTE bStartTOX : 1;         // true: a TOX is startet
+    BYTE bInWriteTOX : 1;       // true: all content are in a TOX
+    BYTE bFtnAtTxtEnd : 1;      // true: all FTN at Textend
+    BYTE bEndAtTxtEnd : 1;      // true: all END at Textend
 
 
 
 
-    SvxMSExportOLEObjects& GetOLEExp()		{ return *pOLEExp; }
-    SwMSConvertControls& GetOCXExp()		{ return *pOCXExp; }
-    WW8OleMaps& GetOLEMap()		            { return *pOleMap; }
+    SvxMSExportOLEObjects& GetOLEExp()      { return *pOLEExp; }
+    SwMSConvertControls& GetOCXExp()        { return *pOCXExp; }
+    WW8OleMaps& GetOLEMap()                 { return *pOleMap; }
     void ExportDopTypography(WW8DopTypography &rTypo);
 
     const SfxPoolItem* HasItem( USHORT nWhich ) const;
@@ -583,8 +586,8 @@ public:
     void Out_SwFmt(const SwFmt& rFmt, bool bPapFmt, bool bChpFmt,
         bool bFlyFmt = false);
     bool GetNumberFmt(const SwField& rFld, String& rStr);
-    void OutField( const SwField* pFld, BYTE nFldType, const String& rFldCmd, 
-        BYTE nMode = WRITEFIELD_ALL );
+    void OutField(const SwField* pFld, ww::eField eFldType, 
+        const String& rFldCmd, BYTE nMode = WRITEFIELD_ALL);
     void StartCommentOutput( const String& rName );
     void EndCommentOutput(   const String& rName );
     void OutGrf( const SwNoTxtNode* pNd );
@@ -612,18 +615,18 @@ public:
 
     ULONG ReplaceCr( BYTE nChar );
 
-    ULONG Fc2Cp( ULONG nFc ) const 			{ return pPiece->Fc2Cp( nFc ); }
+    ULONG Fc2Cp( ULONG nFc ) const          { return pPiece->Fc2Cp( nFc ); }
 
             // einige z.T. static halb-interne Funktions-Deklarationen
 
     void OutSprmBytes( BYTE* pBytes, USHORT nSiz )
                                 { pO->Insert( pBytes, nSiz, pO->Count() ); }
 
-    ULONG GetIniFlags() const 				{ return nIniFlags; }
-    inline bool IsUnicode() const 			{ return pPiece->IsUnicode(); }
+    ULONG GetIniFlags() const               { return nIniFlags; }
+    inline bool IsUnicode() const           { return pPiece->IsUnicode(); }
 
-    const SfxItemSet* GetCurItemSet() const 		{ return pISet;	}
-    void SetCurItemSet( const SfxItemSet* pS ) 		{ pISet = pS; }
+    const SfxItemSet* GetCurItemSet() const         { return pISet; }
+    void SetCurItemSet( const SfxItemSet* pS )      { pISet = pS; }
 
     void Out_SfxItemSet(const SfxItemSet& rSet, bool bPapFmt, bool bChpFmt,
         USHORT nScript);
@@ -675,9 +678,8 @@ public:
     SwTwips CurrentPageWidth(SwTwips &rLeft, SwTwips &rRight) const;
     bool MiserableRTLGraphicsHack(long &rLeft,  long nWidth,
         SwHoriOrient eHoriOri, SwRelationOrient eHoriRel, bool bBiDi);
-
-    void InsUInt16( UINT16 n )		{ SwWW8Writer::InsUInt16( *pO, n ); }
-    void InsUInt32( UINT32 n )		{ SwWW8Writer::InsUInt32( *pO, n ); }
+    void InsUInt16( UINT16 n )      { SwWW8Writer::InsUInt16( *pO, n ); }
+    void InsUInt32( UINT32 n )      { SwWW8Writer::InsUInt32( *pO, n ); }
     void InsAsString16( const String& rStr )
                         { SwWW8Writer::InsAsString16( *pO, rStr ); }
     void InsAsString8( const String& rStr, rtl_TextEncoding eCodeSet )
@@ -690,8 +692,8 @@ public:
     virtual ~SwWW8Writer();
 
     // fuer WW8SaveData
-    SwPaM* GetEndPaM() 				{ return pOrigPam; }
-    void SetEndPaM( SwPaM* pPam )	{ pOrigPam = pPam; }
+    SwPaM* GetEndPaM()              { return pOrigPam; }
+    void SetEndPaM( SwPaM* pPam )   { pOrigPam = pPam; }
 
     void DoComboBox(const rtl::OUString &rName, const rtl::OUString &rSelected, 
             com::sun::star::uno::Sequence<rtl::OUString> &rListItems);
@@ -701,22 +703,23 @@ public:
     void pop_charpropstart();
     xub_StrLen top_charpropstart() const;
     bool empty_charpropstart() const;
+    void GetCurrentItems(WW8Bytes &rItems) const;
 private:
     //No copying
     SwWW8Writer(const SwWW8Writer&);
     SwWW8Writer& operator=(const SwWW8Writer&);
 };
 
-class WW8_WrPlcSubDoc	// Doppel-Plc fuer Foot-/Endnotes und Postits
+class WW8_WrPlcSubDoc   // Doppel-Plc fuer Foot-/Endnotes und Postits
 {
 private:
     //No copying
     WW8_WrPlcSubDoc(const WW8_WrPlcSubDoc&);
     WW8_WrPlcSubDoc& operator=(const WW8_WrPlcSubDoc&);
 protected:
-    SvULongs aCps;					// PTRARR CP-Pos der Verweise
-    SvPtrarr aCntnt;				// PTRARR von SwFmtFtn/PostIts/..
-    WW8_WrPlc0* pTxtPos;			// Pos der einzelnen Texte
+    SvULongs aCps;                  // PTRARR CP-Pos der Verweise
+    SvPtrarr aCntnt;                // PTRARR von SwFmtFtn/PostIts/..
+    WW8_WrPlc0* pTxtPos;            // Pos der einzelnen Texte
 
     WW8_WrPlcSubDoc();
     virtual ~WW8_WrPlcSubDoc();
@@ -746,7 +749,7 @@ public:
     void Append( WW8_CP nCp, const SwFmtFtn& rFtn );
 };
 
-class WW8_WrPlcPostIt : public WW8_WrPlcSubDoc	// Doppel-Plc fuer PostIts
+class WW8_WrPlcPostIt : public WW8_WrPlcSubDoc  // Doppel-Plc fuer PostIts
 {
 private:
     //No copying
@@ -761,7 +764,7 @@ public:
 };
 
 class WW8_WrPlcTxtBoxes : public WW8_WrPlcSubDoc // Doppel-Plc fuer Textboxen
-{						 // Rahmen/DrawTextboxes!
+{                        // Rahmen/DrawTextboxes!
 private:
     BYTE nTyp;
     SvULongs aShapeIds;        // VARARR of ShapeIds for the SwFrmFmts
@@ -780,17 +783,17 @@ public:
     USHORT GetPos( const VoidPtr& p ) const { return aCntnt.GetPos( p ); }
 };
 
-typedef WW8_WrFkp* WW8_FkpPtr;	// Plc fuer Chpx und Papx ( incl PN-Plc )
+typedef WW8_WrFkp* WW8_FkpPtr;  // Plc fuer Chpx und Papx ( incl PN-Plc )
 SV_DECL_PTRARR( WW8_WrFkpPtrs, WW8_FkpPtr, 4, 4 )
 
-class WW8_WrPlcPn					// Plc fuer Page Numbers
+class WW8_WrPlcPn                   // Plc fuer Page Numbers
 {
 private:
     SwWW8Writer& rWrt;
-    WW8_WrFkpPtrs aFkps;			// PTRARR
+    WW8_WrFkpPtrs aFkps;            // PTRARR
     USHORT nFkpStartPage;
     ePLCFT ePlc;
-    bool bWrtWW8;					// Fuer Writererkennung
+    bool bWrtWW8;                   // Fuer Writererkennung
     USHORT nMark;
 
     //No copying
@@ -809,8 +812,8 @@ public:
 class WW8_WrPlc1
 {
 private:
-    SvULongs aPos;				// PTRARR von CPs
-    BYTE* pData;				// Inhalte ( Strukturen )
+    SvULongs aPos;              // PTRARR von CPs
+    BYTE* pData;                // Inhalte ( Strukturen )
     ULONG nDataLen;
     USHORT nStructSiz;
 
@@ -859,11 +862,11 @@ public:
 class GraphicDetails
 {
 public:
-    const SwNoTxtNode* mpNd;	// Positionen der SwGrfNodes und SwOleNodes
-    const SwFlyFrmFmt* mpFly;	// Umgebende FlyFrms dazu
-    ULONG mnPos;		// FilePos der Grafiken
-    UINT16 mnWid;		// Breite der Grafiken
-    UINT16 mnHei;		// Hoehe der Grafiken
+    const SwNoTxtNode* mpNd;    // Positionen der SwGrfNodes und SwOleNodes
+    const SwFlyFrmFmt* mpFly;   // Umgebende FlyFrms dazu
+    ULONG mnPos;        // FilePos der Grafiken
+    UINT16 mnWid;       // Breite der Grafiken
+    UINT16 mnHei;       // Hoehe der Grafiken
     GraphicDetails(const SwNoTxtNode* pNd, const SwFlyFrmFmt* pFly, 
         UINT16 nWid, UINT16 nHei)
     : mpNd(pNd), mpFly(pFly), mnPos(0), mnWid(nWid), mnHei(nHei)
@@ -880,10 +883,10 @@ public:
 class SwWW8WrGrf
 {
 private:
-    SwWW8Writer& rWrt;	// SwWW8Writer fuer Zugriff auf die Vars
+    SwWW8Writer& rWrt;  // SwWW8Writer fuer Zugriff auf die Vars
     std::vector<GraphicDetails> maDetails;
     typedef std::vector<GraphicDetails>::iterator myiter;
-    USHORT mnIdx;		// Index in File-Positionen
+    USHORT mnIdx;       // Index in File-Positionen
 
     void WritePICFHeader(SvStream& rStrm, const SwNoTxtNode* pNd,
         const SwFlyFrmFmt* pFly, UINT16 mm, UINT16 nWidth, UINT16 nHeight);
@@ -921,7 +924,6 @@ public:
 
     virtual const SfxPoolItem* HasTextItem( USHORT nWhich ) const = 0;
     virtual const SfxPoolItem& GetItem( USHORT nWhich ) const = 0;
-    virtual void GetItems( WW8Bytes& rItems ) const;
     void StartURL(const String &rUrl, const String &rTarget);
     void EndURL();
 };
@@ -995,7 +997,9 @@ Writer& OutWW8_SwFmtHoriOrient( Writer& rWrt, const SfxPoolItem& rHt );
 Writer& OutWW8_SwFmtVertOrient( Writer& rWrt, const SfxPoolItem& rHt );
 
 sal_uInt16 GetWordFirstLineOffset(const SwNumFmt &rFmt);
+//A bit of a bag on the side for now
+String FieldString(ww::eField eIndex);
 String BookmarkToWord(const String &rBookmark);
-#endif	//  _WRTWW8_HXX
+#endif  //  _WRTWW8_HXX
 
 /* vi:set tabstop=4 shiftwidth=4 expandtab: */
