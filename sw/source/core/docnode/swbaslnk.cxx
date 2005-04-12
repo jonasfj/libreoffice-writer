@@ -2,9 +2,9 @@
  *
  *  $rcsfile: swbaslnk.cxx,v $
  *
- *  $Revision: 1.9 $
+ *  $Revision: 1.10 $
  *
- *  last change: $Author: obo $ $Date: 2005-03-15 10:06:57 $
+ *  last change: $Author: obo $ $Date: 2005-04-12 16:35:03 $
  *
  *  The Contents of this file are made available subject to the terms of
  *  either of the following licenses
@@ -497,54 +497,54 @@ BOOL SetGrfFlySize( const Size& rGrfSz, const Size& rFrmSz, SwGrfNode* pGrfNd )
 
 class ReReadThread : public osl::Thread {
 public:
-    
+
     class DelCondition : public ::salhelper::Condition {
-        
+
     public:
-        
+
         DelCondition(ReReadThread& rThread)
             : salhelper::Condition(rThread.m_aMutex),
-              m_rThread(rThread) 
+              m_rThread(rThread)
         {
         }
-        
+
     protected:
-        
+
         bool applies() const {
-            return m_rThread.m_bIsRead; 
+            return m_rThread.m_bIsRead;
         }
-        
+
     private:
-        
+
         ReReadThread& m_rThread;
     };
-    
+
     friend class DelCondition;
-    
+
     ReReadThread(
-        SwBaseLink* pSwBaseLink, 
+        SwBaseLink* pSwBaseLink,
         const String& rGrfName,
-        BOOL bWaitForData, 
+        BOOL bWaitForData,
         BOOL bNativFormat
     );
-    
+
     ~ReReadThread();
-    
+
     String getGrfName() {
         osl::MutexGuard aGuard(m_aMutex);
         return m_rGrfName;
     }
-    
+
     BOOL waitForData() {
         osl::MutexGuard aGuard(m_aMutex);
         return m_bWaitForData;
     }
-    
+
     BOOL nativFormat() {
         osl::MutexGuard aGuard(m_aMutex);
         return m_bNativFormat;
     }
-    
+
     uno::Reference<io::XInputStream> getInputStream() {
         osl::MutexGuard aGuard(m_aMutex);
         return m_xInputStream;
@@ -553,39 +553,39 @@ public:
     sal_Bool getIsReadOnly() {
         return m_bIsReadOnly;
     }
-    
+
     SwBaseLink* getSwBaseLink() {
         osl::MutexGuard aGuard(m_aMutex);
         return m_pSwBaseLink;
     }
-    
-    void setReRead() 
-    { 
+
+    void setReRead()
+    {
         salhelper::ConditionModifier aCM(m_aCond);
         m_bIsRead = true;
     }
-    
+
     void releaseSwBaseLink() {
         osl::MutexGuard aGuard(m_aMutex);
         m_pSwBaseLink = 0;
     }
-    
+
 protected:
-    
+
     void SAL_CALL run();
-    
+
     void SAL_CALL onTerminated();
-    
+
 private:
-    
+
     osl::Mutex m_aMutex;
     DelCondition m_aCond;
     bool m_bIsRead;
-    
+
     SwBaseLink* m_pSwBaseLink;
     String m_rGrfName;
     BOOL m_bWaitForData, m_bNativFormat;
-    
+
     sal_Bool m_bIsReadOnly;
     uno::Reference<io::XInputStream> m_xInputStream;
 };
@@ -614,7 +614,7 @@ long GrfNodeChanged( void* pLink, void* pCaller ) {
     // is called in the main thread
     if(!pCaller)
         return 0;
-    
+
     ReReadThread* pReReadThread = static_cast<ReReadThread*>(pCaller);
     SwBaseLink* pSwBaseLink = pReReadThread->getSwBaseLink();
     if(pSwBaseLink) {
@@ -627,9 +627,13 @@ long GrfNodeChanged( void* pLink, void* pCaller ) {
                 xInputStream,bIsReadOnly);
             pSwBaseLink->Update();
         }
+        else
+        {
+            ASSERT( false, "<GrfNodeChanged()> - no input stream" );
+        }
         pSwBaseLink->m_pReReadThread = 0;
     }
-    
+
     pReReadThread->setReRead();
     return 0;
 }
@@ -640,24 +644,24 @@ void SAL_CALL ReReadThread::run() {
     xProps[0].Name = ::rtl::OUString::createFromAscii("URL");
     xProps[0].Value <<= ::rtl::OUString(m_rGrfName);
     comphelper::MediaDescriptor aMedium( xProps );
-    
+
     aMedium.addInputStream();
     m_bIsReadOnly = aMedium.isStreamReadOnly();
     uno::Reference<io::XInputStream> xInputStream;
     uno::Reference<io::XStream> xStream;
-    aMedium[comphelper::MediaDescriptor::PROP_STREAM()] >>= xStream;    
+    aMedium[comphelper::MediaDescriptor::PROP_STREAM()] >>= xStream;
     aMedium[comphelper::MediaDescriptor::PROP_INPUTSTREAM()] >>= xInputStream;
     if( !xInputStream.is() && xStream.is() )
         xInputStream = xStream->getInputStream();
-    
+
     if( xInputStream.is() ) {
         osl::MutexGuard aGuard(m_aMutex);
         m_xInputStream = xInputStream;
     }
-    
+
     //TODO error handling
-    Application* pApp = GetpApp();             
-    Link aLink(0, 
+    Application* pApp = GetpApp();
+    Link aLink(0,
                // important that this is 0,
                // because the main thread might have killed
                // the node already
@@ -678,7 +682,7 @@ void SAL_CALL ReReadThread::onTerminated() {
 FASTBOOL SwBaseLink::SwapIn( BOOL bWaitForData, BOOL bNativFormat )
 {
     bSwapIn = TRUE;
-    
+
     FASTBOOL bRes;
 
     if( !GetObj() && ( bNativFormat || ( !IsSynchron() && bWaitForData ) ))
@@ -687,7 +691,7 @@ FASTBOOL SwBaseLink::SwapIn( BOOL bWaitForData, BOOL bNativFormat )
         _GetRealObject();
         ReleaseRef();
     }
-    
+
 #if OSL_DEBUG_LEVEL > 1
     {
         String sGrfNm;
@@ -696,16 +700,25 @@ FASTBOOL SwBaseLink::SwapIn( BOOL bWaitForData, BOOL bNativFormat )
         int x = 0;
     }
 #endif
-    
-    TestBalloonInputStream* pTBIS = 0;
-    if(!m_xInputStreamToLoadFrom.is()) {
-        pTBIS = new TestBalloonInputStream();
-        m_xInputStreamToLoadFrom = pTBIS;
-    }
-    
+
+    // --> OD 2005-04-11 #i46300# - deactivate fix for issues i9861 and i33293
+//    TestBalloonInputStream* pTBIS = 0;
+//    if(!m_xInputStreamToLoadFrom.is()) {
+//        if ( !pCntntNode->IsGrfNode() ||
+//             static_cast<SwGrfNode*>(pCntntNode)->GetGrfObj().GetType()
+//                    != GRAPHIC_DEFAULT )
+//        {
+//            pTBIS = new TestBalloonInputStream();
+//            m_xInputStreamToLoadFrom = pTBIS;
+//        }
+//    }
+    // <--
+
     if( GetObj() )
     {
-        GetObj()->setStreamToLoadFrom(m_xInputStreamToLoadFrom,m_bIsReadOnly);
+        // --> OD 2005-04-11 #i46300# - deactivate fix for issues i9861 and i33293
+//        GetObj()->setStreamToLoadFrom(m_xInputStreamToLoadFrom,m_bIsReadOnly);
+        // <--
         String aMimeType( SotExchange::GetFormatMimeType( GetContentType() ));
 
 //!! ??? what have we here to do ????
@@ -737,13 +750,20 @@ FASTBOOL SwBaseLink::SwapIn( BOOL bWaitForData, BOOL bNativFormat )
     }
     else
         bRes = Update();
-    
+
     bSwapIn = FALSE;
-    
-    if(pTBIS && pTBIS->isTouched()) {
-        (m_pReReadThread = new ReReadThread(
-            this,GetName(),bWaitForData,bNativFormat))->create();
-    }
+
+    // --> OD 2005-04-11 #i46300# - deactivate fix for issues i9861 and i33293
+//    if ( pTBIS && pTBIS->isTouched() )
+//    {
+//        // --> OD 2005-04-11 #i46300# - determine correct URL for the graphic
+//        String sGrfNm;
+//        GetLinkManager()->GetDisplayNames( this, 0, &sGrfNm, 0, 0 );
+//        (m_pReReadThread = new ReReadThread(
+//                this, sGrfNm, bWaitForData, bNativFormat))->create();
+//        // <--
+//    }
+    // <--
     return bRes;
 }
 
