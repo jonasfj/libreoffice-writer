@@ -2,9 +2,9 @@
  *
  *  $RCSfile: docredln.cxx,v $
  *
- *  $Revision: 1.32 $
+ *  $Revision: 1.33 $
  *
- *  last change: $Author: obo $ $Date: 2004-08-12 12:17:25 $
+ *  last change: $Author: obo $ $Date: 2005-04-18 14:33:00 $
  *
  *  The Contents of this file are made available subject to the terms of
  *  either of the following licenses
@@ -141,21 +141,21 @@
     void lcl_CheckPosition( const SwPosition* pPos )
     {
         SwPosition aComparePos( *pPos );
-        aComparePos.nContent.Assign( 
+        aComparePos.nContent.Assign(
             aComparePos.nNode.GetNode().GetCntntNode(), 0 );
-        DBG_ASSERT( pPos->nContent.GetIdxReg() == 
+        DBG_ASSERT( pPos->nContent.GetIdxReg() ==
                     aComparePos.nContent.GetIdxReg(),
                     _ERROR_PREFIX "illegal position" );
 
         SwTxtNode* pTxtNode = pPos->nNode.GetNode().GetTxtNode();
         if( pTxtNode == NULL )
         {
-            DBG_ASSERT( pPos->nContent == 0, 
+            DBG_ASSERT( pPos->nContent == 0,
                         _ERROR_PREFIX "non-text-node with content" );
         }
         else
         {
-            DBG_ASSERT( pPos->nContent >= 0  && 
+            DBG_ASSERT( pPos->nContent >= 0  &&
                         pPos->nContent <= pTxtNode->Len(),
                         _ERROR_PREFIX "index behind text" );
         }
@@ -186,14 +186,14 @@
                         _ERROR_PREFIX "empty redline" );
          }
 
-        // verify proper redline sorting 
+        // verify proper redline sorting
         for( USHORT n = 1; n < rTbl.Count(); ++n )
         {
             const SwRedline* pPrev = rTbl[ n-1 ];
             const SwRedline* pCurrent = rTbl[ n ];
-            
+
             // check redline sorting
-            DBG_ASSERT( *pPrev->Start() <= *pCurrent->Start(), 
+            DBG_ASSERT( *pPrev->Start() <= *pCurrent->Start(),
                         _ERROR_PREFIX "not sorted correctly" );
 
             // check for overlapping redlines
@@ -326,7 +326,7 @@ BOOL SwDoc::AppendRedline( SwRedline* pNewRedl, BOOL bCallDelete )
                                                            : pRedl->GetPoint();
 
             // #i8518# remove empty redlines while we're at it
-            if( ( *pRStt == *pREnd ) && 
+            if( ( *pRStt == *pREnd ) &&
                 ( pRedl->GetContentIdx() == NULL ) )
             {
                 pRedlineTbl->DeleteAndDestroy(n);
@@ -348,7 +348,7 @@ BOOL SwDoc::AppendRedline( SwRedline* pNewRedl, BOOL bCallDelete )
                         // ggfs. verschmelzen?
                         if( (( POS_BEHIND == eCmpPos &&
                                IsPrevPos( *pREnd, *pStt ) ) ||
-                             ( POS_COLLIDE_START == eCmpPos ) || 
+                             ( POS_COLLIDE_START == eCmpPos ) ||
                              ( POS_OVERLAP_BEHIND == eCmpPos ) ) &&
                             pRedl->CanCombine( *pNewRedl ) &&
                             ( n+1 >= pRedlineTbl->Count() ||
@@ -361,7 +361,7 @@ BOOL SwDoc::AppendRedline( SwRedline* pNewRedl, BOOL bCallDelete )
                                 pRedlineTbl->Remove( n );
                                 pRedlineTbl->Insert( pRedl );
                             }
-                            
+
                             bDelete = true;
                         }
                         else if( (( POS_BEFORE == eCmpPos &&
@@ -376,7 +376,7 @@ BOOL SwDoc::AppendRedline( SwRedline* pNewRedl, BOOL bCallDelete )
                             // neu einsortieren
                             pRedlineTbl->Remove( n );
                             pRedlineTbl->Insert( pRedl );
-                            
+
                             bDelete = true;
                         }
                         else if ( POS_OUTSIDE == eCmpPos )
@@ -427,7 +427,7 @@ BOOL SwDoc::AppendRedline( SwRedline* pNewRedl, BOOL bCallDelete )
                     {
                         // #102366# handle overlapping redlines in broken
                         // documents
-                        
+
                         // split up the new redline, since it covers the
                         // existing redline. Insert the first part, and
                         // progress with the remainder as usual
@@ -468,7 +468,7 @@ BOOL SwDoc::AppendRedline( SwRedline* pNewRedl, BOOL bCallDelete )
                     {
                         // #102366# handle overlapping redlines in broken
                         // documents
-                        
+
                         // split up the new redline, since it covers the
                         // existing redline. Insert the first part, and
                         // progress with the remainder as usual
@@ -479,7 +479,7 @@ BOOL SwDoc::AppendRedline( SwRedline* pNewRedl, BOOL bCallDelete )
                     }
                     else if ( POS_EQUAL == eCmpPos )
                     {
-                        // #112895# handle identical redlines in broken 
+                        // #112895# handle identical redlines in broken
                         // documents - delete old (delete) redline
                         pRedlineTbl->DeleteAndDestroy( n-- );
                     }
@@ -609,7 +609,7 @@ BOOL SwDoc::AppendRedline( SwRedline* pNewRedl, BOOL bCallDelete )
                             USHORT nToBeDeleted = n;
                             n--;
 
-                            // #107359# Do it again, Sam! 
+                            // #107359# Do it again, Sam!
                             // If you can do it for them, you can do it for me.
                             if( *(pNewRedl->Start()) <= *pREnd )
                             {
@@ -660,17 +660,17 @@ BOOL SwDoc::AppendRedline( SwRedline* pNewRedl, BOOL bCallDelete )
                                 // For this case, we completely delete the
                                 // paragraphs (if, of course, we also start on
                                 // a paragraph boundary).
-                                if( (pStt->nContent == 0) && 
+                                if( (pStt->nContent == 0) &&
                                     pEnd->nNode.GetNode().IsEndNode() )
                                 {
                                     pEnd->nNode--;
-                                    pEnd->nContent.Assign( 
+                                    pEnd->nContent.Assign(
                                         pEnd->nNode.GetNode().GetTxtNode(), 0);
                                     DelFullPara( *pNewRedl );
                                 }
                                 else
                                     DeleteAndJoin( *pNewRedl );
-                                    
+
                                 bCompress = TRUE;
                             }
                             delete pNewRedl, pNewRedl = 0;
@@ -2000,7 +2000,7 @@ BOOL SwDoc::AcceptRedline( const SwPaM& rPam, BOOL bCallDelete )
 
         SwRewriter aRewriter;
         aRewriter.AddRule(UNDO_ARG1, aTmpStr);
-        
+
         EndUndo( UNDO_ACCEPT_REDLINE, &aRewriter );
     }
     return nRet;
@@ -2108,7 +2108,7 @@ BOOL SwDoc::RejectRedline( const SwPaM& rPam, BOOL bCallDelete )
 
         SwRewriter aRewriter;
         aRewriter.AddRule(UNDO_ARG1, aTmpStr);
-        
+
         EndUndo( UNDO_REJECT_REDLINE, &aRewriter );
     }
 
@@ -2843,10 +2843,10 @@ SwRedlineData::SwRedlineData( SwRedlineType eT, USHORT nAut )
 }
 
 SwRedlineData::SwRedlineData( const SwRedlineData& rCpy, BOOL bCpyNext )
-    : 
+    :
     pNext( (bCpyNext && rCpy.pNext) ? new SwRedlineData( *rCpy.pNext ) : 0 ),
     pExtraData( rCpy.pExtraData ? rCpy.pExtraData->CreateNew() : 0 ),
-    sComment( rCpy.sComment ), aStamp( rCpy.aStamp ), eType( rCpy.eType ), 
+    sComment( rCpy.sComment ), aStamp( rCpy.aStamp ), eType( rCpy.eType ),
     nAuthor( rCpy.nAuthor ), nSeqNo( rCpy.nSeqNo )
 {
 }
@@ -2951,9 +2951,9 @@ BOOL SwRedline::HasValidRange() const
     if( pPtNd->FindStartNode() == pMkNd->FindStartNode() &&
         !pPtNd->FindStartNode()->IsTableNode() &&
         // JP 18.5.2001: Bug 87222 - invalid if points on the end of content
-        // DVO 25.03.2002: #96530# end-of-content only invalid if no content 
+        // DVO 25.03.2002: #96530# end-of-content only invalid if no content
         //                 index exists
-        ( pPtNd != pMkNd || GetContentIdx() != NULL || 
+        ( pPtNd != pMkNd || GetContentIdx() != NULL ||
           pPtNd != &pPtNd->GetNodes().GetEndOfContent() )
         )
         return TRUE;
@@ -3124,7 +3124,7 @@ void SwRedline::InvalidateRange()		// das Layout anstossen
  * text node nNdIdx
  *************************************************************************/
 
-void SwRedline::CalcStartEnd( USHORT nNdIdx, USHORT& nStart, USHORT& nEnd ) const
+void SwRedline::CalcStartEnd( ULONG nNdIdx, USHORT& nStart, USHORT& nEnd ) const
 {
     const SwPosition *pRStt = Start(), *pREnd = End();
     if( pRStt->nNode < nNdIdx )
@@ -3458,7 +3458,7 @@ void SwRedline::MoveFromSection()
             if( bDelLastPara && *aPam.GetPoint() == *aPam.GetMark() )
             {
                 aPos.nNode--;
-                
+
                 pDoc->AppendTxtNode( aPos );
             }
             else
@@ -3619,7 +3619,7 @@ const SwRedlineData & SwRedline::GetRedlineData(USHORT nPos) const
     return *pCur;
 }
 
-String SwRedline::GetDescr(USHORT nPos) 
+String SwRedline::GetDescr(USHORT nPos)
 {
     String aResult;
 
@@ -3636,7 +3636,7 @@ String SwRedline::GetDescr(USHORT nPos)
     }
     else // otherwise it is saved in pCntntSect
     {
-        pPaM = new SwPaM(*pCntntSect, 
+        pPaM = new SwPaM(*pCntntSect,
                          pCntntSect->GetNode().EndOfSectionIndex());
         bDeletePaM = true;
     }
@@ -3644,7 +3644,7 @@ String SwRedline::GetDescr(USHORT nPos)
     // replace $1 in description by description of the redlines text
     String aTmpStr;
     aTmpStr += String(SW_RES(STR_START_QUOTE));
-    aTmpStr += ShortenString(pPaM->GetTxt(), nUndoStringLength, 
+    aTmpStr += ShortenString(pPaM->GetTxt(), nUndoStringLength,
                              String(SW_RES(STR_LDOTS)));
     aTmpStr += String(SW_RES(STR_END_QUOTE));
 
