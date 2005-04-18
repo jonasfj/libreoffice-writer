@@ -2,9 +2,9 @@
  *
  *  $RCSfile: unoport.cxx,v $
  *
- *  $Revision: 1.31 $
+ *  $Revision: 1.32 $
  *
- *  last change: $Author: rt $ $Date: 2005-01-27 12:38:01 $
+ *  last change: $Author: obo $ $Date: 2005-04-18 11:30:27 $
  *
  *  The Contents of this file are made available subject to the terms of
  *  either of the following licenses
@@ -118,15 +118,15 @@
 #ifndef _COM_SUN_STAR_BEANS_PROPERTYATTRIBUTE_HPP_
 #include <com/sun/star/beans/PropertyAttribute.hpp>
 #endif
-#ifndef _COM_SUN_STAR_BEANS_SETPROPERTYTOLERANTFAILED_HPP_
-#include <com/sun/star/beans/SetPropertyTolerantFailed.hpp>
-#endif
-#ifndef _COM_SUN_STAR_BEANS_GETPROPERTYTOLERANTRESULT_HPP_
-#include <com/sun/star/beans/GetPropertyTolerantResult.hpp>
-#endif
-#ifndef _COM_SUN_STAR_BEANS_TOLERANTPROPERTYSETRESULTTYPE_HPP_
-#include <com/sun/star/beans/TolerantPropertySetResultType.hpp>
-#endif
+//#ifndef _COM_SUN_STAR_BEANS_SETPROPERTYTOLERANTFAILED_HPP_
+//#include <com/sun/star/beans/SetPropertyTolerantFailed.hpp>
+//#endif
+//#ifndef _COM_SUN_STAR_BEANS_GETPROPERTYTOLERANTRESULT_HPP_
+//#include <com/sun/star/beans/GetPropertyTolerantResult.hpp>
+//#endif
+//#ifndef _COM_SUN_STAR_BEANS_TOLERANTPROPERTYSETRESULTTYPE_HPP_
+//#include <com/sun/star/beans/TolerantPropertySetResultType.hpp>
+//#endif
 
 using namespace ::com::sun::star;
 using namespace ::com::sun::star::lang;
@@ -351,10 +351,10 @@ void SwXTextPortion::setPropertyValue(const OUString& rPropertyName,
 /*-- 04.11.03 09:56:58---------------------------------------------------
 
   -----------------------------------------------------------------------*/
-void SwXTextPortion::GetPropertyValue( 
+void SwXTextPortion::GetPropertyValue(
         Any &rVal,
-        const SfxItemPropertyMap *pEntry, 
-        SwUnoCrsr *pUnoCrsr, 
+        const SfxItemPropertyMap *pEntry,
+        SwUnoCrsr *pUnoCrsr,
         SfxItemSet *&pSet )
 {
     DBG_ASSERT( pUnoCrsr, "UNO cursor missing" );
@@ -543,10 +543,10 @@ uno::Any SwXTextPortion::getPropertyValue(
 /* -----------------------------02.04.01 11:44--------------------------------
 
  ---------------------------------------------------------------------------*/
-void SAL_CALL SwXTextPortion::SetPropertyValues_Impl( 
-    const uno::Sequence< OUString >& rPropertyNames, 
-    const uno::Sequence< Any >& rValues ) 
-    throw( UnknownPropertyException, PropertyVetoException, IllegalArgumentException, 
+void SAL_CALL SwXTextPortion::SetPropertyValues_Impl(
+    const uno::Sequence< OUString >& rPropertyNames,
+    const uno::Sequence< Any >& rValues )
+    throw( UnknownPropertyException, PropertyVetoException, IllegalArgumentException,
             WrappedTargetException, RuntimeException)
 {
     SwUnoCrsr* pUnoCrsr = ((SwXTextPortion*)this)->GetCrsr();
@@ -580,7 +580,7 @@ void SwXTextPortion::setPropertyValues(
     vos::OGuard aGuard(Application::GetSolarMutex());
 
     // workaround for bad designed API
-    try 
+    try
     {
         SetPropertyValues_Impl( rPropertyNames, rValues );
     }
@@ -616,12 +616,15 @@ Sequence< Any > SwXTextPortion::getPropertyValues(
     {
         throw RuntimeException(OUString ( RTL_CONSTASCII_USTRINGPARAM ( "WrappedTargetException caught" ) ), static_cast < cppu::OWeakObject * > ( this ) );
     }
-    
+
     return aValues;
 }
 /* -----------------------------29.09.03 11:44--------------------------------
 
  ---------------------------------------------------------------------------*/
+
+/* disabled for #i46921#
+
 uno::Sequence< SetPropertyTolerantFailed > SAL_CALL SwXTextPortion::setPropertyValuesTolerant(
         const uno::Sequence< OUString >& rPropertyNames,
         const uno::Sequence< Any >& rValues )
@@ -701,13 +704,13 @@ uno::Sequence< SetPropertyTolerantFailed > SAL_CALL SwXTextPortion::setPropertyV
 }
 
 
-uno::Sequence< GetPropertyTolerantResult > SAL_CALL SwXTextPortion::getPropertyValuesTolerant( 
+uno::Sequence< GetPropertyTolerantResult > SAL_CALL SwXTextPortion::getPropertyValuesTolerant(
         const uno::Sequence< OUString >& rPropertyNames )
     throw (uno::RuntimeException)
 {
     vos::OGuard aGuard( Application::GetSolarMutex() );
-    
-    uno::Sequence< GetDirectPropertyTolerantResult > aTmpRes( 
+
+    uno::Sequence< GetDirectPropertyTolerantResult > aTmpRes(
             GetPropertyValuesTolerant_Impl( rPropertyNames, sal_False ) );
     const GetDirectPropertyTolerantResult *pTmpRes = aTmpRes.getConstArray();
 
@@ -721,7 +724,7 @@ uno::Sequence< GetPropertyTolerantResult > SAL_CALL SwXTextPortion::getPropertyV
 }
 
 
-uno::Sequence< GetDirectPropertyTolerantResult > SAL_CALL SwXTextPortion::getDirectPropertyValuesTolerant( 
+uno::Sequence< GetDirectPropertyTolerantResult > SAL_CALL SwXTextPortion::getDirectPropertyValuesTolerant(
         const uno::Sequence< OUString >& rPropertyNames )
     throw (uno::RuntimeException)
 {
@@ -736,7 +739,7 @@ uno::Sequence< GetDirectPropertyTolerantResult > SAL_CALL SwXTextPortion::GetPro
     throw (uno::RuntimeException)
 {
     vos::OGuard aGuard(Application::GetSolarMutex());
-    
+
     SwUnoCrsr* pUnoCrsr = ((SwXTextPortion*)this)->GetCrsr();
     if(!pUnoCrsr)
         throw RuntimeException();
@@ -826,6 +829,10 @@ uno::Sequence< GetDirectPropertyTolerantResult > SAL_CALL SwXTextPortion::GetPro
 
     return aResult;
 }
+
+
+*/
+
 
 /* -----------------------------02.04.01 11:44--------------------------------
 
