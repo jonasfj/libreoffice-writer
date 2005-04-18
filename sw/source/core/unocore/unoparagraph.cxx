@@ -2,9 +2,9 @@
  *
  *  $RCSfile: unoparagraph.cxx,v $
  *
- *  $Revision: 1.29 $
+ *  $Revision: 1.30 $
  *
- *  last change: $Author: obo $ $Date: 2004-03-17 09:36:36 $
+ *  last change: $Author: obo $ $Date: 2005-04-18 11:30:13 $
  *
  *  The Contents of this file are made available subject to the terms of
  *  either of the following licenses
@@ -102,15 +102,15 @@
 #define _SVSTDARR_USHORTSSORT
 #include <svtools/svstdarr.hxx>
 
-#ifndef _COM_SUN_STAR_BEANS_SETPROPERTYTOLERANTFAILED_HPP_
-#include <com/sun/star/beans/SetPropertyTolerantFailed.hpp>
-#endif
-#ifndef _COM_SUN_STAR_BEANS_GETPROPERTYTOLERANTRESULT_HPP_
-#include <com/sun/star/beans/GetPropertyTolerantResult.hpp>
-#endif
-#ifndef _COM_SUN_STAR_BEANS_TOLERANTPROPERTYSETRESULTTYPE_HPP_
-#include <com/sun/star/beans/TolerantPropertySetResultType.hpp>
-#endif
+//#ifndef _COM_SUN_STAR_BEANS_SETPROPERTYTOLERANTFAILED_HPP_
+//#include <com/sun/star/beans/SetPropertyTolerantFailed.hpp>
+//#endif
+//#ifndef _COM_SUN_STAR_BEANS_GETPROPERTYTOLERANTRESULT_HPP_
+//#include <com/sun/star/beans/GetPropertyTolerantResult.hpp>
+//#endif
+//#ifndef _COM_SUN_STAR_BEANS_TOLERANTPROPERTYSETRESULTTYPE_HPP_
+//#include <com/sun/star/beans/TolerantPropertySetResultType.hpp>
+//#endif
 #ifndef _COM_SUN_STAR_BEANS_PropertyAttribute_HPP_
 #include <com/sun/star/beans/PropertyAttribute.hpp>
 #endif
@@ -309,10 +309,10 @@ uno::Any SwXParagraph::getPropertyValue(const OUString& rPropertyName)
 /* -----------------------------02.04.01 11:43--------------------------------
 
  ---------------------------------------------------------------------------*/
-void SAL_CALL SwXParagraph::SetPropertyValues_Impl( 
-    const uno::Sequence< OUString >& rPropertyNames, 
-    const uno::Sequence< Any >& rValues ) 
-    throw( UnknownPropertyException, PropertyVetoException, IllegalArgumentException, 
+void SAL_CALL SwXParagraph::SetPropertyValues_Impl(
+    const uno::Sequence< OUString >& rPropertyNames,
+    const uno::Sequence< Any >& rValues )
+    throw( UnknownPropertyException, PropertyVetoException, IllegalArgumentException,
             WrappedTargetException, RuntimeException)
 {
     SwUnoCrsr* pUnoCrsr = GetCrsr();
@@ -352,7 +352,7 @@ void SwXParagraph::setPropertyValues(
     vos::OGuard aGuard(Application::GetSolarMutex());
 
     // workaround for bad designed API
-    try 
+    try
     {
         SetPropertyValues_Impl( rPropertyNames, rValues );
     }
@@ -368,8 +368,8 @@ void SwXParagraph::setPropertyValues(
 /* -----------------------------02.04.01 11:43--------------------------------
 
  ---------------------------------------------------------------------------*/
-uno::Sequence< Any > SAL_CALL SwXParagraph::GetPropertyValues_Impl( 
-        const uno::Sequence< OUString > & rPropertyNames ) 
+uno::Sequence< Any > SAL_CALL SwXParagraph::GetPropertyValues_Impl(
+        const uno::Sequence< OUString > & rPropertyNames )
     throw( UnknownPropertyException, WrappedTargetException, RuntimeException )
 {
     Sequence< Any > aValues(rPropertyNames.getLength());
@@ -429,7 +429,7 @@ Sequence< Any > SwXParagraph::getPropertyValues(
     {
         throw RuntimeException(OUString ( RTL_CONSTASCII_USTRINGPARAM ( "WrappedTargetException caught" ) ), static_cast < cppu::OWeakObject * > ( this ) );
     }
-    
+
     return aValues;
 }
 /* -----------------------------02.04.01 11:43--------------------------------
@@ -458,9 +458,12 @@ void SwXParagraph::firePropertiesChangeEvent(
 /* -----------------------------25.09.03 11:09--------------------------------
 
  ---------------------------------------------------------------------------*/
-uno::Sequence< SetPropertyTolerantFailed > SAL_CALL SwXParagraph::setPropertyValuesTolerant( 
-        const uno::Sequence< OUString >& rPropertyNames, 
-        const uno::Sequence< Any >& rValues ) 
+
+/* disabled for #i46921#
+
+uno::Sequence< SetPropertyTolerantFailed > SAL_CALL SwXParagraph::setPropertyValuesTolerant(
+        const uno::Sequence< OUString >& rPropertyNames,
+        const uno::Sequence< Any >& rValues )
     throw (lang::IllegalArgumentException, uno::RuntimeException)
 {
     vos::OGuard aGuard( Application::GetSolarMutex() );
@@ -470,7 +473,7 @@ uno::Sequence< SetPropertyTolerantFailed > SAL_CALL SwXParagraph::setPropertyVal
     SwUnoCrsr* pUnoCrsr = ((SwXParagraph*)this)->GetCrsr();
     if(!pUnoCrsr)
         throw RuntimeException();
-    
+
     SwNode& rTxtNode = pUnoCrsr->GetPoint()->nNode.GetNode();
     SwAttrSet& rAttrSet = ((SwTxtNode&)rTxtNode).GetSwAttrSet();
     USHORT nAttrCount = rAttrSet.Count();
@@ -495,31 +498,20 @@ uno::Sequence< SetPropertyTolerantFailed > SAL_CALL SwXParagraph::setPropertyVal
         try
         {
             pFailed[ nFailed ].Name    = pProp[i];
-            
-            const SfxItemPropertyMap* pEntry = 
+
+            const SfxItemPropertyMap* pEntry =
                     SfxItemPropertyMap::GetByName( pStartEntry, pProp[i] );
             if (!pEntry)
                 pFailed[ nFailed++ ].Result  = TolerantPropertySetResultType::UNKNOWN_PROPERTY;
             else
             {
-/*
-                // get property state
-                // (compare to SwXParagraph::getPropertyState)
-                PropertyState eState;
-                const SwAttrSet *pAttrSet = &rAttrSet;
-                sal_Bool bAttrSetFetched = sal_True;
-                eState = lcl_SwXParagraph_getPropertyState( 
-                            *pUnoCrsr, &pAttrSet, *pEntry, bAttrSetFetched );
-                rInfo.State  = eState;
-*/
-
-                // set property value    
+                // set property value
                 // (compare to SwXParagraph::setPropertyValues)
                 if (pEntry->nFlags & PropertyAttribute::READONLY)
                     pFailed[ nFailed++ ].Result  = TolerantPropertySetResultType::PROPERTY_VETO;
                 else
                 {
-                    SwXTextCursor::SetPropertyValue( 
+                    SwXTextCursor::SetPropertyValue(
                                 *pUnoCrsr, aPropSet, sTmp, pValue[i], pEntry );
                 }
 
@@ -547,19 +539,19 @@ uno::Sequence< SetPropertyTolerantFailed > SAL_CALL SwXParagraph::setPropertyVal
             pFailed[ nFailed++ ].Result = TolerantPropertySetResultType::WRAPPED_TARGET;
         }
     }
-    
+
     aFailed.realloc( nFailed );
     return aFailed;
 }
 
 
-uno::Sequence< GetPropertyTolerantResult > SAL_CALL SwXParagraph::getPropertyValuesTolerant( 
+uno::Sequence< GetPropertyTolerantResult > SAL_CALL SwXParagraph::getPropertyValuesTolerant(
         const uno::Sequence< OUString >& rPropertyNames )
     throw (uno::RuntimeException)
 {
     vos::OGuard aGuard( Application::GetSolarMutex() );
-    
-    uno::Sequence< GetDirectPropertyTolerantResult > aTmpRes( 
+
+    uno::Sequence< GetDirectPropertyTolerantResult > aTmpRes(
             GetPropertyValuesTolerant_Impl( rPropertyNames, sal_False ) );
     const GetDirectPropertyTolerantResult *pTmpRes = aTmpRes.getConstArray();
 
@@ -573,7 +565,7 @@ uno::Sequence< GetPropertyTolerantResult > SAL_CALL SwXParagraph::getPropertyVal
 }
 
 
-uno::Sequence< GetDirectPropertyTolerantResult > SAL_CALL SwXParagraph::getDirectPropertyValuesTolerant( 
+uno::Sequence< GetDirectPropertyTolerantResult > SAL_CALL SwXParagraph::getDirectPropertyValuesTolerant(
         const uno::Sequence< OUString >& rPropertyNames )
     throw (uno::RuntimeException)
 {
@@ -582,9 +574,9 @@ uno::Sequence< GetDirectPropertyTolerantResult > SAL_CALL SwXParagraph::getDirec
 }
 
 
-uno::Sequence< GetDirectPropertyTolerantResult > SAL_CALL SwXParagraph::GetPropertyValuesTolerant_Impl( 
+uno::Sequence< GetDirectPropertyTolerantResult > SAL_CALL SwXParagraph::GetPropertyValuesTolerant_Impl(
         const uno::Sequence< OUString >& rPropertyNames,
-        sal_Bool bDirectValuesOnly ) 
+        sal_Bool bDirectValuesOnly )
     throw (uno::RuntimeException)
 {
     vos::OGuard aGuard( Application::GetSolarMutex() );
@@ -610,12 +602,12 @@ uno::Sequence< GetDirectPropertyTolerantResult > SAL_CALL SwXParagraph::GetPrope
     {
         DBG_ASSERT( nIdx < nProps, "index out ouf bounds" );
         GetDirectPropertyTolerantResult &rResult = pResult[nIdx];
-        
+
         try
         {
             rResult.Name = pProp[i];
 
-            const SfxItemPropertyMap *pEntry = 
+            const SfxItemPropertyMap *pEntry =
                     SfxItemPropertyMap::GetByName( pStartEntry, pProp[i] );
             if (!pEntry)  // property available?
                 rResult.Result = TolerantPropertySetResultType::UNKNOWN_PROPERTY;
@@ -625,7 +617,7 @@ uno::Sequence< GetDirectPropertyTolerantResult > SAL_CALL SwXParagraph::GetPrope
                 // (compare to SwXParagraph::getPropertyState)
                 const SwAttrSet *pAttrSet = &rAttrSet;
                 sal_Bool bAttrSetFetched = sal_True;
-                PropertyState eState = lcl_SwXParagraph_getPropertyState( 
+                PropertyState eState = lcl_SwXParagraph_getPropertyState(
                             *pUnoCrsr, &pAttrSet, *pEntry, bAttrSetFetched );
                 rResult.State  = eState;
 
@@ -661,10 +653,10 @@ uno::Sequence< GetDirectPropertyTolerantResult > SAL_CALL SwXParagraph::GetPrope
                 // this assertion should never occur!
                 DBG_ASSERT( nIdx < 1  ||  pResult[nIdx - 1].Result != TolerantPropertySetResultType::UNKNOWN_FAILURE,
                         "unknown failure while retrieving property" );
-                
+
                 // continue with search for next property after current entry
                 // (property map and sequence of property names are sorted!)
-                pStartEntry = ++pEntry;   
+                pStartEntry = ++pEntry;
             }
         }
         catch (UnknownPropertyException &)
@@ -686,12 +678,15 @@ uno::Sequence< GetDirectPropertyTolerantResult > SAL_CALL SwXParagraph::GetPrope
             rResult.Result = TolerantPropertySetResultType::WRAPPED_TARGET;
         }
     }
-    
+
     // resize to actually used size
     aResult.realloc( nIdx );
 
     return aResult;
 }
+
+
+*/
 
 /* -----------------------------12.09.00 11:09--------------------------------
 
