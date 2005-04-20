@@ -2,9 +2,9 @@
  *
  *  $RCSfile: fecopy.cxx,v $
  *
- *  $Revision: 1.32 $
+ *  $Revision: 1.33 $
  *
- *  last change: $Author: kz $ $Date: 2005-03-01 15:24:25 $
+ *  last change: $Author: obo $ $Date: 2005-04-20 12:17:03 $
  *
  *  The Contents of this file are made available subject to the terms of
  *  either of the following licenses
@@ -594,6 +594,13 @@ BOOL SwFEShell::CopyDrawSel( SwFEShell* pDestShell, const Point& rSttPt,
                         // direct positioning
                         pFmt->SetAttr( SwFmtHoriOrient( aPos.X(), HORI_NONE, FRAME ) );
                         pFmt->SetAttr( SwFmtVertOrient( aPos.Y(), VERT_NONE, FRAME ) );
+                        // --> OD 2005-04-15 #i47455# - notify draw frame format
+                        // that position attributes are already set.
+                        if ( pFmt->ISA(SwDrawFrmFmt) )
+                        {
+                            static_cast<SwDrawFrmFmt*>(pFmt)->PosAttrSet();
+                        }
+                        // <--
                     }
                     if( bSelectInsert )
                         pDestDrwView->MarkObj( pNew, pDestPgView );
@@ -1047,7 +1054,6 @@ BOOL SwFEShell::Paste( SwDoc* pClpDoc, BOOL bIncludingPageFrames )
 
                     SwFrmFmt * pNew = GetDoc()->CopyLayoutFmt( rCpyFmt, aAnchor );
 
-                    //Kann 0 sein, weil Draws in Kopf-/Fusszeilen nicht erlaubt sind.
                     if( pNew )
                     {
                         if( RES_FLYFRMFMT == pNew->Which() )
@@ -1067,6 +1073,13 @@ BOOL SwFEShell::Paste( SwDoc* pClpDoc, BOOL bIncludingPageFrames )
                             SdrObject *pObj = pNew->FindSdrObject();
                             SwDrawView  *pDV = Imp()->GetDrawView();
                             pDV->MarkObj( pObj, pDV->GetPageView( pObj->GetPage() ) );
+                            // --> OD 2005-04-15 #i47455# - notify draw frame format
+                            // that position attributes are already set.
+                            if ( pNew->ISA(SwDrawFrmFmt) )
+                            {
+                                static_cast<SwDrawFrmFmt*>(pNew)->PosAttrSet();
+                            }
+                            // <--
                         }
                     }
                 }
@@ -1094,17 +1107,17 @@ BOOL SwFEShell::Paste( SwDoc* pClpDoc, BOOL bIncludingPageFrames )
             //find out if the clipboard document starts with a table
             bool bStartWithTable = 0 != aCpyPam.Start()->nNode.GetNode().FindTableNode();
             SwPosition aInsertPosition( rInsPos );
-            
+
             {
                 SwNodeIndex aIndexBefore(rInsPos.nNode);
                 aIndexBefore--;
-                
+
                 pClpDoc->Copy( aCpyPam, rInsPos );
-                
+
                 {
                     aIndexBefore++;
                     SwPaM aPaM(SwPosition(aIndexBefore, 0), rInsPos);
-                    
+
                     GetDoc()->MakeUniqueNumRules(aPaM);
                 }
             }
@@ -1182,7 +1195,7 @@ BOOL SwFEShell::PastePages( SwFEShell& rToFill, USHORT nStartPage, USHORT nEndPa
     {
         Pop(sal_False);
         return FALSE;
-    }            
+    }
     MovePage( fnPageCurr, fnPageStart );
     SwPaM aCpyPam( *GetCrsr()->GetPoint() );
     String sStartingPageDesc = GetPageDesc( GetCurPageDesc()).GetName();
@@ -1194,7 +1207,7 @@ BOOL SwFEShell::PastePages( SwFEShell& rToFill, USHORT nStartPage, USHORT nEndPa
     {
         Pop(sal_False);
         return FALSE;
-    }            
+    }
     //if the page starts with a table a paragraph has to be inserted before
     SwNode* pTableNode = aCpyPam.GetNode()->FindTableNode();
     if(pTableNode)
