@@ -2,9 +2,9 @@
  *
  *  $RCSfile: trvlfrm.cxx,v $
  *
- *  $Revision: 1.44 $
+ *  $Revision: 1.45 $
  *
- *  last change: $Author: vg $ $Date: 2005-03-23 11:53:58 $
+ *  last change: $Author: obo $ $Date: 2005-07-08 11:04:45 $
  *
  *  The Contents of this file are made available subject to the terms of
  *  either of the following licenses
@@ -1039,13 +1039,13 @@ SwCntntFrm *GetLastSub( const SwLayoutFrm *pLayout )
 
 SwLayoutFrm *GetNextFrm( const SwLayoutFrm *pFrm )
 {
-    SwLayoutFrm *pNext = 
+    SwLayoutFrm *pNext =
         (pFrm->GetNext() && pFrm->GetNext()->IsLayoutFrm()) ?
                                             (SwLayoutFrm*)pFrm->GetNext() : 0;
-    // #i39402# in case of an empty page 
+    // #i39402# in case of an empty page
     if(pNext && !pNext->ContainsCntnt())
         pNext = (pNext->GetNext() && pNext->GetNext()->IsLayoutFrm()) ?
-                                            (SwLayoutFrm*)pNext->GetNext() : 0; 
+                                            (SwLayoutFrm*)pNext->GetNext() : 0;
     return pNext;
 }
 
@@ -1056,13 +1056,13 @@ SwLayoutFrm *GetThisFrm( const SwLayoutFrm *pFrm )
 
 SwLayoutFrm *GetPrevFrm( const SwLayoutFrm *pFrm )
 {
-    SwLayoutFrm *pPrev = 
+    SwLayoutFrm *pPrev =
         (pFrm->GetPrev() && pFrm->GetPrev()->IsLayoutFrm()) ?
                                             (SwLayoutFrm*)pFrm->GetPrev() : 0;
-    // #i39402# in case of an empty page 
+    // #i39402# in case of an empty page
     if(pPrev && !pPrev->ContainsCntnt())
         pPrev = (pPrev->GetPrev() && pPrev->GetPrev()->IsLayoutFrm()) ?
-                                            (SwLayoutFrm*)pPrev->GetPrev() : 0; 
+                                            (SwLayoutFrm*)pPrev->GetPrev() : 0;
     return pPrev;
 }
 
@@ -1502,10 +1502,38 @@ void SwPageFrm::GetCntntPosition( const Point &rPt, SwPosition &rPos ) const
 |*
 |*************************************************************************/
 
+// --> OD 2005-05-25 #123110# - helper class to disable creation of an action
+// by a callback event - e.g., change event from a drawing object
+class DisableCallbackAction
+{
+    private:
+        SwRootFrm& mrRootFrm;
+        BOOL mbOldCallbackActionState;
+
+    public:
+        DisableCallbackAction( const SwRootFrm& _rRootFrm ) :
+            mrRootFrm( const_cast<SwRootFrm&>(_rRootFrm) ),
+            mbOldCallbackActionState( _rRootFrm.IsCallbackActionEnabled() )
+        {
+            mrRootFrm.SetCallbackActionEnabled( FALSE );
+        }
+
+        ~DisableCallbackAction()
+        {
+            mrRootFrm.SetCallbackActionEnabled( mbOldCallbackActionState );
+        }
+};
+// <--
+
 //!!!!! Es wird nur der vertikal naechstliegende gesucht.
 //JP 11.10.2001: only in tables we try to find the right column - Bug 72294
 Point SwRootFrm::GetNextPrevCntntPos( const Point& rPoint, BOOL bNext ) const
 {
+    // --> OD 2005-05-25 #123110# - disable creation of an action by a callback
+    // event during processing of this method. Needed because formatting is
+    // triggered by this method.
+    DisableCallbackAction aDisableCallbackAction( *this );
+    // <--
     //Ersten CntntFrm und seinen Nachfolger im Body-Bereich suchen
     //Damit wir uns nicht tot suchen (und vor allem nicht zuviel formatieren)
     //gehen wir schon mal von der richtigen Seite aus.
@@ -1624,7 +1652,7 @@ Point SwRootFrm::GetContentFromPos( const Point &rPoint, int offset ) const {
             const SwPageFrm *pPageFrm = pNxt->FindPageFrm();
             if(visArea.GetIntersection(pPageFrm->UnionFrm()).IsEmpty())
                 break;
-    
+
             Point pkClosest;
             float fCurrentDistance = aCntFrm.GetDistance(rPoint,pkClosest);
             if(fCurrentDistance < fDistance) {
@@ -1696,7 +1724,7 @@ Point SwRootFrm::GetContentFromPos( const Point &rPoint, int offset ) const {
         SwRect aCntFrm(pCnt->UnionFrm());
         return aCntFrm.Pos();
     }
-    
+
     return rPoint;
 }
 
