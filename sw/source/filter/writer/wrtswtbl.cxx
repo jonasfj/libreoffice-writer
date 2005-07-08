@@ -2,9 +2,9 @@
  *
  *  $RCSfile: wrtswtbl.cxx,v $
  *
- *  $Revision: 1.8 $
+ *  $Revision: 1.9 $
  *
- *  last change: $Author: rt $ $Date: 2005-01-11 13:25:16 $
+ *  last change: $Author: obo $ $Date: 2005-07-08 11:07:35 $
  *
  *  The Contents of this file are made available subject to the terms of
  *  either of the following licenses
@@ -131,7 +131,7 @@ SwVertOrient SwWriteTableCell::GetVertOri() const
 //-----------------------------------------------------------------------
 
 SwWriteTableRow::SwWriteTableRow( long nPosition, BOOL bUseLayoutHeights )
-    : pBackground(0), nPos(nPosition), mbUseLayoutHeights(bUseLayoutHeights), 
+    : pBackground(0), nPos(nPosition), mbUseLayoutHeights(bUseLayoutHeights),
     nTopBorder(USHRT_MAX), nBottomBorder(USHRT_MAX), bTopBorder(true),
     bBottomBorder(true)
 {
@@ -181,7 +181,7 @@ long SwWriteTable::GetLineHeight( const SwTableLine *pLine )
     if( bUseLayoutHeights )
     {
         // Erstmal versuchen wir die Hoehe ueber das Layout zu bekommen
-        long nHeight = pLine->GetLineRect( FALSE ).Height();
+        long nHeight = pLine->GetLineHeight();
         if( nHeight > 0 )
             return nHeight;
 
