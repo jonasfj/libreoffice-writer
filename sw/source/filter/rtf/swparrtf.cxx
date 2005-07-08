@@ -2,9 +2,9 @@
  *
  *  $RCSfile: swparrtf.cxx,v $
  *
- *  $Revision: 1.49 $
+ *  $Revision: 1.50 $
  *
- *  last change: $Author: rt $ $Date: 2005-01-31 14:23:01 $
+ *  last change: $Author: obo $ $Date: 2005-07-08 11:07:23 $
  *
  *  The Contents of this file are made available subject to the terms of
  *  either of the following licenses
@@ -261,7 +261,7 @@
 #include <tblsel.hxx>			// SwSelBoxes
 #endif
 
-#ifndef _FMTTSPLT_HXX 
+#ifndef _FMTTSPLT_HXX
 #include <fmtlsplt.hxx> // SwLayoutSplit
 #endif
 
@@ -396,6 +396,12 @@ void SwRTFParser::Continue( int nToken )
             pDoc->SetAddFlyOffsets( true );
             pDoc->SetAddExtLeading( true );
             pDoc->SetOldNumbering( false );
+            // --> FME 2005-05-27 #i47448#
+            pDoc->SetIgnoreFirstLineIndentInNumbering( false );
+            // <--
+            // --> FME 2005-06-08 #i49277#
+            pDoc->SetDoNotJustifyLinesWithManualBreak( false );
+            // <--
             pDoc->SetUseFormerLineSpacing( false );
             pDoc->SetAddParaSpacingToTableCells( true );
             pDoc->SetUseFormerObjectPositioning( false );
@@ -1299,7 +1305,7 @@ USHORT SwRTFParser::ReadRevTbl()
             break;
         }
     }
-    SkipToken( -1 );		
+    SkipToken( -1 );
     return nAuthorTableIndex;
 }
 
@@ -1319,8 +1325,8 @@ void fixKeepAndSplitAttributes(SwTableNode *pTableNode)
     SwTableBox* pBox = pLastLine->GetTabBoxes()[ 0 ];
     ULONG iFirstParagraph=pBox->GetSttIdx()+1;
     SwTxtNode *pTxtNode=(SwTxtNode *)pDoc->GetNodes()[iFirstParagraph];
-    SwFrmFmt* pFmt=rTable.GetFrmFmt();	
-    
+    SwFrmFmt* pFmt=rTable.GetFrmFmt();
+
     SwFmtLayoutSplit *pTableSplit=(SwFmtLayoutSplit *)pFmt->GetAttrSet().GetItem(RES_LAYOUT_SPLIT);
     BOOL isTableKeep = pTableSplit!=NULL && !pTableSplit->GetValue();
     SvxFmtKeepItem *pTableKeep=(SvxFmtKeepItem *)pFmt->GetAttrSet().GetItem(RES_KEEP);
@@ -1333,37 +1339,37 @@ void fixKeepAndSplitAttributes(SwTableNode *pTableNode)
             { // split
                 SwTableLine* pSplitLine = rLns[ nLines-2 ];
                 SwTableBox* pSplitBox = pSplitLine->GetTabBoxes()[ 0 ];
-                SwNodeIndex aSplitIdx( *pSplitBox->GetSttNd() );	
+                SwNodeIndex aSplitIdx( *pSplitBox->GetSttNd() );
                 pDoc->SplitTable( aSplitIdx, HEADLINE_NONE, !isTableKeep );
                 SwTable& rSplitTable=aSplitIdx.GetNode().FindTableNode()->GetTable();
                 aSplitIdx-=2;
                 pDoc->GetNodes().Delete(aSplitIdx);
-                pFmt=rSplitTable.GetFrmFmt();			
+                pFmt=rSplitTable.GetFrmFmt();
                 pFmt->ResetAttr(RES_PAGEDESC);
             }
         // set keep=1(i.e. split=0) attribut
         SwFmtLayoutSplit aSplit(0);
         SwAttrSet aNewSet(pFmt->GetAttrSet());
         aNewSet.Put(aSplit);
-        pFmt->SetAttr(aNewSet);				
+        pFmt->SetAttr(aNewSet);
     }
     else // !isTableKeepNext
     {
         if (isTableKeep)
         {
-            SwNodeIndex aTmpIdx( *pBox->GetSttNd() );	
+            SwNodeIndex aTmpIdx( *pBox->GetSttNd() );
             pDoc->SplitTable( aTmpIdx, HEADLINE_NONE, FALSE );
             SwTable& rSplitTable=aTmpIdx.GetNode().FindTableNode()->GetTable();
             aTmpIdx-=2;
             pDoc->GetNodes().Delete(aTmpIdx);
-            pFmt=rSplitTable.GetFrmFmt();		
+            pFmt=rSplitTable.GetFrmFmt();
             pFmt->ResetAttr(RES_PAGEDESC);
         }
         // set keep=0(i.e. split=1) attribut
         SwFmtLayoutSplit aSplit(1);
         SwAttrSet aNewSet(pFmt->GetAttrSet());
         aNewSet.Put(aSplit);
-        pFmt->SetAttr(aNewSet);				
+        pFmt->SetAttr(aNewSet);
     }
     // move keepnext attribtue from last paragraph to table
     if (pKeepNext!=NULL)
@@ -1371,7 +1377,7 @@ void fixKeepAndSplitAttributes(SwTableNode *pTableNode)
         SvxFmtKeepItem aNewKeepItem(pKeepNext->GetValue());
         SwAttrSet aNewSet(pFmt->GetAttrSet());
         aNewSet.Put(aNewKeepItem);
-        pFmt->SetAttr(aNewSet);				
+        pFmt->SetAttr(aNewSet);
     }
 }
 
@@ -1412,11 +1418,11 @@ void SwRTFParser::NextToken( int nToken )
         break;
 #endif
     case RTF_TROWD:					ReadTable( nToken );		break;
-    case RTF_PGDSCTBL:				
+    case RTF_PGDSCTBL:
         if( !IsNewDoc() )
             SkipPageDescTbl();
         else
-            ReadPageDescTbl();			
+            ReadPageDescTbl();
         break;
     case RTF_LISTTABLE: 			ReadListTable();			break;
     case RTF_LISTOVERRIDETABLE:		ReadListOverrideTable();    break;
@@ -1478,7 +1484,7 @@ void SwRTFParser::NextToken( int nToken )
     case RTF_PNSECLVL:{
         if( bNewNumList)
             SkipGroup();
-        else            
+        else
             ReadNumSecLevel( nToken );
         break;
                       }
@@ -1558,7 +1564,7 @@ void SwRTFParser::NextToken( int nToken )
             aTmp.Move( fnMoveBackward, fnGoNode );
             SwTableNode *pTableNode=aTmp.GetMark()->nNode.GetNode().FindTableNode();
             //fixKeepAndSplitAttributes(pTableNode); $flr disabled in frrtf01, see #117910#
-            
+
 
         }
         ::SetProgressState( rInput.Tell(), pDoc->GetDocShell() );
@@ -1658,7 +1664,7 @@ void SwRTFParser::NextToken( int nToken )
         if( IsNewDoc() && bSwPageDesc &&
             USHORT(nTokenValue) < pDoc->GetPageDescCnt() )
         {
-            const SwPageDesc* pPgDsc = 
+            const SwPageDesc* pPgDsc =
                 &const_cast<const SwDoc *>(pDoc)
                 ->GetPageDesc( USHORT(nTokenValue) );
             CheckInsNewTblLine();
@@ -1794,7 +1800,7 @@ void SwRTFParser::InsertText()
     // dann fuege den String ein, ohne das Attribute am Ende
     // aufgespannt werden.
     CheckInsNewTblLine();
-    
+
     if(pRedlineInsert)
         mpRedlineStack->open(*pPam->GetPoint(), *pRedlineInsert);
     if(pRedlineDelete)
@@ -2508,7 +2514,7 @@ void SwRTFParser::MakeStyleTab()
                     else
                         nValidOutlineLevels |= nOutlFlag;
                 }
-#endif 
+#endif
                 // existiert noch nicht, also anlegen
                 MakeStyle( nNo, *pStyle );
             }
@@ -2633,7 +2639,7 @@ void SwRTFParser::ReadSectControls( int nToken )
         {
             case RTF_SECT:
                 bNewSection = true;
-                bForceNewTable = true; // #117882# 
+                bForceNewTable = true; // #117882#
                 break;
             case RTF_SECTD: {
                 //Reset to page defaults
@@ -2756,14 +2762,14 @@ void SwRTFParser::ReadSectControls( int nToken )
                 }
             case RTF_FOOTER:
             case RTF_FOOTERL:
-            case RTF_FOOTERR: 
+            case RTF_FOOTERR:
                 if (aNewSection.mpPageHdFt!=NULL && _pKeepFooter==NULL)
                 {
                     _pKeepHeader = &aNewSection.mpPageHdFt->GetMaster().GetHeader();
                 }
-                if (!bNewSectionHeader) { //see #117914# topic 2). If a header is redefined in a section					                      
+                if (!bNewSectionHeader) { //see #117914# topic 2). If a header is redefined in a section
                     bNewSectionHeader=true;                    //  a new header must be created.
-                    aNewSection.mpPageHdFt=NULL; 
+                    aNewSection.mpPageHdFt=NULL;
                 }
                 if (!aNewSection.mpPageHdFt)
                 {
@@ -2884,7 +2890,7 @@ void SwRTFParser::ReadSectControls( int nToken )
     if (bNewSection || maSegments.empty())
     {
         AttrGroupEnd(); //#106493#
-        if(!bContainsPara && !bContainsTablePara) //#117881#: bContainsTablePara is set in rtftbl.cxx 
+        if(!bContainsPara && !bContainsTablePara) //#117881#: bContainsTablePara is set in rtftbl.cxx
             pDoc->AppendTxtNode(*pPam->GetPoint());
         bContainsPara = false;
         bContainsTablePara = false;
@@ -2922,10 +2928,10 @@ void SwRTFParser::LeaveEnvironment()
 
 void SwRTFParser::SkipPageDescTbl()
 {
-    // M.M. #117907# I have to use this glorified SkipGroup because the 
+    // M.M. #117907# I have to use this glorified SkipGroup because the
     // SvParser SkipGroup uses nNextCh which is not set correctly <groan>
-    int nOpenBrakets = 1;           
-    
+    int nOpenBrakets = 1;
+
     while( nOpenBrakets && IsParserWorking() )
     {
         switch( GetNextToken() )
@@ -2935,16 +2941,16 @@ void SwRTFParser::SkipPageDescTbl()
                 --nOpenBrakets;
             }
             break;
-    
-        case '{':                       
+
+        case '{':
             {
                 nOpenBrakets++;
             }
             break;
         }
     }
-    
-    SkipToken( -1 );                
+
+    SkipToken( -1 );
 }
 
 void SwRTFParser::ReadPageDescTbl()
@@ -3937,7 +3943,7 @@ void SwRTFParser::UnknownAttrToken( int nToken, SfxItemSet* pSet )
                 NewTblLine();			// evt. Line copieren
             else
             {
-                static int _do=0; //$flr See #117881# for explanation.  
+                static int _do=0; //$flr See #117881# for explanation.
                 // Crsr nicht mehr in der Tabelle ?
                 if( !pPam->GetNode()->FindTableNode() && _do )
                 {
@@ -4005,13 +4011,13 @@ void SwRTFParser::UnknownAttrToken( int nToken, SfxItemSet* pSet )
                 if( SFX_ITEM_SET != pSet->GetItemState( FN_PARAM_NUM_LEVEL, FALSE ))
                     pSet->Put( SfxUInt16Item( FN_PARAM_NUM_LEVEL, 0 ));
             }
-            else 
+            else
             {
                 // wir sind in der Style-Definitions - Phase. Der Name
                 // wird dann spaeter umgesetzt
                                 //#117891# pSet->Put( SwNumRuleItem( String::CreateFromInt32( nTokenValue )));
             }
-                
+
         }
         break;
 
@@ -4049,16 +4055,16 @@ sal_Char __READONLY_DATA aChkForVerNo[] = "StarWriter";
 
 void SwRTFParser::ReadUserProperties()
 {
-    // For now we don't support user properties but at least the parser is here. 
+    // For now we don't support user properties but at least the parser is here.
     // At the moment it just swallows the tokens to prevent them being displayed
-    int nOpenBrakets = 1, nToken;		
+    int nOpenBrakets = 1, nToken;
 
     while( nOpenBrakets && IsParserWorking() )
     {
         switch( nToken = GetNextToken() )
         {
-        case '}':		
-             --nOpenBrakets;	
+        case '}':
+             --nOpenBrakets;
              break;
         case '{':
             {
@@ -4094,7 +4100,7 @@ void SwRTFParser::ReadUserProperties()
         }
     }
 
-    SkipToken( -1 );		
+    SkipToken( -1 );
 }
 
 
