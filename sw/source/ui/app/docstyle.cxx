@@ -2,9 +2,9 @@
  *
  *  $RCSfile: docstyle.cxx,v $
  *
- *  $Revision: 1.18 $
+ *  $Revision: 1.19 $
  *
- *  last change: $Author: vg $ $Date: 2005-03-08 11:17:07 $
+ *  last change: $Author: obo $ $Date: 2005-07-08 11:09:05 $
  *
  *  The Contents of this file are made available subject to the terms of
  *  either of the following licenses
@@ -154,10 +154,10 @@
 #ifndef _COMPHELPER_PROCESSFACTORY_HXX_
 #include <comphelper/processfactory.hxx>
 #endif
-#ifndef _UNOTOOLS_LOCALEDATAWRAPPER_HXX 
+#ifndef _UNOTOOLS_LOCALEDATAWRAPPER_HXX
 #include <unotools/localedatawrapper.hxx>
 #endif
-#ifndef _UNOTOOLS_INTLWRAPPER_HXX 
+#ifndef _UNOTOOLS_INTLWRAPPER_HXX
 #include <unotools/intlwrapper.hxx>
 #endif
 
@@ -515,7 +515,7 @@ SwDocStyleSheet::SwDocStyleSheet(	SwDoc&			rDocument,
             FN_PARAM_FTN_INFO, 		FN_PARAM_FTN_INFO,
             SID_ATTR_PARA_MODEL,	SID_ATTR_PARA_MODEL,
             SID_ATTR_PARA_PAGENUM, SID_ATTR_PARA_PAGENUM,
-            SID_SWREGISTER_MODE,    SID_SWREGISTER_MODE,    
+            SID_SWREGISTER_MODE,    SID_SWREGISTER_MODE,
             SID_SWREGISTER_COLLECTION, SID_SWREGISTER_COLLECTION,
             FN_COND_COLL,			FN_COND_COLL,
             SID_ATTR_AUTO_STYLE_UPDATE,	SID_ATTR_AUTO_STYLE_UPDATE,
@@ -687,7 +687,7 @@ String  SwDocStyleSheet::GetDescription(SfxMapUnit eUnit)
     IntlWrapper aIntlWrapper(
         ::comphelper::getProcessServiceFactory(),
         GetAppLocaleData().getLocale());
-    
+
     String sPlus(String::CreateFromAscii(" + "));
     if ( SFX_STYLE_FAMILY_PAGE == nFamily )
     {
@@ -894,7 +894,7 @@ BOOL  SwDocStyleSheet::SetName( const String& rStr)
             if( pColl && pColl->GetName() != rStr )
             {
                 if (pColl->GetName().Len() > 0)
-                    rDoc.RenameFmt(*pColl, rStr); 
+                    rDoc.RenameFmt(*pColl, rStr);
                 else
                     pColl->SetName(rStr);
 
@@ -929,7 +929,7 @@ BOOL  SwDocStyleSheet::SetName( const String& rStr)
 
                 aPageDesc.SetName( rStr );
                 BOOL bDoesUndo = rDoc.DoesUndo();
-                
+
                 rDoc.DoUndo(aOldName.Len() > 0);
                 rDoc.ChgPageDesc(aOldName, aPageDesc);
                 rDoc.DoUndo(bDoesUndo);
@@ -962,7 +962,7 @@ BOOL  SwDocStyleSheet::SetName( const String& rStr)
                 {
                     ((SwNumRule*)pNumRule)->SetName( rStr );
                     rDoc.SetModified();
-                    
+
                     bChg = TRUE;
                 }
             }
@@ -1313,7 +1313,13 @@ void   SwDocStyleSheet::SetItemSet(const SfxItemSet& rSet)
                 if( rDoc.FindPageDescByName( pDesc->GetName(), &nPgDscPos ))
                 {
                     pNewDsc = new SwPageDesc( *pDesc );
+                    // --> OD 2005-05-09 #i48949# - no undo actions for the
+                    // copy of the page style
+                    const sal_Bool bDoesUndo( rDoc.DoesUndo() );
+                    rDoc.DoUndo( sal_False );
                     rDoc.CopyPageDesc(*pDesc, *pNewDsc); // #i7983#
+                    rDoc.DoUndo( bDoesUndo );
+                    // <--
 
                     pFmt = &pNewDsc->GetMaster();
                 }
@@ -1437,7 +1443,7 @@ void lcl_SaveStyles( USHORT nFamily, SvPtrarr& rArr, SwDoc& rDoc )
         {
             for( sal_uInt16 n = 0, nCnt = rDoc.GetPageDescCnt(); n < nCnt; ++n )
             {
-                void* p = 
+                void* p =
                     (void*)&const_cast<const SwDoc &>(rDoc).GetPageDesc( n );
                 rArr.Insert( p, n );
             }
@@ -1512,7 +1518,7 @@ void lcl_DeleteInfoStyles( USHORT nFamily, SvPtrarr& rArr, SwDoc& rDoc )
             SvUShorts aDelArr;
             for( n = 0, nCnt = rDoc.GetPageDescCnt(); n < nCnt; ++n )
             {
-                void* p = 
+                void* p =
                     (void*)&const_cast<const SwDoc &>(rDoc).GetPageDesc( n );
                 if( USHRT_MAX == rArr.GetPos( p ))
                     aDelArr.Insert( n, 0 );
