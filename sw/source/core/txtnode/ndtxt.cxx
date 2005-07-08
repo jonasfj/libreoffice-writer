@@ -2,9 +2,9 @@
  *
  *  $RCSfile: ndtxt.cxx,v $
  *
- *  $Revision: 1.49 $
+ *  $Revision: 1.50 $
  *
- *  last change: $Author: obo $ $Date: 2005-05-03 14:39:29 $
+ *  last change: $Author: obo $ $Date: 2005-07-08 11:06:07 $
  *
  *  The Contents of this file are made available subject to the terms of
  *  either of the following licenses
@@ -349,7 +349,6 @@ SwTxtNode::SwTxtNode( const SwNodeIndex &rWhere,
     if( pAutoAttr )
         SwCntntNode::SetAttr( *pAutoAttr );
 
-    const SfxPoolItem* pItem;
     if( GetNodes().IsDocNodes())
     {
         //pNdNum = new SwNodeNum( 0 );
@@ -1055,15 +1054,15 @@ void SwTxtNode::_ChgTxtCollUpdateNum( const SwTxtFmtColl *pOldColl,
 
     const SfxPoolItem * pItem = NULL;
     String sNewCollNumRuleName;
-    if (SFX_ITEM_SET == 
+    if (SFX_ITEM_SET ==
         pNewColl->GetItemState(RES_PARATR_NUMRULE, TRUE, &pItem))
     {
-        sNewCollNumRuleName = 
+        sNewCollNumRuleName =
             static_cast<const SwNumRuleItem *>(pItem)->GetValue();
     }
 
     SwNodes& rNds = GetNodes();
-    if( nOldLevel != nNewLevel && 
+    if( nOldLevel != nNewLevel &&
         (pRule == NULL || sNewCollNumRuleName.Len() == 0 ||
          sNewCollNumRuleName == pRule->GetName()))
     // <- HB 2005-04-05 #i46625#
@@ -2463,12 +2462,12 @@ SwTxtNode* SwTxtNode::_MakeNewTxtNode( const SwNodeIndex& rPos, BOOL bNext,
     {
         /* -> HB #i47372# */
         BYTE nLevel = pNextColl->GetOutlineLevel();
-        
+
         if (nLevel == NO_NUMBERING)
             nLevel = 0;
-        
+
         SetLevel(nLevel);
-        
+
         /* <- HB #i47372# */
     }
 
@@ -2532,7 +2531,7 @@ BOOL SwTxtNode::HasNumber() const
             SwNumFmt aFmt(pRule->Get(pNum->GetRealLevel()));
 
             // #i40041#
-            bResult = aFmt.IsEnumeration() && 
+            bResult = aFmt.IsEnumeration() &&
                 SVX_NUM_NUMBER_NONE != aFmt.GetNumberingType();
         }
     }
@@ -2636,7 +2635,7 @@ BOOL SwTxtNode::GetFirstLineOfsWithNum( short& rFLOffset ) const
         {
             rFLOffset = pRule->Get( pNum->GetRealLevel() ).GetFirstLineOffset();
 
-            if (! GetDoc()->IsOldNumbering())
+            if (! GetDoc()->IgnoreFirstLineIndentInNumbering())
             {
                 SvxLRSpaceItem aItem = GetSwAttrSet().GetLRSpace();
 
