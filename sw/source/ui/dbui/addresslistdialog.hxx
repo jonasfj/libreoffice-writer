@@ -4,9 +4,9 @@
  *
  *  $RCSfile: addresslistdialog.hxx,v $
  *
- *  $Revision: 1.4 $
+ *  $Revision: 1.5 $
  *
- *  last change: $Author: rt $ $Date: 2005-09-09 06:48:15 $
+ *  last change: $Author: hr $ $Date: 2005-09-23 11:47:54 $
  *
  *  The Contents of this file are made available subject to
  *  the terms of GNU Lesser General Public License Version 2.1.
@@ -35,10 +35,10 @@
 #ifndef _ADDRESSLISTDIALOG_HXX
 #define _ADDRESSLISTDIALOG_HXX
 
-#ifndef _BASEDLGS_HXX 
+#ifndef _BASEDLGS_HXX
 #include <sfx2/basedlgs.hxx>
 #endif
-#ifndef _STDCTRL_HXX 
+#ifndef _STDCTRL_HXX
 #include <svtools/stdctrl.hxx>
 #endif
 #ifndef _SV_BUTTON_HXX
@@ -53,8 +53,8 @@
 #ifndef _SWDBDATA_HXX
 #include <swdbdata.hxx>
 #endif
-#ifndef SW_SHARED_UNO_COMPONENT_HXX
-#include "sharedunocomponent.hxx"
+#ifndef SW_UI_SHARED_CONNECTION_HXX
+#include "sharedconnection.hxx"
 #endif
 
 
@@ -68,7 +68,7 @@ namespace com{namespace sun{namespace star{
     }
     namespace sdbcx{
         class XColumnsSupplier;
-    }    
+    }
 }}}
 class SwMailMergeAddressBlockPage;
 /*-- 08.04.2004 14:04:29---------------------------------------------------
@@ -77,7 +77,7 @@ class SwMailMergeAddressBlockPage;
 class SwAddressListDialog : public SfxModalDialog
 {
     FixedInfo       m_aDescriptionFI;
-    
+
     FixedInfo       m_aListFT;
     HeaderBar       m_aListHB;
     SvTabListBox    m_aListLB;
@@ -85,7 +85,7 @@ class SwAddressListDialog : public SfxModalDialog
     PushButton      m_aLoadListPB;
     PushButton      m_aCreateListPB;
     PushButton      m_aFilterPB;
-    PushButton      m_aEditPB;    
+    PushButton      m_aEditPB;
     PushButton      m_aTablePB;
 
     FixedLine       m_aSeparatorFL;
@@ -109,9 +109,9 @@ class SwAddressListDialog : public SfxModalDialog
 //    ::com::sun::star::uno::Reference< ::com::sun::star::sdbc::XConnection>          m_xConnection;
 //    ::com::sun::star::uno::Reference< ::com::sun::star::sdbcx::XColumnsSupplier>    m_xColumnsSupplier;
     SwDBData                                                                        m_aDBData;
-    
+
     void DetectTablesAndQueries(SvLBoxEntry* pSelect, bool bWidthDialog);
-    
+
     DECL_LINK(FilterHdl_Impl, PushButton*);
     DECL_LINK(LoadHdl_Impl,   PushButton*);
     DECL_LINK(CreateHdl_Impl, PushButton*);
@@ -122,16 +122,16 @@ class SwAddressListDialog : public SfxModalDialog
 
     DECL_STATIC_LINK(SwAddressListDialog, StaticListBoxSelectHdl_Impl, SvLBoxEntry*);
 
-public: 
+public:
     SwAddressListDialog(SwMailMergeAddressBlockPage* pParent);
     ~SwAddressListDialog();
-    
-    ::com::sun::star::uno::Reference< ::com::sun::star::sdbc::XDataSource>  
+
+    ::com::sun::star::uno::Reference< ::com::sun::star::sdbc::XDataSource>
                         GetSource();
 
     SharedConnection    GetConnection();
 
-    ::com::sun::star::uno::Reference< ::com::sun::star::sdbcx::XColumnsSupplier> 
+    ::com::sun::star::uno::Reference< ::com::sun::star::sdbcx::XColumnsSupplier>
                         GetColumnsSupplier();
 
     const SwDBData&     GetDBData() const       {return m_aDBData;}
