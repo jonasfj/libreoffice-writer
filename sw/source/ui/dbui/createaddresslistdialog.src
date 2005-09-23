@@ -4,9 +4,9 @@
  *
  *  $RCSfile: createaddresslistdialog.src,v $
  *
- *  $Revision: 1.5 $
+ *  $Revision: 1.6 $
  *
- *  last change: $Author: rt $ $Date: 2005-09-09 06:49:28 $
+ *  last change: $Author: hr $ $Date: 2005-09-23 12:54:11 $
  *
  *  The Contents of this file are made available subject to
  *  the terms of GNU Lesser General Public License Version 2.1.
@@ -47,7 +47,7 @@ ModalDialog DLG_MM_CREATEADDRESSLIST
     HelpID = HID_MM_CREATEADDRESSLIST;
     Size = MAP_APPFONT ( 318 , 231 ) ;
     Moveable = TRUE ;
-    
+
     Text [ de ] = "Neue Adressenliste";
     Text [ en-US ] = "New Address List";
 
@@ -89,7 +89,7 @@ ModalDialog DLG_MM_CREATEADDRESSLIST
     {
         Pos = MAP_APPFONT ( 262 , 32 ) ;
         Size = MAP_APPFONT ( 50 , 14 ) ;
-        Text [ de ] = "Löschen";
+        Text [ de ] = "LÃ¶schen";
         Text [ en-US ] = "~Delete";
     };
     PushButton              PB_FIND
@@ -190,7 +190,7 @@ ModelessDialog DLG_MM_FIND_ENTRY
     HelpID = HID_MM_FIND_ENTRY;
     Size = MAP_APPFONT ( 188 , 63 ) ;
     Moveable = TRUE ;
-    
+
     Text [ de ] = "Eintrag suchen";
     Text [ en-US ] = "Find Entry";
 
@@ -214,7 +214,7 @@ ModelessDialog DLG_MM_FIND_ENTRY
         Text [ de ] = "Nur suchen in";
         Text [ en-US ] = "Find ~only in";
     };
-    ListBox   LB_FINDONLY  
+    ListBox   LB_FINDONLY
     {
         Pos = MAP_APPFONT ( 12 , 45 ) ;
         Size = MAP_APPFONT ( 114 , 50 ) ;
@@ -233,7 +233,7 @@ ModelessDialog DLG_MM_FIND_ENTRY
     {
         Pos = MAP_APPFONT ( 132 , 20 ) ;
         Size = MAP_APPFONT ( 50 , 14 ) ;
-        Text [ de ] = "Schließen";
+        Text [ de ] = "SchlieÃŸen";
         Text [ en-US ] = "~Close";
     };
     HelpButton              PB_HELP
