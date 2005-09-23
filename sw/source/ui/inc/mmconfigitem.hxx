@@ -4,9 +4,9 @@
  *
  *  $RCSfile: mmconfigitem.hxx,v $
  *
- *  $Revision: 1.6 $
+ *  $Revision: 1.7 $
  *
- *  last change: $Author: rt $ $Date: 2005-09-09 09:50:59 $
+ *  last change: $Author: hr $ $Date: 2005-09-23 11:48:52 $
  *
  *  The Contents of this file are made available subject to
  *  the terms of GNU Lesser General Public License Version 2.1.
@@ -50,8 +50,8 @@
 #ifndef INCLUDED_SWDLLAPI_H
 #include "swdllapi.h"
 #endif
-#ifndef SW_SHARED_UNO_COMPONENT_HXX
-#include "sharedunocomponent.hxx"
+#ifndef SW_UI_SHARED_CONNECTION_HXX
+#include "sharedconnection.hxx"
 #endif
 
 namespace com{namespace sun{namespace star{
@@ -62,7 +62,7 @@ namespace com{namespace sun{namespace star{
     }
     namespace sdbcx{
         class XColumnsSupplier;
-    }    
+    }
 }}}
 class SwMailMergeConfigItem_Impl;
 class SwView;
@@ -76,9 +76,9 @@ struct SwDocMergeInfo
     long    nEndPageInTarget;
     long    nDBRow;
 };
-class SW_DLLPUBLIC SwMailMergeConfigItem 
+class SW_DLLPUBLIC SwMailMergeConfigItem
 {
-//    com::sun::star::uno::Sequence< ::rtl::OUString>     m_aSavedDocuments;    
+//    com::sun::star::uno::Sequence< ::rtl::OUString>     m_aSavedDocuments;
     SwMailMergeConfigItem_Impl*                                 m_pImpl;
     //session information - not stored in configuration
     bool                                                        m_bAddressInserted;
@@ -95,36 +95,36 @@ class SW_DLLPUBLIC SwMailMergeConfigItem
 
     SwView*                                                     m_pSourceView;
     SwView*                                                     m_pTargetView;
-public: 
+public:
     SwMailMergeConfigItem();
     ~SwMailMergeConfigItem();
 
     enum Gender
     {
         FEMALE,
-        MALE,        
+        MALE,
         NEUTRAL
     };
 
     void                Commit();
-    
+
     const ResStringArray&   GetDefaultAddressHeaders() const;
-    
+
     void                SetCurrentConnection(
                             ::com::sun::star::uno::Reference< ::com::sun::star::sdbc::XDataSource>          xSource,
                             SharedConnection                                                                xConnection,
                             ::com::sun::star::uno::Reference< ::com::sun::star::sdbcx::XColumnsSupplier>    xColumnsSupplier,
                             const SwDBData& rDBData);
-    
-    ::com::sun::star::uno::Reference< ::com::sun::star::sdbc::XDataSource>  
+
+    ::com::sun::star::uno::Reference< ::com::sun::star::sdbc::XDataSource>
                         GetSource();
-    
+
     SharedConnection    GetConnection();
-    
-    ::com::sun::star::uno::Reference< ::com::sun::star::sdbcx::XColumnsSupplier> 
+
+    ::com::sun::star::uno::Reference< ::com::sun::star::sdbcx::XColumnsSupplier>
                         GetColumnsSupplier();
-    
-    ::com::sun::star::uno::Reference< ::com::sun::star::sdbc::XResultSet>   
+
+    ::com::sun::star::uno::Reference< ::com::sun::star::sdbc::XResultSet>
                         GetResultSet();
 
     void                DisposeResultSet();
@@ -135,7 +135,7 @@ public:
     ::com::sun::star::uno::Sequence< ::com::sun::star::uno::Any>
                         GetSelection()const;
     void                SetSelection(::com::sun::star::uno::Sequence< ::com::sun::star::uno::Any > rSelection);
-    
+
     void                SetCurrentDBData( const SwDBData& rDBData);
     const SwDBData&     GetCurrentDBData() const;
 
@@ -146,21 +146,21 @@ public:
 
     bool                IsRecordExcluded(sal_Int32 nRecord);
     void                ExcludeRecord(sal_Int32 nRecord, bool bExclude);
-    
-    const com::sun::star::uno::Sequence< ::rtl::OUString>&   
+
+    const com::sun::star::uno::Sequence< ::rtl::OUString>&
                         GetSavedDocuments() const;
     void                AddSavedDocument(::rtl::OUString rName);
-    
+
     sal_Bool            IsOutputToLetter()const;
     void                SetOutputToLetter(sal_Bool bSet);
 
     sal_Bool            IsAddressBlock()const;
     void                SetAddressBlock(sal_Bool bSet);
-    
-    const com::sun::star::uno::Sequence< ::rtl::OUString>   
+
+    const com::sun::star::uno::Sequence< ::rtl::OUString>
                         GetAddressBlocks() const;
     void                SetAddressBlocks(const com::sun::star::uno::Sequence< ::rtl::OUString>& rBlocks);
-    
+
 
     sal_Bool            IsIncludeCountry() const;
     rtl::OUString&      GetExcludeCountry() const;
@@ -168,11 +168,11 @@ public:
 
     sal_Bool            IsIndividualGreeting(sal_Bool bInEMail) const;
     void                SetIndividualGreeting(sal_Bool bSet, sal_Bool bInEMail);
-    
+
     sal_Bool            IsGreetingLine(sal_Bool bInEMail) const;
     void                SetGreetingLine(sal_Bool bSet, sal_Bool bInEMail);
 
-    const com::sun::star::uno::Sequence< ::rtl::OUString>   
+    const com::sun::star::uno::Sequence< ::rtl::OUString>
                         GetGreetings(Gender eType) const;
     void                SetGreetings(Gender eType, const com::sun::star::uno::Sequence< ::rtl::OUString>& rBlocks);
 
@@ -186,11 +186,11 @@ public:
     //returns the assignment in the order of the default headers (GetDefaultAddressHeaders())
     com::sun::star::uno::Sequence< ::rtl::OUString >
                         GetColumnAssignment( const SwDBData& rDBData ) const;
-    void                SetColumnAssignment( 
-                            const SwDBData& rDBData, 
+    void                SetColumnAssignment(
+                            const SwDBData& rDBData,
                             const com::sun::star::uno::Sequence< ::rtl::OUString>& );
 
-    //e-Mail settings: 
+    //e-Mail settings:
     ::rtl::OUString     GetMailDisplayName() const;
     void                SetMailDisplayName(const ::rtl::OUString& rName);
 
@@ -211,52 +211,52 @@ public:
 
     sal_Bool            IsDefaultPort() const;
     void                SetPortToDefault();
-    
+
     sal_Bool            IsSecureConnection() const;
     void                SetSecureConnection(sal_Bool bSet);
 
     sal_Bool            IsAuthentication() const;
     void                SetAuthentication(sal_Bool bSet);
-    
+
     ::rtl::OUString     GetMailUserName() const;
     void                SetMailUserName(const ::rtl::OUString& rName);
 
     ::rtl::OUString     GetMailPassword() const;
     void                SetMailPassword(const ::rtl::OUString& rPassword);
 
-    sal_Bool            IsSMTPAfterPOP() const;            
-    void                SetSMTPAfterPOP(sal_Bool bSet);            
-    
+    sal_Bool            IsSMTPAfterPOP() const;
+    void                SetSMTPAfterPOP(sal_Bool bSet);
+
     ::rtl::OUString     GetInServerName() const;
     void                SetInServerName(const ::rtl::OUString& rServer);
-    
+
     sal_Int16           GetInServerPort() const;
     void                SetInServerPort(sal_Int16 nSet);
 
     sal_Bool            IsInServerPOP() const;
     void                SetInServerPOP(sal_Bool bSet);
-    
+
     ::rtl::OUString     GetInServerUserName() const;
     void                SetInServerUserName(const ::rtl::OUString& rName);
-    
+
     ::rtl::OUString     GetInServerPassword() const;
     void                SetInServerPassword(const ::rtl::OUString& rPassword);
-    
+
     //session information
     bool                IsAddressInserted() const { return m_bAddressInserted; }
-    void                SetAddressInserted(const ::rtl::OUString& rFrameName) 
-                            { m_bAddressInserted = true; 
+    void                SetAddressInserted(const ::rtl::OUString& rFrameName)
+                            { m_bAddressInserted = true;
                               m_rAddressBlockFrame = rFrameName;
                             }
 
     bool                IsGreetingInserted() const { return m_bGreetingInserted; }
-    void                SetGreetingInserted() 
+    void                SetGreetingInserted()
                             { m_bGreetingInserted = true; }
 
-    // counts the moves in the layout page 
+    // counts the moves in the layout page
     void                MoveGreeting( sal_Int32 nMove) { m_nGreetingMoves += nMove;}
     sal_Int32           GetGreetingMoves() const { return m_nGreetingMoves;}
-    
+
     bool                IsMergeDone() const { return m_bMergeDone;}
     void                SetMergeDone(  ) { m_bMergeDone = true; }
 
@@ -264,7 +264,7 @@ public:
     void                DocumentReloaded();
 
     bool                IsMailAvailable() const;
-            
+
     // notify a completed merge, provid the appropriate e-Mail address if available
     void                AddMergedDocument(SwDocMergeInfo& rInfo);
     //returns the page and database cursor information of each merged document
@@ -272,23 +272,23 @@ public:
     sal_uInt32          GetMergedDocumentCount() const;
 
     void                SetPrintRange( USHORT nStartDocument, USHORT nEndDocument)
-                            {m_nStartPrint = nStartDocument; m_nEndPrint = nEndDocument;}                        
+                            {m_nStartPrint = nStartDocument; m_nEndPrint = nEndDocument;}
     USHORT              GetPrintRangeStart() const  {return m_nStartPrint;}
     USHORT              GetPrintRangeEnd() const {return m_nEndPrint;}
-            
+
     const ::rtl::OUString&  GetSelectedPrinter() const {return m_sSelectedPrinter;}
-    void                    SetSelectedPrinter(const ::rtl::OUString& rSet ) 
+    void                    SetSelectedPrinter(const ::rtl::OUString& rSet )
                                     {m_sSelectedPrinter = rSet;}
 
-            
+
     SwView*             GetTargetView();
     void                SetTargetView(SwView* pView);
 
     SwView*             GetSourceView();
     void                SetSourceView(SwView* pView);
 
-    //helper methods    
+    //helper methods
     ::rtl::OUString     GetAssignedColumn(sal_uInt32 nColumn)const;
-};            
+};
 #endif
 
