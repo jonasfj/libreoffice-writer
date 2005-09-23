@@ -4,9 +4,9 @@
  *
  *  $RCSfile: mailmergewizard.src,v $
  *
- *  $Revision: 1.3 $
+ *  $Revision: 1.4 $
  *
- *  last change: $Author: rt $ $Date: 2005-09-09 06:55:54 $
+ *  last change: $Author: hr $ $Date: 2005-09-23 12:55:57 $
  *
  *  The Contents of this file are made available subject to
  *  the terms of GNU Lesser General Public License Version 2.1.
@@ -49,24 +49,24 @@ ModalDialog DLG_MAILMERGEWIZARD
         Text [ de ] = "Schritte";
         Text [ en-US ] = "Steps";
     };
-    String ST_STARTING     
+    String ST_STARTING
     {
-        Text [ de ] = "Ausgangsdokument w‰hlen";
+        Text [ de ] = "Ausgangsdokument w√§hlen";
         Text [ en-US ] = "Select starting document";
     };
-    String ST_DOCUMETNTYPE 
+    String ST_DOCUMETNTYPE
     {
-        Text [ de ] = "Dokumenttyp w‰hlen";
+        Text [ de ] = "Dokumenttyp w√§hlen";
         Text [ en-US ] = "Select document type";
     };
-    String ST_ADDRESSBLOCK 
+    String ST_ADDRESSBLOCK
     {
-        Text [ de ] = "Adressblock einf¸gen";
+        Text [ de ] = "Adressblock einf√ºgen";
         Text [ en-US ] = "Insert address block";
     };
     String ST_ADDRESSLIST
     {
-        Text [ de ] = "Adressenliste w‰hlen";
+        Text [ de ] = "Adressenliste w√§hlen";
         Text [ en-US ] = "Select address list";
     };
     String ST_GREETINGSLINE
@@ -74,22 +74,22 @@ ModalDialog DLG_MAILMERGEWIZARD
         Text [ de ] = "Briefanrede erstellen";
         Text [ en-US ] = "Create salutation";
     };
-    String ST_LAYOUT       
+    String ST_LAYOUT
     {
         Text [ de ] = "Layout anpassen";
         Text [ en-US ] = "Adjust layout";
     };
-    String ST_PREPAREMERGE 
+    String ST_PREPAREMERGE
     {
         Text [ de ] = "Dokument vorbereiten";
         Text [ en-US ] = "Edit document";
     };
-    String ST_MERGE        
+    String ST_MERGE
     {
         Text [ de ] = "Dokument personalisieren";
         Text [ en-US ] = "Personalize document";
     };
-    String ST_OUTPUT       
+    String ST_OUTPUT
     {
         Text [ de ] = "Speichern, drucken, versenden";
         Text [ en-US ] = "Save, print or send";
