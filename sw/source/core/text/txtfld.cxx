@@ -4,9 +4,9 @@
  *
  *  $RCSfile: txtfld.cxx,v $
  *
- *  $Revision: 1.19 $
+ *  $Revision: 1.20 $
  *
- *  last change: $Author: rt $ $Date: 2005-09-09 05:05:32 $
+ *  last change: $Author: hr $ $Date: 2005-09-28 11:20:17 $
  *
  *  The Contents of this file are made available subject to
  *  the terms of GNU Lesser General Public License Version 2.1.
@@ -398,17 +398,21 @@ SwNumberPortion *SwTxtFormatter::NewNumberPortion( SwTxtFormatInfo &rInf ) const
                 //
                 pNumFnt = new SwFont( &rInf.GetCharAttr(), rInf.GetDoc() );
 
-                // i18463:
-                // Underline style of paragraph font should not be considered 
-                // Weight style of paragraph font should not be considered 
-                // Posture style of paragraph font should not be considered 
-                pNumFnt->SetUnderline( UNDERLINE_NONE );
-                pNumFnt->SetItalic( ITALIC_NONE, SW_LATIN );
-                pNumFnt->SetItalic( ITALIC_NONE, SW_CJK );
-                pNumFnt->SetItalic( ITALIC_NONE, SW_CTL );
-                pNumFnt->SetWeight( WEIGHT_NORMAL, SW_LATIN );
-                pNumFnt->SetWeight( WEIGHT_NORMAL, SW_CJK );
-                pNumFnt->SetWeight( WEIGHT_NORMAL, SW_CTL );
+                // --> FME 2005-08-11 #i53199#
+                if ( !pTxtNd->GetDoc()->DoNotResetParaAttrsForNumFont() )
+                {
+                    // i18463:
+                    // Underline style of paragraph font should not be considered
+                    // Weight style of paragraph font should not be considered
+                    // Posture style of paragraph font should not be considered
+                    pNumFnt->SetUnderline( UNDERLINE_NONE );
+                    pNumFnt->SetItalic( ITALIC_NONE, SW_LATIN );
+                    pNumFnt->SetItalic( ITALIC_NONE, SW_CJK );
+                    pNumFnt->SetItalic( ITALIC_NONE, SW_CTL );
+                    pNumFnt->SetWeight( WEIGHT_NORMAL, SW_LATIN );
+                    pNumFnt->SetWeight( WEIGHT_NORMAL, SW_CJK );
+                    pNumFnt->SetWeight( WEIGHT_NORMAL, SW_CTL );
+                }
 
                 //
                 // Apply the explicit attributes from the character style
@@ -416,7 +420,7 @@ SwNumberPortion *SwTxtFormatter::NewNumberPortion( SwTxtFormatInfo &rInf ) const
                 //
                 if( pFmt )
                     pNumFnt->SetDiffFnt( pFmt, rInf.GetDoc() );
-                
+
                 if ( pFmtFnt )
                 {
                     const BYTE nAct = pNumFnt->GetActual();
@@ -450,9 +454,13 @@ SwNumberPortion *SwTxtFormatter::NewNumberPortion( SwTxtFormatInfo &rInf ) const
                     //
                     pNumFnt = new SwFont( &rInf.GetCharAttr(), rInf.GetDoc() );
 
-                    // i18463:
-                    // Underline style of paragraph font should not be considered 
-                    pNumFnt->SetUnderline( UNDERLINE_NONE );
+                    // --> FME 2005-08-11 #i53199#
+                    if ( !pTxtNd->GetDoc()->DoNotResetParaAttrsForNumFont() )
+                    {
+                        // i18463:
+                        // Underline style of paragraph font should not be considered
+                        pNumFnt->SetUnderline( UNDERLINE_NONE );
+                    }
 
                     //
                     // Apply the explicit attributes from the character style
@@ -480,7 +488,7 @@ void SwTxtFld::NotifyContentChange(SwFmtFld& rFmtFld)
     //if not in undo section notify the change
     if(pMyTxtNd && pMyTxtNd->GetNodes().IsDocNodes())
         pMyTxtNd->Modify(0, &rFmtFld);
-}            
+}
 
 // #111840#
 SwPosition * SwTxtFld::GetPosition() const
