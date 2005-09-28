@@ -4,9 +4,9 @@
  *
  *  $RCSfile: docnum.cxx,v $
  *
- *  $Revision: 1.51 $
+ *  $Revision: 1.52 $
  *
- *  last change: $Author: rt $ $Date: 2005-09-09 03:14:04 $
+ *  last change: $Author: hr $ $Date: 2005-09-28 11:05:22 $
  *
  *  The Contents of this file are made available subject to
  *  the terms of GNU Lesser General Public License Version 2.1.
@@ -182,6 +182,11 @@ void SwDoc::SetOutlineNumRule( const SwNumRule& rRule )
     PropagateOutlineRule();
     pOutlineRule->SetInvalidRule(TRUE);
     UpdateNumRule();
+
+    // gibt es Fussnoten && gilt Kapitelweises Nummerieren, dann updaten
+    if( GetFtnIdxs().Count() && FTNNUM_CHAPTER == GetFtnInfo().eNum )
+        GetFtnIdxs().UpdateAllFtn();
+
     UpdateExpFlds();
 
     SetModified();
@@ -1356,7 +1361,7 @@ void SwDoc::MakeUniqueNumRules(const SwPaM & rPaM)
                         pReplaceNumRule = pRule;
                     else if (bFirst)
                     {
-                        SwPosition aPos(*pCNd);      
+                        SwPosition aPos(*pCNd);
 
                         pReplaceNumRule =
                             const_cast<SwNumRule *>
