@@ -4,9 +4,9 @@
  *
  *  $RCSfile: swxml.cxx,v $
  *
- *  $Revision: 1.64 $
+ *  $Revision: 1.65 $
  *
- *  last change: $Author: rt $ $Date: 2005-09-09 06:18:15 $
+ *  last change: $Author: hr $ $Date: 2005-09-30 10:03:43 $
  *
  *  The Contents of this file are made available subject to
  *  the terms of GNU Lesser General Public License Version 2.1.
@@ -604,7 +604,7 @@ sal_uInt32 XMLReader::Read( SwDoc &rDoc, const String& rBaseURL, SwPaM &rPaM, co
     // prepare for special modes
     if( aOpt.IsFmtsOnly() )
     {
-        sal_Int32 nCount = 
+        sal_Int32 nCount =
             (aOpt.IsFrmFmts() ? 1 : 0) +
             (aOpt.IsPageDescs() ? 1 : 0) +
             (aOpt.IsTxtFmts() ? 2 : 0) +
@@ -630,7 +630,7 @@ sal_uInt32 XMLReader::Read( SwDoc &rDoc, const String& rBaseURL, SwPaM &rPaM, co
 
         OUString sStyleInsertModeFamilies(
                 RTL_CONSTASCII_USTRINGPARAM("StyleInsertModeFamilies"));
-        xInfoSet->setPropertyValue( sStyleInsertModeFamilies, 
+        xInfoSet->setPropertyValue( sStyleInsertModeFamilies,
                                     makeAny(aFamiliesSeq) );
 
         OUString sStyleInsertModeOverwrite(
@@ -642,12 +642,12 @@ sal_uInt32 XMLReader::Read( SwDoc &rDoc, const String& rBaseURL, SwPaM &rPaM, co
     }
     else if( bInsertMode )
     {
-        Reference<XTextRange> xInsertTextRange = 
+        Reference<XTextRange> xInsertTextRange =
             SwXTextRange::CreateTextRangeFromPosition( &rDoc, *rPaM.GetPoint(),
                                                            0 );
         OUString sTextInsertModeRange(
                 RTL_CONSTASCII_USTRINGPARAM("TextInsertModeRange"));
-        xInfoSet->setPropertyValue( sTextInsertModeRange, 
+        xInfoSet->setPropertyValue( sTextInsertModeRange,
                                     makeAny(xInsertTextRange) );
     }
     else
@@ -688,7 +688,7 @@ sal_uInt32 XMLReader::Read( SwDoc &rDoc, const String& rBaseURL, SwPaM &rPaM, co
     // TODO/LATER: separate links from usual embedded objects
     if( SFX_CREATE_MODE_EMBEDDED == rDoc.GetDocShell()->GetCreateMode() )
     {
-        OUString aName = ::rtl::OUString::createFromAscii( "dummyObjectName" );
+        OUString aName;
         if ( pMedDescrMedium && pMedDescrMedium->GetItemSet() )
         {
             const SfxStringItem* pDocHierarchItem = static_cast<const SfxStringItem*>(
@@ -696,6 +696,8 @@ sal_uInt32 XMLReader::Read( SwDoc &rDoc, const String& rBaseURL, SwPaM &rPaM, co
             if ( pDocHierarchItem )
                 aName = pDocHierarchItem->GetValue();
         }
+        else
+            aName = ::rtl::OUString::createFromAscii( "dummyObjectName" );
 
         if( aName.getLength() )
         {
