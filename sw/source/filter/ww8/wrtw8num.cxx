@@ -4,9 +4,9 @@
  *
  *  $RCSfile: wrtw8num.cxx,v $
  *
- *  $Revision: 1.32 $
+ *  $Revision: 1.33 $
  *
- *  last change: $Author: rt $ $Date: 2005-09-09 06:08:08 $
+ *  last change: $Author: rt $ $Date: 2005-11-08 17:28:45 $
  *
  *  The Contents of this file are made available subject to
  *  the terms of GNU Lesser General Public License Version 2.1.
@@ -34,7 +34,7 @@
  ************************************************************************/
 
 /* -*- Mode: C; tab-width: 4; indent-tabs-mode: nil -*- */
- 
+
 #ifdef PCH
 #include "filt_pch.hxx"
 #endif
@@ -81,7 +81,7 @@
 #ifndef SW_WRITERWORDGLUE
 #include "writerwordglue.hxx"
 #endif
- 
+
 #ifndef _WRTWW8_HXX
 #include "wrtww8.hxx"
 #endif
@@ -98,11 +98,11 @@ using namespace ::com::sun::star::i18n;
 using namespace sw::types;
 using namespace sw::util;
 
-USHORT SwWW8Writer::DupNumRuleWithLvlStart(const SwNumRule *pRule,BYTE nLvl, 
+USHORT SwWW8Writer::DupNumRuleWithLvlStart(const SwNumRule *pRule,BYTE nLvl,
     USHORT nVal)
 {
-    //List is set to restart at a particular value so for export make a 
-    //completely new list based on this one and export that instead, 
+    //List is set to restart at a particular value so for export make a
+    //completely new list based on this one and export that instead,
     //which duplicates words behaviour in this respect.
     USHORT nNumId = USHRT_MAX;
     String sPrefix(CREATE_CONST_ASC("WW8TempExport"));
@@ -124,7 +124,7 @@ USHORT SwWW8Writer::DupNumRuleWithLvlStart(const SwNumRule *pRule,BYTE nLvl,
 
     //Map the old list to our new list
     aRuleDuplicates[GetId(*pRule)] = nNumId;
-    
+
     return nNumId;
 }
 
@@ -135,13 +135,29 @@ USHORT SwWW8Writer::GetId( const SwNumRule& rNumRule ) const
         SwWW8Writer* pThis = (SwWW8Writer*)this;
         pThis->pUsedNumTbl = new SwNumRuleTbl;
         pThis->pUsedNumTbl->Insert( &pDoc->GetNumRuleTbl(), 0 );
+        // --> OD 2005-10-17 #126238# - Check, if the outline rule is
+        // already inserted into <pUsedNumTbl>. If yes, do not insert it again.
+        bool bOutlineRuleAdded( false );
         for( USHORT n = pUsedNumTbl->Count(); n; )
-            if( !pDoc->IsUsed( *pUsedNumTbl->GetObject( --n )) )
+        {
+            const SwNumRule& rRule = *pUsedNumTbl->GetObject( --n );
+            if ( !pDoc->IsUsed( rRule ) )
+            {
                 pThis->pUsedNumTbl->Remove( n );
+            }
+            else if ( &rRule == pDoc->GetOutlineNumRule() )
+            {
+                bOutlineRuleAdded = true;
+            }
+        }
 
-        // jetzt noch die OutlineRule einfuegen
-        SwNumRule* pR = (SwNumRule*)pDoc->GetOutlineNumRule();
-        pThis->pUsedNumTbl->Insert( pR, pUsedNumTbl->Count() );
+        if ( !bOutlineRuleAdded )
+        {
+            // jetzt noch die OutlineRule einfuegen
+            SwNumRule* pR = (SwNumRule*)pDoc->GetOutlineNumRule();
+            pThis->pUsedNumTbl->Insert( pR, pUsedNumTbl->Count() );
+        }
+        // <--
     }
     SwNumRule* p = (SwNumRule*)&rNumRule;
     USHORT nRet = pUsedNumTbl->GetPos(p);
@@ -202,9 +218,9 @@ void SwWW8Writer::OutListTab()
     // second Loop - write all Levels for all SwNumRules - LVLF
 
     // prepare the NodeNum to generate the NumString
-    SwNodeNum aNdNum( 0 );
+    SwNodeNum::tNumberVector aNumVector;
     for (n = 0; n < WW8ListManager::nMaxLevel; ++n)
-        aNdNum.GetLevelVal()[ n ] = n;
+        aNumVector.push_back(n);
 
     BYTE aPapSprms [] = {
         0x0f, 0x84, 0, 0,               // sprmPDxaLeft
@@ -217,7 +233,7 @@ void SwWW8Writer::OutListTab()
     {
         const SwNumRule& rRule = *pUsedNumTbl->GetObject( n );
         BYTE nLvl, nFlags, nAlign;
-        BYTE nLevels = rRule.IsContinusNum() ? 
+        BYTE nLevels = rRule.IsContinusNum() ?
             WW8ListManager::nMinLevel : WW8ListManager::nMaxLevel;
         for( nLvl = 0; nLvl < nLevels; ++nLvl )
         {
@@ -275,8 +291,10 @@ void SwWW8Writer::OutListTab()
                 if (SVX_NUM_NUMBER_NONE != rFmt.GetNumberingType())
                 {
                     BYTE* pLvlPos = aNumLvlPos;
-                    aNdNum.SetLevel( nLvl );
-                    sNumStr = rRule.MakeNumString(aNdNum, false, true);
+                    // --> OD 2005-10-17 #126238# - the numbering string
+                    // has to be restrict to the level currently working on.
+                    sNumStr = rRule.MakeNumString(aNumVector, false, true, nLvl);
+                    // <--
 
                     // now search the nums in the string
                     for( BYTE i = 0; i <= nLvl; ++i )
@@ -339,7 +357,7 @@ void SwWW8Writer::OutListTab()
                     }
                     else
                         pO->Insert(93, pO->Count());
-                    InsUInt16(nFontID); 
+                    InsUInt16(nFontID);
                 }
                 else
                     pOutSet = &rFmt.GetCharFmt()->GetAttrSet();
@@ -368,7 +386,7 @@ void SwWW8Writer::OutListTab()
             Set_UInt16( pData, nFirstLineOffset );
             pData += 5;
             Set_UInt16( pData, nAbsLSpace );
-            
+
             pTableStrm->Write( aPapSprms, sizeof( aPapSprms ));
             // write Chpx
             if( aCharAtrs.Count() )
@@ -490,14 +508,14 @@ void SwWW8Writer::BuildAnlvBulletBase(WW8_ANLV& rAnlv, BYTE*& rpCh,
     switch (rFmt.GetNumAdjust())
     {
         case SVX_ADJUST_RIGHT:
-            nb = 2; 
+            nb = 2;
             break;
-        case SVX_ADJUST_CENTER:     
-            nb = 1; 
+        case SVX_ADJUST_CENTER:
+            nb = 1;
             break;
         case SVX_ADJUST_BLOCK:
-        case SVX_ADJUST_BLOCKLINE:  
-            nb = 3; 
+        case SVX_ADJUST_BLOCKLINE:
+            nb = 3;
             break;
         case SVX_ADJUST_LEFT:
         case SVX_ADJUST_END:
@@ -507,7 +525,7 @@ void SwWW8Writer::BuildAnlvBulletBase(WW8_ANLV& rAnlv, BYTE*& rpCh,
     if (GetWordFirstLineOffset(rFmt) < 0)
         nb |= 0x8;          // number will be displayed using a hanging indent
     ByteToSVBT8(nb, rAnlv.aBits1);
-   
+
     if (1 < rCharLen)
     {
         const Font& rFont = rFmt.GetBulletFont() ? *rFmt.GetBulletFont()
@@ -559,12 +577,12 @@ void SwWW8Writer::BuildAnlvBulletBase(WW8_ANLV& rAnlv, BYTE*& rpCh,
     ShortToSVBT16( rFmt.GetCharTextDistance(), rAnlv.dxaSpace );
 }
 
-void SwWW8Writer::SubstituteBullet(String& rNumStr, 
+void SwWW8Writer::SubstituteBullet(String& rNumStr,
     rtl_TextEncoding& rChrSet, String& rFontName) const
 {
     StarSymbolToMSMultiFont *pConvert = 0;
     FontFamily eFamily = FAMILY_DECORATIVE;
-    
+
     if (!pConvert)
     {
         pConvert = CreateStarSymbolToMSMultiFont();
@@ -577,7 +595,7 @@ void SwWW8Writer::SubstituteBullet(String& rNumStr,
                  output << ::std::hex << i << std::endl;
         }
 #endif
-    }    
+    }
     sal_Unicode cChar = rNumStr.GetChar(0);
     String sFont = pConvert->ConvertChar(cChar);
 
@@ -609,7 +627,7 @@ void SwWW8Writer::SubstituteBullet(String& rNumStr,
         */
         rFontName.ASSIGN_CONST_ASC("Wingdings");
         rNumStr = static_cast< sal_Unicode >(0x6C);
-     }      
+     }
      delete pConvert;
 }
 
@@ -632,7 +650,7 @@ static void SwWw8_InsertAnlText( const String& rStr, BYTE*& rpCh,
 }
 
 void SwWW8Writer::BuildAnlvBase(WW8_ANLV& rAnlv, BYTE*& rpCh,
-    USHORT& rCharLen, const SwNumRule& rRul, const SwNumFmt& rFmt, 
+    USHORT& rCharLen, const SwNumRule& rRul, const SwNumFmt& rFmt,
     BYTE nSwLevel)
 {
     ByteToSVBT8(SwWW8Writer::GetNumId(rFmt.GetNumberingType()), rAnlv.nfc);
@@ -640,15 +658,15 @@ void SwWW8Writer::BuildAnlvBase(WW8_ANLV& rAnlv, BYTE*& rpCh,
     BYTE nb = 0;
     switch (rFmt.GetNumAdjust())
     {
-        case SVX_ADJUST_RIGHT: 
-            nb = 2; 
+        case SVX_ADJUST_RIGHT:
+            nb = 2;
             break;
-        case SVX_ADJUST_CENTER: 
-            nb = 1; 
+        case SVX_ADJUST_CENTER:
+            nb = 1;
             break;
         case SVX_ADJUST_BLOCK:
-        case SVX_ADJUST_BLOCKLINE: 
-            nb = 3; 
+        case SVX_ADJUST_BLOCKLINE:
+            nb = 3;
             break;
         case SVX_ADJUST_LEFT:
         case SVX_ADJUST_END:
@@ -723,7 +741,7 @@ void SwWW8Writer::Out_NumRuleAnld( const SwNumRule& rRul, const SwNumFmt& rFmt,
 // Return: ist es eine Gliederung ?
 bool SwWW8Writer::Out_SwNum(const SwTxtNode* pNd)
 {
-    BYTE nSwLevel = pNd->GetNum()->GetLevel();
+    BYTE nSwLevel = pNd->GetLevel();
     const SwNumRule* pRul = pNd->GetNumRule();
     if( !pRul || nSwLevel == WW8ListManager::nMaxLevel )
         return false;
@@ -744,8 +762,8 @@ bool SwWW8Writer::Out_SwNum(const SwTxtNode* pNd)
     aFmt.SetAbsLSpace(writer_cast<short>(aFmt.GetAbsLSpace() + rLR.GetLeft()));
 
     if (
-         aFmt.GetNumberingType() == SVX_NUM_NUMBER_NONE || 
-         aFmt.GetNumberingType() == SVX_NUM_CHAR_SPECIAL || 
+         aFmt.GetNumberingType() == SVX_NUM_NUMBER_NONE ||
+         aFmt.GetNumberingType() == SVX_NUM_CHAR_SPECIAL ||
          aFmt.GetNumberingType() == SVX_NUM_BITMAP
        )
     {
@@ -755,7 +773,7 @@ bool SwWW8Writer::Out_SwNum(const SwTxtNode* pNd)
         bRet = false;
     }
     else if (
-              pRul->IsContinusNum() || 
+              pRul->IsContinusNum() ||
               (pRul->Get(1).GetIncludeUpperLevels() <= 1)
             )
     {
