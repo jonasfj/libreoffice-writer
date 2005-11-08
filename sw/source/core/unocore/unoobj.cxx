@@ -4,9 +4,9 @@
  *
  *  $RCSfile: unoobj.cxx,v $
  *
- *  $Revision: 1.88 $
+ *  $Revision: 1.89 $
  *
- *  last change: $Author: kz $ $Date: 2005-10-05 13:22:50 $
+ *  last change: $Author: rt $ $Date: 2005-11-08 17:24:22 $
  *
  *  The Contents of this file are made available subject to
  *  the terms of GNU Lesser General Public License Version 2.1.
@@ -621,7 +621,7 @@ void lcl_SetTxtFmtColl(const uno::Any& rAny, SwPaM& rPaM)
  * --------------------------------------------------*/
 void lcl_SetNodeNumStart( SwPaM& rCrsr, uno::Any aValue )
 {
-    sal_Int16 nTmp;
+    sal_Int16 nTmp = 1;
     aValue >>= nTmp;
     sal_uInt16 nStt = (nTmp < 0 ? USHRT_MAX : (sal_uInt16)nTmp);
     SwDoc* pDoc = rCrsr.GetDoc();
@@ -633,11 +633,18 @@ void lcl_SetNodeNumStart( SwPaM& rCrsr, uno::Any aValue )
         SwPamRanges aRangeArr( rCrsr );
         SwPaM aPam( *rCrsr.GetPoint() );
         for( sal_uInt16 n = 0; n < aRangeArr.Count(); ++n )
-            pDoc->SetNodeNumStart( *aRangeArr.SetPam( n, aPam ).GetPoint(), nStt );
+        {
+            pDoc->SetNumRuleStart(*aRangeArr.SetPam( n, aPam ).GetPoint());
+            pDoc->SetNodeNumStart(*aRangeArr.SetPam( n, aPam ).GetPoint(), 
+                                  nStt );
+        }
         pDoc->EndUndo( UNDO_END );
     }
     else
+    {
+        pDoc->SetNumRuleStart( *rCrsr.GetPoint());
         pDoc->SetNodeNumStart( *rCrsr.GetPoint(), nStt );
+    }
 }
 
 /* -----------------17.09.98 09:44-------------------
@@ -719,13 +726,20 @@ sal_Bool lcl_setCrsrPropertyValue(const SfxItemPropertyMap* pMap,
             break;
             case FN_UNO_PARA_CHAPTER_NUMBERING_LEVEL:
                 {
+/*                  Will be used in OOo 3.0
+                    SwTxtNode * pTmpNode = rPam.GetNode()->GetTxtNode();
+
                     BYTE nLevel;
                     aValue >>= nLevel;
 
-                    SwTxtNode * pTmpNode = rPam.GetNode()->GetTxtNode();
-
-                    if (pTmpNode)
+                    if ( pTmpNode )
+                    {
                         pTmpNode->SetOutlineLevel(nLevel);
+
+                        // --> OD 2005-09-01 #i53198# - update outline nodes array
+                        rPam.GetDoc()->GetNodes().UpdateOutlineNode( *pTmpNode );
+                        // <--
+                    }*/
                 }
                 break;
             case FN_UNO_NUM_LEVEL  :
@@ -735,45 +749,19 @@ sal_Bool lcl_setCrsrPropertyValue(const SfxItemPropertyMap* pMap,
                 const SwNumRule* pRule = pTxtNd->GetNumRule();
                 // hier wird Multiselektion nicht beruecksichtigt
 
-                if( pTxtNd->GetNum() )
+                if( FN_UNO_NUM_LEVEL == pMap->nWID  &&  pRule != NULL )
                 {
-                    if( FN_UNO_NUM_LEVEL == pMap->nWID  &&  pRule != NULL )
-                    {
-                        sal_Int16 nLevel;
-                        aValue >>= nLevel;
+                    sal_Int16 nLevel;
+                    aValue >>= nLevel;
 
-                        if (pTxtNd->GetNum())
-                        {
-                            SwNodeNum aNum = *pTxtNd->GetNum();
-                            aNum.SetLevel(nLevel);
+                    pTxtNd->SetLevel(nLevel);
 
-                            pTxtNd->UpdateNum(aNum);
-                        }
-#if 0
-                        sal_Int16 nOldLevel = pTxtNd->GetNum()->GetRealLevel();
-                        if(nLevel < MAXLEVEL && nOldLevel != nLevel)
-                        {
-                            UnoActionContext aAction(rPam.GetDoc());
-                            sal_Bool bDown = nLevel > nOldLevel;
-                            sal_Int8 nMove = (sal_Int8)(bDown ? nLevel - nOldLevel : nOldLevel - nLevel);
-                            while( nMove-- )
-                            {
-                                rPam.GetDoc()->NumUpDown( rPam, bDown );
-                            }
-                        }
-#endif
-                    }
-                    else if( FN_UNO_IS_NUMBER == pMap->nWID )
-                    {
-                        BOOL bIsNumber = *(sal_Bool*) aValue.getValue();
-                        SwNodeNum aNum = *pTxtNd->GetNum();
-                        sal_Int16 nOldLevel = aNum.GetRealLevel();
-                        aNum.SetLevel(nOldLevel);
-                        if(!bIsNumber)
-                            aNum.SetNoNum(TRUE);
-                        pTxtNd->UpdateNum( aNum );
-
-                    }
+                }
+                else if( FN_UNO_IS_NUMBER == pMap->nWID )
+                {
+                    BOOL bIsNumber = *(sal_Bool*) aValue.getValue();
+                    if(!bIsNumber)
+                        pTxtNd->SetCounted(FALSE);
                 }
                 //PROPERTY_MAYBEVOID!
             }
@@ -1480,7 +1468,7 @@ sal_Bool SwXTextCursor::gotoNextWord(sal_Bool Expand) throw( uno::RuntimeExcepti
         // remember old position to check if cursor has moved
         // since the called functions are sometimes a bit unreliable
         // in specific cases...
-        SwPosition  *pPoint		= pUnoCrsr->GetPoint(); 
+        SwPosition  *pPoint		= pUnoCrsr->GetPoint();
         SwNode		*pOldNode	= &pPoint->nNode.GetNode();
         xub_StrLen	 nOldIndex	= pPoint->nContent.GetIndex();
 
@@ -1498,14 +1486,14 @@ sal_Bool SwXTextCursor::gotoNextWord(sal_Bool Expand) throw( uno::RuntimeExcepti
         }
 
         // return true if cursor has moved
-        bRet = &pPoint->nNode.GetNode() != pOldNode  ||  
+        bRet = &pPoint->nNode.GetNode() != pOldNode  ||
                 pPoint->nContent.GetIndex() != nOldIndex;
     }
     else
     {
         throw uno::RuntimeException();
     }
-    
+
     return bRet;
 }
 /*-- 09.12.98 14:18:45---------------------------------------------------
@@ -1520,7 +1508,7 @@ sal_Bool SwXTextCursor::gotoPreviousWord(sal_Bool Expand) throw( uno::RuntimeExc
     sal_Bool bRet = sal_False;
     if(pUnoCrsr)
     {
-        SwPosition  *pPoint		= pUnoCrsr->GetPoint(); 
+        SwPosition  *pPoint		= pUnoCrsr->GetPoint();
         SwNode		*pOldNode	= &pPoint->nNode.GetNode();
         xub_StrLen	 nOldIndex	= pPoint->nContent.GetIndex();
 
@@ -1536,7 +1524,7 @@ sal_Bool SwXTextCursor::gotoPreviousWord(sal_Bool Expand) throw( uno::RuntimeExc
         }
 
         // return true if cursor has moved
-        bRet = &pPoint->nNode.GetNode() != pOldNode  ||  
+        bRet = &pPoint->nNode.GetNode() != pOldNode  ||
                 pPoint->nContent.GetIndex() != nOldIndex;
     }
     else
@@ -1557,7 +1545,7 @@ sal_Bool SwXTextCursor::gotoEndOfWord(sal_Bool Expand) throw( uno::RuntimeExcept
     sal_Bool bRet = sal_False;
     if(pUnoCrsr)
     {
-        SwPosition  *pPoint		= pUnoCrsr->GetPoint(); 
+        SwPosition  *pPoint		= pUnoCrsr->GetPoint();
         SwNode		&rOldNode	= pPoint->nNode.GetNode();
         xub_StrLen	 nOldIndex	= pPoint->nContent.GetIndex();
 
@@ -1593,7 +1581,7 @@ sal_Bool SwXTextCursor::gotoStartOfWord(sal_Bool Expand) throw( uno::RuntimeExce
     sal_Bool bRet = sal_False;
     if(pUnoCrsr)
     {
-        SwPosition  *pPoint		= pUnoCrsr->GetPoint(); 
+        SwPosition  *pPoint		= pUnoCrsr->GetPoint();
         SwNode		&rOldNode	= pPoint->nNode.GetNode();
         xub_StrLen	 nOldIndex	= pPoint->nContent.GetIndex();
 
@@ -1826,7 +1814,7 @@ sal_Bool SwXTextCursor::gotoStartOfParagraph(sal_Bool Expand) throw( uno::Runtim
         throw uno::RuntimeException();
 
     // since MovePara(fnParaCurr, fnParaStart) only returns false
-    // if we were already at the start of the paragraph this function 
+    // if we were already at the start of the paragraph this function
     // should always complete successfully.
     DBG_ASSERT( bRet, "gotoStartOfParagraph failed" );
     return bRet;
@@ -1850,7 +1838,7 @@ sal_Bool SwXTextCursor::gotoEndOfParagraph(sal_Bool Expand) throw( uno::RuntimeE
         throw uno::RuntimeException();
 
     // since MovePara(fnParaCurr, fnParaEnd) only returns false
-    // if we were already at the end of the paragraph this function 
+    // if we were already at the end of the paragraph this function
     // should always complete successfully.
     DBG_ASSERT( bRet, "gotoEndOfParagraph failed" );
     return bRet;
