@@ -4,9 +4,9 @@
  *
  *  $RCSfile: xmlexp.cxx,v $
  *
- *  $Revision: 1.77 $
+ *  $Revision: 1.78 $
  *
- *  last change: $Author: rt $ $Date: 2005-09-09 06:20:01 $
+ *  last change: $Author: rt $ $Date: 2005-11-08 17:30:36 $
  *
  *  The Contents of this file are made available subject to
  *  the terms of GNU Lesser General Public License Version 2.1.
@@ -549,19 +549,6 @@ void SwXMLExport::GetViewSettings(Sequence<PropertyValue>& aProps)
             (OUString( RTL_CONSTASCII_USTRINGPARAM ("com.sun.star.document.IndexedPropertyValues") ) ), UNO_QUERY);
     if (xBox.is() )
     {
-#if 0
-        Any aAny;
-        sal_Int32 i=0;
-        for ( SfxViewFrame *pFrame = SfxViewFrame::GetFirst();
-                pFrame;
-                i++, pFrame = SfxViewFrame::GetNext(*pFrame ) )
-        {
-            Sequence < PropertyValue > aSequence;
-            pFrame->GetViewShell()->WriteUserDataSequence( aSequence, sal_False );
-            aAny <<= aSequence;
-            xBox->insertByIndex(i, aAny);
-        }
-#endif
         pValue[nIndex].Name = OUString( RTL_CONSTASCII_USTRINGPARAM ( "Views") );
         pValue[nIndex++].Value <<= Reference < XIndexAccess > ( xBox, UNO_QUERY );
     }
@@ -751,7 +738,7 @@ Reference< XInterface > SAL_CALL SwXMLExportStylesOOO_createInstance(
     throw( Exception )
 {
     return (cppu::OWeakObject*)new SwXMLExport( rSMgr,
-        EXPORT_STYLES | EXPORT_MASTERSTYLES | EXPORT_AUTOSTYLES | 
+        EXPORT_STYLES | EXPORT_MASTERSTYLES | EXPORT_AUTOSTYLES |
         EXPORT_FONTDECLS );
 }
 
@@ -774,7 +761,7 @@ Reference< XInterface > SAL_CALL SwXMLExportContentOOO_createInstance(
     throw( Exception )
 {
     return (cppu::OWeakObject*)new SwXMLExport(rSMgr,
-        EXPORT_AUTOSTYLES | EXPORT_CONTENT | EXPORT_SCRIPTS | 
+        EXPORT_AUTOSTYLES | EXPORT_CONTENT | EXPORT_SCRIPTS |
         EXPORT_FONTDECLS );
 }
 
@@ -865,7 +852,7 @@ Reference< XInterface > SAL_CALL SwXMLExportStyles_createInstance(
     //	EXPORT_STYLES | EXPORT_MASTERSTYLES | EXPORT_AUTOSTYLES |
     //	EXPORT_FONTDECLS );
     return (cppu::OWeakObject*)new SwXMLExport( rSMgr,
-        EXPORT_STYLES | EXPORT_MASTERSTYLES | EXPORT_AUTOSTYLES | 
+        EXPORT_STYLES | EXPORT_MASTERSTYLES | EXPORT_AUTOSTYLES |
         EXPORT_FONTDECLS|EXPORT_OASIS );
 }
 
@@ -893,7 +880,7 @@ Reference< XInterface > SAL_CALL SwXMLExportContent_createInstance(
     //	EXPORT_FONTDECLS );
     return (cppu::OWeakObject*)new SwXMLExport(
         rSMgr,
-        EXPORT_AUTOSTYLES | EXPORT_CONTENT | EXPORT_SCRIPTS | 
+        EXPORT_AUTOSTYLES | EXPORT_CONTENT | EXPORT_SCRIPTS |
         EXPORT_FONTDECLS|EXPORT_OASIS );
 }
 
