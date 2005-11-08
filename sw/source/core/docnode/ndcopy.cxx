@@ -4,9 +4,9 @@
  *
  *  $RCSfile: ndcopy.cxx,v $
  *
- *  $Revision: 1.17 $
+ *  $Revision: 1.18 $
  *
- *  last change: $Author: rt $ $Date: 2005-09-09 03:20:47 $
+ *  last change: $Author: rt $ $Date: 2005-11-08 17:18:09 $
  *
  *  The Contents of this file are made available subject to
  *  the terms of GNU Lesser General Public License Version 2.1.
@@ -180,8 +180,13 @@ SwCntntNode* SwTxtNode::MakeCopy( SwDoc* pDoc, const SwNodeIndex& rIdx ) const
         // ??? reicht das ??? was ist mit PostIts/Feldern/FeldTypen ???
     pCpyTxtNd->Copy( pTxtNd, SwIndex( pCpyTxtNd ), pCpyTxtNd->GetTxt().Len() );
 
-    if( pCpyAttrNd->GetNum() )
-        pTxtNd->UpdateNum( *pCpyAttrNd->GetNum() );
+    // --> OD 2005-11-01 #i53235#
+    // --> OD 2005-11-02 #i51089 - TUNING#
+    if ( pCpyAttrNd->GetNum() && pCpyAttrNd->GetNum()->GetNumRule() )
+    {
+        pCpyAttrNd->CopyNumber(*pTxtNd);
+    }
+    // <--
 
 //FEATURE::CONDCOLL
     if( RES_CONDTXTFMTCOLL == pColl->Which() )
@@ -755,7 +760,7 @@ BOOL SwDoc::Copy( SwPaM& rPam, SwPosition& rPos ) const
 // Die Position darf nicht im Bereich liegen !!
 
 BOOL lcl_MarksWholeNode(const SwPaM & rPam)
-{    
+{
     BOOL bResult = FALSE;
     const SwPosition * pStt = rPam.Start(), * pEnd = rPam.End();
 
@@ -765,7 +770,7 @@ BOOL lcl_MarksWholeNode(const SwPaM & rPam)
         SwTxtNode * pEndNd = pEnd->nNode.GetNode().GetTxtNode();
 
         if (NULL != pSttNd && NULL != pEndNd &&
-            pStt->nContent.GetIndex() == 0 && 
+            pStt->nContent.GetIndex() == 0 &&
             pEnd->nContent.GetIndex() == pEndNd->Len())
         {
             bResult = TRUE;
@@ -826,7 +831,7 @@ BOOL SwDoc::_Copy( SwPaM& rPam, SwPosition& rPos,
     BOOL bCopyBookmarks = TRUE;
     BOOL bStartIsTxtNode = 0 != pSttNd;
 
-    const SwNumRule * pNumRuleToPropagate = 
+    const SwNumRule * pNumRuleToPropagate =
         pDoc->SearchNumRule(rPos, FALSE, FALSE, TRUE, 0);
 
     // Block, damit aus diesem gesprungen werden kann !!
@@ -853,8 +858,7 @@ BOOL SwDoc::_Copy( SwPaM& rPam, SwPosition& rPos,
                 }
                 else if( !bOneNode )
                 {
-                    BYTE nNumLevel = !pDestNd->GetNum() ? 0
-                                            : pDestNd->GetNum()->GetLevel();
+                    BYTE nNumLevel = pDestNd->GetLevel();
 
                     xub_StrLen nCntntEnd = pEnd->nContent.GetIndex();
                     BOOL bDoesUndo = pDoc->DoesUndo();
@@ -864,8 +868,7 @@ BOOL SwDoc::_Copy( SwPaM& rPam, SwPosition& rPos,
 
                     // Nummerierung korrigieren, SplitNode erzeugt immer einen
                     // neuen Level
-                    if( ! IsNum(nNumLevel) )
-                        pDestNd->UpdateNum( SwNodeNum( nNumLevel ));
+                    pDestNd->SetLevel(nNumLevel);
 
                     if( bCanMoveBack && rPos == *aCpyPam.GetPoint() )
                     {
@@ -901,8 +904,8 @@ BOOL SwDoc::_Copy( SwPaM& rPam, SwPosition& rPos,
 
                 const SfxPoolItem * pItem = NULL;
                 SwAttrSet * pAttrSet = pDestNd->GetpSwAttrSet();
-                
-                /* #107213#: Safe numrule item at destination. */ 
+
+                /* #107213#: Safe numrule item at destination. */
                 int aState = SFX_ITEM_UNKNOWN;
                 SwNumRuleItem aNumRuleItem;
 
@@ -910,7 +913,7 @@ BOOL SwDoc::_Copy( SwPaM& rPam, SwPosition& rPos,
                 {
                     aState = pAttrSet->GetItemState
                         (RES_PARATR_NUMRULE, FALSE, &pItem);
-                    
+
                     if (SFX_ITEM_SET == aState)
                         aNumRuleItem = *((SwNumRuleItem *) pItem);
                 }
@@ -932,21 +935,19 @@ BOOL SwDoc::_Copy( SwPaM& rPam, SwPosition& rPos,
                     if( bCopyCollFmt )
                     {
                         pSttNd->CopyCollFmt( *pDestNd );
-                        
-                        if (pSttNd->GetNum())
-                              pDestNd->UpdateNum(*pSttNd->GetNum());
-                        
+                        pSttNd->CopyNumber(*pDestNd);
+
                         /* #107213# If only a part of one paragraph is copied
                            restore the numrule at the destination. */
                         if (! lcl_MarksWholeNode(rPam))
                         {
                             if (SFX_ITEM_SET == aState)
                                 pDestNd->SwCntntNode::SetAttr(aNumRuleItem);
-                            else 
+                            else
                                 pDestNd->ResetAttr(RES_PARATR_NUMRULE);
                         }
                     }
-                    
+
                     break;
                 }
 
@@ -962,8 +963,7 @@ BOOL SwDoc::_Copy( SwPaM& rPam, SwPosition& rPos,
             else if( rPos.nContent.GetIndex() )
             {
                 // splitte den TextNode, bei dem Eingefuegt wird.
-                BYTE nNumLevel = !pDestNd->GetNum() ? 0
-                                        : pDestNd->GetNum()->GetLevel();
+                BYTE nNumLevel = pDestNd->GetLevel();
 
                 xub_StrLen nCntntEnd = pEnd->nContent.GetIndex();
                 BOOL bDoesUndo = pDoc->DoesUndo();
@@ -973,8 +973,7 @@ BOOL SwDoc::_Copy( SwPaM& rPam, SwPosition& rPos,
 
                 // Nummerierung korrigieren, SplitNode erzeugt immer einen
                 // neuen Level
-                if( ! IsNum(nNumLevel ) )
-                    pDestNd->UpdateNum( SwNodeNum( nNumLevel ));
+                pDestNd->SetLevel(nNumLevel);
 
                 if( bCanMoveBack && rPos == *aCpyPam.GetPoint() )
                 {
@@ -1011,7 +1010,7 @@ BOOL SwDoc::_Copy( SwPaM& rPam, SwPosition& rPos,
                 // #112756# #98130# if we have to insert an extra text node
                 // at the destination, this node will be our new destination
                 // (text) node, and thus we set bStartisTxtNode to true. This
-                // will ensure that this node will be deleted during Undo 
+                // will ensure that this node will be deleted during Undo
                 // using JoinNext.
                 DBG_ASSERT( !bStartIsTxtNode, "Oops, undo may be instable now." );
                 bStartIsTxtNode = TRUE;
@@ -1019,7 +1018,7 @@ BOOL SwDoc::_Copy( SwPaM& rPam, SwPosition& rPos,
 
             const SfxPoolItem * pItem = NULL;
             SwAttrSet * pAttrSet = pDestNd->GetpSwAttrSet();
-            
+
             /* #107213# Save numrule at destination */
             int aState = SFX_ITEM_UNKNOWN;
             SwNumRuleItem aNumRuleItem;
@@ -1028,12 +1027,12 @@ BOOL SwDoc::_Copy( SwPaM& rPam, SwPosition& rPos,
             {
                 aState = pAttrSet->GetItemState
                     (RES_PARATR_NUMRULE, FALSE, &pItem);
-                
+
                 if (SFX_ITEM_SET == aState)
                     aNumRuleItem = *((SwNumRuleItem *) pItem);
             }
             /* #107213# */
-            
+
             BOOL bEmptyDestNd = 0 == pDestNd->GetTxt().Len();
             pEndNd->Copy( pDestNd, aDestIdx, SwIndex( pEndNd ),
                             pEnd->nContent.GetIndex() );
@@ -1043,10 +1042,9 @@ BOOL SwDoc::_Copy( SwPaM& rPam, SwPosition& rPos,
             {
                 pEndNd->CopyCollFmt( *pDestNd );
 
-                if (pEndNd->GetNum())
-                    pDestNd->UpdateNum( *pEndNd->GetNum() );
+                pEndNd->CopyNumber(*pDestNd);
 
-                if (bOneNode) 
+                if (bOneNode)
                 {
                     /* #107213# If only a part of one paragraph is copied
                        restore the numrule at the destination. */
@@ -1054,7 +1052,7 @@ BOOL SwDoc::_Copy( SwPaM& rPam, SwPosition& rPos,
                     {
                         if (SFX_ITEM_SET == aState)
                             pDestNd->SwCntntNode::SetAttr(aNumRuleItem);
-                        else 
+                        else
                             pDestNd->ResetAttr(RES_PARATR_NUMRULE);
                     }
                 }
