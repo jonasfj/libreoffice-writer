@@ -4,9 +4,9 @@
  *
  *  $RCSfile: dbgoutsw.cxx,v $
  *
- *  $Revision: 1.15 $
+ *  $Revision: 1.16 $
  *
- *  last change: $Author: kz $ $Date: 2005-10-06 10:50:55 $
+ *  last change: $Author: rt $ $Date: 2005-11-08 17:15:31 $
  *
  *  The Contents of this file are made available subject to
  *  the terms of GNU Lesser General Public License Version 2.1.
@@ -53,6 +53,7 @@
 #include <fmtanchr.hxx>
 #include <swrect.hxx>
 #include <ndarr.hxx>
+#include <paratr.hxx>
 #include <dbgoutsw.hxx>
 
 using namespace std;
@@ -60,27 +61,6 @@ using namespace std;
 static ByteString aDbgOutResult;
 bool bDbgOutStdErr = false;
 bool bDbgOutPrintAttrSet = false;
-
-template<class T>
-String lcl_dbg_out_SvPtrArr(const T & rArr)
-{
-    String aStr("[ ", RTL_TEXTENCODING_ASCII_US);
-
-    for (sal_Int16 n = 0; n < rArr.Count(); n++)
-    {
-        if (n > 0)
-            aStr += String(", ", RTL_TEXTENCODING_ASCII_US);
-        
-        if (rArr[n])
-            aStr += lcl_dbg_out(*rArr[n]);
-        else
-            aStr += String("(null)", RTL_TEXTENCODING_ASCII_US);
-    }
-
-    aStr += String(" ]", RTL_TEXTENCODING_ASCII_US);
-
-    return aStr;
-}
 
 const char * dbg_out(const void * pVoid)
 {
@@ -267,7 +247,7 @@ const char * dbg_out(const SfxPoolItem & rItem)
 
 const char * dbg_out(const SfxPoolItem * pItem)
 {
-    return dbg_out(pItem ? lcl_dbg_out(*pItem) : 
+    return dbg_out(pItem ? lcl_dbg_out(*pItem) :
                    String("(nil)", RTL_TEXTENCODING_ASCII_US));
 }
 
@@ -279,17 +259,17 @@ static const String lcl_dbg_out(const SfxItemSet & rSet)
     String aStr = String("[ ", RTL_TEXTENCODING_ASCII_US);
 
     pItem = aIter.FirstItem();
- 
+
     while (pItem )
     {
         if (!bFirst)
             aStr += String(", ", RTL_TEXTENCODING_ASCII_US);
-        
+
         if ((sal_uInt32)pItem != 0xffffffff)
             aStr += lcl_dbg_out(*pItem);
         else
             aStr += String("invalid", RTL_TEXTENCODING_ASCII_US);
-        
+
         bFirst = false;
 
         pItem = aIter.NextItem();
@@ -391,28 +371,7 @@ const char * dbg_out(const SwPaM & rPam)
 
 static String lcl_dbg_out(const SwNodeNum & rNum)
 {
-    String aStr("[ ", RTL_TEXTENCODING_ASCII_US);
-
-    aStr += String::CreateFromInt32(rNum.GetLevel());
-    aStr += String(": ", RTL_TEXTENCODING_ASCII_US);
-
-    bool first = true;
-    for (int i = 0; i < MAXLEVEL; i++)
-    {
-        if (! first)
-            aStr += String(", ", RTL_TEXTENCODING_ASCII_US);
-
-        aStr += String::CreateFromInt32(rNum.GetLevelVal()[i]);
-
-        first = false;
-    }
-
-    if (rNum.IsStart())
-        aStr += String(" (Start)", RTL_TEXTENCODING_ASCII_US);
-
-    aStr += String(" ]", RTL_TEXTENCODING_ASCII_US);
-
-    return aStr;
+    return rNum.ToString();
 }
 
 const char * dbg_out(const SwNodeNum & rNum)
@@ -423,7 +382,7 @@ const char * dbg_out(const SwNodeNum & rNum)
 static String lcl_dbg_out(const SwRect & rRect)
 {
     String aResult("[ [", RTL_TEXTENCODING_ASCII_US);
-    
+
     aResult += String::CreateFromInt32(rRect.Left());
     aResult += String(", ", RTL_TEXTENCODING_ASCII_US);
     aResult += String::CreateFromInt32(rRect.Top());
@@ -442,10 +401,10 @@ const char * dbg_out(const SwRect & rRect)
     return dbg_out(lcl_dbg_out(rRect));
 }
 
-static String lcl_dbg_out(const SwFrmFmt & rFrmFmt)
+String lcl_dbg_out(const SwFrmFmt & rFrmFmt)
 {
     String aResult("[ ", RTL_TEXTENCODING_ASCII_US);
-    
+
     char sBuffer[256];
     sprintf(sBuffer, "%p", &rFrmFmt);
 
@@ -485,7 +444,7 @@ static const String lcl_AnchoredFrames(const SwNode & rNode)
             {
                 const SwFmtAnchor & rAnchor = (*pFrmFmts)[nI]->GetAnchor();
                 const SwPosition * pPos = rAnchor.GetCntntAnchor();
-                
+
                 if (pPos && &pPos->nNode.GetNode() == &rNode)
                 {
                     if (! bFirst)
@@ -500,7 +459,7 @@ static const String lcl_AnchoredFrames(const SwNode & rNode)
     }
 
     aResult += String("]", RTL_TEXTENCODING_ASCII_US);
-    
+
     return aResult;
 }
 
@@ -555,6 +514,13 @@ static String lcl_dbg_out(const SwNode & rNode)
 
     aTmpStr += String("[ Idx: ", RTL_TEXTENCODING_ASCII_US);
     aTmpStr += String::CreateFromInt32(rNode.GetIndex());
+
+#ifndef PRODUCT
+    aTmpStr += String("(", RTL_TEXTENCODING_ASCII_US);
+    aTmpStr += String::CreateFromInt32(rNode.GetSerial());
+    aTmpStr += String(")", RTL_TEXTENCODING_ASCII_US);
+#endif
+
     aTmpStr += String(" ", RTL_TEXTENCODING_ASCII_US);
 
     char aBuffer[128];
@@ -569,41 +535,57 @@ static String lcl_dbg_out(const SwNode & rNode)
         aTmpStr += String(" End", RTL_TEXTENCODING_ASCII_US);
     else if (rNode.IsTxtNode())
     {
+        const SfxItemSet * pAttrSet = pTxtNode->GetpSwAttrSet();
+
         aTmpStr += String(" Txt ", RTL_TEXTENCODING_ASCII_US);
         aTmpStr += pTxtNode->GetTxt().Copy(0, 10);
-
-
-         const SwNodeNum * pNodeNum = pTxtNode->GetNum();
-
-        if (pNodeNum)
-        {
-            aTmpStr += String(" Num: ", RTL_TEXTENCODING_ASCII_US);
-            aTmpStr += lcl_dbg_out(*pNodeNum);
-        }
 
         if (rNode.IsTableNode())
             aTmpStr += String(" Tbl", RTL_TEXTENCODING_ASCII_US);
 
-        const SwNumRule * pNumRule = rNode.GetTxtNode()->GetNumRule();
+        aTmpStr += String(" olvl:", RTL_TEXTENCODING_ASCII_US);
+        aTmpStr += String::CreateFromInt32(pTxtNode->GetOutlineLevel());
+
+        const SwNumRule * pNumRule = pTxtNode->GetNumRule();
 
         if (pNumRule != NULL)
         {
+            aTmpStr += String(" Num: ", RTL_TEXTENCODING_ASCII_US);
+            if ( pTxtNode->GetNum() )
+            {
+                aTmpStr += lcl_dbg_out(*(pTxtNode->GetNum()));
+            }
+
             aTmpStr += String(" Rule: ", RTL_TEXTENCODING_ASCII_US);
             aTmpStr += pNumRule->GetName();
 
-            if (pNodeNum != NULL)
-            {
-                const SwNumFmt * pNumFmt =
-                    pNumRule->GetNumFmt(pNodeNum->GetRealLevel());
+            const SfxPoolItem * pItem = NULL;
 
-                if (pNumFmt)
-                {
-                    aTmpStr += String(" NumFmt: ", RTL_TEXTENCODING_ASCII_US);
-                    aTmpStr += 
-                        lcl_dbg_out_NumType(pNumFmt->GetNumberingType());
-                }
+            if (pAttrSet && SFX_ITEM_SET ==
+                pAttrSet->GetItemState(RES_PARATR_NUMRULE, FALSE, &pItem))
+            {
+                aTmpStr += String("(", RTL_TEXTENCODING_ASCII_US);
+                aTmpStr +=
+                    static_cast<const SwNumRuleItem *>(pItem)->GetValue();
+                aTmpStr += String(")", RTL_TEXTENCODING_ASCII_US);
+                aTmpStr += String("*", RTL_TEXTENCODING_ASCII_US);
+            }
+
+            const SwNumFmt * pNumFmt = NULL;
+
+            if (pTxtNode->GetLevel() > 0)
+                pNumFmt = pNumRule->GetNumFmt(pTxtNode->GetLevel());
+
+            if (pNumFmt)
+            {
+                aTmpStr += String(" NumFmt: ", RTL_TEXTENCODING_ASCII_US);
+                aTmpStr +=
+                    lcl_dbg_out_NumType(pNumFmt->GetNumberingType());
             }
         }
+
+        if (pTxtNode->IsCounted())
+            aTmpStr += String(" counted", RTL_TEXTENCODING_ASCII_US);
 
         SwFmtColl * pColl = pTxtNode->GetFmtColl();
 
@@ -611,6 +593,30 @@ static String lcl_dbg_out(const SwNode & rNode)
         {
             aTmpStr += String(" Coll: ", RTL_TEXTENCODING_ASCII_US);
             aTmpStr += pColl->GetName();
+
+            aTmpStr += String("(", RTL_TEXTENCODING_ASCII_US);
+            aTmpStr += String::CreateFromInt32
+                (static_cast<SwTxtFmtColl *>(pColl)->GetOutlineLevel());
+
+            const SwNumRuleItem & rItem =
+                static_cast<const SwNumRuleItem &>
+                (pColl->GetAttr(RES_PARATR_NUMRULE));
+            const String sNumruleName = rItem.GetValue();
+
+            if (sNumruleName.Len() > 0)
+            {
+                aTmpStr += String(", ", RTL_TEXTENCODING_ASCII_US);
+                aTmpStr += sNumruleName;
+            }
+            aTmpStr += String(")", RTL_TEXTENCODING_ASCII_US);
+        }
+
+        SwFmtColl * pCColl = pTxtNode->GetCondFmtColl();
+
+        if (pCColl)
+        {
+            aTmpStr += String(" CCOll: ", RTL_TEXTENCODING_ASCII_US);
+            aTmpStr += pCColl->GetName();
         }
 
         aTmpStr += String(", Frms: ", RTL_TEXTENCODING_ASCII_US);
@@ -855,6 +861,27 @@ static String lcl_dbg_out(const SwTxtFmtColl & rFmt)
 const char * dbg_out(const SwTxtFmtColl & rFmt)
 {
     return dbg_out(lcl_dbg_out(rFmt));
+}
+
+template<class T>
+String lcl_dbg_out_SvPtrArr(const T & rArr)
+{
+    String aStr("[ ", RTL_TEXTENCODING_ASCII_US);
+
+    for (sal_Int16 n = 0; n < rArr.Count(); n++)
+    {
+        if (n > 0)
+            aStr += String(", ", RTL_TEXTENCODING_ASCII_US);
+        
+        if (rArr[n])
+            aStr += lcl_dbg_out(*rArr[n]);
+        else
+            aStr += String("(null)", RTL_TEXTENCODING_ASCII_US);
+    }
+
+    aStr += String(" ]", RTL_TEXTENCODING_ASCII_US);
+
+    return aStr;
 }
 
 String lcl_dbg_out(const SwFrmFmts & rFrmFmts)
