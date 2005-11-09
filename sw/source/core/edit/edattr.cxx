@@ -4,9 +4,9 @@
  *
  *  $RCSfile: edattr.cxx,v $
  *
- *  $Revision: 1.38 $
+ *  $Revision: 1.39 $
  *
- *  last change: $Author: rt $ $Date: 2005-11-08 17:19:24 $
+ *  last change: $Author: rt $ $Date: 2005-11-09 10:08:41 $
  *
  *  The Contents of this file are made available subject to
  *  the terms of GNU Lesser General Public License Version 2.1.
@@ -149,7 +149,7 @@ BOOL SwEditShell::GetAttr( SfxItemSet& rSet ) const
         // the attributes to get are those from the numbering format.
         if (PCURCRSR->IsInFrontOfLabel())
         {
-            SwTxtNode * pTxtNd = 
+            SwTxtNode * pTxtNd =
                 PCURCRSR->GetPoint()->nNode.GetNode().GetTxtNode();
 
             if (pTxtNd)
@@ -158,12 +158,12 @@ BOOL SwEditShell::GetAttr( SfxItemSet& rSet ) const
 
                 if (pNumRule)
                 {
-                    const String & aCharFmtName = 
+                    const String & aCharFmtName =
                         pNumRule->Get(pTxtNd->GetLevel()).
                         GetCharFmtName();
-                    SwCharFmt * pCharFmt = 
+                    SwCharFmt * pCharFmt =
                         GetDoc()->FindCharFmtByName(aCharFmtName);
-                    
+
                     if (pCharFmt)
                         rSet.Put(pCharFmt->GetAttrSet());
                 }
