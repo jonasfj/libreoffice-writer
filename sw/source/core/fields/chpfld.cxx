@@ -4,9 +4,9 @@
  *
  *  $RCSfile: chpfld.cxx,v $
  *
- *  $Revision: 1.11 $
+ *  $Revision: 1.12 $
  *
- *  last change: $Author: rt $ $Date: 2005-11-08 17:19:56 $
+ *  last change: $Author: hr $ $Date: 2005-11-17 19:58:59 $
  *
  *  The Contents of this file are made available subject to
  *  the terms of GNU Lesser General Public License Version 2.1.
@@ -124,7 +124,7 @@ SwField* SwChapterField::Copy() const
     return pTmp;
 }
 
-void SwChapterField::ChangeExpansion(const SwFrm* pFrm, 
+void SwChapterField::ChangeExpansion(const SwFrm* pFrm,
     const SwTxtNode* pTxtNd, sal_Bool bSrchNum)
 {
     ASSERT( pFrm, "in welchem Frame stehe ich denn?" )
@@ -174,13 +174,18 @@ void SwChapterField::ChangeExpansion(const SwTxtNode &rTxtNd, sal_Bool bSrchNum)
         }
 
         // nur die Nummer besorgen, ohne Pre-/Post-fixstrings
-        
-        SwNumRule * pRule = pTxtNd->GetNumRule();
-        if (pTxtNd->IsOutline() && pRule)
+
+        if ( pTxtNd->IsOutline() )
         {
-            sNumber = pTxtNd->GetNumString();
-            
-            if( pTxtNd->IsCounted() )
+            // --> OD 2005-11-17 #128041#
+            // correction of refactoring done by cws swnumtree:
+            // retrieve numbering string without prefix and suffix strings
+            // as stated in the above german comment.
+            sNumber = pTxtNd->GetNumString( false );
+            // <--
+
+            SwNumRule* pRule( pTxtNd->GetNumRule() );
+            if ( pTxtNd->IsCounted() && pRule )
             {
                 const SwNumFmt& rNFmt = pRule->Get( pTxtNd->GetLevel() );
                 sPost = rNFmt.GetSuffix();
