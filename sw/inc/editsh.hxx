@@ -4,9 +4,9 @@
  *
  *  $RCSfile: editsh.hxx,v $
  *
- *  $Revision: 1.50 $
+ *  $Revision: 1.51 $
  *
- *  last change: $Author: rt $ $Date: 2005-11-08 17:12:14 $
+ *  last change: $Author: obo $ $Date: 2005-11-17 16:20:57 $
  *
  *  The Contents of this file are made available subject to
  *  the terms of GNU Lesser General Public License Version 2.1.
@@ -67,10 +67,6 @@
 
 #ifndef _COM_SUN_STAR_LINGUISTIC2_XSPELLALTERNATIVES_HPP_
 #include <com/sun/star/linguistic2/XSpellAlternatives.hpp>
-#endif
-
-#ifndef _SW_NODE_NUM_HXX
-#include <SwNodeNum.hxx>
 #endif
 
 #include <vector>
@@ -738,12 +734,12 @@ public:
                     USHORT* pPageCnt, USHORT* pPageSt,
                     SwConversionArgs *pConvArgs = 0 );
 
-    // spells on a sentence basis - the SpellPortions are needed 
+    // spells on a sentence basis - the SpellPortions are needed
     // returns false if no error could be found
     bool SpellSentence(::svx::SpellPortions& rToFill);
     //applies a changed sentence
     void ApplyChangedSentence(const ::svx::SpellPortions& rNewPortions);
-    
+
     // Is spelling active somewhere else?
     BOOL HasSpellIter() const;
     // Is text conversion active somewhere else?
