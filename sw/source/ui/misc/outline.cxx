@@ -4,9 +4,9 @@
  *
  *  $RCSfile: outline.cxx,v $
  *
- *  $Revision: 1.31 $
+ *  $Revision: 1.32 $
  *
- *  last change: $Author: rt $ $Date: 2005-11-08 17:32:23 $
+ *  last change: $Author: hr $ $Date: 2005-11-17 19:59:45 $
  *
  *  The Contents of this file are made available subject to
  *  the terms of GNU Lesser General Public License Version 2.1.
@@ -114,9 +114,9 @@
 #ifndef _VIEWOPT_HXX
 #include <viewopt.hxx>
 #endif
-#ifndef _CTRLBOX_HXX //add CHINA001 
-#include <svtools/ctrlbox.hxx> //CHINA001 
-#endif //CHINA001 
+#ifndef _CTRLBOX_HXX //add CHINA001
+#include <svtools/ctrlbox.hxx> //CHINA001
+#endif //CHINA001
 #ifndef _HELPID_H
 #include <helpid.h>
 #endif
@@ -463,12 +463,12 @@ short SwOutlineTabDialog::Ok()
         {
             rTxtColl.SetOutlineLevel( (BYTE)GetLevel(rTxtColl.GetName()));
 
-            const SfxPoolItem & rItem = 
+            const SfxPoolItem & rItem =
                 rTxtColl.GetAttr(RES_PARATR_NUMRULE, FALSE);
 
             if ((BYTE)GetLevel(rTxtColl.GetName()) == NO_NUMBERING)
             {
-                if (static_cast<const SwNumRuleItem &>(rItem).GetValue() == 
+                if (static_cast<const SwNumRuleItem &>(rItem).GetValue() ==
                     pOutlineRule->GetName())
                 {
                     rTxtColl.ResetAttr(RES_PARATR_NUMRULE);
@@ -476,7 +476,7 @@ short SwOutlineTabDialog::Ok()
             }
             else
             {
-                if (static_cast<const SwNumRuleItem &>(rItem).GetValue() != 
+                if (static_cast<const SwNumRuleItem &>(rItem).GetValue() !=
                     pOutlineRule->GetName())
                 {
                     SwNumRuleItem aItem(pOutlineRule->GetName());
@@ -1157,7 +1157,9 @@ void	NumberingPreview::Paint( const Rectangle& rRect )
                     pVDev->SetFont(aStdFont);
                     if(pActNum->IsContinusNum())
                         aNumVector[nLevel] = nPreNum;
-                    String aText(pActNum->MakeNumString( aNumVector, nLevel ));
+                    // --> OD 2005-11-17 #128041#
+                    String aText(pActNum->MakeNumString( aNumVector ));
+                    // <--
                     pVDev->DrawText( Point(nNumberXPos, nYStart), aText );
                     nBulletWidth = (USHORT)pVDev->GetTextWidth(aText);
                     nPreNum++;
@@ -1200,7 +1202,9 @@ void	NumberingPreview::Paint( const Rectangle& rRect )
                     pVDev->SetFont(aStdFont);
                     if(pActNum->IsContinusNum())
                         aNumVector[nLevel] = nPreNum;
-                    String aText(pActNum->MakeNumString( aNumVector, nLevel ));
+                    // --> OD 2005-11-17 #128041#
+                    String aText(pActNum->MakeNumString( aNumVector ));
+                    // <--
                     pVDev->DrawText( Point(nXStart, nYStart), aText );
                     nTextOffset = (USHORT)pVDev->GetTextWidth(aText);
                     nTextOffset += nXStep;
