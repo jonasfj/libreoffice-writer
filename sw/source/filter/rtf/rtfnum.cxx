@@ -4,9 +4,9 @@
  *
  *  $RCSfile: rtfnum.cxx,v $
  *
- *  $Revision: 1.14 $
+ *  $Revision: 1.15 $
  *
- *  last change: $Author: rt $ $Date: 2005-11-08 17:27:05 $
+ *  last change: $Author: obo $ $Date: 2005-11-19 13:34:32 $
  *
  *  The Contents of this file are made available subject to
  *  the terms of GNU Lesser General Public License Version 2.1.
@@ -280,7 +280,7 @@ void SwRTFParser::ReadListLevel( SwNumRule& rRule, BYTE nNumLvl )
 
         case RTF_LEVELFOLLOW:
           /* removed; waiting for swnum02 to be integrated!
-            switch (nTokenValue) 
+            switch (nTokenValue)
             {
             case 0:
                 aStringFollow=String('\t');
@@ -450,7 +450,7 @@ void SwRTFParser::ReadListTable()
                 String sTmp( String::CreateFromAscii(
                     RTL_CONSTASCII_STRINGPARAM( RTF_NUMRULE_NAME " 1" )));
                 aEntry.nListDocPos = pDoc->MakeNumRule( sTmp );
-                pCurRule = pDoc->GetNumRuleTbl()[ aEntry.nListDocPos ];				
+                pCurRule = pDoc->GetNumRuleTbl()[ aEntry.nListDocPos ];
                 pCurRule->SetName( pDoc->GetUniqueNumRuleName( &sTmp, FALSE ) );
                 pCurRule->SetAutoRule( FALSE );
                 nNumLvl = (BYTE)-1;
@@ -569,28 +569,28 @@ void SwRTFParser::ReadListOverrideTable()
                             lcl_ExpandNumFmts( *pRule );
                     }
 
-                    if( aEntry.nListId && aEntry.nListNo ) 
+                    if( aEntry.nListId && aEntry.nListNo )
                     {
                         int nMatch=-1;
-                        for( USHORT n = aListArr.Count(); n; ) 
+                        for( USHORT n = aListArr.Count(); n; )
                         {
                             if( aListArr[ --n ].nListId == aEntry.nListId)
                             {
-                                nMatch=n;	
+                                nMatch=n;
                                 break;
                             }
                         }
-                        if(nMatch>=0) 
+                        if(nMatch>=0)
                         {
                             if (!aListArr[nMatch].nListNo )
                             {
                                 aListArr[nMatch].nListNo = aEntry.nListNo;
                             }
-                            else 
+                            else
                             {
                                 aEntry.nListDocPos=aListArr[nMatch].nListDocPos;
                                 aEntry.nListTemplateId=aListArr[nMatch].nListTemplateId;
-                                aListArr.Insert(aEntry, aListArr.Count());		
+                                aListArr.Insert(aEntry, aListArr.Count());
                             }
                             if(pOrigRule)
                                 aListArr[nMatch].nListDocPos = aEntry.nListDocPos;
@@ -785,12 +785,12 @@ void SwRTFParser::RemoveUnusedNumRules()
         {
             // really *NOT* used by anyone else?
             BOOL unused=TRUE;
-            for(int j=0;j<aListArr.Count();j++) 
+            for(int j=0;j<aListArr.Count();j++)
             {
                 if (aListArr[n].nListNo==aListArr[j].nListNo)
                     unused&=!aListArr[j].bRuleUsed;
             }
-            if (unused) 
+            if (unused)
             {
                 void * p = pDoc->GetNumRuleTbl()[pEntry->nListDocPos];
                 // dont delete named char formats
@@ -858,7 +858,7 @@ SwNumRule *SwRTFParser::ReadNumSecLevel( int nToken )
         case RTF_PNLVLBODY:
             nListNo = 2;
             break;
-        case RTF_PNLVLBLT:		
+        case RTF_PNLVLBLT:
             nListNo = 1;
             break;
         case RTF_PNLVLCONT:
@@ -1253,7 +1253,12 @@ void SwRTFWriter::OutRTFListTab()
             {
                 memset( aNumLvlPos, 0, MAXLEVEL );
                 BYTE* pLvlPos = aNumLvlPos;
-                String sNumStr( pRule->MakeNumString(aNumVector, FALSE, TRUE));
+                // --> OD 2005-11-18 #128056#
+                // correction of refactoring done by cws swnumtree:
+                // - the numbering string has to be restrict to the level
+                //   currently working on.
+                String sNumStr( pRule->MakeNumString( aNumVector, FALSE, TRUE, nLvl ));
+                // <--
 
                 // now search the nums in the string
                 for( BYTE i = 0; i <= nLvl; ++i )
@@ -1450,7 +1455,7 @@ BOOL SwRTFWriter::OutListNum( const SwTxtNode& rNd )
 
             if (sTxt.Len())
             {
-                RTFOutFuncs::Out_String(Strm(), sTxt, DEF_ENCODING, 
+                RTFOutFuncs::Out_String(Strm(), sTxt, DEF_ENCODING,
                     bWriteHelpFmt);
             }
 
