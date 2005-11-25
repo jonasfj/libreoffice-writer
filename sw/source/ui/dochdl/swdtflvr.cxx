@@ -4,9 +4,9 @@
  *
  *  $RCSfile: swdtflvr.cxx,v $
  *
- *  $Revision: 1.96 $
+ *  $Revision: 1.97 $
  *
- *  last change: $Author: hr $ $Date: 2005-10-24 15:32:29 $
+ *  last change: $Author: rt $ $Date: 2005-11-25 17:25:40 $
  *
  *  The Contents of this file are made available subject to
  *  the terms of GNU Lesser General Public License Version 2.1.
@@ -1918,12 +1918,12 @@ int SwTransferable::_PasteOLE( TransferableDataHelper& rData, SwWrtShell& rSh,
                             ::comphelper::getProcessServiceFactory()->createInstance( ::rtl::OUString(
                                             RTL_CONSTASCII_USTRINGPARAM("com.sun.star.embed.MSOLEObjectSystemCreator")) ),
                             uno::UNO_QUERY_THROW );
-    
+
                         embed::InsertedObjectInfo aInfo = xClipboardCreator->createInstanceInitFromClipboard(
                                                             xTmpStor,
                                                             ::rtl::OUString( RTL_CONSTASCII_USTRINGPARAM ( "DummyName" ) ),
                                                             uno::Sequence< beans::PropertyValue >() );
-    
+
                         // TODO/LATER: in future InsertedObjectInfo will be used to get container related information
                         // for example whether the object should be an iconified one
                         xObj = aInfo.Object;
@@ -2337,8 +2337,8 @@ int SwTransferable::_PasteGrf( TransferableDataHelper& rData, SwWrtShell& rSh,
                 String sDesc;
                 SwTransferable::_CheckForURLOrLNKFile( rData, sTxt, &sDesc );
 
-                aBkmk = INetBookmark( 
-                        URIHelper::SmartRel2Abs(INetURLObject(), sTxt, Link(), false ), 
+                aBkmk = INetBookmark(
+                        URIHelper::SmartRel2Abs(INetURLObject(), sTxt, Link(), false ),
                         sDesc );
                 bCheckForGrf = TRUE;
                 bCheckForImageMap = SW_PASTESDR_REPLACE == nAction;
@@ -2548,15 +2548,15 @@ int SwTransferable::_PasteFileName( TransferableDataHelper& rData,
         if( rData.GetString( nFmt, sFile ) && sFile.Len() )
         {
             INetURLObject aMediaURL;
-           
+
             aMediaURL.SetSmartURL( sFile );
             const String aMediaURLStr( aMediaURL.GetMainURL( INetURLObject::NO_DECODE ) );
-            
+
             if( ::avmedia::MediaWindow::isMediaURL( aMediaURLStr ) )
             {
                 const SfxStringItem aMediaURLItem( SID_INSERT_AVMEDIA, aMediaURLStr );
                 rSh.GetView().GetViewFrame()->GetDispatcher()->Execute(
-                                SID_INSERT_AVMEDIA, SFX_CALLMODE_SYNCHRON, 
+                                SID_INSERT_AVMEDIA, SFX_CALLMODE_SYNCHRON,
                                 &aMediaURLItem, 0L );
             }
             else
@@ -2566,7 +2566,7 @@ int SwTransferable::_PasteFileName( TransferableDataHelper& rData,
                 //Eigenes FileFormat? -->Einfuegen, nicht fuer StarWriter/Web
                 String sFileURL = URIHelper::SmartRel2Abs(INetURLObject(), sFile, Link(), false );
                 const SfxFilter* pFlt = SW_PASTESDR_SETATTR == nAction
-                        ? 0 : SwIoSystem::GetFileFilter( 
+                        ? 0 : SwIoSystem::GetFileFilter(
                         sFileURL, aEmptyStr );
                 if( pFlt && !rSh.GetView().GetDocShell()->ISA(SwWebDocShell)
     /*
@@ -3819,12 +3819,19 @@ void SwTrnsfrDdeLink::Disconnect( BOOL bRemoveDataAdvise )
         BOOL bUndo = pDoc->DoesUndo();
         pDoc->DoUndo( FALSE );
 
+        // --> OD, CD, OS 2005-11-25 #i58448#
+        Link aSavedOle2Link( pDoc->GetOle2Link() );
+        pDoc->SetOle2Link( Link() );
+        // <--
         BOOL bIsModified = pDoc->IsModified();
 
         pDoc->DelBookmark( sName );
 
         if( !bIsModified )
             pDoc->ResetModified();
+        // --> OD, CD, OS 2005-11-25 #i58448#
+        pDoc->SetOle2Link( aSavedOle2Link );
+        // <--
 
         pDoc->DoUndo( bUndo );
         bDelBookmrk = FALSE;
