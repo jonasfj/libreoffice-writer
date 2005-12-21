@@ -4,9 +4,9 @@
  *
  *  $RCSfile: optpage.cxx,v $
  *
- *  $Revision: 1.47 $
+ *  $Revision: 1.48 $
  *
- *  last change: $Author: obo $ $Date: 2005-11-16 09:51:17 $
+ *  last change: $Author: obo $ $Date: 2005-12-21 15:12:06 $
  *
  *  The Contents of this file are made available subject to
  *  the terms of GNU Lesser General Public License Version 2.1.
@@ -76,7 +76,7 @@
 #endif
 #ifndef _SVX_FHGTITEM_HXX
 #include <svx/fhgtitem.hxx>
-#endif 
+#endif
 #ifndef _SVX_FONTITEM_HXX //autogen
 #include <svx/fontitem.hxx>
 #endif
@@ -451,8 +451,9 @@ SwAddPrinterTabPage::SwAddPrinterTabPage( Window* pParent,
     aEndPageRB       (this, SW_RES(RB_PAGEEND)),
     aFL3          (this, SW_RES(FL_3)),
     aFL4          (this, SW_RES(FL_4)),
+    aPrintEmptyPagesCB(this, SW_RES(CB_PRINTEMPTYPAGES)),
+    aSingleJobsCB    (this, SW_RES(CB_SINGLEJOBS)),
     aPaperFromSetupCB(this, SW_RES(CB_PAPERFROMSETUP)),
-    aSingleJobsCB	 (this, SW_RES(CB_SINGLEJOBS)),
     aFaxFT           (this, SW_RES(FT_FAX)),
     aFaxLB           (this, SW_RES(LB_FAX)),
     sNone(ResId(ST_NONE)),
@@ -472,6 +473,7 @@ SwAddPrinterTabPage::SwAddPrinterTabPage( Window* pParent,
     aReverseCB.SetClickHdl( aLk );
     aProspectCB.SetClickHdl( aLk );
     aPaperFromSetupCB.SetClickHdl( aLk );
+    aPrintEmptyPagesCB.SetClickHdl( aLk );
     aEndPageRB.SetClickHdl( aLk );
     aEndRB.SetClickHdl( aLk );
     aOnlyRB.SetClickHdl( aLk );
@@ -541,6 +543,7 @@ BOOL 	SwAddPrinterTabPage::FillItemSet( SfxItemSet& rCoreSet )
         aAddPrinterAttr.bPrintReverse 	= aReverseCB.IsChecked();
         aAddPrinterAttr.bPrintProspect  = aProspectCB.IsChecked();
         aAddPrinterAttr.bPaperFromSetup = aPaperFromSetupCB.IsChecked();
+        aAddPrinterAttr.bPrintEmptyPages = aPrintEmptyPagesCB.IsChecked();
         aAddPrinterAttr.bPrintSingleJobs = aSingleJobsCB.IsChecked();
 
         if (aNoRB.IsChecked()) 	aAddPrinterAttr.nPrintPostIts =
@@ -579,6 +582,7 @@ void 	SwAddPrinterTabPage::Reset( const SfxItemSet&  )
         aRightPageCB.Check(		pAddPrinterAttr->bPrintRightPage);
         aReverseCB.Check(		pAddPrinterAttr->bPrintReverse);
         aPaperFromSetupCB.Check(pAddPrinterAttr->bPaperFromSetup);
+        aPrintEmptyPagesCB.Check(pAddPrinterAttr->bPrintEmptyPages);
         aProspectCB.Check(      pAddPrinterAttr->bPrintProspect);
         aSingleJobsCB.Check(    pAddPrinterAttr->bPrintSingleJobs);
 
@@ -821,27 +825,27 @@ BOOL SwStdFontTabPage::FillItemSet( SfxItemSet& rSet )
         pFontConfig->SetFontCaption(sLabel, nFontGroup);
         pFontConfig->SetFontIndex(sIdx, nFontGroup);
         if(bStandardHeightChanged)
-        {        
+        {
             float fSize = (float)aStandardHeightLB.GetValue() / 10;
             pFontConfig->SetFontHeight( CalcToUnit( fSize, SFX_MAPUNIT_TWIP ), FONT_STANDARD, nFontGroup );
         }
         if(bTitleHeightChanged)
-        {        
+        {
             float fSize = (float)aTitleHeightLB.GetValue() / 10;
             pFontConfig->SetFontHeight( CalcToUnit( fSize, SFX_MAPUNIT_TWIP ), FONT_OUTLINE, nFontGroup );
         }
         if(bListHeightChanged)
-        {        
+        {
             float fSize = (float)aListHeightLB.GetValue() / 10;
             pFontConfig->SetFontHeight( CalcToUnit( fSize, SFX_MAPUNIT_TWIP ), FONT_LIST, nFontGroup );
         }
-        if(bLabelHeightChanged) 
-        {        
+        if(bLabelHeightChanged)
+        {
             float fSize = (float)aLabelHeightLB.GetValue() / 10;
             pFontConfig->SetFontHeight( CalcToUnit( fSize, SFX_MAPUNIT_TWIP ), FONT_CAPTION, nFontGroup );
         }
         if(bIndexHeightChanged)
-        {        
+        {
             float fSize = (float)aIndexHeightLB.GetValue() / 10;
             pFontConfig->SetFontHeight( CalcToUnit( fSize, SFX_MAPUNIT_TWIP ), FONT_INDEX, nFontGroup );
         }
@@ -877,7 +881,7 @@ BOOL SwStdFontTabPage::FillItemSet( SfxItemSet& rSet )
             bMod = TRUE;
         }
         if(bStandardHeightChanged)
-        {        
+        {
             float fSize = (float)aStandardHeightLB.GetValue() / 10;
             pWrtShell->SetDefault(SvxFontHeightItem( CalcToUnit( fSize, SFX_MAPUNIT_TWIP ), 100, nFontHeightWhich ) );
             SwTxtFmtColl *pColl = pWrtShell->GetTxtCollFromPool(RES_POOLCOLL_STANDARD);
@@ -900,7 +904,7 @@ BOOL SwStdFontTabPage::FillItemSet( SfxItemSet& rSet )
             lcl_SetColl(pWrtShell, RES_POOLCOLL_NUMBUL_BASE, pPrt, sList, nFontWhich);
             bMod = TRUE;
         }
-        if(bListHeightChanged)   
+        if(bListHeightChanged)
         {
             lcl_SetColl(pWrtShell, RES_POOLCOLL_NUMBUL_BASE, aListHeightLB.GetValue(), nFontHeightWhich);
             bMod = TRUE;
@@ -910,7 +914,7 @@ BOOL SwStdFontTabPage::FillItemSet( SfxItemSet& rSet )
             lcl_SetColl(pWrtShell, RES_POOLCOLL_LABEL, pPrt, sLabel, nFontWhich);
             bMod = TRUE;
         }
-        if(bLabelHeightChanged)   
+        if(bLabelHeightChanged)
         {
             lcl_SetColl(pWrtShell, RES_POOLCOLL_LABEL, aLabelHeightLB.GetValue(), nFontHeightWhich);
             bMod = TRUE;
@@ -920,7 +924,7 @@ BOOL SwStdFontTabPage::FillItemSet( SfxItemSet& rSet )
             lcl_SetColl(pWrtShell, RES_POOLCOLL_REGISTER_BASE, pPrt, sIdx, nFontWhich);
             bMod = TRUE;
         }
-        if(bIndexHeightChanged)   
+        if(bIndexHeightChanged)
         {
             lcl_SetColl(pWrtShell, RES_POOLCOLL_REGISTER_BASE, aIndexHeightLB.GetValue(), nFontHeightWhich);
             bMod = TRUE;
@@ -1045,7 +1049,7 @@ void SwStdFontTabPage::Reset( const SfxItemSet& rSet )
 
         const SvxFontHeightItem& rFontHeightTitle = (const SvxFontHeightItem&)pColl->GetAttr( nFontHeightWhich, sal_True );
         nTitleHeight = (sal_Int32)rFontHeightTitle.GetHeight();
-        
+
         USHORT nFontWhich = nFontGroup == FONT_GROUP_DEFAULT  ? RES_CHRATR_FONT :
             FONT_GROUP_CJK == nFontGroup ? RES_CHRATR_CJK_FONT : RES_CHRATR_CTL_FONT;
         pColl = pWrtShell->GetTxtCollFromPool(RES_POOLCOLL_NUMBUL_BASE);
@@ -1058,7 +1062,7 @@ void SwStdFontTabPage::Reset( const SfxItemSet& rSet )
         nListHeight = (sal_Int32)rFontHeightList.GetHeight();
         bListHeightDefault = SFX_ITEM_DEFAULT == pColl->GetAttrSet().GetItemState(nFontWhich, FALSE);
 
-        
+
         pColl = pWrtShell->GetTxtCollFromPool(RES_POOLCOLL_LABEL);
         bLabelDefault = SFX_ITEM_DEFAULT == pColl->GetAttrSet().GetItemState(nFontWhich, FALSE);
         const SvxFontItem& rFontCP = !nFontGroup ? pColl->GetFont() :
@@ -1094,7 +1098,7 @@ void SwStdFontTabPage::Reset( const SfxItemSet& rSet )
     aListHeightLB.    SetValue( CalcToPoint( nListHeight    , SFX_MAPUNIT_TWIP, 10 ) );
     aLabelHeightLB.   SetValue( CalcToPoint( nLabelHeight   , SFX_MAPUNIT_TWIP, 10 ));
     aIndexHeightLB.   SetValue( CalcToPoint( nIndexHeight   , SFX_MAPUNIT_TWIP, 10 ));
-    
+
     aStandardBox.SaveValue();
     aTitleBox   .SaveValue();
     aListBox    .SaveValue();
@@ -1128,20 +1132,20 @@ IMPL_LINK( SwStdFontTabPage, StandardHdl, PushButton *, EMPTYARG )
     aLabelBox   .SaveValue();
     aIdxBox     .SaveValue();
 
-    aStandardHeightLB.SetValue( CalcToPoint( 
-        SwStdFontConfig::GetDefaultHeightFor(FONT_STANDARD + nFontOffset, eLanguage), 
+    aStandardHeightLB.SetValue( CalcToPoint(
+        SwStdFontConfig::GetDefaultHeightFor(FONT_STANDARD + nFontOffset, eLanguage),
             SFX_MAPUNIT_TWIP, 10 ) );
-    aTitleHeightLB   .SetValue(CalcToPoint( 
-        SwStdFontConfig::GetDefaultHeightFor(FONT_OUTLINE  + 
+    aTitleHeightLB   .SetValue(CalcToPoint(
+        SwStdFontConfig::GetDefaultHeightFor(FONT_OUTLINE  +
             nFontOffset, eLanguage), SFX_MAPUNIT_TWIP, 10 ));
-    aListHeightLB    .SetValue(CalcToPoint( 
-        SwStdFontConfig::GetDefaultHeightFor(FONT_LIST + nFontOffset, eLanguage), 
+    aListHeightLB    .SetValue(CalcToPoint(
+        SwStdFontConfig::GetDefaultHeightFor(FONT_LIST + nFontOffset, eLanguage),
             SFX_MAPUNIT_TWIP, 10 ));
-    aLabelHeightLB   .SetValue(CalcToPoint( 
-        SwStdFontConfig::GetDefaultHeightFor(FONT_CAPTION  + nFontOffset, eLanguage), 
+    aLabelHeightLB   .SetValue(CalcToPoint(
+        SwStdFontConfig::GetDefaultHeightFor(FONT_CAPTION  + nFontOffset, eLanguage),
             SFX_MAPUNIT_TWIP, 10 ));
-    aIndexHeightLB   .SetValue(CalcToPoint( 
-        SwStdFontConfig::GetDefaultHeightFor(FONT_INDEX    + nFontOffset, eLanguage), 
+    aIndexHeightLB   .SetValue(CalcToPoint(
+        SwStdFontConfig::GetDefaultHeightFor(FONT_INDEX    + nFontOffset, eLanguage),
             SFX_MAPUNIT_TWIP, 10 ));
 
     return 0;
