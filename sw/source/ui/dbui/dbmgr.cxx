@@ -4,9 +4,9 @@
  *
  *  $RCSfile: dbmgr.cxx,v $
  *
- *  $Revision: 1.102 $
+ *  $Revision: 1.103 $
  *
- *  last change: $Author: rt $ $Date: 2005-11-10 15:57:22 $
+ *  last change: $Author: obo $ $Date: 2005-12-21 15:12:34 $
  *
  *  The Contents of this file are made available subject to
  *  the terms of GNU Lesser General Public License Version 2.1.
@@ -402,7 +402,7 @@ bool lcl_getCountFromResultSet( sal_Int32& rCount, const uno::Reference<XResultS
 }
 // #122799# copy compatibility options
 void lcl_CopyCompatibilityOptions( SwWrtShell& rSourceShell, SwWrtShell& rTargetShell)
-{        
+{
     rTargetShell.SetParaSpaceMax( rSourceShell.IsParaSpaceMax(), rSourceShell.IsParaSpaceMaxAtPages() );
     rTargetShell.SetTabCompat( rSourceShell.IsTabCompat() );
     rTargetShell.SetAddExtLeading( rSourceShell.IsAddExtLeading() );
@@ -1095,7 +1095,7 @@ BOOL SwNewDBMgr::MergePrint( SwView& rView,
     long nStartRow, nEndRow;
     //calculate number of data sets to be printed
 
-    Sequence<PropertyValue> aViewProperties(15);
+    Sequence<PropertyValue> aViewProperties(16);
     PropertyValue* pViewProperties =  aViewProperties.getArray();
     pViewProperties[0].Name = C2U("MailMergeCount");
     pViewProperties[0].Value <<= (sal_Int32)rOpt.nMergeCnt;
@@ -1127,6 +1127,8 @@ BOOL SwNewDBMgr::MergePrint( SwView& rView,
     pViewProperties[13].Value <<= (sal_Bool)rOpt.IsPrintBlackFont();
     pViewProperties[14].Name = C2U("IsSinglePrintJob");
     pViewProperties[14].Value <<= (sal_Bool)rOpt.IsPrintSingleJobs();
+    pViewProperties[15].Name = C2U("PrintEmptyPages");
+    pViewProperties[15].Value <<= (sal_Bool)rOpt.IsPrintEmptyPages();
 
     rView.SetAdditionalPrintOptions(aViewProperties);
     do {
@@ -1228,7 +1230,7 @@ BOOL SwNewDBMgr::MergePrintDocuments( SwView& rView,
          bRet = FALSE;
     //calculate number of data sets to be printed
 
-    Sequence<PropertyValue> aViewProperties(15);
+    Sequence<PropertyValue> aViewProperties(16);
     PropertyValue* pViewProperties =  aViewProperties.getArray();
     pViewProperties[0].Name = C2U("MailMergeCount");
     pViewProperties[0].Value <<= (sal_Int32)rOpt.nMergeCnt;
@@ -1260,6 +1262,8 @@ BOOL SwNewDBMgr::MergePrintDocuments( SwView& rView,
     pViewProperties[13].Value <<= (sal_Bool)rOpt.IsPrintBlackFont();
     pViewProperties[14].Name = C2U("IsSinglePrintJob");
     pViewProperties[14].Value <<= (sal_Bool)rOpt.IsPrintSingleJobs();
+    pViewProperties[15].Name = C2U("PrintEmptyPages");
+    pViewProperties[15].Value <<= (sal_Bool)rOpt.IsPrintEmptyPages();
 
     rView.SetAdditionalPrintOptions(aViewProperties);
 
@@ -1604,7 +1608,7 @@ BOOL SwNewDBMgr::MergeMailFiles(SwWrtShell* pSourceShell,
                                 //#i51359# add a second paragraph in case there's only one
                                 {
                                     SwNodeIndex aIdx( pWorkDoc->GetNodes().GetEndOfExtras(), 2 );
-                  SwPosition aTestPos( aIdx ); 
+                  SwPosition aTestPos( aIdx );
                   SwCursor aTestCrsr(aTestPos);
                                     if(!aTestCrsr.MovePara(fnParaNext, fnParaStart))
                                     {
@@ -1614,7 +1618,7 @@ BOOL SwNewDBMgr::MergeMailFiles(SwWrtShell* pSourceShell,
                                 }
                                 pTargetShell->Paste( rWorkShell.GetDoc(), sal_True );
                                 //convert fields in page styles (header/footer - has to be done after the first document has been pasted
-                                if(1 == nDocNo)   
+                                if(1 == nDocNo)
                                 {
                                     pTargetShell->CalcLayout();
                                     pTargetShell->ConvertFieldsToText();
@@ -2393,7 +2397,7 @@ sal_Bool SwNewDBMgr::ToRecordId(sal_Int32 nSet)
 /* -----------------------------17.07.00 14:17--------------------------------
 
  ---------------------------------------------------------------------------*/
-BOOL SwNewDBMgr::OpenDataSource(const String& rDataSource, const String& rTableOrQuery, 
+BOOL SwNewDBMgr::OpenDataSource(const String& rDataSource, const String& rTableOrQuery,
             sal_Int32 nCommandType, bool bCreate)
 {
     SwDBData aData;
@@ -2891,7 +2895,7 @@ void SwNewDBMgr::ExecuteFormLetter(	SwWrtShell& rSh,
     {
         xConnection = SwNewDBMgr::RegisterConnection(sDataSource);
         pFound = FindDSConnection(sDataSource, TRUE);
-    }            
+    }
     SwAbstractDialogFactory* pFact = SwAbstractDialogFactory::Create();
     DBG_ASSERT(pFact, "Dialogdiet fail!");//CHINA001
     pImpl->pMergeDialog = pFact->CreateMailMergeDlg( ResId(DLG_MAILMERGE),
@@ -2938,10 +2942,10 @@ void SwNewDBMgr::ExecuteFormLetter(	SwWrtShell& rSh,
                 }
                 break;
             }
-            //pFound doesn't need to be removed/deleted - 
+            //pFound doesn't need to be removed/deleted -
             //this has been done by the SwConnectionDisposedListener_Impl already
         }
-    }            
+    }
     DELETEZ(pImpl->pMergeDialog);
 }
 /* -----------------------------13.11.00 08:20--------------------------------
@@ -3289,7 +3293,7 @@ sal_Int32 SwNewDBMgr::MergeDocuments( SwMailMergeConfigItem& rMMConfig,
                 //#i51359# add a second paragraph in case there's only one
                 {
                     SwNodeIndex aIdx( pWorkDoc->GetNodes().GetEndOfExtras(), 2 );
-                  SwPosition aTestPos( aIdx ); 
+                  SwPosition aTestPos( aIdx );
                   SwCursor aTestCrsr(aTestPos);
                     if(!aTestCrsr.MovePara(fnParaNext, fnParaStart))
                     {
@@ -3299,7 +3303,7 @@ sal_Int32 SwNewDBMgr::MergeDocuments( SwMailMergeConfigItem& rMMConfig,
                 }
                 pTargetShell->Paste( rWorkShell.GetDoc(), sal_True );
                 //convert fields in page styles (header/footer - has to be done after the first document has been pasted
-                if(1 == nDocNo)    
+                if(1 == nDocNo)
                 {
                     pTargetShell->CalcLayout();
                     pTargetShell->ConvertFieldsToText();
