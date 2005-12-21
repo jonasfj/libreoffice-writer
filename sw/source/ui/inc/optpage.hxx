@@ -4,9 +4,9 @@
  *
  *  $RCSfile: optpage.hxx,v $
  *
- *  $Revision: 1.18 $
+ *  $Revision: 1.19 $
  *
- *  last change: $Author: obo $ $Date: 2005-11-16 09:52:03 $
+ *  last change: $Author: obo $ $Date: 2005-12-21 15:13:01 $
  *
  *  The Contents of this file are made available subject to
  *  the terms of GNU Lesser General Public License Version 2.1.
@@ -156,7 +156,8 @@ class SwAddPrinterTabPage : public SfxTabPage
     RadioButton     aEndPageRB;
     FixedLine        aFL3;
     FixedLine        aFL4;
-    CheckBox	    aSingleJobsCB;
+    CheckBox        aPrintEmptyPagesCB;
+    CheckBox        aSingleJobsCB;
     CheckBox	    aPaperFromSetupCB;
     FixedText       aFaxFT;
     ListBox         aFaxLB;
@@ -202,7 +203,7 @@ class SwStdFontTabPage : public SfxTabPage
 
     FixedText       aHeightFT;
     FontSizeBox     aStandardHeightLB;
-    
+
     FixedText       aTitleLbl   ;
     ComboBox 		aTitleBox   ;
     FontSizeBox     aTitleHeightLB;
@@ -248,7 +249,7 @@ class SwStdFontTabPage : public SfxTabPage
     BOOL    bSetLabelHeightDefault :1;
     BOOL    bIndexHeightDefault     :1;
     BOOL    bSetIndexHeightDefault  :1;
-    
+
     sal_uInt8 nFontGroup; //fontcfg.hxx: FONT_GROUP_[STANDARD|CJK|CTL]
 
     String sScriptWestern;
