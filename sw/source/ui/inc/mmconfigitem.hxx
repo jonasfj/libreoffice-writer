@@ -4,9 +4,9 @@
  *
  *  $RCSfile: mmconfigitem.hxx,v $
  *
- *  $Revision: 1.7 $
+ *  $Revision: 1.8 $
  *
- *  last change: $Author: hr $ $Date: 2005-09-23 11:48:52 $
+ *  last change: $Author: kz $ $Date: 2006-01-06 13:04:52 $
  *
  *  The Contents of this file are made available subject to
  *  the terms of GNU Lesser General Public License Version 2.1.
@@ -123,9 +123,9 @@ public:
 
     ::com::sun::star::uno::Reference< ::com::sun::star::sdbcx::XColumnsSupplier>
                         GetColumnsSupplier();
-
-    ::com::sun::star::uno::Reference< ::com::sun::star::sdbc::XResultSet>
-                        GetResultSet();
+    
+    ::com::sun::star::uno::Reference< ::com::sun::star::sdbc::XResultSet>   
+                        GetResultSet() const;
 
     void                DisposeResultSet();
 
@@ -156,8 +156,11 @@ public:
 
     sal_Bool            IsAddressBlock()const;
     void                SetAddressBlock(sal_Bool bSet);
+    
+    sal_Bool            IsHideEmptyParagraphs() const;
+    void                SetHideEmptyParagraphs(sal_Bool bSet);
 
-    const com::sun::star::uno::Sequence< ::rtl::OUString>
+    const com::sun::star::uno::Sequence< ::rtl::OUString>   
                         GetAddressBlocks() const;
     void                SetAddressBlocks(const com::sun::star::uno::Sequence< ::rtl::OUString>& rBlocks);
 
@@ -190,7 +193,10 @@ public:
                             const SwDBData& rDBData,
                             const com::sun::star::uno::Sequence< ::rtl::OUString>& );
 
-    //e-Mail settings:
+    bool                IsAddressFieldsAssigned() const;
+    bool                IsGreetingFieldsAssigned() const;
+
+    //e-Mail settings: 
     ::rtl::OUString     GetMailDisplayName() const;
     void                SetMailDisplayName(const ::rtl::OUString& rName);
 
