@@ -4,9 +4,9 @@
  *
  *  $RCSfile: basesh.cxx,v $
  *
- *  $Revision: 1.71 $
+ *  $Revision: 1.72 $
  *
- *  last change: $Author: obo $ $Date: 2005-11-16 09:52:17 $
+ *  last change: $Author: rt $ $Date: 2006-02-06 17:24:20 $
  *
  *  The Contents of this file are made available subject to
  *  the terms of GNU Lesser General Public License Version 2.1.
@@ -983,12 +983,12 @@ void SwBaseShell::Execute(SfxRequest &rReq)
                 //Delimiter
                 String sDelim = static_cast< const SfxStringItem* >(pItem)->GetValue();
                 if(sDelim.Len())
-                    cDelim = sDelim.GetChar(0); 
+                    cDelim = sDelim.GetChar(0);
                 //AutoFormat
                 if(SFX_ITEM_SET == pArgs->GetItemState( FN_PARAM_2, TRUE, &pItem))
-                {        
+                {
                     String sAutoFmt = static_cast< const SfxStringItem* >(pItem)->GetValue();
-                    
+
                     pAutoFmtTbl = new SwTableAutoFmtTbl;
                     pAutoFmtTbl->Load();
 
@@ -996,7 +996,7 @@ void SwBaseShell::Execute(SfxRequest &rReq)
                     {
                         SwTableAutoFmt* pFmt = (*pAutoFmtTbl)[ i ];
                         if( pFmt->GetName() == sAutoFmt )
-                        {        
+                        {
                             pTAFmt = pFmt;
                             bDeleteFormat = false;
                             break;
@@ -1004,12 +1004,12 @@ void SwBaseShell::Execute(SfxRequest &rReq)
                     }
                 }
                 //WithHeader
-                if(SFX_ITEM_SET == pArgs->GetItemState( FN_PARAM_3, TRUE, &pItem) && 
+                if(SFX_ITEM_SET == pArgs->GetItemState( FN_PARAM_3, TRUE, &pItem) &&
                             static_cast< const SfxBoolItem* >(pItem)->GetValue())
                     aInsTblOpts.mnInsMode |= tabopts::HEADLINE;
                 // RepeatHeaderLines
                 if(SFX_ITEM_SET == pArgs->GetItemState( FN_PARAM_4, TRUE, &pItem))
-                   aInsTblOpts.mnRowsToRepeat = 
+                   aInsTblOpts.mnRowsToRepeat =
                             (USHORT)static_cast< const SfxInt16Item* >(pItem)->GetValue();
                 //WithBorder
                 if(SFX_ITEM_SET == pArgs->GetItemState( FN_PARAM_5, TRUE, &pItem) &&
@@ -1021,11 +1021,11 @@ void SwBaseShell::Execute(SfxRequest &rReq)
                     aInsTblOpts.mnInsMode |= tabopts::SPLIT_LAYOUT;
             }
             else
-            {        
+            {
                 SwAbstractDialogFactory* pFact = SwAbstractDialogFactory::Create();//CHINA001
                 DBG_ASSERT(pFact, "SwAbstractDialogFactory fail!");//CHINA001
 
-                AbstractSwConvertTableDlg* pDlg = pFact->CreateSwConvertTableDlg( 
+                AbstractSwConvertTableDlg* pDlg = pFact->CreateSwConvertTableDlg(
                             GetView(),ResId( DLG_CONV_TEXT_TABLE ), bToTable);
                 DBG_ASSERT(pDlg, "Dialogdiet fail!");//CHINA001
                 if( RET_OK == pDlg->Execute() )
@@ -1042,14 +1042,14 @@ void SwBaseShell::Execute(SfxRequest &rReq)
                 SwView& rSaveView = rView;
                 BOOL bInserted = FALSE;
                 //recording:
-                
+
                 SfxViewFrame* pViewFrame = GetView().GetViewFrame();
                 if( SfxRequest::HasMacroRecorder(pViewFrame) )
-                {        
+                {
                     SfxRequest aReq( pViewFrame, nSlot);
                     aReq.AppendItem( SfxStringItem( FN_PARAM_1, String(cDelim) ));
                     if(bToTable)
-                    {        
+                    {
                         if(pTAFmt)
                             aReq.AppendItem( SfxStringItem( FN_PARAM_2, pTAFmt->GetName()));
                         aReq.AppendItem( SfxBoolItem ( FN_PARAM_3, 0 != (aInsTblOpts.mnInsMode & tabopts::HEADLINE)));
@@ -1059,11 +1059,11 @@ void SwBaseShell::Execute(SfxRequest &rReq)
                     }
                     aReq.Done();
                 }
-                
+
                 if( !bToTable )
                     rSh.TableToText( cDelim );
                 else
-                {        
+                {
                     bInserted = rSh.TextToTable( aInsTblOpts, cDelim, HORI_FULL, pTAFmt );
                 }
                 rSh.EnterStdMode();
@@ -1316,7 +1316,7 @@ void SwBaseShell::Execute(SfxRequest &rReq)
                 && pItem != NULL
                 && pItem->ISA( SfxBoolItem ) )
             {
-                BOOL bDesignMode = 
+                BOOL bDesignMode =
                     static_cast<const SfxBoolItem*>( pItem )->GetValue();
 
                 // set form design mode
@@ -2074,7 +2074,6 @@ void SwBaseShell::SetFrmMode(USHORT nMode, SwWrtShell *pSh )
 SwBaseShell::SwBaseShell(SwView& rVw) :
     SfxShell( &rVw ),
     rView(rVw),
-    pFrmMgr(0),
     pGetStateSet(0)
 {
     SwWrtShell& rWrtSh = rView.GetWrtShell();
@@ -2087,7 +2086,6 @@ SwBaseShell::SwBaseShell(SwView& rVw) :
 
 SwBaseShell::~SwBaseShell()
 {
-    delete pFrmMgr;
     if( rView.GetCurShell() == this )
         rView.ResetSubShell();
 
@@ -2113,16 +2111,16 @@ void SwBaseShell::ExecTxtCtrl( SfxRequest& rReq )
         USHORT nWhich = rPool.GetWhich( nSlot );
         USHORT nScripts = SCRIPTTYPE_LATIN | SCRIPTTYPE_ASIAN | SCRIPTTYPE_COMPLEX;
         SfxItemSet aHeightSet( GetPool(),  RES_CHRATR_FONTSIZE, RES_CHRATR_FONTSIZE,
-                                            RES_CHRATR_CJK_FONTSIZE, RES_CHRATR_CJK_FONTSIZE, 
+                                            RES_CHRATR_CJK_FONTSIZE, RES_CHRATR_CJK_FONTSIZE,
                                             RES_CHRATR_CTL_FONTSIZE, RES_CHRATR_CTL_FONTSIZE,
                                         0L);
 
         switch( nSlot )
         {
             case SID_ATTR_CHAR_FONT:
-            {    
+            {
                 nScripts = rSh.GetScriptType();
-                // #42732# input language should be preferred over 
+                // #42732# input language should be preferred over
                 // current cursor position to detect script type
                 if(!rSh.HasSelection())
                 {
@@ -2155,23 +2153,23 @@ void SwBaseShell::ExecTxtCtrl( SfxRequest& rReq )
                         nScripts = SvtLanguageOptions::GetScriptTypeOfLanguage( nInputLang );
                     UINT32 nHeight = static_cast< const SvxFontHeightItem& >(pArgs->Get( nWhich )).GetHeight();
                     SwStdFontConfig* pStdFont = SW_MOD()->GetStdFontConfig();
-                    
+
                     SfxItemSet aLangSet( GetPool(), RES_CHRATR_LANGUAGE, RES_CHRATR_LANGUAGE,
-                                                    RES_CHRATR_CJK_LANGUAGE, RES_CHRATR_CJK_LANGUAGE, 
+                                                    RES_CHRATR_CJK_LANGUAGE, RES_CHRATR_CJK_LANGUAGE,
                                                     RES_CHRATR_CTL_LANGUAGE, RES_CHRATR_CTL_LANGUAGE,
                                                     0L);
                     rSh.GetAttr( aLangSet );
 
-                    sal_Int32 nWesternSize = 
-                            pStdFont->GetFontHeight(FONT_STANDARD, FONT_GROUP_DEFAULT, 
+                    sal_Int32 nWesternSize =
+                            pStdFont->GetFontHeight(FONT_STANDARD, FONT_GROUP_DEFAULT,
                             static_cast<const SvxLanguageItem&>(aLangSet.Get( RES_CHRATR_LANGUAGE)).GetLanguage());
-                    sal_Int32 nCJKSize = 
-                            pStdFont->GetFontHeight(FONT_STANDARD, FONT_GROUP_CJK, 
+                    sal_Int32 nCJKSize =
+                            pStdFont->GetFontHeight(FONT_STANDARD, FONT_GROUP_CJK,
                             static_cast<const SvxLanguageItem&>(aLangSet.Get( RES_CHRATR_CJK_LANGUAGE)).GetLanguage());
-                    sal_Int32 nCTLSize = 
-                            pStdFont->GetFontHeight(FONT_STANDARD, FONT_GROUP_CTL, 
+                    sal_Int32 nCTLSize =
+                            pStdFont->GetFontHeight(FONT_STANDARD, FONT_GROUP_CTL,
                             static_cast<const SvxLanguageItem&>(aLangSet.Get( RES_CHRATR_CTL_LANGUAGE)).GetLanguage());
-                    
+
                     switch(nScripts)
                     {
                         case SCRIPTTYPE_LATIN:
@@ -2250,7 +2248,7 @@ void SwBaseShell::GetTxtFontCtrlState( SfxItemSet& rSet )
                                     RES_CHRATR_BEGIN, RES_CHRATR_END-1 );
                     rSh.GetAttr( *pFntCoreSet );
                     nScriptType = rSh.GetScriptType();
-                    // #42732# input language should be preferred over 
+                    // #42732# input language should be preferred over
                     // current cursor position to detect script type
                     if(!rSh.HasSelection() && (
                         nWhich == RES_CHRATR_FONT ||
@@ -2259,7 +2257,7 @@ void SwBaseShell::GetTxtFontCtrlState( SfxItemSet& rSet )
                         LanguageType nInputLang = GetView().GetEditWin().GetInputLanguage();
                         if(nInputLang != LANGUAGE_DONTKNOW && nInputLang != LANGUAGE_SYSTEM)
                             nScriptType = SvtLanguageOptions::GetScriptTypeOfLanguage( nInputLang );
-                    }            
+                    }
                 }
                 SfxItemPool& rPool = *rSet.GetPool();
                 SvxScriptSetItem aSetItem( rPool.GetSlotId( nWhich ), rPool );
@@ -2611,7 +2609,7 @@ void SwBaseShell::ExecDlg(SfxRequest &rReq)
                 }
             }
             if(pOutSet)
-            {        
+            {
                 rReq.Done(*pOutSet);
                 bDone = true;
             }
@@ -2677,7 +2675,7 @@ void SwBaseShell::ExecDlg(SfxRequest &rReq)
                 }
             }
             if(pOutSet)
-            {        
+            {
                 rReq.Done(*pOutSet);
                 bDone = true;
             }
@@ -2690,68 +2688,6 @@ void SwBaseShell::ExecDlg(SfxRequest &rReq)
     if(!bDone)
         rReq.Done();
 }
-
-/*--------------------------------------------------------------------
-    Beschreibung:
- --------------------------------------------------------------------*/
-
-int SwBaseShell::InsertGraphic( const String &rPath, const String &rFilter,
-                                BOOL bLink, GraphicFilter *pFlt,
-                                Graphic* pPreviewGrf, BOOL bRule )
-{
-    SwWait aWait( *rView.GetDocShell(), TRUE );
-
-    Graphic aGrf;
-    int nRes = GRFILTER_OK;
-    if ( pPreviewGrf )
-        aGrf = *pPreviewGrf;
-    else
-    {
-        if( !pFlt )
-            pFlt = ::GetGrfFilter();
-        Link aOldLink = pFlt->GetUpdatePercentHdl();
-        pFlt->SetUpdatePercentHdl( LINK( this, SwBaseShell, UpdatePercentHdl ));
-        ::StartProgress( STR_STATSTR_IMPGRF, 0, 100, rView.GetDocShell() );
-        nRes = ::LoadGraphic( rPath, rFilter, aGrf, pFlt /*, nFilter*/ );
-        ::EndProgress( rView.GetDocShell() );
-        pFlt->SetUpdatePercentHdl( aOldLink );
-    }
-
-    if( GRFILTER_OK == nRes )
-    {
-        SwWrtShell &rSh = GetShell();
-        rSh.StartAction();
-        if( bLink )
-        {        
-            SwDocShell* pDocSh = GetView().GetDocShell();
-            INetURLObject aTemp(
-                pDocSh->HasName() ? 
-                    pDocSh->GetMedium()->GetURLObject().GetMainURL( INetURLObject::NO_DECODE ) :
-                    rtl::OUString());
-            
-            String sURL = URIHelper::SmartRel2Abs(
-                aTemp, rPath, URIHelper::GetMaybeFileHdl() );
-            
-            rSh.Insert( sURL,
-                        rFilter, aGrf, pFrmMgr, bRule );
-        }
-        else
-            rSh.Insert( aEmptyStr, aEmptyStr, aGrf, pFrmMgr );
-        // nach dem EndAction ist es zu spaet, weil die Shell dann schon zerstoert sein kann
-        DELETEZ(pFrmMgr);
-        rSh.EndAction();
-    }
-    return nRes;
-}
-
-
-IMPL_LINK_INLINE_START( SwBaseShell, UpdatePercentHdl, GraphicFilter *, pFilter )
-{
-    ::SetProgressState( pFilter->GetPercent(), rView.GetDocShell() );
-    return 0;
-}
-IMPL_LINK_INLINE_END( SwBaseShell, UpdatePercentHdl, GraphicFilter *, pFilter )
-
 
 // ----------------------------------------------------------------------------
 
