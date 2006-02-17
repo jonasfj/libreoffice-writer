@@ -4,9 +4,9 @@
  *
  *  $RCSfile: swparrtf.cxx,v $
  *
- *  $Revision: 1.55 $
+ *  $Revision: 1.56 $
  *
- *  last change: $Author: rt $ $Date: 2006-02-09 13:46:41 $
+ *  last change: $Author: hr $ $Date: 2006-02-17 15:58:22 $
  *
  *  The Contents of this file are made available subject to
  *  the terms of GNU Lesser General Public License Version 2.1.
@@ -241,36 +241,36 @@
 
 #ifndef _SVX_KEEPITEM_HXX
 #include <svx/keepitem.hxx>
-#endif 
+#endif
 
 #ifndef _XPOLY_HXX
 #include <svx/xpoly.hxx>
-#endif 
+#endif
 
 #ifndef _SVDOPATH_HXX
 #include <svx/svdopath.hxx>
-#endif 
+#endif
 
 #ifndef _SVDORECT_HXX
 #include <svx/svdorect.hxx>
-#endif 
+#endif
 
 
 #ifndef _FMTSRND_HXX
 #include <fmtsrnd.hxx>
-#endif 
+#endif
 
 #ifndef _FMTFOLLOWTEXTFLOW_HXX
 #include <fmtfollowtextflow.hxx>
-#endif 
+#endif
 
 #ifndef _SVDMODEL_HXX
 #include <svx/svdmodel.hxx>
-#endif 
+#endif
 
 #ifndef _SVDPAGE_HXX
 #include <svx/svdpage.hxx>
-#endif 
+#endif
 
 #ifndef _SVX_OPAQITEM_HXX
 #include <svx/opaqitem.hxx>
@@ -280,6 +280,9 @@
 #include "svx/svdograf.hxx"
 #endif
 
+#ifndef _SVX_XFLCLIT_HXX
+#include <svx/xflclit.hxx>
+#endif
 
 // einige Hilfs-Funktionen
 // char
@@ -341,7 +344,8 @@ SwRTFParser::SwRTFParser(SwDoc* pD, const SwPaM& rCrsr, SvStream& rIn, const Str
     nNewNumSectDef(USHRT_MAX), nRowsToRepeat(0),
     sBaseURL( rBaseURL ),
     pAuthorInfos(0),
-    bTrowdRead(0)
+    bTrowdRead(0),
+    nZOrder(0)
 {
     mbIsFootnote = mbReadNoTbl = bReadSwFly = bSwPageDesc = bStyleTabValid =
     bInPgDscTbl = bNewNumList = false;
@@ -583,7 +587,34 @@ if( pSttNdIdx->GetIndex()+1 == pPam->GetBound( FALSE ).nNode.GetIndex() )
             {
                 SwNode* pTmp = pDoc->GetNodes()[ nNodeIdx -1 ];
                 if( pTmp->IsCntntNode() && !pTmp->FindTableNode() )
-                    DelLastNode();
+                {
+                    // --> FME 2006-02-15 #131200# Do not delete the paragraph
+                    // if it has anchored objects:
+                    bool bAnchoredObjs = false;
+                    const SwSpzFrmFmts* pFrmFmts = pDoc->GetSpzFrmFmts();
+                    if ( pFrmFmts && pFrmFmts->Count() )
+                    {
+                        bool bFirst = true;
+                        for ( USHORT nI = pFrmFmts->Count(); nI; --nI )
+                        {
+                            const SwFmtAnchor & rAnchor = (*pFrmFmts)[ nI - 1 ]->GetAnchor();
+                            if ( FLY_AT_CNTNT == rAnchor.GetAnchorId() ||
+                                 FLY_AUTO_CNTNT == rAnchor.GetAnchorId() )
+                            {
+                                const SwPosition * pObjPos = rAnchor.GetCntntAnchor();
+                                if ( pObjPos && nNodeIdx == pObjPos->nNode.GetIndex() )
+                                {
+                                    bAnchoredObjs = true;
+                                    break;
+                                }
+                            }
+                        }
+                    }
+                    // <--
+
+                    if ( !bAnchoredObjs )
+                        DelLastNode();
+                }
             }
             else if (0 != (pAktNd = pDoc->GetNodes()[nNodeIdx]->GetTxtNode()))
             {
@@ -1337,7 +1368,7 @@ void SwRTFParser::ReadDrawingObject()
         SfxItemSet aFlySet(pDoc->GetAttrPool(), RES_FRMATR_BEGIN, RES_FRMATR_END-1);
         SwFmtSurround aSur( SURROUND_PARALLEL );
         aSur.SetContour( false );
-        aSur.SetOutside(true); 
+        aSur.SetOutside(true);
         aFlySet.Put( aSur );
         SwFmtFollowTextFlow aFollowTextFlow( FALSE );
         aFlySet.Put( aFollowTextFlow );
@@ -1352,7 +1383,7 @@ void SwRTFParser::ReadDrawingObject()
         FLY_AT_FLY,			//Rahmengebundener Rahmen ( LAYER_IMPL ) <to frame>
         FLY_AUTO_CNTNT,		//Automatisch positionierter, absatzgebundener Rahmen <to character>
         */
-        SwFmtAnchor aAnchor( FLY_AT_CNTNT );  
+        SwFmtAnchor aAnchor( FLY_AT_CNTNT );
         aAnchor.SetAnchor( pPam->GetPoint() );
         aFlySet.Put( aAnchor );
 
@@ -1408,17 +1439,17 @@ void SwRTFParser::ReadDrawingObject()
     }
 }
 
-void SwRTFParser::InsertShpObject(SdrObject* pStroke)
+void SwRTFParser::InsertShpObject(SdrObject* pStroke, int nZOrder)
 {
         SfxItemSet aFlySet(pDoc->GetAttrPool(), RES_FRMATR_BEGIN, RES_FRMATR_END-1);
         SwFmtSurround aSur( SURROUND_THROUGHT );
         aSur.SetContour( false );
-        aSur.SetOutside(true); 
+        aSur.SetOutside(true);
         aFlySet.Put( aSur );
         SwFmtFollowTextFlow aFollowTextFlow( FALSE );
         aFlySet.Put( aFollowTextFlow );
 
-        SwFmtAnchor aAnchor( FLY_AT_CNTNT );  
+        SwFmtAnchor aAnchor( FLY_AT_CNTNT );
         aAnchor.SetAnchor( pPam->GetPoint() );
         aFlySet.Put( aAnchor );
 
@@ -1434,8 +1465,8 @@ void SwRTFParser::InsertShpObject(SdrObject* pStroke)
         pDoc->GetOrCreateDrawModel();
         SdrModel* pDrawModel  = pDoc->GetDrawModel();
         SdrPage* pDrawPg = pDrawModel->GetPage(0);
-        pDrawPg->InsertObject(pStroke, 0);
-
+        pDrawPg->InsertObject(pStroke);
+        pDrawPg->SetObjectOrdNum(pStroke->GetOrdNum(), nZOrder);
         SwFrmFmt* pRetFrmFmt = pDoc->Insert(*pPam, *pStroke, &aFlySet);
 }
 
@@ -1450,6 +1481,8 @@ void SwRTFParser::ReadShapeObject()
     sal_Int32 shapeType=-1;
     Graphic aGrf;
     bool bGrfValid=false;
+    bool fFilled=true;
+    Color fillColor(255, 255, 255);
 
     while (level>0 && IsParserWorking())
     {
@@ -1486,7 +1519,15 @@ void SwRTFParser::ReadShapeObject()
                     if (sn.EqualsAscii("shapeType"))
                     {
                         shapeType=aToken.ToInt32();
-                        
+
+                    } else if (sn.EqualsAscii("fFilled"))
+                    {
+                        fFilled=aToken.ToInt32();
+
+                    } else if (sn.EqualsAscii("fillColor"))
+                    {
+                        sal_uInt32 nColor=aToken.ToInt32();
+                        fillColor=Color( (sal_uInt8)nColor, (sal_uInt8)( nColor >> 8 ), (sal_uInt8)( nColor >> 16 ) );
                     }
                 }
                 break;
@@ -1513,13 +1554,21 @@ void SwRTFParser::ReadShapeObject()
     case 1: /* Rectangle */
         {
             Rectangle aRect(aPointLeftTop, aPointRightBottom);
-            
+
             SdrRectObj* pStroke = new SdrRectObj(aRect);
-            pStroke->SetSnapRect(aRect);			
+            pStroke->SetSnapRect(aRect);
 
             pDoc->GetOrCreateDrawModel();
             SfxItemSet aSet(pDoc->GetDrawModel()->GetItemPool());
-            aSet.Put(XFillStyleItem(XFILL_NONE));
+            if (fFilled)
+            {
+                aSet.Put(XFillStyleItem(XFILL_SOLID));
+                aSet.Put(XFillColorItem( String(), fillColor ) );
+            }
+            else
+            {
+                aSet.Put(XFillStyleItem(XFILL_NONE));
+            }
             /*
             aSet.Put(XLineStyleItem(XLINE_NONE));
             aSet.Put(SdrTextFitToSizeTypeItem( SDRTEXTFIT_NONE ));
@@ -1528,8 +1577,7 @@ void SwRTFParser::ReadShapeObject()
             */
             pStroke->SetMergedItemSet(aSet);
 
-
-            InsertShpObject(pStroke);
+            InsertShpObject(pStroke, this->nZOrder++);
         }
         break;
     case 20: /* Line */
@@ -1537,23 +1585,23 @@ void SwRTFParser::ReadShapeObject()
             XPolygon aLine(2);
             aLine [0] = aPointLeftTop;
             aLine [1] = aPointRightBottom;
-            
+
             SdrPathObj* pStroke = new SdrPathObj(OBJ_PLIN, aLine);
             //pStroke->SetSnapRect(aRect);
 
-            InsertShpObject(pStroke);
+            InsertShpObject(pStroke, this->nZOrder++);
         }
         break;
     case 75 : /* Picture */
         if (bGrfValid) {
             Rectangle aRect(aPointLeftTop, aPointRightBottom);
-            
+
             SdrRectObj* pStroke = new SdrGrafObj(aGrf);
             pStroke->SetSnapRect(aRect);
 
-            InsertShpObject(pStroke);
+            InsertShpObject(pStroke, this->nZOrder++);
         }
-    }	
+    }
 }
 
 extern void sw3io_ConvertFromOldField( SwDoc& rDoc, USHORT& rWhich,
@@ -3107,20 +3155,36 @@ void SwRTFParser::ReadSectControls( int nToken )
                 break;
             case RTF_COLNO:
                 {
+                    // next token must be either colw or colsr
                     unsigned long nAktCol = nValue;
-                    if (RTF_COLW == GetNextToken())
+                    long nWidth = 0, nSpace = 0;
+                    int nColToken = GetNextToken();
+                    if (RTF_COLW == nColToken)
                     {
-                        long nWidth = nTokenValue, nSpace = 0;
+                        // next token could be colsr (but not required)
+                        nWidth = nTokenValue;
                         if( RTF_COLSR == GetNextToken() )
                             nSpace = nTokenValue;
                         else
-                            SkipToken( -1 );		// wieder zurueck
+                            SkipToken( -1 );        // put back token
+                    }
+                    else if (RTF_COLSR == nColToken)
+                    {
+                        // next token must be colw (what sense should it make to have colsr only?!)
+                        nSpace = nTokenValue;
+                        if( RTF_COLW == GetNextToken() )
+                            nWidth = nTokenValue;
+                        else
+                            // what should we do if an isolated colsr without colw is found? Doesn't make sense!
+                            SkipToken( -1 );        // put back token
+                    }
+                    else
+                        break;
 
-                        if (--nAktCol == (aNewSection.maColumns.size() / 2))
-                        {
-                            aNewSection.maColumns.push_back(nWidth);
-                            aNewSection.maColumns.push_back(nSpace);
-                        }
+                    if (--nAktCol == (aNewSection.maColumns.size() / 2))
+                    {
+                        aNewSection.maColumns.push_back(nWidth);
+                        aNewSection.maColumns.push_back(nSpace);
                     }
                 }
                 break;
