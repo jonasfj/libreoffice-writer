@@ -4,9 +4,9 @@
  *
  *  $RCSfile: dbgoutsw.cxx,v $
  *
- *  $Revision: 1.16 $
+ *  $Revision: 1.17 $
  *
- *  last change: $Author: rt $ $Date: 2005-11-08 17:15:31 $
+ *  last change: $Author: rt $ $Date: 2006-03-09 14:04:31 $
  *
  *  The Contents of this file are made available subject to
  *  the terms of GNU Lesser General Public License Version 2.1.
@@ -706,7 +706,7 @@ static String lcl_dbg_out(const SwUndo & rUndo)
     {
     case UNDO_START:
         aStr += String(", ", RTL_TEXTENCODING_ASCII_US);
-        aStr += 
+        aStr +=
             String::CreateFromInt32(reinterpret_cast
                                     <const SwUndoStart &>(rUndo).
                                     GetUserId());
@@ -715,12 +715,12 @@ static String lcl_dbg_out(const SwUndo & rUndo)
                                         <const SwUndoStart &>(rUndo).
                                         GetEndOffset());
         aStr += String(" ", RTL_TEXTENCODING_ASCII_US);
-        
+
         break;
-        
+
     case UNDO_END:
         aStr += String(", ", RTL_TEXTENCODING_ASCII_US);
-        aStr += 
+        aStr +=
             String::CreateFromInt32(reinterpret_cast
                                     <const SwUndoEnd &>(rUndo).
                                     GetId());
@@ -729,13 +729,13 @@ static String lcl_dbg_out(const SwUndo & rUndo)
                                         <const SwUndoEnd &>(rUndo).
                                         GetSttOffset());
         aStr += String(" ", RTL_TEXTENCODING_ASCII_US);
-        
+
         break;
     }
-        
+
     aStr += rUndo.GetComment();
     aStr += String(" ]", RTL_TEXTENCODING_ASCII_US);
-    
+
     return aStr;
 }
 
@@ -772,7 +772,7 @@ static String lcl_dbg_out(const SwUndos & rUndos)
 
     for (ULONG n = 0; n < rUndos.Count(); n++)
     {
-        SwUndo * pUndo = rUndos[n];        
+        SwUndo * pUndo = rUndos[n];
 
         if (pUndo->GetId() == UNDO_END)
             nIndent--;
@@ -782,7 +782,7 @@ static String lcl_dbg_out(const SwUndos & rUndos)
 
         aStr += lcl_dbg_out(*pUndo);
         aStr += String("\n", RTL_TEXTENCODING_ASCII_US);
-        
+
         if (pUndo->GetId() == UNDO_START)
             nIndent++;
     }
@@ -872,7 +872,7 @@ String lcl_dbg_out_SvPtrArr(const T & rArr)
     {
         if (n > 0)
             aStr += String(", ", RTL_TEXTENCODING_ASCII_US);
-        
+
         if (rArr[n])
             aStr += lcl_dbg_out(*rArr[n]);
         else
