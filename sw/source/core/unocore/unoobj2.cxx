@@ -4,9 +4,9 @@
  *
  *  $RCSfile: unoobj2.cxx,v $
  *
- *  $Revision: 1.53 $
+ *  $Revision: 1.54 $
  *
- *  last change: $Author: vg $ $Date: 2006-03-16 12:30:35 $
+ *  last change: $Author: obo $ $Date: 2006-03-21 15:44:25 $
  *
  *  The Contents of this file are made available subject to
  *  the terms of GNU Lesser General Public License Version 2.1.
@@ -922,13 +922,22 @@ IMPL_STATIC_LINK( SwXTextCursor, RemoveCursor_Impl,
     ASSERT( pThis != NULL, "no reference?" );
     ASSERT( pArg != NULL, "no reference?" );
 
+    // --> FME 2006-03-07 #126177# Tell the SwXTextCursor that the user event
+    // has been executed. It is not necessary to remove the user event in
+    // ~SwXTextCursor
+    pThis->DoNotRemoveUserEvent();
+    // <--
+
     SwUnoCrsr* pCursor = pThis->GetCrsr();
     if( pCursor != NULL )
     {
         pCursor->Remove( pThis );
         delete pCursor;
     }
-    delete pArg;
+
+    // --> FME 2006-03-07 #126177#
+    //delete pArg;
+    // <--
 
     return 0;
 }
@@ -940,13 +949,24 @@ void 	SwXTextCursor::Modify( SfxPoolItem *pOld, SfxPoolItem *pNew)
     // if the cursor leaves its designated section, it becomes invalid
     if( ( pOld != NULL ) && ( pOld->Which() == RES_UNOCURSOR_LEAVES_SECTION ) )
     {
+        // --> FME 2006-03-07 #126177# We don't need to create a reference
+        // to the SwXTextCursor to prevent its deletion. If the destructor
+        // of the SwXTextCursor is called before the user event is executed,
+        // the user event will be removed. This is necessary, because an other
+        // thread might be currently waiting in ~SwXTextCursor. In this case
+        // the pRef = new ... stuff did not work!
+
         // create reference to this object to prevent deletion before
         // the STATIC_LINK is executed. The link will delete the
         // reference.
-        Reference<XInterface>* pRef =
-            new Reference<XInterface>( static_cast<XServiceInfo*>( this ) );
-        Application::PostUserEvent(
-            STATIC_LINK( this, SwXTextCursor, RemoveCursor_Impl ), pRef );
+        //Reference<XInterface>* pRef =
+            //new Reference<XInterface>( static_cast<XServiceInfo*>( this ) );
+
+        mbRemoveUserEvent = true;
+        // <--
+
+        mnUserEventId = Application::PostUserEvent(
+                        STATIC_LINK( this, SwXTextCursor, RemoveCursor_Impl ), this );
     }
 
     if(!GetRegisteredIn())
@@ -1178,7 +1198,7 @@ sal_Bool SwXParagraphEnumeration::hasMoreElements(void) throw( uno::RuntimeExcep
 //!! compare to SwShellTableCrsr::FillRects() in viscrs.cxx
 SwTableNode * lcl_FindTopLevelTable(
         /*SwUnoCrsr* pUnoCrsr ,*/
-        SwTableNode *pTblNode, 
+        SwTableNode *pTblNode,
         const SwTable *pOwnTable )
 {
     // find top-most table in current context (section) level
@@ -1194,8 +1214,8 @@ SwTableNode * lcl_FindTopLevelTable(
 }
 
 
-BOOL lcl_CursorIsInSection( 
-        const SwUnoCrsr *pUnoCrsr, 
+BOOL lcl_CursorIsInSection(
+        const SwUnoCrsr *pUnoCrsr,
         const SwStartNode *pOwnStartNode )
 {
     // returns true if the cursor is in the section (or in a sub section!)
@@ -1212,7 +1232,7 @@ BOOL lcl_CursorIsInSection(
 }
 
 
-uno::Reference< XTextContent > SAL_CALL SwXParagraphEnumeration::NextElement_Impl(void) 
+uno::Reference< XTextContent > SAL_CALL SwXParagraphEnumeration::NextElement_Impl(void)
     throw( container::NoSuchElementException, lang::WrappedTargetException, uno::RuntimeException )
 {
     uno::Reference< XTextContent >  aRef;
@@ -1220,7 +1240,7 @@ uno::Reference< XTextContent > SAL_CALL SwXParagraphEnumeration::NextElement_Imp
     if(pUnoCrsr)
     {
         // check for exceeding selections
-        if(!bFirstParagraph && 
+        if(!bFirstParagraph &&
             CURSOR_SELECTION == eCursorType || CURSOR_SELECTION_IN_TABLE == eCursorType)
         {
             SwPosition* pStart = pUnoCrsr->Start();
@@ -1229,7 +1249,7 @@ uno::Reference< XTextContent > SAL_CALL SwXParagraphEnumeration::NextElement_Imp
             if(CURSOR_TBLTEXT != eCursorType && CURSOR_SELECTION_IN_TABLE != eCursorType)
                 aNewCrsr->SetRemainInSection( sal_False );
 
-            // os 2005-01-14: This part is only necessary to detect movements out of a selection 
+            // os 2005-01-14: This part is only necessary to detect movements out of a selection
             // if there is no selection we don't have to care
             SwTableNode* pTblNode = aNewCrsr->GetNode()->FindTableNode();
             if((CURSOR_TBLTEXT != eCursorType && CURSOR_SELECTION_IN_TABLE != eCursorType) && pTblNode)
@@ -1272,7 +1292,7 @@ uno::Reference< XTextContent > SAL_CALL SwXParagraphEnumeration::NextElement_Imp
         // the cursor must remain in the current section or a subsection
         // before AND after the movement...
         if( lcl_CursorIsInSection( pUnoCrsr, pOwnStartNode ) &&
-            (bFirstParagraph || bInTable || 
+            (bFirstParagraph || bInTable ||
             (pUnoCrsr->MovePara(fnParaNext, fnParaStart) &&
                 lcl_CursorIsInSection( pUnoCrsr, pOwnStartNode ) ) ) )
         {
@@ -1283,7 +1303,7 @@ uno::Reference< XTextContent > SAL_CALL SwXParagraphEnumeration::NextElement_Imp
 
             SwTableNode* pTblNode = pUnoCrsr->GetNode()->FindTableNode();
             pTblNode = lcl_FindTopLevelTable( /*pUnoCrsr,*/ pTblNode, pOwnTable );
-            if(/*CURSOR_TBLTEXT != eCursorType && CURSOR_SELECTION_IN_TABLE != eCursorType && */ 
+            if(/*CURSOR_TBLTEXT != eCursorType && CURSOR_SELECTION_IN_TABLE != eCursorType && */
                 pTblNode  &&  &pTblNode->GetTable() != pOwnTable)
             {
                 // wir haben es mit einer fremden Tabelle zu tun
