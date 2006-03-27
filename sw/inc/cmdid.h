@@ -4,9 +4,9 @@
  *
  *  $RCSfile: cmdid.h,v $
  *
- *  $Revision: 1.68 $
+ *  $Revision: 1.69 $
  *
- *  last change: $Author: kz $ $Date: 2006-01-06 12:57:44 $
+ *  last change: $Author: obo $ $Date: 2006-03-27 10:11:25 $
  *
  *  The Contents of this file are made available subject to
  *  the terms of GNU Lesser General Public License Version 2.1.
@@ -268,7 +268,7 @@ Achtung: Ab sofort sind in diesem File keine C++-Kommentare (//) mehr
 #define FN_UPDATE_CHARTS			 (FN_EDIT2 + 34) /* update all charts */
 
 #define FN_EDIT_HYPERLINK     		 (FN_EDIT2 + 35) 	/* edit hyperlink */
-#define FN_NUM_CONTINUE              (FN_EDIT2 + 36)    /* continue previous numbering */   
+#define FN_NUM_CONTINUE              (FN_EDIT2 + 36)    /* continue previous numbering */
 /*--------------------------------------------------------------------
     Bereich: Bearbeiten
  --------------------------------------------------------------------*/
@@ -667,7 +667,8 @@ Achtung: Ab sofort sind in diesem File keine C++-Kommentare (//) mehr
 #define FN_GET_SBXCONTROL			 (FN_FORMAT2 + 11)  /* SbxObject rausreichen */
 #define FN_ABSTRACT_NEWDOC           (FN_FORMAT2 + 12)  /* Abstract in neuem Doc */
 #define FN_ABSTRACT_STARIMPRESS      (FN_FORMAT2 + 13)  /* Abstract an StarImpress */
-#define FN_NAME_GROUP                (FN_FORMAT2 + 14)  /* Rename group shapes */
+/* OD 2006-03-09 #i51726# - all drawing objects can be named now. */
+#define FN_NAME_SHAPE                (FN_FORMAT2 + 14)  /* Name shapes */
 
 #define FN_NUMBER_FORMAT		            (FN_FORMAT2 + 120) /* Boxen/NumberFormatter eistellen */
 #define FN_NUMBER_STANDARD		            (FN_FORMAT2 + 121)
