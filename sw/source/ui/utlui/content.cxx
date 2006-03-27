@@ -4,9 +4,9 @@
  *
  *  $RCSfile: content.cxx,v $
  *
- *  $Revision: 1.37 $
+ *  $Revision: 1.38 $
  *
- *  last change: $Author: vg $ $Date: 2006-03-16 12:47:41 $
+ *  last change: $Author: obo $ $Date: 2006-03-27 10:18:48 $
  *
  *  The Contents of this file are made available subject to
  *  the terms of GNU Lesser General Public License Version 2.1.
@@ -216,7 +216,7 @@
 #endif
 
 #include "swabstdlg.hxx" //CHINA001
-#include "globals.hrc" //CHINA001 
+#include "globals.hrc" //CHINA001
 
 #define CTYPE_CNT	0
 #define CTYPE_CTT	1
@@ -558,7 +558,10 @@ void SwContentType::Init(sal_Bool* pbInvalidateWindow)
                 for( sal_uInt32 i=0; i< nCount; i++ )
                 {
                     SdrObject* pTemp = pPage->GetObj(i);
-                    if(pTemp->ISA(SdrObjGroup) && pTemp->GetName().Len())
+                    // --> OD 2006-03-09 #i51726# - all drawing objects can be named now
+//                    if(pTemp->ISA(SdrObjGroup) && pTemp->GetName().Len())
+                    if ( pTemp->GetName().Len() )
+                    // <--
                         nMemberCount++;
                 }
             }
@@ -897,7 +900,10 @@ void	SwContentType::FillMemberList(sal_Bool* pbLevelOrVisibiblityChanged)
                 for( sal_uInt32 i=0; i< nCount; i++ )
                 {
                     SdrObject* pTemp = pPage->GetObj(i);
-                    if(pTemp->ISA(SdrObjGroup) && pTemp->GetName().Len())
+                    // --> OD 2006-03-09 #i51726# - all drawing objects can be named now
+//                    if(pTemp->ISA(SdrObjGroup) && pTemp->GetName().Len())
+                    if ( pTemp->GetName().Len() )
+                    // <--
                     {
                         SwContact* pContact = (SwContact*)pTemp->GetUserCall();
                         long nYPos = 0;
@@ -1129,9 +1135,9 @@ PopupMenu* SwContentTree::CreateContextMenu( void )
         sal_Bool bReadonly = pActiveShell->GetView().GetDocShell()->IsReadOnly();
         sal_Bool bVisible = !((SwContent*)pEntry->GetUserData())->IsInvisible();
         sal_Bool bProtected = ((SwContent*)pEntry->GetUserData())->IsProtect();
-        sal_Bool bEditable = pContType->IsEditable() && 
+        sal_Bool bEditable = pContType->IsEditable() &&
             ((bVisible && !bProtected) ||CONTENT_TYPE_REGION == nContentType);
-        sal_Bool bDeletable = pContType->IsDeletable() && 
+        sal_Bool bDeletable = pContType->IsDeletable() &&
             ((bVisible && !bProtected) ||CONTENT_TYPE_REGION == nContentType);
         sal_Bool bRenamable = bEditable && !bReadonly &&
             (CONTENT_TYPE_TABLE == nContentType ||
@@ -1589,7 +1595,7 @@ sal_Bool SwContentTree::FillTransferData( TransferDataContainer& rTransfer,
                 const SwTxtNode* pTxtNd = pWrtShell->GetOutlineNode(nPos);
                 if( pTxtNd && pOutlRule && pTxtNd->IsNumbered())
                 {
-                    SwNodeNum::tNumberVector aNumVector = 
+                    SwNodeNum::tNumberVector aNumVector =
                         pTxtNd->GetNumberVector();
                     for( sal_Int8 nLevel = 0;
                          nLevel <= pTxtNd->GetLevel();
@@ -2986,7 +2992,7 @@ void SwContentTree::EditEntry(SvLBoxEntry* pEntry, sal_uInt8 nMode)
         //CHINA001 SwRenameXNamedDlg aDlg(this, xNamed, xNameAccess);
         SwAbstractDialogFactory* pFact = SwAbstractDialogFactory::Create();//CHINA001
         DBG_ASSERT(pFact, "SwAbstractDialogFactory fail!");//CHINA001
-                
+
         AbstractSwRenameXNamedDlg* pDlg = pFact->CreateSwRenameXNamedDlg( this, xNamed, xNameAccess,ResId( DLG_RENAME_XNAMED ));
         DBG_ASSERT(pDlg, "Dialogdiet fail!");//CHINA001
         if(xSecond.is())
@@ -3003,7 +3009,7 @@ void SwContentTree::EditEntry(SvLBoxEntry* pEntry, sal_uInt8 nMode)
         }
         pDlg->SetForbiddenChars(sForbiddenChars);//CHINA001 aDlg.SetForbiddenChars(sForbiddenChars);
         pDlg->Execute();//CHINA001 aDlg.Execute();
-        delete pDlg; //CHINA001 
+        delete pDlg; //CHINA001
     }
 }
 
@@ -3085,7 +3091,10 @@ void SwContentTree::GotoContent(SwContent* pCnt)
                 for( sal_uInt32 i=0; i< nCount; i++ )
                 {
                     SdrObject* pTemp = pPage->GetObj(i);
-                    if(pTemp->ISA(SdrObjGroup) && pTemp->GetName() == pCnt->GetName())
+                    // --> OD 2006-03-09 #i51726# - all drawing objects can be named now
+//                    if(pTemp->ISA(SdrObjGroup) && pTemp->GetName() == pCnt->GetName())
+                    if ( pTemp->GetName() == pCnt->GetName() )
+                    // <--
                     {
                         SdrPageView* pPV = pDrawView->GetPageViewPvNum(0);
                         if( pPV )
