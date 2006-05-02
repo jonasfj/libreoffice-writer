@@ -4,9 +4,9 @@
  *
  *  $RCSfile: unotxvw.cxx,v $
  *
- *  $Revision: 1.55 $
+ *  $Revision: 1.56 $
  *
- *  last change: $Author: kz $ $Date: 2005-10-05 13:25:37 $
+ *  last change: $Author: rt $ $Date: 2006-05-02 15:26:05 $
  *
  *  The Contents of this file are made available subject to
  *  the terms of GNU Lesser General Public License Version 2.1.
@@ -1013,7 +1013,7 @@ SfxObjectShellRef SwXTextView::BuildTmpSelectionDoc( SfxObjectShellRef& rRef )
     SfxObjectShellRef xDocSh( pDocSh = new SwDocShell( /*pPrtDoc, */SFX_CREATE_MODE_STANDARD ) );
     xDocSh->DoInitNew( 0 );
     pOldSh->FillPrtDoc(pDocSh->GetDoc(),  pPrt);
-    SfxViewFrame* pDocFrame = SFX_APP()->CreateViewFrame( *xDocSh, 0, TRUE );
+    SfxViewFrame* pDocFrame = SfxViewFrame::CreateViewFrame( *xDocSh, 0, TRUE );
     SwView* pDocView = (SwView*) pDocFrame->GetViewShell();
     pDocView->AttrChangedNotify( &pDocView->GetWrtShell() );//Damit SelectShell gerufen wird.
     SwWrtShell* pSh = pDocView->GetWrtShellPtr();
@@ -1083,7 +1083,7 @@ void SwXTextView::NotifyDBChanged()
 
  ---------------------------------------------------------------------------*/
 
-uno::Reference< beans::XPropertySetInfo > SAL_CALL SwXTextView::getPropertySetInfo(  ) 
+uno::Reference< beans::XPropertySetInfo > SAL_CALL SwXTextView::getPropertySetInfo(  )
     throw (uno::RuntimeException)
 {
     vos::OGuard aGuard( Application::GetSolarMutex() );
@@ -1092,8 +1092,8 @@ uno::Reference< beans::XPropertySetInfo > SAL_CALL SwXTextView::getPropertySetIn
 }
 
 
-void SAL_CALL SwXTextView::setPropertyValue( 
-        const OUString& rPropertyName, const uno::Any& rValue ) 
+void SAL_CALL SwXTextView::setPropertyValue(
+        const OUString& rPropertyName, const uno::Any& rValue )
     throw (beans::UnknownPropertyException, beans::PropertyVetoException, lang::IllegalArgumentException, lang::WrappedTargetException, uno::RuntimeException)
 {
     vos::OGuard aGuard( Application::GetSolarMutex() );
@@ -1129,8 +1129,8 @@ void SAL_CALL SwXTextView::setPropertyValue(
 }
 
 
-uno::Any SAL_CALL SwXTextView::getPropertyValue( 
-        const OUString& rPropertyName ) 
+uno::Any SAL_CALL SwXTextView::getPropertyValue(
+        const OUString& rPropertyName )
     throw (beans::UnknownPropertyException, lang::WrappedTargetException, uno::RuntimeException)
 {
     vos::OGuard aGuard( Application::GetSolarMutex() );
@@ -1151,7 +1151,7 @@ uno::Any SAL_CALL SwXTextView::getPropertyValue(
                 // format document completely in order to get meaningful
                 // values for page count and line count
                 pView->GetWrtShell().CalcLayout();
-                
+
                 sal_Int32 nCount = -1;
                 if (nWID == WID_PAGE_COUNT)
                     nCount = pView->GetDocShell()->GetDoc()->GetPageCount();
@@ -1181,36 +1181,36 @@ uno::Any SAL_CALL SwXTextView::getPropertyValue(
 }
 
 
-void SAL_CALL SwXTextView::addPropertyChangeListener( 
-        const OUString& rPropertyName, 
-        const uno::Reference< beans::XPropertyChangeListener >& rxListener ) 
+void SAL_CALL SwXTextView::addPropertyChangeListener(
+        const OUString& rPropertyName,
+        const uno::Reference< beans::XPropertyChangeListener >& rxListener )
     throw (beans::UnknownPropertyException, lang::WrappedTargetException, uno::RuntimeException)
 {
     DBG_WARNING("not implemented")
 }
 
 
-void SAL_CALL SwXTextView::removePropertyChangeListener( 
-        const OUString& rPropertyName, 
-        const uno::Reference< beans::XPropertyChangeListener >& rxListener ) 
+void SAL_CALL SwXTextView::removePropertyChangeListener(
+        const OUString& rPropertyName,
+        const uno::Reference< beans::XPropertyChangeListener >& rxListener )
     throw (beans::UnknownPropertyException, lang::WrappedTargetException, uno::RuntimeException)
 {
     DBG_WARNING("not implemented")
 }
 
 
-void SAL_CALL SwXTextView::addVetoableChangeListener( 
-        const OUString& rPropertyName, 
-        const uno::Reference< beans::XVetoableChangeListener >& rxListener ) 
+void SAL_CALL SwXTextView::addVetoableChangeListener(
+        const OUString& rPropertyName,
+        const uno::Reference< beans::XVetoableChangeListener >& rxListener )
     throw (beans::UnknownPropertyException, lang::WrappedTargetException, uno::RuntimeException)
 {
     DBG_WARNING("not implemented")
 }
 
 
-void SAL_CALL SwXTextView::removeVetoableChangeListener( 
-        const OUString& rPropertyName, 
-        const uno::Reference< beans::XVetoableChangeListener >& rxListener ) 
+void SAL_CALL SwXTextView::removeVetoableChangeListener(
+        const OUString& rPropertyName,
+        const uno::Reference< beans::XVetoableChangeListener >& rxListener )
     throw (beans::UnknownPropertyException, lang::WrappedTargetException, uno::RuntimeException)
 {
     DBG_WARNING("not implemented")
@@ -1273,12 +1273,12 @@ SwXTextViewCursor::~SwXTextViewCursor()
 // - XTextRange
 // - XLineCursor
 
-sal_Bool SwXTextViewCursor::IsTextSelection( sal_Bool bAllowTables ) const 
+sal_Bool SwXTextViewCursor::IsTextSelection( sal_Bool bAllowTables ) const
 {
 
     sal_Bool bRes = sal_False;
     DBG_ASSERT(pView, "pView is NULL ???");
-    if(pView) 
+    if(pView)
     {
         //! pView->GetShellMode() will only work after the shell
         //! has already changed and thus can not be used here!
@@ -1860,7 +1860,7 @@ OUString SwXTextViewCursor::getString(void) throw( uno::RuntimeException )
         switch(eSelMode)
         {
             //! since setString for SEL_TABLE_TEXT (with possible
-            //! multi selection of cells) would not work properly we 
+            //! multi selection of cells) would not work properly we
             //! will ignore this case for both
             //! functions (setString AND getString) because of symmetrie.
 
@@ -1891,7 +1891,7 @@ void SwXTextViewCursor::setString(const OUString& aString) throw( uno::RuntimeEx
         switch(eSelMode)
         {
             //! since setString for SEL_TABLE_TEXT (with possible
-            //! multi selection of cells) would not work properly we 
+            //! multi selection of cells) would not work properly we
             //! will ignore this case for both
             //! functions (setString AND getString) because of symmetrie.
 
