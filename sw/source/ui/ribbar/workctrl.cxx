@@ -4,9 +4,9 @@
  *
  *  $RCSfile: workctrl.cxx,v $
  *
- *  $Revision: 1.27 $
+ *  $Revision: 1.28 $
  *
- *  last change: $Author: rt $ $Date: 2005-09-09 10:47:33 $
+ *  last change: $Author: rt $ $Date: 2006-05-02 15:22:37 $
  *
  *  The Contents of this file are made available subject to
  *  the terms of GNU Lesser General Public License Version 2.1.
@@ -102,12 +102,14 @@
 #ifndef _SVT_IMAGEITM_HXX
 #include <svtools/imageitm.hxx>
 #endif
-#ifndef _SV_LSTBOX_HXX 
+#ifndef _SV_LSTBOX_HXX
 #include <vcl/lstbox.hxx>
 #endif
 #include <rtl/ustring.hxx>
-#include "swabstdlg.hxx" //CHINA001 
-#include <misc.hrc> //CHINA001 
+#include "swabstdlg.hxx" //CHINA001
+#include <misc.hrc> //CHINA001
+
+#include <vcl/svapp.hxx>
 
 //JP 14.01.99: Size Abpruefung
 #define NAVI_ENTRIES 20
@@ -126,7 +128,7 @@ SFX_IMPL_TOOLBOX_CONTROL( SwTbxAutoTextCtrl, SfxBoolItem );
 /**********************************************************************
 
 **********************************************************************/
-SwTbxInsertCtrl::SwTbxInsertCtrl( 
+SwTbxInsertCtrl::SwTbxInsertCtrl(
     USHORT nSlotId,
     USHORT nId,
     ToolBox& rTbx ) :
@@ -147,14 +149,14 @@ void SAL_CALL SwTbxInsertCtrl::update() throw (::com::sun::star::uno::RuntimeExc
     ToolBox& rTbx = GetToolBox();
     rtl::OUString aSlotURL( RTL_CONSTASCII_USTRINGPARAM( "slot:" ));
     aSlotURL += rtl::OUString::valueOf( sal_Int32( nLastSlotId ));
-    Image aImage = GetImage( m_xFrame, 
+    Image aImage = GetImage( m_xFrame,
                              aSlotURL,
                              hasBigImages(),
                              rTbx.GetDisplayBackground().GetColor().IsDark() );
 
     rTbx.SetItemImage(GetId(), aImage);
     rTbx.Invalidate();
-    
+
     SfxToolBoxControl::update();
 }
 
@@ -181,7 +183,7 @@ void SwTbxInsertCtrl::StateChanged( USHORT nSID,
 
             rtl::OUString aSlotURL( RTL_CONSTASCII_USTRINGPARAM( "slot:" ));
             aSlotURL += rtl::OUString::valueOf( sal_Int32( nId ));
-            Image aImage = GetImage( m_xFrame, 
+            Image aImage = GetImage( m_xFrame,
                                      aSlotURL,
                                      hasBigImages(),
                                      GetToolBox().GetDisplayBackground().GetColor().IsDark() );
