@@ -4,9 +4,9 @@
  *
  *  $RCSfile: cnttab.cxx,v $
  *
- *  $Revision: 1.65 $
+ *  $Revision: 1.66 $
  *
- *  last change: $Author: rt $ $Date: 2006-02-06 10:54:54 $
+ *  last change: $Author: rt $ $Date: 2006-05-02 15:22:08 $
  *
  *  The Contents of this file are made available subject to
  *  the terms of GNU Lesser General Public License Version 2.1.
@@ -71,9 +71,9 @@
 //CHINA001 #ifndef _SVX_BACKGRND_HXX //autogen
 //CHINA001 #include <svx/backgrnd.hxx>
 //CHINA001 #endif
-#include <svx/dialogs.hrc> //CHINA001 
-#include <svx/svxdlg.hxx> //CHINA001 
-#include <svx/flagsdef.hxx>	//CHINA001 
+#include <svx/dialogs.hrc> //CHINA001
+#include <svx/svxdlg.hxx> //CHINA001
+#include <svx/flagsdef.hxx>	//CHINA001
 #ifndef _SVX_SIMPTABL_HXX //autogen wg. SvxSimpleTable
 #include <svx/simptabl.hxx>
 #endif
@@ -125,9 +125,9 @@
 #ifndef _CNTTAB_HXX
 #include <cnttab.hxx>
 #endif
-#ifndef _SWUI_CNTTAB_HXX //CHINA001 
-#include <swuicnttab.hxx> //CHINA001 
-#endif //CHINA001 
+#ifndef _SWUI_CNTTAB_HXX //CHINA001
+#include <swuicnttab.hxx> //CHINA001
+#endif //CHINA001
 #ifndef _FORMEDT_HXX
 #include <formedt.hxx>
 #endif
@@ -203,6 +203,7 @@
 #include "utlui.hrc"
 #endif
 
+#include <sfx2/app.hxx>
 
 using namespace ::com::sun::star::lang;
 using namespace ::com::sun::star::uno;
@@ -456,8 +457,8 @@ SwMultiTOXTabDialog::SwMultiTOXTabDialog(Window* pParent, const SfxItemSet& rSet
             }
         }
     }
-    SfxAbstractDialogFactory* pFact = SfxAbstractDialogFactory::Create(); //CHINA001 
-    DBG_ASSERT(pFact, "Dialogdiet fail!"); //CHINA001 
+    SfxAbstractDialogFactory* pFact = SfxAbstractDialogFactory::Create(); //CHINA001
+    DBG_ASSERT(pFact, "Dialogdiet fail!"); //CHINA001
     AddTabPage(TP_TOX_SELECT, SwTOXSelectTabPage::Create, 0);
     AddTabPage(TP_TOX_STYLES, SwTOXStylesTabPage::Create, 0);
     AddTabPage(TP_COLUMN,	SwColumnPage::Create,  	 0);
@@ -508,7 +509,7 @@ SwMultiTOXTabDialog::~SwMultiTOXTabDialog()
 void	SwMultiTOXTabDialog::PageCreated( sal_uInt16 nId, SfxTabPage &rPage )
 {
     if( TP_BACKGROUND == nId  )
-    { //add CHINA001 
+    { //add CHINA001
         SfxAllItemSet aSet(*(GetInputSetImpl()->GetPool()));
         aSet.Put (SfxUInt32Item(SID_FLAG_TYPE, SVX_SHOW_SELECTOR));
         rPage.PageCreated(aSet);
