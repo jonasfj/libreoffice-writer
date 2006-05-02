@@ -4,9 +4,9 @@
  *
  *  $RCSfile: docglbl.cxx,v $
  *
- *  $Revision: 1.16 $
+ *  $Revision: 1.17 $
  *
- *  last change: $Author: obo $ $Date: 2006-03-29 08:04:42 $
+ *  last change: $Author: rt $ $Date: 2006-05-02 15:17:15 $
  *
  *  The Contents of this file are made available subject to
  *  the terms of GNU Lesser General Public License Version 2.1.
@@ -347,7 +347,7 @@ BOOL SwDoc::SplitDoc( USHORT eDocType, const String& rPath,
                         pDoc->GetSpzFrmFmts()->Count() )
                     {
                         /* SfxViewFrame* pFrame = */
-                            SFX_APP()->CreateViewFrame( *xDocSh, 0, TRUE );
+                            SfxViewFrame::CreateViewFrame( *xDocSh, 0, TRUE );
                     }
                     xDocSh->DoSaveAs( *pTmpMed );
                     xDocSh->DoSaveCompleted( pTmpMed );
@@ -466,7 +466,7 @@ BOOL SwDoc::SplitDoc( USHORT eDocType, const String& rPath,
                         while( pSectNd && pSectNd->GetIndex() >
                                 pSttNd->GetIndex() )
                         {
-                            // #i15712# don't attempt to split sections if 
+                            // #i15712# don't attempt to split sections if
                             // they are fully enclosed in [pSectNd,aEndIdx].
                             if( aEndIdx < pSectNd->EndOfSectionIndex() )
                             {
@@ -481,7 +481,7 @@ BOOL SwDoc::SplitDoc( USHORT eDocType, const String& rPath,
                         // -> #i26762#
                         // Ensure order of start and end of section is sane.
                         SwNodeIndex aStartIdx(*pSttNd);
-                        
+
                         if (aEndIdx >= aStartIdx)
                             pSectNd = GetNodes().InsertSection
                                 (aStartIdx, *pFmt, aSect, &aEndIdx, FALSE );
