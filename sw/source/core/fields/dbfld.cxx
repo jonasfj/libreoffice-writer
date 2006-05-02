@@ -4,9 +4,9 @@
  *
  *  $RCSfile: dbfld.cxx,v $
  *
- *  $Revision: 1.21 $
+ *  $Revision: 1.22 $
  *
- *  last change: $Author: rt $ $Date: 2006-02-09 13:43:54 $
+ *  last change: $Author: rt $ $Date: 2006-05-02 15:17:32 $
  *
  *  The Contents of this file are made available subject to
  *  the terms of GNU Lesser General Public License Version 2.1.
@@ -353,8 +353,11 @@ String SwDBField::GetCntnt(BOOL bName) const
     if(bName)
     {
         const String& rDBName = ((SwDBFieldType*)GetTyp())->GetName();
-        String sContent( SFX_APP()->LocalizeDBName(INI2NATIONAL,
-                                            rDBName.GetToken(0, DB_DELIM)));
+        //TODO/CLEANUP
+        //Funktion tut nichts!
+        //String sContent( SFX_APP()->LocalizeDBName(INI2NATIONAL,
+        //                                    rDBName.GetToken(0, DB_DELIM)));
+        String sContent( rDBName.GetToken(0, DB_DELIM) );
 
         if (sContent.Len() > 1)
         {
@@ -534,7 +537,7 @@ BOOL SwDBField::PutValue( const com::sun::star::uno::Any& rAny, BYTE nMId )
             SetSubType(GetSubType()|SUB_OWN_FMT);
         break;
     case FIELD_PROP_BOOL2:
-    {    
+    {
         USHORT nSubType = GetSubType();
         sal_Bool bVisible;
         if(!(rAny >>= bVisible))
@@ -544,9 +547,9 @@ BOOL SwDBField::PutValue( const com::sun::star::uno::Any& rAny, BYTE nMId )
         else
             nSubType |= SUB_INVISIBLE;
         SetSubType(nSubType);
-        //invalidate text node 
+        //invalidate text node
         if(GetTyp())
-        {        
+        {
             SwClientIter aIter( *GetTyp() );
             SwFmtFld* pFld = (SwFmtFld*)aIter.First( TYPE( SwFmtFld ));
             while(pFld)
@@ -607,8 +610,8 @@ SwDBData SwDBNameInfField::GetDBData(SwDoc* pDoc)
 
 // #111840#
 void SwDBNameInfField::SetDBData(const SwDBData & rDBData)
-{ 
-    aDBData = rDBData; 
+{
+    aDBData = rDBData;
 }
 
 //------------------------------------------------------------------------------
@@ -676,7 +679,7 @@ BOOL SwDBNameInfField::PutValue( const com::sun::star::uno::Any& rAny, BYTE nMId
         rAny >>= aDBData.nCommandType;
         break;
     case FIELD_PROP_BOOL2:
-    {    
+    {
         USHORT nSubType = GetSubType();
         sal_Bool bVisible;
         if(!(rAny >>= bVisible))
