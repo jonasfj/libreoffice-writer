@@ -4,9 +4,9 @@
  *
  *  $RCSfile: _textsh.sdi,v $
  *
- *  $Revision: 1.35 $
+ *  $Revision: 1.36 $
  *
- *  last change: $Author: rt $ $Date: 2006-02-06 17:18:24 $
+ *  last change: $Author: rt $ $Date: 2006-05-02 15:15:48 $
  *
  *  The Contents of this file are made available subject to
  *  the terms of GNU Lesser General Public License Version 2.1.
@@ -32,7 +32,7 @@
  *    MA  02111-1307  USA
  *
  ************************************************************************/
-interface BaseText : Selection
+interface BaseText
 [
     Automation = FALSE;
 ]
@@ -226,25 +226,25 @@ interface BaseText : Selection
         StateMethod = NoState ;
         DisableFlags="SW_DISABLE_ON_PROTECTED_CURSOR";
     ]
-    SID_INSERT_RLM 
+    SID_INSERT_RLM
     [
         ExecMethod = ExecInsert ;
         StateMethod = GetState ;
         DisableFlags="SW_DISABLE_ON_PROTECTED_CURSOR";
     ]
-    SID_INSERT_LRM         
+    SID_INSERT_LRM
     [
         ExecMethod = ExecInsert ;
         StateMethod = GetState ;
         DisableFlags="SW_DISABLE_ON_PROTECTED_CURSOR";
     ]
-    SID_INSERT_ZWSP         
+    SID_INSERT_ZWSP
     [
         ExecMethod = ExecInsert ;
         StateMethod = GetState ;
         DisableFlags="SW_DISABLE_ON_PROTECTED_CURSOR";
     ]
-    SID_INSERT_ZWNBSP                
+    SID_INSERT_ZWNBSP
     [
         ExecMethod = ExecInsert ;
         StateMethod = GetState ;
@@ -1454,7 +1454,7 @@ interface BaseText : Selection
     [
         ExecMethod = Execute ;
         StateMethod = GetState ;
-    ]                
+    ]
     SID_OPEN_XML_FILTERSETTINGS // ole : no, status : ?
     [
         ExecMethod = Execute ;
