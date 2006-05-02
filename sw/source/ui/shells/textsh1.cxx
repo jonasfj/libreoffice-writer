@@ -4,9 +4,9 @@
  *
  *  $RCSfile: textsh1.cxx,v $
  *
- *  $Revision: 1.49 $
+ *  $Revision: 1.50 $
  *
- *  last change: $Author: rt $ $Date: 2006-02-06 17:24:59 $
+ *  last change: $Author: rt $ $Date: 2006-05-02 15:23:30 $
  *
  *  The Contents of this file are made available subject to
  *  the terms of GNU Lesser General Public License Version 2.1.
@@ -249,11 +249,13 @@
 #ifndef _DOC_HXX
 #include <doc.hxx>
 #endif
+#include <vcl/svapp.hxx>
+#include <sfx2/app.hxx>
 
 #include <svx/acorrcfg.hxx>
 #include "swabstdlg.hxx" //CHINA001
 #include "misc.hrc" //CHINA001
-#include "chrdlg.hrc" //CHINA001 
+#include "chrdlg.hrc" //CHINA001
 /*--------------------------------------------------------------------
     Beschreibung:
  --------------------------------------------------------------------*/
@@ -359,7 +361,7 @@ void SwTextShell::Execute(SfxRequest &rReq)
             //CHINA001 SwFootNoteOptionDlg *pDlg = new SwFootNoteOptionDlg(GetView().GetWindow(), rWrtSh);
             SwAbstractDialogFactory* pFact = SwAbstractDialogFactory::Create();//CHINA001
             DBG_ASSERT(pFact, "SwAbstractDialogFactory fail!");//CHINA001
-                    
+
             VclAbstractDialog* pDlg = pFact->CreateSwFootNoteOptionDlg( GetView().GetWindow(), rWrtSh,ResId( DLG_DOC_FOOTNOTE ));
             DBG_ASSERT(pDlg, "Dialogdiet fail!");//CHINA001
             pDlg->Execute();
@@ -407,7 +409,7 @@ void SwTextShell::Execute(SfxRequest &rReq)
                 //CHINA001 SwBreakDlg *pDlg = new SwBreakDlg(GetView().GetWindow(), rWrtSh);
                 SwAbstractDialogFactory* pFact = SwAbstractDialogFactory::Create();//CHINA001
                 DBG_ASSERT(pFact, "SwAbstractDialogFactory fail!");//CHINA001
-                        
+
                 AbstractSwBreakDlg* pDlg = pFact->CreateSwBreakDlg( GetView().GetWindow(), rWrtSh,ResId( DLG_BREAK ));
                 DBG_ASSERT(pDlg, "Dialogdiet fail!");//CHINA001
                 if ( pDlg->Execute() == RET_OK )
@@ -458,7 +460,7 @@ void SwTextShell::Execute(SfxRequest &rReq)
                 //CHINA001 pDlg->Execute();
                 SwAbstractDialogFactory* pFact = SwAbstractDialogFactory::Create();//CHINA001
                 DBG_ASSERT(pFact, "SwAbstractDialogFactory fail!");//CHINA001
-        
+
                 VclAbstractDialog* pDlg = pFact->CreateSwInsertBookmarkDlg( GetView().GetWindow(), rWrtSh, rReq,ResId( DLG_INSERT_BOOKMARK ));
                 DBG_ASSERT(pDlg, "Dialogdiet fail!");//CHINA001
                 pDlg->Execute();
@@ -489,7 +491,7 @@ void SwTextShell::Execute(SfxRequest &rReq)
             //CHINA001 SwModalRedlineAcceptDlg aDlg(&GetView().GetEditWin());
             SwAbstractDialogFactory* pFact = SwAbstractDialogFactory::Create();//CHINA001
             DBG_ASSERT(pFact, "SwAbstractDialogFactory fail!");//CHINA001
-                    
+
             AbstractSwModalRedlineAcceptDlg* pDlg = pFact->CreateSwModalRedlineAcceptDlg( &GetView().GetEditWin(),ResId( DLG_MOD_REDLINE_ACCEPT ));
             DBG_ASSERT(pDlg, "Dialogdiet fail!");//CHINA001
 
@@ -514,7 +516,7 @@ void SwTextShell::Execute(SfxRequest &rReq)
                     rReq.Done();
                     break;
             }
-            delete pDlg; //CHINA001 
+            delete pDlg; //CHINA001
         }
         break;
 
@@ -555,7 +557,7 @@ void SwTextShell::Execute(SfxRequest &rReq)
             //CHINA001 SwSortDlg *pDlg = new SwSortDlg(GetView().GetWindow(), rWrtSh );
             SwAbstractDialogFactory* pFact = SwAbstractDialogFactory::Create();//CHINA001
             DBG_ASSERT(pFact, "SwAbstractDialogFactory fail!");//CHINA001
-                    
+
             VclAbstractDialog* pDlg = pFact->CreateVclAbstractDialog( GetView().GetWindow(), rWrtSh,ResId( DLG_SORTING ));
             DBG_ASSERT(pDlg, "Dialogdiet fail!");//CHINA001
             pDlg->Execute();
@@ -571,7 +573,7 @@ void SwTextShell::Execute(SfxRequest &rReq)
             DBG_ASSERT(pFact, "Dialogdiet fail!");//CHINA001
             SfxAbstractTabDialog* pDlg = pFact->CreateSwTabDialog( ResId(DLG_TAB_OUTLINE),
                                                         GetView().GetWindow(), &aTmp, rWrtSh);
-            DBG_ASSERT(pDlg, "Dialogdiet fail!");//CHINA001			
+            DBG_ASSERT(pDlg, "Dialogdiet fail!");//CHINA001
             pDlg->Execute();
             delete pDlg;
             rReq.Done();
