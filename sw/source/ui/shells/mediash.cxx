@@ -4,9 +4,9 @@
  *
  *  $RCSfile: mediash.cxx,v $
  *
- *  $Revision: 1.5 $
+ *  $Revision: 1.6 $
  *
- *  last change: $Author: rt $ $Date: 2005-09-09 10:52:03 $
+ *  last change: $Author: rt $ $Date: 2006-05-02 15:23:03 $
  *
  *  The Contents of this file are made available subject to
  *  the terms of GNU Lesser General Public License Version 2.1.
@@ -171,13 +171,12 @@
 #define SwMediaShell
 #include "itemdef.hxx"
 #include "swslots.hxx"
-#include "swabstdlg.hxx" //CHINA001 
+#include "swabstdlg.hxx" //CHINA001
 
 SFX_IMPL_INTERFACE(SwMediaShell, SwBaseShell, SW_RES(STR_SHELLNAME_MEDIA))
 {
     SFX_POPUPMENU_REGISTRATION(SW_RES(MN_MEDIA_POPUPMENU));
     SFX_OBJECTBAR_REGISTRATION(SFX_OBJECTBAR_OBJECT, SW_RES(RID_MEDIA_TOOLBOX));
-    //SFX_OBJECTMENU_REGISTRATION(SID_OBJECTMENU0, SW_RES(MN_OBJECTMENU_GRAFIK));
 }
 
 // ------------------------------------------------------------------------------
@@ -186,7 +185,7 @@ void SwMediaShell::ExecMedia(SfxRequest &rReq)
 {
     SwWrtShell* pSh = &GetShell();
     SdrView*	pSdrView = pSh->GetDrawView();
-    
+
     if( pSdrView )
     {
         const SfxItemSet*   pArgs = rReq.GetArgs();
@@ -194,7 +193,7 @@ void SwMediaShell::ExecMedia(SfxRequest &rReq)
         BOOL                bChanged = pSdrView->GetModel()->IsChanged();
 
         pSdrView->GetModel()->SetChanged( FALSE );
-        
+
         switch( nSlotId )
         {
             case SID_DELETE:
@@ -203,40 +202,40 @@ void SwMediaShell::ExecMedia(SfxRequest &rReq)
                 {
                     pSh->SetModified();
                     pSh->DelSelectedObj();
-                    
+
                     if( pSh->IsSelFrmMode() )
                         pSh->LeaveSelFrmMode();
-                    
+
                     GetView().AttrChangedNotify( pSh );
                 }
             }
             break;
-            
+
             case( SID_AVMEDIA_TOOLBOX ):
             {
                 if( pSh->IsObjSelected() )
                 {
                     const SfxPoolItem*	pItem;
                     USHORT				nSlot = rReq.GetSlot();
-                    
+
                     if( !pArgs || ( SFX_ITEM_SET != pArgs->GetItemState( SID_AVMEDIA_TOOLBOX, FALSE, &pItem ) ) )
                         pItem = NULL;
-                        
+
                     if( pItem )
                     {
                         SdrMarkList* pMarkList = new SdrMarkList( pSdrView->GetMarkedObjectList() );
-            
+
                         if( 1 == pMarkList->GetMarkCount() )
                         {
                             SdrObject* pObj = pMarkList->GetMark( 0 )->GetObj();
-            
+
                             if( pObj && pObj->ISA( SdrMediaObj ) )
                             {
-                                static_cast< sdr::contact::ViewContactOfSdrMediaObj& >( pObj->GetViewContact() ).executeMediaItem( 
+                                static_cast< sdr::contact::ViewContactOfSdrMediaObj& >( pObj->GetViewContact() ).executeMediaItem(
                                     static_cast< const ::avmedia::MediaItem& >( *pItem ) );
                             }
                         }
-                        
+
                         delete pMarkList;
                     }
                 }
@@ -263,33 +262,33 @@ void SwMediaShell::GetMediaState(SfxItemSet &rSet)
 
     while( nWhich )
     {
-        if( SID_AVMEDIA_TOOLBOX == nWhich ) 
+        if( SID_AVMEDIA_TOOLBOX == nWhich )
         {
             SwWrtShell&	rSh = GetShell();
             SdrView*	pView = rSh.GetDrawView();
             bool		bDisable = true;
-            
+
             if( pView )
             {
                 SdrMarkList* pMarkList = new SdrMarkList( pView->GetMarkedObjectList() );
-    
+
                 if( 1 == pMarkList->GetMarkCount() )
                 {
                     SdrObject* pObj = pMarkList->GetMark( 0 )->GetObj();
-    
+
                     if( pObj && pObj->ISA( SdrMediaObj ) )
                     {
                         ::avmedia::MediaItem aItem( SID_AVMEDIA_TOOLBOX );
-                        
+
                         static_cast< sdr::contact::ViewContactOfSdrMediaObj& >( pObj->GetViewContact() ).updateMediaItem( aItem );
                         rSet.Put( aItem );
                         bDisable = false;
                     }
                 }
-    
+
                 if( bDisable )
                     rSet.DisableItem( SID_AVMEDIA_TOOLBOX );
-                    
+
                 delete pMarkList;
             }
         }
