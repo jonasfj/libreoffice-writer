@@ -4,9 +4,9 @@
  *
  *  $RCSfile: poolfmt.cxx,v $
  *
- *  $Revision: 1.40 $
+ *  $Revision: 1.41 $
  *
- *  last change: $Author: vg $ $Date: 2006-04-07 15:08:47 $
+ *  last change: $Author: rt $ $Date: 2006-05-04 09:15:00 $
  *
  *  The Contents of this file are made available subject to
  *  the terms of GNU Lesser General Public License Version 2.1.
@@ -676,8 +676,6 @@ SwTxtFmtColl* SwDoc::GetTxtCollFromPool
     case RES_POOLCOLL_TABLE_HDLN:
         {
             SetAllScriptItem( aSet, SvxWeightItem( WEIGHT_BOLD ) );
-            if( !IsHTMLMode() )
-                SetAllScriptItem( aSet, SvxPostureItem( ITALIC_NORMAL ) );
             aSet.Put( SvxAdjustItem( SVX_ADJUST_CENTER ) );
             SwFmtLineNumber aLN; aLN.SetCountLines( FALSE );
             aSet.Put( aLN );
@@ -1298,12 +1296,12 @@ SwFmt* SwDoc::GetFmtFromPool( USHORT nId, String* pDesc,
         switch (nId & (COLL_GET_RANGE_BITS + POOLGRP_NOCOLLID) )
         {
         case POOLGRP_CHARFMT:
-            pNewFmt = MakeCharFmt(aNm, 
+            pNewFmt = MakeCharFmt(aNm,
                                   reinterpret_cast<SwCharFmt *>(pDeriveFmt));
 
             break;
         case POOLGRP_FRAMEFMT:
-            pNewFmt = MakeFrmFmt(aNm, 
+            pNewFmt = MakeFrmFmt(aNm,
                                  reinterpret_cast<SwFrmFmt *>(pDeriveFmt));
 
             break;
@@ -1621,7 +1619,7 @@ SwPageDesc* SwDoc::GetPageDescFromPool( USHORT nId, String* pDesc,
     else
     {
         BOOL bIsModified = IsModified();
-        
+
         BOOL bDoesUndo = DoesUndo();
         DoUndo(FALSE);
         n = MakePageDesc( aNm, 0, bRegardLanguage );
