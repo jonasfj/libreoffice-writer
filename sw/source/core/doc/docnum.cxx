@@ -4,9 +4,9 @@
  *
  *  $RCSfile: docnum.cxx,v $
  *
- *  $Revision: 1.55 $
+ *  $Revision: 1.56 $
  *
- *  last change: $Author: vg $ $Date: 2006-03-31 09:50:38 $
+ *  last change: $Author: rt $ $Date: 2006-05-05 09:14:14 $
  *
  *  The Contents of this file are made available subject to
  *  the terms of GNU Lesser General Public License Version 2.1.
@@ -520,7 +520,7 @@ BOOL SwDoc::MoveOutlinePara( const SwPaM& rPam, short nOffset )
         if( --nAktPos )
             aSttRg = *GetNodes().GetOutLineNds()[ nAktPos ];
         else if( 0 > nOffset )
-            return FALSE; // Promoting at the top of document?! 
+            return FALSE; // Promoting at the top of document?!
         else
             aSttRg = *GetNodes().GetEndOfContent().StartOfSectionNode();
     }
@@ -529,7 +529,7 @@ BOOL SwDoc::MoveOutlinePara( const SwPaM& rPam, short nOffset )
     // the moving range or not. Normally it will be a sub outline of our chapter
     // and has to be moved, too. But if the chapter ends with a table(or a section end),
     // the next text node will be choosen and this could be the next outline of the same level.
-    // The criteria has to be the outline level: sub level => incorporate, same/higher level => no. 
+    // The criteria has to be the outline level: sub level => incorporate, same/higher level => no.
     if( GetNodes().GetOutLineNds().Seek_Entry( pEndSrch, &nTmpPos ) )
     {
         if( !pEndSrch->IsTxtNode() || pEndSrch == pSrch ||
@@ -547,7 +547,7 @@ BOOL SwDoc::MoveOutlinePara( const SwPaM& rPam, short nOffset )
         ASSERT( false, "Moving outlines: Surprising selection" );
         aEndRg++;
     }
-    
+
     const SwNode* pNd;
     // The following code corrects the range to handle sections (start/end nodes)
     // The range will be extended if the least node before the range is a start node
@@ -575,7 +575,7 @@ BOOL SwDoc::MoveOutlinePara( const SwPaM& rPam, short nOffset )
         aEndRg--;
     }
     aEndRg++;
-    
+
     // calculation of the new position
     if( nOffset < 0 && nAktPos < USHORT(-nOffset) )
         pNd = GetNodes().GetEndOfContent().StartOfSectionNode();
@@ -585,7 +585,7 @@ BOOL SwDoc::MoveOutlinePara( const SwPaM& rPam, short nOffset )
         pNd = GetNodes().GetOutLineNds()[ nAktPos + nOffset ];
 
     ULONG nNewPos = pNd->GetIndex();
-    
+
     // And now a correction of the insert position if necessary...
     SwNodeIndex aInsertPos( *pNd, -1 );
     while( aInsertPos.GetNode().IsStartNode() )
@@ -945,11 +945,20 @@ void lcl_ChgNumRule( SwDoc& rDoc, const SwNumRule& rRule, SwHistory* pHist,
             nChgFmtLevel |= nMask;
     }
 
-    if( !nChgFmtLevel )			// es wurde nichts veraendert?
+    if( !nChgFmtLevel )         // es wurde nichts veraendert?
     {
+        // --> OD 2006-04-27 #i64311#
+        const bool bInvalidateNumRule( pOld->IsContinusNum() != rRule.IsContinusNum() );
+        // <--
         pOld->CheckCharFmts( &rDoc );
         pOld->SetContinusNum( rRule.IsContinusNum() );
         pOld->SetRuleType( rRule.GetRuleType() );
+        // --> OD 2006-04-27 #i64311#
+        if ( bInvalidateNumRule )
+        {
+            pOld->SetInvalidRule(TRUE);
+        }
+        // <--
         return ;
     }
 
@@ -1931,7 +1940,7 @@ BOOL SwDoc::MoveParagraph( const SwPaM& rPam, long nOffset, BOOL bIsOutlMv )
         }
         pTmp1 = pTmp1->FindStartNode();
         if( pTmp1->GetIndex() >= nStIdx )
-            return FALSE; // A start node which ends behind the moved area => no. 
+            return FALSE; // A start node which ends behind the moved area => no.
     }
 
     ULONG nInStIdx, nInEndIdx;
@@ -1953,7 +1962,7 @@ BOOL SwDoc::MoveParagraph( const SwPaM& rPam, long nOffset, BOOL bIsOutlMv )
 
     if( nEndIdx >= GetNodes().GetEndOfContent().GetIndex() )
         return FALSE;
-    
+
     if( !bIsOutlMv )
     {   // And here the restrictions for moving paragraphs other than chapters (outlines)
         // The plan is to exchange [nStIdx,nInEndIdx] and [nStartIdx,nEndIdx]
@@ -1985,7 +1994,7 @@ BOOL SwDoc::MoveParagraph( const SwPaM& rPam, long nOffset, BOOL bIsOutlMv )
         if( pTmp1 != pTmp2 )
             return FALSE; // The "end" notes are in different sections
     }
-    
+
     // auf Redlining testen - darf die Selektion ueberhaupt verschoben
     // werden?
     if( !IsIgnoreRedline() )
@@ -2216,7 +2225,7 @@ SetRedlineMode( eOld );
         // i57907: Under circumstances (sections at the end of a chapter)
         // the rPam.Start() is not moved to the new position.
         // But aIdx should be at the new end position and as long as the number of moved paragraphs
-        // is nMoved, I know, where the new position is. 
+        // is nMoved, I know, where the new position is.
         pUndo->SetStartNode( aIdx.GetIndex() - nMoved );
         AppendUndo( pUndo );
     }
