@@ -4,9 +4,9 @@
  *
  *  $RCSfile: edtwin.cxx,v $
  *
- *  $Revision: 1.131 $
+ *  $Revision: 1.132 $
  *
- *  last change: $Author: rt $ $Date: 2006-05-05 08:08:54 $
+ *  last change: $Author: rt $ $Date: 2006-05-05 09:15:28 $
  *
  *  The Contents of this file are made available subject to
  *  the terms of GNU Lesser General Public License Version 2.1.
@@ -854,12 +854,12 @@ BOOL SwEditWin::IsInputSequenceCheckingRequired( const String &rText, const SwPa
     }
 
     xub_StrLen nFirstPos = rCrsr.Start()->nContent.GetIndex();
-    BOOL bIsSequenceChecking =  
+    BOOL bIsSequenceChecking =
         rCTLOptions.IsCTLFontEnabled() &&
-        rCTLOptions.IsCTLSequenceChecking() && 
+        rCTLOptions.IsCTLSequenceChecking() &&
         nFirstPos != 0 && /* first char needs not to be checked */
         (0 <= nCTLScriptPos && nCTLScriptPos <= rText.Len());
-    
+
     return bIsSequenceChecking;
 }
 
@@ -883,7 +883,7 @@ void SwEditWin::FlushInBuffer()
             //
 
             rSh.Push(); // push current cursor to stack
-            
+
             // get text from the beginning (i.e left side) of current selection
             // to the start of the paragraph
             rSh.NormalizePam();     // make point be the first (left) one
@@ -893,14 +893,14 @@ void SwEditWin::FlushInBuffer()
             String aLeftText( rSh.GetCrsr()->GetTxt() );
 
             SvtCTLOptions& rCTLOptions = SW_MOD()->GetCTLOptions();
-            
+
             xub_StrLen nExpandSelection = 0;
             if (aLeftText.Len() > 0)
             {
                 sal_Unicode cChar = '\0';
 
                 xub_StrLen nTmpPos = aLeftText.Len();
-                sal_Int16 nCheckMode = rCTLOptions.IsCTLSequenceCheckingRestricted() ? 
+                sal_Int16 nCheckMode = rCTLOptions.IsCTLSequenceCheckingRestricted() ?
                         i18n::InputSequenceCheckMode::STRICT : i18n::InputSequenceCheckMode::BASIC;
 
                 rtl::OUString aOldText( aLeftText );
@@ -1912,18 +1912,45 @@ KEYINPUT_CHECKTABLE_INSDEL:
                             }
                             // <- #i23725#
                             // --> OD 2006-01-31 #b6341339#, #i58776#
-                            // In this situation method <SwEditShell::NumOrNoNum(..)>
+                            // --> OD 2006-04-21 #i63540#
+                            // revise fix for issues b6341339 and i58776:
+                            // If the cursor is in an empty paragraph, which has
+                            // a numbering, but not the oultine numbering, and
+                            // there is no selection, the numbering has to be
+                            // deleted on key <Backspace>.
+                            // Otherwise method <SwEditShell::NumOrNoNum(..)>
                             // should only change the <IsCounted()> state of
                             // the current paragraph depending of the key.
                             // On <backspace> it is set to <false>,
                             // on <shift-backspace> it is set to <true>.
-                            // No switching on or off of the numbering at the
-                            // current paragraph is intended here.
                             // Thus, assure that method <SwEditShell::NumOrNum(..)>
                             // is only called for the intended purpose.
-                            if ( !bDone &&
-                                 ( ( !rSh.IsNoNum() && bOnlyBackspaceKey ) ||
-                                   ( rSh.IsNoNum() && !bOnlyBackspaceKey ) ) &&
+                            bool bCallNumOrNoNum( false );
+                            {
+                                if ( !bDone )
+                                {
+                                    if ( bOnlyBackspaceKey && !rSh.IsNoNum() )
+                                    {
+                                        bCallNumOrNoNum = true;
+                                    }
+                                    else if ( !bOnlyBackspaceKey && rSh.IsNoNum() )
+                                    {
+                                        bCallNumOrNoNum = true;
+                                    }
+                                    else if ( bOnlyBackspaceKey &&
+                                              rSh.IsSttPara() && rSh.IsEndPara() &&
+                                              !rSh.HasSelection() )
+                                    {
+                                        const SwNumRule* pCurrNumRule( rSh.GetCurNumRule() );
+                                        if ( pCurrNumRule &&
+                                             pCurrNumRule != rSh.GetOutlineNumRule() )
+                                        {
+                                            bCallNumOrNoNum = true;
+                                        }
+                                    }
+                                }
+                            }
+                            if ( bCallNumOrNoNum &&
                                  rSh.NumOrNoNum( !bOnlyBackspaceKey, TRUE ) )
                             {
                                 eKeyState = KS_NumOrNoNum;
@@ -2252,7 +2279,7 @@ KEYINPUT_CHECKTABLE_INSDEL:
                 aInBuffer.Expand( aInBuffer.Len() + 1, ' ' );
             }
 
-            
+
             BOOL bIsAutoCorrectChar = SvxIsAutoCorrectChar( aCh );
             if( !aKeyEvent.GetRepeat() && pACorr && bIsAutoCorrectChar &&
                     pACfg->IsAutoFmtByInput() &&
@@ -2552,7 +2579,7 @@ void SwEditWin::RstMBDownFlags()
 void SwEditWin::MouseButtonDown(const MouseEvent& _rMEvt)
 {
     SwWrtShell &rSh = rView.GetWrtShell();
-    
+
     // We have to check if a context menu is shown and we have an UI
     // active inplace client. In that case we have to ignore the mouse
     // button down event. Otherwise we would crash (context menu has been
@@ -4415,7 +4442,7 @@ SwEditWin::SwEditWin(Window *pParent, SwView &rMyView):
     eBufferLanguage(LANGUAGE_DONTKNOW),
     bLockInput(FALSE),
     nKS_NUMDOWN_Count(0), // #i23725#
-    nKS_NUMINDENTINC_Count(0) // #i23725#    
+    nKS_NUMINDENTINC_Count(0) // #i23725#
 {
     SetHelpId(HID_EDIT_WIN);
     EnableChildTransparentMode();
@@ -4589,8 +4616,8 @@ void SwEditWin::Command( const CommandEvent& rCEvt )
         return;
     }
 
-    // The command event is send to the window after a possible context 
-    // menu from an inplace client has been closed. Now we have the chance 
+    // The command event is send to the window after a possible context
+    // menu from an inplace client has been closed. Now we have the chance
     // to deactivate the inplace client without any problem regarding parent
     // windows and code on the stack.
     // For more information, see #126086# and #128122#
