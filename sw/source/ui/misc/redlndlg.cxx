@@ -4,9 +4,9 @@
  *
  *  $RCSfile: redlndlg.cxx,v $
  *
- *  $Revision: 1.20 $
+ *  $Revision: 1.21 $
  *
- *  last change: $Author: vg $ $Date: 2006-04-07 15:19:46 $
+ *  last change: $Author: hr $ $Date: 2006-05-08 14:54:50 $
  *
  *  The Contents of this file are made available subject to
  *  the terms of GNU Lesser General Public License Version 2.1.
@@ -143,31 +143,31 @@ SFX_IMPL_MODELESSDIALOG( SwRedlineAcceptChild, FN_REDLINE_ACCEPT )
 //CHINA001 const SwRedlineDataChild*	pNext;		// Verweis auf gestackte Daten
 //CHINA001 SvLBoxEntry*				pTLBChild;	// zugehoeriger TreeListBox-Eintrag
 //CHINA001 };
-//CHINA001 
+//CHINA001
 //CHINA001 struct SwRedlineDataParent
 //CHINA001 {
 //CHINA001 const SwRedlineData*		pData;		// RedlineDataPtr
 //CHINA001 const SwRedlineDataChild*	pNext;		// Verweis auf gestackte Daten
 //CHINA001 SvLBoxEntry*				pTLBParent;	// zugehoeriger TreeListBox-Eintrag
 //CHINA001 String						sComment;	// Redline-Kommentar
-//CHINA001 
+//CHINA001
 //CHINA001 inline BOOL	operator==( const SwRedlineDataParent& rObj ) const
 //CHINA001 { return (pData && pData->GetSeqNo() == rObj.pData->GetSeqNo()); }
 //CHINA001 inline BOOL	operator< ( const SwRedlineDataParent& rObj ) const
 //CHINA001 { return (pData && pData->GetSeqNo() <  rObj.pData->GetSeqNo()); }
 //CHINA001 };
-//CHINA001 
+//CHINA001
 //CHINA001 typedef SwRedlineDataParent* SwRedlineDataParentPtr;
 //CHINA001 SV_DECL_PTRARR_DEL(SwRedlineDataParentArr, SwRedlineDataParentPtr, 10, 20)
 SV_IMPL_PTRARR(SwRedlineDataParentArr, SwRedlineDataParentPtr)
-//CHINA001 
+//CHINA001
 //CHINA001 SV_DECL_PTRARR_SORT(SwRedlineDataParentSortArr, SwRedlineDataParentPtr, 10, 20)
 SV_IMPL_OP_PTRARR_SORT(SwRedlineDataParentSortArr, SwRedlineDataParentPtr)
-//CHINA001 
+//CHINA001
 //CHINA001 typedef SwRedlineDataChild* SwRedlineDataChildPtr;
 //CHINA001 SV_DECL_PTRARR_DEL(SwRedlineDataChildArr, SwRedlineDataChildPtr, 4, 4)
 SV_IMPL_PTRARR(SwRedlineDataChildArr, SwRedlineDataChildPtr)
-//CHINA001 
+//CHINA001
 //CHINA001 typedef SvLBoxEntry* SvLBoxEntryPtr;
 //CHINA001 SV_DECL_PTRARR(SvLBoxEntryArr, SvLBoxEntryPtr, 100, 100)
 SV_IMPL_PTRARR(SvLBoxEntryArr, SvLBoxEntryPtr)
@@ -204,10 +204,10 @@ static BOOL   bSortDir = TRUE;
 //CHINA001 BOOL						bOnlyFormatedRedlines;
 //CHINA001 BOOL					bHasReadonlySel;
 //CHINA001 BOOL					bRedlnAutoFmt;
-//CHINA001 
+//CHINA001
 //CHINA001 // prevent update dialog data during longer operations (cf #102657#)
 //CHINA001 bool                    bInhibitActivate;
-//CHINA001 
+//CHINA001
 //CHINA001 DECL_LINK( AcceptHdl,		void* );
 //CHINA001 DECL_LINK( AcceptAllHdl,	void* );
 //CHINA001 DECL_LINK( RejectHdl,		void* );
@@ -217,32 +217,32 @@ static BOOL   bSortDir = TRUE;
 //CHINA001 DECL_LINK( SelectHdl,		void* );
 //CHINA001 DECL_LINK( GotoHdl,			void* );
 //CHINA001 DECL_LINK( CommandHdl,		void* );
-//CHINA001 
+//CHINA001
 //CHINA001 USHORT			CalcDiff(USHORT nStart, BOOL bChild);
 //CHINA001 void			InsertChilds(SwRedlineDataParent *pParent, const SwRedline& rRedln, const USHORT nAutoFmt);
 //CHINA001 void			InsertParents(USHORT nStart, USHORT nEnd = USHRT_MAX);
 //CHINA001 void			RemoveParents(USHORT nStart, USHORT nEnd);
 //CHINA001 void			InitAuthors();
-//CHINA001 
+//CHINA001
 //CHINA001 String			GetRedlineText(const SwRedline& rRedln, DateTime &rDateTime, USHORT nStack = 0);
 //CHINA001 const String&	GetActionText(const SwRedline& rRedln, USHORT nStack = 0);
 //CHINA001 USHORT			GetRedlinePos( const SvLBoxEntry& rEntry) const;
-//CHINA001 
+//CHINA001
 //CHINA001 public:
 //CHINA001 SwRedlineAcceptDlg(Dialog *pParent, BOOL bAutoFmt = FALSE);
 //CHINA001 ~SwRedlineAcceptDlg();
-//CHINA001 
+//CHINA001
 //CHINA001 DECL_LINK( FilterChangedHdl, void *pDummy = 0 );
-//CHINA001 
+//CHINA001
 //CHINA001 inline SvxAcceptChgCtr* GetChgCtrl()		{ return &aTabPagesCTRL; }
 //CHINA001 inline BOOL		HasRedlineAutoFmt() const	{ return bRedlnAutoFmt; }
-//CHINA001 
+//CHINA001
 //CHINA001 void			Init(USHORT nStart = 0);
 //CHINA001 void			CallAcceptReject( BOOL bSelect, BOOL bAccept );
-//CHINA001 
+//CHINA001
 //CHINA001 void			Initialize(const String &rExtraData);
 //CHINA001 void			FillInfo(String &rExtraData) const;
-//CHINA001 
+//CHINA001
 //CHINA001 virtual void	Activate();
 //CHINA001 virtual void	Resize();
 //CHINA001 };
@@ -375,51 +375,51 @@ SwModelessRedlineAcceptDlg::~SwModelessRedlineAcceptDlg()
 //CHINA001 SfxModalDialog(pParent, SW_RES(DLG_MOD_REDLINE_ACCEPT))
 //CHINA001 {
 //CHINA001 pImplDlg = new SwRedlineAcceptDlg(this, TRUE);
-//CHINA001 
+//CHINA001
 //CHINA001 pImplDlg->Initialize(GetExtraData());
 //CHINA001 pImplDlg->Activate();	// Zur Initialisierung der Daten
-//CHINA001 
+//CHINA001
 //CHINA001 FreeResource();
 //CHINA001 }
-//CHINA001 
+//CHINA001
 //CHINA001 /*------------------------------------------------------------------------
 //CHINA001 Beschreibung:
 //CHINA001 ------------------------------------------------------------------------*/
-//CHINA001 
+//CHINA001
 //CHINA001 SwModalRedlineAcceptDlg::~SwModalRedlineAcceptDlg()
 //CHINA001 {
 //CHINA001 AcceptAll(FALSE);	// Alles uebriggebliebene ablehnen
 //CHINA001 pImplDlg->FillInfo(GetExtraData());
-//CHINA001 
+//CHINA001
 //CHINA001 delete pImplDlg;
 //CHINA001 }
-//CHINA001 
+//CHINA001
 //CHINA001 /*--------------------------------------------------------------------
 //CHINA001 Beschreibung:
 //CHINA001 --------------------------------------------------------------------*/
-//CHINA001 
+//CHINA001
 //CHINA001 void SwModalRedlineAcceptDlg::Activate()
 //CHINA001 {
 //CHINA001 }
-//CHINA001 
+//CHINA001
 //CHINA001 /*------------------------------------------------------------------------
 //CHINA001 Beschreibung:
 //CHINA001 ------------------------------------------------------------------------*/
-//CHINA001 
+//CHINA001
 //CHINA001 void SwModalRedlineAcceptDlg::Resize()
 //CHINA001 {
 //CHINA001 pImplDlg->Resize();
 //CHINA001 SfxModalDialog::Resize();
 //CHINA001 }
-//CHINA001 
+//CHINA001
 //CHINA001 /*------------------------------------------------------------------------
 //CHINA001 Beschreibung:
 //CHINA001 ------------------------------------------------------------------------*/
-//CHINA001 
+//CHINA001
 //CHINA001 void SwModalRedlineAcceptDlg::AcceptAll( BOOL bAccept )
 //CHINA001 {
 //CHINA001 SvxTPFilter* pFilterTP = pImplDlg->GetChgCtrl()->GetFilterPage();
-//CHINA001 
+//CHINA001
 //CHINA001 if (pFilterTP->IsDate() || pFilterTP->IsAuthor() ||
 //CHINA001 pFilterTP->IsRange() || pFilterTP->IsAction())
 //CHINA001 {
@@ -429,10 +429,10 @@ SwModelessRedlineAcceptDlg::~SwModelessRedlineAcceptDlg()
 //CHINA001 pFilterTP->CheckAction(FALSE);
 //CHINA001 pImplDlg->FilterChangedHdl();
 //CHINA001	}
-//CHINA001 
+//CHINA001
 //CHINA001 pImplDlg->CallAcceptReject( FALSE, bAccept );
 //CHINA001 }
-//CHINA001 
+//CHINA001
 /*------------------------------------------------------------------------
     Beschreibung:
 ------------------------------------------------------------------------*/
@@ -813,7 +813,6 @@ USHORT SwRedlineAcceptDlg::CalcDiff(USHORT nStart, BOOL bChild)
     SwView *pView	= ::GetActiveView();
     SwWrtShell* pSh	= pView->GetWrtShellPtr();
     USHORT nAutoFmt	= HasRedlineAutoFmt() ? REDLINE_FORM_AUTOFMT : 0;
-    SvLBoxTreeList*	pModel = pTable->GetModel();
     SwRedlineDataParent *pParent = aRedlineParents[nStart];
     const SwRedline& rRedln = pSh->GetRedline(nStart);
 
@@ -827,7 +826,7 @@ USHORT SwRedlineAcceptDlg::CalcDiff(USHORT nStart, BOOL bChild)
         {
             pNext = (SwRedlineDataChildPtr)pBackupData->pNext;
             if (pBackupData->pTLBChild)
-                pModel->Remove(pBackupData->pTLBChild);
+                pTable->RemoveEntry(pBackupData->pTLBChild);
 
             aRedlineChilds.DeleteAndDestroy(aRedlineChilds.GetPos(pBackupData), 1);
             pBackupData = pNext;
@@ -898,7 +897,7 @@ void SwRedlineAcceptDlg::InsertChilds(SwRedlineDataParent *pParent, const SwRedl
             if (pParent->pTLBParent)
             {
                 pTable->SetEntryText(sAutoFormat, aUsedSeqNo[nPos]->pTLBParent, 0);
-                pTable->GetModel()->Remove(pParent->pTLBParent);
+                pTable->RemoveEntry(pParent->pTLBParent);
                 pParent->pTLBParent = 0;
             }
             return;
@@ -951,7 +950,7 @@ void SwRedlineAcceptDlg::InsertChilds(SwRedlineDataParent *pParent, const SwRedl
 
     if (!bValidTree && pParent->pTLBParent)
     {
-        pTable->GetModel()->Remove(pParent->pTLBParent);
+        pTable->RemoveEntry(pParent->pTLBParent);
         pParent->pTLBParent = 0;
         if (nAutoFmt)
             aUsedSeqNo.Remove(pParent);
@@ -1026,7 +1025,7 @@ void SwRedlineAcceptDlg::RemoveParents(USHORT nStart, USHORT nEnd)
     // TLB von hinten abraeumen
     long nIdx = (long)aLBoxArr.Count() - 1L;
     while (nIdx >= 0)
-        pModel->Remove(aLBoxArr[nIdx--]);
+        pTable->RemoveEntry(aLBoxArr[nIdx--]);
 
     pTable->SetSelectHdl(LINK(this, SwRedlineAcceptDlg, SelectHdl));
     pTable->SetDeselectHdl(LINK(this, SwRedlineAcceptDlg, DeselectHdl));
@@ -1117,7 +1116,7 @@ void SwRedlineAcceptDlg::CallAcceptReject( BOOL bSelect, BOOL bAccept )
     ListBoxEntries_t aRedlines;
 
     // don't activate
-    DBG_ASSERT( bInhibitActivate == false, 
+    DBG_ASSERT( bInhibitActivate == false,
                 "recursive call of CallAcceptReject?");
     bInhibitActivate = true;
 
@@ -1151,7 +1150,7 @@ void SwRedlineAcceptDlg::CallAcceptReject( BOOL bSelect, BOOL bAccept )
         String aTmpStr;
         {
             SwRewriter aRewriter;
-            aRewriter.AddRule(UNDO_ARG1, 
+            aRewriter.AddRule(UNDO_ARG1,
                               String::CreateFromInt32(aRedlines.size()));
             aTmpStr = aRewriter.Apply(String(SW_RES(STR_N_REDLINES)));
         }
@@ -1166,11 +1165,11 @@ void SwRedlineAcceptDlg::CallAcceptReject( BOOL bSelect, BOOL bAccept )
     // accept/reject the the redlines in aRedlines. The absolute
     // position may change during the process (e.g. when two redlines
     // are merged in result of another one being deleted), so the
-    // position must be resolved late and checked before using it. 
+    // position must be resolved late and checked before using it.
     // (cf #102547#)
     ListBoxEntries_t::iterator aEnd = aRedlines.end();
     for( ListBoxEntries_t::iterator aIter = aRedlines.begin();
-         aIter != aEnd; 
+         aIter != aEnd;
          aIter++ )
     {
         USHORT nPos = GetRedlinePos( **aIter );
