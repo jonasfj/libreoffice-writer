@@ -4,9 +4,9 @@
  *
  *  $RCSfile: txtedt.cxx,v $
  *
- *  $Revision: 1.71 $
+ *  $Revision: 1.72 $
  *
- *  last change: $Author: rt $ $Date: 2006-05-05 08:41:09 $
+ *  last change: $Author: obo $ $Date: 2006-07-10 15:32:29 $
  *
  *  The Contents of this file are made available subject to
  *  the terms of GNU Lesser General Public License Version 2.1.
@@ -566,13 +566,6 @@ XubString SwTxtNode::GetCurWord( xub_StrLen nPos )
                        static_cast<xub_StrLen>(aBndry.endPos - aBndry.startPos) );
 }
 
-
-void SwTxtNode::SetWrong( SwWrongList *pNew )
-{
-    delete pWrong;
-    pWrong = pNew;
-}
-
 SwScanner::SwScanner( const SwTxtNode& rNd,
                       USHORT nType, xub_StrLen nStart, xub_StrLen nEnde, BOOL bClp )
     : rNode( rNd ), nWordType( nType ), nLen( 0 ),
@@ -844,7 +837,7 @@ void SwTxtNode::SetLanguageAndFont( const SwPaM &rPaM,
     GetDoc()->Insert( rPaM, aSet, 0 );
     // SetAttr( aSet );    <- Does not set language attribute of empty paragraphs correctly,
     //                     <- because since there is no selection the flag to garbage
-    //                     <- collect all attributes is set, and therefore attributes spanned 
+    //                     <- collect all attributes is set, and therefore attributes spanned
     //                     <- over empty selection are removed.
 
 }
@@ -859,7 +852,7 @@ USHORT SwTxtNode::Convert( SwConversionArgs &rArgs )
     //
     if ( rArgs.pStartNode != this )
     {
-        nTextBegin = 0; 
+        nTextBegin = 0;
     }
     else
         nTextBegin = rArgs.pStartIdx->GetIndex();
@@ -892,8 +885,8 @@ USHORT SwTxtNode::Convert( SwConversionArgs &rArgs )
             //SwPaM aCurPaM( *this, *this, nBegin, nBegin + nLen ); <-- wrong c-tor, does sth different
             SwPaM aCurPaM( *this, 0 );
 
-            SetLanguageAndFont( aCurPaM, 
-                    rArgs.nConvTargetLang, RES_CHRATR_CJK_LANGUAGE, 
+            SetLanguageAndFont( aCurPaM,
+                    rArgs.nConvTargetLang, RES_CHRATR_CJK_LANGUAGE,
                     rArgs.pTargetFont, RES_CHRATR_CJK_FONT );
         }
     }
@@ -905,14 +898,14 @@ USHORT SwTxtNode::Convert( SwConversionArgs &rArgs )
         do {
             nLangFound = aIter.GetLanguage();
             sal_Bool bLangOk =  (nLangFound == rArgs.nConvSrcLang) ||
-                                (svx::HangulHanjaConversion::IsChinese( nLangFound ) && 
+                                (svx::HangulHanjaConversion::IsChinese( nLangFound ) &&
                                  svx::HangulHanjaConversion::IsChinese( rArgs.nConvSrcLang ));
-            
+
             xub_StrLen nChPos = aIter.GetChgPos();
-            // the position at the end of the paragraph returns -1 
+            // the position at the end of the paragraph returns -1
             // which becomes 65535 when converted to xub_StrLen,
             // and thus must be cut to the end of the actual string.
-            if (nChPos == (xub_StrLen) -1)	
+            if (nChPos == (xub_StrLen) -1)
                 nChPos = aText.Len();
 
             nLen = nChPos - nBegin;
@@ -934,8 +927,8 @@ USHORT SwTxtNode::Convert( SwConversionArgs &rArgs )
 
                 if (!bIsAsianScript && rArgs.bAllowImplicitChangesForNotConvertibleText)
                 {
-                    SetLanguageAndFont( aCurPaM, 
-                            rArgs.nConvTargetLang, RES_CHRATR_CJK_LANGUAGE, 
+                    SetLanguageAndFont( aCurPaM,
+                            rArgs.nConvTargetLang, RES_CHRATR_CJK_LANGUAGE,
                             rArgs.pTargetFont, RES_CHRATR_CJK_FONT );
                 }
                 nBegin = nChPos;    // start of next language portion
@@ -956,7 +949,7 @@ USHORT SwTxtNode::Convert( SwConversionArgs &rArgs )
         DBG_ASSERT( aText.Len() > 0, "convertible text portion missing!" );
         rArgs.aConvText		= aText.Copy( nBegin, nLen );
         rArgs.nConvTextLang = nLangFound;
-        
+
         // position where to start looking in next iteration (after current ends)
         rArgs.pStartNode = this;
         rArgs.pStartIdx->Assign(this, nBegin + nLen );
@@ -1249,8 +1242,7 @@ SwRect SwTxtFrm::_AutoSpell( SwCntntNode* pActNode, xub_StrLen nActPos )
 }
 
 // Wird vom CollectAutoCmplWords gerufen
-void SwTxtFrm::CollectAutoCmplWrds( SwCntntNode* pActNode, xub_StrLen nActPos,
-                                    BOOL bIsVisArea )
+void SwTxtFrm::CollectAutoCmplWrds( SwCntntNode* pActNode, xub_StrLen nActPos )
 {
     SwTxtNode *pNode = GetTxtNode();
     if( pNode != pActNode || !nActPos )
@@ -1281,10 +1273,8 @@ void SwTxtFrm::CollectAutoCmplWrds( SwCntntNode* pActNode, xub_StrLen nActPos,
 
                 if( nActPos < nBegin || ( nBegin + nLen ) < nActPos )
                 {
-// !!! ---> ggfs. das Flag bIsVisarea auswerten
                     if( rACW.GetMinWordLen() <= rWord.Len() )
                         rACW.InsertWord( rWord, *pDoc );
-// !!! ---> ggfs. das Flag bIsVisarea auswerten
                     bAnyWrd = TRUE;
                 }
                 else
@@ -1308,8 +1298,6 @@ void SwTxtFrm::CollectAutoCmplWrds( SwCntntNode* pActNode, xub_StrLen nActPos,
  *						SwTxtNode::Hyphenate
  *************************************************************************/
 // Findet den TxtFrm und sucht dessen CalcHyph
-
-
 
 BOOL SwTxtNode::Hyphenate( SwInterHyphInfo &rHyphInf )
 {
@@ -1532,37 +1520,155 @@ void SwTxtNode::CountWords( SwDocStat& rStat,
     {
         if ( !IsHidden() )
         {
-            String& rWordStr = (String&)GetTxt();
-            String aOldStr( rWordStr );
+            ++rStat.nPara;
+            ULONG nTmpWords = 0;
+            ULONG nTmpChars = 0;
 
-            // fills the deleted redlines and hidden ranges with cChar:
-            const xub_Unicode cChar(' ');
-            const USHORT nNumOfMaskedChars =
-                    lcl_MaskRedlinesAndHiddenText( *this, rWordStr, nStart, nEnd, cChar, false );
-
-            if( rWordStr.Len() && pBreakIt->xBreak.is() )
+            // Shortcut: Whole paragraph should be considered and cached values
+            // are valid:
+            if ( 0 == nStart && GetTxt().Len() == nEnd && !IsWordCountDirty() )
             {
-                SwScanner aScanner( *this,
-                                    ::com::sun::star::i18n::WordType::WORD_COUNT,
-                                    nStart, nEnd );
+                nTmpWords = GetParaNumberOfWords();
+                nTmpChars = GetParaNumberOfChars();
+            }
+            else
+            {
+                String& rWordStr = (String&)GetTxt();
+                String aOldStr( rWordStr );
 
-                while ( aScanner.NextWord() )
+                // fills the deleted redlines and hidden ranges with cChar:
+                const xub_Unicode cChar(' ');
+                const USHORT nNumOfMaskedChars =
+                        lcl_MaskRedlinesAndHiddenText( *this, rWordStr, nStart, nEnd, cChar, false );
+
+
+                if( rWordStr.Len() && pBreakIt->xBreak.is() )
                 {
-                    if ( aScanner.GetLen() > 1 ||
-                         CH_TXTATR_BREAKWORD != rWordStr.GetChar( aScanner.GetBegin() ) )
-                        ++rStat.nWord;
+                    SwScanner aScanner( *this,
+                                        ::com::sun::star::i18n::WordType::WORD_COUNT,
+                                        nStart, nEnd );
+
+                    while ( aScanner.NextWord() )
+                    {
+                        if ( aScanner.GetLen() > 1 ||
+                             CH_TXTATR_BREAKWORD != rWordStr.GetChar( aScanner.GetBegin() ) )
+                            ++nTmpWords;
+                    }
+                }
+
+                ASSERT( rWordStr.Len() >= nNumOfMaskedChars,
+                        "More characters hidden that characters in string!" )
+                nTmpChars = nEnd - nStart - nNumOfMaskedChars;
+                rWordStr = aOldStr;
+
+                // If the whole paragraph has been calculated, update cached
+                // values:
+                if ( 0 == nStart && GetTxt().Len() == nEnd )
+                {
+                    SetParaNumberOfWords( nTmpWords );
+                    SetParaNumberOfChars( nTmpChars );
+                    SetWordCountDirty( false );
                 }
             }
 
-            ASSERT( rWordStr.Len() >= nNumOfMaskedChars,
-                    "More characters hidden that characters in string!" )
-            rStat.nChar += nEnd - nStart - nNumOfMaskedChars;
-            ++rStat.nPara;
-            rWordStr = aOldStr;
+            rStat.nWord += nTmpWords;
+            rStat.nChar += nTmpChars;
         }
     }
 }
 
+//
+// Paragraph statistics start
+//
+struct SwParaIdleData_Impl
+{
+    SwWrongList* pWrong;
+    ULONG nNumberOfWords;
+    ULONG nNumberOfChars;
+    bool bWordCountDirty : 1;
+    bool bWrongDirty     : 1;    // Ist das Wrong-Feld auf invalid?
+    bool bAutoComplDirty : 1;    // die ACompl-Liste muss angepasst werden
 
+    SwParaIdleData_Impl() :
+        pWrong         ( 0 ),
+        nNumberOfWords ( 0 ),
+        nNumberOfChars ( 0 ),
+        bWordCountDirty( 1 ),
+        bWrongDirty    ( 1 ),
+        bAutoComplDirty( 1 ) {};
+};
 
+void SwTxtNode::InitSwParaStatistics( bool bNew )
+{
+    if ( bNew )
+        pParaIdleData_Impl = new SwParaIdleData_Impl;
+    else if ( pParaIdleData_Impl )
+    {
+        delete pParaIdleData_Impl->pWrong;
+        delete pParaIdleData_Impl;
+        pParaIdleData_Impl = 0;
+    }
+}
 
+void SwTxtNode::SetWrong( SwWrongList* pNew, bool bDelete )
+{
+    if ( pParaIdleData_Impl )
+    {
+        if ( bDelete )
+            delete pParaIdleData_Impl->pWrong;
+        pParaIdleData_Impl->pWrong = pNew;
+    }
+}
+
+SwWrongList* SwTxtNode::GetWrong()
+{
+    return pParaIdleData_Impl ? pParaIdleData_Impl->pWrong : 0;
+}
+void SwTxtNode::SetParaNumberOfWords( ULONG nNew ) const
+{
+    if ( pParaIdleData_Impl )
+        pParaIdleData_Impl->nNumberOfWords = nNew;
+}
+ULONG SwTxtNode::GetParaNumberOfWords() const
+{
+    return pParaIdleData_Impl ? pParaIdleData_Impl->nNumberOfWords : 0;
+}
+void SwTxtNode::SetParaNumberOfChars( ULONG nNew ) const
+{
+    if ( pParaIdleData_Impl )
+        pParaIdleData_Impl->nNumberOfChars = nNew;
+}
+ULONG SwTxtNode::GetParaNumberOfChars() const
+{
+    return pParaIdleData_Impl ? pParaIdleData_Impl->nNumberOfChars : 0;
+}
+void SwTxtNode::SetWordCountDirty( bool bNew ) const
+{
+    if ( pParaIdleData_Impl )
+        pParaIdleData_Impl->bWordCountDirty = bNew;
+}
+bool SwTxtNode::IsWordCountDirty() const
+{
+    return pParaIdleData_Impl ? pParaIdleData_Impl->bWordCountDirty : 0;
+}
+void SwTxtNode::SetWrongDirty( bool bNew ) const
+{
+    if ( pParaIdleData_Impl )
+        pParaIdleData_Impl->bWrongDirty = bNew;
+}
+bool SwTxtNode::IsWrongDirty() const
+{
+    return pParaIdleData_Impl ? pParaIdleData_Impl->bWrongDirty : 0;
+}
+void SwTxtNode::SetAutoCompleteWordDirty( bool bNew ) const
+{
+    if ( pParaIdleData_Impl )
+        pParaIdleData_Impl->bAutoComplDirty = bNew;
+}
+bool SwTxtNode::IsAutoCompleteWordDirty() const
+{
+    return pParaIdleData_Impl ? pParaIdleData_Impl->bAutoComplDirty : 0;
+}
+//
+// Paragraph statistics end
+//
