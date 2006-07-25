@@ -4,9 +4,9 @@
  *
  *  $RCSfile: autofmt.cxx,v $
  *
- *  $Revision: 1.29 $
+ *  $Revision: 1.30 $
  *
- *  last change: $Author: kz $ $Date: 2006-01-05 14:50:18 $
+ *  last change: $Author: rt $ $Date: 2006-07-25 11:48:02 $
  *
  *  The Contents of this file are made available subject to
  *  the terms of GNU Lesser General Public License Version 2.1.
@@ -716,8 +716,8 @@ BOOL SwAutoFormat::DoUnderline()
             aLine.SetDistance( DEF_DOUBLE_LINE6_DIST );
             break;
         }
-        SfxItemSet aSet(pDoc->GetAttrPool(), 
-                    RES_PARATR_CONNECT_BORDER, RES_PARATR_CONNECT_BORDER, 
+        SfxItemSet aSet(pDoc->GetAttrPool(),
+                    RES_PARATR_CONNECT_BORDER, RES_PARATR_CONNECT_BORDER,
                     RES_BOX, RES_BOX,
                     0);
         aSet.Put( SwParaConnectBorderItem( FALSE ) );
@@ -1094,9 +1094,9 @@ CHECK_ROMAN_5:
         }
         else if( (256 > cCurrentChar &&
                  strchr( ".)(", cCurrentChar )) ||
-                 0x3002 == cCurrentChar /* Chinese trad. dot */|| 
-                 0xff0e == cCurrentChar /* Japanese dot */|| 
-                 0xFF08 == cCurrentChar /* opening bracket Chin./Jap.*/|| 
+                 0x3002 == cCurrentChar /* Chinese trad. dot */||
+                 0xff0e == cCurrentChar /* Japanese dot */||
+                 0xFF08 == cCurrentChar /* opening bracket Chin./Jap.*/||
                  0xFF09 == cCurrentChar )/* closing bracket Chin./Jap. */
         {
             if(cCurrentChar == '(' || cCurrentChar == 0xFF09)
@@ -1525,7 +1525,7 @@ void SwAutoFormat::BuildText()
                 pDoc->Insert( aDelPam, ' ' );
             if( bBreak )
                 break;
-            const SwTxtNode* pCurrNode = pNxtNd; 
+            const SwTxtNode* pCurrNode = pNxtNd;
             pNxtNd = GetNextNode();
             if(!pNxtNd || pCurrNode == pNxtNd)
                 break;
@@ -1609,7 +1609,9 @@ void SwAutoFormat::BuildEnum( USHORT nLvl, USHORT nDigitLevel )
                         cBullChar = nBulletPos < cnPosEmDash
                                         ? cStarSymbolEnDash
                                         : cStarSymbolEmDash;
-                        pBullFnt = &SwNumRule::GetDefBulletFont();
+                        // --> OD 2006-06-28 #b6440955#
+                        pBullFnt = &numfunc::GetDefBulletFont();
+                        // <--
                     }
 
                     USHORT nAbsPos = lBullIndent;
@@ -1821,7 +1823,7 @@ void SwAutoFormat::BuildEnum( USHORT nLvl, USHORT nDigitLevel )
             pDoc->Insert( aDelPam, ' ' );
         if( bBreak )
             break;
-        const SwTxtNode* pCurrNode = pNxtNd; 
+        const SwTxtNode* pCurrNode = pNxtNd;
         pNxtNd = GetNextNode();
         if(!pNxtNd || pCurrNode == pNxtNd)
             break;
