@@ -4,9 +4,9 @@
  *
  *  $RCSfile: instable.hxx,v $
  *
- *  $Revision: 1.7 $
+ *  $Revision: 1.8 $
  *
- *  last change: $Author: rt $ $Date: 2005-09-09 09:22:56 $
+ *  last change: $Author: ihi $ $Date: 2006-08-04 13:06:53 $
  *
  *  The Contents of this file are made available subject to
  *  the terms of GNU Lesser General Public License Version 2.1.
@@ -67,12 +67,15 @@ class SwInsTableDlg : public SfxModalDialog
 {
     FixedText       aNameFT;
     TableNameEdit   aNameEdit;
+    
+    FixedLine       aFL;
     FixedText       aColLbl;
     NumericField 	aColEdit;
     FixedText   	aRowLbl;
     NumericField 	aRowEdit;
 
-    CheckBox		aHeaderCB;
+    FixedLine       aOptionsFL;
+    CheckBox        aHeaderCB;
     CheckBox		aRepeatHeaderCB;
     FixedText		aRepeatHeaderFT;	// "dummy" to build before and after FT
     FixedText		aRepeatHeaderBeforeFT;
@@ -82,10 +85,8 @@ class SwInsTableDlg : public SfxModalDialog
 
     CheckBox		aDontSplitCB;
     CheckBox		aBorderCB;
-    FixedLine       aOptionsFL;
 
-    FixedLine       aFL;
-    OKButton     	aOkBtn;
+    OKButton        aOkBtn;
     CancelButton 	aCancelBtn;
     HelpButton 		aHelpBtn;
     PushButton 		aAutoFmtBtn;
