@@ -4,9 +4,9 @@
  *
  *  $RCSfile: unoobj.hxx,v $
  *
- *  $Revision: 1.41 $
+ *  $Revision: 1.42 $
  *
- *  last change: $Author: obo $ $Date: 2006-03-21 15:30:09 $
+ *  last change: $Author: ihi $ $Date: 2006-08-04 13:05:45 $
  *
  *  The Contents of this file are made available subject to
  *  the terms of GNU Lesser General Public License Version 2.1.
@@ -565,7 +565,15 @@ public:
     const SwUnoCrsr*	GetCrsr()const{return (SwUnoCrsr*)GetRegisteredIn();}
 
     static void         SetCrsrAttr(SwPaM& rPam, const SfxItemSet& rSet, USHORT nAttrMode );
-    static void			GetCrsrAttr(SwPaM& rPam, SfxItemSet& rSet, BOOL bCurrentAttrOnly = FALSE);
+    // --> OD 2006-07-12 #i63870#
+    // split third parameter <bCurrentAttrOnly> into new parameters <bOnlyTxtAttr>
+    // and <bGetFromChrFmt> to get better control about resulting <SfxItemSet>
+//    static void         GetCrsrAttr(SwPaM& rPam, SfxItemSet& rSet, BOOL bCurrentAttrOnly = FALSE);
+    static void         GetCrsrAttr( SwPaM& rPam,
+                                     SfxItemSet& rSet,
+                                     BOOL bOnlyTxtAttr = FALSE,
+                                     BOOL bGetFromChrFmt = TRUE );
+    // <--
     static void         getTextFromPam(SwPaM& aCrsr, rtl::OUString& rBuffer);
     static SwFmtColl* 	GetCurTxtFmtColl(SwPaM& rPam, BOOL bConditional);
 
@@ -880,7 +888,7 @@ public:
     static const ::com::sun::star::uno::Sequence< sal_Int8 > & getUnoTunnelId();
 
     //XUnoTunnel
-    virtual sal_Int64 SAL_CALL getSomething( const ::com::sun::star::uno::Sequence< sal_Int8 >& aIdentifier ) 
+    virtual sal_Int64 SAL_CALL getSomething( const ::com::sun::star::uno::Sequence< sal_Int8 >& aIdentifier )
             throw(::com::sun::star::uno::RuntimeException);
 
 
@@ -908,15 +916,15 @@ public:
 
 class SwXTextSection;
 class SwXTextSectionClient : public SwClient
-{        
+{
     friend class SwXTextSection;
     SwXTextSection*                                                                 m_pSection;
     ::com::sun::star::uno::WeakReference< ::com::sun::star::text::XTextSection >    m_xReference;
     //SwClient
     virtual void    Modify( SfxPoolItem *pOld, SfxPoolItem *pNew);
-    SwXTextSectionClient( 
+    SwXTextSectionClient(
             SwSectionFmt& rFmt,
-            SwXTextSection& rTextSection, 
+            SwXTextSection& rTextSection,
             ::com::sun::star::uno::Reference< ::com::sun::star::text::XTextSection > xSection );
     virtual ~SwXTextSectionClient();
     DECL_STATIC_LINK( SwXTextSectionClient, RemoveSectionClient_Impl,
@@ -926,11 +934,11 @@ public:
     TYPEINFO();
     ::com::sun::star::uno::Reference< ::com::sun::star::text::XTextSection > GetXTextSection();
 
-    static ::com::sun::star::uno::Reference< ::com::sun::star::text::XTextSection > 
+    static ::com::sun::star::uno::Reference< ::com::sun::star::text::XTextSection >
             CreateXTextSection(SwSectionFmt* pFmt = 0, BOOL bIndexHeader = FALSE );
     static SwXTextSectionClient* Create(
-            SwXTextSection& rSection, 
-            ::com::sun::star::uno::Reference< ::com::sun::star::text::XTextSection > xSection, 
+            SwXTextSection& rSection,
+            ::com::sun::star::uno::Reference< ::com::sun::star::text::XTextSection > xSection,
             SwSectionFmt& rFmt );
 };
 
@@ -959,7 +967,7 @@ class SwXTextSection : public cppu::WeakImplHelper7
 protected:
     void SAL_CALL SetPropertyValues_Impl( const ::com::sun::star::uno::Sequence< ::rtl::OUString >& aPropertyNames, const ::com::sun::star::uno::Sequence< ::com::sun::star::uno::Any >& aValues ) throw(::com::sun::star::beans::UnknownPropertyException, ::com::sun::star::beans::PropertyVetoException, ::com::sun::star::lang::IllegalArgumentException, ::com::sun::star::lang::WrappedTargetException, ::com::sun::star::uno::RuntimeException);
     ::com::sun::star::uno::Sequence< ::com::sun::star::uno::Any > SAL_CALL GetPropertyValues_Impl( const ::com::sun::star::uno::Sequence< ::rtl::OUString >& aPropertyNames ) throw(::com::sun::star::beans::UnknownPropertyException, ::com::sun::star::lang::WrappedTargetException, ::com::sun::star::uno::RuntimeException);
-    
+
     SwXTextSection(sal_Bool bWithFormat, sal_Bool bIndexHeader = FALSE);
     virtual ~SwXTextSection();
     void                            ResetClient() {m_pClient = 0;}
