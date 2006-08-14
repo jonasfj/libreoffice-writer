@@ -4,9 +4,9 @@
  *
  *  $RCSfile: view0.cxx,v $
  *
- *  $Revision: 1.18 $
+ *  $Revision: 1.19 $
  *
- *  last change: $Author: kz $ $Date: 2006-04-27 09:50:17 $
+ *  last change: $Author: hr $ $Date: 2006-08-14 17:56:48 $
  *
  *  The Contents of this file are made available subject to
  *  the terms of GNU Lesser General Public License Version 2.1.
@@ -60,11 +60,8 @@
 #ifndef _VIEWOPT_HXX
 #include <viewopt.hxx>
 #endif
-#ifndef _DOC_HXX
-#include <doc.hxx>
-#endif
 #ifndef _GLOBALS_H
-#include <globals.h>  
+#include <globals.h>
 #endif
 #ifndef _SFXAPP_HXX //autogen
 #include <sfx2/app.hxx>
@@ -145,6 +142,8 @@ using namespace ::rtl;
 
 #include <svtools/moduleoptions.hxx>
 
+#include <IDocumentSettingAccess.hxx>
+
 #define C2S(cChar) UniString::CreateFromAscii(cChar)
 
 SFX_IMPL_VIEWFACTORY(SwView, SW_RES(STR_NONAME))
@@ -206,7 +205,7 @@ void SwView::ApplyAccessiblityOptions(SvtAccessibilityOptions& rAccessibilityOpt
 /*-- 26.05.2004 09:14:25---------------------------------------------------
 
   -----------------------------------------------------------------------*/
-void   SwView::SetMailMergeConfigItem(SwMailMergeConfigItem*  pConfigItem, 
+void   SwView::SetMailMergeConfigItem(SwMailMergeConfigItem*  pConfigItem,
                 sal_uInt16 nRestart, sal_Bool bIsSource)
 {
     pViewImpl->SetMailMergeConfigItem(pConfigItem, nRestart, bIsSource);
@@ -229,7 +228,7 @@ sal_uInt16 SwView::GetMailMergeRestartPage() const
 /*-- 03.09.2004 11:56:33---------------------------------------------------
 
   -----------------------------------------------------------------------*/
-sal_Bool SwView::IsMailMergeSourceView() const 
+sal_Bool SwView::IsMailMergeSourceView() const
 {
     return pViewImpl->IsMailMergeSourceView();
 }
@@ -276,12 +275,12 @@ void SwView::StateViewOptions(SfxItemSet &rSet)
     sal_uInt16 nWhich = aIter.FirstWhich();
     SfxBoolItem aBool;
     const SwViewOption* pOpt = GetWrtShell().GetViewOptions();
-    SwDoc *pDoc = GetDocShell()->GetDoc();
+    const IDocumentSettingAccess* pIDSA = GetDocShell()->getIDocumentSettingAccess();
 
     while(nWhich)
     {
         sal_Bool bReadonly = GetDocShell()->IsReadOnly();
-        sal_Bool bBrowse = pDoc ? pDoc->IsBrowseMode() : sal_False;
+        sal_Bool bBrowse = pIDSA ? pIDSA->get( IDocumentSettingAccess::BROWSE_MODE ) : sal_False;
         if ( bReadonly && nWhich != FN_VIEW_GRAPHIC )
         {
             rSet.DisableItem(nWhich);
@@ -343,7 +342,7 @@ void SwView::StateViewOptions(SfxItemSet &rSet)
                 aBool.SetValue( pOpt->IsHideSpell() );
             break;
             case FN_SHADOWCURSOR:
-                if (pDoc == 0 || pDoc->IsBrowseMode())
+                if (pIDSA == 0 || pIDSA->get( IDocumentSettingAccess::BROWSE_MODE ))
                 {
                     rSet.DisableItem( nWhich );
                     nWhich = 0;
@@ -562,9 +561,9 @@ void SwView::ExecViewOptions(SfxRequest &rReq)
     //      das Doc modified setzt.
     if( !bModified )
         rSh.ResetModified();
-    
+
     pModule->ApplyUsrPref( *pOpt, this, bWebView ? VIEWOPT_DEST_WEB : VIEWOPT_DEST_TEXT );
-    
+
     const BOOL bLockedView = rSh.IsViewLocked();
     rSh.LockView( TRUE );    //lock visible section
     GetWrtShell().EndAction();
