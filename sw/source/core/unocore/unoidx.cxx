@@ -4,9 +4,9 @@
  *
  *  $RCSfile: unoidx.cxx,v $
  *
- *  $Revision: 1.58 $
+ *  $Revision: 1.59 $
  *
- *  last change: $Author: rt $ $Date: 2005-09-09 05:26:53 $
+ *  last change: $Author: hr $ $Date: 2006-08-14 16:54:57 $
  *
  *  The Contents of this file are made available subject to
  *  the terms of GNU Lesser General Public License Version 2.1.
@@ -32,7 +32,6 @@
  *    MA  02111-1307  USA
  *
  ************************************************************************/
-
 
 #pragma hdrstop
 
@@ -64,14 +63,9 @@
 #ifndef _COM_SUN_STAR_TEXT_XTEXTDOCUMENT_HPP_
 #include <com/sun/star/text/XTextDocument.hpp>
 #endif
-#ifndef _COM_SUN_STAR_BEANS_PROPERTYVALUES_HPP_
-#include <com/sun/star/beans/PropertyValues.hpp>
-#endif
 #ifndef _COM_SUN_STAR_BEANS_PROPERTYATTRIBUTE_HPP_
 #include <com/sun/star/beans/PropertyAttribute.hpp>
 #endif
-
-
 #ifndef _CMDID_H
 #include <cmdid.h>
 #endif
@@ -128,9 +122,6 @@
 #endif
 #ifndef _CHPFLD_HXX
 #include <chpfld.hxx>
-#endif
-#ifndef _HINTS_HXX
-#include <hints.hxx>
 #endif
 #ifndef _SWSTYLENAMEMAPPER_HXX
 #include <SwStyleNameMapper.hxx>
@@ -588,10 +579,10 @@ void SwXDocumentIndex::setPropertyValue(const OUString& rPropertyName,
                 aForm.SetCommaSeparated(lcl_AnyToBool(aValue));
             break;
             case WID_LABEL_CATEGORY                    :
-            {   
+            {
                 // convert file-format/API/external programmatic english name
                 // to internal UI name before usage
-                String aName( SwStyleNameMapper::GetSpecialExtraUIName( 
+                String aName( SwStyleNameMapper::GetSpecialExtraUIName(
                                     lcl_AnyToString(aValue) ) );
                 pTOXBase->SetSequenceName( aName );
             }
@@ -867,10 +858,10 @@ uno::Any SwXDocumentIndex::getPropertyValue(const OUString& rPropertyName)
             break;
             case WID_LABEL_CATEGORY                    :
             {
-                // convert internal UI name to 
+                // convert internal UI name to
                 // file-format/API/external programmatic english name
                 // before usage
-                String aName( SwStyleNameMapper::GetSpecialExtraProgName( 
+                String aName( SwStyleNameMapper::GetSpecialExtraProgName(
                                     pTOXBase->GetSequenceName() ) );
                 aRet <<= OUString( aName );
                 bBOOL = sal_False;
@@ -2555,7 +2546,7 @@ void SwXIndexTokenAccess_Impl::replaceByIndex(sal_Int32 nIndex, const uno::Any& 
             // #i21237#
             else if ( pProperties[j].Name.equalsAsciiL(RTL_CONSTASCII_STRINGPARAM("WithTab")))
             {
-                aToken.bWithTab = lcl_AnyToBool(pProperties[j].Value);               
+                aToken.bWithTab = lcl_AnyToBool(pProperties[j].Value);
             }
 
         }
@@ -2610,8 +2601,8 @@ uno::Any SwXIndexTokenAccess_Impl::getByIndex(sal_Int32 nIndex)
     // #i21237#
     SwFormTokens aPattern = pTOXBase->GetTOXForm().
         GetPattern((sal_uInt16) nIndex);
-    SwFormTokens::iterator aIt = aPattern.begin();    
-    
+    SwFormTokens::iterator aIt = aPattern.begin();
+
     sal_uInt16 nTokenCount = 0;
     uno::Sequence< PropertyValues > aRetSeq;
     String aString;
