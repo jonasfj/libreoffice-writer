@@ -4,9 +4,9 @@
  *
  *  $RCSfile: svxcss1.hxx,v $
  *
- *  $Revision: 1.4 $
+ *  $Revision: 1.5 $
  *
- *  last change: $Author: rt $ $Date: 2005-09-09 05:47:28 $
+ *  last change: $Author: hr $ $Date: 2006-08-14 17:06:50 $
  *
  *  The Contents of this file are made available subject to
  *  the terms of GNU Lesser General Public License Version 2.1.
@@ -32,7 +32,6 @@
  *    MA  02111-1307  USA
  *
  ************************************************************************/
-
 #ifndef _SVXCSS1_HXX
 #define _SVXCSS1_HXX
 
@@ -63,7 +62,6 @@
 class SfxItemPool;
 class SvxBoxItem;
 class FontList;
-class OutputDevice;
 
 /*  */
 
@@ -266,7 +264,7 @@ class SvxCSS1Parser : public CSS1Parser
     SvxCSS1PropertyInfo *pPropInfo;
 
     sal_uInt16 nMinFixLineSpace;	// Mindest-Abstand fuer festen Zeilenabstand
-    
+
     rtl_TextEncoding	eDfltEnc;
     sal_uInt16			nScriptFlags;
 
@@ -381,14 +379,14 @@ public:
                       sal_Bool bSmart );
 
     sal_uInt16 GetMinFixLineSpace() const { return nMinFixLineSpace; }
-    
+
     virtual void SetDfltEncoding( rtl_TextEncoding eEnc );
     rtl_TextEncoding GetDfltEncoding() const { return eDfltEnc; }
 
     sal_Bool IsSetWesternProps() const { return (nScriptFlags & CSS1_SCRIPT_WESTERN) != 0; }
     sal_Bool IsSetCJKProps() const { return (nScriptFlags & CSS1_SCRIPT_CJK) != 0; }
     sal_Bool IsSetCTLProps() const { return (nScriptFlags & CSS1_SCRIPT_CTL) != 0; }
-    
+
     const String& GetBaseURL() const { return sBaseURL;}
 
 };
