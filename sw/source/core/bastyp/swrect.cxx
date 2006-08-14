@@ -4,9 +4,9 @@
  *
  *  $RCSfile: swrect.cxx,v $
  *
- *  $Revision: 1.13 $
+ *  $Revision: 1.14 $
  *
- *  last change: $Author: rt $ $Date: 2005-09-09 03:01:24 $
+ *  last change: $Author: hr $ $Date: 2006-08-14 15:50:13 $
  *
  *  The Contents of this file are made available subject to
  *  the terms of GNU Lesser General Public License Version 2.1.
@@ -32,7 +32,6 @@
  *    MA  02111-1307  USA
  *
  ************************************************************************/
-
 
 #pragma hdrstop
 
@@ -278,7 +277,7 @@ float SwRect::GetDistance( const Point &rPOINT, Point rClosest ) const {
     // A point is in the box whenever xmin <= x <= xmax and
     // ymin <= y <= ymax and zmin <= z <= zmax.
     if(!(IsInside(rPOINT))) {
-            
+
         if(rPOINT.X() < fXMin) {
             long fDelta = rPOINT.X() - fXMin;
             fSqrDistance += fDelta*fDelta;
@@ -311,8 +310,6 @@ float SwRect::GetDistance( const Point &rPOINT, Point rClosest ) const {
     return sqrt(fSqrDistance);
 }
 
-
-#ifdef VERTICAL_LAYOUT
 
 // Similiar to the inline methods, but we need the function pointers
 
@@ -375,7 +372,6 @@ void SwRect::SetLowerLeftCorner(  const Point& rNew )
     { nX = rNew.nA; nY = rNew.nB - nHeight; }
 void SwRect::SetLowerRightCorner(  const Point& rNew )
     { nX = rNew.nA - nWidth; nY = rNew.nB - nHeight; }
-#endif
 
 #ifndef PRODUCT
 /*************************************************************************
