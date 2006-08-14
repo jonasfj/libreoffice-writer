@@ -4,9 +4,9 @@
  *
  *  $RCSfile: SwAppletImpl.hxx,v $
  *
- *  $Revision: 1.7 $
+ *  $Revision: 1.8 $
  *
- *  last change: $Author: rt $ $Date: 2005-09-09 01:28:54 $
+ *  last change: $Author: hr $ $Date: 2006-08-14 15:14:39 $
  *
  *  The Contents of this file are made available subject to
  *  the terms of GNU Lesser General Public License Version 2.1.
@@ -90,7 +90,7 @@ public:
     SwApplet_Impl( SfxItemSet& rSet ): aItemSet ( rSet) {}
     ~SwApplet_Impl();
     void CreateApplet( const String& rCode, const String& rName,
-                       BOOL bMayScript, const String& rCodeBase, 
+                       BOOL bMayScript, const String& rCodeBase,
                        const String& rBaseURL );
 #ifdef SOLAR_JAVA
     sal_Bool CreateApplet( const String& rBaseURL );
@@ -100,6 +100,6 @@ public:
     com::sun::star::uno::Reference < com::sun::star::embed::XEmbeddedObject > GetApplet() { return xApplet; }
     SfxItemSet& GetItemSet() { return aItemSet; }
     const String& GetAltText() { return sAlt; }
-    void 		  SetAltText( const String& rAlt ) {sAlt = rAlt;}
+    void          SetAltText( const String& rAlt ) {sAlt = rAlt;}
 };
 #endif
