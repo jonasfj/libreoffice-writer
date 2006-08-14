@@ -4,9 +4,9 @@
  *
  *  $RCSfile: accfootnote.hxx,v $
  *
- *  $Revision: 1.6 $
+ *  $Revision: 1.7 $
  *
- *  last change: $Author: rt $ $Date: 2005-09-09 02:47:37 $
+ *  last change: $Author: hr $ $Date: 2006-08-14 15:42:54 $
  *
  *  The Contents of this file are made available subject to
  *  the terms of GNU Lesser General Public License Version 2.1.
@@ -34,18 +34,11 @@
  ************************************************************************/
 #ifndef _ACCFOOTNOTE_HXX
 #define _ACCFOOTNOTE_HXX
-
 #ifndef _ACCCONTEXT_HXX
 #include "acccontext.hxx"
 #endif
 
-#ifndef _COM_SUN_STAR_UNO_RUNTIMEEXCEPTION_HPP_
-#include <com/sun/star/uno/RuntimeException.hpp>
-#endif
-
-class SwFtnContFrm;
-
-class SwAccessibleFootnote : public	SwAccessibleContext
+class SwAccessibleFootnote : public SwAccessibleContext
 {
 
 protected:
@@ -64,7 +57,7 @@ public:
 
     ///	Return this object's description.
     virtual ::rtl::OUString SAL_CALL
-        getAccessibleDescription (void) 
+        getAccessibleDescription (void)
         throw (com::sun::star::uno::RuntimeException);
 
     //=====  XServiceInfo  ====================================================
