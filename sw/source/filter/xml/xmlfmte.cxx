@@ -4,9 +4,9 @@
  *
  *  $RCSfile: xmlfmte.cxx,v $
  *
- *  $Revision: 1.43 $
+ *  $Revision: 1.44 $
  *
- *  last change: $Author: hr $ $Date: 2006-06-19 12:42:17 $
+ *  last change: $Author: hr $ $Date: 2006-08-14 17:22:33 $
  *
  *  The Contents of this file are made available subject to
  *  the terms of GNU Lesser General Public License Version 2.1.
@@ -33,10 +33,9 @@
  *
  ************************************************************************/
 
-
 #pragma hdrstop
 
-#ifndef _COM_SUN_STAR_TEXT_XTEXTDOCUMENT_HPP_ 
+#ifndef _COM_SUN_STAR_TEXT_XTEXTDOCUMENT_HPP_
 #include <com/sun/star/text/XTextDocument.hpp>
 #endif
 
@@ -52,7 +51,7 @@
 #ifndef _XMLOFF_NMSPMAP_HXX
 #include <xmloff/nmspmap.hxx>
 #endif
-#ifndef _XMLOFF_XMLTEXTLISTAUTOSTYLEPOOL_HXX 
+#ifndef _XMLOFF_XMLTEXTLISTAUTOSTYLEPOOL_HXX
 #include <xmloff/XMLTextListAutoStylePool.hxx>
 #endif
 #ifndef _XMLOFF_XMLTEXTMASTERPAGEEXPORT
@@ -62,7 +61,7 @@
 #ifndef _XMLOFF_TXTPRMAP_HXX
 #include <xmloff/txtprmap.hxx>
 #endif
-#ifndef _XMLOFF_XMLASTPLP_HXX 
+#ifndef _XMLOFF_XMLASTPLP_HXX
 #include <xmloff/xmlaustp.hxx>
 #endif
 #ifndef _XMLOFF_FAMILIES_HXX_
@@ -88,19 +87,12 @@
 #include <cellatr.hxx>
 #endif
 
-#ifndef _COM_SUN_STAR_DRAWING_XDRAWPAGESUPPLIER_HPP_ 
+#ifndef _COM_SUN_STAR_DRAWING_XDRAWPAGESUPPLIER_HPP_
 #include <com/sun/star/drawing/XDrawPageSupplier.hpp>
-#endif
-#ifndef _COM_SUN_STAR_DRAWING_XDRAWPAGE_HPP_ 
-#include <com/sun/star/drawing/XDrawPage.hpp>
 #endif
 #ifndef _COM_SUN_STAR_BEANS_XPROPERTYSET_HPP_
 #include <com/sun/star/beans/XPropertySet.hpp>
 #endif
-#ifndef _COM_SUN_STAR_LANG_XMULTISERVICEFACTORY_HPP_ 
-#include <com/sun/star/lang/XMultiServiceFactory.hpp>
-#endif
-
 #ifndef _XMLEXP_HXX
 #include "xmlexp.hxx"
 #endif
@@ -128,7 +120,7 @@ void SwXMLExport::ExportFmt( const SwFmt& rFmt, enum XMLTokenEnum eFamily )
     DBG_ASSERT( eFamily != XML_TOKEN_INVALID, "family must be specified" );
     // style:name="..."
     sal_Bool bEncoded = sal_False;
-    AddAttribute( XML_NAMESPACE_STYLE, XML_NAME, EncodeStyleName( 
+    AddAttribute( XML_NAMESPACE_STYLE, XML_NAME, EncodeStyleName(
                     rFmt.GetName(), &bEncoded ) );
     if( bEncoded )
         AddAttribute( XML_NAMESPACE_STYLE, XML_DISPLAY_NAME, rFmt.GetName() );
@@ -136,7 +128,7 @@ void SwXMLExport::ExportFmt( const SwFmt& rFmt, enum XMLTokenEnum eFamily )
 
     if( eFamily != XML_TOKEN_INVALID )
         AddAttribute( XML_NAMESPACE_STYLE, XML_FAMILY, eFamily );
-    
+
     // style:parent-style-name="..." (if its not the default only)
     const SwFmt* pParent = rFmt.DerivedFrom();
     // Parent-Namen nur uebernehmen, wenn kein Default
@@ -163,7 +155,7 @@ void SwXMLExport::ExportFmt( const SwFmt& rFmt, enum XMLTokenEnum eFamily )
                                     sName,
                                     GET_POOLID_PAGEDESC,
                                     sal_True);
-            AddAttribute( XML_NAMESPACE_STYLE, XML_MASTER_PAGE_NAME, 
+            AddAttribute( XML_NAMESPACE_STYLE, XML_MASTER_PAGE_NAME,
                           EncodeStyleName( sName ) );
         }
     }
