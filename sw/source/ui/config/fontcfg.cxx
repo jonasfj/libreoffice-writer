@@ -4,9 +4,9 @@
  *
  *  $RCSfile: fontcfg.cxx,v $
  *
- *  $Revision: 1.19 $
+ *  $Revision: 1.20 $
  *
- *  last change: $Author: vg $ $Date: 2006-03-16 12:45:48 $
+ *  last change: $Author: hr $ $Date: 2006-08-14 17:28:17 $
  *
  *  The Contents of this file are made available subject to
  *  the terms of GNU Lesser General Public License Version 2.1.
@@ -33,7 +33,6 @@
  *
  ************************************************************************/
 
-
 #pragma hdrstop
 
 #ifndef _FONTCFG_HXX
@@ -42,20 +41,15 @@
 #ifndef _SV_OUTDEV_HXX
 #include <vcl/outdev.hxx>
 #endif
-#ifndef _TOOLS_DEBUG_HXX
-#include <tools/debug.hxx>
-#endif
-#ifndef _SVTOOLS_LINGUCFG_HXX_ 
+#ifndef _SVTOOLS_LINGUCFG_HXX_
 #include <svtools/lingucfg.hxx>
 #endif
-
 #ifndef _COM_SUN_STAR_UNO_ANY_HXX_
 #include <com/sun/star/uno/Any.hxx>
 #endif
 #ifndef _COM_SUN_STAR_UNO_SEQUENCE_HXX_
 #include <com/sun/star/uno/Sequence.hxx>
 #endif
-
 #ifndef _SWTYPES_HXX
 #include <swtypes.hxx>
 #endif
@@ -72,12 +66,12 @@ using namespace com::sun::star::uno;
 #define C2S(cChar) String::CreateFromAscii(cChar)
 #define C2U(cChar) OUString::createFromAscii(cChar)
 /* -----------------07.10.2002 12:15-----------------
- * 
+ *
  * --------------------------------------------------*/
 inline LanguageType lcl_LanguageOfType(sal_Int16 nType, sal_Int16 eWestern, sal_Int16 eCJK, sal_Int16 eCTL)
 {
     return LanguageType(
-                nType < FONT_STANDARD_CJK ? eWestern : 
+                nType < FONT_STANDARD_CJK ? eWestern :
                     nType >= FONT_STANDARD_CTL ? eCTL : eCJK);
 }
 /* -----------------------------08.09.00 15:52--------------------------------
@@ -142,7 +136,7 @@ SwStdFontConfig::SwStdFontConfig() :
 
     // #107253# Replaced SvtLinguConfig with SwLinguConfig wrapper with UsageCount
     SwLinguConfig().GetOptions( aLinguOpt );
-    
+
     sal_Int16   eWestern = aLinguOpt.nDefaultLanguage,
                 eCJK = aLinguOpt.nDefaultLanguage_CJK,
                 eCTL = aLinguOpt.nDefaultLanguage_CTL;
@@ -191,7 +185,7 @@ void	SwStdFontConfig::Commit()
 
     // #107253# Replaced SvtLinguConfig with SwLinguConfig wrapper with UsageCount
     SwLinguConfig().GetOptions( aLinguOpt );
-    
+
     sal_Int16   eWestern = aLinguOpt.nDefaultLanguage,
                 eCJK = aLinguOpt.nDefaultLanguage_CJK,
                 eCTL = aLinguOpt.nDefaultLanguage_CTL;
