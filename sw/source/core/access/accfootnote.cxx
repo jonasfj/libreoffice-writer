@@ -4,9 +4,9 @@
  *
  *  $RCSfile: accfootnote.cxx,v $
  *
- *  $Revision: 1.10 $
+ *  $Revision: 1.11 $
  *
- *  last change: $Author: rt $ $Date: 2005-09-09 02:47:24 $
+ *  last change: $Author: hr $ $Date: 2006-08-14 15:42:40 $
  *
  *  The Contents of this file are made available subject to
  *  the terms of GNU Lesser General Public License Version 2.1.
@@ -33,7 +33,6 @@
  *
  ************************************************************************/
 
-
 #pragma hdrstop
 
 #ifndef _VOS_MUTEX_HXX_ //autogen
@@ -49,9 +48,6 @@
 
 #ifndef _UTL_ACCESSIBLESTATESETHELPER_HXX_
 #include <unotools/accessiblestatesethelper.hxx>
-#endif
-#ifndef _COM_SUN_STAR_UNO_RUNTIMEEXCEPTION_HPP_
-#include <com/sun/star/uno/RuntimeException.hpp>
 #endif
 #ifndef _RTL_UUID_H_
 #include <rtl/uuid.h>
@@ -101,17 +97,17 @@ const sal_Char sServiceNameEndnote[] = "com.sun.star.text.AccessibleEndnoteView"
 const sal_Char sImplementationNameFootnote[] = "com.sun.star.comp.Writer.SwAccessibleFootnoteView";
 const sal_Char sImplementationNameEndnote[] = "com.sun.star.comp.Writer.SwAccessibleEndnoteView";
 
-SwAccessibleFootnote::SwAccessibleFootnote( 
+SwAccessibleFootnote::SwAccessibleFootnote(
         SwAccessibleMap *pMap,
         sal_Bool bIsEndnote,
         sal_Int32 nFootEndNote,
         const SwFtnFrm *pFtnFrm	) :
     SwAccessibleContext( pMap,
-        bIsEndnote ? AccessibleRole::END_NOTE : AccessibleRole::FOOTNOTE, 
+        bIsEndnote ? AccessibleRole::END_NOTE : AccessibleRole::FOOTNOTE,
         pFtnFrm )
 {
     vos::OGuard aGuard(Application::GetSolarMutex());
-    
+
     sal_uInt16 nResId = bIsEndnote ? STR_ACCESS_ENDNOTE_NAME
                                    : STR_ACCESS_FOOTNOTE_NAME;
     OUString sArg( OUString::valueOf( nFootEndNote ) );
@@ -158,7 +154,7 @@ sal_Bool SAL_CALL SwAccessibleFootnote::supportsService(
         const ::rtl::OUString& sTestServiceName)
     throw (::com::sun::star::uno::RuntimeException)
 {
-    if( sTestServiceName.equalsAsciiL( sAccessibleServiceName, 
+    if( sTestServiceName.equalsAsciiL( sAccessibleServiceName,
                                        sizeof(sAccessibleServiceName)-1 ) )
         return sal_True;
     else if( AccessibleRole::END_NOTE == GetRole() )
