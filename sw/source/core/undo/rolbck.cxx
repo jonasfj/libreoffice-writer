@@ -4,9 +4,9 @@
  *
  *  $RCSfile: rolbck.cxx,v $
  *
- *  $Revision: 1.15 $
+ *  $Revision: 1.16 $
  *
- *  last change: $Author: hr $ $Date: 2006-01-27 14:39:03 $
+ *  last change: $Author: hr $ $Date: 2006-08-14 16:48:45 $
  *
  *  The Contents of this file are made available subject to
  *  the terms of GNU Lesser General Public License Version 2.1.
@@ -33,17 +33,14 @@
  *
  ************************************************************************/
 
-
 #pragma hdrstop
 
 #ifndef _HINTIDS_HXX //autogen
 #include <hintids.hxx>
 #endif
-
 #ifndef _SFXITEMITER_HXX //autogen
 #include <svtools/itemiter.hxx>
 #endif
-
 #ifndef _FMTFTN_HXX //autogen
 #include <fmtftn.hxx>
 #endif
@@ -76,9 +73,6 @@
 #endif
 #ifndef _TXTFLCNT_HXX //autogen
 #include <txtflcnt.hxx>
-#endif
-#ifndef _FMTPDSC_HXX //autogen
-#include <fmtpdsc.hxx>
 #endif
 #ifndef _FMTANCHR_HXX //autogen
 #include <fmtanchr.hxx>
@@ -113,9 +107,6 @@
 #ifndef _PAM_HXX
 #include <pam.hxx>				// fuer SwPaM
 #endif
-#ifndef _HINTS_HXX
-#include <hints.hxx> 			// fuer SwHytrSetAttrSet
-#endif
 #ifndef _SWTABLE_HXX
 #include <swtable.hxx>
 #endif
@@ -131,25 +122,18 @@
 #ifndef _BOOKMRK_HXX
 #include <bookmrk.hxx> 			// fuer SwBookmark
 #endif
-#ifndef _NDINDEX_HXX
-#include <ndindex.hxx> 			// fuer SwNodeIndex
-#endif
-
 #ifndef _CHARFMT_HXX
 #include <charfmt.hxx> // #i27615#
 #endif
-
 #ifndef _COMCORE_HRC
 #include <comcore.hrc>
 #endif
 #ifndef _TOOLS_RESID_HXX
 #include <tools/resid.hxx>
 #endif
-
 #ifndef _UNDO_HRC
 #include <undo.hrc>
 #endif
-
 #ifndef _SVX_BRKITEM_HXX
 #include <svx/brkitem.hxx>
 #endif
@@ -223,15 +207,15 @@ String SwSetFmtHint::GetDescription() const
         {
         case SVX_BREAK_PAGE_BEFORE:
         case SVX_BREAK_PAGE_AFTER:
-        case SVX_BREAK_PAGE_BOTH:            
+        case SVX_BREAK_PAGE_BOTH:
             aResult = SW_RES(STR_UNDO_PAGEBREAKS);
-            
+
             break;
         case SVX_BREAK_COLUMN_BEFORE:
         case SVX_BREAK_COLUMN_AFTER:
-        case SVX_BREAK_COLUMN_BOTH:            
+        case SVX_BREAK_COLUMN_BOTH:
             aResult = SW_RES(STR_UNDO_COLBRKS);
-            
+
             break;
         default:
             break;
@@ -707,14 +691,14 @@ void SwHstryBookmark::SetInDoc( SwDoc* pDoc, BOOL )
                 ASSERT( pCntntNd, "Falscher Node fuer den Bookmark" );
                 aPam.GetMark()->nContent.Assign( pCntntNd, nCntnt2 );
             }
-            pDoc->MakeBookmark( aPam, KeyCode( nKeyCode ), aName, aShortName );
+            pDoc->makeBookmark( aPam, KeyCode( nKeyCode ), aName, aShortName, IDocumentBookmarkAccess::BOOKMARK );
         }
     }
     else
     {
         // dann muss das noch vorhandene manipuliert werden
-        SwBookmark* const* ppBkmks = pDoc->GetBookmarks().GetData();
-        for( USHORT n = pDoc->GetBookmarks().Count(); n; --n, ++ppBkmks )
+        SwBookmark* const* ppBkmks = pDoc->getBookmarks().GetData();
+        for( USHORT n = pDoc->getBookmarks().Count(); n; --n, ++ppBkmks )
             if( (*ppBkmks)->GetName() == aName )
             {
                 ULONG nNd;
@@ -731,8 +715,8 @@ void SwHstryBookmark::SetInDoc( SwDoc* pDoc, BOOL )
                         aPam.GetPoint()->nContent.Assign(
                                 rNds[ nNode1 ]->GetCntntNode(), nCntnt1 );
 
-                        pDoc->DelBookmark( pDoc->GetBookmarks().Count() - n );
-                        pDoc->MakeBookmark( aPam, KeyCode( nKeyCode ), aName, aShortName, BOOKMARK );
+                        pDoc->deleteBookmark( pDoc->getBookmarks().Count() - n );
+                        pDoc->makeBookmark( aPam, KeyCode( nKeyCode ), aName, aShortName, IDocumentBookmarkAccess::BOOKMARK );
                         break;
 
                     }
@@ -751,8 +735,8 @@ void SwHstryBookmark::SetInDoc( SwDoc* pDoc, BOOL )
                         aPam.GetMark()->nContent.Assign(
                                 rNds[ nNode2 ]->GetCntntNode(), nCntnt2 );
 
-                        pDoc->DelBookmark( pDoc->GetBookmarks().Count() - n );
-                        pDoc->MakeBookmark( aPam, KeyCode( nKeyCode ), aName, aShortName, BOOKMARK );
+                        pDoc->deleteBookmark( pDoc->getBookmarks().Count() - n );
+                        pDoc->makeBookmark( aPam, KeyCode( nKeyCode ), aName, aShortName, IDocumentBookmarkAccess::BOOKMARK );
                         break;
                     }
                     nNd = nNode2;
@@ -1029,7 +1013,7 @@ void SwHstryChgFlyChain::SetInDoc( SwDoc* pDoc, BOOL bTmpSet )
 
 
 // -> #i27615#
-SwHstryChgCharFmt::SwHstryChgCharFmt(const SfxItemSet & rSet, 
+SwHstryChgCharFmt::SwHstryChgCharFmt(const SfxItemSet & rSet,
                                      const String & _sFmt)
     : SwHstryHint(HSTRY_CHGCHARFMT), aOldSet(rSet), sFmt(_sFmt)
 {
@@ -1040,7 +1024,7 @@ void SwHstryChgCharFmt::SetInDoc(SwDoc * pDoc, BOOL bTmpSet)
     SwCharFmt * pCharFmt = pDoc->FindCharFmtByName(sFmt);
 
     if (pCharFmt)
-        pCharFmt->SetAttr(aOldSet);    
+        pCharFmt->SetAttr(aOldSet);
 }
 // <- #i27615#
 
