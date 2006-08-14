@@ -4,9 +4,9 @@
  *
  *  $RCSfile: chardlg.cxx,v $
  *
- *  $Revision: 1.25 $
+ *  $Revision: 1.26 $
  *
- *  last change: $Author: obo $ $Date: 2005-11-16 13:54:11 $
+ *  last change: $Author: hr $ $Date: 2006-08-14 17:27:52 $
  *
  *  The Contents of this file are made available subject to
  *  the terms of GNU Lesser General Public License Version 2.1.
@@ -33,7 +33,6 @@
  *
  ************************************************************************/
 
-
 #ifdef SW_DLLIMPLEMENTATION
 #undef SW_DLLIMPLEMENTATION
 #endif
@@ -59,9 +58,9 @@
 //CHINA001 #ifndef _SVX_BACKGRND_HXX //autogen
 //CHINA001 #include <svx/backgrnd.hxx>
 //CHINA001 #endif
-#ifndef _SVX_FLSTITEM_HXX //CHINA001 
-#include <svx/flstitem.hxx> //CHINA001 
-#endif //CHINA001 
+#ifndef _SVX_FLSTITEM_HXX //CHINA001
+#include <svx/flstitem.hxx> //CHINA001
+#endif //CHINA001
 #ifndef _SVX_HTMLMODE_HXX //autogen
 #include <svx/htmlmode.hxx>
 #endif
@@ -135,12 +134,10 @@
 #endif
 #include <sfx2/viewfrm.hxx>
 
-#include <svx/svxdlg.hxx> //CHINA001 
-#include <svx/svxids.hrc> //CHINA001 
-#ifndef _SFXINTITEM_HXX //CHINA001 
-#include <svtools/intitem.hxx> //CHINA001 
-#endif //CHINA001 
-#include <svx/flagsdef.hxx>	//CHINA001 
+#include <svx/svxdlg.hxx> //CHINA001
+#include <svx/svxids.hrc> //CHINA001
+#include <svx/flagsdef.hxx> //CHINA001
+
 using namespace com::sun::star::ui::dialogs;
 using namespace ::com::sun::star::lang;
 using namespace ::com::sun::star::uno;
