@@ -4,9 +4,9 @@
  *
  *  $RCSfile: olmenu.hxx,v $
  *
- *  $Revision: 1.6 $
+ *  $Revision: 1.7 $
  *
- *  last change: $Author: rt $ $Date: 2006-02-10 08:49:17 $
+ *  last change: $Author: hr $ $Date: 2006-08-14 17:43:50 $
  *
  *  The Contents of this file are made available subject to
  *  the terms of GNU Lesser General Public License Version 2.1.
@@ -34,7 +34,6 @@
  ************************************************************************/
 #ifndef _OLMENU_HXX
 #define _OLMENU_HXX
-
 #ifndef _COM_SUN_STAR_LINGUISTIC2_XDICTIONARY_HPP_
 #include <com/sun/star/linguistic2/XDictionary.hpp>
 #endif
@@ -47,21 +46,20 @@
 #endif
 
 class SwWrtShell;
-class SvStringsDtor;
 
 class SwSpellPopup : public PopupMenu
 {
     SwWrtShell*	pSh;
-    ::com::sun::star::uno::Sequence< ::com::sun::star::uno::Reference< 
+    ::com::sun::star::uno::Sequence< ::com::sun::star::uno::Reference<
         ::com::sun::star::linguistic2::XDictionary >  >		aDics;
-    ::com::sun::star::uno::Reference< 
+    ::com::sun::star::uno::Reference<
         ::com::sun::star::linguistic2::XSpellAlternatives >	xSpellAlt;
 
     LanguageType				nCorrLang;
 
 public:
-    SwSpellPopup( SwWrtShell*, 
-            const ::com::sun::star::uno::Reference< 
+    SwSpellPopup( SwWrtShell*,
+            const ::com::sun::star::uno::Reference<
                 ::com::sun::star::linguistic2::XSpellAlternatives >  &xAlt );
 
     sal_uInt16  Execute( Window* pWin, const Rectangle& rPopupPos );
