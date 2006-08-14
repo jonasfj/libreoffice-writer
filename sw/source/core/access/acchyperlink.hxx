@@ -4,9 +4,9 @@
  *
  *  $RCSfile: acchyperlink.hxx,v $
  *
- *  $Revision: 1.3 $
+ *  $Revision: 1.4 $
  *
- *  last change: $Author: rt $ $Date: 2005-09-09 02:51:26 $
+ *  last change: $Author: hr $ $Date: 2006-08-14 15:45:01 $
  *
  *  The Contents of this file are made available subject to
  *  the terms of GNU Lesser General Public License Version 2.1.
@@ -34,13 +34,8 @@
  ************************************************************************/
 #ifndef _ACCHYPERLINK_HXX
 #define _ACCHYPERLINK_HXX
-
-
 #ifndef _COM_SUN_STAR_ACCESSIBILITY_XACCESSIBLEHYPERLINK_HPP_
 #include <com/sun/star/accessibility/XAccessibleHyperlink.hpp>
-#endif
-#ifndef _COM_SUN_STAR_UNO_RUNTIMEEXCEPTION_HPP_
-#include <com/sun/star/uno/RuntimeException.hpp>
 #endif
 #ifndef _VOS_REF_HXX_
 #include <vos/ref.hxx>
@@ -55,7 +50,7 @@
 class SwAccessibleParagraph;
 class SwTxtAttr;
 
-class SwAccessibleHyperlink : 
+class SwAccessibleHyperlink :
         public ::cppu::WeakImplHelper1<
         ::com::sun::star::accessibility::XAccessibleHyperlink >
 {
@@ -76,35 +71,35 @@ class SwAccessibleHyperlink :
 public:
 
     // XAccessibleAction
-    virtual sal_Int32 SAL_CALL getAccessibleActionCount() 
+    virtual sal_Int32 SAL_CALL getAccessibleActionCount()
         throw (::com::sun::star::uno::RuntimeException);
-    virtual sal_Bool SAL_CALL doAccessibleAction( sal_Int32 nIndex ) 
-        throw (::com::sun::star::lang::IndexOutOfBoundsException, 
-                ::com::sun::star::uno::RuntimeException);
-    virtual ::rtl::OUString SAL_CALL getAccessibleActionDescription( 
-                sal_Int32 nIndex ) 
+    virtual sal_Bool SAL_CALL doAccessibleAction( sal_Int32 nIndex )
         throw (::com::sun::star::lang::IndexOutOfBoundsException,
                 ::com::sun::star::uno::RuntimeException);
-    virtual ::com::sun::star::uno::Reference< 
+    virtual ::rtl::OUString SAL_CALL getAccessibleActionDescription(
+                sal_Int32 nIndex )
+        throw (::com::sun::star::lang::IndexOutOfBoundsException,
+                ::com::sun::star::uno::RuntimeException);
+    virtual ::com::sun::star::uno::Reference<
             ::com::sun::star::accessibility::XAccessibleKeyBinding > SAL_CALL
-               getAccessibleActionKeyBinding( sal_Int32 nIndex ) 
-        throw (::com::sun::star::lang::IndexOutOfBoundsException, 
+               getAccessibleActionKeyBinding( sal_Int32 nIndex )
+        throw (::com::sun::star::lang::IndexOutOfBoundsException,
                 ::com::sun::star::uno::RuntimeException);
 
     // XAccessibleHyperlink
-    virtual ::com::sun::star::uno::Any SAL_CALL getAccessibleActionAnchor( 
-                sal_Int32 nIndex ) 
-        throw (::com::sun::star::lang::IndexOutOfBoundsException, 
+    virtual ::com::sun::star::uno::Any SAL_CALL getAccessibleActionAnchor(
+                sal_Int32 nIndex )
+        throw (::com::sun::star::lang::IndexOutOfBoundsException,
                 ::com::sun::star::uno::RuntimeException);
-    virtual ::com::sun::star::uno::Any SAL_CALL getAccessibleActionObject( 
-            sal_Int32 nIndex ) 
-        throw (::com::sun::star::lang::IndexOutOfBoundsException, 
+    virtual ::com::sun::star::uno::Any SAL_CALL getAccessibleActionObject(
+            sal_Int32 nIndex )
+        throw (::com::sun::star::lang::IndexOutOfBoundsException,
                 ::com::sun::star::uno::RuntimeException);
-    virtual sal_Int32 SAL_CALL getStartIndex() 
+    virtual sal_Int32 SAL_CALL getStartIndex()
         throw (::com::sun::star::uno::RuntimeException);
-    virtual sal_Int32 SAL_CALL getEndIndex() 
+    virtual sal_Int32 SAL_CALL getEndIndex()
         throw (::com::sun::star::uno::RuntimeException);
-    virtual sal_Bool SAL_CALL isValid(  ) 
+    virtual sal_Bool SAL_CALL isValid(  )
         throw (::com::sun::star::uno::RuntimeException);
 };
 
