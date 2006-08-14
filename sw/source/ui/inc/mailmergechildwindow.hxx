@@ -4,9 +4,9 @@
  *
  *  $RCSfile: mailmergechildwindow.hxx,v $
  *
- *  $Revision: 1.5 $
+ *  $Revision: 1.6 $
  *
- *  last change: $Author: rt $ $Date: 2005-09-09 09:39:55 $
+ *  last change: $Author: hr $ $Date: 2006-08-14 17:42:53 $
  *
  *  The Contents of this file are made available subject to
  *  the terms of GNU Lesser General Public License Version 2.1.
@@ -34,24 +34,21 @@
  ************************************************************************/
 #ifndef _SWMAILMERGECHILDWINDOW_HXX
 #define _SWMAILMERGECHILDWINDOW_HXX
-
-#ifndef _SFX_CHILDWIN_HXX 
+#ifndef _SFX_CHILDWIN_HXX
 #include <sfx2/childwin.hxx>
 #endif
 
-#ifndef _BASEDLGS_HXX 
+#ifndef _BASEDLGS_HXX
 #include <sfx2/basedlgs.hxx>
 #endif
 
-#ifndef _SV_TOOLBOX_HXX 
+#ifndef _SV_TOOLBOX_HXX
 #include <vcl/toolbox.hxx>
 #endif
 
 #ifndef INCLUDED_SWDLLAPI_H
 #include "swdllapi.h"
 #endif
-
-class SwWrtShell;
 
 /*-- 25.05.2004 15:25:56---------------------------------------------------
 
