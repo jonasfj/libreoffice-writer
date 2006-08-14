@@ -4,9 +4,9 @@
  *
  *  $RCSfile: redlndlg.hxx,v $
  *
- *  $Revision: 1.6 $
+ *  $Revision: 1.7 $
  *
- *  last change: $Author: vg $ $Date: 2006-04-07 15:19:12 $
+ *  last change: $Author: hr $ $Date: 2006-08-14 17:44:14 $
  *
  *  The Contents of this file are made available subject to
  *  the terms of GNU Lesser General Public License Version 2.1.
@@ -34,7 +34,6 @@
  ************************************************************************/
 #ifndef _SWREDLNDLG_HXX
 #define _SWREDLNDLG_HXX
-
 #ifndef INCLUDED_SWDLLAPI_H
 #include "swdllapi.h"
 #endif
@@ -42,12 +41,8 @@
 #include "chldwrap.hxx"
 #endif
 #ifndef _REDLINE_HXX
-#include <redline.hxx> //CHINA001 
+#include <redline.hxx> //CHINA001
 #endif
-#ifndef _REDLENUM_HXX
-#include <redlenum.hxx>
-#endif
-
 #ifndef _DATETIME_HXX //autogen
 #include <tools/datetime.hxx>
 #endif
@@ -210,13 +205,13 @@ public:
 //CHINA001 class SwModalRedlineAcceptDlg : public SfxModalDialog
 //CHINA001 {
 //CHINA001 SwRedlineAcceptDlg*		pImplDlg;
-//CHINA001 
+//CHINA001
 //CHINA001 virtual void	Resize();
-//CHINA001 
+//CHINA001
 //CHINA001 public:
 //CHINA001 SwModalRedlineAcceptDlg(Window *pParent);
 //CHINA001 ~SwModalRedlineAcceptDlg();
-//CHINA001 
+//CHINA001
 //CHINA001 void			AcceptAll( BOOL bAccept );
 //CHINA001 virtual void	Activate();
 //CHINA001 };
