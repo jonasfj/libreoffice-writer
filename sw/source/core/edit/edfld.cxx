@@ -4,9 +4,9 @@
  *
  *  $RCSfile: edfld.cxx,v $
  *
- *  $Revision: 1.13 $
+ *  $Revision: 1.14 $
  *
- *  last change: $Author: rt $ $Date: 2005-09-09 03:26:57 $
+ *  last change: $Author: hr $ $Date: 2006-08-14 16:08:16 $
  *
  *  The Contents of this file are made available subject to
  *  the terms of GNU Lesser General Public License Version 2.1.
@@ -33,7 +33,6 @@
  *
  ************************************************************************/
 
-
 #pragma hdrstop
 
 #ifndef _UNOTOOLS_CHARCLASS_HXX
@@ -49,8 +48,8 @@
 #ifndef _NDTXT_HXX
 #include <ndtxt.hxx>		// GetCurFld
 #endif
-#ifndef _HINTS_HXX
-#include <hints.hxx>		// SwRefMarkFldUpdate
+#ifndef _DOC_HXX
+#include <doc.hxx>
 #endif
 #ifndef _DOCARY_HXX
 #include <docary.hxx>
@@ -172,7 +171,7 @@ SwFieldType* SwEditShell::GetFldType(USHORT nFld, USHORT nResId, BOOL bUsed ) co
  --------------------------------------------------------------------*/
 SwFieldType* SwEditShell::GetFldType(USHORT nResId, const String& rName) const
 {
-    return GetDoc()->GetFldType( nResId, rName );
+    return GetDoc()->GetFldType( nResId, rName, false );
 }
 
 /*--------------------------------------------------------------------
@@ -265,7 +264,7 @@ void SwEditShell::FieldToText( SwFieldType* pType )
                 pPaM->SetMark();
                 pPaM->Move( fnMoveForward );
                 GetDoc()->Delete( *pPaM );
-                GetDoc()->Insert( *pPaM, aEntry );
+                GetDoc()->Insert( *pPaM, aEntry, true );
             }
             else if( bDDEFld )
             {
@@ -297,7 +296,7 @@ void SwEditShell::Insert(SwField& rFld)
     SwFmtFld aFld( rFld );
 
     FOREACHPAM_START(this)						// fuer jeden PaM
-        if( !GetDoc()->Insert( *PCURCRSR, aFld ) )
+        if( !GetDoc()->Insert( *PCURCRSR, aFld, 0 ) )
             ASSERT( FALSE, "Doc->Insert(Field) failed");
     FOREACHPAM_END()					  // fuer jeden PaM
 
@@ -334,10 +333,10 @@ SwField* SwEditShell::GetCurFld() const
     /* #108536# Field was only recognized if no selection was
         present. Now it is recognized if either the cursor is in the
         field or the selection spans exactly over the field. */
-    if( pTxtFld && 
-        pCrsr->GetNext() == pCrsr && 
-        pCrsr->Start()->nNode == pCrsr->End()->nNode && 
-        (pCrsr->End()->nContent.GetIndex() - 
+    if( pTxtFld &&
+        pCrsr->GetNext() == pCrsr &&
+        pCrsr->Start()->nNode == pCrsr->End()->nNode &&
+        (pCrsr->End()->nContent.GetIndex() -
          pCrsr->Start()->nContent.GetIndex()) <= 1)
     {
         pCurFld = (SwField*)pTxtFld->GetFld().GetFld();
@@ -347,7 +346,7 @@ SwField* SwEditShell::GetCurFld() const
             const SwTableNode* pTblNd = IsCrsrInTbl();
             ((SwTblField*)pCurFld)->PtrToBoxNm( pTblNd ? &pTblNd->GetTable() : 0 );
         }
-        
+
     }
 
     /* #108536# removed handling of multi-selections */
@@ -373,10 +372,10 @@ SwTxtFld* lcl_FindInputFld( SwDoc* pDoc, SwField& rFld )
         ((SwSetExpField&)rFld).GetInputFlag() ) )
     {
         const SfxPoolItem* pItem;
-        USHORT n, nMaxItems = 
+        USHORT n, nMaxItems =
             pDoc->GetAttrPool().GetItemCount( RES_TXTATR_FIELD );
         for( n = 0; n < nMaxItems; ++n )
-            if( 0 != (pItem = 
+            if( 0 != (pItem =
                       pDoc->GetAttrPool().GetItem( RES_TXTATR_FIELD, n ) )
                 && ((SwFmtFld*)pItem)->GetFld() == &rFld )
             {
@@ -405,7 +404,7 @@ void SwEditShell::UpdateFlds( SwField &rFld )
         SwPaM* pCrsr = GetCrsr();
         SwTxtFld *pTxtFld;
         SwFmtFld *pFmtFld;
-        
+
 // 		if( pCrsr->GetNext() == pCrsr && !pCrsr->HasMark() &&
 // 			( 0 != ( pTxtFld = GetDocTxtFld( pCrsr->Start() ) ) ||
 // 			  0 != ( pTxtFld = lcl_FindInputFld( GetDoc(), rFld ) ) ) &&
@@ -436,7 +435,7 @@ void SwEditShell::UpdateFlds( SwField &rFld )
                 SwPaM aCurPam( *PCURCRSR->GetMark(), *PCURCRSR->GetPoint() );
                 SwPaM aPam( *PCURCRSR->GetPoint() );
 
-                SwPosition *pCurStt = aCurPam.Start(), *pCurEnd = 
+                SwPosition *pCurStt = aCurPam.Start(), *pCurEnd =
                     aCurPam.End();
                 /*
                  * Fuer den Fall, dass zwei aneinanderliegende Felder in einem
@@ -461,11 +460,11 @@ void SwEditShell::UpdateFlds( SwField &rFld )
                         pCurFld = pFmtFld->GetFld();
 
                         // bei gemischten Feldtypen
-                        if( pCurFld->GetTyp()->Which() != 
+                        if( pCurFld->GetTyp()->Which() !=
                             rFld.GetTyp()->Which() )
                             bOkay = FALSE;
-                        
-                        bTblSelBreak = GetDoc()->UpdateFld(pTxtFld, rFld, 
+
+                        bTblSelBreak = GetDoc()->UpdateFld(pTxtFld, rFld,
                                                            pMsgHnt, FALSE); // #111840#
                     }
                     // Der Suchbereich wird um den gefundenen Bereich
@@ -521,7 +520,7 @@ void SwEditShell::UpdateExpFlds(BOOL bCloseDB)
 {
     SET_CURR_SHELL( this );
     StartAllAction();
-    GetDoc()->UpdateExpFlds();
+    GetDoc()->UpdateExpFlds(NULL, true);
     if (bCloseDB)
         GetDoc()->GetNewDBMgr()->CloseAll();	// Alle Datenbankverbindungen dichtmachen
     EndAllAction();
@@ -557,12 +556,12 @@ BOOL SwEditShell::IsExpFldsLocked() const
 
 void SwEditShell::SetFldUpdateFlags( USHORT eFlags )
 {
-    GetDoc()->SetFldUpdateFlags( eFlags );
+    getIDocumentSettingAccess()->setFieldUpdateFlags( eFlags );
 }
 
 USHORT SwEditShell::GetFldUpdateFlags(BOOL bDocSettings) const
 {
-    return bDocSettings ? GetDoc()->_GetFldUpdateFlags() : GetDoc()->GetFldUpdateFlags();
+    return getIDocumentSettingAccess()->getFieldUpdateFlags( !bDocSettings );
 }
 
 void SwEditShell::SetFixFields( BOOL bOnlyTimeDate,
@@ -580,12 +579,12 @@ void SwEditShell::SetFixFields( BOOL bOnlyTimeDate,
 
 void SwEditShell::SetLabelDoc( BOOL bFlag )
 {
-    GetDoc()->SetLabelDoc( bFlag );
+    GetDoc()->set(IDocumentSettingAccess::LABEL_DOCUMENT, bFlag );
 }
 
 BOOL SwEditShell::IsLabelDoc() const
 {
-    return GetDoc()->IsLabelDoc();
+    return getIDocumentSettingAccess()->get(IDocumentSettingAccess::LABEL_DOCUMENT);
 }
 /* -----------------------------21.12.99 12:53--------------------------------
 
