@@ -4,9 +4,9 @@
  *
  *  $RCSfile: accnotextframe.hxx,v $
  *
- *  $Revision: 1.6 $
+ *  $Revision: 1.7 $
  *
- *  last change: $Author: rt $ $Date: 2005-09-09 02:52:47 $
+ *  last change: $Author: hr $ $Date: 2006-08-14 15:45:43 $
  *
  *  The Contents of this file are made available subject to
  *  the terms of GNU Lesser General Public License Version 2.1.
@@ -34,15 +34,9 @@
  ************************************************************************/
 #ifndef _ACCNOTEXTFRAME_HXX
 #define _ACCNOTEXTFRAME_HXX
-
 #ifndef _ACCFRAMEBASE_HXX
 #include "accframebase.hxx"
 #endif
-
-#ifndef _COM_SUN_STAR_UNO_RUNTIMEEXCEPTION_HPP_
-#include <com/sun/star/uno/RuntimeException.hpp>
-#endif
-
 #ifndef _COM_SUN_STAR_ACCESSIBILITY_XACCESSIBLEIMAGE_HPP_
 #include <com/sun/star/accessibility/XAccessibleImage.hpp>
 #endif
@@ -73,7 +67,7 @@ public:
 
     ///	Return this object's description.
     virtual ::rtl::OUString SAL_CALL
-        getAccessibleDescription (void) 
+        getAccessibleDescription (void)
         throw (com::sun::star::uno::RuntimeException);
 
     //=====  XInterface  ======================================================
@@ -82,11 +76,11 @@ public:
     // between those inherited through SwAcessibleContext and
     // XAccessibleImage.
 
-    virtual ::com::sun::star::uno::Any SAL_CALL queryInterface( 
-        const ::com::sun::star::uno::Type& aType ) 
+    virtual ::com::sun::star::uno::Any SAL_CALL queryInterface(
+        const ::com::sun::star::uno::Type& aType )
         throw (::com::sun::star::uno::RuntimeException);
 
-    virtual void SAL_CALL acquire(  ) throw () 
+    virtual void SAL_CALL acquire(  ) throw ()
         { SwAccessibleContext::acquire(); };
 
     virtual void SAL_CALL release(  ) throw ()
@@ -97,16 +91,16 @@ public:
 
     //=====  XAccessibleImage  ================================================
 
-    virtual ::rtl::OUString SAL_CALL 
-        getAccessibleImageDescription(  ) 
+    virtual ::rtl::OUString SAL_CALL
+        getAccessibleImageDescription(  )
         throw ( ::com::sun::star::uno::RuntimeException );
 
-    virtual sal_Int32 SAL_CALL 
-        getAccessibleImageHeight(  ) 
+    virtual sal_Int32 SAL_CALL
+        getAccessibleImageHeight(  )
         throw ( ::com::sun::star::uno::RuntimeException );
 
-    virtual sal_Int32 SAL_CALL 
-        getAccessibleImageWidth(  ) 
+    virtual sal_Int32 SAL_CALL
+        getAccessibleImageWidth(  )
         throw ( ::com::sun::star::uno::RuntimeException );
 
     // The object is not visible an longer and should be destroyed
