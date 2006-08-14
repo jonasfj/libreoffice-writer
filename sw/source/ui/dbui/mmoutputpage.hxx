@@ -4,9 +4,9 @@
  *
  *  $RCSfile: mmoutputpage.hxx,v $
  *
- *  $Revision: 1.6 $
+ *  $Revision: 1.7 $
  *
- *  last change: $Author: rt $ $Date: 2005-10-19 08:26:43 $
+ *  last change: $Author: hr $ $Date: 2006-08-14 17:32:22 $
  *
  *  The Contents of this file are made available subject to
  *  the terms of GNU Lesser General Public License Version 2.1.
@@ -34,14 +34,13 @@
  ************************************************************************/
 #ifndef _MAILMERGEOUTPUTPAGE_HXX
 #define _MAILMERGEOUTPUTPAGE_HXX
-
 #ifndef _SVTOOLS_WIZARDMACHINE_HXX_
 #include <svtools/wizardmachine.hxx>
 #endif
 #ifndef _SV_BUTTON_HXX
 #include <vcl/button.hxx>
 #endif
-#ifndef _STDCTRL_HXX 
+#ifndef _STDCTRL_HXX
 #include <svtools/stdctrl.hxx>
 #endif
 #ifndef _SV_COMBOBOX_HXX
@@ -56,7 +55,7 @@
 #ifndef _SFX_OBJSH_HXX
 #include <sfx2/objsh.hxx>
 #endif
-#ifndef _BASEDLGS_HXX 
+#ifndef _BASEDLGS_HXX
 #include <sfx2/basedlgs.hxx>
 #endif
 #ifndef _SVTABBX_HXX
@@ -80,7 +79,7 @@ class SwMailMergeWizard;
 class SfxPrinter;
 class SwSendMailDialog;
 
-namespace com{ namespace sun{ namespace star{ 
+namespace com{ namespace sun{ namespace star{
     namespace mail{
         class XMailMessage;
     }
@@ -96,9 +95,9 @@ class SwMailMergeOutputPage : public svt::OWizardPage
     RadioButton     m_aSaveMergedDocRB;
     RadioButton     m_aPrintRB;
     RadioButton     m_aSendMailRB;
-                    
+
     FixedLine       m_aSeparatorFL;
-                    
+
     PushButton      m_aSaveStartDocPB;
 
     RadioButton     m_aSaveAsOneRB;
@@ -116,7 +115,7 @@ class SwMailMergeOutputPage : public svt::OWizardPage
     ListBox         m_aPrinterLB;
     PushButton      m_aPrinterSettingsPB;
     PushButton      m_aPrintNowPB;
-    
+
     FixedText       m_aMailToFT;
     ListBox         m_aMailToLB;
     PushButton      m_aCopyToPB;
@@ -131,20 +130,20 @@ class SwMailMergeOutputPage : public svt::OWizardPage
 
     SwMailMergeWizard*  m_pWizard;
 
-    
+
     //some FixedLine labels
     String          m_sSaveStartST;
     String          m_sSaveMergedST;
     String          m_sPrintST;
     String          m_sSendMailST;
-    
+
     //misc strings
     String          m_sDefaultAttachmentST;
     String          m_sNoSubjectQueryST;
     String          m_sNoSubjectST;
     String          m_sNoAttachmentNameST;
     String          m_sConfigureMail;
-    
+
     String          m_sBody;
 
     long            m_nFromToRBPos;
@@ -174,7 +173,7 @@ class SwMailMergeOutputPage : public svt::OWizardPage
 protected:
         virtual sal_Bool determineNextButtonState();
         virtual void     ActivatePage();
-public:     
+public:
         SwMailMergeOutputPage( SwMailMergeWizard* _pParent);
         ~SwMailMergeOutputPage();
 
@@ -191,34 +190,33 @@ struct SwMailDescriptor
     ::rtl::OUString                             sSubject;
     ::rtl::OUString                             sBodyMimeType;
     ::rtl::OUString                             sBodyContent;
-    
+
 
     ::rtl::OUString                             sCC;
     ::rtl::OUString                             sBCC;
 };
 struct SwSendMailDialog_Impl;
-class MailProgressBar_Impl;
 class SwMailMergeConfigItem;
 class SW_DLLPUBLIC SwSendMailDialog : public ModelessDialog //SfxModalDialog
 {
     FixedLine               m_aStatusFL;
     FixedText               m_aStatusFT;
-                            
+
     FixedLine               m_aTransferStatusFL;
     FixedText               m_aTransferStatusFT;
     FixedInfo               m_PausedFI;
     ProgressBar             m_aProgressBar;
     FixedText               m_aErrorStatusFT;
-                            
+
     PushButton              m_aDetailsPB;
     HeaderBar               m_aStatusHB;
     SvTabListBox            m_aStatusLB;
-                            
+
     FixedLine               m_aSeparatorFL;
-                            
+
     PushButton              m_aStopPB;
     PushButton              m_aClosePB;
-                            
+
     String                  m_sMore;
     String                  m_sLess;
     String                  m_sContinue;
