@@ -4,9 +4,9 @@
  *
  *  $RCSfile: edsect.cxx,v $
  *
- *  $Revision: 1.9 $
+ *  $Revision: 1.10 $
  *
- *  last change: $Author: rt $ $Date: 2005-09-09 03:29:13 $
+ *  last change: $Author: hr $ $Date: 2006-08-14 16:10:01 $
  *
  *  The Contents of this file are made available subject to
  *  the terms of GNU Lesser General Public License Version 2.1.
@@ -80,7 +80,7 @@ const SwSection* SwEditShell::InsertSection( const SwSection& rNew,
     if( !IsTableMode() )
     {
         StartAllAction();
-        GetDoc()->StartUndo( UNDO_INSSECTION );
+        GetDoc()->StartUndo( UNDO_INSSECTION, NULL );
 
         FOREACHPAM_START(this)
             const SwSection* pNew = GetDoc()->Insert( *PCURCRSR,
@@ -90,7 +90,7 @@ const SwSection* SwEditShell::InsertSection( const SwSection& rNew,
         FOREACHPAM_END()
 
         // Undo-Klammerung hier beenden
-        GetDoc()->EndUndo( UNDO_INSSECTION );
+        GetDoc()->EndUndo( UNDO_INSSECTION, NULL );
         EndAllAction();
     }
     return pRet;
@@ -263,7 +263,7 @@ void SwEditShell::SetSectionAttr( const SfxItemSet& rSet,
                         if( 0 != (pSttSectNd = aSIdx.GetNode().GetSectionNode())
                             || ( aSIdx.GetNode().IsEndNode() &&
                                 0 != ( pSttSectNd = aSIdx.GetNode().
-                                    FindStartNode()->GetSectionNode())) )
+                                    StartOfSectionNode()->GetSectionNode())) )
                             _SetSectionAttr( *pSttSectNd->GetSection().GetFmt(),
                                             rSet );
                         aSIdx++;
@@ -322,14 +322,14 @@ USHORT SwEditShell::GetFullSelectedSectionCount() const
         SwNodeIndex aSIdx( pStt->nNode, -1 ), aEIdx( pEnd->nNode, +1 );
         if( !aSIdx.GetNode().IsSectionNode() ||
             !aEIdx.GetNode().IsEndNode() ||
-            !aEIdx.GetNode().FindStartNode()->IsSectionNode() )
+            !aEIdx.GetNode().StartOfSectionNode()->IsSectionNode() )
         {
             nRet = 0;
             break;
         }
 
         ++nRet;
-        if( &aSIdx.GetNode() != aEIdx.GetNode().FindStartNode() )
+        if( &aSIdx.GetNode() != aEIdx.GetNode().StartOfSectionNode() )
             ++nRet;
 
     FOREACHPAM_END()
@@ -343,7 +343,7 @@ USHORT SwEditShell::GetFullSelectedSectionCount() const
  *
  * A node is found if:
  * 1) the innermost table/section is not in a write-protected area
- * 2) pCurrentPos is at or just before an end node 
+ * 2) pCurrentPos is at or just before an end node
  *    (or at or just after a start node)
  * 3) there are only start/end nodes between pCurrentPos and the innermost
  *    table/section
@@ -376,8 +376,8 @@ const SwNode* lcl_SpecialInsertNode(const SwPosition* pCurrentPos)
         else
         {
             // compare and choose the larger one
-            pInnermostNode = 
-                ( pSectionNode->GetIndex() > pTableNode->GetIndex() ) 
+            pInnermostNode =
+                ( pSectionNode->GetIndex() > pTableNode->GetIndex() )
                 ? pSectionNode : pTableNode;
         }
     }
@@ -392,7 +392,7 @@ const SwNode* lcl_SpecialInsertNode(const SwPosition* pCurrentPos)
         DBG_ASSERT( pInnermostNode->IsTableNode() ||
                     pInnermostNode->IsSectionNode(), "wrong node found" );
         DBG_ASSERT( ( pInnermostNode->GetIndex() <= rCurrentNode.GetIndex() )&&
-                    ( pInnermostNode->EndOfSectionNode()->GetIndex() >= 
+                    ( pInnermostNode->EndOfSectionNode()->GetIndex() >=
                       rCurrentNode.GetIndex() ), "wrong node found" );
 
         // we now need to find the possible start/end positions
@@ -401,10 +401,10 @@ const SwNode* lcl_SpecialInsertNode(const SwPosition* pCurrentPos)
         // - we're at or just before a start node
         // - there are only start nodes between the current and pInnermostNode
         SwNodeIndex aBegin( pCurrentPos->nNode );
-        if( rCurrentNode.IsCntntNode() && 
+        if( rCurrentNode.IsCntntNode() &&
             (pCurrentPos->nContent.GetIndex() == 0))
             aBegin--;
-        while( (aBegin != pInnermostNode->GetIndex()) && 
+        while( (aBegin != pInnermostNode->GetIndex()) &&
                aBegin.GetNode().IsStartNode() )
             aBegin--;
         bool bStart = ( aBegin == pInnermostNode->GetIndex() );
@@ -415,10 +415,10 @@ const SwNode* lcl_SpecialInsertNode(const SwPosition* pCurrentPos)
         //   pInnermostNode's end node
         SwNodeIndex aEnd( pCurrentPos->nNode );
         if( rCurrentNode.IsCntntNode() &&
-            ( pCurrentPos->nContent.GetIndex() == 
+            ( pCurrentPos->nContent.GetIndex() ==
               rCurrentNode.GetCntntNode()->Len() ) )
             aEnd++;
-        while( (aEnd != pInnermostNode->EndOfSectionNode()->GetIndex()) && 
+        while( (aEnd != pInnermostNode->EndOfSectionNode()->GetIndex()) &&
                aEnd.GetNode().IsEndNode() )
             aEnd++;
         bool bEnd = ( aEnd == pInnermostNode->EndOfSectionNode()->GetIndex() );
@@ -431,7 +431,7 @@ const SwNode* lcl_SpecialInsertNode(const SwPosition* pCurrentPos)
         // else pReturn = NULL;
     }
     // else: pReturn = NULL
-        
+
 
     DBG_ASSERT( ( pReturn == NULL ) || pReturn->IsStartNode() ||
                                        pReturn->IsEndNode(),
@@ -465,7 +465,7 @@ bool SwEditShell::DoSpecialInsert()
 
         // adjust insert position to insert before start nodes and after end
         // nodes
-        SwNodeIndex aInsertIndex( *pInsertNode, 
+        SwNodeIndex aInsertIndex( *pInsertNode,
                                   pInsertNode->IsStartNode() ? -1 : 0 );
         SwPosition aInsertPos( aInsertIndex );
 
