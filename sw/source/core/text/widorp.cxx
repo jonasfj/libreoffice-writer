@@ -4,9 +4,9 @@
  *
  *  $RCSfile: widorp.cxx,v $
  *
- *  $Revision: 1.17 $
+ *  $Revision: 1.18 $
  *
- *  last change: $Author: rt $ $Date: 2005-09-09 05:08:27 $
+ *  last change: $Author: hr $ $Date: 2006-08-14 16:45:39 $
  *
  *  The Contents of this file are made available subject to
  *  the terms of GNU Lesser General Public License Version 2.1.
@@ -33,7 +33,6 @@
  *
  ************************************************************************/
 
-
 #pragma hdrstop
 
 #include "hintids.hxx"
@@ -43,10 +42,6 @@
 #include "ftnboss.hxx"
 #include "ndtxt.hxx"
 #include "paratr.hxx"
-#ifndef PRODUCT
-#include "viewsh.hxx"	// ViewShell
-#include "viewopt.hxx"	// SwViewOption
-#endif
 
 #ifndef _SVX_ORPHITEM_HXX //autogen
 #include <svx/orphitem.hxx>
@@ -561,7 +556,7 @@ sal_Bool WidowsAndOrphans::WouldFit( SwTxtMargin &rLine, SwTwips &rMaxHeight, sa
     // Sind nach Orphans/Initialen noch genug Zeilen fuer die Widows uebrig?
     // #111937#: If we are currently doing a test formatting, we may not
     // consider the widows rule for two reasons:
-    // 1. The columns may have different widths. 
+    // 1. The columns may have different widths.
     //    Widow lines would have wrong width.
     // 2. Test formatting is only done up to the given space.
     //    we do not have any lines for widows at all.
