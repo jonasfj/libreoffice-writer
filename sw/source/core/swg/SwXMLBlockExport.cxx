@@ -4,9 +4,9 @@
  *
  *  $RCSfile: SwXMLBlockExport.cxx,v $
  *
- *  $Revision: 1.10 $
+ *  $Revision: 1.11 $
  *
- *  last change: $Author: rt $ $Date: 2005-09-09 04:42:21 $
+ *  last change: $Author: hr $ $Date: 2006-08-14 16:31:24 $
  *
  *  The Contents of this file are made available subject to
  *  the terms of GNU Lesser General Public License Version 2.1.
@@ -38,43 +38,39 @@
 #ifndef _SW_XMLTEXTBLOCKS_HXX
 #include <SwXMLTextBlocks.hxx>
 #endif
-#ifndef _XMLOFF_XMLTOKEN_HXX
-#include <xmloff/xmltoken.hxx>
-#endif
 #ifndef _XMLOFF_NMSPMAP_HXX
 #include <xmloff/nmspmap.hxx>
 #endif
 #ifndef _XMLOFF_XMLNMSPE_HXX
 #include <xmloff/xmlnmspe.hxx>
 #endif
-
 using namespace ::com::sun::star::uno;
 using namespace ::com::sun::star;
 using namespace ::xmloff::token;
 using namespace ::rtl;
 
 // #110680#
-SwXMLBlockListExport::SwXMLBlockListExport( 
+SwXMLBlockListExport::SwXMLBlockListExport(
     const ::com::sun::star::uno::Reference< ::com::sun::star::lang::XMultiServiceFactory > xServiceFactory,
-    SwXMLTextBlocks & rBlocks, 
+    SwXMLTextBlocks & rBlocks,
     const rtl::OUString &rFileName,
     com::sun::star::uno::Reference< com::sun::star::xml::sax::XDocumentHandler> &rHandler)
 :	SvXMLExport( xServiceFactory, rFileName, rHandler ),
     rBlockList(rBlocks)
 {
     _GetNamespaceMap().Add( GetXMLToken ( XML_NP_BLOCK_LIST ),
-                            GetXMLToken ( XML_N_BLOCK_LIST ), 
+                            GetXMLToken ( XML_N_BLOCK_LIST ),
                             XML_NAMESPACE_BLOCKLIST );
-} 
+}
 
 sal_uInt32 SwXMLBlockListExport::exportDoc(enum XMLTokenEnum eClass)
 {
     GetDocHandler()->startDocument();
-    
-    AddAttribute ( XML_NAMESPACE_NONE, 
+
+    AddAttribute ( XML_NAMESPACE_NONE,
                    _GetNamespaceMap().GetAttrNameByKey ( XML_NAMESPACE_BLOCKLIST ),
                    _GetNamespaceMap().GetNameByKey ( XML_NAMESPACE_BLOCKLIST ) );
-    AddAttribute( XML_NAMESPACE_BLOCKLIST, 
+    AddAttribute( XML_NAMESPACE_BLOCKLIST,
                   XML_LIST_NAME,
                   OUString (rBlockList.GetName()));
     {
@@ -82,19 +78,19 @@ sal_uInt32 SwXMLBlockListExport::exportDoc(enum XMLTokenEnum eClass)
         sal_uInt16 nBlocks= rBlockList.GetCount();
         for ( sal_uInt16 i = 0; i < nBlocks; i++)
         {
-            AddAttribute( XML_NAMESPACE_BLOCKLIST, 
-                          XML_ABBREVIATED_NAME, 
+            AddAttribute( XML_NAMESPACE_BLOCKLIST,
+                          XML_ABBREVIATED_NAME,
                           OUString(rBlockList.GetShortName(i)));
             AddAttribute( XML_NAMESPACE_BLOCKLIST,
-                          XML_PACKAGE_NAME, 
+                          XML_PACKAGE_NAME,
                           OUString(rBlockList.GetPackageName(i)));
-            AddAttribute( XML_NAMESPACE_BLOCKLIST, 
-                          XML_NAME, 
+            AddAttribute( XML_NAMESPACE_BLOCKLIST,
+                          XML_NAME,
                           OUString(rBlockList.GetLongName(i)));
-            AddAttribute( XML_NAMESPACE_BLOCKLIST, 
-                          XML_UNFORMATTED_TEXT, 
+            AddAttribute( XML_NAMESPACE_BLOCKLIST,
+                          XML_UNFORMATTED_TEXT,
                           rBlockList.IsOnlyTextBlock(i) ? XML_TRUE : XML_FALSE );
-                              
+
             SvXMLElementExport aBlock( *this, XML_NAMESPACE_BLOCKLIST, XML_BLOCK, sal_True, sal_True);
         }
     }
@@ -103,16 +99,16 @@ sal_uInt32 SwXMLBlockListExport::exportDoc(enum XMLTokenEnum eClass)
 }
 
 // #110680#
-SwXMLTextBlockExport::SwXMLTextBlockExport( 
+SwXMLTextBlockExport::SwXMLTextBlockExport(
     const ::com::sun::star::uno::Reference< ::com::sun::star::lang::XMultiServiceFactory > xServiceFactory,
-    SwXMLTextBlocks & rBlocks, 
+    SwXMLTextBlocks & rBlocks,
     const rtl::OUString &rFileName,
     com::sun::star::uno::Reference< com::sun::star::xml::sax::XDocumentHandler> &rHandler)
 :	SvXMLExport( xServiceFactory, rFileName, rHandler ),
     rBlockList(rBlocks)
 {
     _GetNamespaceMap().Add( GetXMLToken ( XML_NP_BLOCK_LIST ),
-                            GetXMLToken ( XML_N_BLOCK_LIST ), 
+                            GetXMLToken ( XML_N_BLOCK_LIST ),
                             XML_NAMESPACE_BLOCKLIST );
     _GetNamespaceMap().Add( GetXMLToken ( XML_NP_OFFICE ),
                             GetXMLToken(XML_N_OFFICE_OOO),
@@ -120,22 +116,22 @@ SwXMLTextBlockExport::SwXMLTextBlockExport(
     _GetNamespaceMap().Add( GetXMLToken ( XML_NP_TEXT ),
                             GetXMLToken(XML_N_TEXT_OOO),
                             XML_NAMESPACE_TEXT );
-} 
+}
 
 sal_uInt32 SwXMLTextBlockExport::exportDoc(const String &rText)
 {
     GetDocHandler()->startDocument();
-    
-    AddAttribute ( XML_NAMESPACE_NONE, 
+
+    AddAttribute ( XML_NAMESPACE_NONE,
                    _GetNamespaceMap().GetAttrNameByKey ( XML_NAMESPACE_BLOCKLIST ),
                    _GetNamespaceMap().GetNameByKey ( XML_NAMESPACE_BLOCKLIST ) );
-    AddAttribute ( XML_NAMESPACE_NONE, 
+    AddAttribute ( XML_NAMESPACE_NONE,
                    _GetNamespaceMap().GetAttrNameByKey ( XML_NAMESPACE_TEXT ),
                    _GetNamespaceMap().GetNameByKey ( XML_NAMESPACE_TEXT ) );
-    AddAttribute ( XML_NAMESPACE_NONE, 
+    AddAttribute ( XML_NAMESPACE_NONE,
                    _GetNamespaceMap().GetAttrNameByKey ( XML_NAMESPACE_OFFICE ),
                    _GetNamespaceMap().GetNameByKey ( XML_NAMESPACE_OFFICE ) );
-    AddAttribute( XML_NAMESPACE_BLOCKLIST, 
+    AddAttribute( XML_NAMESPACE_BLOCKLIST,
                   XML_LIST_NAME,
                   OUString (rBlockList.GetName()));
     {
