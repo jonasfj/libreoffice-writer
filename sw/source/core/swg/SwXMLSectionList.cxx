@@ -4,9 +4,9 @@
  *
  *  $RCSfile: SwXMLSectionList.cxx,v $
  *
- *  $Revision: 1.6 $
+ *  $Revision: 1.7 $
  *
- *  last change: $Author: rt $ $Date: 2005-09-09 04:43:13 $
+ *  last change: $Author: hr $ $Date: 2006-08-14 16:32:03 $
  *
  *  The Contents of this file are made available subject to
  *  the terms of GNU Lesser General Public License Version 2.1.
@@ -33,15 +33,11 @@
  *
  ************************************************************************/
 #pragma hdrstop
-
 #define _SVSTDARR_STRINGSDTOR
 #define _SVSTDARR_STRINGS
 #include <svtools/svstdarr.hxx>
 #ifndef _SW_XMLSECTIONLIST_HXX
 #include <SwXMLSectionList.hxx>
-#endif
-#ifndef _XMLOFF_XMLTOKEN_HXX
-#include <xmloff/xmltoken.hxx>
 #endif
 #ifndef _XMLOFF_NMSPMAP_HXX
 #include <xmloff/nmspmap.hxx>
@@ -102,11 +98,11 @@ SvXMLImportContext *SwXMLSectionList::CreateContext(
     return pContext;
 }
 
-SvXMLSectionListContext::SvXMLSectionListContext( 
+SvXMLSectionListContext::SvXMLSectionListContext(
    SwXMLSectionList& rImport,
-   sal_uInt16 nPrefix, 
+   sal_uInt16 nPrefix,
    const OUString& rLocalName,
-   const com::sun::star::uno::Reference< 
+   const com::sun::star::uno::Reference<
    com::sun::star::xml::sax::XAttributeList > & xAttrList ) :
    rLocalRef(rImport),
    SvXMLImportContext ( rImport, nPrefix, rLocalName )
@@ -120,7 +116,7 @@ SvXMLImportContext *SvXMLSectionListContext::CreateChildContext(
 {
     SvXMLImportContext *pContext = 0;
     String sName;
-    
+
     if (nPrefix == XML_NAMESPACE_TEXT && ( IsXMLToken ( rLocalName, XML_SECTION ) ||
                                            IsXMLToken ( rLocalName, XML_BOOKMARK) ) )
     {
@@ -138,7 +134,7 @@ SvXMLImportContext *SvXMLSectionListContext::CreateChildContext(
         if ( sName.Len() )
             rLocalRef.rSectionList.Insert ( new String(sName), rLocalRef.rSectionList.Count() );
     }
-    
+
     pContext = new SvXMLSectionListContext (rLocalRef, nPrefix, rLocalName, xAttrList);
     return pContext;
 }
@@ -146,11 +142,11 @@ SvXMLSectionListContext::~SvXMLSectionListContext ( void )
 {
 }
 
-SvXMLIgnoreSectionListContext::SvXMLIgnoreSectionListContext( 
+SvXMLIgnoreSectionListContext::SvXMLIgnoreSectionListContext(
    SwXMLSectionList& rImport,
-   sal_uInt16 nPrefix, 
+   sal_uInt16 nPrefix,
    const OUString& rLocalName,
-   const com::sun::star::uno::Reference< 
+   const com::sun::star::uno::Reference<
    com::sun::star::xml::sax::XAttributeList > & xAttrList ) :
    rLocalRef(rImport),
    SvXMLImportContext ( rImport, nPrefix, rLocalName )
