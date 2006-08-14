@@ -4,9 +4,9 @@
  *
  *  $RCSfile: swparrtf.hxx,v $
  *
- *  $Revision: 1.28 $
+ *  $Revision: 1.29 $
  *
- *  last change: $Author: hr $ $Date: 2006-05-08 14:47:33 $
+ *  last change: $Author: hr $ $Date: 2006-08-14 17:10:44 $
  *
  *  The Contents of this file are made available subject to
  *  the terms of GNU Lesser General Public License Version 2.1.
@@ -32,7 +32,6 @@
  *    MA  02111-1307  USA
  *
  ************************************************************************/
-
 /* -*- Mode: C; tab-width: 4; indent-tabs-mode: nil -*- */
 
 #ifndef _SWPARRTF_HXX
@@ -99,7 +98,6 @@ class SwPageDesc;
 class SwTxtFmtColl;
 class SwTableNode;
 class SwCharFmt;
-class SwNumFmt;
 class SwNumRule;
 class SwRTFParser;
 class SvxFontItem;
@@ -129,7 +127,7 @@ public:
 private:
     //No assignment
     BookmarkPosition& operator=(const BookmarkPosition&);
-    
+
 };
 
 class SwxPosition : public SvxPosition
@@ -239,7 +237,7 @@ struct SectPageInformation
 class rtfSection
 {
 public:
-    rtfSection(const SwPosition &rPos, 
+    rtfSection(const SwPosition &rPos,
         const SectPageInformation &rPageInfo);
     SwNodeIndex maStart;
     SectPageInformation maPageInfo;
@@ -276,7 +274,7 @@ private:
         wwULSpaceData() : bHasHeader(false), bHasFooter(false) {}
     };
 
-    void SetSegmentToPageDesc(const rtfSection &rSection, bool bTitlePage, 
+    void SetSegmentToPageDesc(const rtfSection &rSection, bool bTitlePage,
         bool bIgnoreCols);
     SwSectionFmt *InsertSection(SwPaM& rMyPaM, rtfSection &rSection);
     void SetPage(SwPageDesc &rInPageDesc, SwFrmFmt &rFmt,
@@ -314,7 +312,7 @@ class SwRTFParser : public SvxRTFParser
     */
     sw::util::ParaStyleMapper maParaStyleMapper;
     sw::util::CharStyleMapper maCharStyleMapper;
-    
+
     std::vector<String> aRevTbl;
 
     friend class rtfSections;
@@ -332,7 +330,7 @@ class SwRTFParser : public SvxRTFParser
     BookmarkPosition* mpBookmarkStart;
     sw::util::RedlineStack *mpRedlineStack;
     sw::util::AuthorInfos* pAuthorInfos;
-   
+
     SfxItemSet* pGrfAttrSet;
     SwTableNode* pTableNode, *pOldTblNd; // fuers Lesen von Tabellen: akt. Tab
     SwNodeIndex* pSttNdIdx;
@@ -340,7 +338,7 @@ class SwRTFParser : public SvxRTFParser
     SwDoc* 	pDoc;
     SwPaM*	pPam;				// SwPosition duerfte doch reichen, oder ??
     SwRelNumRuleSpaces* pRelNumRule;	// Liste aller benannten NumRules
-    
+
     String sNestedFieldStr;
     SwFltRedline *pRedlineInsert;
     SwFltRedline *pRedlineDelete;
@@ -352,7 +350,7 @@ class SwRTFParser : public SvxRTFParser
     USHORT nInsTblRow;		// beim nach \row kein \pard -> neue Line anlegen
     USHORT nNewNumSectDef;	// jeder SectionWechsel kann neue Rules definieren
     USHORT nRowsToRepeat;
-    
+
     bool bSwPageDesc;
     bool bReadSwFly;		// lese Swg-Fly (wichtig fuer Bitmaps!)
     bool mbReadNoTbl;		// verhinder Tabelle in Tabelle/FootNote
@@ -389,7 +387,7 @@ class SwRTFParser : public SvxRTFParser
     void SetSwgValues( SfxItemSet& rSet );
 
     virtual void ReadInfo( const sal_Char* pChkForVerNo = 0 );
-    
+
     void ReadUserProperties();
 
     void ReadListLevel( SwNumRule& rRule, BYTE nLvl );
