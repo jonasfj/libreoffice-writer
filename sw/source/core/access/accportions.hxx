@@ -4,9 +4,9 @@
  *
  *  $RCSfile: accportions.hxx,v $
  *
- *  $Revision: 1.15 $
+ *  $Revision: 1.16 $
  *
- *  last change: $Author: rt $ $Date: 2005-09-09 02:54:18 $
+ *  last change: $Author: hr $ $Date: 2006-08-14 15:46:42 $
  *
  *  The Contents of this file are made available subject to
  *  the terms of GNU Lesser General Public License Version 2.1.
@@ -34,18 +34,12 @@
  ************************************************************************/
 #ifndef _ACCPORTIONS_HXX
 #define _ACCPORTIONS_HXX
-
 #include <SwPortionHandler.hxx>
 #include <sal/types.h>
 
 #ifndef _RTL_USTRBUF_HXX_
 #include <rtl/ustrbuf.hxx>
 #endif
-
-#ifndef _RTL_USTRING_HXX_
-#include <rtl/ustring.hxx>
-#endif
-
 #include <vector>
 
 class String;
@@ -53,7 +47,7 @@ class SwTxtNode;
 struct SwSpecialPos;
 class SwViewOption;
 namespace com { namespace sun { namespace star {
-    namespace i18n { struct Boundary; } 
+    namespace i18n { struct Boundary; }
 } } }
 
 /**
@@ -78,7 +72,7 @@ class SwAccessiblePortionData : public SwPortionHandler
     // maximum positions as first/last elements (to simplify the
     // algorithms)
     typedef std::vector<sal_Int32> Positions_t;
-    
+
     Positions_t aLineBreaks;        /// position of line breaks
     Positions_t aModelPositions;    /// position of portion breaks in the model
     Positions_t aAccessiblePositions;   /// portion breaks in sAccessibleString
@@ -99,7 +93,7 @@ class SwAccessiblePortionData : public SwPortionHandler
     size_t FindLastBreak( const Positions_t& rPositions, sal_Int32 nValue );
 
     /// fill the boundary with the values from rPositions[nPos]
-    void FillBoundary(com::sun::star::i18n::Boundary& rBound, 
+    void FillBoundary(com::sun::star::i18n::Boundary& rBound,
                       const Positions_t& rPositions,
                       size_t nPos );
 
@@ -115,11 +109,11 @@ class SwAccessiblePortionData : public SwPortionHandler
     sal_Bool IsGrayPortionType( USHORT nType );
 
     // helper method for GetEditableRange(...):
-    void AdjustAndCheck( sal_Int32 nPos, size_t& nPortionNo, 
+    void AdjustAndCheck( sal_Int32 nPos, size_t& nPortionNo,
                          USHORT& nCorePos, sal_Bool& bEdit );
 
 public:
-    SwAccessiblePortionData( const SwTxtNode* pTxtNd, 
+    SwAccessiblePortionData( const SwTxtNode* pTxtNd,
                              const SwViewOption* pViewOpt = NULL );
     virtual ~SwAccessiblePortionData();
 
@@ -137,7 +131,7 @@ public:
     const rtl::OUString& GetAccessibleString();
 
     /// get the start & end positions of the sentence
-    void GetLineBoundary( com::sun::star::i18n::Boundary& rBound, 
+    void GetLineBoundary( com::sun::star::i18n::Boundary& rBound,
                           sal_Int32 nPos );
 
     // get start and end position of the last line
@@ -154,18 +148,18 @@ public:
     /// SwTxtFrm->GetCharRect
     /// Returns the core position, and fills thr rpPos either with NULL or
     /// with the &rPos, after putting the appropriate data into it.
-    USHORT FillSpecialPos( sal_Int32 nPos, 
+    USHORT FillSpecialPos( sal_Int32 nPos,
                            SwSpecialPos& rPos,
                            SwSpecialPos*& rpPos );
-                   
+
 
     // get boundaries of words/sentences. The data structures are
     // created on-demand.
-    void GetSentenceBoundary( com::sun::star::i18n::Boundary& rBound, 
+    void GetSentenceBoundary( com::sun::star::i18n::Boundary& rBound,
                               sal_Int32 nPos );
 
     // get (a) boundary for attribut change
-    void GetAttributeBoundary( com::sun::star::i18n::Boundary& rBound, 
+    void GetAttributeBoundary( com::sun::star::i18n::Boundary& rBound,
                                sal_Int32 nPos );
 
     /// Determine whether this portion should have a gray background
