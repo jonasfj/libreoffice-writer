@@ -4,9 +4,9 @@
  *
  *  $RCSfile: fmtatr2.cxx,v $
  *
- *  $Revision: 1.23 $
+ *  $Revision: 1.24 $
  *
- *  last change: $Author: rt $ $Date: 2005-09-09 05:12:03 $
+ *  last change: $Author: hr $ $Date: 2006-08-14 16:46:42 $
  *
  *  The Contents of this file are made available subject to
  *  the terms of GNU Lesser General Public License Version 2.1.
@@ -66,9 +66,6 @@
 #endif
 #ifndef _HINTS_HXX
 #include <hints.hxx>        // SwUpdateAttr
-#endif
-#ifndef _DOC_HXX
-#include <doc.hxx>
 #endif
 #ifndef _UNOSTYLE_HXX
 #include <unostyle.hxx>
@@ -548,7 +545,7 @@ BOOL SwFmtRuby::PutValue( const com::sun::star::uno::Any& rVal,
         }
         break;
         case MID_RUBY_CHARSTYLE:
-        {    
+        {
             OUString sTmp;
             bRet = rVal >>= sTmp;
             if(bRet)
