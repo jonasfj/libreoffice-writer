@@ -4,9 +4,9 @@
  *
  *  $RCSfile: SwXMLBlockImport.cxx,v $
  *
- *  $Revision: 1.7 $
+ *  $Revision: 1.8 $
  *
- *  last change: $Author: rt $ $Date: 2005-09-09 04:42:45 $
+ *  last change: $Author: hr $ $Date: 2006-08-14 16:31:37 $
  *
  *  The Contents of this file are made available subject to
  *  the terms of GNU Lesser General Public License Version 2.1.
@@ -41,16 +41,12 @@
 #ifndef _XMLOFF_XMLNMSPE_HXX
 #include <xmloff/xmlnmspe.hxx>
 #endif
-#ifndef _XMLOFF_XMLTOKEN_HXX
-#include <xmloff/xmltoken.hxx>
-#endif
 #ifndef _SW_XMLBLOCKLIST_CONTEXT_HXX
 #include <SwXMLBlockListContext.hxx>
 #endif
 #ifndef _SW_XMLTEXTBLOCKS_HXX
 #include <SwXMLTextBlocks.hxx>
 #endif
-
 using namespace ::com::sun::star::uno;
 using namespace ::com::sun::star;
 using namespace ::xmloff::token;
@@ -61,8 +57,8 @@ sal_Char __READONLY_DATA sXML_np__office[] = "_ooffice";
 sal_Char __READONLY_DATA sXML_np__text[] = "_otext";
 
 // #110680#
-SwXMLBlockListImport::SwXMLBlockListImport( 
-    const ::com::sun::star::uno::Reference< ::com::sun::star::lang::XMultiServiceFactory > xServiceFactory, 
+SwXMLBlockListImport::SwXMLBlockListImport(
+    const ::com::sun::star::uno::Reference< ::com::sun::star::lang::XMultiServiceFactory > xServiceFactory,
     SwXMLTextBlocks &rBlocks )
 :	SvXMLImport( xServiceFactory, 0 ),
     rBlockList (rBlocks)
@@ -88,15 +84,15 @@ SvXMLImportContext *SwXMLBlockListImport::CreateContext(
         pContext = new SwXMLBlockListContext( *this, nPrefix, rLocalName,
                                               xAttrList );
     else
-        pContext = SvXMLImport::CreateContext( nPrefix, rLocalName, xAttrList ); 
+        pContext = SvXMLImport::CreateContext( nPrefix, rLocalName, xAttrList );
     return pContext;
 }
 
 // #110680#
 SwXMLTextBlockImport::SwXMLTextBlockImport(
     const ::com::sun::star::uno::Reference< ::com::sun::star::lang::XMultiServiceFactory > xServiceFactory,
-    SwXMLTextBlocks &rBlocks, 
-    String & rNewText, 
+    SwXMLTextBlocks &rBlocks,
+    String & rNewText,
     sal_Bool bNewTextOnly )
 :	SvXMLImport(xServiceFactory, IMPORT_ALL ),
     rBlockList ( rBlocks ),
@@ -126,7 +122,7 @@ SvXMLImportContext *SwXMLTextBlockImport::CreateContext(
         IsXMLToken ( rLocalName, bTextOnly ? XML_DOCUMENT : XML_DOCUMENT_CONTENT ) )
         pContext = new SwXMLTextBlockDocumentContext( *this, nPrefix, rLocalName, xAttrList );
     else
-        pContext = SvXMLImport::CreateContext( nPrefix, rLocalName, xAttrList ); 
+        pContext = SvXMLImport::CreateContext( nPrefix, rLocalName, xAttrList );
     return pContext;
 }
 void SAL_CALL SwXMLTextBlockImport::endDocument(void)
