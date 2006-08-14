@@ -4,9 +4,9 @@
  *
  *  $RCSfile: mmlayoutpage.cxx,v $
  *
- *  $Revision: 1.12 $
+ *  $Revision: 1.13 $
  *
- *  last change: $Author: kz $ $Date: 2006-04-27 09:49:48 $
+ *  last change: $Author: hr $ $Date: 2006-08-14 17:31:45 $
  *
  *  The Contents of this file are made available subject to
  *  the terms of GNU Lesser General Public License Version 2.1.
@@ -32,7 +32,6 @@
  *    MA  02111-1307  USA
  *
  ************************************************************************/
-
 #ifdef SW_DLLIMPLEMENTATION
 #undef SW_DLLIMPLEMENTATION
 #endif
@@ -65,10 +64,10 @@
 #ifndef _SWUNDO_HXX
 #include <swundo.hxx>
 #endif
-#ifndef _SFXDISPATCH_HXX 
+#ifndef _SFXDISPATCH_HXX
 #include <sfx2/dispatch.hxx>
 #endif
-#ifndef _SFXSTRITEM_HXX 
+#ifndef _SFXSTRITEM_HXX
 #include <svtools/stritem.hxx>
 #endif
 #ifndef _SFX_DOCFILT_HACK_HXX
@@ -83,9 +82,6 @@
 #ifndef _COM_SUN_STAR_VIEW_DOCUMENTZOOMTYPE_HPP_
 #include <com/sun/star/view/DocumentZoomType.hpp>
 #endif
-#ifndef _COM_SUN_STAR_BEANS_PROPERTYVALUE_HPP_
-#include <com/sun/star/beans/PropertyValue.hpp>
-#endif
 #ifndef _FLDMGR_HXX
 #include <fldmgr.hxx>
 #endif
@@ -95,7 +91,7 @@
 #ifndef _POOLFMT_HXX
 #include <poolfmt.hxx>
 #endif
-#ifndef _UNOTXDOC_HXX 
+#ifndef _UNOTXDOC_HXX
 #include <unotxdoc.hxx>
 #endif
 #ifndef _DOCSH_HXX
@@ -113,10 +109,10 @@
 #ifndef _PAGEDESC_HXX
 #include <pagedesc.hxx>
 #endif
-#ifndef _FMTANCHR_HXX 
+#ifndef _FMTANCHR_HXX
 #include <fmtanchr.hxx>
 #endif
-#ifndef _FMTORNT_HXX 
+#ifndef _FMTORNT_HXX
 #include <fmtornt.hxx>
 #endif
 #ifndef _FMTFSIZE_HXX
