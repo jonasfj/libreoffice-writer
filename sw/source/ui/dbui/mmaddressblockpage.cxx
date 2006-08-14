@@ -4,9 +4,9 @@
  *
  *  $RCSfile: mmaddressblockpage.cxx,v $
  *
- *  $Revision: 1.14 $
+ *  $Revision: 1.15 $
  *
- *  last change: $Author: kz $ $Date: 2006-04-27 09:46:41 $
+ *  last change: $Author: hr $ $Date: 2006-08-14 17:31:00 $
  *
  *  The Contents of this file are made available subject to
  *  the terms of GNU Lesser General Public License Version 2.1.
@@ -32,7 +32,6 @@
  *    MA  02111-1307  USA
  *
  ************************************************************************/
-
 #ifdef SW_DLLIMPLEMENTATION
 #undef SW_DLLIMPLEMENTATION
 #endif
@@ -58,9 +57,6 @@
 #endif
 #ifndef _SV_MSGBOX_HXX
 #include <vcl/msgbox.hxx>
-#endif
-#ifndef _SV_SCRBAR_HXX
-#include <vcl/scrbar.hxx>
 #endif
 #ifndef _MMCONFIGITEM_HXX
 #include <mmconfigitem.hxx>
@@ -93,7 +89,7 @@ void lcl_Move(Control* pCtrl, long nYOffset)
     Point aPos(pCtrl->GetPosPixel());
     aPos.Y() += nYOffset;
     pCtrl->SetPosPixel(aPos);
-}            
+}
 /*-- 02.04.2004 12:46:40---------------------------------------------------
 
   -----------------------------------------------------------------------*/
@@ -161,7 +157,7 @@ void SwMailMergeAddressBlockPage::ActivatePage()
 {
     SwMailMergeConfigItem& rConfigItem = m_pWizard->GetConfigItem();
     bool bIsLetter = rConfigItem.IsOutputToLetter();
-    
+
     //no address block is created for e-Mail
     m_aSettingsFI.Show( bIsLetter );
     m_aAddressCB.Show( bIsLetter );
