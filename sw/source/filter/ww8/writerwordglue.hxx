@@ -4,9 +4,9 @@
  *
  *  $RCSfile: writerwordglue.hxx,v $
  *
- *  $Revision: 1.7 $
+ *  $Revision: 1.8 $
  *
- *  last change: $Author: obo $ $Date: 2005-11-16 13:54:04 $
+ *  last change: $Author: hr $ $Date: 2006-08-14 17:15:17 $
  *
  *  The Contents of this file are made available subject to
  *  the terms of GNU Lesser General Public License Version 2.1.
@@ -32,7 +32,6 @@
  *    MA  02111-1307  USA
  *
  ************************************************************************/
-
 /* -*- Mode: C; tab-width: 4; indent-tabs-mode: nil -*- */
 /// @HTML
 
@@ -48,10 +47,6 @@
 
 class SwFrmFmt;
 class SfxItemSet;
-class SwDoc;
-class SwTxtFmtColl;
-class String;
-class PoolItems;
 
 namespace sw
 {
@@ -62,8 +57,8 @@ namespace sw
             There are a number of places where the winword types are larger
             than the writer equivalents requiring a cast to silence warnings.
             To avoid throwing away this useful information writer_cast is used
-            to identify where writer's types are smaller than word's. 
-            
+            to identify where writer's types are smaller than word's.
+
             Based on needed_cast it will compile time assert if the cast
             becomes unnecessary at any time in the future.
 
@@ -88,8 +83,8 @@ namespace sw
             There are a number of places where the writer types are larger than
             the winword equivalents requiring a cast to silence warnings.  To
             avoid throwing away this useful information writer_cast is used to
-            identify where word's types are smaller than writers's. 
-            
+            identify where word's types are smaller than writers's.
+
             Based on needed_cast it will compile time assert if the cast
             becomes unnecessary at any time in the future.
 
@@ -113,7 +108,7 @@ namespace sw
         /** If a page dimension is close to a standard page size, snap to it.
 
             Commonly a page dimension is slightly different from a standard
-            page size, so close that its likely a rounding error after 
+            page size, so close that its likely a rounding error after
             creeping in. Use this to snap to standard sizes when within a
             trivial distance from a standard size.
 
@@ -156,7 +151,7 @@ namespace sw
             const SwFrmFmt &rFollowFmt);
 
         /** Make export a word section top/bottom values easy
-        
+
             The top and bottom margins in word and writer are expressed in very
             different ways. This class provides the equivalent word values for
             header/footer distances from a given writer attrset of a page
