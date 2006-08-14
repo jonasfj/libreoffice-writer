@@ -4,9 +4,9 @@
  *
  *  $RCSfile: xmlfonte.cxx,v $
  *
- *  $Revision: 1.5 $
+ *  $Revision: 1.6 $
  *
- *  last change: $Author: rt $ $Date: 2005-09-09 06:21:41 $
+ *  last change: $Author: hr $ $Date: 2006-08-14 17:22:45 $
  *
  *  The Contents of this file are made available subject to
  *  the terms of GNU Lesser General Public License Version 2.1.
@@ -33,30 +33,19 @@
  *
  ************************************************************************/
 
-
 #pragma hdrstop
 
 #ifndef _HINTIDS_HXX
 #include "hintids.hxx"
 #endif
 
-#ifndef _COM_SUN_STAR_TEXT_XTEXTDOCUMENT_HPP_ 
+#ifndef _COM_SUN_STAR_TEXT_XTEXTDOCUMENT_HPP_
 #include <com/sun/star/text/XTextDocument.hpp>
-#endif
-#ifndef _COM_SUN_STAR_TEXT_XTEXT_HPP_ 
-#include <com/sun/star/text/XText.hpp>
-#endif
-
-#ifndef _COM_SUN_STAR_TEXT_XTEXTDOCUMENT_HPP_ 
-#include <com/sun/star/text/XTextDocument.hpp>
-#endif
-#ifndef _COM_SUN_STAR_TEXT_XTEXT_HPP_ 
-#include <com/sun/star/text/XText.hpp>
 #endif
 #ifndef _XMLOFF_XMLFONTAUTOSTYLEPOOL_HXX
 #include <xmloff/XMLFontAutoStylePool.hxx>
 #endif
-#ifndef _SVX_FONTITEM_HXX 
+#ifndef _SVX_FONTITEM_HXX
 #include <svx/fontitem.hxx>
 #endif
 #ifndef _UNOOBJ_HXX
@@ -117,7 +106,7 @@ SwXMLFontAutoStylePool_Impl::SwXMLFontAutoStylePool_Impl(
         {
             if( 0 != (pItem = rPool.GetItem( nWhichId, j ) ) )
             {
-                const SvxFontItem *pFont = 
+                const SvxFontItem *pFont =
                             (const SvxFontItem *)pItem;
                 Add( pFont->GetFamilyName(), pFont->GetStyleName(),
                      pFont->GetFamily(), pFont->GetPitch(),
