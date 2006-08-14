@@ -4,9 +4,9 @@
  *
  *  $RCSfile: mmconfigitem.cxx,v $
  *
- *  $Revision: 1.11 $
+ *  $Revision: 1.12 $
  *
- *  last change: $Author: obo $ $Date: 2006-03-29 08:07:11 $
+ *  last change: $Author: hr $ $Date: 2006-08-14 17:31:13 $
  *
  *  The Contents of this file are made available subject to
  *  the terms of GNU Lesser General Public License Version 2.1.
@@ -33,7 +33,6 @@
  *
  ************************************************************************/
 #pragma hdrstop
-
 #ifndef _MMCONFIGITEM_HXX
 #include <mmconfigitem.hxx>
 #endif
@@ -58,12 +57,6 @@
 #ifndef _COM_SUN_STAR_SDBCX_XCOLUMNSSUPPLIER_HPP_
 #include <com/sun/star/sdbcx/XColumnsSupplier.hpp>
 #endif
-#ifndef _COM_SUN_STAR_SDBC_XSTATEMENT_HPP_
-#include <com/sun/star/sdbc/XStatement.hpp>
-#endif
-//#ifndef _COM_SUN_STAR_MAIL_XMAILSERVER_HPP_
-//#include "com/sun/star/mail/XMailServer.hpp"
-//#endif
 #ifndef _COM_SUN_STAR_MAIL_MAILSERVICETYPE_HPP_
 #include "com/sun/star/mail/MailServiceType.hpp"
 #endif
@@ -109,7 +102,6 @@
 #ifndef _WRTSH_HXX
 #include <wrtsh.hxx>
 #endif
-
 #include <dbui.hrc>
 #include <vector>
 
@@ -136,7 +128,7 @@ const char* cDataCommandType            = "DataSource/DataCommandType";
 #define SECURE_PORT     465
 #define DEFAULT_PORT    25
 #define POP_PORT        110
-        
+
 /*-- 16.04.2004 09:41:36---------------------------------------------------
 
   -----------------------------------------------------------------------*/
@@ -147,7 +139,7 @@ struct DBAddressDataAssignment
     //if loaded the name of the node has to be saved
     ::rtl::OUString                     sConfigNodeName;
     //all created or changed assignments need to be stored
-    bool                                bColumnAssignmentsChanged;  
+    bool                                bColumnAssignmentsChanged;
 
     DBAddressDataAssignment() :
         bColumnAssignmentsChanged(false)
@@ -164,11 +156,11 @@ class SwMailMergeConfigItem_Impl : public utl::ConfigItem
     SharedConnection                        xConnection;
     Reference< XColumnsSupplier>            xColumnsSupplier;
     Reference< XStatement>                  xStatement;
-    Reference< XResultSet>                  xResultSet;    
+    Reference< XResultSet>                  xResultSet;
     SwDBData                                aDBData;
     ::rtl::OUString                         sFilter;
     sal_Int32                               nResultSetCursorPos;
-    
+
     ::std::vector<DBAddressDataAssignment>  aAddressDataAssignments;
     ::std::vector< ::rtl::OUString>         aAddressBlocks;
     sal_Int32                               nCurrentAddressBlock;
