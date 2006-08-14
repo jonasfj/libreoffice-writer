@@ -4,9 +4,9 @@
  *
  *  $RCSfile: wrtswtbl.hxx,v $
  *
- *  $Revision: 1.7 $
+ *  $Revision: 1.8 $
  *
- *  last change: $Author: rt $ $Date: 2005-09-09 05:51:44 $
+ *  last change: $Author: hr $ $Date: 2006-08-14 17:09:13 $
  *
  *  The Contents of this file are made available subject to
  *  the terms of GNU Lesser General Public License Version 2.1.
@@ -32,7 +32,6 @@
  *    MA  02111-1307  USA
  *
  ************************************************************************/
-
 #ifndef  _WRTSWTBL_HXX
 #define  _WRTSWTBL_HXX
 
@@ -55,16 +54,12 @@
 
 class Color;
 class SwTableBox;
-class SwTableBoxes;
 class SwTableLine;
 class SwTableLines;
 class SwTable;
-class SwFrmFmt;
 class SwHTMLTableLayout;
 class SvxBrushItem;
-class SvxBoxItem;
 class SvxBorderLine;
-
 
 //---------------------------------------------------------------------------
 // 		 Code aus dem HTML-Filter fuers schreiben von Tabellen
@@ -99,9 +94,9 @@ class SwWriteTableCell
 public:
 
     SwWriteTableCell(const SwTableBox *pB, USHORT nR, USHORT nC, USHORT nRSpan,
-        USHORT nCSpan, long nHght, const SvxBrushItem *pBGround) 
-    : pBox( pB ), pBackground( pBGround ), nHeight( nHght ), nWidthOpt( 0 ), 
-    nRow( nR ), nCol( nC ), nRowSpan( nRSpan ), nColSpan( nCSpan ), 
+        USHORT nCSpan, long nHght, const SvxBrushItem *pBGround)
+    : pBox( pB ), pBackground( pBGround ), nHeight( nHght ), nWidthOpt( 0 ),
+    nRow( nR ), nCol( nC ), nRowSpan( nRSpan ), nColSpan( nCSpan ),
     bPrcWidthOpt( FALSE )
     {}
 
