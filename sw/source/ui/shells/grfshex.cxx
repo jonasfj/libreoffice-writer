@@ -4,9 +4,9 @@
  *
  *  $RCSfile: grfshex.cxx,v $
  *
- *  $Revision: 1.15 $
+ *  $Revision: 1.16 $
  *
- *  last change: $Author: rt $ $Date: 2006-02-06 17:24:33 $
+ *  last change: $Author: hr $ $Date: 2006-08-14 17:54:10 $
  *
  *  The Contents of this file are made available subject to
  *  the terms of GNU Lesser General Public License Version 2.1.
@@ -36,9 +36,6 @@
 
 #pragma hdrstop
 
-#ifndef _DOC_HXX
-#include <doc.hxx>
-#endif
 #ifndef _DOCARY_HXX
 #include <docary.hxx>
 #endif
@@ -50,9 +47,6 @@
 #endif
 #ifndef _VIEW_HXX
 #include <view.hxx>
-#endif
-#ifndef _DOC_HXX
-#include <doc.hxx>
 #endif
 #ifndef _DOCARY_HXX
 #include <docary.hxx>
@@ -150,7 +144,7 @@ bool SwTextShell::InsertMediaDlg( SfxRequest& rReq )
     if( pReqArgs )
     {
         const SfxStringItem* pStringItem = PTR_CAST( SfxStringItem, &pReqArgs->Get( rReq.GetSlot() ) );
-        
+
         if( pStringItem )
         {
             aURL = pStringItem->GetValue();
@@ -164,33 +158,33 @@ bool SwTextShell::InsertMediaDlg( SfxRequest& rReq )
 
         if( pWindow )
             pWindow->EnterWait();
-        
+
         if( !::avmedia::MediaWindow::isMediaURL( aURL, true, &aPrefSize ) )
         {
             if( pWindow )
                 pWindow->LeaveWait();
-            
+
             if( !bAPI )
                 ::avmedia::MediaWindow::executeFormatErrorBox( pWindow );
         }
         else
         {
             SwWrtShell&	rSh = GetShell();
-            
+
             if( !rSh.HasDrawView() )
-                rSh.MakeDrawView();	
-            
+                rSh.MakeDrawView();
+
             Size 			aDocSz( rSh.GetDocSize() );
                const SwRect& 	rVisArea = rSh.VisArea();
             Point 			aPos( rVisArea.Center() );
             Size			aSize;
-            
+
             if( rVisArea.Width() > aDocSz.Width())
                 aPos.X() = aDocSz.Width() / 2 + rVisArea.Left();
-            
+
             if(rVisArea.Height() > aDocSz.Height())
                 aPos.Y() = aDocSz.Height() / 2 + rVisArea.Top();
-            
+
             if( aPrefSize.Width() && aPrefSize.Height() )
             {
                 if( pWindow )
@@ -200,14 +194,14 @@ bool SwTextShell::InsertMediaDlg( SfxRequest& rReq )
             }
             else
                 aSize = Size( 2835, 2835 );
-            
+
             SdrMediaObj* pObj = new SdrMediaObj( Rectangle( aPos, aSize ) );
 
-            pObj->setURL( aURL ); 
+            pObj->setURL( aURL );
             rSh.EnterStdMode();
             rSh.SwFEShell::Insert( *pObj, 0, 0, &aPos );
             bRet = true;
-            
+
             if( pWindow )
                 pWindow->LeaveWait();
         }
