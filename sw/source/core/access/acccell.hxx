@@ -4,9 +4,9 @@
  *
  *  $RCSfile: acccell.hxx,v $
  *
- *  $Revision: 1.7 $
+ *  $Revision: 1.8 $
  *
- *  last change: $Author: rt $ $Date: 2005-09-09 02:45:41 $
+ *  last change: $Author: hr $ $Date: 2006-08-14 15:41:07 $
  *
  *  The Contents of this file are made available subject to
  *  the terms of GNU Lesser General Public License Version 2.1.
@@ -34,13 +34,8 @@
  ************************************************************************/
 #ifndef _ACCCELL_HXX
 #define _ACCCELL_HXX
-
 #ifndef _ACCCONTEXT_HXX
 #include "acccontext.hxx"
-#endif
-
-#ifndef _COM_SUN_STAR_UNO_RUNTIMEEXCEPTION_HPP_
-#include <com/sun/star/uno/RuntimeException.hpp>
 #endif
 
 #ifndef _COM_SUN_STAR_ACCESSIBILITY_XACCESSIBLEVALUE_HPP_
@@ -51,7 +46,7 @@ class SwCellFrm;
 
 class SwAccessibleCell : public	SwAccessibleContext,
                   ::com::sun::star::accessibility::XAccessibleValue
-                         
+
 {
     sal_Bool	bIsSelected;	// protected by base class mutex
 
@@ -80,7 +75,7 @@ public:
 
     ///	Return this object's description.
     virtual ::rtl::OUString SAL_CALL
-        getAccessibleDescription (void) 
+        getAccessibleDescription (void)
         throw (com::sun::star::uno::RuntimeException);
 
     //=====  XServiceInfo  ====================================================
@@ -114,11 +109,11 @@ public:
     // between those inherited through SwAcessibleContext and
     // XAccessibleValue).
 
-    virtual ::com::sun::star::uno::Any SAL_CALL queryInterface( 
-        const ::com::sun::star::uno::Type& aType ) 
+    virtual ::com::sun::star::uno::Any SAL_CALL queryInterface(
+        const ::com::sun::star::uno::Type& aType )
         throw (::com::sun::star::uno::RuntimeException);
 
-    virtual void SAL_CALL acquire(  ) throw () 
+    virtual void SAL_CALL acquire(  ) throw ()
         { SwAccessibleContext::acquire(); };
 
     virtual void SAL_CALL release(  ) throw ()
@@ -137,14 +132,14 @@ public:
     virtual ::com::sun::star::uno::Any SAL_CALL getCurrentValue( )
         throw (::com::sun::star::uno::RuntimeException);
 
-    virtual sal_Bool SAL_CALL setCurrentValue( 
-        const ::com::sun::star::uno::Any& aNumber ) 
+    virtual sal_Bool SAL_CALL setCurrentValue(
+        const ::com::sun::star::uno::Any& aNumber )
         throw (::com::sun::star::uno::RuntimeException);
 
-    virtual ::com::sun::star::uno::Any SAL_CALL getMaximumValue(  ) 
+    virtual ::com::sun::star::uno::Any SAL_CALL getMaximumValue(  )
         throw (::com::sun::star::uno::RuntimeException);
 
-    virtual ::com::sun::star::uno::Any SAL_CALL getMinimumValue(  ) 
+    virtual ::com::sun::star::uno::Any SAL_CALL getMinimumValue(  )
         throw (::com::sun::star::uno::RuntimeException);
 };
 
