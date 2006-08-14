@@ -4,9 +4,9 @@
  *
  *  $RCSfile: undobj.cxx,v $
  *
- *  $Revision: 1.19 $
+ *  $Revision: 1.20 $
  *
- *  last change: $Author: hr $ $Date: 2006-04-19 14:20:39 $
+ *  last change: $Author: hr $ $Date: 2006-08-14 16:49:31 $
  *
  *  The Contents of this file are made available subject to
  *  the terms of GNU Lesser General Public License Version 2.1.
@@ -87,9 +87,6 @@
 #ifndef _COMCORE_HRC
 #include <comcore.hrc>
 #endif
-#ifndef _SW_REWRITER_HXX
-#include <SwRewriter.hxx>
-#endif 
 
 class SwRedlineSaveData : public SwUndRng, public SwRedlineData,
                           private SwUndoSaveSection
@@ -240,15 +237,15 @@ void SwUndo::RemoveIdxRel( ULONG nIdx, const SwPosition& rPos )
 }
 
 SwUndo::SwUndo( USHORT nI )
-    : nId(nI), nOrigRedlineMode(REDLINE_NONE), pComment(NULL), 
+    : nId(nI), nOrigRedlineMode(IDocumentRedlineAccess::REDLINE_NONE), pComment(NULL),
       bCacheComment(true)
 {
 }
 
 bool SwUndo::IsDelBox() const
-{ 
-    return GetId() == UNDO_COL_DELETE || GetId() == UNDO_ROW_DELETE || 
-        GetId() == UNDO_TABLE_DELBOX; 
+{
+    return GetId() == UNDO_COL_DELETE || GetId() == UNDO_ROW_DELETE ||
+        GetId() == UNDO_TABLE_DELBOX;
 }
 
 SwUndo::~SwUndo()
@@ -270,12 +267,12 @@ String SwUndo::GetComment() const
         if (! pComment)
         {
             pComment = new String(SW_RES(UNDO_BASE + nId));
-            
+
             SwRewriter aRewriter = GetRewriter();
-            
-            *pComment = aRewriter.Apply(*pComment);            
+
+            *pComment = aRewriter.Apply(*pComment);
         }
-        
+
         aResult = *pComment;
     }
     else
@@ -283,7 +280,7 @@ String SwUndo::GetComment() const
         aResult = String(SW_RES(UNDO_BASE + nId));
 
         SwRewriter aRewriter = GetRewriter();
-        
+
         aResult = aRewriter.Apply(aResult);
     }
 
@@ -298,7 +295,7 @@ USHORT SwUndo::GetEffectiveId() const
 SwRewriter SwUndo::GetRewriter() const
 {
     SwRewriter aResult;
-    
+
     return aResult;
 }
 
@@ -648,7 +645,7 @@ void SwUndoSaveCntnt::DelCntntIndex( const SwPosition& rMark,
                             else
                             {
                                 if (bDelFwrd)
-                                    bTmp = rMark.nNode < pAPos->nNode && 
+                                    bTmp = rMark.nNode < pAPos->nNode &&
                                         pAPos->nNode <= rPoint.nNode;
                                 else
                                     bTmp = rPoint.nNode <= pAPos->nNode &&
@@ -659,8 +656,8 @@ void SwUndoSaveCntnt::DelCntntIndex( const SwPosition& rMark,
                             {
                                 if( !pHistory )
                                     pHistory = new SwHistory;
-    
-                                // Moving the anchor?                               
+
+                                // Moving the anchor?
                                 if( !( DELCNT_CHKNOCNTNT & nDelCntntType ) &&
                                     ( rPoint.nNode.GetIndex() == pAPos->nNode.GetIndex() ) )
                                 {
@@ -679,7 +676,7 @@ void SwUndoSaveCntnt::DelCntntIndex( const SwPosition& rMark,
                                     pHistory->Add( *pFmt, nChainInsPos );
                                     // n wieder zurueck, damit nicht ein
                                     // Format uebesprungen wird !
-                                    n = n >= rSpzArr.Count() ? 
+                                    n = n >= rSpzArr.Count() ?
                                         rSpzArr.Count() : n+1;
                                 }
                             }
@@ -707,7 +704,7 @@ void SwUndoSaveCntnt::DelCntntIndex( const SwPosition& rMark,
                         {
                             if( *pStt <= *pAPos && *pAPos < *pEnd )
                             {
-                                // These are the objects anchored 
+                                // These are the objects anchored
                                 // between section start and end position
                                 // Do not try to move the anchor to a table!
                                 if( rMark.nNode.GetNode().GetTxtNode() )
@@ -743,7 +740,7 @@ void SwUndoSaveCntnt::DelCntntIndex( const SwPosition& rMark,
     // 3. Bookmarks
     if( DELCNT_BKM & nDelCntntType )
     {
-        const SwBookmarks& rBkmkTbl = pDoc->GetBookmarks();
+        const SwBookmarks& rBkmkTbl = pDoc->getBookmarks();
         if( rBkmkTbl.Count() )
         {
             const SwBookmark* pBkmk;
@@ -776,7 +773,7 @@ void SwUndoSaveCntnt::DelCntntIndex( const SwPosition& rMark,
                         SwHstryBookmark::BKMK_POS) == nTyp ||
                         ( SwHstryBookmark::BKMK_POS == nTyp
                             && !pBkmk->GetOtherPos() ))
-                        pDoc->DelBookmark( n-- );
+                        pDoc->deleteBookmark( n-- );
                 }
             }
         }
@@ -1080,11 +1077,11 @@ void SwRedlineSaveData::RedlineToDoc( SwPaM& rPam )
     // erstmal die "alten" entfernen, damit im Append keine unerwarteten
     // Dinge passieren, wie z.B. eine Delete in eigenen Insert. Dann wird
     // naehmlich das gerade restaurierte wieder geloescht - nicht das gewollte
-    rDoc.DeleteRedline( *pRedl, FALSE );
+    rDoc.DeleteRedline( *pRedl, false, USHRT_MAX );
 
-    SwRedlineMode eOld = rDoc.GetRedlineMode();
-    rDoc.SetRedlineMode_intern( eOld | REDLINE_DONTCOMBINE_REDLINES );
-    rDoc.AppendRedline( pRedl );
+    IDocumentRedlineAccess::RedlineMode_t eOld = rDoc.GetRedlineMode();
+    rDoc.SetRedlineMode_intern( eOld | IDocumentRedlineAccess::REDLINE_DONTCOMBINE_REDLINES );
+    rDoc.AppendRedline( pRedl, true );
     rDoc.SetRedlineMode_intern( eOld );
 }
 
@@ -1114,7 +1111,7 @@ BOOL SwUndo::FillSaveData( const SwPaM& rRange, SwRedlineSaveDatas& rSData,
         }
     }
     if( rSData.Count() && bDelRange )
-        rRange.GetDoc()->DeleteRedline( rRange, FALSE );
+        rRange.GetDoc()->DeleteRedline( rRange, false, USHRT_MAX );
     return 0 != rSData.Count();
 }
 
@@ -1131,7 +1128,7 @@ BOOL SwUndo::FillSaveDataForFmt( const SwPaM& rRange, SwRedlineSaveDatas& rSData
     for( ; n < rTbl.Count(); ++n )
     {
         SwRedline* pRedl = rTbl[ n ];
-        if( REDLINE_FORMAT == pRedl->GetType() )
+        if( IDocumentRedlineAccess::REDLINE_FORMAT == pRedl->GetType() )
         {
             const SwPosition *pRStt = pRedl->Start(), *pREnd = pRedl->End();
 
@@ -1152,8 +1149,8 @@ BOOL SwUndo::FillSaveDataForFmt( const SwPaM& rRange, SwRedlineSaveDatas& rSData
 
 void SwUndo::SetSaveData( SwDoc& rDoc, const SwRedlineSaveDatas& rSData )
 {
-    SwRedlineMode eOld = rDoc.GetRedlineMode();
-    rDoc.SetRedlineMode_intern( ( eOld & ~REDLINE_IGNORE) | REDLINE_ON );
+    IDocumentRedlineAccess::RedlineMode_t eOld = rDoc.GetRedlineMode();
+    rDoc.SetRedlineMode_intern( ( eOld & ~IDocumentRedlineAccess::REDLINE_IGNORE) | IDocumentRedlineAccess::REDLINE_ON );
     SwPaM aPam( rDoc.GetNodes().GetEndOfContent() );
 
     for( USHORT n = rSData.Count(); n; )
@@ -1161,7 +1158,7 @@ void SwUndo::SetSaveData( SwDoc& rDoc, const SwRedlineSaveDatas& rSData )
 
     // check redline count against count saved in RedlineSaveData object
     DBG_ASSERT( (rSData.Count() == 0) ||
-                (rSData[0]->nRedlineCount == rDoc.GetRedlineTbl().Count()), 
+                (rSData[0]->nRedlineCount == rDoc.GetRedlineTbl().Count()),
                 "redline count not restored properly" );
 
     rDoc.SetRedlineMode_intern( eOld );
@@ -1226,7 +1223,7 @@ String ShortenString(const String & rStr, int aLength, const String & rFillStr)
     else
     {
         aLength -= rFillStr.Len();
-        
+
         if (aLength < 2)
             aLength = 2;
 
@@ -1237,7 +1234,7 @@ String ShortenString(const String & rStr, int aLength, const String & rFillStr)
         aResult += rFillStr;
         aResult += rStr.Copy(rStr.Len() - aBackLen, aBackLen);
     }
-    
+
     return aResult;
 }
 
@@ -1258,7 +1255,7 @@ static bool lcl_IsSpecialCharacter(sal_Unicode nChar)
     return false;
 }
 
-static String lcl_DenotedPortion(String rStr, xub_StrLen nStart, 
+static String lcl_DenotedPortion(String rStr, xub_StrLen nStart,
                                  xub_StrLen nEnd)
 {
     String aResult;
@@ -1287,7 +1284,7 @@ static String lcl_DenotedPortion(String rStr, xub_StrLen nStart,
 
             }
             SwRewriter aRewriter;
-            aRewriter.AddRule(UNDO_ARG1, 
+            aRewriter.AddRule(UNDO_ARG1,
                               String::CreateFromInt32(nEnd - nStart));
             aResult = aRewriter.Apply(aResult);
         }
@@ -1311,7 +1308,7 @@ String DenoteSpecialCharacters(const String & rStr)
         bool bStart = false;
         xub_StrLen nStart = 0;
         sal_Unicode cLast = 0;
-    
+
         for (xub_StrLen i = 0; i < rStr.Len(); i++)
         {
             if (lcl_IsSpecialCharacter(rStr.GetChar(i)))
