@@ -4,9 +4,9 @@
  *
  *  $RCSfile: wrtww8gr.cxx,v $
  *
- *  $Revision: 1.46 $
+ *  $Revision: 1.47 $
  *
- *  last change: $Author: hr $ $Date: 2006-04-19 13:41:22 $
+ *  last change: $Author: hr $ $Date: 2006-08-14 17:16:40 $
  *
  *  The Contents of this file are made available subject to
  *  the terms of GNU Lesser General Public License Version 2.1.
@@ -114,6 +114,8 @@
 #ifndef _FMTORNT_HXX
 #include <fmtornt.hxx>
 #endif
+
+#include <doc.hxx>
 
 #ifndef SW_WRITERHELPER
 #include "writerhelper.hxx"
@@ -239,7 +241,7 @@ bool SwWW8Writer::TestOleNeedsGraphic(const SwAttrSet& rSet,
                 }
                 catch( ::com::sun::star::uno::Exception& )
                 {}
-               
+
                 DBG_ASSERT( pGraphicStream && !pGraphicStream->GetError(), "No graphic stream available!" );
                 if ( pGraphicStream && !pGraphicStream->GetError() )
                 {
@@ -262,7 +264,7 @@ bool SwWW8Writer::TestOleNeedsGraphic(const SwAttrSet& rSet,
                 else
                     delete pGraphicStream;
             }
-            
+
             delete pRet;
         }
     }
@@ -670,8 +672,8 @@ void SwWW8WrGrf::WriteGrfFromGrfNode(SvStream& rStrm, const SwGrfNode &rGrfNd,
 
         aFileN = URIHelper::simpleNormalizedMakeRelative(rWrt.GetBaseURL(),
                                           aFileN);
-        
-        
+
+
         INetURLObject aUrl( aFileN );
         if( aUrl.GetProtocol() == INET_PROT_FILE )
             aFileN = aUrl.PathToFileName();
