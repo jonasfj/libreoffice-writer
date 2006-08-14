@@ -4,9 +4,9 @@
  *
  *  $RCSfile: accheaderfooter.cxx,v $
  *
- *  $Revision: 1.11 $
+ *  $Revision: 1.12 $
  *
- *  last change: $Author: rt $ $Date: 2005-09-09 02:50:44 $
+ *  last change: $Author: hr $ $Date: 2006-08-14 15:44:28 $
  *
  *  The Contents of this file are made available subject to
  *  the terms of GNU Lesser General Public License Version 2.1.
@@ -33,7 +33,6 @@
  *
  ************************************************************************/
 
-
 #pragma hdrstop
 
 #ifndef _VOS_MUTEX_HXX_ //autogen
@@ -49,9 +48,6 @@
 
 #ifndef _UTL_ACCESSIBLESTATESETHELPER_HXX_
 #include <unotools/accessiblestatesethelper.hxx>
-#endif
-#ifndef _COM_SUN_STAR_UNO_RUNTIMEEXCEPTION_HPP_
-#include <com/sun/star/uno/RuntimeException.hpp>
 #endif
 #ifndef _RTL_UUID_H_
 #include <rtl/uuid.h>
@@ -80,7 +76,7 @@ const sal_Char sServiceNameFooter[] = "com.sun.star.text.AccessibleFooterView";
 const sal_Char sImplementationNameHeader[] = "com.sun.star.comp.Writer.SwAccessibleHeaderView";
 const sal_Char sImplementationNameFooter[] = "com.sun.star.comp.Writer.SwAccessibleFooterView";
 
-SwAccessibleHeaderFooter::SwAccessibleHeaderFooter( 
+SwAccessibleHeaderFooter::SwAccessibleHeaderFooter(
         SwAccessibleMap *pMap,
         const SwHeaderFrm *pHdFrm	) :
     SwAccessibleContext( pMap, AccessibleRole::HEADER, pHdFrm )
@@ -91,7 +87,7 @@ SwAccessibleHeaderFooter::SwAccessibleHeaderFooter(
     SetName( GetResource( STR_ACCESS_HEADER_NAME, &sArg ) );
 }
 
-SwAccessibleHeaderFooter::SwAccessibleHeaderFooter( 
+SwAccessibleHeaderFooter::SwAccessibleHeaderFooter(
         SwAccessibleMap *pMap,
         const SwFooterFrm *pFtFrm	) :
     SwAccessibleContext( pMap, AccessibleRole::FOOTER, pFtFrm )
@@ -135,7 +131,7 @@ sal_Bool SAL_CALL SwAccessibleHeaderFooter::supportsService(
         const ::rtl::OUString& sTestServiceName)
     throw (::com::sun::star::uno::RuntimeException)
 {
-    if( sTestServiceName.equalsAsciiL( sAccessibleServiceName, 
+    if( sTestServiceName.equalsAsciiL( sAccessibleServiceName,
                                        sizeof(sAccessibleServiceName)-1 ) )
         return sal_True;
     else if( AccessibleRole::HEADER == GetRole() )
@@ -158,7 +154,7 @@ Sequence< OUString > SAL_CALL SwAccessibleHeaderFooter::getSupportedServiceNames
     return aRet;
 }
 
-Sequence< sal_Int8 > SAL_CALL SwAccessibleHeaderFooter::getImplementationId() 
+Sequence< sal_Int8 > SAL_CALL SwAccessibleHeaderFooter::getImplementationId()
         throw(RuntimeException)
 {
     vos::OGuard aGuard(Application::GetSolarMutex());
