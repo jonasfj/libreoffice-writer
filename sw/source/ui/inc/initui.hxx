@@ -4,9 +4,9 @@
  *
  *  $RCSfile: initui.hxx,v $
  *
- *  $Revision: 1.5 $
+ *  $Revision: 1.6 $
  *
- *  last change: $Author: rt $ $Date: 2005-09-09 09:20:43 $
+ *  last change: $Author: hr $ $Date: 2006-08-14 17:42:15 $
  *
  *  The Contents of this file are made available subject to
  *  the terms of GNU Lesser General Public License Version 2.1.
@@ -32,7 +32,6 @@
  *    MA  02111-1307  USA
  *
  ************************************************************************/
-
 #ifndef _INITUI_HXX
 #define _INITUI_HXX
 
@@ -49,7 +48,6 @@
  */
 class String;
 class SwThesaurus;
-class SpellCheck;
 class SvStringsDtor;
 
 /*
@@ -63,7 +61,7 @@ extern  String* 		pOldFrmCat;
 
 extern  String* 		pCurrGlosGroup;
 
-//CHINA001  add for swui to access global variables in sw. Begin 
+//CHINA001  add for swui to access global variables in sw. Begin
 SW_DLLPUBLIC String* GetOldGrfCat();
 SW_DLLPUBLIC String* GetOldTabCat();
 SW_DLLPUBLIC String* GetOldFrmCat();
