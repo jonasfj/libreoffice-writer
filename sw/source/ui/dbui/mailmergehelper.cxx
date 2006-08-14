@@ -4,9 +4,9 @@
  *
  *  $RCSfile: mailmergehelper.cxx,v $
  *
- *  $Revision: 1.9 $
+ *  $Revision: 1.10 $
  *
- *  last change: $Author: kz $ $Date: 2006-01-31 18:33:50 $
+ *  last change: $Author: hr $ $Date: 2006-08-14 17:30:35 $
  *
  *  The Contents of this file are made available subject to
  *  the terms of GNU Lesser General Public License Version 2.1.
@@ -33,14 +33,13 @@
  *
  ************************************************************************/
 #pragma hdrstop
-
 #ifndef _SWTYPES_HXX
 #include <swtypes.hxx>
 #endif
 #ifndef _MAILMERGEHELPER_HXX
 #include <mailmergehelper.hxx>
 #endif
-#ifndef _STDCTRL_HXX 
+#ifndef _STDCTRL_HXX
 #include <svtools/stdctrl.hxx>
 #endif
 #ifndef _MMCONFIGITEM_HXX
@@ -61,23 +60,14 @@
 #ifndef _SFX_FCONTNR_HXX
 #include <sfx2/fcontnr.hxx>
 #endif
-#ifndef _COM_SUN_STAR_CONTAINER_XNAMEACCESS_HPP_
-#include <com/sun/star/container/XNameAccess.hpp>
-#endif
 #ifndef _COM_SUN_STAR_SDBCX_XCOLUMNSSUPPLIER_HPP_
 #include <com/sun/star/sdbcx/XColumnsSupplier.hpp>
 #endif
 #ifndef _COM_SUN_STAR_SDB_XCOLUMN_HPP_
 #include <com/sun/star/sdb/XColumn.hpp>
 #endif
-#ifndef _COM_SUN_STAR_LANG_XMULTISERVICEFACTORY_HPP_
-#include "com/sun/star/lang/XMultiServiceFactory.hpp"
-#endif
 #ifndef _COM_SUN_STAR_BEANS_XPROPERTYSET_HPP_
 #include <com/sun/star/beans/XPropertySet.hpp>
-#endif
-#ifndef _COM_SUN_STAR_UNO_XCOMPONENTCONTEXT_HPP_
-#include <com/sun/star/uno/XComponentContext.hpp>
 #endif
 #ifndef _COM_SUN_STAR_UI_DIALOGS_XFILEPICKER_HPP_
 #include <com/sun/star/ui/dialogs/XFilePicker.hpp>
@@ -106,8 +96,11 @@ using namespace ::com::sun::star::container;
 using namespace ::com::sun::star::sdb;
 using namespace ::com::sun::star::sdbc;
 using namespace ::com::sun::star::sdbcx;
-using ::rtl::OUString;
-    
+
+using rtl::OUString;
+
+//using namespace ::rtl;
+
 namespace SwMailMergeHelper
 {
 
@@ -118,17 +111,17 @@ String  CallSaveAsDialog(String& rFilter)
 {
     ErrCode nRet;
     String sFactory(String::CreateFromAscii(SwDocShell::Factory().GetShortName()));
-    ::sfx2::FileDialogHelper aDialog( sfx2::FILESAVE_AUTOEXTENSION, 
+    ::sfx2::FileDialogHelper aDialog( sfx2::FILESAVE_AUTOEXTENSION,
                 0,
                 sFactory );
     String& rLastSaveDir = (String&)SFX_APP()->GetLastSaveDirectory();
-    
+
     SvStringsDtor* pURLList = NULL;
     SfxItemSet* pSet=0;
     String sRet;
     nRet = aDialog.Execute();
     if(ERRCODE_NONE == nRet)
-    {        
+    {
         uno::Reference < ui::dialogs::XFilePicker > xFP = aDialog.GetFilePicker();
         sRet = xFP->getFiles().getConstArray()[0];
         rFilter = aDialog.GetCurrentFilter();
@@ -141,7 +134,7 @@ String  CallSaveAsDialog(String& rFilter)
     return sRet;
 }
 /*-- 20.08.2004 09:39:18---------------------------------------------------
-    simple address check: check for '@' 
+    simple address check: check for '@'
                             for at least one '.' after the '@'
                             and for at least to characters before and after the dot
   -----------------------------------------------------------------------*/
@@ -154,12 +147,12 @@ bool CheckMailAddress( const ::rtl::OUString& rMailAddress )
     if(sAddress.GetTokenCount('.') < 2)
         return false;
     if(sAddress.GetToken( 0, '.').Len() < 2 || sAddress.GetToken( 1, '.').Len() < 2)
-        return false;            
+        return false;
     return true;
 }
-    
+
 /*-- 28.12.2004 10:16:02---------------------------------------------------
-    
+
   -----------------------------------------------------------------------*/
 uno::Reference< mail::XSmtpService > ConnectToSmtpServer( 
         SwMailMergeConfigItem& rConfigItem, 
