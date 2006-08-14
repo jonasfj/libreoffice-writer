@@ -4,9 +4,9 @@
  *
  *  $RCSfile: SwXPrintPreviewSettings.hxx,v $
  *
- *  $Revision: 1.6 $
+ *  $Revision: 1.7 $
  *
- *  last change: $Author: rt $ $Date: 2005-09-09 11:17:51 $
+ *  last change: $Author: hr $ $Date: 2006-08-14 17:59:17 $
  *
  *  The Contents of this file are made available subject to
  *  the terms of GNU Lesser General Public License Version 2.1.
@@ -32,7 +32,6 @@
  *    MA  02111-1307  USA
  *
  ************************************************************************/
-
 #ifndef _SW_XPRINTPREVIEWSETTINGS_HXX_
 #define _SW_XPRINTPREVIEWSETTINGS_HXX_
 
@@ -54,8 +53,6 @@
 #include <com/sun/star/lang/XServiceInfo.hpp>
 #endif
 
-class SwXTextDocument;
-class SwDocShell;
 class SwDoc;
 class SwPagePreViewPrtData;
 
@@ -72,14 +69,14 @@ protected:
 
     virtual void _preSetValues ()
         throw(::com::sun::star::beans::UnknownPropertyException, ::com::sun::star::beans::PropertyVetoException, ::com::sun::star::lang::IllegalArgumentException, ::com::sun::star::lang::WrappedTargetException );
-    virtual void _setSingleValue( const comphelper::PropertyInfo & rInfo, const ::com::sun::star::uno::Any &rValue ) 
+    virtual void _setSingleValue( const comphelper::PropertyInfo & rInfo, const ::com::sun::star::uno::Any &rValue )
         throw(::com::sun::star::beans::UnknownPropertyException, ::com::sun::star::beans::PropertyVetoException, ::com::sun::star::lang::IllegalArgumentException, ::com::sun::star::lang::WrappedTargetException );
     virtual void _postSetValues ()
         throw(::com::sun::star::beans::UnknownPropertyException, ::com::sun::star::beans::PropertyVetoException, ::com::sun::star::lang::IllegalArgumentException, ::com::sun::star::lang::WrappedTargetException );
 
     virtual void _preGetValues ()
         throw(::com::sun::star::beans::UnknownPropertyException, ::com::sun::star::beans::PropertyVetoException, ::com::sun::star::lang::IllegalArgumentException, ::com::sun::star::lang::WrappedTargetException );
-    virtual void _getSingleValue( const comphelper::PropertyInfo & rInfo, ::com::sun::star::uno::Any & rValue ) 
+    virtual void _getSingleValue( const comphelper::PropertyInfo & rInfo, ::com::sun::star::uno::Any & rValue )
         throw(::com::sun::star::beans::UnknownPropertyException, ::com::sun::star::lang::WrappedTargetException );
     virtual void _postGetValues ()
         throw(::com::sun::star::beans::UnknownPropertyException, ::com::sun::star::beans::PropertyVetoException, ::com::sun::star::lang::IllegalArgumentException, ::com::sun::star::lang::WrappedTargetException );
@@ -87,22 +84,22 @@ protected:
         throw();
 public:
     SwXPrintPreviewSettings(SwDoc *pDoc);
-    
+
 
     // XInterface
-    virtual ::com::sun::star::uno::Any SAL_CALL queryInterface( const ::com::sun::star::uno::Type& aType ) 
+    virtual ::com::sun::star::uno::Any SAL_CALL queryInterface( const ::com::sun::star::uno::Type& aType )
         throw (::com::sun::star::uno::RuntimeException);
-    virtual void SAL_CALL acquire(  ) 
+    virtual void SAL_CALL acquire(  )
         throw ();
-    virtual void SAL_CALL release(  ) 
+    virtual void SAL_CALL release(  )
         throw ();
 
     //XServiceInfo
-    virtual rtl::OUString SAL_CALL getImplementationName(void) 
+    virtual rtl::OUString SAL_CALL getImplementationName(void)
         throw( ::com::sun::star::uno::RuntimeException );
-    virtual sal_Bool SAL_CALL supportsService(const rtl::OUString& ServiceName) 
+    virtual sal_Bool SAL_CALL supportsService(const rtl::OUString& ServiceName)
         throw( ::com::sun::star::uno::RuntimeException );
-    virtual ::com::sun::star::uno::Sequence< rtl::OUString > SAL_CALL getSupportedServiceNames(void) 
+    virtual ::com::sun::star::uno::Sequence< rtl::OUString > SAL_CALL getSupportedServiceNames(void)
         throw( ::com::sun::star::uno::RuntimeException );
 };
 #endif
