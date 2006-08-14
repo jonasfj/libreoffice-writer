@@ -4,9 +4,9 @@
  *
  *  $RCSfile: unoevent.cxx,v $
  *
- *  $Revision: 1.13 $
+ *  $Revision: 1.14 $
  *
- *  last change: $Author: rt $ $Date: 2005-09-09 05:25:41 $
+ *  last change: $Author: hr $ $Date: 2006-08-14 16:54:05 $
  *
  *  The Contents of this file are made available subject to
  *  the terms of GNU Lesser General Public License Version 2.1.
@@ -33,54 +33,39 @@
  *
  ************************************************************************/
 
-
 #pragma hdrstop
 
 // HINTIDs must be on top; it is required for the macitem.hxx header
 #ifndef _HINTIDS_HXX
 #include "hintids.hxx"
 #endif
-
 #ifndef _UNOEVENT_HXX
 #include "unoevent.hxx"
 #endif
-
 #ifndef _UNOFRAME_HXX
 #include "unoframe.hxx"
 #endif
-
 #ifndef _UNOSTYLE_HXX
 #include "unostyle.hxx"
 #endif
-
 #ifndef _SWEVENT_HXX
 #include "swevent.hxx"
 #endif
-
 #ifndef _DOCSTYLE_HXX
 #include "docstyle.hxx"
 #endif
-
-#ifndef _SFX_HRC
-#include <sfx2/sfx.hrc>
-#endif
-
 #ifndef _SVX_SVXIDS_HRC
 #include <svx/svxids.hrc>
 #endif
-
 #ifndef _FMTINFMT_HXX
 #include "fmtinfmt.hxx"
 #endif
-
 #ifndef _SFXMACITEM_HXX
 #include <svtools/macitem.hxx>
 #endif
-
 #ifndef _RTL_USTRBUF_HXX_
 #include <rtl/ustrbuf.hxx>
 #endif
-
 #ifndef _COM_SUN_STAR_BEANS_PROPERTYVALUE_HPP
 #include <com/sun/star/beans/PropertyValue.hpp>
 #endif
@@ -101,10 +86,10 @@ using ::rtl::OUStringBuffer;
 
 const sal_Char sAPI_ServiceName[] = "com.sun.star.container.XNameReplace";
 const sal_Char sAPI_SwFrameEventDescriptor[] = "SwFrameEventDescriptor";
-const sal_Char sAPI_SwFrameStyleEventDescriptor[] = 
+const sal_Char sAPI_SwFrameStyleEventDescriptor[] =
                                     "SwFrameStyleEventDescriptor";
 const sal_Char sAPI_SwDetachedEventDescriptor[] = "SwDetachedEventDescriptor";
-const sal_Char sAPI_SwHyperlinkEventDescriptor[] = 
+const sal_Char sAPI_SwHyperlinkEventDescriptor[] =
                                     "SwHyperlinkEventDescriptor";
 const sal_Char sAPI_SwAutoTextEventDescriptor[] =
                                     "SwAutoTextEventDescriptor";
@@ -169,7 +154,7 @@ const sal_Char sAPI_SwAutoTextEventDescriptor[] =
 // 	"OnMouseOver",				// SFX_EVENT_MOUSEOVER_OBJECT
 // 	"OnClick",					// SFX_EVENT_MOUSECLICK_OBJECT
 // 	"OnMouseOut",				// SFX_EVENT_MOUSEOUT_OBJECT
-// 	"OnLoad",				    // SFX_EVENT_OPENDOC,               
+// 	"OnLoad",				    // SFX_EVENT_OPENDOC,
 // 	"OnUnload",					// SFX_EVENT_CLOSEDOC,              
 // 	"OnStartApp",				// SFX_EVENT_STARTAPP,              
 // 	"OnCloseApp",				// SFX_EVENT_CLOSEAPP,              
