@@ -4,9 +4,9 @@
  *
  *  $RCSfile: xmlimpit.hxx,v $
  *
- *  $Revision: 1.5 $
+ *  $Revision: 1.6 $
  *
- *  last change: $Author: rt $ $Date: 2005-09-09 06:22:48 $
+ *  last change: $Author: hr $ $Date: 2006-08-14 17:23:21 $
  *
  *  The Contents of this file are made available subject to
  *  the terms of GNU Lesser General Public License Version 2.1.
@@ -32,7 +32,6 @@
  *    MA  02111-1307  USA
  *
  ************************************************************************/
-
 #ifndef _XMLIMPIT_HXX
 #define _XMLIMPIT_HXX
 
@@ -59,7 +58,6 @@ namespace rtl { class OUString; }
 class SvXMLUnitConverter;
 class SfxPoolItem;
 class SfxItemSet;
-class SvXMLAttributeList;
 class SvXMLNamespaceMap;
 struct SvXMLItemMapEntry;
 
@@ -96,7 +94,7 @@ public:
                                const ::rtl::OUString& rValue,
                                const SvXMLUnitConverter& rUnitConverter,
                                const SvXMLNamespaceMap& rNamespaceMap ) const;
-    
+
     /** This method is called when all attributes have benn processed. It
       * may be used to remove items that are incomplete */
     virtual void finished( SfxItemSet& rSet ) const;
@@ -107,9 +105,9 @@ public:
 
     /** This method is called for every item that should be set based
         upon an XML attribute value. */
-    static sal_Bool PutXMLValue( 
+    static sal_Bool PutXMLValue(
         SfxPoolItem& rItem,
-        const ::rtl::OUString& rValue, 
+        const ::rtl::OUString& rValue,
         sal_uInt16 nMemberId,
         const SvXMLUnitConverter& rUnitConverter );
 };
