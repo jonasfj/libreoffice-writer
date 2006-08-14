@@ -4,9 +4,9 @@
  *
  *  $RCSfile: printdata.hxx,v $
  *
- *  $Revision: 1.6 $
+ *  $Revision: 1.7 $
  *
- *  last change: $Author: hr $ $Date: 2006-06-19 12:39:31 $
+ *  last change: $Author: hr $ $Date: 2006-08-14 15:29:41 $
  *
  *  The Contents of this file are made available subject to
  *  the terms of GNU Lesser General Public License Version 2.1.
@@ -117,8 +117,8 @@ struct SwPrintData
     const rtl::OUString		GetFaxName() const{return sFaxName;}
 
     void SetPrintGraphic  ( sal_Bool b ) { doSetModified(); bPrintGraphic = b;}
-    void SetPrintTable	  ( sal_Bool b ) { doSetModified(); bPrintTable = b;}
-    void SetPrintDraw	  ( sal_Bool b ) { doSetModified(); bPrintDraw = b;}
+    void SetPrintTable    ( sal_Bool b ) { doSetModified(); bPrintTable = b;}
+    void SetPrintDraw     ( sal_Bool b ) { doSetModified(); bPrintDraw = b;}
     void SetPrintControl  ( sal_Bool b ) { doSetModified(); bPrintControl = b; }
     void SetPrintLeftPage ( sal_Bool b ) { doSetModified(); bPrintLeftPage = b;}
     void SetPrintRightPage( sal_Bool b ) { doSetModified(); bPrintRightPage = b;}
@@ -126,13 +126,12 @@ struct SwPrintData
     void SetPaperFromSetup( sal_Bool b ) { doSetModified(); bPaperFromSetup = b;}
     void SetPrintEmptyPages(sal_Bool b ) { doSetModified(); bPrintEmptyPages = b;}
     void SetPrintPostIts    ( sal_Int16 n){ doSetModified(); nPrintPostIts = n; }
-    void SetPrintProspect	( sal_Bool b ) { doSetModified(); bPrintProspect = b; }
+    void SetPrintProspect   ( sal_Bool b ) { doSetModified(); bPrintProspect = b; }
     void SetPrintPageBackground(sal_Bool b){ doSetModified(); bPrintPageBackground = b;}
     void SetPrintBlackFont(sal_Bool b){ doSetModified(); bPrintBlackFont = b;}
     void SetPrintSingleJobs(sal_Bool b){ doSetModified(); bPrintSingleJobs = b;}
     void SetFaxName(const rtl::OUString& rSet){sFaxName = rSet;}
     virtual void doSetModified () { bModified = sal_True;}
-    sal_Bool WasModified () { return bModified; }
 };
 
 #endif  //_SW_PRINTDATA_HXX
