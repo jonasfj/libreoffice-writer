@@ -4,9 +4,9 @@
  *
  *  $RCSfile: unocoll.hxx,v $
  *
- *  $Revision: 1.17 $
+ *  $Revision: 1.18 $
  *
- *  last change: $Author: kz $ $Date: 2006-01-31 18:32:43 $
+ *  last change: $Author: hr $ $Date: 2006-08-14 15:36:28 $
  *
  *  The Contents of this file are made available subject to
  *  the terms of GNU Lesser General Public License Version 2.1.
@@ -34,7 +34,6 @@
  ************************************************************************/
 #ifndef _UNOCOLL_HXX
 #define _UNOCOLL_HXX
-
 #ifndef _SOLAR_H
 #include <tools/solar.h>
 #endif
@@ -249,7 +248,7 @@ protected:
     virtual ~SwXTextTables();
 public:
     SwXTextTables(SwDoc* pDoc);
-    
+
 
     //XIndexAccess
     virtual sal_Int32 SAL_CALL getCount(  ) throw(::com::sun::star::uno::RuntimeException);
@@ -302,7 +301,7 @@ public:
     virtual BOOL SAL_CALL supportsService(const rtl::OUString& ServiceName) throw( ::com::sun::star::uno::RuntimeException );
     virtual ::com::sun::star::uno::Sequence< rtl::OUString > SAL_CALL getSupportedServiceNames(void) throw( ::com::sun::star::uno::RuntimeException );
 
-    FlyCntType 			GetType()const{return eType;}
+    FlyCntType          GetType()const{return eType;}
     static SwXFrame* 	GetObject( SwFrmFmt& rFmt, FlyCntType eType );
 
 };
@@ -316,7 +315,7 @@ protected:
     virtual ~SwXTextFrames();
 public:
     SwXTextFrames(SwDoc* pDoc);
-    
+
 
 //	SMART_UNO_DECLARATION( SwXTextFrames, UsrObject );
 
@@ -336,7 +335,7 @@ protected:
     virtual ~SwXTextGraphicObjects();
 public:
         SwXTextGraphicObjects(SwDoc* pDoc);
-        
+
 
 //	SMART_UNO_DECLARATION( SwXTextGraphicObjects, UsrObject );
 
@@ -356,7 +355,7 @@ protected:
     virtual ~SwXTextEmbeddedObjects();
 public:
     SwXTextEmbeddedObjects(SwDoc* pDoc);
-    
+
 
 //	SMART_UNO_DECLARATION( SwXTextEmbeddedObjects, UsrObject );
 
@@ -377,7 +376,7 @@ protected:
     virtual ~SwXTextSections();
 public:
     SwXTextSections(SwDoc* pDoc);
-    
+
 
     //XIndexAccess
     virtual sal_Int32 SAL_CALL getCount(void) throw( ::com::sun::star::uno::RuntimeException );
@@ -409,7 +408,7 @@ protected:
     virtual ~SwXBookmarks();
 public:
     SwXBookmarks(SwDoc*	pDoc);
-    
+
 
     //XIndexAccess
     virtual sal_Int32 SAL_CALL getCount(void) throw( ::com::sun::star::uno::RuntimeException );
@@ -450,7 +449,7 @@ protected:
     virtual ~SwXFootnotes();
 public:
     SwXFootnotes(sal_Bool bEnd, SwDoc* pDoc);
-    
+
 
     //XIndexAccess
     virtual sal_Int32 SAL_CALL SAL_CALL getCount(void) throw( ::com::sun::star::uno::RuntimeException );
@@ -478,7 +477,7 @@ protected:
     virtual ~SwXReferenceMarks();
 public:
     SwXReferenceMarks(SwDoc* pDoc);
-    
+
 
     //XIndexAccess
     virtual sal_Int32 SAL_CALL getCount(void) throw( ::com::sun::star::uno::RuntimeException );
