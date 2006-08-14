@@ -4,9 +4,9 @@
  *
  *  $RCSfile: customizeaddresslistdialog.hxx,v $
  *
- *  $Revision: 1.3 $
+ *  $Revision: 1.4 $
  *
- *  last change: $Author: rt $ $Date: 2005-09-09 06:50:07 $
+ *  last change: $Author: hr $ $Date: 2006-08-14 17:29:55 $
  *
  *  The Contents of this file are made available subject to
  *  the terms of GNU Lesser General Public License Version 2.1.
@@ -34,15 +34,14 @@
  ************************************************************************/
 #ifndef _CUSTOMIZEADDRESSLISTDIALOG_HXX
 #define _CUSTOMIZEADDRESSLISTDIALOG_HXX
-
-#ifndef _BASEDLGS_HXX 
+#ifndef _BASEDLGS_HXX
 #include <sfx2/basedlgs.hxx>
 #endif
 
 #ifndef _SV_BUTTON_HXX
 #include <vcl/button.hxx>
 #endif
-#ifndef _STDCTRL_HXX 
+#ifndef _STDCTRL_HXX
 #include <svtools/stdctrl.hxx>
 #endif
 #ifndef _SV_FIELD_HXX
@@ -52,7 +51,6 @@
 #include <vcl/lstbox.hxx>
 #endif
 
-class SwAddressControl_Impl;
 struct SwCSVData;
 /*-- 08.04.2004 14:04:39---------------------------------------------------
 
@@ -65,12 +63,12 @@ class SwCustomizeAddressListDialog : public SfxModalDialog
     PushButton              m_aAddPB;
     PushButton              m_aDeletePB;
     PushButton              m_aRenamePB;
-    
+
     ImageButton             m_aUpPB;
     ImageButton             m_aDownPB;
 
     FixedLine               m_aSeparatorFL;
-    
+
     OKButton                m_aOK;
     CancelButton            m_aCancel;
     HelpButton              m_aHelp;
@@ -83,7 +81,7 @@ class SwCustomizeAddressListDialog : public SfxModalDialog
     DECL_LINK(ListBoxSelectHdl_Impl, ListBox*);
 
     void UpdateButtons();
-public:    
+public:
     SwCustomizeAddressListDialog(Window* pParent, const SwCSVData& rOldData);
     ~SwCustomizeAddressListDialog();
 
@@ -104,7 +102,7 @@ class SwAddRenameEntryDialog : public SfxModalDialog
     const ::std::vector< ::rtl::OUString >& m_rCSVHeader;
 
     DECL_LINK(ModifyHdl_Impl, Edit*);
-public:    
+public:
     SwAddRenameEntryDialog(Window* pParent, bool bRename, const ::std::vector< ::rtl::OUString >& aCSVHeader);
     ~SwAddRenameEntryDialog();
 
