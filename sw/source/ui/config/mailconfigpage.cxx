@@ -4,9 +4,9 @@
  *
  *  $RCSfile: mailconfigpage.cxx,v $
  *
- *  $Revision: 1.5 $
+ *  $Revision: 1.6 $
  *
- *  last change: $Author: rt $ $Date: 2005-09-09 06:42:42 $
+ *  last change: $Author: hr $ $Date: 2006-08-14 17:28:30 $
  *
  *  The Contents of this file are made available subject to
  *  the terms of GNU Lesser General Public License Version 2.1.
@@ -32,7 +32,6 @@
  *    MA  02111-1307  USA
  *
  ************************************************************************/
-
 #ifdef SW_DLLIMPLEMENTATION
 #undef SW_DLLIMPLEMENTATION
 #endif
@@ -45,13 +44,10 @@
 #ifndef _MAILCONFIGPAGE_HXX
 #include <mailconfigpage.hxx>
 #endif
-#ifndef _BASEDLGS_HXX 
-#include <sfx2/basedlgs.hxx>
-#endif
-#ifndef _SVEDIT_HXX 
+#ifndef _SVEDIT_HXX
 #include <svtools/svmedit.hxx>
 #endif
-#ifndef _STDCTRL_HXX 
+#ifndef _STDCTRL_HXX
 #include <svtools/stdctrl.hxx>
 #endif
 #ifndef _SVTABBX_HXX
@@ -103,10 +99,10 @@ using namespace ::rtl;
 class SwTestAccountSettingsDialog : public SfxModalDialog
 {
     FixedInfo           m_aInfoFI;
-    
+
     HeaderBar           m_aStatusHB;
     SvTabListBox        m_aStatusLB;
-    
+
     FixedInfo           m_aErrorFI;
     MultiLineEdit       m_eErrorsED;
 
@@ -129,11 +125,11 @@ class SwTestAccountSettingsDialog : public SfxModalDialog
     SwMailConfigPage*   m_pParent;
 
     bool                m_bStop;
-    
+
     void                Test();
     DECL_LINK(StopHdl, PushButton*);
     DECL_STATIC_LINK(SwTestAccountSettingsDialog, TestHdl, void*);
-public:    
+public:
     SwTestAccountSettingsDialog(SwMailConfigPage* pParent);
     ~SwTestAccountSettingsDialog();
 };
@@ -146,13 +142,13 @@ class SwAuthenticationSettingsDialog : public SfxModalDialog
 
     RadioButton     m_aSeparateAuthenticationRB;
     RadioButton     m_aSMTPAfterPOPRB;
-    
+
     FixedInfo       m_aOutgoingServerFT;
     FixedText       m_aUserNameFT;
     Edit            m_aUserNameED;
     FixedText       m_aOutPasswordFT;
     Edit            m_aOutPasswordED;
-    
+
     FixedInfo       m_aIncomingServerFT;
     FixedText       m_aServerFT;
     Edit            m_aServerED;
