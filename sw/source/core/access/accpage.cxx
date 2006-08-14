@@ -4,9 +4,9 @@
  *
  *  $RCSfile: accpage.cxx,v $
  *
- *  $Revision: 1.11 $
+ *  $Revision: 1.12 $
  *
- *  last change: $Author: rt $ $Date: 2005-09-09 02:53:02 $
+ *  last change: $Author: hr $ $Date: 2006-08-14 15:46:02 $
  *
  *  The Contents of this file are made available subject to
  *  the terms of GNU Lesser General Public License Version 2.1.
@@ -32,7 +32,6 @@
  *    MA  02111-1307  USA
  *
  ************************************************************************/
-
 
 #pragma hdrstop
 
@@ -62,11 +61,6 @@
 #ifndef _ACCESS_HRC
 #include "access.hrc"
 #endif
-
-#ifndef _TOOLS_DEBUG_HXX
-#include <tools/debug.hxx>
-#endif
-
 #ifndef _PAGEFRM_HXX
 #include <pagefrm.hxx>
 #endif
@@ -147,7 +141,7 @@ void SwAccessiblePage::_InvalidateFocus()
         }
         ASSERT( bSelected, "focus object should be selected" );
 
-        FireStateChangedEvent( AccessibleStateType::FOCUSED, 
+        FireStateChangedEvent( AccessibleStateType::FOCUSED,
                                pWin->HasFocus() && bSelected );
     }
 }
@@ -163,7 +157,7 @@ SwAccessiblePage::SwAccessiblePage( SwAccessibleMap* pMap,
     vos::OGuard aGuard(Application::GetSolarMutex());
 
     OUString sPage = OUString::valueOf(
-        static_cast<sal_Int32>( 
+        static_cast<sal_Int32>(
             static_cast<const SwPageFrm*>( GetFrm() )->GetPhyPageNum() ) );
     SetName( GetResource( STR_ACCESS_PAGE_NAME, &sPage ) );
 }
