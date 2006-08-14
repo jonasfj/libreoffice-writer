@@ -4,9 +4,9 @@
  *
  *  $RCSfile: SwUndoField.hxx,v $
  *
- *  $Revision: 1.4 $
+ *  $Revision: 1.5 $
  *
- *  last change: $Author: rt $ $Date: 2005-09-09 01:30:06 $
+ *  last change: $Author: hr $ $Date: 2006-08-14 15:14:53 $
  *
  *  The Contents of this file are made available subject to
  *  the terms of GNU Lesser General Public License Version 2.1.
@@ -35,11 +35,9 @@
 #ifndef _SW_UNDO_FIELD_HXX
 #define _SW_UNDO_FIELD_HXX
 
-#include <doc.hxx>
 #include <undobj.hxx>
-#include <pam.hxx>
 
-class SwTxtFld;
+class SwDoc;
 class SwField;
 class SwMsgPoolItem;
 
@@ -51,7 +49,7 @@ class SwUndoField : public SwUndo
 protected:
     SwDoc * pDoc;
     SwPosition GetPosition();
-    
+
 public:
     SwUndoField(const SwPosition & rPos);
     virtual ~SwUndoField();
@@ -64,7 +62,7 @@ class SwUndoFieldFromDoc : public SwUndoField
     BOOL bUpdate;
 
 public:
-    SwUndoFieldFromDoc(const SwPosition & rPos, const SwField & aOldField, 
+    SwUndoFieldFromDoc(const SwPosition & rPos, const SwField & aOldField,
                        const SwField & aNewField,
                        SwMsgPoolItem * pHnt, BOOL bUpdate);
     virtual ~SwUndoFieldFromDoc();
@@ -81,8 +79,8 @@ class SwUndoFieldFromAPI : public SwUndoField
 
 public:
     SwUndoFieldFromAPI(const SwPosition & rPos,
-                       const com::sun::star::uno::Any & rOldVal, 
-                       const com::sun::star::uno::Any & rNewVal, 
+                       const com::sun::star::uno::Any & rOldVal,
+                       const com::sun::star::uno::Any & rNewVal,
                        BYTE nMId);
     virtual ~SwUndoFieldFromAPI();
 
