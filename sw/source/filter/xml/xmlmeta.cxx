@@ -4,9 +4,9 @@
  *
  *  $RCSfile: xmlmeta.cxx,v $
  *
- *  $Revision: 1.13 $
+ *  $Revision: 1.14 $
  *
- *  last change: $Author: rt $ $Date: 2005-09-09 06:25:32 $
+ *  last change: $Author: hr $ $Date: 2006-08-14 17:24:10 $
  *
  *  The Contents of this file are made available subject to
  *  the terms of GNU Lesser General Public License Version 2.1.
@@ -33,7 +33,6 @@
  *
  ************************************************************************/
 
-
 #pragma hdrstop
 
 #include <hintids.hxx>
@@ -44,13 +43,9 @@
 #ifndef _COM_SUN_STAR_DOCUMENT_XDOCUMENTINFOSUPPLIER_HPP_
 #include <com/sun/star/document/XDocumentInfoSupplier.hpp>
 #endif
-#ifndef _COM_SUN_STAR_TEXT_XTEXTDOCUMENT_HPP_ 
+#ifndef _COM_SUN_STAR_TEXT_XTEXTDOCUMENT_HPP_
 #include <com/sun/star/text/XTextDocument.hpp>
 #endif
-#ifndef _COM_SUN_STAR_TEXT_XTEXT_HPP_ 
-#include <com/sun/star/text/XText.hpp>
-#endif
-
 #ifndef _XMLOFF_XMLNMSPE_HXX
 #include <xmloff/xmlnmspe.hxx>
 #endif
@@ -65,10 +60,10 @@
 #ifndef _SVX_LANGITEM_HXX
 #include <svx/langitem.hxx>
 #endif
-#ifndef _XMLOFF_XMLUCONV_HXX 
+#ifndef _XMLOFF_XMLUCONV_HXX
 #include <xmloff/xmluconv.hxx>
 #endif
-#ifndef _XMLOFF_NMSPMAP_HXX 
+#ifndef _XMLOFF_NMSPMAP_HXX
 #include <xmloff/nmspmap.hxx>
 #endif
 
@@ -88,9 +83,7 @@
 #ifndef _XMLIMP_HXX
 #include "xmlimp.hxx"
 #endif
-#ifndef _XMLOFF_PROGRESSBARHELPER_HXX
-#include <xmloff/ProgressBarHelper.hxx>
-#endif
+
 #ifndef _XMLEXP_HXX
 #include "xmlexp.hxx"
 #endif
@@ -105,29 +98,6 @@ using namespace ::xmloff::token;
 
 // ---------------------------------------------------------------------
 
-#if 0
-class SwXMLMetaContext_Impl : public SfxXMLMetaContext
-{
-public:
-    SwXMLMetaContext_Impl( SwXMLImport& rImport, sal_uInt16 nPrfx,
-            const OUString& rLName,
-            const Reference< document::XDocumentInfo > & rInfo ) :
-        SfxXMLMetaContext( rImport, nPrfx, rLName, rInfo )
-    {}
-
-    virtual void SetDocLanguage( LanguageType eLang );
-};
-
-void SwXMLMetaContext_Impl::SetDocLanguage( LanguageType eLang )
-{
-    SwDoc& rDoc = ((SwXMLImport&)GetImport()).GetDoc();
-
-    rDoc.SetDefault( SvxLanguageItem( eLang, RES_CHRATR_LANGUAGE ) );
-}
-#endif
-
-// ---------------------------------------------------------------------
-
 SvXMLImportContext *SwXMLImport::CreateMetaContext(
                                        const OUString& rLocalName )
 {
@@ -139,7 +109,7 @@ SvXMLImportContext *SwXMLImport::CreateMetaContext(
                                     XML_NAMESPACE_OFFICE, rLocalName,
                                     GetModel() );
     }
-    
+
     if( !pContext )
         pContext = new SvXMLImportContext( *this, XML_NAMESPACE_OFFICE,
                                               rLocalName );
@@ -170,7 +140,7 @@ static __FAR_DATA SvXMLTokenMapEntry aMetaStatAttrTokenMap[] =
     { XML_NAMESPACE_META, XML_PAGE_COUNT,       XML_TOK_META_STAT_PAGE	},
     { XML_NAMESPACE_META, XML_WORD_COUNT,       XML_TOK_META_STAT_WORD	},
     { XML_NAMESPACE_META, XML_CHARACTER_COUNT,  XML_TOK_META_STAT_CHAR	},
-    XML_TOKEN_MAP_END 
+    XML_TOKEN_MAP_END
 };
 void SwXMLImport::SetStatisticAttributes(
         const Reference< xml::sax::XAttributeList > & xAttrList)
@@ -263,7 +233,7 @@ void SwXMLExport::_ExportMeta()
     if( !IsBlockMode() )
     {
         OUStringBuffer aOut(16);
-        
+
         Reference < XTextDocument > xTextDoc( GetModel(), UNO_QUERY );
         Reference < XText > xText = xTextDoc->getText();
         Reference<XUnoTunnel> xTextTunnel( xText, UNO_QUERY);
