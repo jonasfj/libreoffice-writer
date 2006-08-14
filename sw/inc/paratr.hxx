@@ -4,9 +4,9 @@
  *
  *  $RCSfile: paratr.hxx,v $
  *
- *  $Revision: 1.13 $
+ *  $Revision: 1.14 $
  *
- *  last change: $Author: rt $ $Date: 2005-09-09 02:04:45 $
+ *  last change: $Author: hr $ $Date: 2006-08-14 15:29:29 $
  *
  *  The Contents of this file are made available subject to
  *  the terms of GNU Lesser General Public License Version 2.1.
@@ -118,10 +118,6 @@ public:
 
     inline USHORT GetDistance() const { return nDistance; }
     inline USHORT &GetDistance() { return nDistance; }
-
-    // fuer den Sw3-Reader: CharFormat-Id (Pool laden!)
-    inline USHORT GetReadFmt() const 		{ return nReadFmt; }
-    inline void SetReadFmt( USHORT n ) 		{ nReadFmt = n; }
 
     inline const SwCharFmt *GetCharFmt() const { return (SwCharFmt*)pRegisteredIn; }
     inline SwCharFmt *GetCharFmt()       { return (SwCharFmt*)pRegisteredIn; }
@@ -280,31 +276,31 @@ inline const SwParaConnectBorderItem &SwAttrSet::GetParaConnectBorder(BOOL bInP)
 inline const SvxLineSpacingItem &SwFmt::GetLineSpacing(BOOL bInP) const
     {	return aSet.GetLineSpacing(bInP); }
 inline const SvxAdjustItem &SwFmt::GetAdjust(BOOL bInP) const
-    {	return aSet.GetAdjust(bInP); }
+    {   return aSet.GetAdjust(bInP); }
 inline const SvxFmtSplitItem &SwFmt::GetSplit(BOOL bInP) const
-    {	return aSet.GetSplit(bInP); }
+    {   return aSet.GetSplit(bInP); }
 inline const SwRegisterItem &SwFmt::GetRegister(BOOL bInP) const
-    {	return aSet.GetRegister(bInP); }
+    {   return aSet.GetRegister(bInP); }
 inline const SvxWidowsItem &SwFmt::GetWidows(BOOL bInP) const
-    {	return aSet.GetWidows(bInP); }
+    {   return aSet.GetWidows(bInP); }
 inline const SvxOrphansItem &SwFmt::GetOrphans(BOOL bInP) const
-    {	return aSet.GetOrphans(bInP); }
+    {   return aSet.GetOrphans(bInP); }
 inline const SvxTabStopItem &SwFmt::GetTabStops(BOOL bInP) const
     {	return aSet.GetTabStops(bInP); }
 inline const SvxHyphenZoneItem &SwFmt::GetHyphenZone(BOOL bInP) const
-    {	return aSet.GetHyphenZone(bInP); }
+    {   return aSet.GetHyphenZone(bInP); }
 inline const SwFmtDrop &SwFmt::GetDrop(BOOL bInP) const
     {	return aSet.GetDrop(bInP); }
 inline const SwNumRuleItem &SwFmt::GetNumRule(BOOL bInP) const
     {	return aSet.GetNumRule(bInP); }
 inline const SvxScriptSpaceItem& SwFmt::GetScriptSpace(BOOL bInP) const
-    {	return aSet.GetScriptSpace(bInP) ; }
+    {   return aSet.GetScriptSpace(bInP) ; }
 inline const SvxHangingPunctuationItem &SwFmt::GetHangingPunctuation(BOOL bInP) const
-    {	return aSet.GetHangingPunctuation(bInP) ; }
+    {   return aSet.GetHangingPunctuation(bInP) ; }
 inline const SvxForbiddenRuleItem &SwFmt::GetForbiddenRule(BOOL bInP) const
-    {	return (const SvxForbiddenRuleItem&)aSet.Get(RES_PARATR_FORBIDDEN_RULES, bInP); }
+    {   return (const SvxForbiddenRuleItem&)aSet.Get(RES_PARATR_FORBIDDEN_RULES, bInP); }
 inline const SvxParaVertAlignItem &SwFmt::GetParaVertAlign(BOOL bInP) const
-    {	return (const SvxParaVertAlignItem&)aSet.Get( RES_PARATR_VERTALIGN, bInP ); }
+    {   return (const SvxParaVertAlignItem&)aSet.Get( RES_PARATR_VERTALIGN, bInP ); }
 inline const SvxParaGridItem &SwFmt::GetParaGrid(BOOL bInP) const
     {   return (const SvxParaGridItem&)aSet.Get( RES_PARATR_SNAPTOGRID, bInP ); }
 inline const SwParaConnectBorderItem &SwFmt::GetParaConnectBorder(BOOL bInP) const
