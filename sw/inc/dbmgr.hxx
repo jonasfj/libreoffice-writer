@@ -4,9 +4,9 @@
  *
  *  $RCSfile: dbmgr.hxx,v $
  *
- *  $Revision: 1.31 $
+ *  $Revision: 1.32 $
  *
- *  last change: $Author: kz $ $Date: 2006-04-27 09:44:08 $
+ *  last change: $Author: hr $ $Date: 2006-08-14 15:19:15 $
  *
  *  The Contents of this file are made available subject to
  *  the terms of GNU Lesser General Public License Version 2.1.
@@ -234,7 +234,7 @@ friend class SwConnectionDisposedListener_Impl;
     String				sAttached;		// Mailing: Attachte Files
     USHORT				nMergeType;
     BOOL				bInitDBFields : 1;	// TRUE: Datenbank an Feldern beim Mergen
-    BOOL				bSingleJobs : 1;	// Einzelne Druckjobs bei Aufruf aus Basic
+    BOOL                bSingleJobs : 1;    // Einzelne Druckjobs bei Aufruf aus Basic
     BOOL				bCancel : 1;		// Serienbrief-Save abgebrochen
 
     BOOL 				bInMerge	: 1;	//merge process active
@@ -292,8 +292,8 @@ public:
     inline void 	SetInitDBFields(BOOL b)	{ bInitDBFields = b;	}
 
     // Serienbriefe einzelnd oder alle zusammen drucken/speichern
-    inline BOOL		IsSingleJobs() const 	{ return bSingleJobs;	}
-    inline void 	SetSingleJobs(BOOL b)	{ bSingleJobs = b;	}
+    inline BOOL     IsSingleJobs() const    { return bSingleJobs;   }
+    inline void     SetSingleJobs(BOOL b)   { bSingleJobs = b;  }
 
     // Mailing
     // email-Daten setzen
