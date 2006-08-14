@@ -4,9 +4,9 @@
  *
  *  $RCSfile: wrtswtbl.cxx,v $
  *
- *  $Revision: 1.11 $
+ *  $Revision: 1.12 $
  *
- *  last change: $Author: hr $ $Date: 2006-01-27 14:39:44 $
+ *  last change: $Author: hr $ $Date: 2006-08-14 17:13:19 $
  *
  *  The Contents of this file are made available subject to
  *  the terms of GNU Lesser General Public License Version 2.1.
@@ -32,11 +32,9 @@
  *    MA  02111-1307  USA
  *
  ************************************************************************/
-
 #ifdef PCH
 #include "filt_pch.hxx"
 #endif
-
 #ifndef _HINTIDS_HXX
 #include <hintids.hxx>
 #endif
@@ -720,8 +718,8 @@ void SwWriteTable::FillTableRowsCols( long nStartRPos, USHORT nStartRow,
                         nRowSpan, nColSpan, nTopBorder, nBottomBorder);
 
                     // #i30094# add a sanity check here to ensure that
-                    // we don't access an invalid aCols[] as &nCol 
-                    // above can be changed.                       
+                    // we don't access an invalid aCols[] as &nCol
+                    // above can be changed.
                     if (!(nBorderMask & 4) && nOldCol < aCols.Count())
                     {
                         SwWriteTableCol *pCol = aCols[nOldCol];
@@ -746,7 +744,7 @@ void SwWriteTable::FillTableRowsCols( long nStartRPos, USHORT nStartRow,
                     if (!(nBorderMask & 2))
                         pEndRow->bBottomBorder = FALSE;
                     else if (
-                                !pEndRow->nBottomBorder || 
+                                !pEndRow->nBottomBorder ||
                                 nBottomBorder < pEndRow->nBottomBorder
                             )
                     {
@@ -790,7 +788,7 @@ SwWriteTable::SwWriteTable(const SwTableLines& rLines, long nWidth,
 #ifndef PRODUCT
     bGetLineHeightCalled(false),
 #endif
-    bColsOption(false), bColTags(true), bLayoutExport(false), 
+    bColsOption(false), bColTags(true), bLayoutExport(false),
     bCollectBorderWidth(true)
 {
     USHORT nParentWidth = nBaseWidth + nLeftSub + nRightSub;
@@ -817,7 +815,7 @@ SwWriteTable::SwWriteTable( const SwHTMLTableLayout *pLayoutInfo )
 #ifndef PRODUCT
     bGetLineHeightCalled(false),
 #endif
-    bColsOption(pLayoutInfo->HasColsOption()), 
+    bColsOption(pLayoutInfo->HasColsOption()),
     bColTags(pLayoutInfo->HasColTags()), bLayoutExport(true),
     bCollectBorderWidth(pLayoutInfo->HaveBordersChanged())
 {
