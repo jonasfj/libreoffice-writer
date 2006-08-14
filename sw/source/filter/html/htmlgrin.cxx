@@ -4,9 +4,9 @@
  *
  *  $RCSfile: htmlgrin.cxx,v $
  *
- *  $Revision: 1.18 $
+ *  $Revision: 1.19 $
  *
- *  last change: $Author: vg $ $Date: 2006-04-07 15:12:41 $
+ *  last change: $Author: hr $ $Date: 2006-08-14 17:04:46 $
  *
  *  The Contents of this file are made available subject to
  *  the terms of GNU Lesser General Public License Version 2.1.
@@ -32,7 +32,6 @@
  *    MA  02111-1307  USA
  *
  ************************************************************************/
-
 
 #pragma hdrstop
 #define ITEMID_BOXINFO      SID_ATTR_BORDER_INNER
@@ -81,7 +80,7 @@
 #ifndef _SVX_LANGITEM_HXX
 #include <svx/langitem.hxx>
 #endif
-#ifndef _SVX_SCRIPTTYPEITEM_HXX 
+#ifndef _SVX_SCRIPTTYPEITEM_HXX
 #include <svx/scripttypeitem.hxx>
 #endif
 #ifndef _SFXDOCFILE_HXX //autogen
@@ -544,6 +543,7 @@ IMAGE_SETEVENT:
         aBulletGrfs[GetNumInfo().GetDepth()-1]==sGrfNm )
     {
         SwTxtNode* pTxtNode = pPam->GetNode()->GetTxtNode();
+
         if( pTxtNode && ! pTxtNode->IsCounted())
         {
             ASSERT( pTxtNode->GetLevel() == GetNumInfo().GetLevel(),
@@ -756,7 +756,7 @@ IMAGE_SETEVENT:
         if( pImgMap )
         {
             SwFmtURL aURL; aURL.SetMap( pImgMap );//wird kopieiert
-            
+
             bSetScaleImageMap = !nPrcWidth || !nPrcHeight;
             aFrmSet.Put( aURL );
         }
@@ -810,7 +810,7 @@ IMAGE_SETEVENT:
     Graphic aEmptyGrf;
     aEmptyGrf.SetDefaultType();
     SwFrmFmt *pFlyFmt = pDoc->Insert( *pPam, sGrfNm, aEmptyStr, &aEmptyGrf,
-                                      &aFrmSet );
+                                      &aFrmSet, NULL, NULL );
     SwGrfNode *pGrfNd = pDoc->GetNodes()[ pFlyFmt->GetCntnt().GetCntntIdx()
                                   ->GetIndex()+1 ]->GetGrfNode();
 
@@ -1072,8 +1072,8 @@ void SwHTMLParser::InsertBodyOptions()
                                                        &pItem ) &&
                 static_cast <const SvxFontHeightItem * >(pItem)->GetProp() != 100)
             {
-                sal_uInt32 nHeight = 
-                    ( aFontHeights[2] * 
+                sal_uInt32 nHeight =
+                    ( aFontHeights[2] *
                      static_cast <const SvxFontHeightItem * >(pItem)->GetProp() ) / 100;
                 SvxFontHeightItem aNewItem( nHeight, 100, aWhichIds[i] );
                 aItemSet.Put( aNewItem );
@@ -1392,7 +1392,7 @@ BOOL SwHTMLParser::HasCurrentParaBookmarks( BOOL bIgnoreStack ) const
     {
         // 2. Schritt: Wenn wir keine Bookmark gefunden haben, schauen wir,
         // ob schon eine gesetzt ist
-        const SwBookmarks& rBookmarks = pDoc->GetBookmarks();
+        const SwBookmarks& rBookmarks = pDoc->getBookmarks();
         for( USHORT i=0; i<rBookmarks.Count(); i++ )
         {
             const SwBookmark* pBookmark = rBookmarks[i];
@@ -1462,7 +1462,7 @@ void SwHTMLParser::StripTrailingPara()
 
             // jetz muessen wir noch eventuell vorhandene Bookmarks
             // verschieben
-            const SwBookmarks& rBookmarks = pDoc->GetBookmarks();
+            const SwBookmarks& rBookmarks = pDoc->getBookmarks();
             for( i=0; i<rBookmarks.Count(); i++ )
             {
                 const SwBookmark* pBookmark = rBookmarks[i];
