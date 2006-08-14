@@ -4,9 +4,9 @@
  *
  *  $RCSfile: accfrmobjmap.hxx,v $
  *
- *  $Revision: 1.3 $
+ *  $Revision: 1.4 $
  *
- *  last change: $Author: rt $ $Date: 2005-09-09 02:49:33 $
+ *  last change: $Author: hr $ $Date: 2006-08-14 15:44:02 $
  *
  *  The Contents of this file are made available subject to
  *  the terms of GNU Lesser General Public License Version 2.1.
@@ -34,10 +34,6 @@
  ************************************************************************/
 #ifndef _ACCFRMOBJMAP_HXX
 #define _ACCFRMOBJMAP_HXX
-
-#ifndef _PAGEFRM_HXX
-#include <pagefrm.hxx>
-#endif
 #ifndef _ACCFRMOBJ_HXX
 #include <accfrmobj.hxx>
 #endif
@@ -67,17 +63,17 @@ public:
 typedef ::std::map < SwFrmOrObjMapKey, SwFrmOrObj, SwFrmOrObjMapKey >
     _SwFrmOrObjMap;
 
-class SwFrmOrObjMap : public _SwFrmOrObjMap 
+class SwFrmOrObjMap : public _SwFrmOrObjMap
 {
     SdrLayerID nHellId;
     SdrLayerID nControlsId;
     sal_Bool bLayerIdsValid;
 
-    ::std::pair< iterator, bool > insert( sal_uInt32 nPos, 
-                                          const SwFrmOrObj& rLower );	
+    ::std::pair< iterator, bool > insert( sal_uInt32 nPos,
+                                          const SwFrmOrObj& rLower );
     ::std::pair< iterator, bool > insert( const SdrObject *pObj,
                                               const SwFrmOrObj& rLower,
-                                             const SwDoc *pDoc	);	
+                                             const SwDoc *pDoc	);
 
 public:
 
@@ -103,7 +99,7 @@ inline sal_Bool SwFrmOrObjMapKey::operator()(
         const SwFrmOrObjMapKey& r1,
         const SwFrmOrObjMapKey& r2 ) const
 {
-    return (r1.eLayerId == r2.eLayerId) ? (r1.nOrdNum < r2.nOrdNum) : 
+    return (r1.eLayerId == r2.eLayerId) ? (r1.nOrdNum < r2.nOrdNum) :
            (r1.eLayerId < r2.eLayerId);
 }
 
