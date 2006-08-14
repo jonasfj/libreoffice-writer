@@ -4,9 +4,9 @@
  *
  *  $RCSfile: hhcwrp.cxx,v $
  *
- *  $Revision: 1.13 $
+ *  $Revision: 1.14 $
  *
- *  last change: $Author: kz $ $Date: 2006-01-31 18:36:49 $
+ *  last change: $Author: hr $ $Date: 2006-08-14 17:48:06 $
  *
  *  The Contents of this file are made available subject to
  *  the terms of GNU Lesser General Public License Version 2.1.
@@ -126,9 +126,6 @@
 #ifndef _BREAKIT_HXX
 #include <breakit.hxx>
 #endif
-#ifndef _DOC_HXX
-#include <doc.hxx>
-#endif
 #ifndef _SWDOCSH_HXX
 #include <docsh.hxx>
 #endif
@@ -169,7 +166,7 @@ public:
         //!! ( see SwHHCWrapper::~SwHHCWrapper() )
         svx::HangulHanjaConversion::SetUseSavedConversionDirectionState( sal_True );
     }
-    
+
     ~SwKeepConversionDirectionStateContext()
     {
         svx::HangulHanjaConversion::SetUseSavedConversionDirectionState( sal_False );
@@ -184,10 +181,10 @@ SwHHCWrapper::SwHHCWrapper(
         LanguageType nSourceLanguage,
         LanguageType nTargetLanguage,
         const Font *pTargetFont,
-        sal_Int32 nConvOptions, 
+        sal_Int32 nConvOptions,
         sal_Bool bIsInteractive,
         sal_Bool bStart, sal_Bool bOther, sal_Bool bSelection ) :
-    svx::HangulHanjaConversion( &pSwView->GetEditWin(), rxMSF, 
+    svx::HangulHanjaConversion( &pSwView->GetEditWin(), rxMSF,
                                 SvxCreateLocale( nSourceLanguage ),
                                 SvxCreateLocale( nTargetLanguage ),
                                 pTargetFont,
