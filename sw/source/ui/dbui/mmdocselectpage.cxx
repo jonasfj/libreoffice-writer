@@ -4,9 +4,9 @@
  *
  *  $RCSfile: mmdocselectpage.cxx,v $
  *
- *  $Revision: 1.7 $
+ *  $Revision: 1.8 $
  *
- *  last change: $Author: obo $ $Date: 2006-03-29 08:07:23 $
+ *  last change: $Author: hr $ $Date: 2006-08-14 17:31:25 $
  *
  *  The Contents of this file are made available subject to
  *  the terms of GNU Lesser General Public License Version 2.1.
@@ -32,7 +32,6 @@
  *    MA  02111-1307  USA
  *
  ************************************************************************/
-
 #ifdef SW_DLLIMPLEMENTATION
 #undef SW_DLLIMPLEMENTATION
 #endif
@@ -45,10 +44,10 @@
 #ifndef _FILEDLGHELPER_HXX
 #include <sfx2/filedlghelper.hxx>
 #endif
-#ifndef _SFXNEW_HXX 
+#ifndef _SFXNEW_HXX
 #include <sfx2/new.hxx>
 #endif
-#ifndef _SFX_DOCFILT_HACK_HXX 
+#ifndef _SFX_DOCFILT_HACK_HXX
 #include <sfx2/docfilt.hxx>
 #endif
 #ifndef _SFX_FCONTNR_HXX
@@ -64,16 +63,13 @@
 #include <view.hxx>
 #endif
 #ifndef _DOCSH_HXX
-#include <docsh.hxx>        
+#include <docsh.hxx>
 #endif
 #ifndef _MAILMERGEDOCSELECTPAGE_HXX
 #include <mmdocselectpage.hxx>
 #endif
 #ifndef _MAILMERGEWIZARD_HXX
 #include <mailmergewizard.hxx>
-#endif
-#ifndef _SWTYPES_HXX
-#include <swtypes.hxx>
 #endif
 #ifndef _SHELLIO_HXX
 #include <shellio.hxx>
@@ -120,34 +116,34 @@ SwMailMergeDocSelectPage::SwMailMergeDocSelectPage( SwMailMergeWizard* _pParent 
     m_pWizard(_pParent)
 {
     FreeResource();
-    
+
     m_aCurrentDocRB.Check();
     DocSelectHdl(&m_aNewDocRB);
-    
+
     Link aDocSelectLink = LINK(this, SwMailMergeDocSelectPage, DocSelectHdl);
     m_aCurrentDocRB.SetClickHdl(aDocSelectLink);
     m_aNewDocRB.SetClickHdl(aDocSelectLink);
     m_aLoadDocRB.SetClickHdl(aDocSelectLink);
     m_aLoadTemplateRB.SetClickHdl(aDocSelectLink);
     m_aRecentDocRB.SetClickHdl(aDocSelectLink);
-            
+
     Link aFileSelectHdl = LINK(this, SwMailMergeDocSelectPage, FileSelectHdl);
     m_aBrowseDocPB.SetClickHdl(aFileSelectHdl);
     m_aBrowseTemplatePB.SetClickHdl(aFileSelectHdl);
 
-    const uno::Sequence< ::rtl::OUString >& rDocs = 
+    const uno::Sequence< ::rtl::OUString >& rDocs =
                             m_pWizard->GetConfigItem().GetSavedDocuments();
     for(sal_Int32 nDoc = 0; nDoc < rDocs.getLength(); ++nDoc)
     {
         //insert in reverse order
         m_aRecentDocLB.InsertEntry(rDocs[nDoc], 0);
-    }            
+    }
     m_aRecentDocLB.SelectEntryPos(0);
     if(!rDocs.getLength())
     {
         m_aRecentDocRB.Enable(sal_False);
-    }            
-}           
+    }
+}
 
 /*-- 02.04.2004 09:40:14---------------------------------------------------
 
