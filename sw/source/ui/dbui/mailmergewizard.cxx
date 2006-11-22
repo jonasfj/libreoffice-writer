@@ -4,9 +4,9 @@
  *
  *  $RCSfile: mailmergewizard.cxx,v $
  *
- *  $Revision: 1.11 $
+ *  $Revision: 1.12 $
  *
- *  last change: $Author: obo $ $Date: 2006-09-16 22:45:15 $
+ *  last change: $Author: vg $ $Date: 2006-11-22 10:25:10 $
  *
  *  The Contents of this file are made available subject to
  *  the terms of GNU Lesser General Public License Version 2.1.
@@ -88,6 +88,13 @@
 #ifndef _WRTSH_HXX
 #include <wrtsh.hxx>
 #endif
+#ifndef _SFXVIEWFRM_HXX
+#include <sfx2/viewfrm.hxx>
+#endif
+#ifndef _SV_MSGBOX_HXX
+#include "vcl/msgbox.hxx" // RET_CANCEL
+#endif
+
 #include <helpid.h>
 #include <dbui.hrc>
 #include <mailmergewizard.hrc>
@@ -126,31 +133,31 @@ SwMailMergeWizard::SwMailMergeWizard(SwView& rView, SwMailMergeConfigItem& rItem
 
     //#i51949# no output type page visible if e-Mail is not supported
     if(rItem.IsMailAvailable())
-        declarePath( 
+        declarePath(
             0,
             MM_DOCUMENTSELECTPAGE,
-            MM_OUTPUTTYPETPAGE, 
-            MM_ADDRESSBLOCKPAGE,  
-            MM_GREETINGSPAGE,     
-            MM_LAYOUTPAGE,        
+            MM_OUTPUTTYPETPAGE,
+            MM_ADDRESSBLOCKPAGE,
+            MM_GREETINGSPAGE,
+            MM_LAYOUTPAGE,
             MM_PREPAREMERGEPAGE,
             MM_MERGEPAGE,
             MM_OUTPUTPAGE,
             WZS_INVALID_STATE
         );
     else
-        declarePath( 
+        declarePath(
             0,
             MM_DOCUMENTSELECTPAGE,
-            MM_ADDRESSBLOCKPAGE,  
-            MM_GREETINGSPAGE,     
-            MM_LAYOUTPAGE,        
+            MM_ADDRESSBLOCKPAGE,
+            MM_GREETINGSPAGE,
+            MM_LAYOUTPAGE,
             MM_PREPAREMERGEPAGE,
             MM_MERGEPAGE,
             MM_OUTPUTPAGE,
             WZS_INVALID_STATE
         );
-    
+
     ActivatePage();
     UpdateRoadmap();
 }
@@ -176,7 +183,7 @@ OWizardPage*    SwMailMergeWizard::createPage(WizardState _nState)
         case MM_PREPAREMERGEPAGE  : pRet = new SwMailMergePrepareMergePage(this);   break;
         case MM_MERGEPAGE         : pRet = new SwMailMergeMergePage(this);          break;
         case MM_OUTPUTPAGE       :  pRet = new SwMailMergeOutputPage(this);         break;
-    }        
+    }
     DBG_ASSERT(pRet, "no page created in ::createPage");
     return pRet;
 }
@@ -186,8 +193,8 @@ OWizardPage*    SwMailMergeWizard::createPage(WizardState _nState)
 void SwMailMergeWizard::enterState( WizardState _nState )
 {
     ::svt::RoadmapWizard::enterState( _nState );
-/*    
-    entering a page after the layoutpage requires the insertion 
+/*
+    entering a page after the layoutpage requires the insertion
     of greeting and address block - if not yet done
     entering the merge or output page requires to create the output document
 */
@@ -195,14 +202,14 @@ void SwMailMergeWizard::enterState( WizardState _nState )
             ((m_rConfigItem.IsAddressBlock() && !m_rConfigItem.IsAddressInserted()) ||
              (m_rConfigItem.IsGreetingLine(sal_False) && !m_rConfigItem.IsGreetingInserted() )))
     {
-        SwMailMergeLayoutPage::InsertAddressAndGreeting(m_rConfigItem.GetSourceView(), 
+        SwMailMergeLayoutPage::InsertAddressAndGreeting(m_rConfigItem.GetSourceView(),
                                 m_rConfigItem, Point(-1, -1), true);
-    }    
+    }
     if(_nState >= MM_MERGEPAGE && !m_rConfigItem.GetTargetView())
     {
         CreateTargetDocument();
         m_nRestartPage = _nState;
-        EndDialog(RET_TARGET_CREATED);        
+        EndDialog(RET_TARGET_CREATED);
         return;
     }
     else if(_nState < MM_MERGEPAGE && m_rConfigItem.GetTargetView())
@@ -213,18 +220,18 @@ void SwMailMergeWizard::enterState( WizardState _nState )
         m_rConfigItem.MoveResultSet(1);
         EndDialog(RET_REMOVE_TARGET);
         return;
-    }            
+    }
     bool bEnablePrev = true;
     bool bEnableNext = true;
     switch(_nState)
     {
-        case MM_DOCUMENTSELECTPAGE : 
+        case MM_DOCUMENTSELECTPAGE :
             bEnablePrev = false;
         break;
-        case MM_ADDRESSBLOCKPAGE  :  
+        case MM_ADDRESSBLOCKPAGE  :
             bEnableNext = m_rConfigItem.GetResultSet().is();
         break;
-        case MM_OUTPUTPAGE       :     
+        case MM_OUTPUTPAGE       :
             bEnableNext = false;
         break;
     }
@@ -232,7 +239,7 @@ void SwMailMergeWizard::enterState( WizardState _nState )
     enableButtons( WZB_NEXT, bEnableNext);
 
     UpdateRoadmap();
-}                     
+}
 /*-- 04.06.2004 12:54:13---------------------------------------------------
 
   -----------------------------------------------------------------------*/
@@ -243,40 +250,40 @@ String  SwMailMergeWizard::getStateDisplayName( WizardState _nState )
     {
         case MM_DOCUMENTSELECTPAGE :sRet = m_sStarting;      break;
         case MM_OUTPUTTYPETPAGE :   sRet = m_sDocumentType;  break;
-        case MM_ADDRESSBLOCKPAGE  : 
-            sRet =  m_rConfigItem.IsOutputToLetter() ? 
-                    m_sAddressBlock : m_sAddressList;  
-        
+        case MM_ADDRESSBLOCKPAGE  :
+            sRet =  m_rConfigItem.IsOutputToLetter() ?
+                    m_sAddressBlock : m_sAddressList;
+
         break;
         case MM_GREETINGSPAGE     : sRet = m_sGreetingsLine; break;
         case MM_LAYOUTPAGE        : sRet = m_sLayout;        break;
         case MM_PREPAREMERGEPAGE  : sRet = m_sPrepareMerge;  break;
         case MM_MERGEPAGE         : sRet = m_sMerge;         break;
         case MM_OUTPUTPAGE       : sRet = m_sOutput;        break;
-    }        
+    }
     return sRet;
 }
 /*-- 24.06.2004 09:24:45---------------------------------------------------
-    enables/disables pages in the roadmap depending on the current 
+    enables/disables pages in the roadmap depending on the current
     page and state
   -----------------------------------------------------------------------*/
 void SwMailMergeWizard::UpdateRoadmap()
 {
 /*
-    MM_DOCUMENTSELECTPAGE       > inactive after the layoutpage 
-    MM_OUTPUTTYPETPAGE :        > inactive after the layoutpage 
-    MM_ADDRESSBLOCKPAGE         > inactive after the layoutpage 
-    MM_GREETINGSPAGE            > inactive after the layoutpage 
-    MM_LAYOUTPAGE               >   inactive after the layoutpage 
+    MM_DOCUMENTSELECTPAGE       > inactive after the layoutpage
+    MM_OUTPUTTYPETPAGE :        > inactive after the layoutpage
+    MM_ADDRESSBLOCKPAGE         > inactive after the layoutpage
+    MM_GREETINGSPAGE            > inactive after the layoutpage
+    MM_LAYOUTPAGE               >   inactive after the layoutpage
                                     inactive if address block and greeting are switched off
                                     or are already inserted into the source document
     MM_PREPAREMERGEPAGE         > only active if address data has been selected
-                                    inactive after preparemerge page 
+                                    inactive after preparemerge page
     MM_MERGEPAGE                > only active if address data has been selected
-                                    
+
     MM_OUTPUTPAGE               > only active if address data has been selected
-*/        
-    
+*/
+
     // enableState( <page id>, false );
     const sal_uInt16 nCurPage = GetCurLevel();
     TabPage* pCurPage = GetPage( nCurPage );
@@ -284,40 +291,40 @@ void SwMailMergeWizard::UpdateRoadmap()
         return;
     bool bEnable = false;
     bool bAddressFieldsConfigured = !m_rConfigItem.IsOutputToLetter() ||
-                !m_rConfigItem.IsAddressBlock() || 
+                !m_rConfigItem.IsAddressBlock() ||
                 m_rConfigItem.IsAddressFieldsAssigned();
-    bool bGreetingFieldsConfigured = !m_rConfigItem.IsGreetingLine(sal_False) || 
+    bool bGreetingFieldsConfigured = !m_rConfigItem.IsGreetingLine(sal_False) ||
             !m_rConfigItem.IsIndividualGreeting(sal_False)||
                     m_rConfigItem.IsGreetingFieldsAssigned();
     bool bEnableOutputTypePage = (nCurPage != MM_DOCUMENTSELECTPAGE) ||
             static_cast<svt::OWizardPage*>(pCurPage)->commitPage(IWizardPage::CR_VALIDATE);
-    
+
     for(sal_uInt16 nPage = MM_DOCUMENTSELECTPAGE; nPage <= MM_OUTPUTPAGE; ++nPage)
-    {        
+    {
         switch(nPage)
         {
-            case MM_DOCUMENTSELECTPAGE : 
+            case MM_DOCUMENTSELECTPAGE :
                 bEnable = sal_True;
             break;
-            case MM_OUTPUTTYPETPAGE :    
-            case MM_ADDRESSBLOCKPAGE  :  
+            case MM_OUTPUTTYPETPAGE :
+            case MM_ADDRESSBLOCKPAGE  :
                 bEnable = bEnableOutputTypePage;
             break;
-            case MM_GREETINGSPAGE     :     
+            case MM_GREETINGSPAGE     :
                 bEnable = bEnableOutputTypePage &&
-                    m_rConfigItem.GetResultSet().is() && 
+                    m_rConfigItem.GetResultSet().is() &&
                             bAddressFieldsConfigured;
             break;
-            case MM_PREPAREMERGEPAGE  :     
-            case MM_MERGEPAGE         :     
-            case MM_OUTPUTPAGE       :     
-            case MM_LAYOUTPAGE        : 
+            case MM_PREPAREMERGEPAGE  :
+            case MM_MERGEPAGE         :
+            case MM_OUTPUTPAGE       :
+            case MM_LAYOUTPAGE        :
                 bEnable = bEnableOutputTypePage &&
-                            m_rConfigItem.GetResultSet().is() && 
-                            bAddressFieldsConfigured && 
+                            m_rConfigItem.GetResultSet().is() &&
+                            bAddressFieldsConfigured &&
                             bGreetingFieldsConfigured;
                 if(MM_LAYOUTPAGE == nPage)
-                    bEnable &= 
+                    bEnable &=
                         ((m_rConfigItem.IsAddressBlock() && !m_rConfigItem.IsAddressInserted()) ||
                             (m_rConfigItem.IsGreetingLine(sal_False) && !m_rConfigItem.IsGreetingInserted() ));
             break;
@@ -326,11 +333,11 @@ void SwMailMergeWizard::UpdateRoadmap()
     }
 }
 /*-- 24.06.2004 09:24:45---------------------------------------------------
-    enables/disables pages in the roadmap depending on the current 
+    enables/disables pages in the roadmap depending on the current
     page and state
   -----------------------------------------------------------------------*/
 void SwMailMergeWizard::CreateTargetDocument()
-{        
+{
     sal_Int32 nMerged = GetSwView()->GetWrtShell().GetNewDBMgr()->
                 MergeDocuments( m_rConfigItem, *GetSwView() );
     m_rConfigItem.SetMergeDone();
@@ -343,4 +350,22 @@ void SwMailMergeWizard::CreateTargetDocument()
 void SwMailMergeWizard::updateRoadmapItemLabel( WizardState _nState )
 {
     svt::RoadmapWizard::updateRoadmapItemLabel( _nState );
+}
+
+// ------------------------------------------------------------------------
+
+short SwMailMergeWizard::Execute()
+{
+    DBG_ERROR( "SwMailMergeWizard cannot be executed via Dialog::Execute!\n"
+               "It creates a thread (MailDispatcher instance) that will call"
+               "back to VCL apartment => deadlock!\n"
+               "Use Dialog::StartExecuteModal to execute the dialog!" );
+    return RET_CANCEL;
+}
+
+// ------------------------------------------------------------------------
+
+void SwMailMergeWizard::StartExecuteModal( const Link& rEndDialogHdl )
+{
+    ::svt::RoadmapWizard::StartExecuteModal( rEndDialogHdl );
 }
