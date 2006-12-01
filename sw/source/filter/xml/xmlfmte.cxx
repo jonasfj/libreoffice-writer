@@ -4,9 +4,9 @@
  *
  *  $RCSfile: xmlfmte.cxx,v $
  *
- *  $Revision: 1.45 $
+ *  $Revision: 1.46 $
  *
- *  last change: $Author: obo $ $Date: 2006-09-16 22:28:52 $
+ *  last change: $Author: rt $ $Date: 2006-12-01 15:58:08 $
  *
  *  The Contents of this file are made available subject to
  *  the terms of GNU Lesser General Public License Version 2.1.
@@ -167,7 +167,7 @@ void SwXMLExport::ExportFmt( const SwFmt& rFmt, enum XMLTokenEnum eFamily )
         DBG_ASSERT(RES_FRMFMT == rFmt.Which(), "only frame format");
 
         const SfxPoolItem *pItem;
-        if( SFX_ITEM_SET == 
+        if( SFX_ITEM_SET ==
             rFmt.GetAttrSet().GetItemState( RES_BOXATR_FORMAT,
                                             sal_False, &pItem ) )
         {
@@ -182,7 +182,7 @@ void SwXMLExport::ExportFmt( const SwFmt& rFmt, enum XMLTokenEnum eFamily )
                 addDataStyle(nFormat);
                 OUString sDataStyleName = getDataStyleName(nFormat);
                 if( sDataStyleName.getLength() > 0 )
-                    AddAttribute( XML_NAMESPACE_STYLE, XML_DATA_STYLE_NAME, 
+                    AddAttribute( XML_NAMESPACE_STYLE, XML_DATA_STYLE_NAME,
                                   sDataStyleName );
             }
         }
@@ -298,7 +298,8 @@ void SwXMLExport::_ExportAutoStyles()
                 GetFormExport()->examineForms(xPage);
         }
 
-        GetTextParagraphExport()->collectTextAutoStyles( xText, bShowProgress );
+        GetTextParagraphExport()->collectTextAutoStylesOptimized( bShowProgress );
+        //GetTextParagraphExport()->collectTextAutoStyles( xText, bShowProgress, sal_True, bPortions );
     }
 
     GetTextParagraphExport()->exportTextAutoStyles();
@@ -338,7 +339,7 @@ protected:
 
     virtual void exportStyleAttributes(
             SvXMLAttributeList& rAttrList,
-            sal_Int32 nFamily, 
+            sal_Int32 nFamily,
             const ::std::vector< XMLPropertyState >& rProperties,
             const SvXMLExportPropertyMapper& rPropExp
             , const SvXMLUnitConverter& rUnitConverter,
@@ -352,7 +353,7 @@ public:
 
 void SwXMLAutoStylePoolP::exportStyleAttributes(
             SvXMLAttributeList& rAttrList,
-            sal_Int32 nFamily, 
+            sal_Int32 nFamily,
             const ::std::vector< XMLPropertyState >& rProperties,
             const SvXMLExportPropertyMapper& rPropExp
             , const SvXMLUnitConverter& rUnitConverter,
@@ -383,7 +384,7 @@ void SwXMLAutoStylePoolP::exportStyleAttributes(
                             if( sTmp.getLength() )
                                 sStyleName = sTmp;
                             GetExport().AddAttribute( XML_NAMESPACE_STYLE,
-                                  sListStyleName, 
+                                  sListStyleName,
                                   GetExport().EncodeStyleName( sStyleName ) );
                         }
                     }
@@ -393,7 +394,7 @@ void SwXMLAutoStylePoolP::exportStyleAttributes(
                         OUString sStyleName;
                         aProperty->maValue >>= sStyleName;
                         GetExport().AddAttribute( XML_NAMESPACE_STYLE,
-                                      sMasterPageName, 
+                                      sMasterPageName,
                                       GetExport().EncodeStyleName( sStyleName ) );
                     }
                     break;
