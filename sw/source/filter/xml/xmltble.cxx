@@ -4,9 +4,9 @@
  *
  *  $RCSfile: xmltble.cxx,v $
  *
- *  $Revision: 1.37 $
+ *  $Revision: 1.38 $
  *
- *  last change: $Author: vg $ $Date: 2006-11-22 10:47:43 $
+ *  last change: $Author: rt $ $Date: 2006-12-01 15:58:23 $
  *
  *  The Contents of this file are made available subject to
  *  the terms of GNU Lesser General Public License Version 2.1.
@@ -625,7 +625,7 @@ void SwXMLExport::ExportTableColumnStyle( const SwXMLTableColumn_Impl& rCol )
 
     // style:name="..."
     sal_Bool bEncoded = sal_False;
-    AddAttribute( XML_NAMESPACE_STYLE, XML_NAME, 
+    AddAttribute( XML_NAMESPACE_STYLE, XML_NAME,
                     EncodeStyleName( rCol.GetStyleName(), &bEncoded ) );
     if( bEncoded )
         AddAttribute( XML_NAMESPACE_STYLE, XML_DISPLAY_NAME, rCol.GetStyleName() );
@@ -653,7 +653,7 @@ void SwXMLExport::ExportTableColumnStyle( const SwXMLTableColumn_Impl& rCol )
 
         {
             SvXMLElementExport aElem( *this, XML_NAMESPACE_STYLE,
-                                      XML_TABLE_COLUMN_PROPERTIES, 
+                                      XML_TABLE_COLUMN_PROPERTIES,
                                       sal_True, sal_True );
         }
     }
@@ -800,8 +800,14 @@ void SwXMLExport::ExportTableLinesAutoStyles( const SwTableLines& rLines,
                         aAny >>= xTextSection;
                         rTblInfo.SetBaseSection( xTextSection );
                     }
-                    GetTextParagraphExport()->collectTextAutoStyles(
-                        xText, rTblInfo.GetBaseSection(), IsShowProgress() );
+
+                    const bool bExportContent = (getExportFlags() & EXPORT_CONTENT ) != 0;
+                    if ( !bExportContent )
+                    {
+                        // AUTOSTYLES - not needed anymore if we are currently exporting content.xml
+                        GetTextParagraphExport()->collectTextAutoStyles(
+                            xText, rTblInfo.GetBaseSection(), IsShowProgress() );
+                    }
                 }
                 else
                     DBG_ERROR("here should be a XCell");
@@ -909,8 +915,8 @@ void SwXMLExport::ExportTableBox( const SwTableBox& rBox, sal_uInt16 nColSpan,
                 //     (with value and number format)
                 if (sCellFormula.getLength()>0)
                 {
-                    OUString sQValue = 
-                        GetNamespaceMap().GetQNameByKey( 
+                    OUString sQValue =
+                        GetNamespaceMap().GetQNameByKey(
                                 XML_NAMESPACE_OOOW, sCellFormula, sal_False );
                     // formula
                     AddAttribute(XML_NAMESPACE_TABLE, XML_FORMULA, sQValue );
@@ -1249,7 +1255,13 @@ void SwXMLTextParagraphExport::exportTable(
             ASSERT( pTblNd, "table node missing" );
             if( bAutoStyles )
             {
-                ((SwXMLExport&)GetExport()).ExportTableAutoStyles( *pTblNd );
+                SwNodeIndex aIdx( *pTblNd );
+                // AUTOSTYLES: Optimization: Do not export table autostyle if
+                // we are currently exporting the content.xml stuff and
+                // the table is located in header/footer:
+                const bool bExportContent = ( GetExport().getExportFlags() & EXPORT_CONTENT ) != 0;
+                if ( !bExportContent || !pFmt->GetDoc()->IsInHeaderFooter( aIdx ) )
+                    ((SwXMLExport&)GetExport()).ExportTableAutoStyles( *pTblNd );
             }
             else
             {
