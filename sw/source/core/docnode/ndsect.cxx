@@ -4,9 +4,9 @@
  *
  *  $RCSfile: ndsect.cxx,v $
  *
- *  $Revision: 1.29 $
+ *  $Revision: 1.30 $
  *
- *  last change: $Author: vg $ $Date: 2006-09-25 09:26:51 $
+ *  last change: $Author: rt $ $Date: 2006-12-01 15:41:49 $
  *
  *  The Contents of this file are made available subject to
  *  the terms of GNU Lesser General Public License Version 2.1.
@@ -617,7 +617,7 @@ void SwDoc::DelSectionFmt( SwSectionFmt *pFmt, BOOL bDelNodes )
         // A ClearRedo could result in a rekursive call of this function and delete some section
         // formats => the position iside the SectionFmtTbl could have changed
         nPos = pSectionFmtTbl->GetPos( pFmt );
-        
+
         // ACHTUNG: erst aus dem Array entfernen und dann loeschen.
         //			Der Section-DTOR versucht selbst noch sein Format
         //			zu loeschen!
@@ -913,10 +913,10 @@ SwSectionNode* SwNodes::InsertSection( const SwNodeIndex& rNdIdx,
             while( pStartNode->GetIndex() > nMyIndex );
             pTemp = pTemp->EndOfSectionNode();
             // If it starts behind me but ends behind my end...
-            if( pTemp->GetIndex() >= aInsPos.GetIndex() ) 
+            if( pTemp->GetIndex() >= aInsPos.GetIndex() )
                 aInsPos = pTemp->GetIndex()+1; // ...I have to correct my end position
         }
-        
+
     }
     else
     {
@@ -924,7 +924,7 @@ SwSectionNode* SwNodes::InsertSection( const SwNodeIndex& rNdIdx,
         if( pCpyTNd )
         {
             SwTxtNode* pTNd = new SwTxtNode( aInsPos, pCpyTNd->GetTxtColl() );
-            if( pCpyTNd->GetpSwAttrSet() )
+            if( pCpyTNd->HasSwAttrSet() )
             {
                 // Task 70955 - move PageDesc/Break to the first Node of the
                 //				section
