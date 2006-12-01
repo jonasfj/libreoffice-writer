@@ -4,9 +4,9 @@
  *
  *  $RCSfile: rtftbl.cxx,v $
  *
- *  $Revision: 1.31 $
+ *  $Revision: 1.32 $
  *
- *  last change: $Author: obo $ $Date: 2006-09-16 22:14:59 $
+ *  last change: $Author: rt $ $Date: 2006-12-01 15:54:45 $
  *
  *  The Contents of this file are made available subject to
  *  the terms of GNU Lesser General Public License Version 2.1.
@@ -239,7 +239,7 @@ void SwRTFParser::ReadTable( int nToken )
             USHORT nTmpBox = nAktBox;
             if( nTmpBox > pLine->GetTabBoxes().Count() )
                 nTmpBox = pLine->GetTabBoxes().Count();
-            
+
             for( USHORT n = nTmpBox; n; )
             {
                 const SwTableBox *pTmp = pLine->GetTabBoxes()[ --n ];
@@ -1025,7 +1025,7 @@ void SwRTFParser::NewTblLine()
             while( aIdx <= rEndIdx )
             {
                 SwCntntNode* pCNd = aIdx.GetNode().GetCntntNode();
-                if( pCNd && pCNd->GetpSwAttrSet() )
+                if( pCNd && pCNd->HasSwAttrSet() )
                     pCNd->ResetAllAttr();
                 aIdx++;
             }
