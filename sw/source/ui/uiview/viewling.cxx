@@ -4,9 +4,9 @@
  *
  *  $RCSfile: viewling.cxx,v $
  *
- *  $Revision: 1.28 $
+ *  $Revision: 1.29 $
  *
- *  last change: $Author: obo $ $Date: 2006-09-16 23:25:42 $
+ *  last change: $Author: hr $ $Date: 2007-01-02 16:54:51 $
  *
  *  The Contents of this file are made available subject to
  *  the terms of GNU Lesser General Public License Version 2.1.
@@ -175,6 +175,10 @@
 #include <com/sun/star/lang/XInitialization.hpp>
 #include <cppuhelper/bootstrap.hxx>
 
+#ifndef _STMENU_HXX
+#include "stmenu.hxx"              // PopupMenu for smarttags
+#endif
+
 using namespace ::com::sun::star;
 using namespace ::com::sun::star::beans;
 using namespace ::com::sun::star::uno;
@@ -195,7 +199,7 @@ void SwView::ExecLingu(SfxRequest &rReq)
             rReq.Ignore();
             break;
         case SID_HANGUL_HANJA_CONVERSION:
-            StartTextConversion( LANGUAGE_KOREAN, LANGUAGE_KOREAN, NULL, 
+            StartTextConversion( LANGUAGE_KOREAN, LANGUAGE_KOREAN, NULL,
                     i18n::TextConversionOption::CHARACTER_BY_CHARACTER, sal_True );
             break;
         case SID_CHINESE_CONVERSION:
@@ -253,8 +257,8 @@ void SwView::ExecLingu(SfxRequest &rReq)
                             sal_Int32 nOptions    = bUseVariants ? i18n::TextConversionOption::USE_CHARACTER_VARIANTS : 0;
                             if( !bCommonTerms )
                                 nOptions = nOptions | i18n::TextConversionOption::CHARACTER_BY_CHARACTER;
-                            
-                            Font aTargetFont = GetEditWin().GetDefaultFont( DEFAULTFONT_CJK_TEXT, 
+
+                            Font aTargetFont = GetEditWin().GetDefaultFont( DEFAULTFONT_CJK_TEXT,
                                                     nTargetLang, DEFAULTFONT_FLAGS_ONLYONE );
 
                             // disallow formatting, updating the view, ... while
@@ -271,9 +275,9 @@ void SwView::ExecLingu(SfxRequest &rReq)
                             // since this conversion is not interactive the whole converted
                             // document should be undone in a single undo step.
                             pWrtShell->StartUndo( UNDO_OVERWRITE );
-                            
+
                             StartTextConversion( nSourceLang, nTargetLang, &aTargetFont, nOptions, sal_False );
-                            
+
                             pWrtShell->EndUndo( UNDO_OVERWRITE );
 
                             if (bRestoreCursor)
@@ -312,8 +316,8 @@ void SwView::ExecLingu(SfxRequest &rReq)
     Description: start language specific text conversion
  --------------------------------------------------------------------*/
 
-void SwView::StartTextConversion( 
-        LanguageType nSourceLang, 
+void SwView::StartTextConversion(
+        LanguageType nSourceLang,
         LanguageType nTargetLang,
         const Font *pTargetFont,
         sal_Int32 nOptions,
@@ -346,7 +350,7 @@ void SwView::StartTextConversion(
     sal_Bool bOldIns = pWrtShell->IsInsMode();
     pWrtShell->SetInsMode( sal_True );
 
-    
+
     {
         sal_Bool bSelection = ((SwCrsrShell*)pWrtShell)->HasSelection() ||
             pWrtShell->GetCrsr() != pWrtShell->GetCrsr()->GetNext();
@@ -734,7 +738,7 @@ void SwView::StartThesaurus()
 
                 pWrtShell->SelWrd();
 
-                // make sure the selection build later from the 
+                // make sure the selection build later from the
                 // data below does not include footnotes and other
                 // "in word" character to the left and right in order
                 // to preserve those. Therefore count those "in words"
@@ -747,7 +751,7 @@ void SwView::StartThesaurus()
                 xub_StrLen nRight = 0;
                 while (pChar && *pChar-- == CH_TXTATR_INWORD)
                     ++nRight;
-                
+
                 // adjust existing selection
                 SwPaM *pCrsr = pWrtShell->GetCrsr();
                 pCrsr->GetPoint()->nContent/*.nIndex*/ -= nRight;
@@ -806,7 +810,7 @@ sal_Bool SwView::ExecSpellPopup(const Point& rPt)
                 Menu* pMenu = 0;
 
                 if(TryContextMenuInterception( aPopup, pMenu, aEvent ))
-                {        
+                {
                     if ( pMenu )
                     {
                         USHORT nId = ((PopupMenu*)pMenu)->Execute(pEditWin, aPixPos);
@@ -814,7 +818,7 @@ sal_Bool SwView::ExecSpellPopup(const Point& rPt)
                             aPopup.Execute(nId);
                     }
                     else
-                    {        
+                    {
                         aPopup.Execute(
                             pEditWin,
                             aToFill.SVRect());
@@ -827,5 +831,55 @@ sal_Bool SwView::ExecSpellPopup(const Point& rPt)
         }
     }
     return bRet;
+}
+
+// SMARTTAGS
+
+/** Function: IsOverSmartTag
+
+   This function returns true in given point lies over
+   a smarttag word.
+*/
+sal_Bool SwView::IsOverSmartTag(const Point& rPt)
+{
+        return pWrtShell->IsOverSmartTag(&rPt);
+}
+
+/** Function: ExecSmartTagPopup
+
+   This function shows the popup menu for smarttag
+   actions.
+*/
+
+sal_Bool SwView::ExecSmartTagPopup(const Point& rPt)
+{
+   sal_Bool bRet = sal_False;
+   const sal_Bool bOldViewLock = pWrtShell->IsViewLocked();
+   pWrtShell->LockView( sal_True );
+   pWrtShell->Push();
+
+   SwRect aToFill;
+   // get word that was clicked on
+   Reference<XTextRange> xRange = pWrtShell->GetSmartTagTerm(&rPt, aToFill);
+   if ( xRange.is() ) {
+     // get references to smarttags which provide actions for
+     // this word
+     SmartTagMgr& rSmartTagMgr = SmartTagMgr::getSmartTagMgr();
+     std::vector <ActionReference> aRefs;
+     aRefs = rSmartTagMgr.getActionRefsByWord(xRange->getString());
+
+     // if the word is actionable open popup menu
+     if (aRefs.size() > 0) {
+       bRet = sal_True;
+       pWrtShell->SttSelect();
+       SwSmartTagPopup aPopup(this, aRefs, xRange);
+       aPopup.Execute(pEditWin, aToFill.SVRect());
+     }
+   }
+
+   pWrtShell->Pop( sal_False );
+   pWrtShell->LockView( bOldViewLock );
+
+   return bRet;
 }
 
