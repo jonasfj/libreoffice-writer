@@ -4,9 +4,9 @@
  *
  *  $RCSfile: txthyph.cxx,v $
  *
- *  $Revision: 1.22 $
+ *  $Revision: 1.23 $
  *
- *  last change: $Author: obo $ $Date: 2006-09-16 21:41:31 $
+ *  last change: $Author: obo $ $Date: 2007-01-23 08:32:37 $
  *
  *  The Contents of this file are made available subject to
  *  the terms of GNU Lesser General Public License Version 2.1.
@@ -356,10 +356,10 @@ sal_Bool SwTxtFormatter::Hyphenate( SwInterHyphInfo &rHyphInf )
 sal_Bool SwTxtPortion::CreateHyphen( SwTxtFormatInfo &rInf, SwTxtGuess &rGuess )
 {
     Reference< XHyphenatedWord >  xHyphWord = rGuess.HyphWord();
-    
+
     ASSERT( !pPortion, "SwTxtPortion::CreateHyphen(): another portion, another planet..." )
     ASSERT( xHyphWord.is(), "SwTxtPortion::CreateHyphen(): You are lucky! The code is robust here." )
-    
+
     if( rInf.IsHyphForbud() ||
         pPortion || // robust
         !xHyphWord.is() || // more robust
@@ -458,7 +458,8 @@ sal_Bool SwTxtPortion::CreateHyphen( SwTxtFormatInfo &rInf, SwTxtGuess &rGuess )
 sal_Bool SwHyphPortion::GetExpTxt( const SwTxtSizeInfo &rInf, XubString &rTxt ) const
 {
     // --> FME 2004-06-24 #i16816# tagged pdf support
-    const sal_Unicode cChar = rInf.GetVsh()->GetViewOptions()->IsPDFExport() &&
+    const sal_Unicode cChar = rInf.GetVsh() &&
+                              rInf.GetVsh()->GetViewOptions()->IsPDFExport() &&
                               SwTaggedPDFHelper::IsExportTaggedPDF( *rInf.GetOut() ) ?
                               0xad :
                               '-';
