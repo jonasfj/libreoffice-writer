@@ -4,9 +4,9 @@
  *
  *  $RCSfile: itrform2.cxx,v $
  *
- *  $Revision: 1.98 $
+ *  $Revision: 1.99 $
  *
- *  last change: $Author: obo $ $Date: 2006-09-16 21:35:57 $
+ *  last change: $Author: obo $ $Date: 2007-01-23 08:31:48 $
  *
  *  The Contents of this file are made available subject to
  *  the terms of GNU Lesser General Public License Version 2.1.
@@ -1339,7 +1339,7 @@ SwLinePortion *SwTxtFormatter::NewPortion( SwTxtFormatInfo &rInf )
                     // We have a decimal tab portion in the line and the next character has to be
                     // aligned at the tab stop position. We store the width from the beginning of
                     // the tab stop portion up to the portion containint the decimal separator:
-                  if ( GetTxtFrm()->GetTxtNode()->getIDocumentSettingAccess()->get(IDocumentSettingAccess::TAB_COMPAT) /*rInf.GetVsh()->IsTabCompat();*/ && 
+                  if ( GetTxtFrm()->GetTxtNode()->getIDocumentSettingAccess()->get(IDocumentSettingAccess::TAB_COMPAT) /*rInf.GetVsh()->IsTabCompat();*/ &&
                          POR_TABDECIMAL == pLastTabPortion->GetWhichPor() )
                     {
                         ASSERT( rInf.X() >= pLastTabPortion->Fix(), "Decimal tab stop position cannot be calculated" )
@@ -2091,7 +2091,7 @@ long SwTxtFormatter::CalcOptRepaint( xub_StrLen nOldLineEnd,
 bool lcl_BuildHiddenPortion( const SwTxtSizeInfo& rInf, xub_StrLen &rPos )
 {
     // Only if hidden text should not be shown:
-    if ( rInf.GetVsh()->GetWin() && rInf.GetOpt().IsShowHiddenChar() )
+    if ( rInf.GetVsh() && rInf.GetVsh()->GetWin() && rInf.GetOpt().IsShowHiddenChar() )
         return false;
 
     const SwScriptInfo& rSI = rInf.GetParaPortion()->GetScriptInfo();
