@@ -4,9 +4,9 @@
  *
  *  $RCSfile: dbmgr.cxx,v $
  *
- *  $Revision: 1.113 $
+ *  $Revision: 1.114 $
  *
- *  last change: $Author: obo $ $Date: 2006-10-12 11:07:57 $
+ *  last change: $Author: obo $ $Date: 2007-01-25 11:44:43 $
  *
  *  The Contents of this file are made available subject to
  *  the terms of GNU Lesser General Public License Version 2.1.
@@ -1026,7 +1026,7 @@ SwNewDBMgr::~SwNewDBMgr()
 
 
 BOOL SwNewDBMgr::MergePrint( SwView& rView,
-                             SwPrtOptions& rOpt, SfxProgress& rProgress )
+                             SwPrtOptions& rOpt, SfxProgress& rProgress, BOOL bIsAPI )
 {
     SwWrtShell* pSh = &rView.GetWrtShell();
     //check if the doc is synchronized and contains at least one linked section
@@ -1114,7 +1114,7 @@ BOOL SwNewDBMgr::MergePrint( SwView& rView,
                 pEvtSrc->LaunchMailMergeEvent( aEvt );
             }
 
-            rView.SfxViewShell::Print( rProgress ); // ggf Basic-Macro ausfuehren
+            rView.SfxViewShell::Print( rProgress, bIsAPI ); // ggf Basic-Macro ausfuehren
             if( rOpt.IsPrintSingleJobs() && bRet )
             {
                 //rOpt.bJobStartet = FALSE;
@@ -1179,7 +1179,7 @@ BOOL SwNewDBMgr::MergePrint( SwView& rView,
 
   -----------------------------------------------------------------------*/
 BOOL SwNewDBMgr::MergePrintDocuments( SwView& rView,
-                                SwPrtOptions& rOpt, SfxProgress& rProgress )
+                                SwPrtOptions& rOpt, SfxProgress& rProgress, BOOL bIsAPI )
 {
     SwWrtShell* pSh = &rView.GetWrtShell();
     //check if the doc is synchronized and contains at least one linked section
@@ -1271,7 +1271,7 @@ BOOL SwNewDBMgr::MergePrintDocuments( SwView& rView,
         pViewProperties[0].Value <<= ::rtl::OUString( aTmp );
         rView.SetAdditionalPrintOptions(aViewProperties);
 
-        rView.SfxViewShell::Print( rProgress ); // ggf Basic-Macro ausfuehren
+        rView.SfxViewShell::Print( rProgress, bIsAPI ); // ggf Basic-Macro ausfuehren
         if( rOpt.IsPrintSingleJobs() && bRet )
         {
             //rOpt.bJobStartet = FALSE;
@@ -1893,7 +1893,7 @@ ULONG SwNewDBMgr::GetColumnFmt( uno::Reference< XDataSource> xSource,
         }
         bool bUseDefault = true;
         try
-        {        
+        {
             Any aFormat = xColumn->getPropertyValue(C2U("FormatKey"));
             if(aFormat.hasValue())
             {
@@ -3102,7 +3102,7 @@ String lcl_FindUniqueName(SwWrtShell* pTargetShell, const String& rStartingPageD
         String sTest = rStartingPageDesc;
         sTest += String::CreateFromInt32( nDocNo );
         if( !pTargetShell->FindPageDescByName( sTest ) )
-            return sTest;            
+            return sTest;
         ++nDocNo;
     }while(true);
 }
@@ -3202,7 +3202,7 @@ sal_Int32 SwNewDBMgr::MergeDocuments( SwMailMergeConfigItem& rMMConfig,
         //initiate SelectShell() to create sub shells
         pTargetView->AttrChangedNotify( &pTargetView->GetWrtShell() );
         SwWrtShell* pTargetShell = pTargetView->GetWrtShellPtr();
-        // #i63806#  
+        // #i63806#
         const SwPageDesc* pSourcePageDesc = rSourceShell.FindPageDescByName( sStartingPageDesc );
         const SwFrmFmt& rMaster = pSourcePageDesc->GetMaster();
         bool bPageStylesWithHeaderFooter = rMaster.GetHeader().IsActive()  ||
@@ -3271,14 +3271,14 @@ sal_Int32 SwNewDBMgr::MergeDocuments( SwMailMergeConfigItem& rMMConfig,
                 rWorkShell.SwCrsrShell::SttDoc();
                 rWorkShell.SelAll();
                 pTargetShell->SwCrsrShell::EndDoc();
-                
+
                 //#i63806# put the styles to the target document
-                //if the source uses headers or footers each new copy need to copy a new page styles 
+                //if the source uses headers or footers each new copy need to copy a new page styles
                 if(bPageStylesWithHeaderFooter)
                 {
                     //create a new pagestyle
                     //copy the pagedesc from the current document to the new document and change the name of the to-be-applied style
-                                  
+
                     SwDoc* pTargetDoc = pTargetShell->GetDoc();
                     SwPageDesc* pSourcePageDesc = rWorkShell.FindPageDescByName( sStartingPageDesc );
                     String sNewPageDescName = lcl_FindUniqueName(pTargetShell, sStartingPageDesc, nDocNo );
