@@ -4,9 +4,9 @@
  *
  *  $RCSfile: docstyle.cxx,v $
  *
- *  $Revision: 1.25 $
+ *  $Revision: 1.26 $
  *
- *  last change: $Author: obo $ $Date: 2006-09-16 22:35:06 $
+ *  last change: $Author: vg $ $Date: 2007-02-05 10:54:41 $
  *
  *  The Contents of this file are made available subject to
  *  the terms of GNU Lesser General Public License Version 2.1.
@@ -1349,7 +1349,7 @@ void   SwDocStyleSheet::SetItemSet(const SfxItemSet& rSet)
         }
         SfxItemSet aSet(rSet);
         aSet.ClearInvalidItems();
-        
+
         // #i56252: If a standard numbering style is assigned to a standard paragraph style
         // we have to create a physical instance of the numbering style. If we do not and
         // neither the paragraph style nor the numbering style is used in the document
@@ -2176,10 +2176,14 @@ void  SwDocStyleSheetPool::Replace( SfxStyleSheetBase& rSource,
             else if( USHRT_MAX != nPgDscPos )
                 pTargetFmt->ResetAttr( RES_PAGEDESC, RES_FRMATR_END-1 );
             else
-                pTargetFmt->ResetAllAttr();
+            {
+                // --> OD 2007-01-25 #i73790# - method renamed
+                pTargetFmt->ResetAllFmtAttr();
+                // <--
+            }
 
             if( USHRT_MAX != nPgDscPos )
-                rDoc.ChgPageDesc( nPgDscPos, 
+                rDoc.ChgPageDesc( nPgDscPos,
                                   const_cast<const SwDoc &>(rDoc).
                                   GetPageDesc(nPgDscPos) );
         }
