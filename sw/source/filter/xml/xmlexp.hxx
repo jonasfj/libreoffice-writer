@@ -4,9 +4,9 @@
  *
  *  $RCSfile: xmlexp.hxx,v $
  *
- *  $Revision: 1.32 $
+ *  $Revision: 1.33 $
  *
- *  last change: $Author: obo $ $Date: 2005-11-16 13:54:09 $
+ *  last change: $Author: vg $ $Date: 2007-02-28 15:55:00 $
  *
  *  The Contents of this file are made available subject to
  *  the terms of GNU Lesser General Public License Version 2.1.
@@ -110,7 +110,7 @@ class SwXMLExport : public SvXMLExport
     void ExportTableFmt( const SwFrmFmt& rFmt, sal_uInt32 nAbsWidth );
 
     void ExportTableColumnStyle( const SwXMLTableColumn_Impl& rCol );
-    void ExportTableBox( const SwTableBox& rBox, sal_uInt16 nColSpan,
+    void ExportTableBox( const SwTableBox& rBox, sal_uInt16 nColSpan, sal_uInt16 nRowSpan,
                          SwXMLTableInfo_Impl& rTblInfo );
     void ExportTableLine( const SwTableLine& rLine,
                           const SwXMLTableLines_Impl& rLines,
@@ -156,14 +156,14 @@ public:
 
 #ifdef XML_CORE_API
     // #110680#
-    SwXMLExport( 
+    SwXMLExport(
         const ::com::sun::star::uno::Reference< ::com::sun::star::lang::XMultiServiceFactory > xServiceFactory,
         const ::com::sun::star::uno::Reference< ::com::sun::star::frame::XModel > & rModel,
-        SwPaM& rPaM, 
+        SwPaM& rPaM,
         const ::rtl::OUString& rFileName,
         const ::com::sun::star::uno::Reference< ::com::sun::star::xml::sax::XDocumentHandler > & rHandler,
         const ::com::sun::star::uno::Reference< ::com::sun::star::document::XGraphicObjectResolver > &,
-        sal_Bool bExpWholeDoc, 
+        sal_Bool bExpWholeDoc,
         sal_Bool bExpFirstTableOnly,
         sal_Bool bShowProgr );
 #endif
@@ -191,7 +191,7 @@ public:
     virtual sal_Int64 SAL_CALL getSomething( const ::com::sun::star::uno::Sequence< sal_Int8 >& aIdentifier ) throw(::com::sun::star::uno::RuntimeException);
 
     // XServiceInfo (override parent method)
-    ::rtl::OUString SAL_CALL getImplementationName() 
+    ::rtl::OUString SAL_CALL getImplementationName()
         throw( ::com::sun::star::uno::RuntimeException );
 };
 
