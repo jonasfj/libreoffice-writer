@@ -4,9 +4,9 @@
  *
  *  $RCSfile: ww8par2.cxx,v $
  *
- *  $Revision: 1.128 $
+ *  $Revision: 1.129 $
  *
- *  last change: $Author: vg $ $Date: 2007-02-05 10:54:15 $
+ *  last change: $Author: vg $ $Date: 2007-02-28 15:54:50 $
  *
  *  The Contents of this file are made available subject to
  *  the terms of GNU Lesser General Public License Version 2.1.
@@ -2454,7 +2454,7 @@ void WW8TabDesc::CreateSwTable()
     // da sich die (identischen) Zeilen eines Bandes prima duplizieren lassen
     pTable = pIo->rDoc.InsertTable(
             SwInsertTableOptions( tabopts::HEADLINE_NO_BORDER, 0 ),
-            *pTmpPos, nBands, nDefaultSwCols, eOri );
+            *pTmpPos, nBands, nDefaultSwCols, eOri, 0, 0, FALSE, FALSE );
 
     ASSERT(pTable && pTable->GetFrmFmt(), "insert table failed");
     if (!pTable || !pTable->GetFrmFmt())
@@ -2900,8 +2900,8 @@ void WW8TabDesc::FinishSwTable()
 
                     aPam.GetPoint()->nNode = *pTargetBox->GetSttNd();
                     aPam.GetPoint()->nContent.Assign( 0, 0 );
-
-                    ((SwTable*)pTable)->Merge( &pIo->rDoc, aBoxes, pTargetBox );
+                    SwSelBoxes aDummyBox;
+                    ((SwTable*)pTable)->Merge( &pIo->rDoc, aBoxes, aDummyBox, pTargetBox );
 
                     }
                     break;
@@ -4493,12 +4493,12 @@ Word2CHPX ReadWord2Chpx(SvStream &rSt, sal_Size nOffset, sal_uInt8 nSize)
 
         break;
     }
-    
+
     rSt.SeekRel(nSize-nCount);
     return aChpx;
 }
 
-namespace 
+namespace
 {
     struct pxoffset { sal_Size mnOffset; sal_uInt8 mnSize; };
 }
@@ -4573,7 +4573,7 @@ void WW8RStyle::ImportOldFormatStyles()
         sal_uInt8 cb;
         rSt >> cb;
         nByteCount++;
-        
+
         aCHPXOffsets[stcp].mnSize = 0;
 
         if (cb != 0xFF)
@@ -4583,7 +4583,7 @@ void WW8RStyle::ImportOldFormatStyles()
             aCHPXOffsets[stcp].mnOffset = rSt.Tell();
             aCHPXOffsets[stcp].mnSize = nRemainder;
 
-            Word2CHPX aChpx = ReadWord2Chpx(rSt, aCHPXOffsets[stcp].mnOffset, 
+            Word2CHPX aChpx = ReadWord2Chpx(rSt, aCHPXOffsets[stcp].mnOffset,
                 aCHPXOffsets[stcp].mnSize);
             aConvertedChpx.push_back( ChpxToSprms(aChpx) );
 
@@ -4605,7 +4605,7 @@ void WW8RStyle::ImportOldFormatStyles()
         sal_uInt8 cb;
         rSt >> cb;
         nByteCount++;
-        
+
         aPAPXOffsets[stcp].mnSize = 0;
 
         if (cb != 0xFF)
@@ -4662,10 +4662,10 @@ void WW8RStyle::ImportOldFormatStyles()
 
         bool bOldNoImp = PrepareStyle(rSI, eSti, stc, stcNext);
 
-        ImportSprms(aPAPXOffsets[stcp].mnOffset, aPAPXOffsets[stcp].mnSize, 
+        ImportSprms(aPAPXOffsets[stcp].mnOffset, aPAPXOffsets[stcp].mnSize,
             true);
 
-        ImportSprms(&(aConvertedChpx[stcp][0]), aConvertedChpx[stcp].size(), 
+        ImportSprms(&(aConvertedChpx[stcp][0]), aConvertedChpx[stcp].size(),
             false);
 
         PostStyle(rSI, bOldNoImp);
@@ -4676,7 +4676,7 @@ void WW8RStyle::ImportNewFormatStyles()
 {
     ScanStyles();                       // Scanne Based On
 
-    for (USHORT i = 0; i < cstd; ++i) // import Styles 
+    for (USHORT i = 0; i < cstd; ++i) // import Styles
         if (pIo->pCollA[i].bValid)
             Import1Style( i );
 }
@@ -4701,7 +4701,7 @@ void WW8RStyle::Import()
     ImportStyles();
 
     for (USHORT i = 0; i < cstd; ++i)
-    {   
+    {
         // Follow chain
         SwWW8StyInf* pi = &pIo->pCollA[i];
         USHORT j = pi->nFollow;
