@@ -4,9 +4,9 @@
  *
  *  $RCSfile: tabsh.cxx,v $
  *
- *  $Revision: 1.39 $
+ *  $Revision: 1.40 $
  *
- *  last change: $Author: obo $ $Date: 2006-09-16 23:16:39 $
+ *  last change: $Author: obo $ $Date: 2007-03-14 08:05:35 $
  *
  *  The Contents of this file are made available subject to
  *  the terms of GNU Lesser General Public License Version 2.1.
@@ -163,7 +163,7 @@
 #include <tabsh.hxx>
 #endif
 #ifndef _SWTABLEREP_HXX
-#include "swtablerep.hxx" //CHINA001 
+#include "swtablerep.hxx" //CHINA001
 #endif
 #ifndef _TABLEMGR_HXX
 #include <tablemgr.hxx>
@@ -257,7 +257,7 @@
 
 #include "swabstdlg.hxx" //CHINA001
 #include "dialog.hrc" //CHINA001
-#include <table.hrc> //CHINA001 
+#include <table.hrc> //CHINA001
 
 //-----------------------------------------------------------------------------
 BOOL lcl_IsNumeric(const String& rStr)
@@ -790,11 +790,11 @@ void SwTableShell::Execute(SfxRequest &rReq)
             //CHINA001 SwTableTabDlg* pDlg = NULL;
             SfxAbstractTabDialog * pDlg = NULL;
             if ( bUseDialog )
-            {    
+            {
                 //CHINA001 pDlg = new SwTableTabDlg( GetView().GetWindow(), GetPool(), &aCoreSet, &rSh);
                 SwAbstractDialogFactory* pFact = SwAbstractDialogFactory::Create();//CHINA001
                 DBG_ASSERT(pFact, "SwAbstractDialogFactory fail!");//CHINA001
-                        
+
                 pDlg = pFact->CreateSwTableTabDlg( GetView().GetWindow(), GetPool(), &aCoreSet, &rSh,ResId( DLG_FORMAT_TABLE ));
                 DBG_ASSERT(pDlg, "Dialogdiet fail!");//CHINA001
             }
@@ -873,7 +873,7 @@ void SwTableShell::Execute(SfxRequest &rReq)
 //CHINA001				aCoreSet );
                 SwAbstractDialogFactory* pFact = SwAbstractDialogFactory::Create();//CHINA001
                 DBG_ASSERT(pFact, "SwAbstractDialogFactory fail!");//CHINA001
-                        
+
                 AbstractSfxSingleTabDialog* pDlg = pFact->CreateSfxSingleTabDialog( GetView().GetWindow(),aCoreSet,ResId( RC_DLG_SWNUMFMTDLG ));
                 DBG_ASSERT(pDlg, "Dialogdiet fail!");//CHINA001
 
@@ -1021,7 +1021,7 @@ void SwTableShell::Execute(SfxRequest &rReq)
             //CHINA001 				&GetView().GetViewFrame()->GetWindow(), &rSh );
             SwAbstractDialogFactory* pFact = SwAbstractDialogFactory::Create();//CHINA001
             DBG_ASSERT(pFact, "SwAbstractDialogFactory fail!");//CHINA001
-                    
+
             AbstractSwAutoFormatDlg* pDlg = pFact->CreateSwAutoFormatDlg(&GetView().GetViewFrame()->GetWindow(), &rSh ,ResId( DLG_AUTOFMT_TABLE ) );
             DBG_ASSERT(pDlg, "Dialogdiet fail!");//CHINA001
             pDlg->Execute();
@@ -1034,7 +1034,7 @@ void SwTableShell::Execute(SfxRequest &rReq)
             //CHINA001 							GetView().GetWindow(), rSh );
             SwAbstractDialogFactory* pFact = SwAbstractDialogFactory::Create();//CHINA001
             DBG_ASSERT(pFact, "SwAbstractDialogFactory fail!");//CHINA001
-                    
+
             VclAbstractDialog* pDlg = pFact->CreateVclAbstractDialog( GetView().GetWindow(), rSh,ResId( DLG_ROW_HEIGHT ));
             DBG_ASSERT(pDlg, "Dialogdiet fail!");//CHINA001
             pDlg->Execute();
@@ -1063,10 +1063,42 @@ void SwTableShell::Execute(SfxRequest &rReq)
 
             if( nCount )
             {
+                // i74180: Table border patch submitted by chensuchun:
+                // -->get the SvxBoxInfoItem of the table before insert
+                SfxItemSet aCoreSet( GetPool(), aUITableAttrRange);
+                ::lcl_TableParamToItemSet( aCoreSet, rSh );
+                bool bSetInnerBorders = false;
+                sal_uInt16 nUndoId = 0;
+                // <--End
+
                 if( bColumn )
+                {
+                    rSh.StartUndo( UNDO_TABLE_INSCOL );
                     rSh.InsertCol( nCount, bAfter );
+                    bSetInnerBorders = true;
+                    nUndoId = UNDO_TABLE_INSCOL;
+                }
                 else if ( !rSh.IsInRepeatedHeadline() )
+                {
+                    rSh.StartUndo( UNDO_TABLE_INSROW );
                     rSh.InsertRow( nCount, bAfter );
+                    bSetInnerBorders = true;
+                    nUndoId = UNDO_TABLE_INSROW;
+                }
+
+                // -->after inserting,reset the inner table borders
+                if ( bSetInnerBorders )
+                {
+                    const SvxBoxInfoItem aBoxInfo((const SvxBoxInfoItem&)
+                        aCoreSet.Get(SID_ATTR_BORDER_INNER));
+                    SfxItemSet aSet( GetPool(), SID_ATTR_BORDER_INNER,
+                                                SID_ATTR_BORDER_INNER, 0);
+                    aSet.Put( aBoxInfo );
+                    ItemSetToTableParam( aSet, rSh );
+                    rSh.EndUndo( nUndoId );
+                }
+                // <--
+
                 bCallDone = TRUE;
                 break;
             }
@@ -1112,7 +1144,7 @@ void SwTableShell::Execute(SfxRequest &rReq)
                 //CHINA001 SwSplitTableDlg *pDlg = new SwSplitTableDlg( GetView().GetWindow(), rSh );
                 SwAbstractDialogFactory* pFact = SwAbstractDialogFactory::Create();//CHINA001
                 DBG_ASSERT(pFact, "SwAbstractDialogFactory fail!");//CHINA001
-                        
+
                 AbstractSwSplitTableDlg* pDlg = pFact->CreateSwSplitTableDlg( GetView().GetWindow(), rSh,ResId( DLG_SPLIT ));
                 DBG_ASSERT(pDlg, "Dialogdiet fail!");//CHINA001
                 if ( pDlg->Execute() == RET_OK )
@@ -1143,7 +1175,7 @@ void SwTableShell::Execute(SfxRequest &rReq)
             //CHINA001 SwSplitTblDlg *pDlg = new SwSplitTblDlg( GetView().GetWindow(), rSh );
             SwAbstractDialogFactory* pFact = SwAbstractDialogFactory::Create();//CHINA001
             DBG_ASSERT(pFact, "SwAbstractDialogFactory fail!");//CHINA001
-                    
+
             VclAbstractDialog* pDlg = pFact->CreateVclAbstractDialog( GetView().GetWindow(), rSh ,ResId( DLG_SPLIT_TABLE ));
             DBG_ASSERT(pDlg, "Dialogdiet fail!");//CHINA001
             pDlg->Execute();
@@ -1215,10 +1247,10 @@ void SwTableShell::Execute(SfxRequest &rReq)
             else
                 rSh.SetRowsToRepeat(rSh.GetRowSelectionFromTop());
         break;
-        case FN_TABLE_SELECT_CELL   :  
+        case FN_TABLE_SELECT_CELL   :
             rSh.SelectTableCell();
         break;
-        case FN_TABLE_DELETE_TABLE  :  
+        case FN_TABLE_DELETE_TABLE  :
         {
             rSh.StartAction();
             rSh.StartUndo();
@@ -1226,7 +1258,7 @@ void SwTableShell::Execute(SfxRequest &rReq)
             rSh.DeleteRow();
             rSh.EndUndo();
             rSh.EndAction();
-        }        
+        }
         //'this' is already destroyed
         return;
         //break;
@@ -1509,7 +1541,7 @@ void SwTableShell::GetState(SfxItemSet &rSet)
                 }
             }
             break;
-            case FN_TABLE_HEADLINE_REPEAT: 
+            case FN_TABLE_HEADLINE_REPEAT:
                 if(0 != rSh.GetRowsToRepeat())
                     rSet.Put(SfxBoolItem(nSlot, sal_True));
                 else if(!rSh.GetRowSelectionFromTop())
@@ -1517,7 +1549,7 @@ void SwTableShell::GetState(SfxItemSet &rSet)
                 else
                     rSet.Put(SfxBoolItem(nSlot, sal_False));
             break;
-            case FN_TABLE_SELECT_CELL   : 
+            case FN_TABLE_SELECT_CELL   :
                 if(rSh.HasBoxSelection())
                     rSet.DisableItem( nSlot );
             break;
