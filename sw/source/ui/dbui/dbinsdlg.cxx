@@ -4,9 +4,9 @@
  *
  *  $RCSfile: dbinsdlg.cxx,v $
  *
- *  $Revision: 1.56 $
+ *  $Revision: 1.57 $
  *
- *  last change: $Author: obo $ $Date: 2006-09-16 22:43:25 $
+ *  last change: $Author: rt $ $Date: 2007-04-04 15:17:39 $
  *
  *  The Contents of this file are made available subject to
  *  the terms of GNU Lesser General Public License Version 2.1.
@@ -253,7 +253,7 @@
 #include "tabsh.hxx"
 #endif
 #include "swabstdlg.hxx" //CHINA001
-#include "table.hrc" //CHINA001 
+#include "table.hrc" //CHINA001
 
 namespace swui
 {
@@ -945,7 +945,7 @@ IMPL_LINK( SwInsertDBColAutoPilot, TblFmtHdl, PushButton*, pButton )
 //CHINA001	pTblSet, &rSh );
     SwAbstractDialogFactory* pFact = swui::GetFactory();//CHINA001
     DBG_ASSERT(pFact, "SwAbstractDialogFactory fail!");//CHINA001
-            
+
     SfxAbstractTabDialog* pDlg = pFact->CreateSwTableTabDlg(  pButton, rSh.GetAttrPool(),pTblSet, &rSh, ResId( DLG_FORMAT_TABLE ));
     DBG_ASSERT(pDlg, "Dialogdiet fail!");//CHINA001
     if( RET_OK == pDlg->Execute() )
@@ -967,12 +967,12 @@ IMPL_LINK( SwInsertDBColAutoPilot, AutoFmtHdl, PushButton*, pButton )
     //CHINA001 SwAutoFormatDlg aDlg( pButton, pView->GetWrtShellPtr(), FALSE, pTAutoFmt );
     SwAbstractDialogFactory* pFact = swui::GetFactory();//CHINA001
     DBG_ASSERT(pFact, "SwAbstractDialogFactory fail!");//CHINA001
-            
+
     AbstractSwAutoFormatDlg* pDlg = pFact->CreateSwAutoFormatDlg(pButton, pView->GetWrtShellPtr(),ResId( DLG_AUTOFMT_TABLE ), FALSE, pTAutoFmt);
     DBG_ASSERT(pDlg, "Dialogdiet fail!");//CHINA001
     if( RET_OK == pDlg->Execute()) //CHINA001 if( RET_OK == aDlg.Execute())
         pDlg->FillAutoFmtOfIndex( pTAutoFmt ); //CHINA001 aDlg.FillAutoFmtOfIndex( pTAutoFmt );
-    delete pDlg; //CHINA001 
+    delete pDlg; //CHINA001
     return 0;
 }
 /* ---------------------------------------------------------------------------
@@ -1295,7 +1295,7 @@ void SwInsertDBColAutoPilot::DataToDoc( const Sequence<Any>& rSelection,
 
                 Reference< XColumn > xColumn;
                 xCols->getByName(pEntry->sColumn) >>= xColumn;
-                Reference< XPropertySet > xColumnProps( xColumn, UNO_QUERY ); 
+                Reference< XPropertySet > xColumnProps( xColumn, UNO_QUERY );
                 sal_Int32 eDataType = 0;
                 if( xColumnProps.is() )
                 {
@@ -1332,22 +1332,22 @@ void SwInsertDBColAutoPilot::DataToDoc( const Sequence<Any>& rSelection,
                     }
                     //#i60207# don't insert binary data as string - creates a loop
                     else if( DataType::BINARY       == eDataType ||
-                             DataType::VARBINARY    == eDataType ||  
+                             DataType::VARBINARY    == eDataType ||
                              DataType::LONGVARBINARY== eDataType ||
                              DataType::SQLNULL      == eDataType ||
                              DataType::OTHER        == eDataType ||
-                             DataType::OBJECT       == eDataType ||  
+                             DataType::OBJECT       == eDataType ||
                              DataType::DISTINCT     == eDataType ||
                              DataType::STRUCT       == eDataType ||
                              DataType::ARRAY        == eDataType ||
-                             DataType::BLOB         == eDataType ||  
+                             DataType::BLOB         == eDataType ||
                              DataType::CLOB         == eDataType ||
                              DataType::REF          == eDataType
                              )
                     {
                         // do nothing
                     }
-                    else 
+                    else
                     {
                         rtl::OUString sVal =  xColumn->getString();
                         if(!xColumn->wasNull())
@@ -1518,14 +1518,14 @@ void SwInsertDBColAutoPilot::DataToDoc( const Sequence<Any>& rSelection,
 
                                 {
                                     ::Date aStandard(1,1,1900);
-                                    ::Date aCompare(aDBFormatData.aNullDate.Day , 
-                                                    aDBFormatData.aNullDate.Month, 
-                                                    aDBFormatData.aNullDate.Year); 
+                                    ::Date aCompare(aDBFormatData.aNullDate.Day ,
+                                                    aDBFormatData.aNullDate.Month,
+                                                    aDBFormatData.aNullDate.Year);
                                     if(aStandard != aCompare)
                                         nValue += (aStandard - aCompare);
                                 }
+                                pFld->ChgValue( nValue, TRUE );
                             }
-                            pFld->ChgValue( nValue, TRUE );
                             pFld->SetInitialized();
 
                             rSh.Insert( *pFld );
