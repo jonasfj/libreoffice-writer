@@ -4,9 +4,9 @@
  *
  *  $RCSfile: viewsh.cxx,v $
  *
- *  $Revision: 1.68 $
+ *  $Revision: 1.69 $
  *
- *  last change: $Author: obo $ $Date: 2007-01-22 15:11:13 $
+ *  last change: $Author: rt $ $Date: 2007-04-04 15:15:41 $
  *
  *  The Contents of this file are made available subject to
  *  the terms of GNU Lesser General Public License Version 2.1.
@@ -362,7 +362,7 @@ void ViewShell::ImplEndAction( const BOOL bIdleEnd )
                             aOrigin.X() = -aOrigin.X(); aOrigin.Y() = -aOrigin.Y();
                             aMapMode.SetOrigin( aOrigin );
                             pVout->SetMapMode( aMapMode );
-                            
+
                             // #i72754# start Pre/PostPaint encapsulation before pOut is changed to the buffering VDev
                             const Region aRepaintRegion(aRect.SVRect());
                             DLPrePaint2(aRepaintRegion);
@@ -494,7 +494,7 @@ void ViewShell::ImplUnlockPaint( BOOL bVirDev )
                 // #i72754# start Pre/PostPaint encapsulation before pOut is changed to the buffering VDev
                 const Region aRepaintRegion(VisArea().SVRect());
                 DLPrePaint2(aRepaintRegion);
-                
+
                 OutputDevice *pOld = pOut;
                 pOut = pVout;
                 Paint( VisArea().SVRect() );
@@ -1144,10 +1144,6 @@ void ViewShell::VisPortChgd( const SwRect &rRect)
     }
 #endif
 
-    ASSERT( rRect.Top() >= 0 && rRect.Left() >= 0 &&
-            rRect.Bottom() >= 0 && rRect.Right() >= 0,
-            "VisArea in die Wiese?" );
-
     //Ersteinmal die alte sichtbare Seite holen, dann braucht nacher nicht
     //lange gesucht werden.
     const SwFrm *pOldPage = Imp()->GetFirstVisPage();
@@ -1558,7 +1554,7 @@ void ViewShell::_PaintDesktop( const SwRegionRects &rRegion )
     for ( USHORT i = 0; i < rRegion.Count(); ++i )
     {
         const Rectangle aRectangle(rRegion[i].SVRect());
-        
+
         // #i68597# inform Drawinglayer about display change
         DLPrePaint2(Region(aRectangle));
         GetOut()->DrawRect(aRectangle);
@@ -1828,7 +1824,7 @@ void ViewShell::Paint(const Rectangle &rRect)
             pOut->SetLineColor();
             pOut->DrawRect( rRect );
             pOut->Pop();
-            
+
             // #i68597#
             DLPostPaint2();
         }
