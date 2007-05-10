@@ -4,9 +4,9 @@
  *
  *  $RCSfile: drwtxtsh.cxx,v $
  *
- *  $Revision: 1.38 $
+ *  $Revision: 1.39 $
  *
- *  last change: $Author: rt $ $Date: 2007-04-26 09:16:21 $
+ *  last change: $Author: kz $ $Date: 2007-05-10 16:22:40 $
  *
  *  The Contents of this file are made available subject to
  *  the terms of GNU Lesser General Public License Version 2.1.
@@ -132,9 +132,6 @@
 #endif
 #ifndef _WRTSH_HXX
 #include <wrtsh.hxx>
-#endif
-#ifndef _UIPARAM_HXX
-#include <uiparam.hxx>
 #endif
 #ifndef _VIEWOPT_HXX
 #include <viewopt.hxx>
@@ -497,7 +494,7 @@ void SwDrawTextShell::ExecDrawLingu(SfxRequest &rReq)
             break;
 
         case SID_HANGUL_HANJA_CONVERSION:
-            pOLV->StartTextConversion( LANGUAGE_KOREAN, LANGUAGE_KOREAN, NULL, 
+            pOLV->StartTextConversion( LANGUAGE_KOREAN, LANGUAGE_KOREAN, NULL,
                     i18n::TextConversionOption::CHARACTER_BY_CHARACTER, sal_True, sal_False );
             break;
 
@@ -622,7 +619,7 @@ void SwDrawTextShell::ExecDraw(SfxRequest &rReq)
         {
             SdrOutliner * pOutliner = pSdrView->GetTextEditOutliner();
             if(pOutliner)
-            {        
+            {
                 ULONG nParaCount = pOutliner->GetParagraphCount();
                 if (nParaCount > 0)
                     pOLV->SelectRange(0L, USHORT(nParaCount) );
@@ -868,7 +865,7 @@ void SwDrawTextShell::InsertSymbol(SfxRequest& rReq)
 
     SfxItemSet aSet(pOLV->GetAttribs());
     USHORT nScript = pOLV->GetSelectedScriptType();
-    SvxFontItem aSetDlgFont;
+    SvxFontItem aSetDlgFont( RES_CHRATR_FONT );
     {
         SvxScriptSetItem aSetItem( SID_ATTR_CHAR_FONT, *aSet.GetPool() );
         aSetItem.GetItemSet().Put( aSet, FALSE );
