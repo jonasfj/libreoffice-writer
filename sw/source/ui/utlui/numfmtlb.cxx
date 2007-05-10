@@ -4,9 +4,9 @@
  *
  *  $RCSfile: numfmtlb.cxx,v $
  *
- *  $Revision: 1.20 $
+ *  $Revision: 1.21 $
  *
- *  last change: $Author: rt $ $Date: 2007-04-26 09:23:50 $
+ *  last change: $Author: kz $ $Date: 2007-05-10 16:26:53 $
  *
  *  The Contents of this file are made available subject to
  *  the terms of GNU Lesser General Public License Version 2.1.
@@ -68,7 +68,7 @@
 #include <svx/svxids.hrc>
 #endif
 #ifndef _SVX_NUMINF_HXX //autogen
-#define ITEMID_NUMBERINFO SID_ATTR_NUMBERFORMAT_INFO
+
 #include <svx/numinf.hxx>
 #endif
 #ifndef _SV_MSGBOX_HXX //autogen
@@ -77,7 +77,7 @@
 //CHINA001 #ifndef _SVX_NUMFMT_HXX //autogen
 //CHINA001 #include <svx/numfmt.hxx>
 //CHINA001 #endif
-#include <svx/flagsdef.hxx> //CHINA001 
+#include <svx/flagsdef.hxx> //CHINA001
 #include <svtools/itemset.hxx>
 //CHINA001 #ifndef _TBLNUMFM_HXX
 //CHINA001 #include <tblnumfm.hxx>
@@ -464,7 +464,7 @@ IMPL_LINK( NumFormatListBox, SelectHdl, ListBox *, pBox )
             SID_ATTR_NUMBERFORMAT_INFO, SID_ATTR_NUMBERFORMAT_INFO,
             SID_ATTR_NUMBERFORMAT_ONE_AREA, SID_ATTR_NUMBERFORMAT_ONE_AREA,
             SID_ATTR_NUMBERFORMAT_NOLANGUAGE, SID_ATTR_NUMBERFORMAT_NOLANGUAGE,
-            SID_ATTR_NUMBERFORMAT_ADD_AUTO, SID_ATTR_NUMBERFORMAT_ADD_AUTO, 
+            SID_ATTR_NUMBERFORMAT_ADD_AUTO, SID_ATTR_NUMBERFORMAT_ADD_AUTO,
             0 );
 
         double fValue = GetDefValue( nCurrFormatType);
@@ -484,7 +484,7 @@ IMPL_LINK( NumFormatListBox, SelectHdl, ListBox *, pBox )
         //CHINA001 SwNumFmtDlg* pDlg = new SwNumFmtDlg(this, aCoreSet);
         SwAbstractDialogFactory* pFact = SwAbstractDialogFactory::Create();//CHINA001
         DBG_ASSERT(pFact, "SwAbstractDialogFactory fail!");//CHINA001
-            
+
         AbstractSfxSingleTabDialog* pDlg = pFact->CreateSfxSingleTabDialog( this, aCoreSet, RC_DLG_SWNUMFMTDLG );
         DBG_ASSERT(pDlg, "Dialogdiet fail!");//CHINA001
 
@@ -511,7 +511,7 @@ IMPL_LINK( NumFormatListBox, SelectHdl, ListBox *, pBox )
                 if( pFmt )
                     eCurLanguage = pFmt->GetLanguage();
                 // SetDefFormat uses eCurLanguage to look for if this format already in the list
-                SetDefFormat(nFormat);                
+                SetDefFormat(nFormat);
             }
             if( bShowLanguageControl && SFX_ITEM_SET == pOutSet->GetItemState(
                 SID_ATTR_NUMBERFORMAT_ADD_AUTO, FALSE, &pItem ))
