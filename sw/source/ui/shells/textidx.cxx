@@ -4,9 +4,9 @@
  *
  *  $RCSfile: textidx.cxx,v $
  *
- *  $Revision: 1.11 $
+ *  $Revision: 1.12 $
  *
- *  last change: $Author: rt $ $Date: 2007-04-26 09:17:42 $
+ *  last change: $Author: kz $ $Date: 2007-05-10 16:24:13 $
  *
  *  The Contents of this file are made available subject to
  *  the terms of GNU Lesser General Public License Version 2.1.
@@ -37,7 +37,6 @@
 #include "precompiled_sw.hxx"
 
 #include <hintids.hxx>
-#include <uiparam.hxx>
 #ifndef _MSGBOX_HXX //autogen
 #include <vcl/msgbox.hxx>
 #endif
@@ -196,7 +195,7 @@ void SwTextShell::ExecIdx(SfxRequest &rReq)
             AbstractMultiTOXTabDialog* pDlg = pFact->CreateMultiTOXTabDialog( DLG_MULTI_TOX,
                                                         pMDI, aSet, rSh, (SwTOXBase* )pCurTOX,
                                                         USHRT_MAX, bGlobal);
-            DBG_ASSERT(pDlg, "Dialogdiet fail!");//CHINA001			
+            DBG_ASSERT(pDlg, "Dialogdiet fail!");//CHINA001
             pDlg->Execute();
             delete pDlg;
         }
