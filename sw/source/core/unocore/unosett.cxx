@@ -4,9 +4,9 @@
  *
  *  $RCSfile: unosett.cxx,v $
  *
- *  $Revision: 1.48 $
+ *  $Revision: 1.49 $
  *
- *  last change: $Author: obo $ $Date: 2006-09-16 22:00:48 $
+ *  last change: $Author: kz $ $Date: 2007-05-10 16:03:02 $
  *
  *  The Contents of this file are made available subject to
  *  the terms of GNU Lesser General Public License Version 2.1.
@@ -1083,7 +1083,7 @@ void SwXLineNumberingProperties::setPropertyValue(
                 {
                     INT32 nVal;
                     aValue >>= nVal;
-                    aInfo.SetPosFromLeft(Min(static_cast<sal_Int32>(MM100_TO_TWIP(nVal)), 
+                    aInfo.SetPosFromLeft(Min(static_cast<sal_Int32>(MM100_TO_TWIP(nVal)),
                         sal_Int32(0xffff)));
                 }
                 break;
@@ -1896,7 +1896,7 @@ void SwXNumberingRules::SetNumberingRuleByIndex(
                             }
                         }
                         aFmt.SetCharFmt( pCharFmt );
-                        // os 2005-08-22 #i51842# 
+                        // os 2005-08-22 #i51842#
                         // If the character format has been found it's name should not be in the
                         // char style names array
                         //sNewCharStyleNames[(sal_uInt16)nIndex] = sCharFmtName;
@@ -2005,7 +2005,7 @@ void SwXNumberingRules::SetNumberingRuleByIndex(
                             pSetBrush = new SvxBrushItem(*pOrigBrush);
                         }
                         else
-                            pSetBrush = new SvxBrushItem(aEmptyStr, aEmptyStr, GPOS_AREA);
+                            pSetBrush = new SvxBrushItem(aEmptyStr, aEmptyStr, GPOS_AREA, RES_BACKGROUND);
                     }
                     pSetBrush->PutValue( pData->aVal, MID_GRAPHIC_URL );
                 }
@@ -2023,7 +2023,7 @@ void SwXNumberingRules::SetNumberingRuleByIndex(
                                 pSetBrush = new SvxBrushItem(*pOrigBrush);
                             }
                             else
-                                pSetBrush = new SvxBrushItem(aEmptyStr, aEmptyStr, GPOS_AREA);
+                                pSetBrush = new SvxBrushItem(aEmptyStr, aEmptyStr, GPOS_AREA, RES_BACKGROUND);
                         }
 
                         BitmapEx aBmp = VCLUnoHelper::GetBitmap( *pBitmap );
