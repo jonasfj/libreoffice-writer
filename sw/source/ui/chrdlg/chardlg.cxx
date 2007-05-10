@@ -4,9 +4,9 @@
  *
  *  $RCSfile: chardlg.cxx,v $
  *
- *  $Revision: 1.27 $
+ *  $Revision: 1.28 $
  *
- *  last change: $Author: obo $ $Date: 2006-09-16 22:37:47 $
+ *  last change: $Author: kz $ $Date: 2007-05-10 16:14:41 $
  *
  *  The Contents of this file are made available subject to
  *  the terms of GNU Lesser General Public License Version 2.1.
@@ -79,9 +79,6 @@
 #ifndef _SWTYPES_HXX
 #include <swtypes.hxx>
 #endif
-#ifndef _UIPARAM_HXX
-#include <uiparam.hxx>
-#endif
 #ifndef _ERRHDL_HXX
 #include <errhdl.hxx>
 #endif
@@ -139,6 +136,7 @@
 #include <svx/svxdlg.hxx> //CHINA001
 #include <svx/svxids.hrc> //CHINA001
 #include <svx/flagsdef.hxx> //CHINA001
+#include "svx/dialogs.hrc"
 
 using namespace com::sun::star::ui::dialogs;
 using namespace ::com::sun::star::lang;
@@ -168,8 +166,8 @@ SwCharDlg::SwCharDlg(Window* pParent, SwView& rVw, const SfxItemSet& rCoreSet,
         aTmp += ')';
         SetText(aTmp);
     }
-    SfxAbstractDialogFactory* pFact = SfxAbstractDialogFactory::Create(); //CHINA001 
-    DBG_ASSERT(pFact, "Dialogdiet fail!"); //CHINA001 
+    SfxAbstractDialogFactory* pFact = SfxAbstractDialogFactory::Create(); //CHINA001
+    DBG_ASSERT(pFact, "Dialogdiet fail!"); //CHINA001
     //OS: Unter OS/2 darf die erste TabPage nie per RemoveTabPage entfernt werden
     AddTabPage(TP_CHAR_STD, pFact->GetTabPageCreatorFunc( RID_SVXPAGE_CHAR_NAME ), 0 );//CHINA001 AddTabPage(TP_CHAR_STD, SvxCharNamePage::Create, 0);
     AddTabPage(TP_CHAR_EXT, pFact->GetTabPageCreatorFunc( RID_SVXPAGE_CHAR_EFFECTS ), 0 ); //CHINA001 AddTabPage(TP_CHAR_EXT, SvxCharEffectsPage::Create, 0);
