@@ -4,9 +4,9 @@
  *
  *  $RCSfile: paintfrm.cxx,v $
  *
- *  $Revision: 1.101 $
+ *  $Revision: 1.102 $
  *
- *  last change: $Author: vg $ $Date: 2007-02-28 15:48:45 $
+ *  last change: $Author: kz $ $Date: 2007-05-10 16:00:50 $
  *
  *  The Contents of this file are made available subject to
  *  the terms of GNU Lesser General Public License Version 2.1.
@@ -37,7 +37,6 @@
 #include "precompiled_sw.hxx"
 
 
-#define ITEMID_BOXINFO      SID_ATTR_BORDER_INNER
 #include <hintids.hxx>
 
 #ifndef _SOUND_HXX //autogen
@@ -2894,7 +2893,7 @@ void SwRootFrm::Paint( const SwRect& rRect ) const
                 aPaintRect._Intersection( pSh->VisArea() );
             }
 
-            // #i68597# 
+            // #i68597#
             // moved paint pre-process for DrawingLayer overlay here since the above
             // code dependent from bExtraData may expand the PaintRect
             const Region aDLRegion(aPaintRect.SVRect());
@@ -2992,7 +2991,7 @@ void SwRootFrm::Paint( const SwRect& rRect ) const
                 pPageView->DrawPageViewGrid(*pSh->GetOut(), aPaintRect.SVRect(), SwViewOption::GetTextGridColor() );
             }
 
-            // #i68597# 
+            // #i68597#
             // moved paint post-process for DrawingLayer overlay here, see above
             pSh->DLPostPaint2();
         }
@@ -5445,11 +5444,11 @@ void SwFrm::PaintBackground( const SwRect &rRect, const SwPageFrm *pPage,
                  )
                )
             {
-                pTmpBackBrush = new SvxBrushItem( Color( COL_WHITE ) );
+                pTmpBackBrush = new SvxBrushItem( Color( COL_WHITE ), RES_BACKGROUND );
             }
             else
             {
-                pTmpBackBrush = new SvxBrushItem( aGlobalRetoucheColor );
+                pTmpBackBrush = new SvxBrushItem( aGlobalRetoucheColor, RES_BACKGROUND);
             }
             pItem = pTmpBackBrush;
             bBack = true;
@@ -5495,7 +5494,7 @@ void SwFrm::PaintBackground( const SwRect &rRect, const SwPageFrm *pPage,
                 SwRegionRects aRegion( aRect );
                 if( pCol )
                 {
-                    pNewItem = new SvxBrushItem( *pCol );
+                    pNewItem = new SvxBrushItem( *pCol, RES_BACKGROUND );
                     pItem = pNewItem;
                 }
                 if ( pPage->GetSortedObjs() )
