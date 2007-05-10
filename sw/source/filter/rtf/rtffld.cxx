@@ -4,9 +4,9 @@
  *
  *  $RCSfile: rtffld.cxx,v $
  *
- *  $Revision: 1.29 $
+ *  $Revision: 1.30 $
  *
- *  last change: $Author: obo $ $Date: 2006-09-16 22:14:10 $
+ *  last change: $Author: kz $ $Date: 2007-05-10 16:06:55 $
  *
  *  The Contents of this file are made available subject to
  *  the terms of GNU Lesser General Public License Version 2.1.
@@ -249,7 +249,7 @@ static USHORT CheckNumberFmtStr( const String& rNStr )
         "\x04""PAGE"              /* PAGEDESC          */
     };
 
-    ASSERT(sizeof(aNumberTypeTab) / sizeof(sal_Char *) 
+    ASSERT(sizeof(aNumberTypeTab) / sizeof(sal_Char *)
            >= SVX_NUM_PAGEDESC - SVX_NUM_CHARS_UPPER_LETTER, "impossible");
 
     for (USHORT n = SVX_NUM_CHARS_UPPER_LETTER;  n <= SVX_NUM_PAGEDESC; ++n)
@@ -459,7 +459,7 @@ int SwRTFParser::MakeFieldInst( String& rFieldStr )
     {
         xub_StrLen nStartDel = nPos;
         nPos += 2;
-        while (aSaveStr.GetChar(nPos) == ' ') 
+        while (aSaveStr.GetChar(nPos) == ' ')
             ++nPos;
         if (aSaveStr.EqualsIgnoreCaseAscii("MERGEFORMAT", nPos, 11))
         {
@@ -500,7 +500,7 @@ int SwRTFParser::MakeFieldInst( String& rFieldStr )
 
     case RTFFLD_NUMPAGES:
         {
-            SwDocStatField aFld( (SwDocStatFieldType*)pDoc->GetSysFldType( RES_DOCSTATFLD ), 
+            SwDocStatField aFld( (SwDocStatFieldType*)pDoc->GetSysFldType( RES_DOCSTATFLD ),
                                   DS_PAGE, SVX_NUM_ARABIC );
             if( STRING_NOTFOUND != ( nPos = aSaveStr.SearchAscii( "\\*" )) )
             {
@@ -555,7 +555,7 @@ int SwRTFParser::MakeFieldInst( String& rFieldStr )
                 aSaveStr.SearchAndReplaceAscii( "AM", aEmptyStr );
                 aSaveStr.SearchAndReplaceAscii( "PM", aEmptyStr );
 
-                // #117892# M.M. Put the word date and time formatter stuff in a common area 
+                // #117892# M.M. Put the word date and time formatter stuff in a common area
                 // and get the rtf filter to use it
                 SwField *pFld = 0;
                 UINT16 nCheckPos = 0;
@@ -566,7 +566,7 @@ int SwRTFParser::MakeFieldInst( String& rFieldStr )
 
                 USHORT rLang(0);
                 RES_CHRATR eLang = maPageDefaults.mbRTLdoc ? RES_CHRATR_CTL_LANGUAGE : RES_CHRATR_LANGUAGE;
-                const SvxLanguageItem *pLang = (SvxLanguageItem*)&pDoc->GetAttrPool().GetDefaultItem(eLang);                
+                const SvxLanguageItem *pLang = (SvxLanguageItem*)&pDoc->GetAttrPool().GetDefaultItem(eLang);
                 rLang = pLang ? pLang->GetValue() : LANGUAGE_ENGLISH_US;
 
                 SvNumberFormatter* pFormatter = pDoc->GetNumberFormatter();
@@ -808,12 +808,11 @@ int SwRTFParser::MakeFieldInst( String& rFieldStr )
                         pCharFmt = pDoc->MakeCharFmt( sNm,
                                             ( SwCharFmt*)pDoc->GetDfltCharFmt() );
 
-                        SvxFontHeightItem aHeightItem( aData.nFontSize * 10 );
+                        SvxFontHeightItem aHeightItem( aData.nFontSize * 10, 100, RES_CHRATR_FONTSIZE );
                         aHeightItem.SetWhich( nFntHWhich );
 
                         SvxFontItem aFontItem( FAMILY_DONTKNOW, aData.sFontName,
-                            aEmptyStr, PITCH_DONTKNOW, RTL_TEXTENCODING_DONTKNOW );
-                        aFontItem.SetWhich( nFntWhich );
+                            aEmptyStr, PITCH_DONTKNOW, RTL_TEXTENCODING_DONTKNOW, nFntWhich );
 
                         pCharFmt->SetAttr( aHeightItem );
                         pCharFmt->SetAttr( aFontItem );
@@ -860,7 +859,7 @@ int SwRTFParser::MakeFieldInst( String& rFieldStr )
                 sal_Unicode cKey = aRFS.GetSwitch( sParam );
                 switch( cKey )
                 {
-                    // In the case of pageref the only parameter we are 
+                    // In the case of pageref the only parameter we are
                     // interested in, is the name of the bookmark
                     case 0:
                         if( !sOrigBkmName.Len() ) // get name of bookmark
@@ -868,7 +867,7 @@ int SwRTFParser::MakeFieldInst( String& rFieldStr )
                         break;
                 }
             }
-            SwGetRefField aFld( 
+            SwGetRefField aFld(
                     (SwGetRefFieldType*)pDoc->GetSysFldType( RES_GETREFFLD ),
                     sOrigBkmName,REF_BOOKMARK,0,REF_PAGE);
 
@@ -912,14 +911,14 @@ int SwRTFParser::MakeFieldInst( String& rFieldStr )
             {
                 if (bChapterNr)
                 {
-                    SwGetRefField aFld( 
+                    SwGetRefField aFld(
                         (SwGetRefFieldType*)pDoc->GetSysFldType( RES_GETREFFLD ),
                         sOrigBkmName,REF_BOOKMARK,0,REF_CHAPTER);
                     pDoc->Insert( *pPam, SwFmtFld( aFld ), 0 );
                 }
                 else
                 {
-                    SwGetRefField aFld( 
+                    SwGetRefField aFld(
                         (SwGetRefFieldType*)pDoc->GetSysFldType( RES_GETREFFLD ),
                         sOrigBkmName,REF_BOOKMARK,0,REF_CONTENT);
                     pDoc->Insert( *pPam, SwFmtFld( aFld ), 0 );
@@ -960,7 +959,7 @@ void SwRTFParser::ReadXEField()
 {
     bReadSwFly = false; //#it may be that any uses of this need to be removed and replaced
     int nRet = 0;
-    int nOpenBrakets = 1;		
+    int nOpenBrakets = 1;
     String sFieldStr;
     BYTE cCh;
 
@@ -991,7 +990,7 @@ void SwRTFParser::ReadXEField()
                     }
 
                     sw::ms::ImportXE(*pDoc, *pPam, sXE);
-                    
+
                     sFieldStr.Erase();
                 }
             }
@@ -1106,14 +1105,14 @@ void SwRTFParser::ReadField()
                     }
                     sFieldStr.Erase();
                 }
-                else if (RTFFLD_UNKNOWN == nRet) 
+                else if (RTFFLD_UNKNOWN == nRet)
                 {
                     // FieldResult wurde eingelesen
                     if (SwTxtNode* pTxtNd = pPam->GetPoint()->nNode.GetNode().GetTxtNode())
                     {
                         SwTxtAttr* pFldAttr = pTxtNd->GetTxtAttr(
                                 pPam->GetPoint()->nContent.GetIndex()-1 );
-                        
+
                         if (pFldAttr)
                         {
                             const SwField *pFld = pFldAttr->GetFld().GetFld();
@@ -1145,7 +1144,7 @@ void SwRTFParser::ReadField()
                             sNestedFieldStr.Erase();
                             // im FieldStr steht der anzuzeigenden Text, im
                              pDoc->Insert( *pPam, sFieldStr, true );
-                            
+
                             String sTarget( sFieldNm.GetToken( 1, '\1' ));
                             if( sTarget.Len() )
                                 sFieldNm.Erase( sFieldNm.Len() - sTarget.Len() -1 );
@@ -1157,7 +1156,7 @@ void SwRTFParser::ReadField()
                                             SwFmtINetFmt( sFieldNm, sTarget ),
                                             SETATTR_DONTEXPAND );
                             pPam->DeleteMark();
-                            
+
                         }
                         break;
                     }
