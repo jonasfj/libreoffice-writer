@@ -4,9 +4,9 @@
  *
  *  $RCSfile: docsh2.cxx,v $
  *
- *  $Revision: 1.90 $
+ *  $Revision: 1.91 $
  *
- *  last change: $Author: rt $ $Date: 2007-04-26 08:50:27 $
+ *  last change: $Author: kz $ $Date: 2007-05-10 16:13:26 $
  *
  *  The Contents of this file are made available subject to
  *  the terms of GNU Lesser General Public License Version 2.1.
@@ -47,7 +47,7 @@
 #include <com/sun/star/frame/XDispatchHelper.hpp>
 #endif
 
-#define ITEMID_COLOR_TABLE      SID_COLOR_TABLE
+
 
 #ifndef _HINTIDS_HXX
 #include <hintids.hxx>
@@ -916,27 +916,27 @@ void SwDocShell::Execute(SfxRequest& rReq)
                             pFlt = aIter.Next();
                         }
                         BOOL bWeb = 0 != dynamic_cast< SwWebDocShell *>( this );
-                        const SfxFilter *pOwnFlt = 
+                        const SfxFilter *pOwnFlt =
                                 SwDocShell::Factory().GetFilterContainer()->
                                 GetFilter4FilterName(String::CreateFromAscii("writer8"));
-                                
+
                         //#b6439685# make sure the default file format is also available
                         if(bWeb)
-                        {        
+                        {
                             const String sWild = ((WildCard&)pOwnFlt->GetWildcard()).GetWildCard();
                             xFltMgr->appendFilter( pOwnFlt->GetUIName(), sWild );
                         }
-                        
+
                         bool bError = false;
-                        //#b6439685# catch expception if wrong filter is selected - should not happen anymore 
+                        //#b6439685# catch expception if wrong filter is selected - should not happen anymore
                         try
-                        {        
+                        {
                             xFltMgr->setCurrentFilter( pOwnFlt->GetUIName() );
                         }
                         catch( const uno::Exception& )
                         {
                             bError = true;
-                        }            
+                        }
 
                         if( !bError && ERRCODE_NONE == aDlgHelper.Execute() )
                         {
@@ -1397,16 +1397,16 @@ void SwDocShell::Execute(SfxRequest& rReq)
                         const String sWild = ((WildCard&)pFlt->GetWildcard()).GetWildCard();
                         xFltMgr->appendFilter( pFlt->GetUIName(), sWild );
                         try
-                        {        
+                        {
                             xFltMgr->setCurrentFilter( pFlt->GetUIName() ) ;
                         }
                         catch( const uno::Exception& )
                         {
                             bError = true;
-                        }            
+                        }
                     }
                     if(!bError)
-                    {        
+                    {
                         Reference<XFilePickerControlAccess> xCtrlAcc(xFP, UNO_QUERY);
                         const USHORT nCount = pDoc->GetTxtFmtColls()->Count();
                         Sequence<OUString> aListBoxEntries(nCount);
