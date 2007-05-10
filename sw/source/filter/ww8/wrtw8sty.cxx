@@ -4,9 +4,9 @@
  *
  *  $RCSfile: wrtw8sty.cxx,v $
  *
- *  $Revision: 1.40 $
+ *  $Revision: 1.41 $
  *
- *  last change: $Author: obo $ $Date: 2006-09-16 22:21:59 $
+ *  last change: $Author: kz $ $Date: 2007-05-10 16:09:46 $
  *
  *  The Contents of this file are made available subject to
  *  the terms of GNU Lesser General Public License Version 2.1.
@@ -765,25 +765,25 @@ USHORT wwFontHelper::GetId(const wwFont &rFont)
 void wwFontHelper::InitFontTable(bool bWrtWW8,const SwDoc& rDoc)
 {
     mbWrtWW8 = bWrtWW8;
-    
-    GetId(wwFont(CREATE_CONST_ASC("Times New Roman"), PITCH_VARIABLE, 
+
+    GetId(wwFont(CREATE_CONST_ASC("Times New Roman"), PITCH_VARIABLE,
         FAMILY_ROMAN, RTL_TEXTENCODING_MS_1252,bWrtWW8));
 
-    GetId(wwFont(CREATE_CONST_ASC("Symbol"), PITCH_VARIABLE, FAMILY_ROMAN, 
+    GetId(wwFont(CREATE_CONST_ASC("Symbol"), PITCH_VARIABLE, FAMILY_ROMAN,
         RTL_TEXTENCODING_SYMBOL,bWrtWW8));
 
-    GetId(wwFont(CREATE_CONST_ASC("Arial"), PITCH_VARIABLE, FAMILY_SWISS, 
+    GetId(wwFont(CREATE_CONST_ASC("Arial"), PITCH_VARIABLE, FAMILY_SWISS,
         RTL_TEXTENCODING_MS_1252,bWrtWW8));
 
     const SvxFontItem* pFont = (const SvxFontItem*)GetDfltAttr(RES_CHRATR_FONT);
 
-    GetId(wwFont(pFont->GetFamilyName(), pFont->GetPitch(), 
+    GetId(wwFont(pFont->GetFamilyName(), pFont->GetPitch(),
         pFont->GetFamily(), pFont->GetCharSet(),bWrtWW8));
 
     const SfxItemPool& rPool = rDoc.GetAttrPool();
     if ((pFont = (const SvxFontItem*)rPool.GetPoolDefaultItem(RES_CHRATR_FONT)))
     {
-        GetId(wwFont(pFont->GetFamilyName(), pFont->GetPitch(), 
+        GetId(wwFont(pFont->GetFamilyName(), pFont->GetPitch(),
             pFont->GetFamily(), pFont->GetCharSet(),bWrtWW8));
     }
 }
@@ -812,7 +812,7 @@ void wwFontHelper::WriteFontTable(SvStream *pTableStream, WW8Fib& rFib)
         SwWW8Writer::WriteLong(*pTableStream, 0);
     else
         SwWW8Writer::WriteShort(*pTableStream, 0);
- 
+
     /*
      * Convert from fast insertion map to linear vector in the order that we
      * want to write.
@@ -827,7 +827,7 @@ void wwFontHelper::WriteFontTable(SvStream *pTableStream, WW8Fib& rFib)
     /*
      * Write them all to pTableStream
      */
-    ::std::for_each(aFontList.begin(), aFontList.end(), 
+    ::std::for_each(aFontList.begin(), aFontList.end(),
         ::std::bind2nd(::std::mem_fun(&wwFont::Write),pTableStream));
 
     /*
@@ -838,7 +838,7 @@ void wwFontHelper::WriteFontTable(SvStream *pTableStream, WW8Fib& rFib)
         SwWW8Writer::WriteLong( *pTableStream, rFib.fcSttbfffn, maFonts.size());
     else
     {
-        SwWW8Writer::WriteShort( *pTableStream, rFib.fcSttbfffn, 
+        SwWW8Writer::WriteShort( *pTableStream, rFib.fcSttbfffn,
             (INT16)rFib.lcbSttbfffn );
     }
 }
@@ -874,8 +874,8 @@ void WW8_WrPlc0::Write( SvStream& rStrm )
 //      behandelt auch Header und Footer
 //------------------------------------------------------------------------------
 
-WW8_WrPlcSepx::WW8_WrPlcSepx() : 
-    mbDocumentIsProtected(false), aSects(4, 4), aCps(4, 4), pAttrs(0), 
+WW8_WrPlcSepx::WW8_WrPlcSepx() :
+    mbDocumentIsProtected(false), aSects(4, 4), aCps(4, 4), pAttrs(0),
     pTxtPos(0)
 {
 }
@@ -1090,7 +1090,7 @@ bool WW8_SepInfo::IsProtected() const
 {
     bool bRet = false;
     if (
-         pSectionFmt && 
+         pSectionFmt &&
          ((SwSectionFmt*)0xFFFFFFFF != pSectionFmt)
        )
     {
@@ -1145,7 +1145,7 @@ void WW8_WrPlcSepx::CheckForFacinPg( SwWW8Writer& rWrt ) const
             if( !( 2 & nEnde ) &&
                 PD_MIRROR == ( PD_MIRROR & pPd->ReadUseOn() ))
             {
-                rWrt.pDop->fSwapBordersFacingPgs = 
+                rWrt.pDop->fSwapBordersFacingPgs =
                     rWrt.pDop->fMirrorMargins = true;
                 nEnde |= 2;
             }
@@ -1285,7 +1285,7 @@ bool WW8_WrPlcSepx::WriteKFTxt(SwWW8Writer& rWrt)
                     nBreakCode = 2;
                 }
             }
-                
+
             if( (SwSectionFmt*)0xFFFFFFFF != rSepInfo.pSectionFmt )
             {
                 // Itemset erzeugen, das das PgDesk-AttrSet beerbt:
@@ -1299,15 +1299,15 @@ bool WW8_WrPlcSepx::WriteKFTxt(SwWW8Writer& rWrt)
                 // umsetzen
                 aSet.Put(rSepInfo.pSectionFmt->GetAttr(RES_COL));
 
-                const SvxLRSpaceItem &rSectionLR = 
-                    ItemGet<SvxLRSpaceItem>(*(rSepInfo.pSectionFmt), 
+                const SvxLRSpaceItem &rSectionLR =
+                    ItemGet<SvxLRSpaceItem>(*(rSepInfo.pSectionFmt),
                     RES_LR_SPACE);
-                const SvxLRSpaceItem &rPageLR = 
+                const SvxLRSpaceItem &rPageLR =
                     ItemGet<SvxLRSpaceItem>(*pPdFmt,RES_LR_SPACE);
 
-                SvxLRSpaceItem aResultLR(rPageLR.GetLeft() + 
-                    rSectionLR.GetLeft(), rPageLR.GetRight() + 
-                    rSectionLR.GetRight());
+                SvxLRSpaceItem aResultLR(rPageLR.GetLeft() +
+                    rSectionLR.GetLeft(), rPageLR.GetRight() +
+                    rSectionLR.GetRight(), 0, 0, RES_LR_SPACE );
 
                 aSet.Put(aResultLR);
 
@@ -1322,12 +1322,12 @@ bool WW8_WrPlcSepx::WriteKFTxt(SwWW8Writer& rWrt)
                 {
                     BYTE nDir;
                     SwWW8Writer::InsUInt16(*pO, 0x3228);
-                    if (FRMDIR_HORI_RIGHT_TOP == 
+                    if (FRMDIR_HORI_RIGHT_TOP ==
                             rWrt.TrueFrameDirection(*rSepInfo.pSectionFmt))
                     {
                         nDir = 1;
                     }
-                    else 
+                    else
                         nDir = 0;
                     pO->Insert( nDir, pO->Count() );
                 }
@@ -1348,12 +1348,12 @@ bool WW8_WrPlcSepx::WriteKFTxt(SwWW8Writer& rWrt)
             // Anders sieht es mit Links/Rechts wechseln aus. Dafuer muss
             // erkannt werden, wo der Seitenwechsel statt findet. Hier ist
             // es aber dafuer zuspaet!
-            if ( 
+            if (
                  pPd->GetFollow() && pPd != pPd->GetFollow() &&
                  pPd->GetFollow()->GetFollow() == pPd->GetFollow() &&
                  (
                    !rSepInfo.pPDNd ||
-                   pPd->IsFollowNextPageOfNode( *rSepInfo.pPDNd ) 
+                   pPd->IsFollowNextPageOfNode( *rSepInfo.pPDNd )
                  )
                )
             {
@@ -1737,7 +1737,7 @@ void WW8_WrPlcPostIt::Append( WW8_CP nCp, const SwPostItField& rPostIt )
     aCntnt.Insert( p, aCntnt.Count() );
 }
 
-bool WW8_WrPlcSubDoc::WriteGenericTxt(SwWW8Writer& rWrt, BYTE nTTyp, 
+bool WW8_WrPlcSubDoc::WriteGenericTxt(SwWW8Writer& rWrt, BYTE nTTyp,
     WW8_CP& rCount)
 {
     bool bRet = false;
