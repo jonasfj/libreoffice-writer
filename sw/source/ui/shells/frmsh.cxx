@@ -4,9 +4,9 @@
  *
  *  $RCSfile: frmsh.cxx,v $
  *
- *  $Revision: 1.19 $
+ *  $Revision: 1.20 $
  *
- *  last change: $Author: rt $ $Date: 2007-04-26 09:16:34 $
+ *  last change: $Author: kz $ $Date: 2007-05-10 16:22:52 $
  *
  *  The Contents of this file are made available subject to
  *  the terms of GNU Lesser General Public License Version 2.1.
@@ -40,9 +40,6 @@
 
 #ifndef _HINTIDS_HXX
 #include <hintids.hxx>
-#endif
-#ifndef _UIPARAM_HXX
-#include <uiparam.hxx>
 #endif
 
 #ifndef _SFX_WHITER_HXX //autogen
@@ -162,7 +159,7 @@
 #ifndef _SHELLS_HRC
 #include <shells.hrc>
 #endif
-#include "swabstdlg.hxx" //CHINA001 
+#include "swabstdlg.hxx" //CHINA001
 // Prototypen ------------------------------------------------------------
 
 void lcl_FrmGetMaxLineWidth(const SvxBorderLine* pBorderLine, SvxBorderLine& rBorderLine);
