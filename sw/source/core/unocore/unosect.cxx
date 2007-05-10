@@ -4,9 +4,9 @@
  *
  *  $RCSfile: unosect.cxx,v $
  *
- *  $Revision: 1.54 $
+ *  $Revision: 1.55 $
  *
- *  last change: $Author: obo $ $Date: 2006-09-16 22:00:35 $
+ *  last change: $Author: kz $ $Date: 2007-05-10 16:02:50 $
  *
  *  The Contents of this file are made available subject to
  *  the terms of GNU Lesser General Public License Version 2.1.
@@ -91,7 +91,7 @@
 #ifndef _DOC_HXX //autogen
 #include <doc.hxx>
 #endif
-#ifndef _DOCSH_HXX 
+#ifndef _DOCSH_HXX
 #include <docsh.hxx>
 #endif
 #ifndef _SFXDOCFILE_HXX
@@ -144,9 +144,9 @@ TYPEINIT1(SwXTextSectionClient, SwClient);
 /*-- 20.12.2005 09:56:33---------------------------------------------------
 
   -----------------------------------------------------------------------*/
-SwXTextSectionClient::SwXTextSectionClient( 
+SwXTextSectionClient::SwXTextSectionClient(
             SwSectionFmt& rFmt,
-            SwXTextSection& rTextSection, 
+            SwXTextSection& rTextSection,
             uno::Reference< text::XTextSection > xSection ) :
             SwClient(&rFmt),
             m_pSection( &rTextSection ),
@@ -164,7 +164,7 @@ SwXTextSectionClient::~SwXTextSectionClient()
     if(xSection.is())
     {
         m_pSection->SetClient( 0 );
-    }            
+    }
 }
 /*-- 20.12.2005 09:56:35---------------------------------------------------
 
@@ -179,7 +179,7 @@ uno::Reference< text::XTextSection > SwXTextSectionClient::GetXTextSection()
   -----------------------------------------------------------------------*/
 /*SwXTextSection* SwXTextSectionClient::GetSwTextSection()
 {
-    if( m_xReference.is() ) 
+    if( m_xReference.is() )
         return m_pSection;;
 } */
 
@@ -194,7 +194,7 @@ void SwXTextSectionClient::Modify( SfxPoolItem *pOld, SfxPoolItem *pNew)
     else
         ClientModify(this, pOld, pNew);
     if(!GetRegisteredIn())
-    {        
+    {
         uno::Reference< text::XTextSection > xSection( m_xReference );
         if(xSection.is())
         {
@@ -204,7 +204,7 @@ void SwXTextSectionClient::Modify( SfxPoolItem *pOld, SfxPoolItem *pNew)
 
             Application::PostUserEvent(
                 STATIC_LINK( this, SwXTextSectionClient, RemoveSectionClient_Impl ), this );
-        }            
+        }
     }
 }
 
@@ -234,7 +234,7 @@ uno::Reference< text::XTextSection >  SwXTextSectionClient::CreateXTextSection(
 /*-- 29.12.2005 10:23:37---------------------------------------------------
 
   -----------------------------------------------------------------------*/
-SwXTextSectionClient* SwXTextSectionClient::Create(SwXTextSection& rSection, 
+SwXTextSectionClient* SwXTextSectionClient::Create(SwXTextSection& rSection,
         uno::Reference< text::XTextSection >xSection, SwSectionFmt& rFmt )
 {
     return new SwXTextSectionClient( rFmt, rSection, xSection );
@@ -399,7 +399,7 @@ uno::Sequence< uno::Reference< text::XTextSection >  > SwXTextSection::getChildS
             SwSectionFmt* pChild = aChildren.GetObject(i)->GetFmt();
             SwXTextSectionClient* pClient = (SwXTextSectionClient*)SwClientIter(*pChild).
                                                         First(TYPE(SwXTextSectionClient));
-            
+
             if(pClient)
                 pArray[i] = pClient->GetXTextSection();
             else
@@ -609,7 +609,7 @@ void SwXTextSection::dispose(void) throw( uno::RuntimeException )
 /*-- 10.12.98 14:47:10---------------------------------------------------
 
   -----------------------------------------------------------------------*/
-void SwXTextSection::addEventListener(const uno::Reference< lang::XEventListener > & aListener) 
+void SwXTextSection::addEventListener(const uno::Reference< lang::XEventListener > & aListener)
             throw( uno::RuntimeException )
 {
     if(!GetFmt())
@@ -619,7 +619,7 @@ void SwXTextSection::addEventListener(const uno::Reference< lang::XEventListener
 /*-- 10.12.98 14:47:10---------------------------------------------------
 
   -----------------------------------------------------------------------*/
-void SwXTextSection::removeEventListener(const uno::Reference< lang::XEventListener > & aListener) 
+void SwXTextSection::removeEventListener(const uno::Reference< lang::XEventListener > & aListener)
             throw( uno::RuntimeException )
 {
     if(!GetFmt() || !aLstnrCntnr.RemoveListener(aListener))
@@ -754,9 +754,9 @@ void SAL_CALL SwXTextSection::SetPropertyValues_Impl(
                                     aSection.SetType(FILE_LINK_SECTION);
                                 String sFileName;
                                 if(aLink.FileURL.getLength())
-                                {       
-                                    sFileName += URIHelper::SmartRel2Abs( 
-                                            pFmt->GetDoc()->GetDocShell()->GetMedium()->GetURLObject(), 
+                                {
+                                    sFileName += URIHelper::SmartRel2Abs(
+                                            pFmt->GetDoc()->GetDocShell()->GetMedium()->GetURLObject(),
                                             aLink.FileURL,
                                             URIHelper::GetMaybeFileHdl());
                                 }
@@ -870,7 +870,7 @@ void SAL_CALL SwXTextSection::SetPropertyValues_Impl(
                             else if(RES_BACKGROUND == pMap->nWID)
                             {
                                 if(!pProps->pBrushItem)
-                                    pProps->pBrushItem = new SvxBrushItem;
+                                    pProps->pBrushItem = new SvxBrushItem(RES_BACKGROUND);
                                 pPutItem = pProps->pBrushItem;
                             }
                             else if(RES_FTN_AT_TXTEND == pMap->nWID)
@@ -1190,7 +1190,7 @@ uno::Sequence< Any > SAL_CALL SwXTextSection::GetPropertyValues_Impl(
                             else if(RES_BACKGROUND == pMap->nWID)
                             {
                                 if(!pProps->pBrushItem)
-                                    pProps->pBrushItem = new SvxBrushItem;
+                                    pProps->pBrushItem = new SvxBrushItem(RES_BACKGROUND);
                                 pQueryItem = pProps->pBrushItem;
                             }
                             else if(RES_FTN_AT_TXTEND == pMap->nWID)
@@ -1220,14 +1220,14 @@ uno::Sequence< Any > SAL_CALL SwXTextSection::GetPropertyValues_Impl(
                             else if(RES_FRAMEDIR == pMap->nWID)
                             {
                                 if(!pProps->pFrameDirItem)
-                                    pProps->pFrameDirItem = new SvxFrameDirectionItem;
+                                    pProps->pFrameDirItem = new SvxFrameDirectionItem(FRMDIR_ENVIRONMENT, RES_FRAMEDIR);
                                 pQueryItem = pProps->pFrameDirItem;
                             }
                             /* -> #109700# */
                             else if(RES_LR_SPACE == pMap->nWID)
                             {
                                 if(!pProps->pLRSpaceItem)
-                                    pProps->pLRSpaceItem = new SvxLRSpaceItem;
+                                    pProps->pLRSpaceItem = new SvxLRSpaceItem( RES_LR_SPACE );
                                 pQueryItem = pProps->pLRSpaceItem;
                             }
                             /* <- #109700# */
@@ -1682,9 +1682,9 @@ uno::Sequence< OUString > SwXTextSection::getSupportedServiceNames(void) throw( 
 /*-- 20.12.2005 10:27:33---------------------------------------------------
 
   -----------------------------------------------------------------------*/
-SwSectionFmt*   SwXTextSection::GetFmt()const 
+SwSectionFmt*   SwXTextSection::GetFmt()const
 {
-    return m_pClient ? 
-        const_cast<SwSectionFmt*>(static_cast< const SwSectionFmt* >(m_pClient->GetRegisteredIn())) 
+    return m_pClient ?
+        const_cast<SwSectionFmt*>(static_cast< const SwSectionFmt* >(m_pClient->GetRegisteredIn()))
         : 0;
 }
