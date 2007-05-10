@@ -4,9 +4,9 @@
  *
  *  $RCSfile: tabledlg.cxx,v $
  *
- *  $Revision: 1.32 $
+ *  $Revision: 1.33 $
  *
- *  last change: $Author: rt $ $Date: 2007-04-26 09:20:35 $
+ *  last change: $Author: kz $ $Date: 2007-05-10 16:25:10 $
  *
  *  The Contents of this file are made available subject to
  *  the terms of GNU Lesser General Public License Version 2.1.
@@ -155,10 +155,10 @@
 #ifndef _TABLE_HRC
 #include <table.hrc>
 #endif
-#include <svx/svxids.hrc> //CHINA001 
+#include <svx/svxids.hrc> //CHINA001
 #include <svx/dialogs.hrc> //CHINA001
-#include <svx/flagsdef.hxx>	//CHINA001 
-#include <svx/svxdlg.hxx> //CHINA001 
+#include <svx/flagsdef.hxx>	//CHINA001
+#include <svx/svxdlg.hxx> //CHINA001
 
 #ifdef DEBUG_TBLDLG
 void DbgTblRep(SwTableRep* pRep)
@@ -1455,8 +1455,8 @@ SwTableTabDlg::SwTableTabDlg(Window* pParent, SfxItemPool& ,
         pShell(pSh)
 {
     FreeResource();
-    SfxAbstractDialogFactory* pFact = SfxAbstractDialogFactory::Create(); //CHINA001 
-    DBG_ASSERT(pFact, "Dialogdiet fail!"); //CHINA001 
+    SfxAbstractDialogFactory* pFact = SfxAbstractDialogFactory::Create(); //CHINA001
+    DBG_ASSERT(pFact, "Dialogdiet fail!"); //CHINA001
     nHtmlMode = ::GetHtmlMode(pSh->GetView().GetDocShell());
     AddTabPage(TP_FORMAT_TABLE, &SwFormatTablePage::Create, 0 );
     AddTabPage(TP_TABLE_TEXTFLOW, &SwTextFlowPage::Create, 0 );
@@ -1470,7 +1470,7 @@ SwTableTabDlg::SwTableTabDlg(Window* pParent, SfxItemPool& ,
 ------------------------------------------------------------------------*/
 void  SwTableTabDlg::PageCreated(USHORT nId, SfxTabPage& rPage)
 {
-    SfxAllItemSet aSet(*(GetInputSetImpl()->GetPool()));//CHINA001 
+    SfxAllItemSet aSet(*(GetInputSetImpl()->GetPool()));//CHINA001
     if( TP_BACKGROUND == nId )
     {
         sal_Int32 nFlagType = SVX_SHOW_TBLCTL;
@@ -1736,7 +1736,7 @@ BOOL  SwTextFlowPage::FillItemSet( SfxItemSet& rSet )
             SfxUInt16Item(FN_PARAM_TABLE_HEADLINE, aHeadLineCB.IsChecked()? USHORT(aRepeatHeaderNF.GetValue()) : 0 ));
     }
     if(aKeepCB.IsChecked() != aKeepCB.GetSavedValue())
-        bModified |= 0 != rSet.Put( SvxFmtKeepItem( aKeepCB.IsChecked()));
+        bModified |= 0 != rSet.Put( SvxFmtKeepItem( aKeepCB.IsChecked(), RES_KEEP));
 
     if(aSplitCB.IsChecked() != aSplitCB.GetSavedValue())
         bModified |= 0 != rSet.Put( SwFmtLayoutSplit( aSplitCB.IsChecked()));
@@ -1816,22 +1816,22 @@ BOOL  SwTextFlowPage::FillItemSet( SfxItemSet& rSet )
     }
 
     if(aTextDirectionLB.GetSelectEntryPos() != aTextDirectionLB.GetSavedValue())
-    {        
+    {
           bModified |= 0 != rSet.Put(
                     SvxFrameDirectionItem(
                         (SvxFrameDirection)(ULONG)aTextDirectionLB.GetEntryData(aTextDirectionLB.GetSelectEntryPos())
                         , FN_TABLE_BOX_TEXTDIRECTION));
     }
-    
+
     if(aVertOrientLB.GetSelectEntryPos() != aVertOrientLB.GetSavedValue())
-    {        
+    {
         USHORT nOrient = USHRT_MAX;
         switch(aVertOrientLB.GetSelectEntryPos())
         {
             case 0 : nOrient = VERT_NONE; break;
             case 1 : nOrient = VERT_CENTER; break;
             case 2 : nOrient = VERT_BOTTOM; break;
-        }            
+        }
         if(nOrient != USHRT_MAX)
             bModified |= 0 != rSet.Put(SfxUInt16Item(FN_TABLE_SET_VERT_ALIGN, nOrient));
     }
@@ -1998,7 +1998,7 @@ void   SwTextFlowPage::Reset( const SfxItemSet& rSet )
         ULONG nDirection = ((const SvxFrameDirectionItem&)rSet.Get(FN_TABLE_BOX_TEXTDIRECTION)).GetValue();
         aTextDirectionLB.SelectEntryPos(aTextDirectionLB.GetEntryPos( (const void*)nDirection ));
     }
-    
+
     if ( rSet.GetItemState(FN_TABLE_SET_VERT_ALIGN) > SFX_ITEM_AVAILABLE )
     {
         USHORT nVert = ((const SfxUInt16Item&)rSet.Get(FN_TABLE_SET_VERT_ALIGN)).GetValue();
