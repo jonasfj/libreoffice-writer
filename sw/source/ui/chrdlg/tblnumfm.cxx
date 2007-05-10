@@ -4,9 +4,9 @@
  *
  *  $RCSfile: tblnumfm.cxx,v $
  *
- *  $Revision: 1.8 $
+ *  $Revision: 1.9 $
  *
- *  last change: $Author: obo $ $Date: 2006-09-16 22:38:55 $
+ *  last change: $Author: kz $ $Date: 2007-05-10 16:14:53 $
  *
  *  The Contents of this file are made available subject to
  *  the terms of GNU Lesser General Public License Version 2.1.
@@ -49,7 +49,7 @@
 //CHINA001 #ifndef _SVX_NUMFMT_HXX
 //CHINA001 #include <svx/numfmt.hxx>
 //CHINA001 #endif
-#define ITEMID_NUMBERINFO SID_ATTR_NUMBERFORMAT_INFO
+
 #ifndef _SVX_NUMINF_HXX
 #include <svx/numinf.hxx>
 #endif
@@ -64,9 +64,9 @@
 #include <chrdlg.hrc>
 #endif
 
-#include <svx/svxdlg.hxx> //CHINA001 
-#include <svx/dialogs.hrc> //CHINA001 
-#include <svtools/itemset.hxx> //CHINA001 
+#include <svx/svxdlg.hxx> //CHINA001
+#include <svx/dialogs.hrc> //CHINA001
+#include <svtools/itemset.hxx> //CHINA001
 #ifndef _SFXTABDLG_HXX
 #include <sfx2/tabdlg.hxx>
 #endif
@@ -92,7 +92,7 @@ SwNumFmtDlg::SwNumFmtDlg(Window* pParent, SfxItemSet& rSet)
         aSet.Put ( SvxNumberInfoItem( (const SvxNumberInfoItem&)pPage->GetItemSet().Get( SID_ATTR_NUMBERFORMAT_INFO )));
         pPage->PageCreated(aSet);
         SetTabPage(pPage);
-    }		
+    }
 }
 
 
