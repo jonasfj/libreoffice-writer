@@ -4,9 +4,9 @@
  *
  *  $RCSfile: wrtw8sty.cxx,v $
  *
- *  $Revision: 1.41 $
+ *  $Revision: 1.42 $
  *
- *  last change: $Author: kz $ $Date: 2007-05-10 16:09:46 $
+ *  last change: $Author: kz $ $Date: 2007-06-20 09:13:37 $
  *
  *  The Contents of this file are made available subject to
  *  the terms of GNU Lesser General Public License Version 2.1.
@@ -1288,6 +1288,9 @@ bool WW8_WrPlcSepx::WriteKFTxt(SwWW8Writer& rWrt)
 
             if( (SwSectionFmt*)0xFFFFFFFF != rSepInfo.pSectionFmt )
             {
+                if (nBreakCode == 0)
+                    bOutPgDscSet = false;
+
                 // Itemset erzeugen, das das PgDesk-AttrSet beerbt:
                 // als Nachkomme wird bei 'deep'-Out_SfxItemSet
                 // auch der Vorfahr abgeklappert
@@ -1314,7 +1317,11 @@ bool WW8_WrPlcSepx::WriteKFTxt(SwWW8Writer& rWrt)
                 // und raus damit ins WW-File
                 const SfxItemSet* pOldI = rWrt.pISet;
                 rWrt.pISet = &aSet;
-                Out_SfxItemSet(aWW8AttrFnTab, rWrt, aSet, true);
+                // --> OD 2007-06-12 #TESTING#
+                // Switch off test on default item values, if page description
+                // set (value of <bOutPgDscSet>) isn't written.
+                Out_SfxItemSet( aWW8AttrFnTab, rWrt, aSet, true, bOutPgDscSet );
+                // <--
 
                 //Cannot export as normal page framedir, as continous sections
                 //cannot contain any grid settings like proper sections
@@ -1333,9 +1340,6 @@ bool WW8_WrPlcSepx::WriteKFTxt(SwWW8Writer& rWrt)
                 }
 
                 rWrt.pISet = pOldI;
-
-                if (nBreakCode == 0)
-                    bOutPgDscSet = false;
             }
         }
 
@@ -1872,7 +1876,7 @@ void WW8_WrPlcSubDoc::WriteGenericPlc( SwWW8Writer& rWrt, BYTE nTTyp,
                     {
                         const String& rStr = aStrArr[i];
                         SwWW8Writer::WriteShort(*rWrt.pTableStrm, rStr.Len());
-                        SwWW8Writer::WriteString16(*rWrt.pTableStrm, rStr, 
+                        SwWW8Writer::WriteString16(*rWrt.pTableStrm, rStr,
                             false);
                     }
                 }
@@ -1947,7 +1951,7 @@ void WW8_WrPlcSubDoc::WriteGenericPlc( SwWW8Writer& rWrt, BYTE nTTyp,
                 SwWW8Writer::WriteLong( *rWrt.pTableStrm, aCps[ i ] );
 
             // n+1-te CP-Pos nach Handbuch
-            SwWW8Writer::WriteLong( *rWrt.pTableStrm, 
+            SwWW8Writer::WriteLong( *rWrt.pTableStrm,
                 rFib.ccpText + rFib.ccpFtn + rFib.ccpHdr + rFib.ccpEdn +
                 rFib.ccpTxbx + rFib.ccpHdrTxbx + 1 );
 
@@ -1958,12 +1962,12 @@ void WW8_WrPlcSubDoc::WriteGenericPlc( SwWW8Writer& rWrt, BYTE nTTyp,
                     const SwPostItField& rPFld = *(SwPostItField*)aCntnt[ i ];
 
                     //aStrArr is sorted
-                    myiter aIter = ::std::lower_bound(aStrArr.begin(), 
+                    myiter aIter = ::std::lower_bound(aStrArr.begin(),
                         aStrArr.end(), rPFld.GetPar1());
                     ASSERT(aIter != aStrArr.end() && *aIter == rPFld.GetPar1(),
                         "Impossible");
                     sal_uInt16 nFndPos = aIter - aStrArr.begin();
-                
+
                     String sAuthor(*aIter);
                     BYTE nNameLen = (BYTE)sAuthor.Len();
                     if (nNameLen > 9)
@@ -1979,7 +1983,7 @@ void WW8_WrPlcSubDoc::WriteGenericPlc( SwWW8Writer& rWrt, BYTE nTTyp,
                         SwWW8Writer::WriteShort(*rWrt.pTableStrm, nNameLen);
                         SwWW8Writer::WriteString16(*rWrt.pTableStrm, sAuthor,
                             false);
-                        SwWW8Writer::FillCount( *rWrt.pTableStrm, 
+                        SwWW8Writer::FillCount( *rWrt.pTableStrm,
                             (9 - nNameLen) * 2 );
 
                     }
