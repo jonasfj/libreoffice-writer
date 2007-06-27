@@ -4,9 +4,9 @@
  *
  *  $RCSfile: txatritr.cxx,v $
  *
- *  $Revision: 1.9 $
+ *  $Revision: 1.10 $
  *
- *  last change: $Author: vg $ $Date: 2007-05-25 13:23:07 $
+ *  last change: $Author: hr $ $Date: 2007-06-27 13:21:35 $
  *
  *  The Contents of this file are made available subject to
  *  the terms of GNU Lesser General Public License Version 2.1.
@@ -178,7 +178,7 @@ sal_Bool SwTxtAttrIterator::Next()
 
                     if( RES_TXTATR_CHARFMT == pHt->Which() )
                     {
-                        sal_uInt16 nWId = bIsUseGetWhichOfScript ? 
+                        sal_uInt16 nWId = bIsUseGetWhichOfScript ?
                                 GetWhichOfScript( nWhichId,
                                                   aSIter.GetCurrScript() ) : nWhichId;
                         pCurItem = &pHt->GetCharFmt().GetCharFmt()->GetAttr(nWId);
@@ -221,7 +221,7 @@ void SwTxtAttrIterator::SearchNextChg()
     }
     if( !pParaItem )
     {
-        nWh = bIsUseGetWhichOfScript ? 
+        nWh = bIsUseGetWhichOfScript ?
                 GetWhichOfScript( nWhichId,
                                   aSIter.GetCurrScript() ) : nWhichId;
         pParaItem = &rTxtNd.GetSwAttrSet().Get( nWh );
@@ -236,7 +236,7 @@ void SwTxtAttrIterator::SearchNextChg()
     {
         if( !nWh )
         {
-            nWh =  bIsUseGetWhichOfScript ? 
+            nWh =  bIsUseGetWhichOfScript ?
                         GetWhichOfScript( nWhichId,
                                           aSIter.GetCurrScript() ) : nWhichId;
         }
