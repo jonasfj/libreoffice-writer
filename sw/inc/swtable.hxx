@@ -4,9 +4,9 @@
  *
  *  $RCSfile: swtable.hxx,v $
  *
- *  $Revision: 1.20 $
+ *  $Revision: 1.21 $
  *
- *  last change: $Author: rt $ $Date: 2007-07-06 12:16:12 $
+ *  last change: $Author: obo $ $Date: 2007-07-18 14:45:01 $
  *
  *  The Contents of this file are made available subject to
  *  the terms of GNU Lesser General Public License Version 2.1.
@@ -135,7 +135,7 @@ protected:
 
 public:
     enum SearchType
-    {	
+    {
         SEARCH_NONE, // Default: expand to rectangle
         SEARCH_ROW,	// row selection
         SEARCH_COL  // column selection
@@ -156,7 +156,7 @@ private:
     SwTable();
     BOOL OldMerge( SwDoc*, const SwSelBoxes&, SwTableBox*, SwUndoTblMerge* );
     BOOL OldSplitRow( SwDoc*, const SwSelBoxes&, USHORT, BOOL );
-    BOOL NewMerge( SwDoc*, const SwSelBoxes&, const SwSelBoxes& rMerged, 
+    BOOL NewMerge( SwDoc*, const SwSelBoxes&, const SwSelBoxes& rMerged,
                    SwTableBox*, SwUndoTblMerge* );
     BOOL NewSplitRow( SwDoc*, const SwSelBoxes&, USHORT, BOOL );
     SwBoxSelection* CollectBoxSelection( const SwPaM& rPam ) const;
@@ -202,14 +202,14 @@ public:
     void SetTabCols( const SwTabCols &rNew, const SwTabCols &rOld,
                      const SwTableBox *pStart, BOOL bCurRowOnly );
 
-// The following functions are for new table model only...                     
+// The following functions are for new table model only...
     void CreateSelection(  const SwPaM& rPam, SwSelBoxes& rBoxes,
         const SearchType eSearchType, bool bProtect ) const;
-    void CreateSelection( const SwNode* pStart, const SwNode* pEnd, 
+    void CreateSelection( const SwNode* pStart, const SwNode* pEnd,
         SwSelBoxes& rBoxes, const SearchType eSearchType, bool bProtect ) const;
     void ExpandSelection( SwSelBoxes& rBoxes ) const;
 
-                     
+
 // The following functions are "pseudo-virtual", i.e. they are different for old and new table model
 // It's not allowed to change the table model after the first call of one of these functions.
 
@@ -220,18 +220,18 @@ public:
         bDontChangeModel = true;
 #endif
         return bNewModel ? NewMerge( pDoc, rBoxes, rMerged, pMergeBox, pUndo ) :
-                           OldMerge( pDoc, rBoxes, pMergeBox, pUndo ); 
+                           OldMerge( pDoc, rBoxes, pMergeBox, pUndo );
     }
     BOOL SplitRow( SwDoc* pDoc, const SwSelBoxes& rBoxes, USHORT nCnt=1,
-                   BOOL bSameHeight = FALSE ) 
+                   BOOL bSameHeight = FALSE )
     {
 #ifndef PRODUCT
         bDontChangeModel = true;
 #endif
         return bNewModel ? NewSplitRow( pDoc, rBoxes, nCnt, bSameHeight ) :
-                           OldSplitRow( pDoc, rBoxes, nCnt, bSameHeight ); 
+                           OldSplitRow( pDoc, rBoxes, nCnt, bSameHeight );
     }
-    bool PrepareMerge( const SwPaM& rPam, SwSelBoxes& rBoxes, 
+    bool PrepareMerge( const SwPaM& rPam, SwSelBoxes& rBoxes,
         SwSelBoxes& rMerged, SwTableBox** ppMergeBox, SwUndoTblMerge* pUndo );
     void ExpandColumnSelection( SwSelBoxes& rBoxes, long &rMin, long &rMax ) const;
     void PrepareDeleteCol( long nMin, long nMax );
@@ -241,15 +241,15 @@ public:
     BOOL InsertRow( SwDoc*, const SwSelBoxes& rBoxes,
                     USHORT nCnt = 1, BOOL bBehind = TRUE );
     BOOL AppendRow( SwDoc* pDoc, USHORT nCnt = 1 );
-    void PrepareDelBoxes( const SwSelBoxes& rBoxes );    
-    BOOL DeleteSel( SwDoc*, const SwSelBoxes& rBoxes, const SwSelBoxes* pMerged, 
+    void PrepareDelBoxes( const SwSelBoxes& rBoxes );
+    BOOL DeleteSel( SwDoc*, const SwSelBoxes& rBoxes, const SwSelBoxes* pMerged,
         SwUndo* pUndo, const BOOL bDelMakeFrms, const BOOL bCorrBorder );
     BOOL SplitCol( SwDoc* pDoc, const SwSelBoxes& rBoxes, USHORT nCnt=1 );
 
     void FindSuperfluousRows( SwSelBoxes& rBoxes )
         { _FindSuperfluousRows( rBoxes, 0, 0 ); }
     void CheckRowSpan( SwTableLinePtr &rpLine, bool bUp ) const;
-    
+
           SwTableSortBoxes& GetTabSortBoxes() 		{ return aSortCntBoxes; }
     const SwTableSortBoxes& GetTabSortBoxes() const { return aSortCntBoxes; }
 
@@ -297,8 +297,6 @@ public:
 
         // Struktur ein wenig aufraeumen
     void GCLines();
-        // BorderLine ein wenig aufraeumen
-    void GCBorderLines();
 
     // returns the table node via aSortCntBoxes or pTableNode
     SwTableNode* GetTableNode() const;
@@ -450,19 +448,19 @@ public:
     inline const Color* GetSaveNumFmtColor() const;
     inline void SetSaveUserColor(const Color* p );
     inline void SetSaveNumFmtColor( const Color* p );
-    
+
     long getRowSpan() const;
     void setRowSpan( long nNewRowSpan );
     bool getDummyFlag() const;
     void setDummyFlag( bool bDummy );
-    
+
     SwTableBox& FindStartOfRowSpan( const SwTable&, USHORT nMaxStep = USHRT_MAX );
-    const SwTableBox& FindStartOfRowSpan( const SwTable& rTable, 
+    const SwTableBox& FindStartOfRowSpan( const SwTable& rTable,
         USHORT nMaxStep = USHRT_MAX ) const
         { return const_cast<SwTableBox*>(this)->FindStartOfRowSpan( rTable, nMaxStep ); }
 
     SwTableBox& FindEndOfRowSpan( const SwTable&, USHORT nMaxStep = USHRT_MAX );
-    const SwTableBox& FindEndOfRowSpan( const SwTable& rTable, 
+    const SwTableBox& FindEndOfRowSpan( const SwTable& rTable,
         USHORT nMaxStep = USHRT_MAX ) const
         { return const_cast<SwTableBox*>(this)->FindEndOfRowSpan( rTable, nMaxStep ); }
 };
