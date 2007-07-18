@@ -4,9 +4,9 @@
  *
  *  $RCSfile: txtedt.cxx,v $
  *
- *  $Revision: 1.80 $
+ *  $Revision: 1.81 $
  *
- *  last change: $Author: ihi $ $Date: 2007-07-12 10:44:05 $
+ *  last change: $Author: obo $ $Date: 2007-07-18 09:50:54 $
  *
  *  The Contents of this file are made available subject to
  *  the terms of GNU Lesser General Public License Version 2.1.
@@ -411,7 +411,7 @@ static bool lcl_HaveCommonAttributes( IStyleAccess& rStyleAccess,
     bool bRet = false;
 
     SfxItemSet* pNewSet = 0;
-    
+
     if ( !pSet1 )
     {
         ASSERT( nWhichId, "lcl_HaveCommonAttributes not used correctly" )
@@ -433,10 +433,10 @@ static bool lcl_HaveCommonAttributes( IStyleAccess& rStyleAccess,
                     pNewSet = rSet2.Clone( TRUE );
                 pNewSet->ClearItem( pItem->Which() );
             }
-    
+
             if( aIter.IsAtEnd() )
                 break;
-    
+
             pItem = aIter.NextItem();
         }
     }
@@ -1281,7 +1281,7 @@ SwRect SwTxtFrm::_AutoSpell( const SwCntntNode* pActNode, const SwViewOption& rV
             BOOL bSpell = TRUE;
             BOOL bSoft = FALSE;
             bSpell = xSpell.is() ? xSpell->hasLanguage( eActLang ) : FALSE;
-            if( bSpell && rWord.Len() > 1 )
+            if( bSpell && rWord.Len() > 0 )
             {
                 // check for: bAlter => xHyphWord.is()
                 DBG_ASSERT(!bSpell || xSpell.is(), "NULL pointer");
