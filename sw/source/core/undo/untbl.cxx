@@ -4,9 +4,9 @@
  *
  *  $RCSfile: untbl.cxx,v $
  *
- *  $Revision: 1.32 $
+ *  $Revision: 1.33 $
  *
- *  last change: $Author: obo $ $Date: 2007-07-18 14:36:51 $
+ *  last change: $Author: rt $ $Date: 2007-07-26 08:21:08 $
  *
  *  The Contents of this file are made available subject to
  *  the terms of GNU Lesser General Public License Version 2.1.
@@ -471,7 +471,7 @@ SwTblToTxtSave::SwTblToTxtSave( SwDoc& rDoc, ULONG nNd, ULONG nEndIdx, xub_StrLe
             pHstry->CopyAttr( pNd->GetpSwpHints(), nNd, 0,
                         pNd->GetTxt().Len(), FALSE );
         if( pNd->HasSwAttrSet() )
-            pHstry->CopyFmtAttr( *pNd->GetpSwAttrSet(), nNd );
+            pHstry->CopyFmtAttr( *pNd->GetpSwAttrSet(), nNd, rDoc );
 
         if( !pHstry->Count() )
             delete pHstry, pHstry = 0;
@@ -1451,7 +1451,7 @@ void _SaveBox::CreateNew( SwTable& rTbl, SwTableLine& rParent, _SaveTable& rSTbl
         pFmt->Add( pBox );
         if( !pOld->GetDepends() )
             delete pOld;
-        
+
         pBox->setRowSpan( nRowSpan );
 
         SwTableBoxes* pTBoxes = &pBox->GetUpper()->GetTabBoxes();
@@ -1819,7 +1819,7 @@ void SwUndoTblNdsChg::Undo( SwUndoIter& rUndoIter )
     SwTableFmlUpdate aMsgHnt( &pTblNd->GetTable() );
     aMsgHnt.eFlags = TBL_BOXPTR;
     rDoc.UpdateTblFlds( &aMsgHnt );
-    
+
     CHECK_TABLE( pTblNd->GetTable() )
 
     _FndBox aTmpBox( 0, 0 );
@@ -2177,8 +2177,8 @@ DUMPDOC( &rDoc, String( "d:\\tmp\\tab_") + String( aNewSttNds.Count() - i ) +
 
             SwTableBoxes* pTBoxes = &pBox->GetUpper()->GetTabBoxes();
             pTBoxes->Remove( pTBoxes->C40_GETPOS( SwTableBox, pBox ) );
-    
-    
+
+
             // Indizies aus dem Bereich loeschen
             {
                 SwNodeIndex aIdx( *pBox->GetSttNd() );
@@ -2186,7 +2186,7 @@ DUMPDOC( &rDoc, String( "d:\\tmp\\tab_") + String( aNewSttNds.Count() - i ) +
                             SwNodeIndex( *aIdx.GetNode().EndOfSectionNode() ),
                             SwPosition( aIdx, SwIndex( 0, 0 )), TRUE );
             }
-    
+
             delete pBox;
             rDoc.DeleteSection( rDoc.GetNodes()[ nIdx ] );
         }
@@ -2292,8 +2292,8 @@ void SwUndoTblMerge::MoveBoxCntnt( SwDoc* pDoc, SwNodeRange& rRg, SwNodeIndex& r
 {
     SwNodeIndex aTmp( rRg.aStart, -1 ), aTmp2( rPos, -1 );
     SwUndoMove* pUndo = new SwUndoMove( pDoc, rRg, rPos );
-    pDoc->Move( rRg, rPos, pSaveTbl->IsNewModel() ? 
-        IDocumentContentOperations::DOC_NO_DELFRMS : 
+    pDoc->Move( rRg, rPos, pSaveTbl->IsNewModel() ?
+        IDocumentContentOperations::DOC_NO_DELFRMS :
         IDocumentContentOperations::DOC_MOVEDEFAULT );
     aTmp++;
     aTmp2++;
@@ -2330,7 +2330,7 @@ void SwUndoTblMerge::SaveCollection( const SwTableBox& rBox )
 
     pHistory->Add( pCNd->GetFmtColl(), aIdx.GetIndex(), pCNd->GetNodeType());
     if( pCNd->HasSwAttrSet() )
-        pHistory->CopyFmtAttr( *pCNd->GetpSwAttrSet(), aIdx.GetIndex() );
+        pHistory->CopyFmtAttr( *pCNd->GetpSwAttrSet(), aIdx.GetIndex(), *(pCNd->GetDoc()) );
 }
 
 /*  */
@@ -2360,7 +2360,7 @@ SwUndoTblNumFmt::SwUndoTblNumFmt( const SwTableBox& rBox,
                             pTNd->GetTxt().Len(), TRUE );
 
         if( pTNd->HasSwAttrSet() )
-            pHistory->CopyFmtAttr( *pTNd->GetpSwAttrSet(), nNdPos );
+            pHistory->CopyFmtAttr( *pTNd->GetpSwAttrSet(), nNdPos, *pDoc );
 
         aStr = pTNd->GetTxt();
         if( pTNd->GetpSwpHints() )
