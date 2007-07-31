@@ -4,9 +4,9 @@
  *
  *  $RCSfile: tblsel.cxx,v $
  *
- *  $Revision: 1.46 $
+ *  $Revision: 1.47 $
  *
- *  last change: $Author: vg $ $Date: 2007-05-22 16:28:13 $
+ *  last change: $Author: hr $ $Date: 2007-07-31 17:41:34 $
  *
  *  The Contents of this file are made available subject to
  *  the terms of GNU Lesser General Public License Version 2.1.
@@ -309,12 +309,13 @@ void GetTblSel( const SwCursor& rCrsr, SwSelBoxes& rBoxes,
         const SwTable& rTbl = pTblNd->GetTable();
         const SwTableLines& rLines = rTbl.GetTabLines();
 
-#if OSL_DEBUG_LEVEL > 1
-        SwNode* pTmpNode = rCrsr.GetNode( FALSE );
-        ULONG nTmpStart = pTmpNode->StartOfSectionIndex();
-#endif
-        const SwTableLine* pLine =
-            rTbl.GetTblBox( rCrsr.GetNode( FALSE )->StartOfSectionIndex() )->GetUpper();
+        const SwNode* pMarkNode = rCrsr.GetNode( FALSE );
+        const ULONG nMarkSectionStart = pMarkNode->StartOfSectionIndex();
+        const SwTableBox* pMarkBox = rTbl.GetTblBox( nMarkSectionStart );
+
+        ASSERT( pMarkBox, "Point in table, mark outside?" )
+
+        const SwTableLine* pLine = pMarkBox ? pMarkBox->GetUpper() : 0;
         USHORT nSttPos = rLines.GetPos( pLine );
         ASSERT( USHRT_MAX != nSttPos, "Wo ist meine Zeile in der Tabelle?" );
         pLine = rTbl.GetTblBox( rCrsr.GetNode( TRUE )->StartOfSectionIndex() )->GetUpper();
@@ -353,10 +354,10 @@ void GetTblSel( const SwCursor& rCrsr, SwSelBoxes& rBoxes,
             aMkPos = pShCrsr->GetMkPos();
         }
         const SwCntntNode *pCntNd = rCrsr.GetCntntNode();
-        const SwLayoutFrm *pStart = pCntNd ? 
+        const SwLayoutFrm *pStart = pCntNd ?
             pCntNd->GetFrm(	&aPtPos )->GetUpper() : 0;
         pCntNd = rCrsr.GetCntntNode(FALSE);
-        const SwLayoutFrm *pEnd = pCntNd ? 
+        const SwLayoutFrm *pEnd = pCntNd ?
             pCntNd->GetFrm(	&aMkPos )->GetUpper() : 0;
         if( pStart && pEnd )
             GetTblSel( pStart, pEnd, rBoxes, 0, eSearchType );
