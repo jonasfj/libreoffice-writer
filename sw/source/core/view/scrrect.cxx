@@ -4,9 +4,9 @@
  *
  *  $RCSfile: scrrect.cxx,v $
  *
- *  $Revision: 1.19 $
+ *  $Revision: 1.20 $
  *
- *  last change: $Author: hr $ $Date: 2007-06-26 11:57:41 $
+ *  last change: $Author: hr $ $Date: 2007-07-31 17:42:46 $
  *
  *  The Contents of this file are made available subject to
  *  the terms of GNU Lesser General Public License Version 2.1.
@@ -192,7 +192,7 @@ void ViewShell::Scroll()
                         // fully buffered overlay.
                         const Rectangle aSourceRect(aAlignedScrollRect.SVRect());
                         const Rectangle aTargetRect(
-                            aSourceRect.Left() - rScroll.GetOffs(), aSourceRect.Top(), 
+                            aSourceRect.Left() - rScroll.GetOffs(), aSourceRect.Top(),
                             aSourceRect.Right() - rScroll.GetOffs(), aSourceRect.Bottom());
 
                         if(GetWin())
@@ -200,11 +200,11 @@ void ViewShell::Scroll()
                             // SCROLL_NOWINDOWINVALIDATE okay since AddPaintRect below adds the to-be-invalidated region
                             GetWin()->Scroll( -rScroll.GetOffs(), 0, aSourceRect, SCROLL_CHILDREN | SCROLL_NOWINDOWINVALIDATE );
                         }
-                        
+
                         // #i68597# if buffered overlay, the buffered content needs to be scrolled directly
                         {
                             SdrPaintWindow* pPaintWindow = GetDrawView()->GetPaintWindow(0);
-                            
+
                             if(pPaintWindow)
                             {
                                 sdr::overlay::OverlayManager* pOverlayManager = pPaintWindow->GetOverlayManager();
@@ -233,13 +233,13 @@ void ViewShell::Scroll()
                         // OD 18.02.2003 #107562# - use aligned rectangle for scrolling
                         SwRect aAlignedScrollRect( aRectangle );
                         ::SwAlignRect( aAlignedScrollRect, this );
-                        
+
                         // #i68597# when scrolling, let DrawingLayer know about refreshed areas,
                         // even when no DL objects are in the area. This is needed to allow
                         // fully buffered overlay.
                         const Rectangle aSourceRect(aAlignedScrollRect.SVRect());
                         const Rectangle aTargetRect(
-                            aSourceRect.Left(), aSourceRect.Top() + rScroll.GetOffs(), 
+                            aSourceRect.Left(), aSourceRect.Top() + rScroll.GetOffs(),
                             aSourceRect.Right(), aSourceRect.Bottom() + rScroll.GetOffs());
 
                         if(GetWin())
@@ -247,11 +247,11 @@ void ViewShell::Scroll()
                             // SCROLL_NOWINDOWINVALIDATE okay since AddPaintRect below adds the to-be-invalidated region
                             GetWin()->Scroll( 0, rScroll.GetOffs(), aSourceRect, SCROLL_CHILDREN | SCROLL_NOWINDOWINVALIDATE );
                         }
-                        
+
                         // #i68597# if buffered overlay, the buffered content needs to be scrolled directly
                         {
                             SdrPaintWindow* pPaintWindow = GetDrawView()->GetPaintWindow(0);
-                            
+
                             if(pPaintWindow)
                             {
                                 sdr::overlay::OverlayManager* pOverlayManager = pPaintWindow->GetOverlayManager();
@@ -823,7 +823,7 @@ void SwViewImp::_RefreshScrolledArea( const SwRect &rRect )
 
         GetShell()->pOut = pOld;
         delete pVout;
-        
+
         // #i72754# end Pre/PostPaint encapsulation when pOut is back and content is painted
         GetShell()->DLPostPaint2();
     }
@@ -848,6 +848,17 @@ void SwViewImp::_RefreshScrolledArea( const SwRect &rRect )
 
 void SwViewImp::RefreshScrolledArea( SwRect &rRect )
 {
+    // --> OD 2007-07-24 #123003# - make code robust
+    // avoid recursive call
+    static bool bRunning( false );
+
+    if ( bRunning )
+    {
+        ASSERT( false, "<SwViewImp::RefreshScrolledArea(..)> - recursive method call - please inform OD" );
+        return;
+    }
+    // <--
+
     //1. Wird auch von der CrsrShell gerufen, um ggf. den Bereich, in den der
     //Crsr gesetzt wird (Absatz, ganze Zeile bei einer Tabelle) aufzufrischen.
     //Allerdings kann es dann natuerlich sein, dass das Rechteck ueberhaupt
@@ -859,6 +870,10 @@ void SwViewImp::RefreshScrolledArea( SwRect &rRect )
     {
         return;
     }
+
+    // --> OD 2007-07-27 #123003#
+    bRunning = true;
+    // <--
 
     if( pScrolledArea && pScrolledArea->Count() &&
         !( ( GetShell()->IsA( TYPE(SwCrsrShell) ) &&
@@ -928,6 +943,10 @@ void SwViewImp::RefreshScrolledArea( SwRect &rRect )
         SetNextScroll();
         aScrollTimer.Stop();
     }
+
+    // --> OD 2007-07-24 #123003#
+    bRunning = false;
+    // <--
 }
 
 SwStripes& SwStripes::Plus( const SwStripes& rOther, BOOL bVert )
