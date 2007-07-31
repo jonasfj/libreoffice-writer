@@ -4,9 +4,9 @@
  *
  *  $RCSfile: docfld.cxx,v $
  *
- *  $Revision: 1.28 $
+ *  $Revision: 1.29 $
  *
- *  last change: $Author: vg $ $Date: 2006-09-27 10:51:50 $
+ *  last change: $Author: hr $ $Date: 2007-07-31 17:40:23 $
  *
  *  The Contents of this file are made available subject to
  *  the terms of GNU Lesser General Public License Version 2.1.
@@ -347,9 +347,9 @@ void SwDoc::RemoveFldType(USHORT nFld)
     }
 }
 
-const SwFldTypes* SwDoc::GetFldTypes() const 
-{ 
-    return pFldTypes; 
+const SwFldTypes* SwDoc::GetFldTypes() const
+{
+    return pFldTypes;
 }
 
 /*--------------------------------------------------------------------
@@ -357,7 +357,7 @@ const SwFldTypes* SwDoc::GetFldTypes() const
  --------------------------------------------------------------------*/
 
 SwFieldType* SwDoc::GetFldType( USHORT nResId, const String& rName,
-         bool bDbFieldMatching // used in some UNO calls for RES_DBFLD 
+         bool bDbFieldMatching // used in some UNO calls for RES_DBFLD
                                    // to use different string matching code
                                    // #i51815#
          ) const
@@ -796,33 +796,33 @@ void SwDoc::GCFieldTypes()
 }
 
 void SwDoc::LockExpFlds()
-{ 
-    ++nLockExpFld; 
+{
+    ++nLockExpFld;
 }
 
 void SwDoc::UnlockExpFlds()
-{ 
-    if( nLockExpFld ) 
-        --nLockExpFld; 
+{
+    if( nLockExpFld )
+        --nLockExpFld;
 }
 
-bool SwDoc::IsExpFldsLocked() const		
-{ 
-    return 0 != nLockExpFld; 
+bool SwDoc::IsExpFldsLocked() const
+{
+    return 0 != nLockExpFld;
 }
 
 SwDocUpdtFld& SwDoc::GetUpdtFlds() const
-{ 
+{
     return *pUpdtFlds;
 }
 
-bool SwDoc::IsNewFldLst() const 
-{ 
-    return mbNewFldLst; 
+bool SwDoc::IsNewFldLst() const
+{
+    return mbNewFldLst;
 }
 
-void SwDoc::SetNewFldLst(bool bFlag) 
-{ 
+void SwDoc::SetNewFldLst(bool bFlag)
+{
     mbNewFldLst = bFlag;
 }
 
@@ -1416,7 +1416,7 @@ void SwDoc::UpdateExpFlds( SwTxtFld* pUpdtFld, bool bUpdRefFlds )
 //			if( pGFld->IsInBodyTxt() )
             SwSbxValue aValue = aCalc.Calculate(
                                         pSect->GetCondition() );
-            if(!aValue.IsVoidValue())                
+            if(!aValue.IsVoidValue())
                 pSect->SetCondHidden( aValue.GetBool() );
             continue;
         }
@@ -1439,7 +1439,7 @@ void SwDoc::UpdateExpFlds( SwTxtFld* pUpdtFld, bool bUpdRefFlds )
             SwSbxValue aValue = aCalc.Calculate( pHFld->GetPar1() );
             sal_Bool bValue = !aValue.GetBool();
             if(!aValue.IsVoidValue())
-            {        
+            {
                 pHFld->SetValue( bValue );
                 // Feld Evaluieren
                 pHFld->Evaluate(this);
@@ -2396,7 +2396,7 @@ void SwDocUpdtFld::_MakeFldList( SwDoc& rDoc, int eGetMode )
         for( n = rArr.Count(); n; )
         {
             SwSection* pSect = rArr[ --n ]->GetSection();
-            if( pSect->IsHidden() && pSect->GetCondition().Len() &&
+            if( pSect && pSect->IsHidden() && pSect->GetCondition().Len() &&
                 0 != ( pSectNd = pSect->GetFmt()->GetSectionNode() ))
             {
                 ULONG nIdx = pSectNd->GetIndex();
