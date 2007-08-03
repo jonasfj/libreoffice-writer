@@ -4,9 +4,9 @@
  *
  *  $RCSfile: frmpage.cxx,v $
  *
- *  $Revision: 1.62 $
+ *  $Revision: 1.63 $
  *
- *  last change: $Author: ihi $ $Date: 2007-07-12 10:50:42 $
+ *  last change: $Author: hr $ $Date: 2007-08-03 13:41:17 $
  *
  *  The Contents of this file are made available subject to
  *  the terms of GNU Lesser General Public License Version 2.1.
@@ -834,7 +834,7 @@ void SwFrmPage::EnableGraficMode( void )
 {
     // #i39692# mustn't be called more than once
     if(!aRealSizeBT.IsVisible())
-    {       
+    {
         long nOffset1 = aRelWidthCB.GetPosPixel().Y() - aAutoWidthCB.GetPosPixel().Y();
         long nOffset2 = nOffset1 + aRelHeightCB.GetPosPixel().Y() - aAutoHeightCB.GetPosPixel().Y();
 
@@ -936,23 +936,23 @@ void SwFrmPage::Reset( const SfxItemSet &rSet )
     aHeightED.SetBaseValue( aHeightED.Normalize(aGrfSize.Height()), FUNIT_TWIP );
     //the available space is not yet known so the RefValue has to be calculated from size and relative size values
     //this is needed only if relative values are already set
-    
+
     const SwFmtFrmSize& rFrmSize = (const SwFmtFrmSize&)rSet.Get(RES_FRM_SIZE);
-    
+
     if (rFrmSize.GetWidthPercent() != 0xff && rFrmSize.GetWidthPercent() != 0)
     {
         //calculate the rerference value from the with and relative width values
         sal_Int32 nSpace = rFrmSize.GetWidth() * 100 / rFrmSize.GetWidthPercent();
         aWidthED. SetRefValue( nSpace );
     }
-    
+
     if (rFrmSize.GetHeightPercent() != 0xff && rFrmSize.GetHeightPercent() != 0)
     {
         //calculate the rerference value from the with and relative width values
         sal_Int32 nSpace = rFrmSize.GetHeight() * 100 / rFrmSize.GetHeightPercent();
-        aHeightED.SetRefValue( nSpace );  
+        aHeightED.SetRefValue( nSpace );
     }
-    
+
     // Allgemeiner Initialisierungteil
     switch(rAnchor.GetAnchorId())
     {
@@ -2415,7 +2415,7 @@ void SwFrmPage::SetFormatUsed(BOOL bFmt)
 
 SwGrfExtPage::SwGrfExtPage(Window *pParent, const SfxItemSet &rSet) :
     SfxTabPage( pParent, SW_RES(TP_GRF_EXT), rSet ),
-    aBmpWin					(this, WN_BMP, Graphic(), Bitmap(SW_RES(BMP_EXAMPLE)) ),
+    aBmpWin                 (this, WN_BMP, Graphic(), BitmapEx(SW_RES(BMP_EXAMPLE)), BitmapEx(SW_RES(BMP_EXAMPLE_HC)) ),
     aConnectFL              (this, SW_RES( FL_CONNECT )),
     aConnectFT      		(this, SW_RES( FT_CONNECT )),
     aConnectED				(this, SW_RES( ED_CONNECT )),
@@ -2432,6 +2432,7 @@ SwGrfExtPage::SwGrfExtPage(Window *pParent, const SfxItemSet &rSet) :
     pGrfDlg( 0 )
 {
     FreeResource();
+
     SetExchangeSupport();
     aMirrorHorzBox.SetClickHdl( LINK(this, SwGrfExtPage, MirrorHdl));
     aMirrorVertBox.SetClickHdl( LINK(this, SwGrfExtPage, MirrorHdl));
@@ -2694,11 +2695,12 @@ IMPL_LINK( SwGrfExtPage, MirrorHdl, CheckBox *, EMPTYARG )
     Beschreibung: BeispielWindow
  --------------------------------------------------------------------*/
 
-BmpWindow::BmpWindow(Window* pPar, USHORT nId,
-                    const Graphic& rGraphic, const Bitmap& rBmp) :
+BmpWindow::BmpWindow( Window* pPar, USHORT nId,
+                        const Graphic& rGraphic, const BitmapEx& rBmp, const BitmapEx& rBmpHC ) :
     Window(pPar, SW_RES(nId)),
     aGraphic(rGraphic),
     aBmp(rBmp),
+    aBmpHC(rBmpHC),
     bHorz(FALSE),
     bVert(FALSE),
     bGraphic(FALSE),
@@ -2740,10 +2742,14 @@ void BmpWindow::Paint( const Rectangle& )
         aPntPos.X()--;
         aPntSz.Width()  *= -1;
     }
-    if(bGraphic)
-        aGraphic.Draw(this, aPntPos, aPntSz);
+
+    if ( bGraphic )
+        aGraphic.Draw( this, aPntPos, aPntSz );
     else
-        DrawBitmap( aPntPos, aPntSz, aBmp );
+    {
+        bool bIsDark = ( GetSettings().GetStyleSettings().GetWindowColor().IsDark() != FALSE );
+        DrawBitmapEx( aPntPos, aPntSz, bIsDark ? aBmpHC : aBmp );
+    }
 }
 
 BmpWindow::~BmpWindow()
@@ -2903,7 +2909,7 @@ IMPL_LINK( SwFrmURLPage, InsertFileHdl, PushButton *, pBtn )
     uno::Reference < ui::dialogs::XFilePicker > xFP = aDlgHelper.GetFilePicker();
 
     try
-    {        
+    {
         String sTemp(aURLED.GetText());
         if(sTemp.Len())
             xFP->setDisplayDirectory(sTemp);
@@ -2911,7 +2917,7 @@ IMPL_LINK( SwFrmURLPage, InsertFileHdl, PushButton *, pBtn )
     catch( const uno::Exception& rEx )
     {
         rEx;
-    }            
+    }
     if( aDlgHelper.Execute() == ERRCODE_NONE )
     {
         aURLED.SetText( xFP->getFiles().getConstArray()[0] );
