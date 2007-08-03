@@ -4,9 +4,9 @@
  *
  *  $RCSfile: frmpage.hrc,v $
  *
- *  $Revision: 1.9 $
+ *  $Revision: 1.10 $
  *
- *  last change: $Author: rt $ $Date: 2005-09-09 07:51:26 $
+ *  last change: $Author: hr $ $Date: 2007-08-03 13:41:31 $
  *
  *  The Contents of this file are made available subject to
  *  the terms of GNU Lesser General Public License Version 2.1.
@@ -34,7 +34,7 @@
  ************************************************************************/
 
 #include <svtools/controldims.hrc>
- 
+
 #define RB_ANCHOR_PAGE			1
 #define RB_ANCHOR_PARA          2
 #define RB_ANCHOR_AT_CHAR       3
@@ -113,9 +113,10 @@
 #define ED_URL         			59
 
 #define BMP_EXAMPLE				62
-#define RB_MIRROR_ALL_PAGES     63
-#define RB_MIRROR_LEFT_PAGES    64
-#define RB_MIRROR_RIGHT_PAGES   65
+#define BMP_EXAMPLE_HC          63
+#define RB_MIRROR_ALL_PAGES     64
+#define RB_MIRROR_LEFT_PAGES    65
+#define RB_MIRROR_RIGHT_PAGES   66
 
 #define FL_HYPERLINK                    94
 #define FT_FRAME                95
