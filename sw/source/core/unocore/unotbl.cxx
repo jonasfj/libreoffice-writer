@@ -4,9 +4,9 @@
  *
  *  $RCSfile: unotbl.cxx,v $
  *
- *  $Revision: 1.107 $
+ *  $Revision: 1.108 $
  *
- *  last change: $Author: obo $ $Date: 2007-07-18 14:29:18 $
+ *  last change: $Author: ihi $ $Date: 2007-08-17 14:00:09 $
  *
  *  The Contents of this file are made available subject to
  *  the terms of GNU Lesser General Public License Version 2.1.
@@ -268,7 +268,7 @@ void lcl_SetSpecialProperty(SwFrmFmt* pFmt, const SfxItemPropertyMap* pMap, cons
     switch(pMap->nWID)
     {
         case  FN_TABLE_HEADLINE_REPEAT:
-        case  FN_TABLE_HEADLINE_COUNT: 
+        case  FN_TABLE_HEADLINE_COUNT:
         {
             SwTable* pTable = SwTable::FindTable( pFmt );
             {
@@ -276,7 +276,7 @@ void lcl_SetSpecialProperty(SwFrmFmt* pFmt, const SfxItemPropertyMap* pMap, cons
                 if( pMap->nWID == FN_TABLE_HEADLINE_REPEAT)
                 {
                     sal_Bool bVal = *(sal_Bool*)aValue.getValue();
-                    pFmt->GetDoc()->SetRowsToRepeat( *pTable, bVal ? 1 : 0 );  
+                    pFmt->GetDoc()->SetRowsToRepeat( *pTable, bVal ? 1 : 0 );
                 }
                 else
                 {
@@ -284,7 +284,7 @@ void lcl_SetSpecialProperty(SwFrmFmt* pFmt, const SfxItemPropertyMap* pMap, cons
                     aValue >>= nRepeat;
                     if( nRepeat >= 0 && nRepeat < USHRT_MAX )
                         pFmt->GetDoc()->SetRowsToRepeat( *pTable, (USHORT) nRepeat );
-                }    
+                }
             }
         }
         break;
@@ -351,13 +351,13 @@ uno::Any lcl_GetSpecialProperty(SwFrmFmt* pFmt, const SfxItemPropertyMap* pMap )
     switch(pMap->nWID)
     {
         case  FN_TABLE_HEADLINE_REPEAT:
-        case  FN_TABLE_HEADLINE_COUNT: 
+        case  FN_TABLE_HEADLINE_COUNT:
         {
             SwTable* pTable = SwTable::FindTable( pFmt );
             USHORT nRepeat = pTable->GetRowsToRepeat();
             if(pMap->nWID == FN_TABLE_HEADLINE_REPEAT)
             {
-                BOOL bTemp = nRepeat > 0;  
+                BOOL bTemp = nRepeat > 0;
                 aRet.setValue(&bTemp, ::getCppuBooleanType());
             }
             else
@@ -496,7 +496,9 @@ void lcl_GetCellPosition( const String &rCellName,
             }
         }
     }
+#if OSL_DEBUG_LEVEL > 1
     DBG_ASSERT( rColumn != -1 && rRow != -1, "failed to get column or row index" );
+#endif
 }
 
 
