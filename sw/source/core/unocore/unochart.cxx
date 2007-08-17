@@ -4,9 +4,9 @@
  *
  *  $RCSfile: unochart.cxx,v $
  *
- *  $Revision: 1.7 $
+ *  $Revision: 1.8 $
  *
- *  last change: $Author: hr $ $Date: 2007-08-02 13:57:30 $
+ *  last change: $Author: ihi $ $Date: 2007-08-17 13:59:52 $
  *
  *  The Contents of this file are made available subject to
  *  the terms of GNU Lesser General Public License Version 2.1.
@@ -261,7 +261,7 @@ sal_Bool FillRangeDescriptor(
         SwRangeDescriptor &rDesc,
         const String &rCellRangeName )
 {
-    xub_StrLen nToken = STRING_NOTFOUND == rCellRangeName.Search('.') ? 0 : 1; 
+    xub_StrLen nToken = STRING_NOTFOUND == rCellRangeName.Search('.') ? 0 : 1;
     String aCellRangeNoTableName( rCellRangeName.GetToken( nToken, '.' ) );
     String aTLName( aCellRangeNoTableName.GetToken(0, ':') );  // name of top left cell
     String aBRName( aCellRangeNoTableName.GetToken(1, ':') );  // name of bottom right cell
@@ -473,7 +473,11 @@ static void GetFormatAndCreateCursorFromRangeRep(
             SwTable *pTable = pTblFmt ? SwTable::FindTable( pTblFmt ) : 0;
             // create new SwUnoCrsr spanning the specified range
             //! see also SwXTextTable::GetRangeByName
-            const SwTableBox* pTLBox = pTable ? pTable->GetTblBox( aStartCell ) : 0;
+            // --> OD 2007-08-03 #i80314#
+            // perform validation check. Thus, pass <true> as 2nd parameter to <SwTable::GetTblBox(..)>
+            const SwTableBox* pTLBox =
+                            pTable ? pTable->GetTblBox( aStartCell, true ) : 0;
+            // <--
             if(pTLBox)
             {
                 // hier muessen die Actions aufgehoben werden
@@ -484,7 +488,10 @@ static void GetFormatAndCreateCursorFromRangeRep(
                 SwUnoCrsr* pUnoCrsr = pTblFmt->GetDoc()->CreateUnoCrsr(aPos, sal_True);
                 pUnoCrsr->Move( fnMoveForward, fnGoNode );
                 pUnoCrsr->SetRemainInSection( sal_False );
-                const SwTableBox* pBRBox = pTable->GetTblBox( aEndCell );
+                // --> OD 2007-08-03 #i80314#
+                // perform validation check. Thus, pass <true> as 2nd parameter to <SwTable::GetTblBox(..)>
+                const SwTableBox* pBRBox = pTable->GetTblBox( aEndCell, true );
+                // <--
                 if(pBRBox)
                 {
                     pUnoCrsr->SetMark();
@@ -614,8 +621,8 @@ SwChartDataProvider::~SwChartDataProvider()
 {
 }
 
-uno::Reference< chart2::data::XDataSource > SwChartDataProvider::Impl_createDataSource( 
-        const uno::Sequence< beans::PropertyValue >& rArguments, sal_Bool bTestOnly ) 
+uno::Reference< chart2::data::XDataSource > SwChartDataProvider::Impl_createDataSource(
+        const uno::Sequence< beans::PropertyValue >& rArguments, sal_Bool bTestOnly )
     throw (lang::IllegalArgumentException, uno::RuntimeException)
 {
     vos::OGuard aGuard( Application::GetSolarMutex() );
@@ -745,7 +752,7 @@ uno::Reference< chart2::data::XDataSource > SwChartDataProvider::Impl_createData
     // get table format for that single table from above
     SwFrmFmt    *pTblFmt  = 0;      // pointer to table format
     SwUnoCrsr   *pUnoCrsr = 0;      // here required to check if the cells in the range do actually exist
-    std::auto_ptr< SwUnoCrsr > pAuto( pUnoCrsr );  // to end lifetime of object pointed to by pUnoCrsr 
+    std::auto_ptr< SwUnoCrsr > pAuto( pUnoCrsr );  // to end lifetime of object pointed to by pUnoCrsr
     if (aSubRanges.getLength() > 0)
         GetFormatAndCreateCursorFromRangeRep( pDoc, pSubRanges[0], &pTblFmt, &pUnoCrsr );
     if (!pTblFmt || !pUnoCrsr)
@@ -783,7 +790,7 @@ uno::Reference< chart2::data::XDataSource > SwChartDataProvider::Impl_createData
                 lcl_GetCellPosition( aEndCell,   nEndCol,   nEndRow );
                 DBG_ASSERT( nStartRow <= nEndRow && nStartCol <= nEndCol,
                         "cell range not normalized");
-                
+
                 // test if the ranges span more than the available cells
                 if( nStartRow < 0 || nEndRow >= nRows ||
                     nStartCol < 0 || nEndCol >= nCols )
@@ -1029,9 +1036,9 @@ uno::Reference< chart2::data::XDataSource > SwChartDataProvider::Impl_createData
     }
 
     return xRes;
-}    
+}
 
-sal_Bool SAL_CALL SwChartDataProvider::createDataSourcePossible( 
+sal_Bool SAL_CALL SwChartDataProvider::createDataSourcePossible(
         const uno::Sequence< beans::PropertyValue >& rArguments )
     throw (uno::RuntimeException)
 {
@@ -1045,7 +1052,7 @@ sal_Bool SAL_CALL SwChartDataProvider::createDataSourcePossible(
     catch (lang::IllegalArgumentException &)
     {
         bPossible = sal_False;
-    }    
+    }
 
     return bPossible;
 }
@@ -1060,19 +1067,19 @@ uno::Reference< chart2::data::XDataSource > SAL_CALL SwChartDataProvider::create
 
 ////////////////////////////////////////////////////////////
 // SwChartDataProvider::GetBrokenCellRangeForExport
-// 
+//
 // fix for #i79009
 // we need to return a property that has the same value as the property
 // 'CellRangeRepresentation' but for all rows which are increased by one.
 // E.g. Table1:A1:D5 -> Table1:A2:D6
-// Since the problem is only for old charts which did not support multiple 
+// Since the problem is only for old charts which did not support multiple
 // we do not need to provide that property/string if the 'CellRangeRepresentation'
 // contains multiple ranges.
-OUString SwChartDataProvider::GetBrokenCellRangeForExport( 
+OUString SwChartDataProvider::GetBrokenCellRangeForExport(
     const OUString &rCellRangeRepresentation )
 {
     OUString aRes;
-    
+
     // check that we do not have multiple ranges
     if (-1 == rCellRangeRepresentation.indexOf( ';' ))
     {
@@ -1083,7 +1090,7 @@ OUString SwChartDataProvider::GetBrokenCellRangeForExport(
         sal_Int32 nStartCol = -1, nStartRow = -1, nEndCol = -1, nEndRow = -1;
         lcl_GetCellPosition( aStartCell, nStartCol, nStartRow );
         lcl_GetCellPosition( aEndCell, nEndCol, nEndRow );
-        
+
         // get new cell names
         ++nStartRow;
         ++nEndRow;
@@ -1092,10 +1099,10 @@ OUString SwChartDataProvider::GetBrokenCellRangeForExport(
 
         aRes = GetRangeRepFromTableAndCells( aTblName,
                 aStartCell, aEndCell, sal_False );
-    }    
-    
+    }
+
     return aRes;
-}    
+}
 
 uno::Sequence< beans::PropertyValue > SAL_CALL SwChartDataProvider::detectArguments(
         const uno::Reference< chart2::data::XDataSource >& xDataSource )
@@ -1428,7 +1435,7 @@ uno::Sequence< beans::PropertyValue > SAL_CALL SwChartDataProvider::detectArgume
         bFirstCellIsLabel = sal_True;
     //
     DBG_ASSERT( aSortedCellRanges.getLength(), "CellRangeRepresentation missing" );
-    OUString aBrokenCellRangeForExport( GetBrokenCellRangeForExport( aSortedCellRanges ) ); 
+    OUString aBrokenCellRangeForExport( GetBrokenCellRangeForExport( aSortedCellRanges ) );
     //
     aResult.realloc(5);
     sal_Int32 nProps = 0;
@@ -1459,8 +1466,8 @@ uno::Sequence< beans::PropertyValue > SAL_CALL SwChartDataProvider::detectArgume
     return aResult;
 }
 
-uno::Reference< chart2::data::XDataSequence > SwChartDataProvider::Impl_createDataSequenceByRangeRepresentation( 
-        const OUString& rRangeRepresentation, sal_Bool bTestOnly ) 
+uno::Reference< chart2::data::XDataSequence > SwChartDataProvider::Impl_createDataSequenceByRangeRepresentation(
+        const OUString& rRangeRepresentation, sal_Bool bTestOnly )
     throw (lang::IllegalArgumentException, uno::RuntimeException)
 {
     if (bDisposed)
@@ -1484,11 +1491,11 @@ uno::Reference< chart2::data::XDataSequence > SwChartDataProvider::Impl_createDa
     uno::Reference< chart2::data::XDataSequence > xDataSeq;
     if (!bTestOnly)
         xDataSeq = new SwChartDataSequence( *this, *pTblFmt, pUnoCrsr );
-    
-    return xDataSeq;
-}    
 
-sal_Bool SAL_CALL SwChartDataProvider::createDataSequenceByRangeRepresentationPossible( 
+    return xDataSeq;
+}
+
+sal_Bool SAL_CALL SwChartDataProvider::createDataSequenceByRangeRepresentationPossible(
         const OUString& rRangeRepresentation )
     throw (uno::RuntimeException)
 {
@@ -1502,7 +1509,7 @@ sal_Bool SAL_CALL SwChartDataProvider::createDataSequenceByRangeRepresentationPo
     catch (lang::IllegalArgumentException &)
     {
         bPossible = sal_False;
-    }    
+    }
 
     return bPossible;
 }
@@ -1721,7 +1728,7 @@ void SwChartDataProvider::DisposeAllDataSequences( const SwTable *pTable )
 // SwChartDataProvider::AddRowCols tries to notify charts of added columns
 // or rows and extends the value sequence respectively (if possible).
 // If those can be added to the end of existing value data-sequences those
-// sequences get mofdified accordingly and will send a modification 
+// sequences get mofdified accordingly and will send a modification
 // notification (calling 'setModified').
 //
 // Since this function is a work-around for non existent Writer core functionality
@@ -1730,17 +1737,17 @@ void SwChartDataProvider::DisposeAllDataSequences( const SwTable *pTable )
 // For example we will only try to adapt value sequences. For this we assume
 // that a sequence of length 1 is a label sequence and those with length >= 2
 // we presume to be value sequences. Also new cells can only be added in the
-// direction the value sequence is already pointing (rows / cols) and at the 
+// direction the value sequence is already pointing (rows / cols) and at the
 // start or end of the values data-sequence.
-// Nothing needs to be done if the new cells are in between the table cursors 
-// point and mark since data-sequence are considered to consist of all cells 
+// Nothing needs to be done if the new cells are in between the table cursors
+// point and mark since data-sequence are considered to consist of all cells
 // between those.
-// New rows/cols need to be added already to the table before calling 
+// New rows/cols need to be added already to the table before calling
 // this function.
 //
-void SwChartDataProvider::AddRowCols( 
-        const SwTable &rTable, 
-        const SwSelBoxes& rBoxes, 
+void SwChartDataProvider::AddRowCols(
+        const SwTable &rTable,
+        const SwSelBoxes& rBoxes,
         USHORT nLines, BOOL bBehind )
 {
     if (rTable.IsTblComplex())
@@ -1823,7 +1830,7 @@ void SwChartDataProvider::AddRowCols(
                 }
                 ++aIt;
             }
-        
+
         }
     }
 }
@@ -1851,7 +1858,7 @@ rtl::OUString SAL_CALL SwChartDataProvider::convertRangeToXML( const rtl::OUStri
         SwFrmFmt    *pTblFmt  = 0;      // pointer to table format
         // BM: For what should the check be necessary? for #i79009# it is required that NO check is done
 //         SwUnoCrsr   *pUnoCrsr = 0;      // here required to check if the cells in the range do actually exist
-//         std::auto_ptr< SwUnoCrsr > pAuto( pUnoCrsr );  // to end lifetime of object pointed to by pUnoCrsr 
+//         std::auto_ptr< SwUnoCrsr > pAuto( pUnoCrsr );  // to end lifetime of object pointed to by pUnoCrsr
         GetFormatAndCreateCursorFromRangeRep( pDoc, aRange, &pTblFmt, NULL );
         if (!pTblFmt)
             throw lang::IllegalArgumentException();
@@ -2723,7 +2730,7 @@ chart::ChartDataRowSource SwChartDataSequence::GetDataRowSource() const
 {
     // default value if sequence is not long enough to properly get this value
     chart::ChartDataRowSource eDataRowSource = chart::ChartDataRowSource_COLUMNS;
-    
+
     SwFrmFmt* pTblFmt = GetFrmFmt();
     if(pTblFmt)
     {
@@ -2755,15 +2762,15 @@ void SwChartDataSequence::FillRangeDesc( SwRangeDescriptor &rRangeDesc ) const
     }
 }
 
-/**    
+/**
 SwChartDataSequence::ExtendTo
 
 extends the data-sequence by new cells added at the end of the direction
 the data-sequence points to.
 If the cells are already within the range of the sequence nothing needs
 to be done.
-If the cells are beyond the end of the sequence (are not adjacent to the 
-current last cell) nothing can be done. Only if the cells are adjacent to 
+If the cells are beyond the end of the sequence (are not adjacent to the
+current last cell) nothing can be done. Only if the cells are adjacent to
 the last cell they can be added.
 
 @returns     true if the data-sequence was changed.
@@ -2774,11 +2781,11 @@ the last cell they can be added.
 @param       nLastNew
              index of last new row/col to be included in data-sequence
 */
-bool SwChartDataSequence::ExtendTo( bool bExtendCol, 
+bool SwChartDataSequence::ExtendTo( bool bExtendCol,
         sal_Int32 nFirstNew, sal_Int32 nCount )
 {
     bool bChanged = false;
-    
+
     SwUnoTableCrsr* pUnoTblCrsr = *pTblCrsr;
     //pUnoTblCrsr->MakeBoxSels();
 
@@ -2827,7 +2834,7 @@ bool SwChartDataSequence::ExtendTo( bool bExtendCol,
         aNewStartCell = lcl_GetCellName(aDesc.nLeft,  aDesc.nTop - nCount);
         aNewEndCell   = lcl_GetCellName(aDesc.nRight, aDesc.nBottom);
         bChanged = true;
-    }    
+    }
     else if (!bExtendCol && aDesc.nRight + 1 == nFirstNew)
     {
         // new row cells adjacent to the right of the
@@ -2836,7 +2843,7 @@ bool SwChartDataSequence::ExtendTo( bool bExtendCol,
         aNewStartCell = lcl_GetCellName(aDesc.nLeft, aDesc.nTop);
         aNewEndCell   = lcl_GetCellName(aDesc.nRight + nCount, aDesc.nBottom);
         bChanged = true;
-    }    
+    }
     else if (!bExtendCol && aDesc.nLeft - nCount == nFirstNew)
     {
         // new row cells adjacent to the left of the
@@ -2845,7 +2852,7 @@ bool SwChartDataSequence::ExtendTo( bool bExtendCol,
         aNewStartCell = lcl_GetCellName(aDesc.nLeft - nCount, aDesc.nTop);
         aNewEndCell   = lcl_GetCellName(aDesc.nRight, aDesc.nBottom);
         bChanged = true;
-    }    
+    }
 
     if (bChanged)
     {
@@ -2860,7 +2867,7 @@ bool SwChartDataSequence::ExtendTo( bool bExtendCol,
     }
 
     return bChanged;
-}    
+}
 
 //////////////////////////////////////////////////////////////////////
 
