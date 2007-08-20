@@ -4,9 +4,9 @@
  *
  *  $RCSfile: paintfrm.cxx,v $
  *
- *  $Revision: 1.105 $
+ *  $Revision: 1.106 $
  *
- *  last change: $Author: hr $ $Date: 2007-08-03 13:40:17 $
+ *  last change: $Author: ihi $ $Date: 2007-08-20 13:42:36 $
  *
  *  The Contents of this file are made available subject to
  *  the terms of GNU Lesser General Public License Version 2.1.
@@ -2879,7 +2879,12 @@ void SwRootFrm::Paint( const SwRect& rRect ) const
                 pSpecSubsLines = new SwSubsRects;
             }
 
-            SwRect aPaintRect( pPage->Frm() );
+            // --> OD 2007-08-15 #i80691#
+            // include border and shadow area into paint area.
+//            SwRect aPaintRect( pPage->Frm() );
+            SwRect aPaintRect;
+            pPage->GetBorderAndShadowBoundRect( pPage->Frm(), pSh, aPaintRect );
+            // <--
             aPaintRect._Intersection( aRect );
 
             if ( bExtraData )
@@ -2981,7 +2986,7 @@ void SwRootFrm::Paint( const SwRect& rRect ) const
                 DELETEZ( pSpecSubsLines );
             }
             pVout->Leave();
-    
+
             // #i68597#
             // needed to move grid painting inside Begin/EndDrawLayer bounds and to change
             // output rect for it accordingly
