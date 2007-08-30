@@ -4,9 +4,9 @@
  *
  *  $RCSfile: thints.cxx,v $
  *
- *  $Revision: 1.52 $
+ *  $Revision: 1.53 $
  *
- *  last change: $Author: vg $ $Date: 2007-05-25 13:22:54 $
+ *  last change: $Author: vg $ $Date: 2007-08-30 16:15:55 $
  *
  *  The Contents of this file are made available subject to
  *  the terms of GNU Lesser General Public License Version 2.1.
@@ -545,14 +545,14 @@ void SwpHints::BuildPortions( SwTxtNode& rNode, SwTxtAttr& rNewHint, USHORT nMod
                 // Merge attributes
                 SfxItemSet aNewSet( *pCurrentStyle );
                 aNewSet.Put( *pNewStyle );
-                
+
                 // --> FME 2007-4-11 #i75750# Remove attributes already set at whole paragraph
                 if ( rNode.HasSwAttrSet() && aNewSet.Count() )
                 {
                     SfxItemIter aIter( aNewSet );
                     const SfxPoolItem* pItem = aIter.GetCurItem();
                     const SfxItemSet& rWholeParaAttrSet = rNode.GetSwAttrSet();
-                    
+
                     do
                     {
                         const SfxPoolItem* pTmpItem = 0;
@@ -562,7 +562,7 @@ void SwpHints::BuildPortions( SwTxtNode& rNode, SwTxtAttr& rNewHint, USHORT nMod
                             // Do not clear item if the attribute is set in a character format:
                             if ( !pCurrentCharFmt || 0 == CharFmt::GetItem( *pCurrentCharFmt, pItem->Which() ) )
                                 aNewSet.ClearItem( pItem->Which() );
-                        }   
+                        }
                     }
                     while (!aIter.IsAtEnd() && 0 != (pItem = aIter.NextItem()));
                 }
@@ -602,7 +602,7 @@ void SwpHints::BuildPortions( SwTxtNode& rNode, SwTxtAttr& rNewHint, USHORT nMod
                                     pNewSet = pNewStyle->Clone( TRUE );
                                 pNewSet->ClearItem( pItem->Which() );
                             }
-                        }   
+                        }
                     }
                     while (!aIter.IsAtEnd() && 0 != (pItem = aIter.NextItem()));
 
@@ -618,11 +618,11 @@ void SwpHints::BuildPortions( SwTxtNode& rNode, SwTxtAttr& rNewHint, USHORT nMod
                     }
                 }
                 // <--
-                
+
                 // Create new AutoStyle
                 // If there is no current hint and start and end of rNewHint
                 // is ok, we do not need to create a new txtattr.
-                if ( bOptimizeAllowed && 
+                if ( bOptimizeAllowed &&
                      nPorStart == nThisStart &&
                      nPorEnd == nThisEnd )
                 {
@@ -1543,7 +1543,7 @@ BOOL SwTxtNode::GetAttr( SfxItemSet& rSet, xub_StrLen nStart, xub_StrLen nEnd,
                             {
                                 if ( bOnlyTxtAttr || *pItem != aFmtSet.Get( nHintWhich ) )
                                 {
-                                    if( nAttrStart > nStart ) 
+                                    if( nAttrStart > nStart )
                                     {
                                         rSet.InvalidateItem( nHintWhich );
                                         pPrev->mpItem = (SfxPoolItem*)-1;
@@ -2186,9 +2186,12 @@ void SwpHints::Insert( SwTxtAttr* pHint, SwTxtNode &rNode, USHORT nMode )
         // There may be more than one character style at the current position.
         // Take care of the sort number.
         // Special case ruby portion: During import, the ruby attribute is set
-        // multiple times (don't know if this has to be like that).
+        // multiple times
+        // Special case hyperlink: During import, the ruby attribute is set
+        // multiple times
         if ( RES_TXTATR_CHARFMT == nWhich ||
-             RES_TXTATR_CJK_RUBY == nWhich )
+             RES_TXTATR_CJK_RUBY == nWhich ||
+             RES_TXTATR_INETFMT == nWhich )
             BuildPortions( rNode, *pHint, nMode );
         else
         {
