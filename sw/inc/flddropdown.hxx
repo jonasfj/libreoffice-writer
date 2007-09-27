@@ -4,9 +4,9 @@
  *
  *  $RCSfile: flddropdown.hxx,v $
  *
- *  $Revision: 1.6 $
+ *  $Revision: 1.7 $
  *
- *  last change: $Author: obo $ $Date: 2007-03-09 13:13:58 $
+ *  last change: $Author: hr $ $Date: 2007-09-27 08:02:06 $
  *
  *  The Contents of this file are made available subject to
  *  the terms of GNU Lesser General Public License Version 2.1.
@@ -51,7 +51,7 @@
 #define INCLUDED_VECTOR
 #endif
 
-/** 
+/**
     Field type for dropdown boxes.
 */
 class SwDropDownFieldType : public SwFieldType
@@ -156,7 +156,7 @@ public:
 
     /**
        Returns the name of the field.
-       
+
        @return the name of the field
     */
     virtual String GetPar2() const;
@@ -195,9 +195,9 @@ public:
     */
     void SetItems(const com::sun::star::uno::Sequence<rtl::OUString> & rItems);
 
-    /** 
+    /**
         Returns the items of the dropdown box.
-        
+
         @return the items of the dropdown box
     */
     com::sun::star::uno::Sequence<rtl::OUString> GetItemSequence() const;
@@ -268,25 +268,25 @@ public:
        API: Gets a property value from the dropdown field.
 
        @param rVal return value
-       @param nMId 
+       @param nMId
           - FIELD_PROP_PAR1 Get selected item (String)
           - FIELD_PROP_STRINGS Get all items (Sequence)
           - FIELD_PROP_PAR3 Get the help text of the field.
           - FIELD_PROP_PAR4 Get the tool tip of the field.
     */
-    virtual BOOL QueryValue(com::sun::star::uno::Any &rVal, BYTE nMId) const;
+    virtual BOOL QueryValue(com::sun::star::uno::Any &rVal, USHORT nWhichId) const;
 
     /**
        API: Sets a property value on the dropdown field.
 
        @param rVal value to set
-       @param nMId 
+       @param nMId
           - FIELD_PROP_PAR1 Set selected item (String)
           - FIELD_PROP_STRINGS Set all items (Sequence)
           - FIELD_PROP_PAR3  Set the help text of the field.
           - FIELD_PROP_PAR4  Set the tool tip of the field.
     */
-        virtual BOOL PutValue(const com::sun::star::uno::Any &rVal, BYTE nMId);
+        virtual BOOL PutValue(const com::sun::star::uno::Any &rVal, USHORT nWhichId);
 };
 
 #endif
