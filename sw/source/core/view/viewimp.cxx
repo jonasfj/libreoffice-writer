@@ -4,9 +4,9 @@
  *
  *  $RCSfile: viewimp.cxx,v $
  *
- *  $Revision: 1.37 $
+ *  $Revision: 1.38 $
  *
- *  last change: $Author: hr $ $Date: 2007-06-26 11:57:56 $
+ *  last change: $Author: hr $ $Date: 2007-09-27 09:42:37 $
  *
  *  The Contents of this file are made available subject to
  *  the terms of GNU Lesser General Public License Version 2.1.
@@ -97,7 +97,7 @@ void SwViewImp::Init( const SwViewOption *pNewOpt )
 
         if ( pRoot->GetDrawPage()->GetSize() != pRoot->Frm().SSize() )
             pRoot->GetDrawPage()->SetSize( pRoot->Frm().SSize() );
-         
+
         pSdrPageView = pDrawView->ShowSdrPage( pRoot->GetDrawPage());
         // OD 26.06.2003 #108784# - notify drawing page view about invisible
         // layers.
@@ -117,7 +117,7 @@ void SwViewImp::Init( const SwViewOption *pNewOpt )
     pDrawView->SetSnapGridWidth( aSnGrWdtX, aSnGrWdtY );
 
     //Ersatzdarstellung
-    FASTBOOL bDraw = !pNewOpt->IsDraw();
+    BOOL bDraw = !pNewOpt->IsDraw();
     pDrawView->SetLineDraft( bDraw );
     pDrawView->SetFillDraft( bDraw );
     pDrawView->SetGrafDraft( bDraw );
@@ -147,21 +147,21 @@ void SwViewImp::Init( const SwViewOption *pNewOpt )
 
 SwViewImp::SwViewImp( ViewShell *pParent ) :
     pSh( pParent ),
+    pDrawView( 0 ),
+    pSdrPageView( 0 ),
     pFirstVisPage( 0 ),
     pRegion( 0 ),
     pScrollRects( 0 ),
     pScrolledArea( 0 ),
     pLayAct( 0 ),
     pIdleAct( 0 ),
-    pSdrPageView( 0 ),
-    pDrawView( 0 ),
+    pAccMap( 0 ),
+    pSdrObjCached(NULL),
     nRestoreActions( 0 ),
     // OD 12.12.2002 #103492#
-    mpPgPrevwLayout( 0 ),
-    pAccMap( 0 ),
-    pSdrObjCached(NULL)
+    mpPgPrevwLayout( 0 )
 {
-    //bResetXorVisibility = 
+    //bResetXorVisibility =
     //HMHbShowHdlPaint =
     bResetHdlHiddenPaint = bScrolled =
     bPaintInScroll = bSmoothUpdate = bStopSmooth = bStopPrt = FALSE;
@@ -332,7 +332,7 @@ void SwViewImp::SetFirstVisPage()
 void SwViewImp::MakeDrawView()
 {
     IDocumentDrawModelAccess* pIDDMA = GetShell()->getIDocumentDrawModelAccess();
- 
+
     // the else here is not an error, _MakeDrawModel() calls this method again
     // after the DrawModel is created to create DrawViews for all shells...
     if( !pIDDMA->GetDrawModel() )
