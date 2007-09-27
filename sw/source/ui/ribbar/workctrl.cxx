@@ -4,9 +4,9 @@
  *
  *  $RCSfile: workctrl.cxx,v $
  *
- *  $Revision: 1.30 $
+ *  $Revision: 1.31 $
  *
- *  last change: $Author: rt $ $Date: 2007-04-26 09:14:57 $
+ *  last change: $Author: hr $ $Date: 2007-09-27 12:26:07 $
  *
  *  The Contents of this file are made available subject to
  *  the terms of GNU Lesser General Public License Version 2.1.
@@ -74,9 +74,6 @@
 #ifndef _GLOSHDL_HXX
 #include <gloshdl.hxx>
 #endif
-//CHINA001 #ifndef _GLOSSARY_HXX
-//CHINA001 #include <glossary.hxx>
-//CHINA001 #endif
 #ifndef _GLOSDOC_HXX
 #include <glosdoc.hxx>
 #endif
@@ -108,8 +105,8 @@
 #include <vcl/lstbox.hxx>
 #endif
 #include <rtl/ustring.hxx>
-#include "swabstdlg.hxx" //CHINA001
-#include <misc.hrc> //CHINA001
+#include "swabstdlg.hxx"
+#include <misc.hrc>
 
 #include <vcl/svapp.hxx>
 
@@ -120,6 +117,7 @@
 #endif
 
 using namespace ::rtl;
+using namespace ::com::sun::star;
 using namespace ::com::sun::star::uno;
 using namespace ::com::sun::star::beans;
 using namespace ::com::sun::star::frame;
@@ -146,7 +144,7 @@ SwTbxInsertCtrl::~SwTbxInsertCtrl()
 {
 }
 
-void SAL_CALL SwTbxInsertCtrl::update() throw (::com::sun::star::uno::RuntimeException)
+void SAL_CALL SwTbxInsertCtrl::update() throw (uno::RuntimeException)
 {
     ToolBox& rTbx = GetToolBox();
     rtl::OUString aSlotURL( RTL_CONSTASCII_USTRINGPARAM( "slot:" ));
@@ -167,7 +165,7 @@ void SAL_CALL SwTbxInsertCtrl::update() throw (::com::sun::star::uno::RuntimeExc
 **********************************************************************/
 
 
-void SwTbxInsertCtrl::StateChanged( USHORT nSID,
+void SwTbxInsertCtrl::StateChanged( USHORT /*nSID*/,
                                       SfxItemState eState,
                                       const SfxPoolItem* pState )
 {
@@ -234,7 +232,7 @@ SfxPopupWindowType	SwTbxInsertCtrl::GetPopupWindowType() const
 **********************************************************************/
 
 
-void SwTbxInsertCtrl::Select( BOOL bMod1 )
+void SwTbxInsertCtrl::Select( BOOL /*bMod1*/ )
 {
     if( nLastSlotId )
     {
@@ -247,7 +245,7 @@ void SwTbxInsertCtrl::Select( BOOL bMod1 )
             if ( pViewFrame )
                 pDispatch = pViewFrame->GetDispatcher();
         }
-        
+
         if ( pDispatch )
             pDispatch->Execute(nLastSlotId);
     }
@@ -258,13 +256,13 @@ void SwTbxInsertCtrl::Select( BOOL bMod1 )
 **********************************************************************/
 
 
-SwTbxAutoTextCtrl::SwTbxAutoTextCtrl( 
+SwTbxAutoTextCtrl::SwTbxAutoTextCtrl(
     USHORT nSlotId,
     USHORT nId,
     ToolBox& rTbx ) :
     SfxToolBoxControl( nSlotId, nId, rTbx ),
-    pView(0),
-    pPopup(0)
+    pPopup(0),
+    pView(0)
 {
     rTbx.SetItemBits( nId, TIB_DROPDOWN | rTbx.GetItemBits( nId ) );
 }
@@ -346,7 +344,7 @@ SfxPopupWindow* SwTbxAutoTextCtrl::CreatePopupWindow()
         pToolBox->SetItemDown( nId, TRUE );
 
         pPopup->Execute( pToolBox, pToolBox->GetItemRect( nId ),
-            (pToolBox->GetAlign() == WINDOWALIGN_TOP || pToolBox->GetAlign() == WINDOWALIGN_BOTTOM) ? 
+            (pToolBox->GetAlign() == WINDOWALIGN_TOP || pToolBox->GetAlign() == WINDOWALIGN_BOTTOM) ?
                 POPUPMENU_EXECUTE_DOWN : POPUPMENU_EXECUTE_RIGHT );
 
         pToolBox->SetItemDown( nId, FALSE );
@@ -391,7 +389,7 @@ void SwTbxAutoTextCtrl::StateChanged( USHORT nSID,
 
 IMPL_LINK(SwTbxAutoTextCtrl, PopupHdl, PopupMenu*, pMenu)
 {
-    int nId = pMenu->GetCurItemId();
+    USHORT nId = pMenu->GetCurItemId();
 
     if ( GetSlotId() == FN_INSERT_FIELD_CTRL)
     {
@@ -400,34 +398,34 @@ IMPL_LINK(SwTbxAutoTextCtrl, PopupHdl, PopupMenu*, pMenu)
         switch(nId)
         {
             case FN_INSERT_FLD_DATE:
-                pChar = RTL_CONSTASCII_USTRINGPARAM( ".uno:InsertDateField" );
+                pChar = ".uno:InsertDateField";
             break;
             case FN_INSERT_FLD_TIME:
-                pChar = RTL_CONSTASCII_USTRINGPARAM( ".uno:InsertTimeField" );
+                pChar = ".uno:InsertTimeField";
             break;
             case FN_INSERT_FLD_PGNUMBER:
-                pChar = RTL_CONSTASCII_USTRINGPARAM( ".uno:InsertPageNumberField" );
+                pChar = ".uno:InsertPageNumberField";
             break;
             case FN_INSERT_FLD_PGCOUNT:
-                pChar = RTL_CONSTASCII_USTRINGPARAM( ".uno:InsertPageCountField" );
+                pChar = ".uno:InsertPageCountField";
             break;
             case FN_INSERT_FLD_TOPIC:
-                pChar = RTL_CONSTASCII_USTRINGPARAM( ".uno:InsertTopicField" );
+                pChar = ".uno:InsertTopicField";
             break;
             case FN_INSERT_FLD_TITLE:
-                pChar = RTL_CONSTASCII_USTRINGPARAM( ".uno:InsertTitleField" );
+                pChar = ".uno:InsertTitleField";
             break;
             case FN_INSERT_FLD_AUTHOR:
-                pChar = RTL_CONSTASCII_USTRINGPARAM( ".uno:InsertAuthorField" );
+                pChar = ".uno:InsertAuthorField";
             break;
             default:
-                pChar = RTL_CONSTASCII_USTRINGPARAM( ".uno:InsertFieldCtrl" );
-        }            
+                pChar = ".uno:InsertFieldCtrl";
+        }
         Dispatch( rtl::OUString::createFromAscii( pChar ),aArgs );
     }
     else
     {
-        USHORT nBlock = nId/100;
+        USHORT nBlock = nId / 100;
 
         SwGlossaryList* pGlossaryList = ::GetGlossaryList();
         String sShortName;
@@ -540,18 +538,18 @@ SwScrollNaviPopup::SwScrollNaviPopup( USHORT nId, const Reference< XFrame >& rFr
     aToolBox.SetOutStyle(TOOLBOX_STYLE_FLAT);
     for( i = 0; i < NID_COUNT; i++)
     {
-        USHORT nId = aNavigationInsertIds[i];
+        USHORT nNaviId = aNavigationInsertIds[i];
         String sText;
         ToolBoxItemBits  nTbxBits = 0;
-        if((NID_PREV != nId) && (NID_NEXT != nId))
+        if((NID_PREV != nNaviId) && (NID_NEXT != nNaviId))
         {
             // -2, there's no string for Next/Prev
-            USHORT nResStr = ST_TBL - 2 + nId - NID_START;
+            USHORT nResStr = ST_TBL - 2 + nNaviId - NID_START;
             sText = String(SW_RES(nResStr));
             nTbxBits = TIB_CHECKABLE;
         }
-        aToolBox.InsertItem(nId, sText, nTbxBits);
-        aToolBox.SetHelpId( nId, aNavigationHelpIds[i] );
+        aToolBox.InsertItem(nNaviId, sText, nTbxBits);
+        aToolBox.SetHelpId( nNaviId, aNavigationHelpIds[i] );
     }
     ApplyImageList();
     aToolBox.InsertBreak(NID_COUNT/2);
@@ -615,8 +613,8 @@ void SwScrollNaviPopup::ApplyImageList()
         aIListH : aIList;
     for(USHORT i = 0; i < NID_COUNT; i++)
     {
-        USHORT nId = aNavigationInsertIds[i];
-        aToolBox.SetItemImage(nId, rImgLst.GetImage(nId));
+        USHORT nNaviId = aNavigationInsertIds[i];
+        aToolBox.SetItemImage(nNaviId, rImgLst.GetImage(nNaviId));
     }
 }
 /*-----------------19.02.97 13.58-------------------
@@ -678,7 +676,6 @@ void SwScrollNaviToolBox::MouseButtonUp( const MouseEvent& rMEvt )
 --------------------------------------------------*/
 void  SwScrollNaviToolBox::RequestHelp( const HelpEvent& rHEvt )
 {
-    USHORT nMoveType = SwView::GetMoveType();
     SetItemText(NID_NEXT, SwScrollNaviPopup::GetQuickHelpText(TRUE));
     SetItemText(NID_PREV, SwScrollNaviPopup::GetQuickHelpText(FALSE));
     ToolBox::RequestHelp( rHEvt );
@@ -716,7 +713,7 @@ void SwNaviImageButton::Click()
 //--------------------------------------------------------------------
 
 void SwNaviImageButton::SetPopupWindow( SfxPopupWindow* pWindow )
-{ 
+{
     pPopupWindow = pWindow;
     pPopupWindow->SetPopupModeEndHdl( LINK( this, SwNaviImageButton, PopupModeEndHdl ));
     pPopupWindow->SetDeleteLink_Impl( LINK( this, SwNaviImageButton, ClosePopupWindow ));
@@ -774,14 +771,14 @@ void SwHlpImageButton::RequestHelp( const HelpEvent& rHEvt )
 SwNaviImageButton::SwNaviImageButton(
     Window* pParent,
     const Reference< XFrame >& rFrame ) :
-    ImageButton(pParent, SW_RES(BTN_NAVI)), 
+    ImageButton(pParent, SW_RES(BTN_NAVI)),
         pPopup(0),
         aImage(SW_RES(IMG_BTN)),
         aImageH(SW_RES(IMG_BTN_H)),
         sQuickText(SW_RES(ST_QUICK)),
-        m_xFrame( rFrame ),
         pPopupWindow(0),
-        pFloatingWindow(0)
+        pFloatingWindow(0),
+        m_xFrame( rFrame )
 {
     FreeResource();
     SetStyle(GetStyle()|WB_NOPOINTERFOCUS);
@@ -800,17 +797,17 @@ void SwNaviImageButton::DataChanged( const DataChangedEvent& rDCEvt )
     Window::DataChanged( rDCEvt );
 }
 /* -----------------26.11.2002 09:28-----------------
- * 
+ *
  * --------------------------------------------------*/
 class SwZoomBox_Impl : public ComboBox
 {
     USHORT          nSlotId;
     BOOL            bRelease;
-    ::com::sun::star::uno::Reference< ::com::sun::star::frame::XDispatchProvider > m_xDispatchProvider;
+    uno::Reference< frame::XDispatchProvider > m_xDispatchProvider;
 
 public:
-    SwZoomBox_Impl( 
-        Window* pParent, 
+    SwZoomBox_Impl(
+        Window* pParent,
         USHORT nSlot,
         const Reference< XDispatchProvider >& rDispatchProvider );
     ~SwZoomBox_Impl();
@@ -823,11 +820,11 @@ protected:
 
 };
 /* -----------------26.11.2002 09:29-----------------
- * 
+ *
  * --------------------------------------------------*/
-SwZoomBox_Impl::SwZoomBox_Impl( 
-    Window* pParent, 
-    USHORT nSlot, 
+SwZoomBox_Impl::SwZoomBox_Impl(
+    Window* pParent,
+    USHORT nSlot,
     const Reference< XDispatchProvider >& rDispatchProvider ):
     ComboBox( pParent, SW_RES(RID_PVIEW_ZOOM_LB)),
     nSlotId(nSlot),
@@ -835,22 +832,22 @@ SwZoomBox_Impl::SwZoomBox_Impl(
     m_xDispatchProvider( rDispatchProvider )
 {
     EnableAutocomplete( FALSE );
-    USHORT aZoomValues[] = 
+    USHORT aZoomValues[] =
     {   25, 50, 75, 100, 150, 200 };
     for(USHORT i = 0; i < sizeof(aZoomValues)/sizeof(USHORT); i++)
     {
         String sEntry = String::CreateFromInt32(aZoomValues[i]);
         sEntry += '%';
         InsertEntry(sEntry);
-    }                                        
+    }
 }
 /* -----------------26.11.2002 09:29-----------------
- * 
+ *
  * --------------------------------------------------*/
 SwZoomBox_Impl::~SwZoomBox_Impl()
-{}        
+{}
 /* -----------------26.11.2002 09:34-----------------
- * 
+ *
  * --------------------------------------------------*/
 void    SwZoomBox_Impl::Select()
 {
@@ -872,17 +869,17 @@ void    SwZoomBox_Impl::Select()
             aArgs[0].Name = rtl::OUString( RTL_CONSTASCII_USTRINGPARAM( "PreviewZoom" ));
             aItem.QueryValue( a );
             aArgs[0].Value = a;
-            SfxToolBoxControl::Dispatch( 
+            SfxToolBoxControl::Dispatch(
                 m_xDispatchProvider,
                 rtl::OUString( RTL_CONSTASCII_USTRINGPARAM( ".uno:PreviewZoom" )),
                 aArgs );
         }
-        
+
         ReleaseFocus();
     }
-}            
+}
 /* -----------------02.12.2002 07:49-----------------
- * 
+ *
  * --------------------------------------------------*/
 long SwZoomBox_Impl::Notify( NotifyEvent& rNEvt )
 {
@@ -921,7 +918,7 @@ long SwZoomBox_Impl::Notify( NotifyEvent& rNEvt )
     return nHandled ? nHandled : ComboBox::Notify( rNEvt );
 }
 /* -----------------02.12.2002 07:51-----------------
- * 
+ *
  * --------------------------------------------------*/
 void SwZoomBox_Impl::ReleaseFocus()
 {
@@ -942,11 +939,11 @@ void SwZoomBox_Impl::ReleaseFocus()
 }
 
 /* -----------------26.11.2002 09:29-----------------
- * 
+ *
  * --------------------------------------------------*/
 SFX_IMPL_TOOLBOX_CONTROL( SwPreviewZoomControl, SfxUInt16Item);
 
-SwPreviewZoomControl::SwPreviewZoomControl( 
+SwPreviewZoomControl::SwPreviewZoomControl(
     USHORT nSlotId,
     USHORT nId,
     ToolBox& rTbx) :
@@ -954,15 +951,15 @@ SwPreviewZoomControl::SwPreviewZoomControl(
 {
 }
 /* -----------------26.11.2002 09:29-----------------
- * 
+ *
  * --------------------------------------------------*/
 SwPreviewZoomControl::~SwPreviewZoomControl()
 {
-}    
+}
 /* -----------------26.11.2002 09:29-----------------
- * 
+ *
  * --------------------------------------------------*/
-void SwPreviewZoomControl::StateChanged( USHORT nSID,
+void SwPreviewZoomControl::StateChanged( USHORT /*nSID*/,
                                          SfxItemState eState,
                                          const SfxPoolItem* pState )
 {
@@ -970,15 +967,15 @@ void SwPreviewZoomControl::StateChanged( USHORT nSID,
     GetToolBox().EnableItem( nId, (GetItemState(pState) != SFX_ITEM_DISABLED) );
     SwZoomBox_Impl* pBox = (SwZoomBox_Impl*)GetToolBox().GetItemWindow( GetId() );
     if(SFX_ITEM_AVAILABLE <= eState)
-    {        
+    {
         String sZoom(String::CreateFromInt32(((const SfxUInt16Item*)pState)->GetValue()));
         sZoom += '%';
         pBox->SetText(sZoom);
         pBox->SaveValue();
     }
-}    
+}
 /* -----------------26.11.2002 09:29-----------------
- * 
+ *
  * --------------------------------------------------*/
 Window* SwPreviewZoomControl::CreateItemWindow( Window *pParent )
 {
