@@ -4,9 +4,9 @@
  *
  *  $RCSfile: createaddresslistdialog.cxx,v $
  *
- *  $Revision: 1.12 $
+ *  $Revision: 1.13 $
  *
- *  last change: $Author: kz $ $Date: 2007-09-06 14:04:23 $
+ *  last change: $Author: hr $ $Date: 2007-09-27 11:30:06 $
  *
  *  The Contents of this file are made available subject to
  *  the terms of GNU Lesser General Public License Version 2.1.
@@ -39,7 +39,6 @@
 #undef SW_DLLIMPLEMENTATION
 #endif
 
-
 #ifndef _SWTYPES_HXX
 #include <swtypes.hxx>
 #endif
@@ -68,7 +67,7 @@
 #ifndef _FILEDLGHELPER_HXX
 #include <sfx2/filedlghelper.hxx>
 #endif
-#ifndef _SFX_DOCFILT_HACK_HXX 
+#ifndef _SFX_DOCFILT_HACK_HXX
 #include <sfx2/docfilt.hxx>
 #endif
 #ifndef _SFX_FCONTNR_HXX
@@ -96,12 +95,13 @@
 #include <createaddresslistdialog.hrc>
 #include <dbui.hrc>
 #include <helpid.h>
+#include <unomid.h>
 
-using namespace com::sun::star::uno;
-using namespace com::sun::star::ui::dialogs;
+
+using namespace ::com::sun::star;
+using namespace ::com::sun::star::ui::dialogs;
 using ::rtl::OUString;
 
-#define C2U(cChar) OUString::createFromAscii(cChar)
 /*-- 19.04.2004 12:19:50---------------------------------------------------
 
   -----------------------------------------------------------------------*/
@@ -123,39 +123,41 @@ class SwAddressControl_Impl : public Control
     DECL_LINK(ScrollHdl_Impl, ScrollBar*);
     DECL_LINK(GotFocusHdl_Impl, Edit*);
     DECL_LINK(EditModifyHdl_Impl, Edit*);
-    
+
     void                MakeVisible(const Rectangle& aRect);
-    
+
     virtual long        PreNotify( NotifyEvent& rNEvt );
     virtual void        Command( const CommandEvent& rCEvt );
 public:
     SwAddressControl_Impl(Window* pParent, const ResId& rResId );
     ~SwAddressControl_Impl();
 
+    using Window::SetData;
     void        SetData(SwCSVData& rDBData);
+
     void        SetCurrentDataSet(sal_uInt32 nSet);
     sal_uInt32  GetCurrentDataSet() const { return m_nCurrentDataSet;}
     void        SetCursorTo(sal_uInt32 nElement);
-};            
+};
 
 /*-- 13.04.2004 10:09:42---------------------------------------------------
 
   -----------------------------------------------------------------------*/
 SwAddressControl_Impl::SwAddressControl_Impl(Window* pParent, const ResId& rResId ) :
     Control(pParent, rResId),
-#ifdef _MSC_VER
+#ifdef MSC
 #pragma warning (disable : 4355)
 #endif
     m_aScrollBar(this, ResId(SCR_1,*rResId.GetResMgr())),
     m_aWindow(this, ResId(WIN_DATA,*rResId.GetResMgr())),
-#ifdef _MSC_VER
+#ifdef MSC
 #pragma warning (default : 4355)
 #endif
     m_pData(0),
+    m_aWinOutputSize( m_aWindow.GetOutputSizePixel() ),
     m_nLineHeight(0),
     m_nCurrentDataSet(0),
-    m_bNoDataSet(true),
-    m_aWinOutputSize( m_aWindow.GetOutputSizePixel() )
+    m_bNoDataSet(true)
 {
     FreeResource();
     Link aScrollLink = LINK(this, SwAddressControl_Impl, ScrollHdl_Impl);
@@ -194,32 +196,32 @@ void SwAddressControl_Impl::SetData(SwCSVData& rDBData)
         m_aFixedTexts.clear();
         m_aEdits.clear();
         m_bNoDataSet = true;
-    }            
-    //now create appropriate controls 
-    
+    }
+    //now create appropriate controls
+
     ::std::vector< OUString >::iterator  aHeaderIter;
-    
+
     long nFTXPos = m_aWindow.LogicToPixel(Point(RSC_SP_CTRL_X, RSC_SP_CTRL_X), MAP_APPFONT).X();
     long nFTHeight = m_aWindow.LogicToPixel(Size(RSC_BS_CHARHEIGHT, RSC_BS_CHARHEIGHT), MAP_APPFONT).Height();
     long nFTWidth = 0;
-    
+
     //determine the width of the FixedTexts
-    for(aHeaderIter = m_pData->aDBColumnHeaders.begin(); 
-                aHeaderIter != m_pData->aDBColumnHeaders.end(); 
+    for(aHeaderIter = m_pData->aDBColumnHeaders.begin();
+                aHeaderIter != m_pData->aDBColumnHeaders.end();
                 ++aHeaderIter)
-    {                    
+    {
         sal_Int32 nTemp = m_aWindow.GetTextWidth(*aHeaderIter);
         if(nTemp > nFTWidth)
           nFTWidth = nTemp;
     }
     //add some pixels
     nFTWidth += 2;
-    long nEDXPos = nFTWidth + nFTXPos + 
+    long nEDXPos = nFTWidth + nFTXPos +
             m_aWindow.LogicToPixel(Size(RSC_SP_CTRL_DESC_X, RSC_SP_CTRL_DESC_X), MAP_APPFONT).Width();
     long nEDHeight = m_aWindow.LogicToPixel(Size(RSC_CD_TEXTBOX_HEIGHT, RSC_CD_TEXTBOX_HEIGHT), MAP_APPFONT).Height();
     long nEDWidth = m_aWinOutputSize.Width() - nEDXPos - nFTXPos;
     m_nLineHeight = nEDHeight + m_aWindow.LogicToPixel(Size(RSC_SP_CTRL_GROUP_Y, RSC_SP_CTRL_GROUP_Y), MAP_APPFONT).Height();
-    
+
     long nEDYPos = m_aWindow.LogicToPixel(Size(RSC_SP_CTRL_DESC_Y, RSC_SP_CTRL_DESC_Y), MAP_APPFONT).Height();
     long nFTYPos = nEDYPos + nEDHeight - nFTHeight;
 
@@ -228,8 +230,8 @@ void SwAddressControl_Impl::SetData(SwCSVData& rDBData)
     Edit* pLastEdit = 0;
     sal_Int32 nVisibleLines = 0;
     sal_Int32 nLines = 0;
-    for(aHeaderIter = m_pData->aDBColumnHeaders.begin(); 
-                aHeaderIter != m_pData->aDBColumnHeaders.end(); 
+    for(aHeaderIter = m_pData->aDBColumnHeaders.begin();
+                aHeaderIter != m_pData->aDBColumnHeaders.end();
                 ++aHeaderIter, nEDYPos += m_nLineHeight, nFTYPos += m_nLineHeight, nLines++)
     {
         FixedText* pNewFT = new FixedText(&m_aWindow, WB_RIGHT);
@@ -243,28 +245,28 @@ void SwAddressControl_Impl::SetData(SwCSVData& rDBData)
         pNewED->SetPosSizePixel(Point(nEDXPos, nEDYPos), Size(nEDWidth, nEDHeight));
         if(nEDYPos + nEDHeight < m_aWinOutputSize.Height())
             ++nVisibleLines;
-        
+
         pNewFT->SetText(*aHeaderIter);
-        
+
         pNewFT->Show();
         pNewED->Show();
         m_aFixedTexts.push_back(pNewFT);
         m_aEdits.push_back(pNewED);
         pLastEdit = pNewED;
-    }                    
+    }
     //scrollbar adjustment
     if(pLastEdit)
     {
         //the m_aWindow has to be at least as high as the ScrollBar and it must include the last Edit
-        sal_Int32 nContentHeight = pLastEdit->GetPosPixel().Y() + nEDHeight + 
+        sal_Int32 nContentHeight = pLastEdit->GetPosPixel().Y() + nEDHeight +
                 m_aWindow.LogicToPixel(Size(RSC_SP_CTRL_GROUP_Y, RSC_SP_CTRL_GROUP_Y), MAP_APPFONT).Height();
         if(nContentHeight < m_aScrollBar.GetSizePixel().Height())
-        {        
+        {
             nContentHeight = m_aScrollBar.GetSizePixel().Height();
             m_aScrollBar.Enable(FALSE);
         }
         else
-        {        
+        {
             m_aScrollBar.Enable(TRUE);
             m_aScrollBar.SetRange(Range(0, nLines));
             m_aScrollBar.SetThumbPos(0);
@@ -274,7 +276,7 @@ void SwAddressControl_Impl::SetData(SwCSVData& rDBData)
         aWinOutputSize.Height() = nContentHeight;
         m_aWindow.SetOutputSizePixel(aWinOutputSize);
 
-    }        
+    }
 }
 /*-- 21.04.2004 11:37:09---------------------------------------------------
 
@@ -282,7 +284,7 @@ void SwAddressControl_Impl::SetData(SwCSVData& rDBData)
 void SwAddressControl_Impl::SetCurrentDataSet(sal_uInt32 nSet)
 {
     if(m_bNoDataSet || m_nCurrentDataSet != nSet)
-    {        
+    {
         m_bNoDataSet = false;
         m_nCurrentDataSet = nSet;
         DBG_ASSERT(m_pData->aDBData.size() > m_nCurrentDataSet, "wrong data set index")
@@ -291,8 +293,8 @@ void SwAddressControl_Impl::SetCurrentDataSet(sal_uInt32 nSet)
             ::std::vector<Edit*>::iterator aEditIter;
             sal_uInt32 nIndex = 0;
             for(aEditIter = m_aEdits.begin(); aEditIter != m_aEdits.end(); ++aEditIter, ++nIndex)
-            {        
-                DBG_ASSERT(nIndex < m_pData->aDBData[m_nCurrentDataSet].size(), 
+            {
+                DBG_ASSERT(nIndex < m_pData->aDBData[m_nCurrentDataSet].size(),
                             "number of colums doesn't match number of Edits")
                 (*aEditIter)->SetText(m_pData->aDBData[m_nCurrentDataSet][nIndex]);
             }
@@ -316,7 +318,7 @@ IMPL_LINK(SwAddressControl_Impl, ScrollHdl_Impl, ScrollBar*, pScroll)
 IMPL_LINK(SwAddressControl_Impl, GotFocusHdl_Impl, Edit*, pEdit)
 {
     if(0 != (GETFOCUS_TAB & pEdit->GetGetFocusFlags()))
-    {        
+    {
         Rectangle aRect(pEdit->GetPosPixel(), pEdit->GetSizePixel());
         MakeVisible(aRect);
     }
@@ -338,9 +340,9 @@ void SwAddressControl_Impl::MakeVisible(const Rectangle & rRect)
     else if(rRect.BottomLeft().Y() > nMaxVisiblePos)
     {
         nThumb += 1 + ((nMaxVisiblePos - rRect.BottomLeft().Y()) / m_nLineHeight);
-    }            
+    }
     if(nThumb != m_aScrollBar.GetThumbPos())
-    {        
+    {
         m_aScrollBar.SetThumbPos(nThumb);
         ScrollHdl_Impl(&m_aScrollBar);
     }
@@ -359,14 +361,14 @@ IMPL_LINK(SwAddressControl_Impl, EditModifyHdl_Impl, Edit*, pEdit)
         m_pData->aDBData[m_nCurrentDataSet][nIndex] = pEdit->GetText();
     }
     return 0;
-}    
+}
 /*-- 21.04.2004 14:51:54---------------------------------------------------
 
   -----------------------------------------------------------------------*/
 void SwAddressControl_Impl::SetCursorTo(sal_uInt32 nElement)
 {
     if(nElement < m_aEdits.size())
-    {        
+    {
         Edit* pEdit = m_aEdits[nElement];
         pEdit->GrabFocus();
         Rectangle aRect(pEdit->GetPosPixel(), pEdit->GetSizePixel());
@@ -419,7 +421,7 @@ long SwAddressControl_Impl::PreNotify( NotifyEvent& rNEvt )
 SwCreateAddressListDialog::SwCreateAddressListDialog(
         Window* pParent, const String& rURL, SwMailMergeConfigItem& rConfig) :
     SfxModalDialog(pParent, SW_RES(DLG_MM_CREATEADDRESSLIST)),
-#ifdef _MSC_VER
+#ifdef MSC
 #pragma warning (disable : 4355)
 #endif
     m_aAddressInformation( this, SW_RES(  FI_ADDRESSINFORMATION)),
@@ -441,7 +443,7 @@ SwCreateAddressListDialog::SwCreateAddressListDialog(
     m_aOK( this, SW_RES(                  PB_OK)),
     m_aCancel( this, SW_RES(              PB_CANCEL)),
     m_aHelp( this, SW_RES(                PB_HELP)),
-#ifdef _MSC_VER
+#ifdef MSC
 #pragma warning (default : 4355)
 #endif
     m_sAddressListFilterName( SW_RES(    ST_FILTERNAME)),
@@ -472,12 +474,12 @@ SwCreateAddressListDialog::SwCreateAddressListDialog(
         {
             pStream->SetLineDelimiter( LINEEND_LF );
             pStream->SetStreamCharSet(RTL_TEXTENCODING_UTF8);
-    
+
             OUString sSemi(';');
             OUString sQuote('"');
             String sTempMiddle(sQuote);
             sTempMiddle += sal_Unicode(9);
-            OUString sMiddle(sTempMiddle); 
+            OUString sMiddle(sTempMiddle);
 
             String sLine;
             BOOL bRead = pStream->ReadUniOrByteStringLine( sLine, RTL_TEXTENCODING_UTF8 );
@@ -488,17 +490,17 @@ SwCreateAddressListDialog::SwCreateAddressListDialog(
                 xub_StrLen nHeaders = sLine.GetTokenCount('\t');
                 xub_StrLen nIndex = 0;
                 for( xub_StrLen nToken = 0; nToken < nHeaders; ++nToken)
-                {        
+                {
                     String sHeader = sLine.GetToken( 0, '\t', nIndex );
-                    DBG_ASSERT(sHeader.Len() > 2 && 
-                            sHeader.GetChar(0) == '\"' && sHeader.GetChar(sHeader.Len() - 1) == '\"', 
+                    DBG_ASSERT(sHeader.Len() > 2 &&
+                            sHeader.GetChar(0) == '\"' && sHeader.GetChar(sHeader.Len() - 1) == '\"',
                             "Wrong format of header")
                     if(sHeader.Len() > 2)
                     {
                         m_pCSVData->aDBColumnHeaders.push_back( sHeader.Copy(1, sHeader.Len() -2));
                     }
                 }
-            }            
+            }
             while(pStream->ReadUniOrByteStringLine( sLine, RTL_TEXTENCODING_UTF8 ))
             {
                 ::std::vector<OUString> aNewData;
@@ -506,10 +508,10 @@ SwCreateAddressListDialog::SwCreateAddressListDialog(
                 xub_StrLen nDataCount = sLine.GetTokenCount('\t');
                 xub_StrLen nIndex = 0;
                 for( xub_StrLen nToken = 0; nToken < nDataCount; ++nToken)
-                {        
+                {
                     String sData = sLine.GetToken( 0, '\t', nIndex );
-                    DBG_ASSERT(sData.Len() >= 2 && 
-                                sData.GetChar(0) == '\"' && sData.GetChar(sData.Len() - 1) == '\"', 
+                    DBG_ASSERT(sData.Len() >= 2 &&
+                                sData.GetChar(0) == '\"' && sData.GetChar(sData.Len() - 1) == '\"',
                             "Wrong format of line")
                     if(sData.Len() >= 2)
                         aNewData.push_back(sData.Copy(1, sData.Len() - 2));
@@ -518,15 +520,15 @@ SwCreateAddressListDialog::SwCreateAddressListDialog(
                 }
                 m_pCSVData->aDBData.push_back( aNewData );
             }
-        }            
-    }        
+        }
+    }
     else
     {
-        //database has to be created 
+        //database has to be created
         const ResStringArray& rAddressHeader = rConfig.GetDefaultAddressHeaders();
-        USHORT nCount = rAddressHeader.Count();
+        sal_uInt32 nCount = rAddressHeader.Count();
         for(USHORT nHeader = 0; nHeader < nCount; ++nHeader)
-            m_pCSVData->aDBColumnHeaders.push_back( rAddressHeader.GetString((USHORT)nHeader));
+            m_pCSVData->aDBColumnHeaders.push_back( rAddressHeader.GetString(nHeader));
         ::std::vector<OUString> aNewData;
         String sTemp;
         aNewData.insert(aNewData.begin(), nCount, sTemp);
@@ -548,10 +550,10 @@ SwCreateAddressListDialog::~SwCreateAddressListDialog()
     delete m_pFindDlg;
 }
 /*-- 13.04.2004 10:08:59---------------------------------------------------
-    add a new data set of empty strings and set the address input control 
+    add a new data set of empty strings and set the address input control
     to that new set
   -----------------------------------------------------------------------*/
-IMPL_LINK(SwCreateAddressListDialog, NewHdl_Impl, PushButton*, pButton)
+IMPL_LINK(SwCreateAddressListDialog, NewHdl_Impl, PushButton*, EMPTYARG)
 {
     sal_uInt32 nCurrent = m_pAddressControl->GetCurrentDataSet();
     ::std::vector<OUString> aNewData;
@@ -569,17 +571,17 @@ IMPL_LINK(SwCreateAddressListDialog, NewHdl_Impl, PushButton*, pButton)
 /*-- 13.04.2004 10:09:00---------------------------------------------------
 
   -----------------------------------------------------------------------*/
-IMPL_LINK(SwCreateAddressListDialog, DeleteHdl_Impl, PushButton*, pButton)
+IMPL_LINK(SwCreateAddressListDialog, DeleteHdl_Impl, PushButton*, EMPTYARG)
 {
     sal_uInt32 nCurrent = m_pAddressControl->GetCurrentDataSet();
     if(m_pCSVData->aDBData.size() > 1)
-    {        
+    {
         m_pCSVData->aDBData.erase(m_pCSVData->aDBData.begin() + nCurrent);
         if(nCurrent)
             --nCurrent;
     }
     else
-    {        
+    {
         // if only one set is available then clear the data
         String sTemp;
         m_pCSVData->aDBData[0].assign(m_pCSVData->aDBData[0].size(), sTemp);
@@ -593,18 +595,18 @@ IMPL_LINK(SwCreateAddressListDialog, DeleteHdl_Impl, PushButton*, pButton)
 /*-- 13.04.2004 10:09:00---------------------------------------------------
 
   -----------------------------------------------------------------------*/
-IMPL_LINK(SwCreateAddressListDialog, FindHdl_Impl, PushButton*, pButton)
+IMPL_LINK(SwCreateAddressListDialog, FindHdl_Impl, PushButton*, EMPTYARG)
 {
     if(!m_pFindDlg)
-    {        
+    {
         m_pFindDlg = new SwFindEntryDialog(this);
         ListBox& rColumnBox = m_pFindDlg->GetFieldsListBox();
         ::std::vector< OUString >::iterator  aHeaderIter;
-        for(aHeaderIter = m_pCSVData->aDBColumnHeaders.begin(); 
-                    aHeaderIter != m_pCSVData->aDBColumnHeaders.end(); 
+        for(aHeaderIter = m_pCSVData->aDBColumnHeaders.begin();
+                    aHeaderIter != m_pCSVData->aDBColumnHeaders.end();
                     ++aHeaderIter)
             rColumnBox.InsertEntry(*aHeaderIter);
-    }      
+    }
     else
         m_pFindDlg->Show(!m_pFindDlg->IsVisible());
     return 0;
@@ -616,7 +618,7 @@ IMPL_LINK(SwCreateAddressListDialog, CustomizeHdl_Impl, PushButton*, pButton)
 {
     SwCustomizeAddressListDialog* pDlg = new SwCustomizeAddressListDialog(pButton, *m_pCSVData);
     if(RET_OK == pDlg->Execute())
-    {        
+    {
         delete m_pCSVData;
         m_pCSVData = pDlg->GetNewData();
         m_pAddressControl->SetData(*m_pCSVData);
@@ -626,12 +628,12 @@ IMPL_LINK(SwCreateAddressListDialog, CustomizeHdl_Impl, PushButton*, pButton)
 
     //update find dialog
     if(m_pFindDlg)
-    {        
+    {
         ListBox& rColumnBox = m_pFindDlg->GetFieldsListBox();
         rColumnBox.Clear();
         ::std::vector< OUString >::iterator  aHeaderIter;
-        for(aHeaderIter = m_pCSVData->aDBColumnHeaders.begin(); 
-                    aHeaderIter != m_pCSVData->aDBColumnHeaders.end(); 
+        for(aHeaderIter = m_pCSVData->aDBColumnHeaders.begin();
+                    aHeaderIter != m_pCSVData->aDBColumnHeaders.end();
                     ++aHeaderIter)
             rColumnBox.InsertEntry(*aHeaderIter);
     }
@@ -641,23 +643,23 @@ IMPL_LINK(SwCreateAddressListDialog, CustomizeHdl_Impl, PushButton*, pButton)
     writes the data into a .csv file
     encoding is UTF8, separator is tab, strings are enclosed into "
   -----------------------------------------------------------------------*/
-IMPL_LINK(SwCreateAddressListDialog, OkHdl_Impl, PushButton*, pButton)
+IMPL_LINK(SwCreateAddressListDialog, OkHdl_Impl, PushButton*, EMPTYARG)
 {
     if(!m_sURL.Len())
     {
         sfx2::FileDialogHelper aDlgHelper( TemplateDescription::FILESAVE_SIMPLE, 0 );
-        Reference < XFilePicker > xFP = aDlgHelper.GetFilePicker();
+        uno::Reference < XFilePicker > xFP = aDlgHelper.GetFilePicker();
 
-        String sPath( SvtPathOptions().SubstituteVariable( 
+        String sPath( SvtPathOptions().SubstituteVariable(
                     String::CreateFromAscii("$(userurl)/database") ));
         aDlgHelper.SetDisplayDirectory( sPath );
-        Reference<XFilterManager> xFltMgr(xFP, UNO_QUERY);
+        uno::Reference< XFilterManager > xFltMgr(xFP, uno::UNO_QUERY);
         ::rtl::OUString sCSV(C2U("*.csv"));
         xFltMgr->appendFilter( m_sAddressListFilterName, sCSV );
         xFltMgr->setCurrentFilter( m_sAddressListFilterName ) ;
 
         if( ERRCODE_NONE == aDlgHelper.Execute() )
-        {        
+        {
             m_sURL = xFP->getFiles().getConstArray()[0];
             INetURLObject aResult( m_sURL );
             aResult.setExtension(String::CreateFromAscii("csv"));
@@ -665,29 +667,29 @@ IMPL_LINK(SwCreateAddressListDialog, OkHdl_Impl, PushButton*, pButton)
         }
     }
     if(m_sURL.Len())
-    {        
+    {
         SfxMedium aMedium( m_sURL, STREAM_READWRITE|STREAM_TRUNC, TRUE );
         SvStream* pStream = aMedium.GetOutStream();
         pStream->SetLineDelimiter( LINEEND_LF );
         pStream->SetStreamCharSet(RTL_TEXTENCODING_UTF8);
-    
+
         OUString sSemi(';');
         OUString sQuote('"');
         String sTempMiddle(sQuote);
         sTempMiddle += sal_Unicode(9);
-        OUString sMiddle(sTempMiddle); 
-        sMiddle += sQuote; 
+        OUString sMiddle(sTempMiddle);
+        sMiddle += sQuote;
 
         //create a string for the header line
         OUString sLine(sQuote);
         ::std::vector< OUString >::iterator  aHeaderIter;
-        for(aHeaderIter = m_pCSVData->aDBColumnHeaders.begin(); 
-                    aHeaderIter != m_pCSVData->aDBColumnHeaders.end(); 
+        for(aHeaderIter = m_pCSVData->aDBColumnHeaders.begin();
+                    aHeaderIter != m_pCSVData->aDBColumnHeaders.end();
                     ++aHeaderIter)
         {
             sLine += *aHeaderIter;
             sLine += sMiddle;
-        }                        
+        }
         //remove tab and quote
         sLine = sLine.copy( 0, sLine.getLength() - 2 );
         pStream->WriteUnicodeOrByteText( sLine, RTL_TEXTENCODING_UTF8 );
@@ -702,16 +704,16 @@ IMPL_LINK(SwCreateAddressListDialog, OkHdl_Impl, PushButton*, pButton)
             {
                 sLine += *aColumnIter;
                 sLine += sMiddle;
-            }            
+            }
             //remove tab and quote
             sLine = sLine.copy( 0, sLine.getLength() - 2 );
             pStream->WriteUnicodeOrByteText( sLine, RTL_TEXTENCODING_UTF8 );
             endl(*pStream);
-        }                        
+        }
         aMedium.Commit();
         EndDialog(RET_OK);
-    }            
-                    
+    }
+
     return 0;
 }
 /*-- 13.04.2004 10:09:01---------------------------------------------------
@@ -719,13 +721,13 @@ IMPL_LINK(SwCreateAddressListDialog, OkHdl_Impl, PushButton*, pButton)
   -----------------------------------------------------------------------*/
 IMPL_LINK(SwCreateAddressListDialog, DBCursorHdl_Impl, PushButton*, pButton)
 {
-    sal_uInt32 nValue = m_aSetNoNF.GetValue();
+    sal_uInt32 nValue = static_cast< sal_uInt32 >(m_aSetNoNF.GetValue());
 
     if(pButton == &m_aStartPB)
         nValue = 1;
     else if(pButton == &m_aPrevPB)
     {
-        if(nValue > 1) 
+        if(nValue > 1)
             --nValue;
     }
     else if(pButton == &m_aNextPB)
@@ -734,9 +736,9 @@ IMPL_LINK(SwCreateAddressListDialog, DBCursorHdl_Impl, PushButton*, pButton)
             ++nValue;
     }
     else //m_aEndPB
-        nValue = m_aSetNoNF.GetMax();
+        nValue = static_cast< sal_uInt32 >(m_aSetNoNF.GetMax());
     if(nValue != m_aSetNoNF.GetValue())
-    {        
+    {
         m_aSetNoNF.SetValue(nValue);
         DBNumCursorHdl_Impl(&m_aSetNoNF);
     }
@@ -745,9 +747,9 @@ IMPL_LINK(SwCreateAddressListDialog, DBCursorHdl_Impl, PushButton*, pButton)
 /*-- 21.04.2004 12:06:47---------------------------------------------------
 
   -----------------------------------------------------------------------*/
-IMPL_LINK(SwCreateAddressListDialog, DBNumCursorHdl_Impl, NumericField*, pField)
+IMPL_LINK(SwCreateAddressListDialog, DBNumCursorHdl_Impl, NumericField*, EMPTYARG)
 {
-    m_pAddressControl->SetCurrentDataSet(m_aSetNoNF.GetValue() - 1);
+    m_pAddressControl->SetCurrentDataSet( static_cast< sal_uInt32 >(m_aSetNoNF.GetValue() - 1) );
     UpdateButtons();
     return 0;
 }
@@ -756,7 +758,7 @@ IMPL_LINK(SwCreateAddressListDialog, DBNumCursorHdl_Impl, NumericField*, pField)
   -----------------------------------------------------------------------*/
 void SwCreateAddressListDialog::UpdateButtons()
 {
-    sal_uInt32 nCurrent = m_aSetNoNF.GetValue();
+    sal_uInt32 nCurrent = static_cast< sal_uInt32 >(m_aSetNoNF.GetValue() );
     sal_uInt32 nSize = (sal_uInt32 )m_pCSVData->aDBData.size();
     m_aStartPB.Enable(nCurrent != 1);
     m_aPrevPB.Enable(nCurrent != 1);
@@ -779,13 +781,13 @@ void SwCreateAddressListDialog::Find(const String& rSearch, sal_Int32 nColumn)
     sal_uInt32 nElement = 0;
     sal_uInt32 nPos = 0;
     for(short nTemp = 0; nTemp < 2 && !bFound; nTemp++)
-    {        
+    {
         for(nPos = nStart; nPos < nEnd; ++nPos)
         {
             ::std::vector< OUString> aData = m_pCSVData->aDBData[nPos];
             if(nColumn >=0)
                 bFound = -1 != aData[(sal_uInt32)nColumn].toAsciiLowerCase().indexOf(sSearch);
-            else 
+            else
             {
                 for( nElement = 0; nElement < aData.size(); ++nElement)
                 {
@@ -795,26 +797,26 @@ void SwCreateAddressListDialog::Find(const String& rSearch, sal_Int32 nColumn)
                         nColumn = nElement;
                         break;
                     }
-                }            
+                }
             }
             if(bFound)
                 break;
-        }                       
+        }
         nStart = 0;
         nEnd = nCurrent;
     }
     if(bFound)
-    {        
+    {
         m_pAddressControl->SetCurrentDataSet(nPos);
         m_pAddressControl->SetCursorTo(nElement);
-    }            
-}            
+    }
+}
 /*-- 13.04.2004 13:48:38---------------------------------------------------
 
   -----------------------------------------------------------------------*/
 SwFindEntryDialog::SwFindEntryDialog(SwCreateAddressListDialog* pParent) :
     ModelessDialog(pParent, SW_RES(DLG_MM_FIND_ENTRY)),
-#ifdef _MSC_VER
+#ifdef MSC
 #pragma warning (disable : 4355)
 #endif
     m_aFindFT( this, SW_RES(      FT_FIND      )),
@@ -823,11 +825,11 @@ SwFindEntryDialog::SwFindEntryDialog(SwCreateAddressListDialog* pParent) :
     m_aFindOnlyLB( this, SW_RES(  LB_FINDONLY  )),
     m_aFindPB( this, SW_RES(      PB_FIND)),
     m_aCancel( this, SW_RES(      PB_CANCEL)),
-    m_aHelp( this, SW_RES(        PB_HELP)),         
-#ifdef _MSC_VER
+    m_aHelp( this, SW_RES(        PB_HELP)),
+#ifdef MSC
 #pragma warning (default : 4355)
 #endif
-    m_pParent(pParent)
+   m_pParent(pParent)
 {
     FreeResource();
     m_aFindPB.SetClickHdl(LINK(this, SwFindEntryDialog, FindHdl_Impl));
