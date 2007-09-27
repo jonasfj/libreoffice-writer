@@ -4,9 +4,9 @@
  *
  *  $RCSfile: selectdbtabledialog.cxx,v $
  *
- *  $Revision: 1.9 $
+ *  $Revision: 1.10 $
  *
- *  last change: $Author: kz $ $Date: 2007-09-06 14:07:17 $
+ *  last change: $Author: hr $ $Date: 2007-09-27 11:35:36 $
  *
  *  The Contents of this file are made available subject to
  *  the terms of GNU Lesser General Public License Version 2.1.
@@ -70,26 +70,27 @@
 #include <com/sun/star/sdbc/XDataSource.hpp>
 #endif
 
+#include <unomid.h>
 
 #include <selectdbtabledialog.hrc>
 #include <dbui.hrc>
 #include <helpid.h>
 
-using namespace com::sun::star::sdbcx;
-using namespace com::sun::star::sdbc;
-using namespace com::sun::star::sdb;
-using namespace com::sun::star::uno;
-using namespace com::sun::star::container;
-using namespace com::sun::star::beans;
+using namespace ::com::sun::star;
+using namespace ::com::sun::star::sdbcx;
+using namespace ::com::sun::star::sdbc;
+using namespace ::com::sun::star::sdb;
+using namespace ::com::sun::star::uno;
+using namespace ::com::sun::star::container;
+using namespace ::com::sun::star::beans;
 
-#define C2U(cChar) ::rtl::OUString(RTL_CONSTASCII_USTRINGPARAM(cChar))
 /*-- 08.04.2004 14:33:56---------------------------------------------------
 
   -----------------------------------------------------------------------*/
-SwSelectDBTableDialog::SwSelectDBTableDialog(Window* pParent, 
-        const ::com::sun::star::uno::Reference< ::com::sun::star::sdbc::XConnection>& rConnection) :
+SwSelectDBTableDialog::SwSelectDBTableDialog(Window* pParent,
+        const uno::Reference< sdbc::XConnection>& rConnection) :
     SfxModalDialog(pParent, SW_RES(DLG_MM_SELECTDBTABLEDDIALOG)),
-#ifdef _MSC_VER
+#ifdef MSC
 #pragma warning (disable : 4355)
 #endif
     m_aSelectFI( this, SW_RES(       FI_SELECT     )),
@@ -100,7 +101,7 @@ SwSelectDBTableDialog::SwSelectDBTableDialog(Window* pParent,
     m_aOK( this, SW_RES(             PB_OK         )),
     m_aCancel( this, SW_RES(         PB_CANCEL     )),
     m_aHelp( this, SW_RES(           PB_HELP       )),
-#ifdef _MSC_VER
+#ifdef MSC
 #pragma warning (default : 4355)
 #endif
     m_sName( SW_RES( ST_NAME )),
@@ -110,7 +111,7 @@ SwSelectDBTableDialog::SwSelectDBTableDialog(Window* pParent,
     m_xConnection(rConnection)
 {
     FreeResource();
-    
+
     Size aLBSize(m_aTableLB.GetSizePixel());
     m_aTableHB.SetSizePixel(aLBSize);
     Size aHeadSize(m_aTableHB.CalcWindowSizePixel());
@@ -121,7 +122,7 @@ SwSelectDBTableDialog::SwSelectDBTableDialog(Window* pParent,
     aLBPos.Y() += aHeadSize.Height();
     aLBSize.Height() -= aHeadSize.Height();
     m_aTableLB.SetPosSizePixel(aLBPos, aLBSize);
-    
+
     Size aSz(m_aTableHB.GetOutputSizePixel());
     m_aTableHB.InsertItem( 1, m_sName,
                             aSz.Width()/2,
@@ -131,7 +132,7 @@ SwSelectDBTableDialog::SwSelectDBTableDialog(Window* pParent,
                             HIB_LEFT | HIB_VCENTER /*| HIB_CLICKABLE | HIB_UPARROW */);
     m_aTableHB.SetHelpId(HID_MM_ADDRESSLIST_HB );
     m_aTableHB.Show();
-    
+
     static long nTabs[] = {3, 0, aSz.Width()/2, aSz.Width() };
     m_aTableLB.SetTabs(&nTabs[0], MAP_PIXEL);
     m_aTableLB.SetHelpId(HID_MM_SELECTDBTABLEDDIALOG_LISTBOX);
@@ -179,7 +180,7 @@ SwSelectDBTableDialog::SwSelectDBTableDialog(Window* pParent,
   -----------------------------------------------------------------------*/
 SwSelectDBTableDialog::~SwSelectDBTableDialog()
 {
-}                                              
+}
 /*-- 08.04.2004 14:33:57---------------------------------------------------
 
   -----------------------------------------------------------------------*/
@@ -190,7 +191,7 @@ IMPL_LINK(SwSelectDBTableDialog, PreviewHdl, PushButton*, pButton)
     {
         ::rtl::OUString sTableOrQuery = m_aTableLB.GetEntryText(pEntry, 0);
         sal_Int32 nCommandType = 0 == pEntry->GetUserData() ? 0 : 1;
-        
+
         ::rtl::OUString sDataSourceName;
         Reference<XChild> xChild(m_xConnection, UNO_QUERY);
         if(xChild.is())
@@ -198,7 +199,7 @@ IMPL_LINK(SwSelectDBTableDialog, PreviewHdl, PushButton*, pButton)
             Reference<XDataSource> xSource(xChild->getParent(), UNO_QUERY);
             Reference<XPropertySet> xPrSet(xSource, UNO_QUERY);
             xPrSet->getPropertyValue(C2U("Name")) >>= sDataSourceName;
-        }            
+        }
         DBG_ASSERT(sDataSourceName.getLength(), "no data source found")
         Sequence<PropertyValue> aProperties(5);
         PropertyValue* pProperties = aProperties.getArray();
@@ -213,7 +214,7 @@ IMPL_LINK(SwSelectDBTableDialog, PreviewHdl, PushButton*, pButton)
         pProperties[3].Value <<= bFalse;
         pProperties[4].Name = C2U("ShowTreeViewButton");
         pProperties[4].Value <<= bFalse;
-                
+
         SwDBTablePreviewDialog* pDlg = new SwDBTablePreviewDialog(pButton, aProperties);
         pDlg->Execute();
         delete pDlg;
@@ -238,7 +239,7 @@ void   SwSelectDBTableDialog::SetSelectedTable(const String& rTable, bool bIsTab
     SvLBoxEntry*    pEntry = m_aTableLB.First();
     while(pEntry)
     {
-        if((m_aTableLB.GetEntryText(pEntry, 0) == rTable) && 
+        if((m_aTableLB.GetEntryText(pEntry, 0) == rTable) &&
                  ((pEntry->GetUserData() == 0 ) == bIsTable))
         {
             m_aTableLB.Select(pEntry);
