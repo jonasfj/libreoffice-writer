@@ -4,9 +4,9 @@
  *
  *  $RCSfile: numfmtlb.hxx,v $
  *
- *  $Revision: 1.6 $
+ *  $Revision: 1.7 $
  *
- *  last change: $Author: rt $ $Date: 2005-09-09 09:53:24 $
+ *  last change: $Author: hr $ $Date: 2007-09-27 12:05:52 $
  *
  *  The Contents of this file are made available subject to
  *  the terms of GNU Lesser General Public License Version 2.1.
@@ -58,7 +58,7 @@ class SW_DLLPUBLIC NumFormatListBox : public ListBox
     SwView*				pVw;
     SvNumberFormatter*	pOwnFormatter;
     LanguageType		eCurLanguage;
-    BOOL                bShowLanguageControl; //determine whether the language control has 
+    BOOL                bShowLanguageControl; //determine whether the language control has
                                               //to be shown in the number format dialog
     BOOL                bUseAutomaticLanguage;//determine whether language is automatically assigned
 
