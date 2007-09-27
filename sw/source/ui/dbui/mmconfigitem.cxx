@@ -4,9 +4,9 @@
  *
  *  $RCSfile: mmconfigitem.cxx,v $
  *
- *  $Revision: 1.14 $
+ *  $Revision: 1.15 $
  *
- *  last change: $Author: rt $ $Date: 2007-04-25 09:15:14 $
+ *  last change: $Author: hr $ $Date: 2007-09-27 11:33:23 $
  *
  *  The Contents of this file are made available subject to
  *  the terms of GNU Lesser General Public License Version 2.1.
@@ -107,20 +107,21 @@
 #include <dbui.hrc>
 #include <vector>
 
+#include <unomid.h>
+
 #define _SVSTDARR_STRINGSDTOR
 #include <svtools/svstdarr.hxx>
 
 using namespace utl;
 using ::rtl::OUString;
-using namespace com::sun::star;
-using namespace com::sun::star::uno;
-using namespace com::sun::star::lang;
-using namespace com::sun::star::beans;
-using namespace com::sun::star::sdb;
-using namespace com::sun::star::sdbc;
-using namespace com::sun::star::sdbcx;
+using namespace ::com::sun::star;
+using namespace ::com::sun::star::uno;
+using namespace ::com::sun::star::lang;
+using namespace ::com::sun::star::beans;
+using namespace ::com::sun::star::sdb;
+using namespace ::com::sun::star::sdbc;
+using namespace ::com::sun::star::sdbcx;
 
-#define C2U(cChar) OUString::createFromAscii(cChar)
 const char* cAddressDataAssignments     = "AddressDataAssignments";
 const char* cDBColumnAssignments        = "DBColumnAssignments";
 const char* cDataSourceName             = "DataSource/DataSourceName";
@@ -168,11 +169,11 @@ class SwMailMergeConfigItem_Impl : public utl::ConfigItem
     sal_Int32                               nCurrentAddressBlock;
     sal_Bool                                bIsAddressBlock;
     sal_Bool                                bIsHideEmptyParagraphs;
-                                            
+
     sal_Bool                                bIsOutputToLetter;
     sal_Bool                                bIncludeCountry;
     ::rtl::OUString                         sExcludeCountry;
-                                            
+
     sal_Bool                                bIsGreetingLine;
     sal_Bool                                bIsIndividualGreetingLine;
     ::std::vector< ::rtl::OUString>         aFemaleGreetingLines;
@@ -186,7 +187,7 @@ class SwMailMergeConfigItem_Impl : public utl::ConfigItem
 
     sal_Bool                                bIsGreetingLineInMail;
     sal_Bool                                bIsIndividualGreetingLineInMail;
-    
+
     //mail settings
     ::rtl::OUString                         sMailDisplayName;
     ::rtl::OUString                         sMailAddress;
@@ -201,7 +202,7 @@ class SwMailMergeConfigItem_Impl : public utl::ConfigItem
     sal_Bool                                bInServerPOP;
     ::rtl::OUString                         sInServerUserName;
     ::rtl::OUString                         sInServerPassword;
-    
+
     sal_Int16                               nMailPort;
     sal_Bool                                bIsMailReplyTo;
     sal_Bool                                bIsDefaultPort;
@@ -211,7 +212,7 @@ class SwMailMergeConfigItem_Impl : public utl::ConfigItem
     sal_Bool                                bIsEMailSupported;
 
     ResStringArray                          m_AddressHeaderSA;
-    
+
     //these addresses are not stored in the configuration
     ::std::vector< SwDocMergeInfo >         aMergeInfos;
 
@@ -222,25 +223,25 @@ class SwMailMergeConfigItem_Impl : public utl::ConfigItem
     sal_Bool                                bIsGreetingLineInMail_LastUserSetting;
     sal_Bool                                bIsGreetingLine_LastUserSetting;
 
-    
+
     const Sequence< ::rtl::OUString>&       GetPropertyNames();
-    
-public: 
+
+public:
     SwMailMergeConfigItem_Impl();
     ~SwMailMergeConfigItem_Impl();
-            
+
     virtual void        Commit();
 
-    const           Sequence< ::rtl::OUString>   
+    const           Sequence< ::rtl::OUString>
                         GetAddressBlocks(sal_Bool bConvertToConfig = sal_False) const;
     void                SetAddressBlocks(
-                                const Sequence< ::rtl::OUString>& rBlocks, 
+                                const Sequence< ::rtl::OUString>& rBlocks,
                                 sal_Bool bConvertFromConfig = sal_False);
-    const com::sun::star::uno::Sequence< ::rtl::OUString>   
-                        GetGreetings(SwMailMergeConfigItem::Gender eType, 
+    const uno::Sequence< ::rtl::OUString>
+                        GetGreetings(SwMailMergeConfigItem::Gender eType,
                                         sal_Bool bConvertToConfig = sal_False) const;
-    void                SetGreetings(SwMailMergeConfigItem::Gender eType, 
-                                    const com::sun::star::uno::Sequence< ::rtl::OUString>& rBlocks, 
+    void                SetGreetings(SwMailMergeConfigItem::Gender eType,
+                                    const uno::Sequence< ::rtl::OUString>& rBlocks,
                                     sal_Bool bConvertFromConfig = sal_False);
 
     void                SetCurrentAddressBlockIndex( sal_Int32 nSet );
@@ -250,32 +251,34 @@ public:
     void                SetCurrentGreeting(SwMailMergeConfigItem::Gender eType, sal_Int32 nIndex);
 
 };
- 
+
 /*-- 06.05.2004 12:51:54---------------------------------------------------
- 
+
   -----------------------------------------------------------------------*/
-SwMailMergeConfigItem_Impl::SwMailMergeConfigItem_Impl() : 
+SwMailMergeConfigItem_Impl::SwMailMergeConfigItem_Impl() :
     ConfigItem(C2U("Office.Writer/MailMergeWizard"), 0),
-          m_AddressHeaderSA( SW_RES( SA_ADDRESS_HEADER )),
-        bIsOutputToLetter(sal_True),
+        nResultSetCursorPos(-1),
+        nCurrentAddressBlock(0),
         bIsAddressBlock(sal_True),
         bIsHideEmptyParagraphs(sal_False),
-        bIsGreetingLine(sal_True),
+        bIsOutputToLetter(sal_True),
         bIncludeCountry(sal_False),
-        nResultSetCursorPos(-1),
-        nMailPort(0),
-        bIsSMPTAfterPOP(sal_False),
-        nInServerPort( POP_PORT ),
-        bInServerPOP( sal_True ),
-        bIsDefaultPort(sal_False),      
-        bIsSecureConnection(sal_False),
-        bIsMailReplyTo(sal_False),
-        bIsAuthentication(sal_False),
-        bIsEMailSupported(sal_False),
-        nCurrentAddressBlock(0),
+        bIsGreetingLine(sal_True),
         nCurrentFemaleGreeting(0),
         nCurrentMaleGreeting(0),
         nCurrentNeutralGreeting(0),
+
+        bIsSMPTAfterPOP(sal_False),
+        nInServerPort( POP_PORT ),
+        bInServerPOP( sal_True ),
+        nMailPort(0),
+        bIsMailReplyTo(sal_False),
+        bIsDefaultPort(sal_False),
+        bIsSecureConnection(sal_False),
+        bIsAuthentication(sal_False),
+
+        bIsEMailSupported(sal_False),
+        m_AddressHeaderSA( SW_RES( SA_ADDRESS_HEADER )),
         bUserSettingWereOverwritten(sal_False),
         bIsAddressBlock_LastUserSetting(sal_False),
         bIsGreetingLineInMail_LastUserSetting(sal_False),
@@ -294,26 +297,26 @@ SwMailMergeConfigItem_Impl::SwMailMergeConfigItem_Impl() :
                 case 0: pValues[nProp] >>= bIsOutputToLetter;  break;
                 case 1: pValues[nProp] >>= bIncludeCountry; break;
                 case 2: pValues[nProp] >>= sExcludeCountry; break;
-                case 3: 
+                case 3:
                 {
                     Sequence< ::rtl::OUString> aBlocks;
                     pValues[nProp] >>= aBlocks;
                     SetAddressBlocks(aBlocks, sal_True);
                 }
-                break;        
+                break;
                 case 4: pValues[nProp] >>= bIsAddressBlock; break;
                 case 5: pValues[nProp] >>= bIsGreetingLine;   break;
                 case 6: pValues[nProp] >>= bIsIndividualGreetingLine; break;
                 case 7 :
                 case 8 :
                 case 9 :
-                {    
+                {
                     Sequence< ::rtl::OUString> aGreetings;
                     pValues[nProp] >>= aGreetings;
                     SetGreetings(SwMailMergeConfigItem::Gender(
                             SwMailMergeConfigItem::FEMALE + nProp - 7), aGreetings, sal_True);
                 }
-                break;      
+                break;
 
                 case 10: pValues[nProp] >>= nCurrentFemaleGreeting;     break;
                 case 11: pValues[nProp] >>= nCurrentMaleGreeting;       break;
@@ -324,9 +327,9 @@ SwMailMergeConfigItem_Impl::SwMailMergeConfigItem_Impl() :
                 case 16: pValues[nProp] >>= bIsMailReplyTo;       break;
                 case 17: pValues[nProp] >>= sMailReplyTo;         break;
                 case 18: pValues[nProp] >>= sMailServer;          break;
-                case 19: 
-                    bIsDefaultPort = 
-                            (pValues[nProp] >>= nMailPort) ? 
+                case 19:
+                    bIsDefaultPort =
+                            (pValues[nProp] >>= nMailPort) ?
                                                         sal_False : sal_True;
                 break;
                 case 20: pValues[nProp] >>= bIsSecureConnection;           break;
@@ -336,16 +339,16 @@ SwMailMergeConfigItem_Impl::SwMailMergeConfigItem_Impl() :
                 case 24 :pValues[nProp] >>= aDBData.sDataSource;           break;
                 case 25 :pValues[nProp] >>= aDBData.sCommand;              break;
                 case 26 :
-                { 
-                    short nTemp; 
+                {
+                    short nTemp;
                     if(pValues[nProp] >>= nTemp)
                         aDBData.nCommandType = nTemp;
                 }
                 break;
                 case 27: pValues[nProp] >>= sFilter; break;
                 case 28: pValues[nProp] >>= aSavedDocuments; break;
-                case 29: 
-                    pValues[nProp] >>= bIsEMailSupported; 
+                case 29:
+                    pValues[nProp] >>= bIsEMailSupported;
                 break;
                 case 30: pValues[nProp] >>= bIsGreetingLineInMail; break;
                 case 31: pValues[nProp] >>= bIsIndividualGreetingLineInMail; break;
@@ -384,23 +387,23 @@ SwMailMergeConfigItem_Impl::SwMailMergeConfigItem_Impl() :
             pAssignProperties[nAssign + 2] += C2U(cDataCommandType);
             pAssignProperties[nAssign + 3] = sAssignPath;
             pAssignProperties[nAssign + 3] += C2U(cDBColumnAssignments);
-        }    
+        }
         Sequence<Any> aAssignValues = GetProperties(aAssignProperties);
         const Any* pAssignValues = aAssignValues.getConstArray();
         for(nAssign = 0; nAssign < aAssignValues.getLength(); nAssign += 4 )
         {
             DBAddressDataAssignment aAssignment;
             pAssignValues[nAssign] >>=      aAssignment.aDBData.sDataSource;
-            pAssignValues[nAssign + 1] >>=  aAssignment.aDBData.sCommand;      
+            pAssignValues[nAssign + 1] >>=  aAssignment.aDBData.sCommand;
             pAssignValues[nAssign + 2] >>=  aAssignment.aDBData.nCommandType;
             pAssignValues[nAssign + 3] >>=  aAssignment.aDBColumnAssignments;
             aAssignment.sConfigNodeName = pAssignments[nAssign / 4];
             aAddressDataAssignments.push_back(aAssignment);
-        }            
-    }        
+        }
+    }
     //check if the saved documents still exist
     if(aSavedDocuments.getLength())
-    {        
+    {
         uno::Sequence< ::rtl::OUString > aTempDocuments(aSavedDocuments.getLength());
         ::rtl::OUString* pTempDocuments = aTempDocuments.getArray();
         sal_Int32 nIndex = 0;
@@ -409,28 +412,28 @@ SwMailMergeConfigItem_Impl::SwMailMergeConfigItem_Impl() :
             if(SWUnoHelper::UCB_IsFile( aSavedDocuments[i] ))
             {
                 pTempDocuments[nIndex++] = aSavedDocuments[i];
-            }            
-        }            
+            }
+        }
         if(nIndex < aSavedDocuments.getLength())
         {
             aSavedDocuments = aTempDocuments;
             aSavedDocuments.realloc(nIndex);
-        } 
+        }
     }
 
 }
 /*-- 06.05.2004 12:51:54---------------------------------------------------
- 
+
   -----------------------------------------------------------------------*/
 SwMailMergeConfigItem_Impl::~SwMailMergeConfigItem_Impl()
 {
-}    
+}
 /*-- 13.03.2006 12:12:59---------------------------------------------------
 
   -----------------------------------------------------------------------*/
 void SwMailMergeConfigItem_Impl::SetCurrentAddressBlockIndex( sal_Int32 nSet )
-{   
-    if(aAddressBlocks.size() >= nSet)
+{
+    if(aAddressBlocks.size() >= sal::static_int_cast<sal_uInt32, sal_Int32>(nSet))
     {
         nCurrentAddressBlock = nSet;
         SetModified();
@@ -452,14 +455,14 @@ OUString lcl_CreateNodeName(Sequence<OUString>& rAssignments )
         sNewName += OUString::valueOf(nStart);
         //search if the name exists
         for(sal_Int32 nAssign = 0; nAssign < rAssignments.getLength(); ++nAssign)
-        {        
+        {
             if(pNames[nAssign] == sNewName)
             {
                 bFound = true;
                 ++nStart;
                 break;
-            }            
-        }            
+            }
+        }
     }
     while(bFound);
     // add the new name to the array of existing names
@@ -483,11 +486,11 @@ void lcl_ConvertToNumbers(OUString& rBlock, const ResStringArray& rHeaders )
         sBlock.SearchAndReplaceAll(sHeader, sReplace);
     }
     rBlock = sBlock;
-}            
+}
 // --------------------------------------------------------------------------------
 void lcl_ConvertFromNumbers(OUString& rBlock, const ResStringArray& rHeaders)
 {
-    //convert the numbers used for the configuration to strings used for UI to numbers 
+    //convert the numbers used for the configuration to strings used for UI to numbers
     //doesn't use ReplaceAll to prevent expansion of numbers inside of the headers
     String sBlock(rBlock);
     sBlock.SearchAndReplaceAllAscii("\\n", '\n');
@@ -513,14 +516,14 @@ void lcl_ConvertFromNumbers(OUString& rBlock, const ResStringArray& rHeaders)
                 DBG_ERROR("parse error in address block or greeting line")
             }
         }
-        else    
+        else
             sBlock += aNext.sText;
-    }            
+    }
     rBlock = sBlock;
-}            
+}
 
 /*--------------------------------------------------------------------
-     
+
  --------------------------------------------------------------------*/
 const Sequence<OUString>& SwMailMergeConfigItem_Impl::GetPropertyNames()
 {
@@ -538,8 +541,8 @@ const Sequence<OUString>& SwMailMergeConfigItem_Impl::GetPropertyNames()
             "IsIndividualGreetingLine", // 6
             "FemaleGreetingLines",      // 7
             "MaleGreetingLines",        // 8
-            "NeutralGreetingLines",     // 9 
-            "CurrentFemaleGreeting",    // 10 
+            "NeutralGreetingLines",     // 9
+            "CurrentFemaleGreeting",    // 10
             "CurrentMaleGreeting",      // 11
             "CurrentNeutralGreeting",   // 12
             "FemaleGenderValue",        // 13
@@ -592,10 +595,10 @@ void  SwMailMergeConfigItem_Impl::Commit()
     {
         switch(nProp)
         {
-            case 0: pValues[nProp] <<= bIsOutputToLetter; break;// 
+            case 0: pValues[nProp] <<= bIsOutputToLetter; break;//
             case 1: pValues[nProp] <<= bIncludeCountry; break;
             case 2: pValues[nProp] <<= sExcludeCountry; break;
-            case 3: pValues[nProp] <<= GetAddressBlocks(sal_True); break;        
+            case 3: pValues[nProp] <<= GetAddressBlocks(sal_True); break;
             case 4:
                 {
                     if( bUserSettingWereOverwritten == sal_True )
@@ -613,12 +616,12 @@ void  SwMailMergeConfigItem_Impl::Commit()
                     break;
                 }
             case 6: pValues[nProp] <<= bIsIndividualGreetingLine;  break;
-            case 7: 
-            case 8: 
-            case 9: 
+            case 7:
+            case 8:
+            case 9:
                 pValues[nProp] <<= GetGreetings(
                         SwMailMergeConfigItem::Gender(
-                            SwMailMergeConfigItem::FEMALE + nProp - 7), sal_True); 
+                            SwMailMergeConfigItem::FEMALE + nProp - 7), sal_True);
             break;
             case 10: pValues[nProp] <<= nCurrentFemaleGreeting;     break;
             case 11: pValues[nProp] <<= nCurrentMaleGreeting;       break;
@@ -663,19 +666,19 @@ void  SwMailMergeConfigItem_Impl::Commit()
     }
     PutProperties(aNames, aValues);
     //store the changed / new assignments
-    
+
     //load the existing node names to find new names
     Sequence<OUString> aAssignments = GetNodeNames(C2U(cAddressDataAssignments));
-    
+
     ::std::vector<DBAddressDataAssignment>::iterator aAssignIter;
-    for(aAssignIter = aAddressDataAssignments.begin(); 
+    for(aAssignIter = aAddressDataAssignments.begin();
                 aAssignIter != aAddressDataAssignments.end(); aAssignIter++)
-    {                    
+    {
         if(aAssignIter->bColumnAssignmentsChanged)
         {
             //create a new node name
-            OUString sNewNode = aAssignIter->sConfigNodeName.getLength() ? 
-                        aAssignIter->sConfigNodeName : 
+            OUString sNewNode = aAssignIter->sConfigNodeName.getLength() ?
+                        aAssignIter->sConfigNodeName :
                         lcl_CreateNodeName(aAssignments);
             OUString sSlash = C2U("/");
             OUString sNodePath = C2U(cAddressDataAssignments);
@@ -683,22 +686,22 @@ void  SwMailMergeConfigItem_Impl::Commit()
             sNodePath += sNewNode;
             sNodePath += sSlash;
             //only one new entry is written
-            Sequence< PropertyValue > aValues(4);
-            PropertyValue* pValues = aValues.getArray();
-            pValues[0].Name = sNodePath;
-            pValues[0].Name += C2U(cDataSourceName);
-            pValues[0].Value <<= aAssignIter->aDBData.sDataSource;
-            pValues[1].Name = sNodePath;
-            pValues[1].Name += C2U(cDataTableName);
-            pValues[1].Value <<= aAssignIter->aDBData.sCommand;    
-            pValues[2].Name = sNodePath;
-            pValues[2].Name += C2U(cDataCommandType);
-            pValues[2].Value <<= aAssignIter->aDBData.nCommandType;
-            pValues[3].Name = sNodePath;
-            pValues[3].Name += C2U(cDBColumnAssignments);
-            pValues[3].Value <<= aAssignIter->aDBColumnAssignments;
+            Sequence< PropertyValue > aNewValues(4);
+            PropertyValue* pNewValues = aNewValues.getArray();
+            pNewValues[0].Name = sNodePath;
+            pNewValues[0].Name += C2U(cDataSourceName);
+            pNewValues[0].Value <<= aAssignIter->aDBData.sDataSource;
+            pNewValues[1].Name = sNodePath;
+            pNewValues[1].Name += C2U(cDataTableName);
+            pNewValues[1].Value <<= aAssignIter->aDBData.sCommand;
+            pNewValues[2].Name = sNodePath;
+            pNewValues[2].Name += C2U(cDataCommandType);
+            pNewValues[2].Value <<= aAssignIter->aDBData.nCommandType;
+            pNewValues[3].Name = sNodePath;
+            pNewValues[3].Name += C2U(cDBColumnAssignments);
+            pNewValues[3].Value <<= aAssignIter->aDBColumnAssignments;
 
-            SetSetProperties(C2U(cAddressDataAssignments), aValues);
+            SetSetProperties(C2U(cAddressDataAssignments), aNewValues);
         }
     }
 
@@ -713,7 +716,7 @@ const Sequence< ::rtl::OUString> SwMailMergeConfigItem_Impl::GetAddressBlocks(
     Sequence< ::rtl::OUString> aRet(aAddressBlocks.size());
     ::rtl::OUString* pRet = aRet.getArray();
     for(sal_uInt32 nBlock = 0; nBlock < aAddressBlocks.size(); nBlock++)
-    {        
+    {
         pRet[nBlock] = aAddressBlocks[nBlock];
         if(bConvertToConfig)
             lcl_ConvertToNumbers(pRet[nBlock], m_AddressHeaderSA);
@@ -729,12 +732,12 @@ void SwMailMergeConfigItem_Impl::SetAddressBlocks(
 {
     aAddressBlocks.clear();
     for(sal_Int32 nBlock = 0; nBlock < rBlocks.getLength(); nBlock++)
-    {        
+    {
         OUString sBlock = rBlocks[nBlock];
         if(bConvertFromConfig)
             lcl_ConvertFromNumbers(sBlock, m_AddressHeaderSA);
-        aAddressBlocks.push_back(sBlock); 
-    }    
+        aAddressBlocks.push_back(sBlock);
+    }
     nCurrentAddressBlock = 0;
     SetModified();
 }
@@ -744,14 +747,14 @@ void SwMailMergeConfigItem_Impl::SetAddressBlocks(
 const Sequence< ::rtl::OUString>   SwMailMergeConfigItem_Impl::GetGreetings(
         SwMailMergeConfigItem::Gender eType, sal_Bool bConvertToConfig) const
 {
-    const ::std::vector< ::rtl::OUString>& rGreetings = 
+    const ::std::vector< ::rtl::OUString>& rGreetings =
             eType == SwMailMergeConfigItem::FEMALE ? aFemaleGreetingLines :
-            eType == SwMailMergeConfigItem::MALE ? aMaleGreetingLines : 
+            eType == SwMailMergeConfigItem::MALE ? aMaleGreetingLines :
                                 aNeutralGreetingLines;
     Sequence< ::rtl::OUString> aRet(rGreetings.size());
     ::rtl::OUString* pRet = aRet.getArray();
     for(sal_uInt32 nGreeting = 0; nGreeting < rGreetings.size(); nGreeting++)
-    {        
+    {
         pRet[nGreeting] = rGreetings[nGreeting];
         if(bConvertToConfig)
             lcl_ConvertToNumbers(pRet[nGreeting], m_AddressHeaderSA);
@@ -762,23 +765,23 @@ const Sequence< ::rtl::OUString>   SwMailMergeConfigItem_Impl::GetGreetings(
 
   -----------------------------------------------------------------------*/
 void  SwMailMergeConfigItem_Impl::SetGreetings(
-        SwMailMergeConfigItem::Gender eType, 
-        const Sequence< ::rtl::OUString>& rSetGreetings, 
+        SwMailMergeConfigItem::Gender eType,
+        const Sequence< ::rtl::OUString>& rSetGreetings,
         sal_Bool bConvertFromConfig)
 {
-    ::std::vector< ::rtl::OUString>& rGreetings = 
+    ::std::vector< ::rtl::OUString>& rGreetings =
             eType == SwMailMergeConfigItem::FEMALE ? aFemaleGreetingLines :
-            eType == SwMailMergeConfigItem::MALE ? aMaleGreetingLines : 
+            eType == SwMailMergeConfigItem::MALE ? aMaleGreetingLines :
                                 aNeutralGreetingLines;
-   
+
     rGreetings.clear();
     for(sal_Int32 nGreeting = 0; nGreeting < rSetGreetings.getLength(); nGreeting++)
-    {        
+    {
         OUString sGreeting = rSetGreetings[nGreeting];
         if(bConvertFromConfig)
             lcl_ConvertFromNumbers(sGreeting, m_AddressHeaderSA);
-        rGreetings.push_back(sGreeting); 
-    }    
+        rGreetings.push_back(sGreeting);
+    }
     SetModified();
 }
 /*-- 11.05.2004 13:13:54---------------------------------------------------
@@ -805,17 +808,17 @@ void SwMailMergeConfigItem_Impl::SetCurrentGreeting(
     bool bChanged = false;
     switch(eType)
     {
-        case SwMailMergeConfigItem::FEMALE: 
-            bChanged = nCurrentFemaleGreeting != nIndex; 
-            nCurrentFemaleGreeting = nIndex; 
+        case SwMailMergeConfigItem::FEMALE:
+            bChanged = nCurrentFemaleGreeting != nIndex;
+            nCurrentFemaleGreeting = nIndex;
         break;
-        case SwMailMergeConfigItem::MALE:   
-            bChanged = nCurrentMaleGreeting != nIndex; 
-            nCurrentMaleGreeting = nIndex; 
+        case SwMailMergeConfigItem::MALE:
+            bChanged = nCurrentMaleGreeting != nIndex;
+            nCurrentMaleGreeting = nIndex;
         break;
-        default: 
-            bChanged = nCurrentNeutralGreeting != nIndex; 
-            nCurrentNeutralGreeting = nIndex; 
+        default:
+            bChanged = nCurrentNeutralGreeting != nIndex;
+            nCurrentNeutralGreeting = nIndex;
     }
     if(bChanged)
         SetModified();
@@ -827,15 +830,15 @@ static ::osl::Mutex aMutex;
 /*-- 15.04.2004 08:42:43---------------------------------------------------
 
   -----------------------------------------------------------------------*/
-SwMailMergeConfigItem::SwMailMergeConfigItem() : 
+SwMailMergeConfigItem::SwMailMergeConfigItem() :
     m_bAddressInserted(false),
+    m_bMergeDone(false),
     m_bGreetingInserted(false),
     m_nGreetingMoves(0),
-    m_bMergeDone(false),
     m_nStartPrint(0),
     m_nEndPrint(0),
-    m_pTargetView(0),
-    m_pSourceView(0)
+    m_pSourceView(0),
+    m_pTargetView(0)
 {
     // Global access, must be guarded (multithreading)
     ::osl::MutexGuard aGuard( aMutex );
@@ -843,7 +846,7 @@ SwMailMergeConfigItem::SwMailMergeConfigItem() :
         pOptions = new SwMailMergeConfigItem_Impl;
     ++nRefCount;
     m_pImpl = pOptions;
-}    
+}
 /*-- 15.04.2004 08:43:36---------------------------------------------------
 
   -----------------------------------------------------------------------*/
@@ -862,12 +865,12 @@ SwMailMergeConfigItem::~SwMailMergeConfigItem()
 void  SwMailMergeConfigItem::Commit()
 {
     if(m_pImpl->IsModified())
-        m_pImpl->Commit();                    
+        m_pImpl->Commit();
 }
 /*-- 06.05.2004 12:59:50---------------------------------------------------
 
   -----------------------------------------------------------------------*/
-const ResStringArray&   SwMailMergeConfigItem::GetDefaultAddressHeaders() const 
+const ResStringArray&   SwMailMergeConfigItem::GetDefaultAddressHeaders() const
 {
     return m_pImpl->m_AddressHeaderSA;
 }
@@ -900,7 +903,7 @@ void     SwMailMergeConfigItem::SetAddressBlock(sal_Bool bSet)
 {
     m_pImpl->bUserSettingWereOverwritten = sal_False;
     if(m_pImpl->bIsAddressBlock != bSet)
-    {        
+    {
         m_pImpl->bIsAddressBlock = bSet;
         m_pImpl->SetModified();
     }
@@ -919,7 +922,7 @@ sal_Bool SwMailMergeConfigItem::IsHideEmptyParagraphs() const
 void SwMailMergeConfigItem::SetHideEmptyParagraphs(sal_Bool bSet)
 {
     if(m_pImpl->bIsHideEmptyParagraphs != bSet)
-    {        
+    {
         m_pImpl->bIsHideEmptyParagraphs = bSet;
         m_pImpl->SetModified();
     }
@@ -943,9 +946,9 @@ rtl::OUString& SwMailMergeConfigItem::GetExcludeCountry() const
   -----------------------------------------------------------------------*/
 void SwMailMergeConfigItem::SetCountrySettings(sal_Bool bSet, const rtl::OUString& rCountry)
 {
-    if(m_pImpl->sExcludeCountry != rCountry || 
+    if(m_pImpl->sExcludeCountry != rCountry ||
         m_pImpl->bIncludeCountry != bSet)
-    {        
+    {
         m_pImpl->bIncludeCountry = bSet;
         m_pImpl->sExcludeCountry = bSet ? rCountry : OUString();
         m_pImpl->SetModified();
@@ -968,19 +971,19 @@ void SwMailMergeConfigItem::SetCurrentConnection(
         m_pImpl->xResultSet         = 0;
         m_pImpl->nResultSetCursorPos = 0;
         m_pImpl->SetModified();
-}    
+}
 /*-- 28.04.2004 15:38:11---------------------------------------------------
 
   -----------------------------------------------------------------------*/
 Reference< XDataSource>  SwMailMergeConfigItem::GetSource()
-{ 
+{
     return m_pImpl->xSource;
 }
 /*-- 28.04.2004 15:38:11---------------------------------------------------
 
   -----------------------------------------------------------------------*/
-SharedConnection SwMailMergeConfigItem::GetConnection() 
-{        
+SharedConnection SwMailMergeConfigItem::GetConnection()
+{
     return m_pImpl->xConnection;
 }
 /*-- 28.04.2004 15:38:11---------------------------------------------------
@@ -989,10 +992,10 @@ SharedConnection SwMailMergeConfigItem::GetConnection()
 Reference< XColumnsSupplier> SwMailMergeConfigItem::GetColumnsSupplier()
 {
     if(!m_pImpl->xColumnsSupplier.is() && m_pImpl->xConnection.is())
-    {        
+    {
         m_pImpl->xColumnsSupplier = SwNewDBMgr::GetColumnSupplier(m_pImpl->xConnection,
                                 m_pImpl->aDBData.sCommand,
-                                m_pImpl->aDBData.nCommandType == CommandType::TABLE ? 
+                                m_pImpl->aDBData.nCommandType == CommandType::TABLE ?
                                         SW_DB_SELECT_TABLE : SW_DB_SELECT_QUERY );
     }
     return m_pImpl->xColumnsSupplier;
@@ -1017,13 +1020,13 @@ void SwMailMergeConfigItem::SetCurrentDBData( const SwDBData& rDBData)
         m_pImpl->xSource = 0;
         m_pImpl->xColumnsSupplier = 0;
         m_pImpl->SetModified();
-    }            
+    }
 }
 /*-- 29.04.2004 11:34:36---------------------------------------------------
 
   -----------------------------------------------------------------------*/
 Reference< XResultSet>   SwMailMergeConfigItem::GetResultSet() const
-{        
+{
     if(!m_pImpl->xConnection.is() && m_pImpl->aDBData.sDataSource.getLength())
     {
         m_pImpl->xConnection.reset(
@@ -1034,11 +1037,11 @@ Reference< XResultSet>   SwMailMergeConfigItem::GetResultSet() const
     if(!m_pImpl->xResultSet.is() && m_pImpl->xConnection.is())
     {
         try
-        {        
+        {
             Reference< XMultiServiceFactory > xMgr( ::comphelper::getProcessServiceFactory() );
             if( xMgr.is() )
-            {        
-                Reference<XRowSet> xRowSet( 
+            {
+                Reference<XRowSet> xRowSet(
                         xMgr->createInstance(C2U("com.sun.star.sdb.RowSet")), UNO_QUERY);
                 Reference<XPropertySet> xRowProperties(xRowSet, UNO_QUERY);
                 xRowProperties->setPropertyValue(C2U("DataSourceName"), makeAny(m_pImpl->aDBData.sDataSource));
@@ -1051,22 +1054,21 @@ Reference< XResultSet>   SwMailMergeConfigItem::GetResultSet() const
                     xRowProperties->setPropertyValue(C2U("ApplyFilter"), makeAny(m_pImpl->sFilter.getLength()>0));
                     xRowProperties->setPropertyValue(C2U("Filter"), makeAny(m_pImpl->sFilter));
                 }
-                catch(Exception&)            
+                catch(Exception&)
                 {
                     DBG_ERROR("exception caught in xResultSet->SetFilter()")
-                }            
+                }
                 xRowSet->execute();
                 m_pImpl->xResultSet = xRowSet.get();
                 m_pImpl->xResultSet->first();
                 m_pImpl->nResultSetCursorPos = 1;
             }
         }
-        catch(Exception& rEx)
+        catch(Exception& )
         {
-            rEx;
             DBG_ERROR("exception caught in: SwMailMergeConfigItem::GetResultSet() ")
-        }        
-    }            
+        }
+    }
     return m_pImpl->xResultSet;
 }
 /*-- 13.08.2004 11:49:46---------------------------------------------------
@@ -1078,7 +1080,7 @@ void SwMailMergeConfigItem::DisposeResultSet()
     if(m_pImpl->xResultSet.is())
     {
         ::comphelper::disposeComponent( m_pImpl->xResultSet );
-    }            
+    }
 }
 /*-- 14.05.2004 15:07:55---------------------------------------------------
 
@@ -1093,7 +1095,7 @@ void SwMailMergeConfigItem::DisposeResultSet()
 void  SwMailMergeConfigItem::SetFilter(::rtl::OUString& rFilter)
 {
     if(m_pImpl->sFilter != rFilter)
-    {        
+    {
         m_pImpl->sFilter = rFilter;
         m_pImpl->SetModified();
         Reference<XPropertySet> xRowProperties(m_pImpl->xResultSet, UNO_QUERY);
@@ -1106,11 +1108,11 @@ void  SwMailMergeConfigItem::SetFilter(::rtl::OUString& rFilter)
                 uno::Reference<XRowSet> xRowSet( m_pImpl->xResultSet, UNO_QUERY_THROW );
                 xRowSet->execute();
             }
-            catch(Exception&)            
+            catch(Exception&)
             {
                 DBG_ERROR("exception caught in SwMailMergeConfigItem::SetFilter()")
-            }            
-        }            
+            }
+        }
     }
 }
 /*-- 29.04.2004 11:55:38---------------------------------------------------
@@ -1121,17 +1123,17 @@ sal_Int32 SwMailMergeConfigItem::MoveResultSet(sal_Int32 nTarget)
     if(!m_pImpl->xResultSet.is())
         GetResultSet();
     if(m_pImpl->xResultSet.is())
-    {        
+    {
         try
-        {        
+        {
             //no action if the resultset is already at the right position
             if(m_pImpl->xResultSet->getRow() != nTarget)
-            {        
+            {
                 if(nTarget > 0)
-                {        
+                {
                     BOOL bMoved = m_pImpl->xResultSet->absolute(nTarget);
                     if(!bMoved)
-                    {        
+                    {
                         if(nTarget > 1)
                             m_pImpl->xResultSet->last();
                         else if(nTarget == 1)
@@ -1143,12 +1145,12 @@ sal_Int32 SwMailMergeConfigItem::MoveResultSet(sal_Int32 nTarget)
                 m_pImpl->nResultSetCursorPos = m_pImpl->xResultSet->getRow();
             }
         }
-        catch(Exception&)            
+        catch(Exception&)
         {
-        }            
-    }            
+        }
+    }
     return m_pImpl->nResultSetCursorPos;
-}      
+}
 
 /*-- 27.05.2004 13:56:18---------------------------------------------------
 
@@ -1159,23 +1161,23 @@ bool SwMailMergeConfigItem::IsResultSetFirstLast(bool& bIsFirst, bool& bIsLast)
     if(!m_pImpl->xResultSet.is())
         GetResultSet();
     if(m_pImpl->xResultSet.is())
-    {        
+    {
         try
-        {        
+        {
             bIsFirst = m_pImpl->xResultSet->isFirst();
             bIsLast = m_pImpl->xResultSet->isLast();
             bRet = true;
         }
-        catch(Exception&)            
+        catch(Exception&)
         {
-        }            
+        }
     }
     return bRet;
 }
 /*-- 29.04.2004 11:55:38---------------------------------------------------
 
   -----------------------------------------------------------------------*/
-sal_Int32 SwMailMergeConfigItem::GetResultSetPosition() const 
+sal_Int32 SwMailMergeConfigItem::GetResultSetPosition() const
 {
     return m_pImpl->nResultSetCursorPos;
 }
@@ -1190,7 +1192,7 @@ bool SwMailMergeConfigItem::IsRecordExcluded(sal_Int32 nRecord)
         sal_Int32 nTemp;
         m_aSelection[nRecord - 1] >>= nTemp;
         bRet = nTemp < 1;
-    }        
+    }
     return bRet;
 }
 /*-- 27.05.2004 14:49:53---------------------------------------------------
@@ -1211,21 +1213,19 @@ void SwMailMergeConfigItem::ExcludeRecord(sal_Int32 nRecord, bool bExclude)
                 GetResultSet();
             if(m_pImpl->xResultSet.is())
             {
-                sal_Int32 nCurrent = m_pImpl->xResultSet->getRow();
                 m_pImpl->xResultSet->last();
                 sal_Int32 nEnd = m_pImpl->xResultSet->getRow();
                 sal_Int32 nStart = m_aSelection.getLength();
                 m_aSelection.realloc(nEnd);
                 Any* pSelection = m_aSelection.getArray();
-                sal_Int32 nRealIdx = 0;
                 for(sal_Int32 nIndex = nStart; nIndex < nEnd; ++nIndex)
                 {
                     if((nRecord - 1) != nIndex)
                         pSelection[nIndex] <<= nIndex + 1;
                     else
                         pSelection[nIndex] <<= (sal_Int32) -1;
-                }            
-            }            
+                }
+            }
         }
     }
     else
@@ -1233,13 +1233,13 @@ void SwMailMergeConfigItem::ExcludeRecord(sal_Int32 nRecord, bool bExclude)
         if(nRecord > 0 && m_aSelection.getLength() > nRecord)
         {
             m_aSelection[nRecord - 1] <<= bExclude ? -1 : nRecord;
-        }            
-    }    
+        }
+    }
 }
 /*-- 27.05.2004 15:08:35---------------------------------------------------
 
   -----------------------------------------------------------------------*/
-Sequence< Any > SwMailMergeConfigItem::GetSelection() const 
+Sequence< Any > SwMailMergeConfigItem::GetSelection() const
 {
     Sequence< Any > aRet(m_aSelection.getLength());
     sal_Int32 nRetIndex = 0;
@@ -1259,7 +1259,7 @@ Sequence< Any > SwMailMergeConfigItem::GetSelection() const
 /*-- 16.06.2004 15:15:56---------------------------------------------------
 
   -----------------------------------------------------------------------*/
-const uno::Sequence< ::rtl::OUString>&   
+const uno::Sequence< ::rtl::OUString>&
                     SwMailMergeConfigItem::GetSavedDocuments() const
 {
     return m_pImpl->aSavedDocuments;
@@ -1277,8 +1277,8 @@ void SwMailMergeConfigItem::AddSavedDocument(::rtl::OUString rName)
         {
             bFound = true;
             break;
-        }            
-    }            
+        }
+    }
     if(!bFound)
     {
         m_pImpl->aSavedDocuments.realloc(m_pImpl->aSavedDocuments.getLength() + 1);
@@ -1291,27 +1291,27 @@ void SwMailMergeConfigItem::AddSavedDocument(::rtl::OUString rName)
 sal_Bool SwMailMergeConfigItem::IsOutputToLetter()const
 {
     return m_pImpl->bIsOutputToLetter || !IsMailAvailable();
-}            
+}
 /*-- 28.04.2004 16:15:16---------------------------------------------------
 
   -----------------------------------------------------------------------*/
 void SwMailMergeConfigItem::SetOutputToLetter(sal_Bool bSet)
 {
     if(m_pImpl->bIsOutputToLetter != bSet)
-    {        
+    {
         m_pImpl->bIsOutputToLetter = bSet;
         m_pImpl->SetModified();
     }
-}            
+}
 /*-- 30.04.2004 10:51:10---------------------------------------------------
 
   -----------------------------------------------------------------------*/
 sal_Bool SwMailMergeConfigItem::IsIndividualGreeting(sal_Bool bInEMail) const
 {
-    return bInEMail ? 
+    return bInEMail ?
             m_pImpl->bIsIndividualGreetingLineInMail :
-            m_pImpl->bIsIndividualGreetingLine; 
-}                                              
+            m_pImpl->bIsIndividualGreetingLine;
+}
 /*-- 30.04.2004 10:51:10---------------------------------------------------
 
   -----------------------------------------------------------------------*/
@@ -1321,15 +1321,15 @@ void     SwMailMergeConfigItem::SetIndividualGreeting(
     if(bInEMail)
     {
         if(m_pImpl->bIsIndividualGreetingLineInMail != bSet)
-        {        
+        {
             m_pImpl->bIsIndividualGreetingLineInMail = bSet;
             m_pImpl->SetModified();
         }
-    }            
+    }
     else
-    {        
+    {
         if(m_pImpl->bIsIndividualGreetingLine != bSet)
-        {        
+        {
             m_pImpl->bIsIndividualGreetingLine = bSet;
             m_pImpl->SetModified();
         }
@@ -1351,15 +1351,15 @@ void     SwMailMergeConfigItem::SetGreetingLine(sal_Bool bSet, sal_Bool bInEMail
     if(bInEMail)
     {
         if(m_pImpl->bIsGreetingLineInMail != bSet)
-        {        
+        {
             m_pImpl->bIsGreetingLineInMail = bSet;
             m_pImpl->SetModified();
         }
-    }            
+    }
     else
-    {        
+    {
         if(m_pImpl->bIsGreetingLine != bSet)
-        {        
+        {
             m_pImpl->bIsGreetingLine = bSet;
             m_pImpl->SetModified();
         }
@@ -1402,39 +1402,39 @@ void SwMailMergeConfigItem::SetCurrentGreeting(Gender eType, sal_Int32 nIndex)
   -----------------------------------------------------------------------*/
 const ::rtl::OUString& SwMailMergeConfigItem::GetFemaleGenderValue() const
 {
-    return m_pImpl->sFemaleGenderValue;        
+    return m_pImpl->sFemaleGenderValue;
 }
 /*-- 12.05.2004 12:29:59---------------------------------------------------
 
   -----------------------------------------------------------------------*/
-void SwMailMergeConfigItem::SetFemaleGenderValue(const ::rtl::OUString rValue) 
+void SwMailMergeConfigItem::SetFemaleGenderValue(const ::rtl::OUString rValue)
 {
     if( m_pImpl->sFemaleGenderValue != rValue )
     {
         m_pImpl->sFemaleGenderValue = rValue;
         m_pImpl->SetModified();
-    }            
+    }
 }
 
 /*-- 30.04.2004 13:25:41---------------------------------------------------
 
   -----------------------------------------------------------------------*/
-Sequence< ::rtl::OUString> SwMailMergeConfigItem::GetColumnAssignment( 
-                const SwDBData& rDBData ) const 
+Sequence< ::rtl::OUString> SwMailMergeConfigItem::GetColumnAssignment(
+                const SwDBData& rDBData ) const
 {
     Sequence< ::rtl::OUString> aRet;
     ::std::vector<DBAddressDataAssignment>::iterator aAssignIter;
-    for(aAssignIter = m_pImpl->aAddressDataAssignments.begin(); 
+    for(aAssignIter = m_pImpl->aAddressDataAssignments.begin();
                 aAssignIter != m_pImpl->aAddressDataAssignments.end(); aAssignIter++)
     {
         if(aAssignIter->aDBData == rDBData)
         {
             aRet = aAssignIter->aDBColumnAssignments;
             break;
-        }            
-    }                        
+        }
+    }
     return aRet;
-}    
+}
 /*-- 21.05.2004 12:31:31---------------------------------------------------
     returns the name that is assigned as e-mail column of the current data base
   -----------------------------------------------------------------------*/
@@ -1442,7 +1442,7 @@ Sequence< ::rtl::OUString> SwMailMergeConfigItem::GetColumnAssignment(
 {
     ::rtl::OUString sRet;
     Sequence< ::rtl::OUString> aAssignment = GetColumnAssignment( m_pImpl->aDBData );
-    if(aAssignment.getLength() > nColumn && aAssignment[nColumn].getLength())
+    if(aAssignment.getLength() > sal::static_int_cast< sal_Int32, sal_uInt32>(nColumn) && aAssignment[nColumn].getLength())
         sRet = aAssignment[nColumn];
     else if(nColumn < m_pImpl->m_AddressHeaderSA.Count())
         sRet = m_pImpl->m_AddressHeaderSA.GetString(nColumn);
@@ -1451,12 +1451,12 @@ Sequence< ::rtl::OUString> SwMailMergeConfigItem::GetColumnAssignment(
 /*-- 30.04.2004 13:25:41---------------------------------------------------
 
   -----------------------------------------------------------------------*/
-void SwMailMergeConfigItem::SetColumnAssignment( const SwDBData& rDBData, 
+void SwMailMergeConfigItem::SetColumnAssignment( const SwDBData& rDBData,
                             const Sequence< ::rtl::OUString>& rList)
 {
     ::std::vector<DBAddressDataAssignment>::iterator aAssignIter;
     sal_Bool bFound = sal_False;
-    for(aAssignIter = m_pImpl->aAddressDataAssignments.begin(); 
+    for(aAssignIter = m_pImpl->aAddressDataAssignments.begin();
                 aAssignIter != m_pImpl->aAddressDataAssignments.end(); aAssignIter++)
     {
         if(aAssignIter->aDBData == rDBData)
@@ -1468,8 +1468,8 @@ void SwMailMergeConfigItem::SetColumnAssignment( const SwDBData& rDBData,
             }
             bFound = sal_True;
             break;
-        }            
-    }                        
+        }
+    }
     if(!bFound)
     {
         DBAddressDataAssignment aAssignment;
@@ -1477,9 +1477,9 @@ void SwMailMergeConfigItem::SetColumnAssignment( const SwDBData& rDBData,
         aAssignment.aDBColumnAssignments = rList;
         aAssignment.bColumnAssignmentsChanged = true;
         m_pImpl->aAddressDataAssignments.push_back(aAssignment);
-    }            
+    }
     m_pImpl->SetModified();
-}    
+}
 
 /*-- 07.09.2005 11:50:27---------------------------------------------------
 
@@ -1494,7 +1494,7 @@ bool SwMailMergeConfigItem::IsAddressFieldsAssigned() const
     uno::Reference<container::XNameAccess> xCols = xColsSupp->getColumns();
 
     const ResStringArray& rHeaders = GetDefaultAddressHeaders();
-    Sequence< ::rtl::OUString> aAssignment = 
+    Sequence< ::rtl::OUString> aAssignment =
                         GetColumnAssignment( GetCurrentDBData() );
     const ::rtl::OUString* pAssignment = aAssignment.getConstArray();
     const Sequence< ::rtl::OUString> aBlocks = GetAddressBlocks();
@@ -1503,28 +1503,28 @@ bool SwMailMergeConfigItem::IsAddressFieldsAssigned() const
         return false;
     SwAddressIterator aIter(aBlocks[m_pImpl->GetCurrentAddressBlockIndex()]);
     while(aIter.HasMore())
-    {        
+    {
         SwMergeAddressItem aItem = aIter.Next();
         if(aItem.bIsColumn)
         {
             String sConvertedColumn = aItem.sText;
-            for(USHORT nColumn = 0; 
-                    nColumn < rHeaders.Count() && nColumn < aAssignment.getLength(); 
+            for(USHORT nColumn = 0;
+                    nColumn < rHeaders.Count() && nColumn < aAssignment.getLength();
                                                                                 ++nColumn)
             {
-                if(rHeaders.GetString(nColumn) == aItem.sText && 
+                if(rHeaders.GetString(nColumn) == aItem.sText &&
                     pAssignment[nColumn].getLength())
                 {
                     sConvertedColumn = pAssignment[nColumn];
                     break;
-                }            
+                }
             }
             //find out if the column exists in the data base
             if(!xCols->hasByName(sConvertedColumn))
             {
                 bResult = false;
                 break;
-            }    
+            }
         }
     }
     return bResult;
@@ -1535,10 +1535,10 @@ bool SwMailMergeConfigItem::IsAddressFieldsAssigned() const
 bool SwMailMergeConfigItem::IsGreetingFieldsAssigned() const
 {
     bool bResult = true;
-    
+
     if(!IsIndividualGreeting(sal_False))
         return true;
-    
+
     Reference< XResultSet> xResultSet = GetResultSet();
     uno::Reference< XColumnsSupplier > xColsSupp( xResultSet, UNO_QUERY );
     if(!xColsSupp.is())
@@ -1546,10 +1546,10 @@ bool SwMailMergeConfigItem::IsGreetingFieldsAssigned() const
     const ResStringArray& rHeaders = GetDefaultAddressHeaders();
     uno::Reference<container::XNameAccess> xCols = xColsSupp->getColumns();
 
-    Sequence< ::rtl::OUString> aAssignment = 
+    Sequence< ::rtl::OUString> aAssignment =
                         GetColumnAssignment( GetCurrentDBData() );
     const ::rtl::OUString* pAssignment = aAssignment.getConstArray();
-    
+
     const Sequence< ::rtl::OUString> rFemaleEntries = GetGreetings(SwMailMergeConfigItem::FEMALE);
     sal_Int32 nCurrentFemale = GetCurrentGreeting(SwMailMergeConfigItem::FEMALE);
     const Sequence< ::rtl::OUString> rMaleEntries = GetGreetings(SwMailMergeConfigItem::MALE);
@@ -1559,33 +1559,33 @@ bool SwMailMergeConfigItem::IsGreetingFieldsAssigned() const
         sFemale = rFemaleEntries[nCurrentFemale];
     if(rMaleEntries.getLength() > nCurrentMale)
         sMale = rMaleEntries[nCurrentMale];
-    
+
     ::rtl::OUString sAddress( sFemale );
     sAddress += sMale;
     SwAddressIterator aIter(sAddress);
     while(aIter.HasMore())
-    {        
+    {
         SwMergeAddressItem aItem = aIter.Next();
         if(aItem.bIsColumn)
         {
             String sConvertedColumn = aItem.sText;
-            for(USHORT nColumn = 0; 
-                    nColumn < rHeaders.Count() && nColumn < aAssignment.getLength(); 
+            for(USHORT nColumn = 0;
+                    nColumn < rHeaders.Count() && nColumn < aAssignment.getLength();
                                                                                 ++nColumn)
             {
-                if(rHeaders.GetString(nColumn) == aItem.sText && 
+                if(rHeaders.GetString(nColumn) == aItem.sText &&
                     pAssignment[nColumn].getLength())
                 {
                     sConvertedColumn = pAssignment[nColumn];
                     break;
-                }            
+                }
             }
             //find out if the column exists in the data base
             if(!xCols->hasByName(sConvertedColumn))
             {
                 bResult = false;
                 break;
-            }    
+            }
         }
     }
     return bResult;
@@ -1603,7 +1603,7 @@ bool SwMailMergeConfigItem::IsGreetingFieldsAssigned() const
 void SwMailMergeConfigItem::SetMailDisplayName(const ::rtl::OUString& rName)
 {
     if(m_pImpl->sMailDisplayName != rName)
-    {        
+    {
         m_pImpl->sMailDisplayName = rName;
         m_pImpl->SetModified();
     }
@@ -1613,7 +1613,7 @@ void SwMailMergeConfigItem::SetMailDisplayName(const ::rtl::OUString& rName)
   -----------------------------------------------------------------------*/
 ::rtl::OUString     SwMailMergeConfigItem::GetMailAddress() const
 {
-    return m_pImpl->sMailAddress;         
+    return m_pImpl->sMailAddress;
 }
 /*-- 05.05.2004 16:10:09---------------------------------------------------
 
@@ -1622,7 +1622,7 @@ void SwMailMergeConfigItem::SetMailAddress(const ::rtl::OUString& rAddress)
 {
     if(m_pImpl->sMailAddress != rAddress )
     {
-        m_pImpl->sMailAddress = rAddress; 
+        m_pImpl->sMailAddress = rAddress;
         m_pImpl->SetModified();
     }
 }
@@ -1677,7 +1677,7 @@ void SwMailMergeConfigItem::SetMailServer(const ::rtl::OUString& rAddress)
 {
     if(m_pImpl->sMailServer != rAddress)
     {
-        m_pImpl->sMailServer = rAddress;        
+        m_pImpl->sMailServer = rAddress;
         m_pImpl->SetModified();
     }
 }
@@ -1686,7 +1686,7 @@ void SwMailMergeConfigItem::SetMailServer(const ::rtl::OUString& rAddress)
   -----------------------------------------------------------------------*/
 sal_Int16 SwMailMergeConfigItem::GetMailPort() const
 {
-    return m_pImpl->bIsDefaultPort ? 
+    return m_pImpl->bIsDefaultPort ?
              (m_pImpl->bIsSecureConnection ? SECURE_PORT : DEFAULT_PORT) :
              m_pImpl->nMailPort;
 }
@@ -1696,7 +1696,7 @@ sal_Int16 SwMailMergeConfigItem::GetMailPort() const
 void     SwMailMergeConfigItem::SetMailPort(sal_Int16 nSet)
 {
     if(m_pImpl->nMailPort != nSet || m_pImpl->bIsDefaultPort)
-    {        
+    {
         m_pImpl->nMailPort = nSet;
         m_pImpl->bIsDefaultPort = sal_False;
         m_pImpl->SetModified();
@@ -1707,7 +1707,7 @@ void     SwMailMergeConfigItem::SetMailPort(sal_Int16 nSet)
   -----------------------------------------------------------------------*/
 sal_Bool SwMailMergeConfigItem::IsSecureConnection() const
 {
-    return m_pImpl->bIsSecureConnection;  
+    return m_pImpl->bIsSecureConnection;
 }
 /*-- 05.05.2004 16:10:12---------------------------------------------------
 
@@ -1725,7 +1725,7 @@ void     SwMailMergeConfigItem::SetSecureConnection(sal_Bool bSet)
   -----------------------------------------------------------------------*/
 sal_Bool SwMailMergeConfigItem::IsAuthentication() const
 {
-    return m_pImpl->bIsAuthentication;    
+    return m_pImpl->bIsAuthentication;
 }
 /*-- 05.05.2004 16:10:13---------------------------------------------------
 
@@ -1743,7 +1743,7 @@ void SwMailMergeConfigItem::SetAuthentication(sal_Bool bSet)
   -----------------------------------------------------------------------*/
 ::rtl::OUString     SwMailMergeConfigItem::GetMailUserName() const
 {
-    return m_pImpl->sMailUserName;        
+    return m_pImpl->sMailUserName;
 }
 /*-- 05.05.2004 16:10:13---------------------------------------------------
 
@@ -1751,7 +1751,7 @@ void SwMailMergeConfigItem::SetAuthentication(sal_Bool bSet)
 void SwMailMergeConfigItem::SetMailUserName(const ::rtl::OUString& rName)
 {
     if(m_pImpl->sMailUserName != rName)
-    {        
+    {
         m_pImpl->sMailUserName = rName;
         m_pImpl->SetModified();
     }
@@ -1761,7 +1761,7 @@ void SwMailMergeConfigItem::SetMailUserName(const ::rtl::OUString& rName)
   -----------------------------------------------------------------------*/
 ::rtl::OUString     SwMailMergeConfigItem::GetMailPassword() const
 {
-    return m_pImpl->sMailPassword;        
+    return m_pImpl->sMailPassword;
 }
 /*-- 05.05.2004 16:10:14---------------------------------------------------
 
@@ -1769,7 +1769,7 @@ void SwMailMergeConfigItem::SetMailUserName(const ::rtl::OUString& rName)
 void SwMailMergeConfigItem::SetMailPassword(const ::rtl::OUString& rPassword)
 {
     if(m_pImpl->sMailPassword != rPassword)
-    {        
+    {
         m_pImpl->sMailPassword = rPassword;
         m_pImpl->SetModified();
     }
@@ -1787,7 +1787,7 @@ sal_Bool SwMailMergeConfigItem::IsSMTPAfterPOP() const
 void SwMailMergeConfigItem::SetSMTPAfterPOP(sal_Bool bSet)
 {
     if( m_pImpl->bIsSMPTAfterPOP != bSet)
-    {       
+    {
         m_pImpl->bIsSMPTAfterPOP = bSet;
         m_pImpl->SetModified();
     }
@@ -1805,7 +1805,7 @@ void SwMailMergeConfigItem::SetSMTPAfterPOP(sal_Bool bSet)
 void SwMailMergeConfigItem::SetInServerName(const ::rtl::OUString& rServer)
 {
     if(m_pImpl->sInServerName != rServer)
-    {       
+    {
         m_pImpl->sInServerName = rServer;
         m_pImpl->SetModified();
     }
@@ -1823,7 +1823,7 @@ sal_Int16           SwMailMergeConfigItem::GetInServerPort() const
 void SwMailMergeConfigItem::SetInServerPort(sal_Int16 nSet)
 {
     if( m_pImpl->nInServerPort != nSet)
-    {       
+    {
         m_pImpl->nInServerPort = nSet;
         m_pImpl->SetModified();
     }
@@ -1841,7 +1841,7 @@ sal_Bool SwMailMergeConfigItem::IsInServerPOP() const
 void SwMailMergeConfigItem::SetInServerPOP(sal_Bool bSet)
 {
     if( m_pImpl->bInServerPOP != bSet)
-    {       
+    {
         m_pImpl->bInServerPOP = bSet;
         m_pImpl->SetModified();
     }
@@ -1859,7 +1859,7 @@ void SwMailMergeConfigItem::SetInServerPOP(sal_Bool bSet)
 void SwMailMergeConfigItem::SetInServerUserName(const ::rtl::OUString& rName)
 {
     if( m_pImpl->sInServerUserName != rName)
-    {       
+    {
         m_pImpl->sInServerUserName = rName;
         m_pImpl->SetModified();
     }
@@ -1877,7 +1877,7 @@ void SwMailMergeConfigItem::SetInServerUserName(const ::rtl::OUString& rName)
 void SwMailMergeConfigItem::SetInServerPassword(const ::rtl::OUString& rPassword)
 {
     if(m_pImpl->sInServerPassword != rPassword)
-    {       
+    {
         m_pImpl->sInServerPassword = rPassword;
         m_pImpl->SetModified();
     }
@@ -1926,16 +1926,16 @@ sal_uInt32 SwMailMergeConfigItem::GetMergedDocumentCount() const
 
   -----------------------------------------------------------------------*/
 SwView* lcl_ExistsView(SwView* pView)
-{        
+{
     const TypeId aType(TYPE(SwView));
     SfxViewShell* pViewShell = SfxViewShell::GetFirst( &aType, FALSE );
     while(pViewShell)
     {
         if(pViewShell == pView)
             return pView;
-        
+
         pViewShell = SfxViewShell::GetNext( *pViewShell, &aType, FALSE );
-    }            
+    }
     return 0;
 }
 /*-- 16.06.2004 15:02:35---------------------------------------------------
@@ -1947,7 +1947,7 @@ SwView*  SwMailMergeConfigItem::GetTargetView()
     if(m_pTargetView)
     {
         m_pTargetView = lcl_ExistsView(m_pTargetView);
-    }            
+    }
     return m_pTargetView;
 }
 /*-- 02.09.2004 17:04:11---------------------------------------------------
@@ -1960,7 +1960,7 @@ void  SwMailMergeConfigItem::SetTargetView(SwView* pView)
     if(!m_pTargetView)
     {
         m_pImpl->aMergeInfos.clear();
-    }            
+    }
 }
 /*-- 16.06.2004 15:02:35---------------------------------------------------
 
@@ -1974,7 +1974,7 @@ SwView* SwMailMergeConfigItem::GetSourceView()
 /*-- 04.11.2004 19:53 ---------------------------------------------------
   -----------------------------------------------------------------------*/
 void SwMailMergeConfigItem::SetSourceView(SwView* pView)
-{   
+{
     m_pSourceView = pView;
 
     if(pView)
@@ -2001,7 +2001,7 @@ void SwMailMergeConfigItem::SetSourceView(SwView* pView)
                     m_pImpl->bIsAddressBlock = sal_False;
                     m_pImpl->bIsGreetingLineInMail = sal_False;
                     m_pImpl->bIsGreetingLine = sal_False;
-                
+
                     m_pImpl->SetModified();
                 }
             }
