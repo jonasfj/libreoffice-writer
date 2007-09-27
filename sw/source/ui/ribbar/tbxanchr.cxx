@@ -4,9 +4,9 @@
  *
  *  $RCSfile: tbxanchr.cxx,v $
  *
- *  $Revision: 1.10 $
+ *  $Revision: 1.11 $
  *
- *  last change: $Author: obo $ $Date: 2006-09-16 23:12:10 $
+ *  last change: $Author: hr $ $Date: 2007-09-27 12:25:54 $
  *
  *  The Contents of this file are made available subject to
  *  the terms of GNU Lesser General Public License Version 2.1.
@@ -102,7 +102,7 @@ SwTbxAnchor::SwTbxAnchor( USHORT nSlotId, USHORT nId, ToolBox& rTbx ) :
  *	Beschreibung:
  ******************************************************************************/
 
-void  SwTbxAnchor::StateChanged( USHORT nSID, SfxItemState eState, const SfxPoolItem* pState )
+void  SwTbxAnchor::StateChanged( USHORT /*nSID*/, SfxItemState eState, const SfxPoolItem* pState )
 {
     GetToolBox().EnableItem( GetId(), (GetItemState(pState) != SFX_ITEM_DISABLED) );
 
@@ -148,23 +148,23 @@ void  SwTbxAnchor::Click()
 //    SfxViewFrame* pViewFrame = pDispatch ? pDispatch->GetFrame() : 0;
     SwView* pActiveView = 0;
     if(pViewFrame)
-    {        
+    {
         const TypeId aTypeId = TYPE(SwView);
         SwView* pView = (SwView*)SfxViewShell::GetFirst(&aTypeId);
         while( pView )
         {
             if(pView->GetViewFrame() == pViewFrame)
-            {        
-                pActiveView = pView;                    
+            {
+                pActiveView = pView;
                 break;
             }
             pView = (SwView*)SfxViewShell::GetNext(*pView, &aTypeId);
-        }        
+        }
     }
     if(!pActiveView)
-    {        
+    {
         DBG_ERROR("No active view could be found")
-        return;            
+        return;
     }
     SwWrtShell* pWrtShell = pActiveView->GetWrtShellPtr();
     aPopMenu.EnableItem( FN_TOOL_ANKER_FRAME, 0 != pWrtShell->IsFlyInFly() );
