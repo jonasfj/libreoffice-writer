@@ -4,9 +4,9 @@
  *
  *  $RCSfile: flddropdown.cxx,v $
  *
- *  $Revision: 1.7 $
+ *  $Revision: 1.8 $
  *
- *  last change: $Author: obo $ $Date: 2007-03-09 13:15:10 $
+ *  last change: $Author: hr $ $Date: 2007-09-27 08:49:24 $
  *
  *  The Contents of this file are made available subject to
  *  the terms of GNU Lesser General Public License Version 2.1.
@@ -54,7 +54,7 @@
 #include <unoprnms.hxx>
 #endif
 
-namespace css = com::sun::star;
+using namespace com::sun::star;
 
 using rtl::OUString;
 using std::vector;
@@ -81,8 +81,8 @@ SwDropDownField::SwDropDownField(SwFieldType * pTyp)
 }
 
 SwDropDownField::SwDropDownField(const SwDropDownField & rSrc)
-    : SwField(rSrc.GetTyp(), rSrc.GetFormat(), rSrc.GetLanguage()), 
-      aValues(rSrc.aValues), aSelectedItem(rSrc.aSelectedItem), 
+    : SwField(rSrc.GetTyp(), rSrc.GetFormat(), rSrc.GetLanguage()),
+      aValues(rSrc.aValues), aSelectedItem(rSrc.aSelectedItem),
       aName(rSrc.aName), aHelp(rSrc.aHelp), aToolTip(rSrc.aToolTip)
 {
 }
@@ -95,7 +95,7 @@ String SwDropDownField::Expand() const
 {
     String sSelect = GetSelectedItem();
     if(!sSelect.Len())
-    {        
+    {
         vector<String>::const_iterator aIt = aValues.begin();
         if ( aIt != aValues.end())
             sSelect = *aIt;
@@ -137,7 +137,7 @@ void SwDropDownField::SetItems(const vector<String> & rItems)
     aSelectedItem = aEmptyString;
 }
 
-void SwDropDownField::SetItems(const css::uno::Sequence<OUString> & rItems)
+void SwDropDownField::SetItems(const uno::Sequence<OUString> & rItems)
 {
     aValues.clear();
 
@@ -148,17 +148,17 @@ void SwDropDownField::SetItems(const css::uno::Sequence<OUString> & rItems)
     aSelectedItem = aEmptyString;
 }
 
-css::uno::Sequence<OUString> SwDropDownField::GetItemSequence() const
+uno::Sequence<OUString> SwDropDownField::GetItemSequence() const
 {
-    css::uno::Sequence<OUString> aSeq( aValues.size() );
+    uno::Sequence<OUString> aSeq( aValues.size() );
     OUString* pSeq = aSeq.getArray();
     int i = 0;
     vector<String>::const_iterator aIt;
-    
+
     for (aIt = aValues.begin(); aIt != aValues.end(); aIt++)
     {
         pSeq[i] = rtl::OUString(*aIt);
-        
+
         i++;
     }
 
@@ -187,7 +187,7 @@ const String & SwDropDownField::GetToolTip() const
 
 BOOL SwDropDownField::SetSelectedItem(const String & rItem)
 {
-    vector<String>::const_iterator aIt = 
+    vector<String>::const_iterator aIt =
         std::find(aValues.begin(), aValues.end(), rItem);
 
     if (aIt != aValues.end())
@@ -213,11 +213,10 @@ void SwDropDownField::SetToolTip(const String & rToolTip)
     aToolTip = rToolTip;
 }
 
-BOOL SwDropDownField::QueryValue(css::uno::Any &rVal, BYTE nMId) 
-    const
+BOOL SwDropDownField::QueryValue(::uno::Any &rVal, USHORT nWhich) const
 {
-    nMId &= ~CONVERT_TWIPS;
-    switch( nMId )
+    nWhich &= ~CONVERT_TWIPS;
+    switch( nWhich )
     {
     case FIELD_PROP_PAR1:
         rVal <<= rtl::OUString(GetSelectedItem());
@@ -242,17 +241,16 @@ BOOL SwDropDownField::QueryValue(css::uno::Any &rVal, BYTE nMId)
     return sal_True;
 }
 
-BOOL SwDropDownField::PutValue(const css::uno::Any &rVal, 
-                               BYTE nMId)
+BOOL SwDropDownField::PutValue(const uno::Any &rVal,
+                               USHORT nWhich)
 {
-    nMId &= ~CONVERT_TWIPS;
-    switch( nMId )
+    switch( nWhich )
     {
     case FIELD_PROP_PAR1:
         {
             String aTmpStr;
             ::GetString( rVal, aTmpStr );
-            
+
             SetSelectedItem(aTmpStr);
         }
         break;
@@ -261,7 +259,7 @@ BOOL SwDropDownField::PutValue(const css::uno::Any &rVal,
         {
             String aTmpStr;
             ::GetString( rVal, aTmpStr );
-            
+
             SetName(aTmpStr);
         }
         break;
@@ -270,7 +268,7 @@ BOOL SwDropDownField::PutValue(const css::uno::Any &rVal,
         {
             String aTmpStr;
             ::GetString( rVal, aTmpStr );
-            
+
             SetHelp(aTmpStr);
         }
         break;
@@ -279,19 +277,19 @@ BOOL SwDropDownField::PutValue(const css::uno::Any &rVal,
         {
             String aTmpStr;
             ::GetString( rVal, aTmpStr );
-            
+
             SetToolTip(aTmpStr);
         }
         break;
 
     case FIELD_PROP_STRINGS:
         {
-            css::uno::Sequence<OUString> aSeq;
+            uno::Sequence<OUString> aSeq;
             rVal >>= aSeq;
             SetItems(aSeq);
         }
         break;
-        
+
     default:
         DBG_ERROR("illegal property");
     }
