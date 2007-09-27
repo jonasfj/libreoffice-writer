@@ -4,9 +4,9 @@
  *
  *  $RCSfile: acchyperlink.cxx,v $
  *
- *  $Revision: 1.6 $
+ *  $Revision: 1.7 $
  *
- *  last change: $Author: ihi $ $Date: 2007-06-05 17:26:47 $
+ *  last change: $Author: hr $ $Date: 2007-09-27 08:22:07 $
  *
  *  The Contents of this file are made available subject to
  *  the terms of GNU Lesser General Public License Version 2.1.
@@ -66,7 +66,7 @@ using namespace ::com::sun::star;
 using namespace ::com::sun::star::accessibility;
 using namespace ::rtl;
 
-SwAccessibleHyperlink::SwAccessibleHyperlink( sal_uInt16 nHPos, 
+SwAccessibleHyperlink::SwAccessibleHyperlink( sal_uInt16 nHPos,
     SwAccessibleParagraph *p, sal_Int32 nStt, sal_Int32 nEnd ) :
     nHintPos( nHPos ),
     xPara( p ),
@@ -117,7 +117,7 @@ sal_Bool SAL_CALL SwAccessibleHyperlink::doAccessibleAction( sal_Int32 nIndex )
             ViewShell *pVSh = xPara->GetShell();
             if( pVSh )
             {
-                LoadURL( rINetFmt.GetValue(), pVSh, URLLOAD_NOFILTER, 
+                LoadURL( rINetFmt.GetValue(), pVSh, URLLOAD_NOFILTER,
                          &rINetFmt.GetTargetFrame() );
                 ASSERT( pTxtAttr == rINetFmt.GetTxtINetFmt(),
                          "lost my txt attr" );
@@ -134,7 +134,7 @@ sal_Bool SAL_CALL SwAccessibleHyperlink::doAccessibleAction( sal_Int32 nIndex )
 
     return bRet;
 }
-        
+
 OUString SAL_CALL SwAccessibleHyperlink::getAccessibleActionDescription(
         sal_Int32 nIndex ) 
         throw (lang::IndexOutOfBoundsException, uno::RuntimeException)
@@ -163,7 +163,7 @@ uno::Reference< XAccessibleKeyBinding > SAL_CALL
                new ::comphelper::OAccessibleKeyBindingHelper();
         xKeyBinding = pKeyBindingHelper;
 
-        ::com::sun::star::awt::KeyStroke aKeyStroke;
+        awt::KeyStroke aKeyStroke;
         aKeyStroke.Modifiers = 0;
         aKeyStroke.KeyCode = KEY_RETURN;
         aKeyStroke.KeyChar = 0;
@@ -176,14 +176,14 @@ uno::Reference< XAccessibleKeyBinding > SAL_CALL
 
 // XAccessibleHyperlink
 uno::Any SAL_CALL SwAccessibleHyperlink::getAccessibleActionAnchor(
-        sal_Int32 nIndex ) 
+        sal_Int32 /*nIndex*/ ) 
         throw (lang::IndexOutOfBoundsException, uno::RuntimeException)
 {
     return uno::Any();
 }
 
 uno::Any SAL_CALL SwAccessibleHyperlink::getAccessibleActionObject( 
-            sal_Int32 nIndex ) 
+            sal_Int32 /*nIndex*/ ) 
     throw (lang::IndexOutOfBoundsException, uno::RuntimeException)
 {
     return uno::Any();
@@ -208,7 +208,7 @@ sal_Bool SAL_CALL SwAccessibleHyperlink::isValid(  )
     return xPara.isValid();
 }
 
-void SwAccessibleHyperlink::Invalidate() 
+void SwAccessibleHyperlink::Invalidate()
 {
     vos::OGuard aGuard(Application::GetSolarMutex());
     xPara = 0;
