@@ -4,9 +4,9 @@
  *
  *  $RCSfile: dbtree.cxx,v $
  *
- *  $Revision: 1.23 $
+ *  $Revision: 1.24 $
  *
- *  last change: $Author: obo $ $Date: 2006-09-16 22:44:08 $
+ *  last change: $Author: hr $ $Date: 2007-09-27 11:31:28 $
  *
  *  The Contents of this file are made available subject to
  *  the terms of GNU Lesser General Public License Version 2.1.
@@ -119,17 +119,19 @@
 #include <utlui.hrc>
 #endif
 
-using namespace rtl;
-using namespace com::sun::star::uno;
-using namespace com::sun::star::container;
-using namespace com::sun::star::lang;
-using namespace com::sun::star::sdb;
-using namespace com::sun::star::sdbc;
-using namespace com::sun::star::sdbcx;
-using namespace com::sun::star::task;
-using namespace com::sun::star::beans;
+#include <unomid.h>
 
-#define C2U(cChar) rtl::OUString::createFromAscii(cChar)
+using namespace ::rtl;
+using namespace ::com::sun::star;
+using namespace ::com::sun::star::uno;
+using namespace ::com::sun::star::container;
+using namespace ::com::sun::star::lang;
+using namespace ::com::sun::star::sdb;
+using namespace ::com::sun::star::sdbc;
+using namespace ::com::sun::star::sdbcx;
+using namespace ::com::sun::star::task;
+using namespace ::com::sun::star::beans;
+
 /* -----------------------------17.07.01 13:10--------------------------------
 
  ---------------------------------------------------------------------------*/
@@ -204,7 +206,7 @@ void SwDBTreeList_Impl::elementRemoved( const ContainerEvent& rEvent ) throw (Ru
         SwConnectionDataPtr pPtr = aConnections[i];
         if(pPtr->sSourceName == sSource)
         {
-            SwConnectionDataPtr pPtr = aConnections[i];
+//            SwConnectionDataPtr pPtr = aConnections[i];
 //            Reference<XComponent> xComp(pPtr->xConnection, UNO_QUERY);
 //            if(xComp.is())
 //                xComp->dispose();
@@ -283,9 +285,9 @@ SwDBTreeList::SwDBTreeList(Window *pParent, const ResId& rResId,
     aImageList      (SW_RES(ILIST_DB_DLG    )),
     aImageListHC    (SW_RES(ILIST_DB_DLG_HC )),
     sDefDBName		(rDefDBName),
+    bInitialized    (FALSE),
     bShowColumns	(bShowCol),
-    pImpl(new SwDBTreeList_Impl(pSh)),
-    bInitialized	(FALSE)
+    pImpl(new SwDBTreeList_Impl(pSh))
 {
     SetHelpId(HID_DB_SELECTION_TLB);
 
@@ -403,7 +405,7 @@ void  SwDBTreeList::RequestingChilds(SvLBoxEntry* pParent)
         if (GetParent(pParent))	// column names
         {
             try
-            {        
+            {
 
                 String sSourceName = GetEntryText(GetParent(pParent));
                 String sTableName = GetEntryText(pParent);
@@ -466,14 +468,14 @@ void  SwDBTreeList::RequestingChilds(SvLBoxEntry* pParent)
                     }
                 }
             }
-            catch(const Exception& rEx)
+            catch(const Exception&)
             {
-            }        
+            }
         }
         else	// Tabellennamen
         {
             try
-            {        
+            {
                 String sSourceName = GetEntryText(pParent);
                 if(!pImpl->GetContext()->hasByName(sSourceName))
                     return;
@@ -522,9 +524,9 @@ void  SwDBTreeList::RequestingChilds(SvLBoxEntry* pParent)
                     }
                 }
             }
-            catch(const Exception& rEx)
+            catch(const Exception&)
             {
-            }        
+            }
         }
     }
 }
@@ -620,7 +622,7 @@ void SwDBTreeList::Select(const String& rDBName, const String& rTableName, const
  Beschreibung:
 ------------------------------------------------------------------------*/
 
-void SwDBTreeList::StartDrag( sal_Int8 nAction, const Point& rPosPixel )
+void SwDBTreeList::StartDrag( sal_Int8 /*nAction*/, const Point& /*rPosPixel*/ )
 {
     String sTableName, sColumnName;
     String  sDBName( GetDBName( sTableName, sColumnName ));
@@ -634,7 +636,7 @@ void SwDBTreeList::StartDrag( sal_Int8 nAction, const Point& rPosPixel )
             svx::OColumnTransferable aColTransfer(
                             sDBName
                             ,::rtl::OUString()
-                            , com::sun::star::sdb::CommandType::TABLE
+                            , sdb::CommandType::TABLE
                             ,sTableName
                             , sColumnName
                             ,(CTF_FIELD_DESCRIPTOR |CTF_COLUMN_DESCRIPTOR ));
@@ -658,17 +660,17 @@ void SwDBTreeList::StartDrag( sal_Int8 nAction, const Point& rPosPixel )
 /*------------------------------------------------------------------------
  Beschreibung:
 ------------------------------------------------------------------------*/
-sal_Int8 SwDBTreeList::AcceptDrop( const AcceptDropEvent& rEvt )
+sal_Int8 SwDBTreeList::AcceptDrop( const AcceptDropEvent& /*rEvt*/ )
 {
     return DND_ACTION_NONE;
 }
 /*-- 07.10.2003 13:28:22---------------------------------------------------
-    
+
   -----------------------------------------------------------------------*/
 void    SwDBTreeList::SetWrtShell(SwWrtShell& rSh)
 {
     pImpl->SetWrtShell(rSh);
     if (IsVisible() && !bInitialized)
         InitTreeList();
-}        
+}
 
