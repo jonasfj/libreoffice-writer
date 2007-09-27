@@ -4,9 +4,9 @@
  *
  *  $RCSfile: mailmrge.hxx,v $
  *
- *  $Revision: 1.13 $
+ *  $Revision: 1.14 $
  *
- *  last change: $Author: rt $ $Date: 2007-07-05 07:41:35 $
+ *  last change: $Author: hr $ $Date: 2007-09-27 12:04:46 $
  *
  *  The Contents of this file are made available subject to
  *  the terms of GNU Lesser General Public License Version 2.1.
@@ -54,7 +54,7 @@
 #include <vcl/edit.hxx>
 #endif
 
-#ifndef _STDCTRL_HXX 
+#ifndef _STDCTRL_HXX
 #include <svtools/stdctrl.hxx>
 #endif
 
@@ -179,7 +179,7 @@ public:
 
 };
 /* -----------------27.11.2002 12:05-----------------
- * 
+ *
  * --------------------------------------------------*/
 class SwMailMergeCreateFromDlg : public ModalDialog
 {
@@ -190,21 +190,21 @@ class SwMailMergeCreateFromDlg : public ModalDialog
     OKButton        aOK;
     CancelButton    aCancel;
     HelpButton      aHelp;
-public:     
+public:
     SwMailMergeCreateFromDlg(Window* pParent);
-    ~SwMailMergeCreateFromDlg();        
+    ~SwMailMergeCreateFromDlg();
 
     BOOL    IsThisDocument() const {return aThisDocRB.IsChecked();}
 };
 /* -----------------04.02.2003 13:41-----------------
- * 
+ *
  * --------------------------------------------------*/
 class SwMailMergeFieldConnectionsDlg : public ModalDialog
 {
     FixedLine       aConnectionsFL;
     RadioButton     aUseExistingRB;
     RadioButton     aCreateNewRB;
-    
+
     FixedInfo       aInfoFI;
 
     OKButton        aOK;
