@@ -4,9 +4,9 @@
  *
  *  $RCSfile: xmltext.cxx,v $
  *
- *  $Revision: 1.13 $
+ *  $Revision: 1.14 $
  *
- *  last change: $Author: obo $ $Date: 2006-09-16 22:32:10 $
+ *  last change: $Author: hr $ $Date: 2007-09-27 10:14:05 $
  *
  *  The Contents of this file are made available subject to
  *  the terms of GNU Lesser General Public License Version 2.1.
@@ -67,7 +67,7 @@ public:
             sal_uInt16 nPrefix, const OUString& rLocalName,
             const Reference< xml::sax::XAttributeList > & xAttrList );
 
-    // The body element's text:global attribute can be ignored, because 
+    // The body element's text:global attribute can be ignored, because
     // we must have the correct object shell already.
     virtual void EndElement();
 };
