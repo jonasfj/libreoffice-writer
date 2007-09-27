@@ -4,9 +4,9 @@
  *
  *  $RCSfile: unoevent.cxx,v $
  *
- *  $Revision: 1.15 $
+ *  $Revision: 1.16 $
  *
- *  last change: $Author: obo $ $Date: 2006-09-16 21:56:29 $
+ *  last change: $Author: hr $ $Date: 2007-09-27 09:35:57 $
  *
  *  The Contents of this file are made available subject to
  *  the terms of GNU Lesser General Public License Version 2.1.
@@ -157,27 +157,27 @@ const sal_Char sAPI_SwAutoTextEventDescriptor[] =
 // 	"OnClick",					// SFX_EVENT_MOUSECLICK_OBJECT
 // 	"OnMouseOut",				// SFX_EVENT_MOUSEOUT_OBJECT
 // 	"OnLoad",				    // SFX_EVENT_OPENDOC,
-// 	"OnUnload",					// SFX_EVENT_CLOSEDOC,              
-// 	"OnStartApp",				// SFX_EVENT_STARTAPP,              
-// 	"OnCloseApp",				// SFX_EVENT_CLOSEAPP,              
-// 	"OnNew",					// SFX_EVENT_CREATEDOC,             
-// 	"OnSave",					// SFX_EVENT_SAVEDOC,               
-// 	"OnSaveAs",					// SFX_EVENT_SAVEASDOC,             
-// 	"OnFocus",					// SFX_EVENT_ACTIVATEDOC,           
-// 	"OnUnfocus",				// SFX_EVENT_DEACTIVATEDOC,         
-// 	"OnPrint",					// SFX_EVENT_PRINTDOC,              
-// 	"OnError",					// SFX_EVENT_ONERROR,               
-// 	"OnLoadFinished",			// SFX_EVENT_LOADFINISHED,          
-// 	"OnSaveFinished",			// SFX_EVENT_SAVEFINISHED,          
-// 	"OnModifyChanged",			// SFX_EVENT_MODIFYCHANGED,         
-// 	"OnPrepareUnload",			// SFX_EVENT_PREPARECLOSEDOC,       
-// 	"OnNewMail",				// SFX_EVENT_NEWMESSAGE,            
-// 	"OnToggleFullscreen",		// SFX_EVENT_TOGGLEFULLSCREENMODE,  
-// 	"OnSaveDone",				// SFX_EVENT_SAVEDOCDONE,           
-// 	"OnSaveAsDone",				// SFX_EVENT_SAVEASDOCDONE,         
-// 	"OnLoadError",				// SVX_EVENT_IMAGE_LOAD,            
-// 	"OnLoadCancel",				// SVX_EVENT_IMAGE_ABORT,           
-// 	"OnLoadDone",				// SVX_EVENT_IMAGE_ERROR,           
+// 	"OnUnload",					// SFX_EVENT_CLOSEDOC,
+// 	"OnStartApp",				// SFX_EVENT_STARTAPP,
+// 	"OnCloseApp",				// SFX_EVENT_CLOSEAPP,
+// 	"OnNew",					// SFX_EVENT_CREATEDOC,
+// 	"OnSave",					// SFX_EVENT_SAVEDOC,
+// 	"OnSaveAs",					// SFX_EVENT_SAVEASDOC,
+// 	"OnFocus",					// SFX_EVENT_ACTIVATEDOC,
+// 	"OnUnfocus",				// SFX_EVENT_DEACTIVATEDOC,
+// 	"OnPrint",					// SFX_EVENT_PRINTDOC,
+// 	"OnError",					// SFX_EVENT_ONERROR,
+// 	"OnLoadFinished",			// SFX_EVENT_LOADFINISHED,
+// 	"OnSaveFinished",			// SFX_EVENT_SAVEFINISHED,
+// 	"OnModifyChanged",			// SFX_EVENT_MODIFYCHANGED,
+// 	"OnPrepareUnload",			// SFX_EVENT_PREPARECLOSEDOC,
+// 	"OnNewMail",				// SFX_EVENT_NEWMESSAGE,
+// 	"OnToggleFullscreen",		// SFX_EVENT_TOGGLEFULLSCREENMODE,
+// 	"OnSaveDone",				// SFX_EVENT_SAVEDOCDONE,
+// 	"OnSaveAsDone",				// SFX_EVENT_SAVEASDOCDONE,
+// 	"OnLoadError",				// SVX_EVENT_IMAGE_LOAD,
+// 	"OnLoadCancel",				// SVX_EVENT_IMAGE_ABORT,
+// 	"OnLoadDone",				// SVX_EVENT_IMAGE_ERROR,
 
 // 	NULL
 // };
@@ -188,7 +188,7 @@ const sal_Char sAPI_SwAutoTextEventDescriptor[] =
 //
 
 const struct SvEventDescription aGraphicEvents[] =
-{ 
+{
     { SW_EVENT_OBJECT_SELECT,		"OnSelect" },
     { SFX_EVENT_MOUSEOVER_OBJECT,	"OnMouseOver" },
     { SFX_EVENT_MOUSECLICK_OBJECT,	"OnClick" },
@@ -200,7 +200,7 @@ const struct SvEventDescription aGraphicEvents[] =
 };
 
 const struct SvEventDescription aFrameEvents[] =
-{ 
+{
     { SW_EVENT_OBJECT_SELECT,		"OnSelect" },
     { SW_EVENT_FRM_KEYINPUT_ALPHA,	"OnAlphaCharInput" },
     { SW_EVENT_FRM_KEYINPUT_NOALPHA,	"OnNonAlphaCharInput" },
@@ -213,7 +213,7 @@ const struct SvEventDescription aFrameEvents[] =
 };
 
 const struct SvEventDescription aOLEEvents[] =
-{ 
+{
     { SW_EVENT_OBJECT_SELECT,		"OnSelect" },
     { SFX_EVENT_MOUSEOVER_OBJECT,	"OnMouseOver" },
     { SFX_EVENT_MOUSECLICK_OBJECT,	"OnClick" },
@@ -222,7 +222,7 @@ const struct SvEventDescription aOLEEvents[] =
 };
 
 const struct SvEventDescription aHyperlinkEvents[] =
-{ 
+{
     { SFX_EVENT_MOUSEOVER_OBJECT,	"OnMouseOver" },
     { SFX_EVENT_MOUSECLICK_OBJECT,	"OnClick" },
     { SFX_EVENT_MOUSEOUT_OBJECT,	"OnMouseOut" },
@@ -230,14 +230,14 @@ const struct SvEventDescription aHyperlinkEvents[] =
 };
 
 const struct SvEventDescription aAutotextEvents[] =
-{ 
+{
     { SW_EVENT_START_INS_GLOSSARY,	"OnInsertStart" },
     { SW_EVENT_END_INS_GLOSSARY,	"OnInsertDone" },
     { 0, NULL }
 };
 
 const struct SvEventDescription aFrameStyleEvents[] =
-{ 
+{
     { SW_EVENT_OBJECT_SELECT,		"OnSelect" },
     { SW_EVENT_FRM_KEYINPUT_ALPHA,	"OnAlphaCharInput" },
     { SW_EVENT_FRM_KEYINPUT_NOALPHA,	"OnNonAlphaCharInput" },
@@ -253,7 +253,7 @@ const struct SvEventDescription aFrameStyleEvents[] =
 };
 
 const struct SvEventDescription aDocumentEvents[] =
-{ 
+{
      { SFX_EVENT_STARTAPP,		"OnStartApp" },
      { SFX_EVENT_CLOSEAPP,		"OnCloseApp" },
      { SFX_EVENT_CREATEDOC,		"OnNew" },
@@ -300,7 +300,7 @@ SwHyperlinkEventDescriptor::~SwHyperlinkEventDescriptor()
 {
 }
 
-OUString SwHyperlinkEventDescriptor::getImplementationName(void) 
+OUString SwHyperlinkEventDescriptor::getImplementationName(void)
     throw( RuntimeException )
 {
     return sImplName;
@@ -335,8 +335,8 @@ void SwHyperlinkEventDescriptor::copyMacrosIntoINetFmt(
 
 
 void SwHyperlinkEventDescriptor::copyMacrosFromNameReplace(
-    ::com::sun::star::uno::Reference<
-        ::com::sun::star::container::XNameReplace> & xReplace)
+    uno::Reference<
+        container::XNameReplace> & xReplace)
 {
     // iterate over all names (all names that *we* support)
     Sequence<OUString> aNames = getElementNames();
@@ -347,7 +347,7 @@ void SwHyperlinkEventDescriptor::copyMacrosFromNameReplace(
         const OUString& rName = aNames[i];
         if (xReplace->hasByName(rName))
         {
-            SvBaseEventDescriptor::replaceByName(rName, 
+            SvBaseEventDescriptor::replaceByName(rName,
                                                  xReplace->getByName(rName));
         }
     }
@@ -359,7 +359,7 @@ void SwHyperlinkEventDescriptor::copyMacrosFromNameReplace(
 //
 
 // use double cast in superclass constructor to avoid ambigous cast
-SwFrameEventDescriptor::SwFrameEventDescriptor( 
+SwFrameEventDescriptor::SwFrameEventDescriptor(
     SwXTextFrame& rFrameRef ) :
         SvEventDescriptor((text::XTextFrame&)rFrameRef, aFrameEvents),
         sSwFrameEventDescriptor(RTL_CONSTASCII_USTRINGPARAM(
@@ -375,7 +375,7 @@ SwFrameEventDescriptor::SwFrameEventDescriptor(
 {
 }
 
-SwFrameEventDescriptor::SwFrameEventDescriptor( 
+SwFrameEventDescriptor::SwFrameEventDescriptor(
     SwXTextEmbeddedObject& rObjectRef ) :
         SvEventDescriptor((text::XTextContent&)rObjectRef, aOLEEvents),
         rFrame((SwXFrame&)rObjectRef)
@@ -412,9 +412,9 @@ OUString SwFrameEventDescriptor::getImplementationName()
 // SwFrameStyleEventDescriptor
 //
 
-SwFrameStyleEventDescriptor::SwFrameStyleEventDescriptor( 
+SwFrameStyleEventDescriptor::SwFrameStyleEventDescriptor(
     SwXFrameStyle& rStyleRef ) :
-        SvEventDescriptor((document::XEventsSupplier&)rStyleRef, 
+        SvEventDescriptor((document::XEventsSupplier&)rStyleRef,
                           aFrameStyleEvents),
         sSwFrameStyleEventDescriptor(RTL_CONSTASCII_USTRINGPARAM(
             sAPI_SwFrameStyleEventDescriptor)),
@@ -467,7 +467,7 @@ const SvxMacroItem& SwFrameStyleEventDescriptor::getMacroItem()
         return aEmptyMacroItem;
 }
 
-OUString SwFrameStyleEventDescriptor::getImplementationName() 
+OUString SwFrameStyleEventDescriptor::getImplementationName()
     throw( RuntimeException )
 {
     return sSwFrameStyleEventDescriptor;
