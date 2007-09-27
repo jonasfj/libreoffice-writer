@@ -4,9 +4,9 @@
  *
  *  $RCSfile: unoportenum.cxx,v $
  *
- *  $Revision: 1.36 $
+ *  $Revision: 1.37 $
  *
- *  last change: $Author: rt $ $Date: 2007-07-06 12:17:39 $
+ *  last change: $Author: hr $ $Date: 2007-09-27 09:38:55 $
  *
  *  The Contents of this file are made available subject to
  *  the terms of GNU Lesser General Public License Version 2.1.
@@ -121,7 +121,7 @@ sal_Int64 SAL_CALL SwXTextPortionEnumeration::getSomething( const uno::Sequence<
         && 0 == rtl_compareMemory( getUnoTunnelId().getConstArray(),
                                         rId.getConstArray(), 16 ) )
     {
-            return (sal_Int64)this;
+        return sal::static_int_cast< sal_Int64 >( reinterpret_cast< sal_IntPtr >( this ) );
     }
     return 0;
 }
@@ -227,7 +227,7 @@ void lcl_InsertRefMarkPortion(
     if(!xContent.is())
         xContent = new SwXReferenceMark(pDoc, &rRefMark);
 
-    SwXTextPortion* pPortion;
+    SwXTextPortion* pPortion = 0;
     if(!bEnd)
     {
         rArr.Insert(
@@ -248,7 +248,7 @@ void lcl_InsertRefMarkPortion(
 void lcl_InsertRubyPortion( XTextRangeArr& rArr, SwUnoCrsr* pUnoCrsr,
                         Reference<XText>& rParent, SwTxtAttr* pAttr, BOOL bEnd)
 {
-    SwXRubyPortion* pPortion;
+    SwXRubyPortion* pPortion = 0;
     rArr.Insert(
         new Reference< XTextRange >(pPortion = new SwXRubyPortion(*pUnoCrsr, *(SwTxtRuby*)pAttr, rParent,
             bEnd)),
@@ -267,7 +267,7 @@ void lcl_InsertTOXMarkPortion(
     if(!xContent.is())
         xContent = new SwXDocumentIndexMark(rTOXMark.GetTOXType(), &rTOXMark, pDoc);
 
-    SwXTextPortion* pPortion;
+    SwXTextPortion* pPortion = 0;
     if(!bEnd)
     {
         rArr.Insert(
@@ -294,7 +294,7 @@ struct SwXBookmarkPortion_Impl
     BYTE						nBkmType;
     const SwPosition 			aPosition;
 
-    SwXBookmarkPortion_Impl( SwXBookmark* pXMark, BYTE nType, const SwPosition &rPosition ) 
+    SwXBookmarkPortion_Impl( SwXBookmark* pXMark, BYTE nType, const SwPosition &rPosition )
     : xBookmark ( pXMark )
     , nBkmType  ( nType )
     , aPosition ( rPosition )
@@ -315,7 +315,7 @@ struct BookmarkCompareStruct
         // #i16896# for bookmark portions at the same position, the start should
         // always precede the end. Hence compare positions, and use bookmark type
         // as tie-breaker for same position.
-        // return ( r1->nIndex   == r2->nIndex ) 
+        // return ( r1->nIndex   == r2->nIndex )
         //	 ? ( r1->nBkmType <  r2->nBkmType )
         //	 : ( r1->nIndex   <  r2->nIndex );
 
@@ -346,8 +346,8 @@ void lcl_ExportBookmark(
         }
         if ( nIndex < pPtr->getIndex() )
             break;
-        
-        SwXTextPortion* pPortion;
+
+        SwXTextPortion* pPortion = 0;
         if(BKM_TYPE_START == pPtr->nBkmType || BKM_TYPE_START_END == pPtr->nBkmType)
         {
             rPortionArr.Insert(
@@ -428,7 +428,7 @@ struct RedlineCompareStruct
     bool operator () ( const SwXRedlinePortion_ImplSharedPtr &r1,
                        const SwXRedlinePortion_ImplSharedPtr &r2 )
     {
-        return getPosition ( r1 ) < getPosition ( r2 ); 
+        return getPosition ( r1 ) < getPosition ( r2 );
     }
 };
 typedef std::multiset < SwXRedlinePortion_ImplSharedPtr, RedlineCompareStruct > SwXRedlinePortion_ImplList;
@@ -544,7 +544,7 @@ Reference<XTextRange> lcl_ExportHints(SwpHints* pHints,
                 break;
                 case RES_TXTATR_SOFTHYPH :
                 {
-                    SwXTextPortion* pPortion;
+                    SwXTextPortion* pPortion = 0;
                     rPortionArr.Insert(
                         new Reference< XTextRange >(
                             pPortion = new SwXTextPortion(
@@ -557,7 +557,7 @@ Reference<XTextRange> lcl_ExportHints(SwpHints* pHints,
                 case RES_TXTATR_HARDBLANK:
                 {
                     ePortionType = PORTION_CONTROL_CHAR;
-                    SwXTextPortion* pPortion;
+                    SwXTextPortion* pPortion = 0;
                     rPortionArr.Insert(
                         new Reference< XTextRange >(
                             pPortion = new SwXTextPortion(
@@ -623,8 +623,8 @@ Reference<XTextRange> lcl_ExportHints(SwpHints* pHints,
             nCurrentIndex >= (nNextStart = (*pHints->GetStart(nStartIndex)->GetStart())))
             nStartIndex++;
 
-        sal_uInt16 nEndIndex = 0;
-        sal_uInt16 nNextEnd = 0;
+        nEndIndex = 0;
+        nNextEnd = 0;
         while(nEndIndex < pHints->GetEndCount() &&
             nCurrentIndex >= (nNextEnd = (*pHints->GetEnd(nEndIndex)->GetAnyEnd())))
             nEndIndex++;
@@ -699,14 +699,14 @@ void lcl_FillBookmarkArray(SwDoc& rDoc,SwUnoCrsr& rUnoCrsr, SwXBookmarkPortion_I
                     nType = BKM_TYPE_START_END;
                 }
 
-                rBkmArr.insert ( SwXBookmarkPortion_ImplSharedPtr ( 
+                rBkmArr.insert ( SwXBookmarkPortion_ImplSharedPtr (
                     new SwXBookmarkPortion_Impl ( SwXBookmarks::GetObject( *pMark, &rDoc ), nType, rPos1 )));
 
             }
             if(pPos2 && pPos2->nNode == nOwnNode)
             {
                 BYTE nType = bBackward ? BKM_TYPE_START : BKM_TYPE_END;
-                rBkmArr.insert( SwXBookmarkPortion_ImplSharedPtr ( 
+                rBkmArr.insert( SwXBookmarkPortion_ImplSharedPtr (
                     new SwXBookmarkPortion_Impl( SwXBookmarks::GetObject( *pMark, &rDoc ), nType, *pPos2 ) ) );
             }
         }
@@ -722,19 +722,17 @@ void lcl_FillRedlineArray(SwDoc& rDoc,SwUnoCrsr& rUnoCrsr, SwXRedlinePortion_Imp
     {
         const SwPosition* pStart = rUnoCrsr.GetPoint();
         const SwNodeIndex nOwnNode = pStart->nNode;
-        IDocumentRedlineAccess::RedlineMode_t eRedMode = rDoc.GetRedlineMode();
 
         for(USHORT nRed = 0; nRed < nRedTblCount; nRed++)
         {
             const SwRedline* pRedline = rRedTbl[nRed];
             const SwPosition* pRedStart = pRedline->Start();
             const SwNodeIndex nRedNode = pRedStart->nNode;
-            IDocumentRedlineAccess::RedlineType_t nType = pRedline->GetType();
             if ( nOwnNode == nRedNode )
-                rRedArr.insert( SwXRedlinePortion_ImplSharedPtr ( 
+                rRedArr.insert( SwXRedlinePortion_ImplSharedPtr (
                     new SwXRedlinePortion_Impl ( pRedline, TRUE) ) );
             if( pRedline->HasMark() && pRedline->End()->nNode == nOwnNode )
-                rRedArr.insert( SwXRedlinePortion_ImplSharedPtr ( 
+                rRedArr.insert( SwXRedlinePortion_ImplSharedPtr (
                     new SwXRedlinePortion_Impl ( pRedline, FALSE) ) );
        }
     }
@@ -776,7 +774,7 @@ void lcl_ExportRedline(
                 rPortionArr.Count());
             rRedlineArr.erase ( aIter++ );
         }
-        // MTG: 23/11/05: If we've iterated past nIndex, exit the loop 
+        // MTG: 23/11/05: If we've iterated past nIndex, exit the loop
         else
             break;
     }
@@ -1028,7 +1026,7 @@ void SwXTextPortionEnumeration::CreatePortions()
                             aPortionArr,
                             pUnoCrsr,
                             xParent,
-                            nLocalEnd,
+                            static_cast< xub_StrLen >(nLocalEnd),
                             ePortionType,
                             STRING_MAXLEN,
                             aBkmArr,
