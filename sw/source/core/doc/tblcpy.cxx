@@ -4,9 +4,9 @@
  *
  *  $RCSfile: tblcpy.cxx,v $
  *
- *  $Revision: 1.9 $
+ *  $Revision: 1.10 $
  *
- *  last change: $Author: vg $ $Date: 2007-02-28 15:41:43 $
+ *  last change: $Author: hr $ $Date: 2007-09-27 08:40:12 $
  *
  *  The Contents of this file are made available subject to
  *  the terms of GNU Lesser General Public License Version 2.1.
@@ -109,27 +109,27 @@ void lcl_CpyBox( const SwTable& rCpyTbl, const SwTableBox* pCpyBox,
 
 namespace
 {
-    struct BoxSpanInfo 
+    struct BoxSpanInfo
     {
         SwTableBox* mpBox;
         SwTableBox* mpCopy;
         USHORT mnColSpan;
         bool mbSelected;
     };
-    
+
     typedef std::vector< BoxSpanInfo > BoxStructure;
     typedef std::vector< BoxStructure > LineStructure;
     typedef std::list< ULONG > ColumnStructure;
-    
+
     struct SubBox
     {
         SwTableBox *mpBox;
         bool mbCovered;
     };
-    
+
     typedef std::list< SubBox > SubLine;
     typedef std::list< SubLine > SubTable;
-    
+
     class TableStructure
     {
     public:
@@ -154,7 +154,7 @@ namespace
         void copyBoxes( const SwTable& rSource, SwTable& rDstTbl,
                         SwUndoTblCpyTbl* pUndo ) const;
     };
-    
+
     SubTable::iterator insertSubLine( SubTable& rSubTable, SwTableLine& rLine,
         SubTable::iterator pStartLn );
 
@@ -201,7 +201,7 @@ namespace
         }
         return pStartLn;
     }
-    
+
     SubTable::iterator insertSubLine( SubTable& rSubTable, SwTableLine& rLine,
         SubTable::iterator pStartLn )
     {
@@ -221,7 +221,7 @@ namespace
         }
         return pMax;
     }
-    
+
     TableStructure::TableStructure( const SwTable& rTable ) :
         maLines( rTable.GetTabLines().Count() ), mnStartCol(USHRT_MAX),
         mnAddLine(0)
@@ -232,8 +232,8 @@ namespace
         for( USHORT nLine = 0; nLine < rLines.Count(); ++nLine )
             addLine( nCnt, rLines[nLine]->GetTabBoxes(), 0, rTable.IsNewModel() );
     }
-    
-    TableStructure::TableStructure( const SwTable& rTable, 
+
+    TableStructure::TableStructure( const SwTable& rTable,
         _FndBox &rFndBox, const SwSelBoxes& rSelBoxes,
         LineStructure::size_type nMinSize )
         : mnStartCol(USHRT_MAX), mnAddLine(0)
@@ -265,9 +265,9 @@ namespace
                     }
                     while( nEndLn < nNewEndLn )
                     {
-                        SwTableLine *pLine = rLines[ ++nEndLn ];
-                        SwTableBox *pTmpBox = pLine->GetTabBoxes()[0];
-                        _FndLine *pInsLine = new _FndLine( pLine, &rFndBox );
+                        SwTableLine *pLine2 = rLines[ ++nEndLn ];
+                        SwTableBox *pTmpBox = pLine2->GetTabBoxes()[0];
+                        _FndLine *pInsLine = new _FndLine( pLine2, &rFndBox );
                         _FndBox *pFndBox = new _FndBox( pTmpBox, pInsLine );
                         pInsLine->GetBoxes().C40_INSERT( _FndBox, pFndBox, 0 );
                         rFndLines.C40_INSERT( _FndLine, pInsLine, rFndLines.Count() );
@@ -292,7 +292,7 @@ namespace
                 mnStartCol = 0;
                 while( nIdx && pC != pEnd )
                 {
-                    mnStartCol += pC->mnColSpan;
+                    mnStartCol = mnStartCol + pC->mnColSpan;
                     --nIdx;
                     ++pC;
                 }
@@ -301,7 +301,7 @@ namespace
                 mnStartCol = USHRT_MAX;
         }
     }
-    
+
     void TableStructure::addLine( USHORT &rLine, const SwTableBoxes& rBoxes,
         const SwSelBoxes* pSelBoxes, bool bNewModel )
     {
@@ -352,15 +352,15 @@ namespace
             ColumnStructure::iterator pCol = maCols.begin();
             BoxStructure::iterator pSel = maLines[rLine].end();
             for( USHORT nBox = 0; nBox < rBoxes.Count(); ++nBox )
-                addBox( rLine, pSelBoxes, rBoxes[nBox], nBorder, nCol, 
+                addBox( rLine, pSelBoxes, rBoxes[nBox], nBorder, nCol,
                         pCol, pSel, bSelected, false );
             ++rLine;
         }
     }
 
-    void TableStructure::addBox( USHORT nLine, const SwSelBoxes* pSelBoxes, 
+    void TableStructure::addBox( USHORT nLine, const SwSelBoxes* pSelBoxes,
         SwTableBox *pBox, ULONG &rnBorder, USHORT &rnCol,
-        ColumnStructure::iterator& rpCol, BoxStructure::iterator& rpSel, 
+        ColumnStructure::iterator& rpCol, BoxStructure::iterator& rpSel,
         bool &rbSelected, bool bCovered )
     {
         BoxSpanInfo aInfo;
@@ -415,7 +415,7 @@ namespace
             --rpSel;
         }
     }
-    
+
     void TableStructure::moreLines( const SwTable& rTable )
     {
         if( mnAddLine )
@@ -434,7 +434,7 @@ namespace
             }
         }
     }
-    
+
     void TableStructure::incColSpan( USHORT nLineMax, USHORT nNewCol )
     {
         for( USHORT nLine = 0; nLine < nLineMax; ++nLine )
@@ -448,7 +448,7 @@ namespace
                 ++(pInfo->mnColSpan);
         }
     }
-    
+
     void TableStructure::assignBoxes( const TableStructure &rSource )
     {
         LineStructure::const_iterator pFirstLine = rSource.maLines.begin();
@@ -543,7 +543,7 @@ namespace
             for( BoxStructure::size_type nBox = 0; nBox < nBoxCount; ++nBox )
             {
                 const BoxSpanInfo& rInfo = rBox[nBox];
-                if( ( rInfo.mpCopy && !rInfo.mpCopy->getDummyFlag() ) 
+                if( ( rInfo.mpCopy && !rInfo.mpCopy->getDummyFlag() )
                     || rInfo.mbSelected )
                 {
                     SwTableBox *pBox = rInfo.mpBox;
@@ -567,7 +567,7 @@ namespace
             }
         }
     }
-};
+}
 
 // ---------------------------------------------------------------
 
@@ -592,8 +592,8 @@ void lcl_CpyBox( const SwTable& rCpyTbl, const SwTableBox* pCpyBox,
 
     // kopiere erst den neuen und loeschen dann den alten Inhalt
     // (keine leeren Section erzeugen; werden sonst geloescht!)
-    std::auto_ptr< SwNodeRange > pRg( pCpyBox ? 
-        new SwNodeRange ( *pCpyBox->GetSttNd(), 1, 
+    std::auto_ptr< SwNodeRange > pRg( pCpyBox ?
+        new SwNodeRange ( *pCpyBox->GetSttNd(), 1,
         *pCpyBox->GetSttNd()->EndOfSectionNode() ) : 0 );
 
     SwNodeIndex aInsIdx( *pDstBox->GetSttNd(), bDelCntnt ? 1 :
@@ -604,7 +604,7 @@ void lcl_CpyBox( const SwTable& rCpyTbl, const SwTableBox* pCpyBox,
         pUndo->AddBoxBefore( *pDstBox, bDelCntnt );
 
     BOOL bUndo = pDoc->DoesUndo();
-    bool bUndoRedline = pUndo && pDoc->IsRedlineOn();  
+    bool bUndoRedline = pUndo && pDoc->IsRedlineOn();
     pDoc->DoUndo( FALSE );
 
     SwNodeIndex aSavePos( aInsIdx, -1 );
@@ -686,9 +686,10 @@ void lcl_CpyBox( const SwTable& rCpyTbl, const SwTableBox* pCpyBox,
                 : RES_POOLCOLL_TABLE_HDLN == nPoolId ) )
         {
             SwTxtFmtColl* pColl = pDoc->GetTxtCollFromPool(
+                static_cast<sal_uInt16>(
                                     RES_POOLCOLL_TABLE == nPoolId
                                         ? RES_POOLCOLL_TABLE_HDLN
-                                        : RES_POOLCOLL_TABLE );
+                                        : RES_POOLCOLL_TABLE ) );
             if( pColl )			// Vorlage umsetzen
             {
                 SwPaM aPam( aSavePos );
@@ -740,10 +741,10 @@ BOOL SwTable::InsNewTable( const SwTable& rCpyTbl, const SwSelBoxes& rSelBoxes,
     SwDoc* pCpyDoc = rCpyTbl.GetFrmFmt()->GetDoc();
 
     SwTblNumFmtMerge aTNFM( *pCpyDoc, *pDoc );
-    
+
     // analyse source structure
     TableStructure aCopyStruct( rCpyTbl );
-    
+
     // analyse target structure (from start box) and selected substructure
     _FndBox aFndBox( 0, 0 );
     {   // get all boxes/lines
@@ -751,7 +752,7 @@ BOOL SwTable::InsNewTable( const SwTable& rCpyTbl, const SwSelBoxes& rSelBoxes,
         GetTabLines().ForEach( &_FndLineCopyCol, &aPara );
     }
     TableStructure aTarget( *this, aFndBox, rSelBoxes, aCopyStruct.getLineCount() );
-    
+
     bool bClear = false;
     if( aTarget.mnAddLine && IsNewModel() )
     {
@@ -765,10 +766,10 @@ BOOL SwTable::InsNewTable( const SwTable& rCpyTbl, const SwSelBoxes& rSelBoxes,
         aTarget.moreLines( *this );
         bClear = true;
     }
-    
+
     // find mapping, if needed extend target table and/or selection
     aTarget.assignBoxes( aCopyStruct );
-    
+
     {
         // Change table formulas into relative representation
         SwTableFmlUpdate aMsgHnt( &rCpyTbl );
@@ -781,15 +782,15 @@ BOOL SwTable::InsNewTable( const SwTable& rCpyTbl, const SwSelBoxes& rSelBoxes,
     if( bClear )
         aFndBox.ClearLineBehind();
     aFndBox.DelFrms( *this );
-    
+
     // copy boxes
     aTarget.copyBoxes( rCpyTbl, *this, pUndo );
-    
+
     // adjust row span attributes accordingly
-    
+
     // make frames
     aFndBox.MakeFrms( *this );
-    
+
     return TRUE;
 }
 
@@ -1082,9 +1083,9 @@ BOOL SwTable::InsTable( const SwTable& rCpyTbl, const SwSelBoxes& rSelBoxes,
 
     if( 1 == rCpyTbl.GetTabSortBoxes().Count() )
     {
-        SwTableBox *pTmpBox = rCpyTbl.GetTabSortBoxes()[0];
+        SwTableBox *pTmpBx = rCpyTbl.GetTabSortBoxes()[0];
         for( USHORT n = 0; n < rSelBoxes.Count(); ++n )
-            lcl_CpyBox( rCpyTbl, pTmpBox, *this,
+            lcl_CpyBox( rCpyTbl, pTmpBx, *this,
                         (SwTableBox*)rSelBoxes[n], TRUE, pUndo );
     }
     else
