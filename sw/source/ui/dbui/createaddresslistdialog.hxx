@@ -4,9 +4,9 @@
  *
  *  $RCSfile: createaddresslistdialog.hxx,v $
  *
- *  $Revision: 1.3 $
+ *  $Revision: 1.4 $
  *
- *  last change: $Author: rt $ $Date: 2005-09-09 06:49:16 $
+ *  last change: $Author: hr $ $Date: 2007-09-27 11:30:21 $
  *
  *  The Contents of this file are made available subject to
  *  the terms of GNU Lesser General Public License Version 2.1.
@@ -35,14 +35,14 @@
 #ifndef _CREATEADDRESSLISTDIALOG_HXX
 #define _CREATEADDRESSLISTDIALOG_HXX
 
-#ifndef _BASEDLGS_HXX 
+#ifndef _BASEDLGS_HXX
 #include <sfx2/basedlgs.hxx>
 #endif
 
 #ifndef _SV_BUTTON_HXX
 #include <vcl/button.hxx>
 #endif
-#ifndef _STDCTRL_HXX 
+#ifndef _STDCTRL_HXX
 #include <svtools/stdctrl.hxx>
 #endif
 #ifndef _SV_FIELD_HXX
@@ -56,13 +56,13 @@
 class SwAddressControl_Impl;
 class SwMailMergeConfigItem;
 /*-- 19.04.2004 12:09:46---------------------------------------------------
-    container of the created database 
+    container of the created database
   -----------------------------------------------------------------------*/
 struct SwCSVData
 {
     ::std::vector< ::rtl::OUString >                    aDBColumnHeaders;
     ::std::vector< ::std::vector< ::rtl::OUString> >     aDBData;
-};        
+};
 /*-- 08.04.2004 14:04:39---------------------------------------------------
 
   -----------------------------------------------------------------------*/
@@ -85,12 +85,12 @@ class SwCreateAddressListDialog : public SfxModalDialog
     PushButton              m_aEndPB;
 
     FixedLine               m_aSeparatorFL;
-    String                  m_sAddressListFilterName;
 
     OKButton                m_aOK;
     CancelButton            m_aCancel;
     HelpButton              m_aHelp;
 
+    String                  m_sAddressListFilterName;
     String                  m_sURL;
 
     SwCSVData*              m_pCSVData;
@@ -106,7 +106,7 @@ class SwCreateAddressListDialog : public SfxModalDialog
 
     void UpdateButtons();
 
-public:    
+public:
     SwCreateAddressListDialog(
             Window* pParent, const String& rURL, SwMailMergeConfigItem& rConfig);
     ~SwCreateAddressListDialog();
@@ -122,8 +122,8 @@ class SwFindEntryDialog : public ModelessDialog
     FixedText               m_aFindFT;
     Edit                    m_aFindED;
     CheckBox                m_aFindOnlyCB;
-    ListBox                 m_aFindOnlyLB;    
-    
+    ListBox                 m_aFindOnlyLB;
+
     PushButton              m_aFindPB;
     CancelButton            m_aCancel;
     HelpButton              m_aHelp;
@@ -134,7 +134,7 @@ class SwFindEntryDialog : public ModelessDialog
     DECL_LINK(FindEnableHdl_Impl, Edit*);
     DECL_LINK(CloseHdl_Impl, PushButton*);
 
-public:    
+public:
     SwFindEntryDialog(SwCreateAddressListDialog* pParent);
     ~SwFindEntryDialog();
 
