@@ -4,9 +4,9 @@
  *
  *  $RCSfile: customizeaddresslistdialog.cxx,v $
  *
- *  $Revision: 1.8 $
+ *  $Revision: 1.9 $
  *
- *  last change: $Author: kz $ $Date: 2007-09-06 14:04:36 $
+ *  last change: $Author: hr $ $Date: 2007-09-27 11:30:34 $
  *
  *  The Contents of this file are made available subject to
  *  the terms of GNU Lesser General Public License Version 2.1.
@@ -68,7 +68,7 @@
 SwCustomizeAddressListDialog::SwCustomizeAddressListDialog(
         Window* pParent, const SwCSVData& rOldData) :
     SfxModalDialog(pParent, SW_RES(DLG_MM_CUSTOMIZE_ADDRESS_LIST)),
-#ifdef _MSC_VER
+#ifdef MSC
 #pragma warning (disable : 4355)
 #endif
     m_aFieldsFT( this, SW_RES(    FT_FIELDS)),
@@ -82,7 +82,7 @@ SwCustomizeAddressListDialog::SwCustomizeAddressListDialog(
     m_aOK( this, SW_RES(          PB_OK)),
     m_aCancel( this, SW_RES(      PB_CANCEL)),
     m_aHelp( this, SW_RES(        PB_HELP)),
-#ifdef _MSC_VER
+#ifdef MSC
 #pragma warning (default : 4355)
 #endif
     m_pNewData( new SwCSVData(rOldData))
@@ -99,7 +99,7 @@ SwCustomizeAddressListDialog::SwCustomizeAddressListDialog(
 
     ::std::vector< ::rtl::OUString >::iterator aHeaderIter;
 
-    for(aHeaderIter = m_pNewData->aDBColumnHeaders.begin(); 
+    for(aHeaderIter = m_pNewData->aDBColumnHeaders.begin();
                 aHeaderIter != m_pNewData->aDBColumnHeaders.end(); ++aHeaderIter)
         m_aFieldsLB.InsertEntry(*aHeaderIter);
 
@@ -130,22 +130,22 @@ IMPL_LINK(SwCustomizeAddressListDialog, AddRenameHdl_Impl, PushButton*, pButton)
     USHORT nPos = m_aFieldsLB.GetSelectEntryPos();
     if(nPos == LISTBOX_ENTRY_NOTFOUND)
         nPos = 0;
-    
-    SwAddRenameEntryDialog* pDlg = 
+
+    SwAddRenameEntryDialog* pDlg =
             new SwAddRenameEntryDialog(pButton, bRename, m_pNewData->aDBColumnHeaders);
     if(bRename)
     {
         String aTemp = m_aFieldsLB.GetEntry(nPos);
         pDlg->SetFieldName(aTemp);
-    }            
+    }
     if(RET_OK == pDlg->Execute())
     {
         String sNew = pDlg->GetFieldName();
         if(bRename)
-        {        
+        {
             m_pNewData->aDBColumnHeaders[nPos] = sNew;
             m_aFieldsLB.RemoveEntry(nPos);
-        }            
+        }
         else
         {
             if ( m_aFieldsLB.GetSelectEntryPos() != LISTBOX_ENTRY_NOTFOUND )
@@ -157,12 +157,12 @@ IMPL_LINK(SwCustomizeAddressListDialog, AddRenameHdl_Impl, PushButton*, pButton)
             ::std::vector< ::std::vector< ::rtl::OUString > >::iterator aDataIter;
             for( aDataIter = m_pNewData->aDBData.begin(); aDataIter != m_pNewData->aDBData.end(); ++aDataIter)
                 aDataIter->insert(aDataIter->begin() + nPos, sTemp);
-            
+
         }
-        
+
         m_aFieldsLB.InsertEntry(sNew, nPos);
         m_aFieldsLB.SelectEntryPos(nPos);
-    }            
+    }
     delete pDlg;
     UpdateButtons();
     return 0;
@@ -170,7 +170,7 @@ IMPL_LINK(SwCustomizeAddressListDialog, AddRenameHdl_Impl, PushButton*, pButton)
 /*-- 13.04.2004 15:02:14---------------------------------------------------
 
   -----------------------------------------------------------------------*/
-IMPL_LINK(SwCustomizeAddressListDialog, DeleteHdl_Impl, PushButton*, pButton)
+IMPL_LINK(SwCustomizeAddressListDialog, DeleteHdl_Impl, PushButton*, EMPTYARG)
 {
     USHORT nPos = m_aFieldsLB.GetSelectEntryPos();
     m_aFieldsLB.RemoveEntry(m_aFieldsLB.GetSelectEntryPos());
@@ -207,7 +207,7 @@ IMPL_LINK(SwCustomizeAddressListDialog, UpDownHdl_Impl, PushButton*, pButton)
     m_pNewData->aDBColumnHeaders.insert(m_pNewData->aDBColumnHeaders.begin() + nPos, sHeader);
     ::std::vector< ::std::vector< ::rtl::OUString > >::iterator aDataIter;
     for( aDataIter = m_pNewData->aDBData.begin(); aDataIter != m_pNewData->aDBData.end(); ++aDataIter)
-    {        
+    {
         ::rtl::OUString sData = (*aDataIter)[nOldPos];
         aDataIter->erase(aDataIter->begin() + nOldPos);
         aDataIter->insert(aDataIter->begin() + nPos, sData);
@@ -234,7 +234,7 @@ void SwCustomizeAddressListDialog::UpdateButtons()
 SwCSVData*    SwCustomizeAddressListDialog::GetNewData()
 {
     return m_pNewData;
-}            
+}
 
 /*-- 13.04.2004 13:48:41---------------------------------------------------
 
@@ -242,7 +242,7 @@ SwCSVData*    SwCustomizeAddressListDialog::GetNewData()
 SwAddRenameEntryDialog::SwAddRenameEntryDialog(
         Window* pParent, bool bRename, const ::std::vector< ::rtl::OUString >& rCSVHeader) :
     SfxModalDialog(pParent, SW_RES(DLG_MM_ADD_RENAME_ENTRY)),
-#ifdef _MSC_VER
+#ifdef MSC
 #pragma warning (disable : 4355)
 #endif
     m_aFieldNameFT( this, SW_RES( FT_FIELDNAME)),
@@ -250,7 +250,7 @@ SwAddRenameEntryDialog::SwAddRenameEntryDialog(
     m_aOK( this, SW_RES(          PB_OK)),
     m_aCancel( this, SW_RES(      PB_CANCEL)),
     m_aHelp( this, SW_RES(        PB_HELP)),
-#ifdef _MSC_VER
+#ifdef MSC
 #pragma warning (default : 4355)
 #endif
     m_rCSVHeader(rCSVHeader)
@@ -276,12 +276,12 @@ IMPL_LINK(SwAddRenameEntryDialog, ModifyHdl_Impl, Edit*, pEdit)
 {
     ::rtl::OUString sEntry = pEdit->GetText();
     BOOL bFound = sEntry.getLength() ? FALSE : TRUE;
-    
+
     if(!bFound)
-    {        
+    {
         ::std::vector< ::rtl::OUString >::const_iterator aHeaderIter;
-        for(aHeaderIter = m_rCSVHeader.begin(); 
-                    aHeaderIter != m_rCSVHeader.end(); 
+        for(aHeaderIter = m_rCSVHeader.begin();
+                    aHeaderIter != m_rCSVHeader.end();
                     ++aHeaderIter)
             if(*aHeaderIter == sEntry)
             {
