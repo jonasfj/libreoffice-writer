@@ -4,9 +4,9 @@
  *
  *  $RCSfile: accframebase.cxx,v $
  *
- *  $Revision: 1.10 $
+ *  $Revision: 1.11 $
  *
- *  last change: $Author: ihi $ $Date: 2007-06-05 17:26:30 $
+ *  last change: $Author: hr $ $Date: 2007-09-27 08:20:45 $
  *
  *  The Contents of this file are made available subject to
  *  the terms of GNU Lesser General Public License Version 2.1.
@@ -164,20 +164,21 @@ sal_uInt8 SwAccessibleFrameBase::GetNodeType( const SwFlyFrm *pFlyFrm )
         const SwNodeIndex *pNdIdx = rCntnt.GetCntntIdx();
         if( pNdIdx )
         {
-            const SwCntntNode *pCNd = 
+            const SwCntntNode *pCNd =
                 (pNdIdx->GetNodes())[pNdIdx->GetIndex()+1]->GetCntntNode();
             if( pCNd )
-                nType = pCNd->GetNodeType();	
+                nType = pCNd->GetNodeType();
         }
     }
 
     return nType;
 }
 
-SwAccessibleFrameBase::SwAccessibleFrameBase( 
-        SwAccessibleMap *pMap, sal_Int16 nRole,
-        const SwFlyFrm *pFlyFrm	) :
-    SwAccessibleContext( pMap, nRole, pFlyFrm ),
+SwAccessibleFrameBase::SwAccessibleFrameBase(
+        SwAccessibleMap* pInitMap,
+        sal_Int16 nInitRole,
+        const SwFlyFrm* pFlyFrm  ) :
+    SwAccessibleContext( pInitMap, nInitRole, pFlyFrm ),
     bIsSelected( sal_False )
 {
     vos::OGuard aGuard(Application::GetSolarMutex());
@@ -244,7 +245,7 @@ void SwAccessibleFrameBase::_InvalidateFocus()
         }
         ASSERT( bSelected, "focus object should be selected" );
 
-        FireStateChangedEvent( AccessibleStateType::FOCUSED, 
+        FireStateChangedEvent( AccessibleStateType::FOCUSED,
                                pWin->HasFocus() && bSelected );
     }
 }
@@ -273,13 +274,13 @@ void SwAccessibleFrameBase::Modify( SfxPoolItem *pOld, SfxPoolItem *pNew)
             ASSERT( pFrmFmt == GetRegisteredIn(), "invalid frame" );
 
             OUString sOldName( GetName() );
-            ASSERT( !pOld || 
+            ASSERT( !pOld ||
                     static_cast < SwStringMsgPoolItem * >( pOld )->GetString() == String( sOldName ),
                     "invalid old name" );
 
             const String& rNewName = pFrmFmt->GetName();
             SetName( rNewName );
-            ASSERT( !pNew || 
+            ASSERT( !pNew ||
                     static_cast < SwStringMsgPoolItem * >( pNew )->GetString() == rNewName,
                     "invalid new name" );
 
@@ -294,7 +295,7 @@ void SwAccessibleFrameBase::Modify( SfxPoolItem *pOld, SfxPoolItem *pNew)
         }
         break;
     case RES_OBJECTDYING:
-        if( GetRegisteredIn() == 
+        if( GetRegisteredIn() ==
                 static_cast< SwModify *>( static_cast< SwPtrMsgPoolItem * >( pOld )->pObject ) )
             pRegisteredIn->Remove( this );
         break;
