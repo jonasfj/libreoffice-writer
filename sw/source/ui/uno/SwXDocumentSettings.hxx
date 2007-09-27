@@ -4,9 +4,9 @@
  *
  *  $RCSfile: SwXDocumentSettings.hxx,v $
  *
- *  $Revision: 1.9 $
+ *  $Revision: 1.10 $
  *
- *  last change: $Author: kz $ $Date: 2007-09-06 14:08:31 $
+ *  last change: $Author: hr $ $Date: 2007-09-27 12:40:05 $
  *
  *  The Contents of this file are made available subject to
  *  the terms of GNU Lesser General Public License Version 2.1.
@@ -39,11 +39,8 @@
 #ifdef PRECOMPILED
 #include "ui_pch.hxx"
 #endif
-#ifdef _MSC_VER
-#pragma hdrstop
-#endif
 
-#ifndef _COMPHELPER_MASTERPROPERTYSET_HXX_ 
+#ifndef _COMPHELPER_MASTERPROPERTYSET_HXX_
 #include <comphelper/MasterPropertySet.hxx>
 #endif
 #ifndef _COM_SUN_STAR_TEXT_XTEXTDOCUMENT_HPP
@@ -68,7 +65,7 @@ class SwDocShell;
 class SwDoc;
 class SfxPrinter;
 
-class SwXDocumentSettings : 
+class SwXDocumentSettings :
         public comphelper::MasterPropertySet,
         public com::sun::star::lang::XServiceInfo,
         public com::sun::star::lang::XTypeProvider,
@@ -87,14 +84,14 @@ protected:
 
     virtual void _preSetValues ()
         throw(::com::sun::star::beans::UnknownPropertyException, ::com::sun::star::beans::PropertyVetoException, ::com::sun::star::lang::IllegalArgumentException, ::com::sun::star::lang::WrappedTargetException );
-    virtual void _setSingleValue( const comphelper::PropertyInfo & rInfo, const ::com::sun::star::uno::Any &rValue ) 
+    virtual void _setSingleValue( const comphelper::PropertyInfo & rInfo, const ::com::sun::star::uno::Any &rValue )
         throw(::com::sun::star::beans::UnknownPropertyException, ::com::sun::star::beans::PropertyVetoException, ::com::sun::star::lang::IllegalArgumentException, ::com::sun::star::lang::WrappedTargetException );
     virtual void _postSetValues ()
         throw(::com::sun::star::beans::UnknownPropertyException, ::com::sun::star::beans::PropertyVetoException, ::com::sun::star::lang::IllegalArgumentException, ::com::sun::star::lang::WrappedTargetException );
 
     virtual void _preGetValues ()
         throw(::com::sun::star::beans::UnknownPropertyException, ::com::sun::star::beans::PropertyVetoException, ::com::sun::star::lang::IllegalArgumentException, ::com::sun::star::lang::WrappedTargetException );
-    virtual void _getSingleValue( const comphelper::PropertyInfo & rInfo, ::com::sun::star::uno::Any & rValue ) 
+    virtual void _getSingleValue( const comphelper::PropertyInfo & rInfo, ::com::sun::star::uno::Any & rValue )
         throw(::com::sun::star::beans::UnknownPropertyException, ::com::sun::star::lang::WrappedTargetException );
     virtual void _postGetValues ()
         throw(::com::sun::star::beans::UnknownPropertyException, ::com::sun::star::beans::PropertyVetoException, ::com::sun::star::lang::IllegalArgumentException, ::com::sun::star::lang::WrappedTargetException );
@@ -103,22 +100,22 @@ protected:
         throw();
 public:
     SwXDocumentSettings( SwXTextDocument* pModel );
-    
+
 
     // XInterface
-    virtual ::com::sun::star::uno::Any SAL_CALL queryInterface( const ::com::sun::star::uno::Type& aType ) 
+    virtual ::com::sun::star::uno::Any SAL_CALL queryInterface( const ::com::sun::star::uno::Type& aType )
         throw (::com::sun::star::uno::RuntimeException);
-    virtual void SAL_CALL acquire(  ) 
+    virtual void SAL_CALL acquire(  )
         throw ();
-    virtual void SAL_CALL release(  ) 
+    virtual void SAL_CALL release(  )
         throw ();
 
     // XServiceInfo
-    virtual ::rtl::OUString SAL_CALL getImplementationName(  ) 
+    virtual ::rtl::OUString SAL_CALL getImplementationName(  )
         throw(com::sun::star::uno::RuntimeException);
-    virtual sal_Bool SAL_CALL supportsService( const ::rtl::OUString& ServiceName ) 
+    virtual sal_Bool SAL_CALL supportsService( const ::rtl::OUString& ServiceName )
         throw(com::sun::star::uno::RuntimeException);
-    virtual com::sun::star::uno::Sequence< ::rtl::OUString > SAL_CALL getSupportedServiceNames(  ) 
+    virtual com::sun::star::uno::Sequence< ::rtl::OUString > SAL_CALL getSupportedServiceNames(  )
         throw(com::sun::star::uno::RuntimeException);
 
     // XTypeProvider
