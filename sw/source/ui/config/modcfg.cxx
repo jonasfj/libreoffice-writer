@@ -4,9 +4,9 @@
  *
  *  $RCSfile: modcfg.cxx,v $
  *
- *  $Revision: 1.26 $
+ *  $Revision: 1.27 $
  *
- *  last change: $Author: obo $ $Date: 2006-09-16 22:40:35 $
+ *  last change: $Author: hr $ $Date: 2007-09-27 10:22:40 $
  *
  *  The Contents of this file are made available subject to
  *  the terms of GNU Lesser General Public License Version 2.1.
@@ -79,11 +79,13 @@
 #include <com/sun/star/uno/Any.hxx>
 #endif
 
+#include <unomid.h>
+
 using namespace utl;
 using namespace rtl;
-using namespace com::sun::star::uno;
+using namespace ::com::sun::star::uno;
 
-#define C2U(cChar) OUString::createFromAscii(cChar)
+
 #define GLOB_NAME_CALC		0
 #define GLOB_NAME_IMPRESS   1
 #define GLOB_NAME_DRAW      2
@@ -237,7 +239,8 @@ String SwModuleOptions::ConvertWordDelimiter(const String& rDelim, BOOL bFromUI)
                                 break;
                             }
 
-                            (nChar <<= 4 ) += nVal;
+                            (nChar <<= 4 );
+                            nChar = nChar + nVal;
                         }
                         if( bValidData )
                             sReturn += nChar;
@@ -362,11 +365,9 @@ sal_Int32 lcl_ConvertAttrToCfg(const AuthorCharAttr& rAttr)
 void SwRevisionConfig::Commit()
 {
     const Sequence<OUString>& aNames = GetPropertyNames();
-    const OUString* pNames = aNames.getConstArray();
     Sequence<Any> aValues(aNames.getLength());
     Any* pValues = aValues.getArray();
 
-    const Type& rType = ::getBooleanCppuType();
     for(int nProp = 0; nProp < aNames.getLength(); nProp++)
     {
         sal_Int32 nVal = -1;
@@ -436,7 +437,7 @@ void SwRevisionConfig::Load()
                     case 3 : aDeletedAttr.nColor 	= nVal; break;
                     case 4 : lcl_ConvertCfgToAttr(nVal, aFormatAttr); break;
                     case 5 : aFormatAttr.nColor 	= nVal; break;
-                    case 6 : nMarkAlign 			= nVal; break;
+                    case 6 : nMarkAlign = sal::static_int_cast< sal_uInt16, sal_Int32>(nVal); break;
                     case 7 : aMarkColor.SetColor(nVal); break;
                 }
             }
@@ -559,10 +560,10 @@ const Sequence<OUString>& SwInsertConfig::GetPropertyNames()
 SwInsertConfig::SwInsertConfig(sal_Bool bWeb) :
     ConfigItem(bWeb ? C2U("Office.WriterWeb/Insert") : C2U("Office.Writer/Insert"),
         CONFIG_MODE_DELAYED_UPDATE|CONFIG_MODE_RELEASE_TREE),
-    bIsWeb(bWeb),
     pCapOptions(0),
     pOLEMiscOpt(0),
-    aInsTblOpts(0,0)
+    aInsTblOpts(0,0),
+    bIsWeb(bWeb)
 {
     aGlobalNames[GLOB_NAME_CALC	  ] = SvGlobalName(SO3_SC_CLASSID);
     aGlobalNames[GLOB_NAME_IMPRESS] = SvGlobalName(SO3_SIMPRESS_CLASSID);
@@ -609,14 +610,12 @@ void lcl_WriteOpt(const InsCaptionOpt& rOpt, Any* pValues, sal_Int32 nProp, sal_
 void SwInsertConfig::Commit()
 {
     const Sequence<OUString>& aNames = GetPropertyNames();
-    const OUString* pNames = aNames.getConstArray();
     Sequence<Any> aValues(aNames.getLength());
     Any* pValues = aValues.getArray();
 
     const Type& rType = ::getBooleanCppuType();
     for(int nProp = 0; nProp < aNames.getLength(); nProp++)
     {
-        sal_Int32 nVal = -1;
         const InsCaptionOpt* pWriterTableOpt = 0;
         const InsCaptionOpt* pWriterFrameOpt = 0;
         const InsCaptionOpt* pWriterGraphicOpt = 0;
@@ -667,31 +666,31 @@ void SwInsertConfig::Commit()
             case 13: case 14: case 15: case 16: case 17: case 18: case 19: case 20:
                     if(pWriterFrameOpt)
                         lcl_WriteOpt(*pWriterFrameOpt, pValues, nProp, nProp - 13);
-            case 21: case 22: case 23: case 24: case 25: case 26: case 27: case 28: case 29: 
+            case 21: case 22: case 23: case 24: case 25: case 26: case 27: case 28: case 29:
                     if(pWriterGraphicOpt)
                         lcl_WriteOpt(*pWriterGraphicOpt, pValues, nProp, nProp - 21);
                     break;
-            case 30: case 31: case 32: case 33: case 34: case 35: case 36: case 37: case 38: 
+            case 30: case 31: case 32: case 33: case 34: case 35: case 36: case 37: case 38:
                     if(pOLECalcOpt)
                         lcl_WriteOpt(*pOLECalcOpt, pValues, nProp, nProp - 30);
             break;
-            case 39: case 40: case 41: case 42: case 43: case 44: case 45:case 46: case 47: 
+            case 39: case 40: case 41: case 42: case 43: case 44: case 45:case 46: case 47:
                     if(pOLEImpressOpt)
                         lcl_WriteOpt(*pOLEImpressOpt, pValues, nProp, nProp - 39);
             break;
-            case 48: case 49: case 50: case 51: case 52:case 53: case 54: case 55: case 56: 
+            case 48: case 49: case 50: case 51: case 52:case 53: case 54: case 55: case 56:
                     if(pOLEChartOpt)
                         lcl_WriteOpt(*pOLEChartOpt, pValues, nProp, nProp - 48);
             break;
-            case 57: case 58: case 59: case 60: case 61: case 62: case 63: case 64: case 65: 
+            case 57: case 58: case 59: case 60: case 61: case 62: case 63: case 64: case 65:
                     if(pOLEFormulaOpt)
                         lcl_WriteOpt(*pOLEFormulaOpt, pValues, nProp, nProp - 57);
             break;
-            case 66: case 67: case 68: case 69: case 70: case 71: case 72: case 73: case 74: 
+            case 66: case 67: case 68: case 69: case 70: case 71: case 72: case 73: case 74:
                     if(pOLEDrawOpt)
                         lcl_WriteOpt(*pOLEDrawOpt, pValues, nProp, nProp - 66);
             break;
-            case 75: case 76: case 77: case 78: case 79: case 80: case 81: case 82: case 83: 
+            case 75: case 76: case 77: case 78: case 79: case 80: case 81: case 82: case 83:
                     if(pOLEMiscOpt)
                         lcl_WriteOpt(*pOLEMiscOpt, pValues, nProp, nProp - 75);
             break;
@@ -719,7 +718,7 @@ void lcl_ReadOpt(InsCaptionOpt& rOpt, const Any* pValues, sal_Int32 nProp, sal_I
         case 2:
         {
             sal_Int32 nTemp;  pValues[nProp] >>= nTemp;
-            rOpt.SetNumType(nTemp);
+            rOpt.SetNumType(sal::static_int_cast< sal_uInt16, sal_Int32>(nTemp));
         }
         break;//Numbering",
         case 3:
@@ -738,25 +737,25 @@ void lcl_ReadOpt(InsCaptionOpt& rOpt, const Any* pValues, sal_Int32 nProp, sal_I
         case 5:
         {
             sal_Int32 nTemp;  pValues[nProp] >>= nTemp;
-            rOpt.SetLevel(nTemp);
+            rOpt.SetLevel(sal::static_int_cast< sal_uInt16, sal_Int32>(nTemp));
         }
         break;//Level",
         case 6:
         {
             sal_Int32 nTemp;  pValues[nProp] >>= nTemp;
-            rOpt.SetPos(nTemp);
+            rOpt.SetPos(sal::static_int_cast< sal_uInt16, sal_Int32>(nTemp));
         }
         break;//Position",
         case 7 : //CharacterStyle
         {
             ::rtl::OUString sTemp; pValues[nProp] >>= sTemp;
             rOpt.SetCharacterStyle( sTemp );
-        }        
+        }
         break;
         case 8 : //ApplyAttributes
-        {    
+        {
             pValues[nProp] >>= rOpt.CopyAttributes();
-        }            
+        }
         break;
     }
 }
@@ -808,7 +807,7 @@ void SwInsertConfig::Load()
                     case  1:
                     {
                         aInsTblOpts.mnRowsToRepeat = bBool? 1 : 0;
-                            
+
                     }
                     break;//"Table/RepeatHeader",
                     case  2:
@@ -826,7 +825,7 @@ void SwInsertConfig::Load()
                     case 4:
                         bInsWithCaption = bBool;
                     break;
-                    case  5: case  6: case  7: case  8: case  9: case 10: case 11: case 12: 
+                    case  5: case  6: case  7: case  8: case  9: case 10: case 11: case 12:
                         if(!pWriterTableOpt)
                         {
                             pWriterTableOpt = new InsCaptionOpt(TABLE_CAP);
@@ -834,14 +833,14 @@ void SwInsertConfig::Load()
                         }
                         lcl_ReadOpt(*pWriterTableOpt, pValues, nProp, nProp - 5);
                     break;
-                    case 13: case 14: case 15: case 16: case 17: case 18:case 19: case 20: 
+                    case 13: case 14: case 15: case 16: case 17: case 18:case 19: case 20:
                         if(!pWriterFrameOpt)
                         {
                             pWriterFrameOpt = new InsCaptionOpt(FRAME_CAP);
                             pCapOptions->Insert(pWriterFrameOpt);
                         }
                         lcl_ReadOpt(*pWriterFrameOpt, pValues, nProp, nProp - 13);
-                    case 21:case 22: case 23: case 24:case 25: case 26: case 27: case 28: case 29: 
+                    case 21:case 22: case 23: case 24:case 25: case 26: case 27: case 28: case 29:
                         if(!pWriterGraphicOpt)
                         {
                             pWriterGraphicOpt = new InsCaptionOpt(GRAPHIC_CAP);
@@ -849,7 +848,7 @@ void SwInsertConfig::Load()
                         }
                         lcl_ReadOpt(*pWriterGraphicOpt, pValues, nProp, nProp - 21);
                         break;
-                    case 30: case 31: case 32: case 33: case 34: case 35: case 36: case 37: case 38: 
+                    case 30: case 31: case 32: case 33: case 34: case 35: case 36: case 37: case 38:
                         if(!pOLECalcOpt)
                         {
                             pOLECalcOpt = new InsCaptionOpt(OLE_CAP, &aGlobalNames[GLOB_NAME_CALC]);
@@ -857,7 +856,7 @@ void SwInsertConfig::Load()
                         }
                         lcl_ReadOpt(*pOLECalcOpt, pValues, nProp, nProp - 30);
                     break;
-                    case 39: case 40: case 41: case 42: case 43: case 44: case 45:case 46: case 47: 
+                    case 39: case 40: case 41: case 42: case 43: case 44: case 45:case 46: case 47:
                         if(!pOLEImpressOpt)
                         {
                             pOLEImpressOpt = new InsCaptionOpt(OLE_CAP, &aGlobalNames[GLOB_NAME_IMPRESS]);
@@ -865,7 +864,7 @@ void SwInsertConfig::Load()
                         }
                         lcl_ReadOpt(*pOLEImpressOpt, pValues, nProp, nProp - 39);
                     break;
-                    case 48: case 49: case 50: case 51: case 52:case 53: case 54:    case 55: case 56:                         
+                    case 48: case 49: case 50: case 51: case 52:case 53: case 54:    case 55: case 56:
                         if(!pOLEChartOpt)
                         {
                             pOLEChartOpt = new InsCaptionOpt(OLE_CAP, &aGlobalNames[GLOB_NAME_CHART]);
@@ -873,7 +872,7 @@ void SwInsertConfig::Load()
                         }
                         lcl_ReadOpt(*pOLEChartOpt, pValues, nProp, nProp - 48);
                     break;
-                    
+
                     case 57: case 58: case 59:case 60: case 61: case 62: case 63: case 65: case 64:
                         if(!pOLEFormulaOpt)
                         {
@@ -882,7 +881,7 @@ void SwInsertConfig::Load()
                         }
                         lcl_ReadOpt(*pOLEFormulaOpt, pValues, nProp, nProp - 57);
                     break;
-                    case 66: case 67: case 68: case 69: case 70: case 71: case 72: case 73: case 74: 
+                    case 66: case 67: case 68: case 69: case 70: case 71: case 72: case 73: case 74:
                         if(!pOLEDrawOpt)
                         {
                             pOLEDrawOpt = new InsCaptionOpt(OLE_CAP, &aGlobalNames[GLOB_NAME_DRAW]);
@@ -890,7 +889,7 @@ void SwInsertConfig::Load()
                         }
                         lcl_ReadOpt(*pOLEDrawOpt, pValues, nProp, nProp - 66);
                     break;
-                    case 75: case 76: case 77: case 78: case 79: case 80: case 81: case 82: case 83: 
+                    case 75: case 76: case 77: case 78: case 79: case 80: case 81: case 82: case 83:
                         if(!pOLEMiscOpt)
                         {
                             pOLEMiscOpt = new InsCaptionOpt(OLE_CAP);
@@ -948,7 +947,6 @@ SwTableConfig::~SwTableConfig()
 void SwTableConfig::Commit()
 {
     const Sequence<OUString>& aNames = GetPropertyNames();
-    const OUString* pNames = aNames.getConstArray();
     Sequence<Any> aValues(aNames.getLength());
     Any* pValues = aValues.getArray();
 
@@ -957,10 +955,10 @@ void SwTableConfig::Commit()
     {
         switch(nProp)
         {
-            case 0 : pValues[nProp] <<= (sal_Int32)TWIP_TO_MM100(nTblHMove); break;	 //"Shift/Row",
-            case 1 : pValues[nProp] <<= (sal_Int32)TWIP_TO_MM100(nTblVMove); break;     //"Shift/Column",
-            case 2 : pValues[nProp] <<= (sal_Int32)TWIP_TO_MM100(nTblHInsert); break;   //"Insert/Row",
-            case 3 : pValues[nProp] <<= (sal_Int32)TWIP_TO_MM100(nTblVInsert); break;   //"Insert/Column",
+            case 0 : pValues[nProp] <<= (sal_Int32)TWIP_TO_MM100_UNSIGNED(nTblHMove); break;   //"Shift/Row",
+            case 1 : pValues[nProp] <<= (sal_Int32)TWIP_TO_MM100_UNSIGNED(nTblVMove); break;     //"Shift/Column",
+            case 2 : pValues[nProp] <<= (sal_Int32)TWIP_TO_MM100_UNSIGNED(nTblHInsert); break;   //"Insert/Row",
+            case 3 : pValues[nProp] <<= (sal_Int32)TWIP_TO_MM100_UNSIGNED(nTblVInsert); break;   //"Insert/Column",
             case 4 : pValues[nProp] <<= (sal_Int32)eTblChgMode; break;   //"Change/Effect",
             case 5 : pValues[nProp].setValue(&bInsTblFormatNum, rType); break;  //"Input/NumberRecognition",
             case 6 : pValues[nProp].setValue(&bInsTblChangeNumFormat, rType); break;  //"Input/NumberFormatRecognition",
@@ -1060,7 +1058,6 @@ const Sequence<OUString>& SwMiscConfig::GetPropertyNames()
 void SwMiscConfig::Commit()
 {
     const Sequence<OUString>& aNames = GetPropertyNames();
-    const OUString* pNames = aNames.getConstArray();
     Sequence<Any> aValues(aNames.getLength());
     Any* pValues = aValues.getArray();
 
