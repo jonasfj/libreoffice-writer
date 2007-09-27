@@ -4,9 +4,9 @@
  *
  *  $RCSfile: tracer.cxx,v $
  *
- *  $Revision: 1.9 $
+ *  $Revision: 1.10 $
  *
- *  last change: $Author: obo $ $Date: 2006-09-16 22:20:30 $
+ *  last change: $Author: hr $ $Date: 2007-09-27 10:00:35 $
  *
  *  The Contents of this file are made available subject to
  *  the terms of GNU Lesser General Public License Version 2.1.
@@ -44,7 +44,7 @@
 #ifndef _SFXDOCFILE_HXX
 #include <sfx2/docfile.hxx>         //SfxMedium
 #endif
-#ifndef _MS_FILTERTRACER_HXX    
+#ifndef _MS_FILTERTRACER_HXX
 #include <svx/msfiltertracer.hxx>   //MSFilterTracer
 #endif
 #ifndef SW_TRACER_HXX
@@ -63,17 +63,18 @@ namespace sw
         Tracer::Tracer(const SfxMedium &rMed)
             : mpTrace(0)
         {
-            using namespace com::sun::star::uno;
+            using namespace ::com::sun::star::uno;
             using namespace ::com::sun::star::beans;
             Sequence<PropertyValue> aConfig(1);
             PropertyValue aPropValue;
-            aPropValue.Value <<= 
+            aPropValue.Value <<=
                 OUString(rMed.GetURLObject().GetMainURL(
                     INetURLObject::NO_DECODE));
             aPropValue.Name = C2O("DocumentURL");
             aConfig[0] = aPropValue;
             OUString aTraceConfigPath(CAU("Office.Tracing/Import/Word"));
-            if ((mpTrace = new MSFilterTracer(aTraceConfigPath, &aConfig)))
+            mpTrace = new MSFilterTracer(aTraceConfigPath, &aConfig);
+            if (mpTrace)
                 mpTrace->StartTracing();
         }
 
@@ -120,27 +121,27 @@ namespace sw
                     mpTrace->Trace(sID, COMMENT("Tab In Numbering"));
                     break;
                 case eNegativeVertPlacement:
-                    mpTrace->Trace(sID, 
+                    mpTrace->Trace(sID,
                         COMMENT("Negative Vertical Placement"));
                     break;
                 case eAutoColorBg:
-                    mpTrace->Trace(sID, 
+                    mpTrace->Trace(sID,
                         COMMENT("Bad Background for Autocolour"));
                     break;
                 case eTooWideAsChar:
-                    mpTrace->Trace(sID, 
+                    mpTrace->Trace(sID,
                         COMMENT("Inline wider than TextArea"));
                     break;
                 case eAnimatedText:
-                    mpTrace->Trace(sID, 
+                    mpTrace->Trace(sID,
                         COMMENT("Animated Text"));
                     break;
                 case eDontAddSpaceForEqualStyles:
-                    mpTrace->Trace(sID, 
+                    mpTrace->Trace(sID,
                         COMMENT("Don't Add Space between Equal Style"));
                     break;
                 case eBorderDistOutside:
-                    mpTrace->Trace(sID, 
+                    mpTrace->Trace(sID,
                         COMMENT("Word draws the border outside"));
                     break;
                 case eContainsVisualBasic:
@@ -209,7 +210,7 @@ namespace sw
             mpTrace->AddAttribute(GetContext(eContext), GetDetails(eContext));
         }
 
-        void Tracer::EnterEnvironment(Environment eContext, 
+        void Tracer::EnterEnvironment(Environment eContext,
             const rtl::OUString &rDetails)
         {
             mpTrace->AddAttribute(GetContext(eContext), rDetails);
