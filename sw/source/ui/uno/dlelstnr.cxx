@@ -4,9 +4,9 @@
  *
  *  $RCSfile: dlelstnr.cxx,v $
  *
- *  $Revision: 1.10 $
+ *  $Revision: 1.11 $
  *
- *  last change: $Author: hr $ $Date: 2007-06-27 13:27:51 $
+ *  last change: $Author: hr $ $Date: 2007-09-27 12:41:14 $
  *
  *  The Contents of this file are made available subject to
  *  the terms of GNU Lesser General Public License Version 2.1.
@@ -105,12 +105,12 @@ SwLinguServiceEventListener::SwLinguServiceEventListener()
                 xMgr->createInstance( aSvcName ), UNO_QUERY );
         if (xDesktop.is())
             xDesktop->addTerminateListener( this );
-    
+
         aSvcName = A2OU( "com.sun.star.linguistic2.LinguServiceManager" );
         xLngSvcMgr = Reference< XLinguServiceManager >(
                 xMgr->createInstance( aSvcName ), UNO_QUERY );
         if (xLngSvcMgr.is())
-            xLngSvcMgr->addLinguServiceManagerListener( 
+            xLngSvcMgr->addLinguServiceManagerListener(
                 (XLinguServiceEventListener *) this );
     }
 }
@@ -133,35 +133,35 @@ void SwLinguServiceEventListener::processDictionaryListEvent(
 
     sal_Int16 nEvt = rDicListEvent.nCondensedEvent;
 
-    sal_Int16 nSpellWrongFlags = 
+    sal_Int16 nSpellWrongFlags =
             DictionaryListEventFlags::ADD_POS_ENTRY 	|
             DictionaryListEventFlags::DEL_NEG_ENTRY		|
             DictionaryListEventFlags::ACTIVATE_POS_DIC	|
             DictionaryListEventFlags::DEACTIVATE_NEG_DIC;
     sal_Bool bIsSpellWrong	=  0 != (nEvt & nSpellWrongFlags);
-    sal_Int16 nSpellAllFlags = 
+    sal_Int16 nSpellAllFlags =
             DictionaryListEventFlags::ADD_NEG_ENTRY		|
             DictionaryListEventFlags::DEL_POS_ENTRY		|
             DictionaryListEventFlags::ACTIVATE_NEG_DIC	|
             DictionaryListEventFlags::DEACTIVATE_POS_DIC;
     sal_Bool bIsSpellAll	=  0 != (nEvt & nSpellAllFlags);
-    
+
     if (bIsSpellWrong || bIsSpellAll)
         SW_MOD()->CheckSpellChanges( sal_False, bIsSpellWrong, bIsSpellAll, sal_False );
 }
 
 
-void SAL_CALL SwLinguServiceEventListener::processLinguServiceEvent( 
-            const LinguServiceEvent& rLngSvcEvent ) 
+void SAL_CALL SwLinguServiceEventListener::processLinguServiceEvent(
+            const LinguServiceEvent& rLngSvcEvent )
         throw(RuntimeException)
 {
     vos::OGuard aGuard(Application::GetSolarMutex());
-    
+
     if (rLngSvcEvent.Source == xLngSvcMgr)
     {
-        sal_Bool bIsSpellWrong = 
+        sal_Bool bIsSpellWrong =
                 0 != (rLngSvcEvent.nEvent & SPELL_WRONG_WORDS_AGAIN);
-        sal_Bool bIsSpellAll   = 
+        sal_Bool bIsSpellAll   =
                 0 != (rLngSvcEvent.nEvent & SPELL_CORRECT_WORDS_AGAIN);
         if (bIsSpellWrong || bIsSpellAll)
         {
@@ -170,9 +170,9 @@ void SAL_CALL SwLinguServiceEventListener::processLinguServiceEvent(
         if (rLngSvcEvent.nEvent & HYPHENATE_AGAIN)
         {
             SwView *pSwView = SW_MOD()->GetFirstView();
-            
+
             //!! since this function may be called within the ctor of
-            //!! SwView (during formatting) where the WrtShell is not yet 
+            //!! SwView (during formatting) where the WrtShell is not yet
             //!! created, we have to check for the WrtShellPtr to see
             //!! if it is already availbale
             while (pSwView && pSwView->GetWrtShellPtr())
@@ -199,7 +199,7 @@ void SAL_CALL SwLinguServiceEventListener::disposing(
 
 
 void SAL_CALL SwLinguServiceEventListener::queryTermination(
-            const EventObject& rEventObj )
+            const EventObject& /*rEventObj*/ )
         throw(TerminationVetoException, RuntimeException)
 {
     //vos::OGuard aGuard(Application::GetSolarMutex());
@@ -216,7 +216,7 @@ void SAL_CALL SwLinguServiceEventListener::notifyTermination(
     {
         if (xLngSvcMgr.is())
         {
-            xLngSvcMgr->removeLinguServiceManagerListener( 
+            xLngSvcMgr->removeLinguServiceManagerListener(
                     (XLinguServiceEventListener *) this );
             xLngSvcMgr = 0;
         }
