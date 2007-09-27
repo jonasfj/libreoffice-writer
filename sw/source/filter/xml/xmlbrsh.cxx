@@ -4,9 +4,9 @@
  *
  *  $RCSfile: xmlbrsh.cxx,v $
  *
- *  $Revision: 1.13 $
+ *  $Revision: 1.14 $
  *
- *  last change: $Author: obo $ $Date: 2006-09-16 22:27:55 $
+ *  last change: $Author: hr $ $Date: 2007-09-27 10:09:34 $
  *
  *  The Contents of this file are made available subject to
  *  the terms of GNU Lesser General Public License Version 2.1.
@@ -156,11 +156,11 @@ SvXMLImportContext *SwXMLBrushItemImportContext::CreateChildContext(
                                         xmloff::token::XML_BINARY_DATA ) )
     {
         if( !xBase64Stream.is() && !pItem->GetGraphicLink() )
-        {	
+        {
             const GraphicObject *pGrObj = pItem->GetGraphicObject();
             if( !pGrObj || GRAPHIC_NONE == pGrObj->GetType() )
             {
-                xBase64Stream = 
+                xBase64Stream =
                     GetImport().GetStreamForGraphicObjectURLFromBase64();
                 if( xBase64Stream.is() )
                     pContext = new XMLBase64ImportContext( GetImport(), nPrefix,
