@@ -4,9 +4,9 @@
  *
  *  $RCSfile: mmpreparemergepage.cxx,v $
  *
- *  $Revision: 1.9 $
+ *  $Revision: 1.10 $
  *
- *  last change: $Author: kz $ $Date: 2007-09-06 14:07:03 $
+ *  last change: $Author: hr $ $Date: 2007-09-27 11:35:23 $
  *
  *  The Contents of this file are made available subject to
  *  the terms of GNU Lesser General Public License Version 2.1.
@@ -78,18 +78,20 @@
 #include <mmpreparemergepage.hrc>
 #include <dbui.hrc>
 
+#include <unomid.h>
+
 using namespace ::com::sun::star::uno;
 using namespace ::com::sun::star::beans;
 using namespace ::com::sun::star::sdbc;
 using namespace ::rtl;
-#define C2U(cChar) OUString::createFromAscii(cChar)
+
 
 /*-- 02.04.2004 16:42:49---------------------------------------------------
 
   -----------------------------------------------------------------------*/
 SwMailMergePrepareMergePage::SwMailMergePrepareMergePage( SwMailMergeWizard* _pParent) :
     svt::OWizardPage( _pParent, SW_RES(DLG_MM_PREPAREMERGE_PAGE)),
-#ifdef _MSC_VER
+#ifdef MSC
 #pragma warning (disable : 4355)
 #endif
     m_aHeaderFI(this,  SW_RES(     FI_HEADER ) ),
@@ -104,11 +106,11 @@ SwMailMergePrepareMergePage::SwMailMergePrepareMergePage( SwMailMergeWizard* _pP
     m_aNoteHeaderFL(this, SW_RES(  FL_NOTEHEADER ) ),
     m_aEditFI(this, SW_RES(        FI_EDIT       ) ),
     m_aEditPB(this, SW_RES(        PB_EDIT       ) ),
-#ifdef _MSC_VER
-#pragma warning (disable : 4355)                
+#ifdef MSC
+#pragma warning (default : 4355)
 #endif
     m_pWizard(_pParent)
-{           
+{
     FreeResource();
     m_aEditPB.SetClickHdl( LINK( this, SwMailMergePrepareMergePage, EditDocumentHdl_Impl));
     Link aMoveLink(LINK( this, SwMailMergePrepareMergePage, MoveHdl_Impl));
@@ -125,11 +127,11 @@ SwMailMergePrepareMergePage::SwMailMergePrepareMergePage( SwMailMergeWizard* _pP
   -----------------------------------------------------------------------*/
 SwMailMergePrepareMergePage::~SwMailMergePrepareMergePage()
 {
-}        
+}
 /*-- 13.05.2004 15:36:48---------------------------------------------------
 
   -----------------------------------------------------------------------*/
-IMPL_LINK( SwMailMergePrepareMergePage, EditDocumentHdl_Impl, PushButton*, pButton)
+IMPL_LINK( SwMailMergePrepareMergePage, EditDocumentHdl_Impl, PushButton*, EMPTYARG)
 {
     m_pWizard->SetRestartPage(MM_PREPAREMERGEPAGE);
     m_pWizard->EndDialog(RET_EDIT_DOC);
@@ -145,20 +147,20 @@ IMPL_LINK( SwMailMergePrepareMergePage, MoveHdl_Impl, void*, pCtrl)
     if(pCtrl == &m_aFirstPB)
     {
         rConfigItem.MoveResultSet(1);
-    }    
+    }
     else if(pCtrl == &m_aPrevPB)
     {
         rConfigItem.MoveResultSet(nPos - 1);
-    }    
+    }
     else if(pCtrl == &m_aRecordED)
     {
-        rConfigItem.MoveResultSet(m_aRecordED.GetValue());
-    }    
+        rConfigItem.MoveResultSet( static_cast< sal_Int32 >(m_aRecordED.GetValue()) );
+    }
     else if(pCtrl == &m_aNextPB)
         rConfigItem.MoveResultSet(nPos + 1);
     else if(pCtrl == &m_aLastPB)
         rConfigItem.MoveResultSet(-1);
-    
+
     nPos = rConfigItem.GetResultSetPosition();
     m_aRecordED.SetValue(nPos);
     bool bIsFirst;
@@ -170,24 +172,8 @@ IMPL_LINK( SwMailMergePrepareMergePage, MoveHdl_Impl, void*, pCtrl)
     m_aLastPB.Enable(bValid && !bIsLast);
     m_ExcludeCB.Check(rConfigItem.IsRecordExcluded( rConfigItem.GetResultSetPosition() ));
     //now the record has to be merged into the source document
-    SwView* pView = m_pWizard->GetSwView();
-
-/*
-            { CONST_CHAR("ActiveConnection"),   daConnection,       &::getCppuType( static_cast< Reference< XConnection >* >(NULL) ),   PropertyAttribute::TRANSIENT, 0 },
-            { CONST_CHAR("BookmarkSelection"),  daBookmarkSelection,&::getBooleanCppuType( ),                                           PropertyAttribute::TRANSIENT, 0 },
-            { CONST_CHAR("Column"),             daColumnObject,     &::getCppuType( static_cast< Reference< XPropertySet >* >(NULL) ),  PropertyAttribute::TRANSIENT, 0 },
-            { CONST_CHAR("ColumnName"),         daColumnName,       &::getCppuType( static_cast< ::rtl::OUString* >(NULL) ),            PropertyAttribute::TRANSIENT, 0 },
-            { CONST_CHAR("Command"),            daCommand,          &::getCppuType( static_cast< ::rtl::OUString* >(NULL) ),            PropertyAttribute::TRANSIENT, 0 },
-            { CONST_CHAR("CommandType"),        daCommandType,      &::getCppuType( static_cast< sal_Int32* >(NULL) ),                  PropertyAttribute::TRANSIENT, 0 },
-            { CONST_CHAR("Cursor"),             daCursor,           &::getCppuType( static_cast< Reference< XResultSet>* >(NULL) ),     PropertyAttribute::TRANSIENT, 0 },
-            { CONST_CHAR("DataSourceName"),     daDataSource,       &::getCppuType( static_cast< ::rtl::OUString* >(NULL) ),            PropertyAttribute::TRANSIENT, 0 },
-            { CONST_CHAR("EscapeProcessing"),   daEscapeProcessing, &::getBooleanCppuType( ),                                           PropertyAttribute::TRANSIENT, 0 },
-            { CONST_CHAR("Filter"),             daFilter,           &::getCppuType( static_cast< ::rtl::OUString* >(NULL) ),            PropertyAttribute::TRANSIENT, 0 },
-            { CONST_CHAR("Selection"),          daSelection,        &::getCppuType( static_cast< Sequence< Any >* >(NULL) ),            PropertyAttribute::TRANSIENT, 0 },
-        
-*/
     const SwDBData& rDBData = rConfigItem.GetCurrentDBData();
-    
+
     Sequence< PropertyValue > aArgs(7);
     Sequence<Any> aSelection(1);
     aSelection[0] <<= rConfigItem.GetResultSetPosition();
@@ -220,7 +206,7 @@ IMPL_LINK( SwMailMergePrepareMergePage, ExcludeHdl_Impl, CheckBox*, pBox)
     SwMailMergeConfigItem& rConfigItem = m_pWizard->GetConfigItem();
     rConfigItem.ExcludeRecord( rConfigItem.GetResultSetPosition(), pBox->IsChecked());
     return 0;
-};    
+};
 /*-- 18.08.2004 10:36:25---------------------------------------------------
 
   -----------------------------------------------------------------------*/
@@ -235,7 +221,7 @@ sal_Bool  SwMailMergePrepareMergePage::commitPage(COMMIT_REASON _eReason)
 {
     SwMailMergeConfigItem& rConfigItem = m_pWizard->GetConfigItem();
     if(CR_TRAVEL_NEXT == _eReason && !rConfigItem.IsMergeDone())
-    {        
+    {
         m_pWizard->CreateTargetDocument();
         m_pWizard->SetRestartPage(MM_MERGEPAGE);
         m_pWizard->EndDialog(RET_TARGET_CREATED);
