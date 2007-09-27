@@ -4,9 +4,9 @@
  *
  *  $RCSfile: fontcfg.cxx,v $
  *
- *  $Revision: 1.21 $
+ *  $Revision: 1.22 $
  *
- *  last change: $Author: obo $ $Date: 2006-09-16 22:40:05 $
+ *  last change: $Author: hr $ $Date: 2007-09-27 10:21:54 $
  *
  *  The Contents of this file are made available subject to
  *  the terms of GNU Lesser General Public License Version 2.1.
@@ -61,12 +61,12 @@
 #include <swlinguconfig.hxx>
 #endif
 
+#include <unomid.h>
+
 using namespace utl;
 using namespace rtl;
-using namespace com::sun::star::uno;
+using namespace ::com::sun::star::uno;
 
-#define C2S(cChar) String::CreateFromAscii(cChar)
-#define C2U(cChar) OUString::createFromAscii(cChar)
 /* -----------------07.10.2002 12:15-----------------
  *
  * --------------------------------------------------*/
@@ -83,7 +83,7 @@ Sequence<OUString> SwStdFontConfig::GetPropertyNames()
 {
     Sequence<OUString> aNames;
     if(!aNames.getLength())
-    {        
+    {
         static const char* aPropNames[] =
         {
             "DefaultFont/Standard",    // 0
@@ -143,8 +143,8 @@ SwStdFontConfig::SwStdFontConfig() :
                 eCJK = aLinguOpt.nDefaultLanguage_CJK,
                 eCTL = aLinguOpt.nDefaultLanguage_CTL;
     for(sal_Int16 i = 0; i < DEF_FONT_COUNT; i++)
-    {        
-        sDefaultFonts[i] = GetDefaultFor(i, 
+    {
+        sDefaultFonts[i] = GetDefaultFor(i,
             lcl_LanguageOfType(i, eWestern, eCJK, eCTL));
         nDefaultFontHeight[i] = -1;
     }
@@ -166,7 +166,7 @@ SwStdFontConfig::SwStdFontConfig() :
                     sDefaultFonts[nProp] = sVal;
                 }
                 else
-                {        
+                {
                    pValues[nProp] >>= nDefaultFontHeight[nProp - DEF_FONT_COUNT];
                    nDefaultFontHeight[nProp - DEF_FONT_COUNT] = MM100_TO_TWIP(nDefaultFontHeight[nProp - DEF_FONT_COUNT]);
                 }
@@ -180,7 +180,6 @@ SwStdFontConfig::SwStdFontConfig() :
 void	SwStdFontConfig::Commit()
 {
     Sequence<OUString> aNames = GetPropertyNames();
-    OUString* pNames = aNames.getArray();
     Sequence<Any> aValues(aNames.getLength());
     Any* pValues = aValues.getArray();
     SvtLinguOptions aLinguOpt;
@@ -191,10 +190,12 @@ void	SwStdFontConfig::Commit()
     sal_Int16   eWestern = aLinguOpt.nDefaultLanguage,
                 eCJK = aLinguOpt.nDefaultLanguage_CJK,
                 eCTL = aLinguOpt.nDefaultLanguage_CTL;
-    for(int nProp = 0; nProp < aNames.getLength(); nProp++)
+    for(sal_uInt16 nProp = 0;
+        nProp < sal::static_int_cast< sal_uInt16, sal_Int32 >( aNames.getLength() );
+            nProp++)
     {
         if( nProp < DEF_FONT_COUNT )
-        {        
+        {
             if(GetDefaultFor(nProp, lcl_LanguageOfType(nProp, eWestern, eCJK, eCTL)) != sDefaultFonts[nProp])
                 pValues[nProp] <<= OUString(sDefaultFonts[nProp]);
         }
@@ -202,7 +203,7 @@ void	SwStdFontConfig::Commit()
         {
             if(nDefaultFontHeight[nProp - DEF_FONT_COUNT] > 0)
                 pValues[nProp] <<= static_cast<sal_Int32>(TWIP_TO_MM100(nDefaultFontHeight[nProp - DEF_FONT_COUNT]));
-        }            
+        }
     }
     PutProperties(aNames, aValues);
 }
@@ -216,12 +217,12 @@ SwStdFontConfig::~SwStdFontConfig()
 --------------------------------------------------*/
 BOOL SwStdFontConfig::IsFontDefault(USHORT nFontType) const
 {
-    BOOL bSame;
+    BOOL bSame = sal_False;
     SvtLinguOptions aLinguOpt;
 
     // #107253# Replaced SvtLinguConfig with SwLinguConfig wrapper with UsageCount
     SwLinguConfig().GetOptions( aLinguOpt );
-    
+
     sal_Int16   eWestern = aLinguOpt.nDefaultLanguage,
                 eCJK = aLinguOpt.nDefaultLanguage_CJK,
                 eCTL = aLinguOpt.nDefaultLanguage_CTL;
@@ -326,9 +327,9 @@ sal_Int32 SwStdFontConfig::GetDefaultHeightFor(USHORT nFontType, LanguageType eL
         case  FONT_OUTLINE_CTL:
             nRet = FONTSIZE_OUTLINE;
         break;
-    }            
+    }
     if( eLang == LANGUAGE_THAI && nFontType >= FONT_STANDARD_CTL )
-    {  
+    {
         nRet = nRet * 4 / 3;
     }
     return nRet;
@@ -348,11 +349,11 @@ void SwStdFontConfig::ChangeInt( USHORT nFontType, sal_Int32 nHeight )
                     eCJK = aLinguOpt.nDefaultLanguage_CJK,
                     eCTL = aLinguOpt.nDefaultLanguage_CTL;
         if( nHeight != GetDefaultHeightFor(nFontType, lcl_LanguageOfType(nFontType, eWestern, eCJK, eCTL)))
-        {        
+        {
             SetModified();
             nDefaultFontHeight[nFontType] = nHeight;
         }
-    }            
+    }
 }
 
 /*-- 08.11.2005 14:18:26---------------------------------------------------
@@ -365,5 +366,5 @@ sal_Int32 SwStdFontConfig::GetFontHeight( sal_uInt8 nFont, sal_uInt8 nScriptType
     if(nRet <= 0)
         return GetDefaultHeightFor(nFont + FONT_PER_GROUP * nScriptType, eLang);
     return nRet;
-}            
+}
 
