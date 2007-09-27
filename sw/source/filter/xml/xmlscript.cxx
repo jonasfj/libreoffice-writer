@@ -4,9 +4,9 @@
  *
  *  $RCSfile: xmlscript.cxx,v $
  *
- *  $Revision: 1.6 $
+ *  $Revision: 1.7 $
  *
- *  last change: $Author: obo $ $Date: 2006-09-16 22:31:28 $
+ *  last change: $Author: hr $ $Date: 2007-09-27 10:13:21 $
  *
  *  The Contents of this file are made available subject to
  *  the terms of GNU Lesser General Public License Version 2.1.
@@ -90,7 +90,7 @@ SvXMLImportContext *SwXMLImport::CreateScriptContext(
                                     XML_NAMESPACE_OFFICE, rLocalName,
                                     GetModel() );
     }
-    
+
     if( !pContext )
         pContext = new SvXMLImportContext( *this, XML_NAMESPACE_OFFICE,
                                               rLocalName );
