@@ -4,9 +4,9 @@
  *
  *  $RCSfile: acccell.cxx,v $
  *
- *  $Revision: 1.18 $
+ *  $Revision: 1.19 $
  *
- *  last change: $Author: ihi $ $Date: 2007-06-05 17:25:06 $
+ *  last change: $Author: hr $ $Date: 2007-09-27 08:18:40 $
  *
  *  The Contents of this file are made available subject to
  *  the terms of GNU Lesser General Public License Version 2.1.
@@ -151,14 +151,14 @@ void SwAccessibleCell::GetStates(
 }
 
 SwAccessibleCell::SwAccessibleCell(
-        SwAccessibleMap *pMap,
+        SwAccessibleMap *pInitMap,
         const SwCellFrm *pCellFrm	) :
-    SwAccessibleContext( pMap, AccessibleRole::TABLE_CELL, pCellFrm ),
+    SwAccessibleContext( pInitMap, AccessibleRole::TABLE_CELL, pCellFrm ),
     bIsSelected( sal_False )
 {
     vos::OGuard aGuard(Application::GetSolarMutex());
-    OUString sName( pCellFrm->GetTabBox()->GetName() );
-    SetName( sName );
+    OUString sBoxName( pCellFrm->GetTabBox()->GetName() );
+    SetName( sBoxName );
 
     bIsSelected = IsSelected();
 }
@@ -207,11 +207,11 @@ sal_Bool SwAccessibleCell::_InvalidateChildrenCursorPos( const SwFrm *pFrm )
                 {
                     ASSERT( xAccImpl->GetFrm()->IsCellFrm(),
                              "table child is not a cell frame" )
-                    bChanged |= static_cast< SwAccessibleCell *>( 
+                    bChanged |= static_cast< SwAccessibleCell *>(
                             xAccImpl.getBodyPtr() )->_InvalidateMyCursorPos();
                 }
                 else
-                    bChanged = sal_True; // If the context is not know we 
+                    bChanged = sal_True; // If the context is not know we
                                          // don't know whether the selection
                                          // changed or not.
             }
@@ -281,9 +281,9 @@ sal_Bool SAL_CALL SwAccessibleCell::supportsService(
         const ::rtl::OUString& sTestServiceName)
     throw (uno::RuntimeException)
 {
-    return sTestServiceName.equalsAsciiL( sServiceName, 
+    return sTestServiceName.equalsAsciiL( sServiceName,
                                           sizeof(sServiceName)-1 ) ||
-           sTestServiceName.equalsAsciiL( sAccessibleServiceName, 
+           sTestServiceName.equalsAsciiL( sAccessibleServiceName,
                                              sizeof(sAccessibleServiceName)-1 );
 }
 
