@@ -4,9 +4,9 @@
  *
  *  $RCSfile: docfld.cxx,v $
  *
- *  $Revision: 1.30 $
+ *  $Revision: 1.31 $
  *
- *  last change: $Author: hr $ $Date: 2007-09-27 08:34:44 $
+ *  last change: $Author: ihi $ $Date: 2007-11-26 15:28:46 $
  *
  *  The Contents of this file are made available subject to
  *  the terms of GNU Lesser General Public License Version 2.1.
@@ -2184,8 +2184,9 @@ void SwDoc::SetFixFields( bool bOnlyTimeDate, const DateTime* pNewDateTime )
                         pDocInfFld->SetExpansion( ((SwDocInfoFieldType*)
                                     pDocInfFld->GetTyp())->Expand(
                                         pDocInfFld->GetSubType(),
-                                        pDocInfFld->GetFormat(),
-                                        pDocInfFld->GetLanguage() ) );
+                                        pDocInfFld->GetFormat(), 
+                                        pDocInfFld->GetLanguage(),
+                                        pDocInfFld->GetName() ) );
                     }
                     break;
 
