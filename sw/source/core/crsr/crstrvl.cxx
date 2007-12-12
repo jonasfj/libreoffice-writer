@@ -4,9 +4,9 @@
  *
  *  $RCSfile: crstrvl.cxx,v $
  *
- *  $Revision: 1.23 $
+ *  $Revision: 1.24 $
  *
- *  last change: $Author: ihi $ $Date: 2007-11-22 15:30:34 $
+ *  last change: $Author: kz $ $Date: 2007-12-12 13:22:21 $
  *
  *  The Contents of this file are made available subject to
  *  the terms of GNU Lesser General Public License Version 2.1.
@@ -1159,7 +1159,7 @@ BOOL SwCrsrShell::GetContentAtPos( const Point& rPt,
                     xub_StrLen nBegin = nCurrent;
                     xub_StrLen nLen = 1;
 
-                    if ( pSmartTagList && pSmartTagList->InWrongWord( nCurrent, nLen ) && !pTxtNd->IsSymbol(nBegin) ) 
+                    if ( pSmartTagList && pSmartTagList->InWrongWord( nCurrent, nLen ) && !pTxtNd->IsSymbol(nBegin) )
                     {
                         const USHORT nIndex = pSmartTagList->GetWrongPos( nBegin );
                         const SwWrongList* pSubList = pSmartTagList->SubList( nIndex );
@@ -1179,7 +1179,7 @@ BOOL SwCrsrShell::GetContentAtPos( const Point& rPt,
                             SwCallLink aLk( *this );        // Crsr-Moves ueberwachen, evt. Link callen
                             pCurCrsr->DeleteMark();
                             *pCurCrsr->GetPoint() = aPos;
-                            if( pCurCrsr->IsSelOvr( nsSwCursorSelOverFlags::SELOVER_CHECKNODESSECTION | 
+                            if( pCurCrsr->IsSelOvr( nsSwCursorSelOverFlags::SELOVER_CHECKNODESSECTION |
                                                     nsSwCursorSelOverFlags::SELOVER_TOGGLE) )
                                 bRet = FALSE;
                             else
@@ -1201,7 +1201,7 @@ BOOL SwCrsrShell::GetContentAtPos( const Point& rPt,
                         }
                     }
                 }
-                
+
                 if( !bRet && ( SwContentAtPos::SW_FIELD | SwContentAtPos::SW_CLICKFIELD )
                     & rCntntAtPos.eCntntAtPos && !aTmpState.bFtnNoInfo )
                 {
@@ -1401,7 +1401,7 @@ BOOL SwCrsrShell::GetContentAtPos( const Point& rPt,
                         }
                     }
                 }
-                            
+
                 if( !bRet && SwContentAtPos::SW_REDLINE & rCntntAtPos.eCntntAtPos )
                 {
                     const SwRedline* pRedl = GetDoc()->GetRedline(aPos, NULL);
@@ -1815,7 +1815,7 @@ BOOL SwCrsrShell::SetShadowCrsrPos( const Point& rPt, SwFillMode eFillMode )
                 if( !n && pNextFmt )
                 {
                     *pCurCrsr->GetPoint() = aPos;
-                    GetDoc()->SetTxtFmtColl( *pCurCrsr, pNextFmt, FALSE );
+                    GetDoc()->SetTxtFmtColl( *pCurCrsr, pNextFmt, false );
                     //JP 04.11.97: erstmal keine Folgevorlage der
                     //				Folgevorlage beachten
                     // pNextFmt = pNextFmt->GetNextTxtFmtColl();
