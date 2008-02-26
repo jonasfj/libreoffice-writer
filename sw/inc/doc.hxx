@@ -4,9 +4,9 @@
  *
  *  $RCSfile: doc.hxx,v $
  *
- *  $Revision: 1.148 $
+ *  $Revision: 1.149 $
  *
- *  last change: $Author: obo $ $Date: 2008-02-26 10:29:19 $
+ *  last change: $Author: obo $ $Date: 2008-02-26 13:59:15 $
  *
  *  The Contents of this file are made available subject to
  *  the terms of GNU Lesser General Public License Version 2.1.
@@ -181,7 +181,6 @@ class SbxArray;
 class SdrModel;
 class SdrObject;
 class SdrUndoAction;
-class SfxDocumentInfo;
 class VirtualDevice;
 class SfxPrinter;
 class SvNumberFormatter;
@@ -408,7 +407,6 @@ class SwDoc :
     SwLineNumberInfo*pLineNumberInfo;
     SwFtnIdxs		*pFtnIdxs;
     SwDocStat		*pDocStat;			// Statistic Informationen
-    SfxDocumentInfo *pSwgInfo;			// Dokumentinformationen
     SvxMacroTableDtor *pMacroTable; 	// Tabelle der dokumentglobalen Macros
 
     SwDocShell		*pDocShell;			// Ptr auf die SfxDocShell vom Doc
@@ -542,7 +540,7 @@ private:
     bool mbClipBoard             : 1;    // true: this document represents the clipboard
     bool mbColumnSelection       : 1;    // true: this content has bee created by a column selection
                                          //       (clipboard docs only)
-                                         
+
 #ifndef PRODUCT
     bool mbXMLExport : 1;                // TRUE: during XML export
 #endif
@@ -990,10 +988,7 @@ public:
 
     /** IDocumentStatistics
     */
-    virtual SfxDocumentInfo* GetDocumentInfo();
-    virtual const SfxDocumentInfo* GetpInfo() const;
-    virtual void SetDocumentInfo(const SfxDocumentInfo& rInfo);
-    virtual void DocInfoChgd(const SfxDocumentInfo& rInfo);
+    virtual void DocInfoChgd();
     virtual const SwDocStat	&GetDocStat() const;
     virtual void SetDocStat(const SwDocStat& rStat);
     SW_DLLPUBLIC virtual void UpdateDocStat(SwDocStat& rStat);
