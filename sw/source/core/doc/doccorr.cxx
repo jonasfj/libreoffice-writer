@@ -4,9 +4,9 @@
  *
  *  $RCSfile: doccorr.cxx,v $
  *
- *  $Revision: 1.11 $
+ *  $Revision: 1.12 $
  *
- *  last change: $Author: hr $ $Date: 2007-09-27 08:33:37 $
+ *  last change: $Author: obo $ $Date: 2008-02-26 10:35:53 $
  *
  *  The Contents of this file are made available subject to
  *  the terms of GNU Lesser General Public License Version 2.1.
@@ -182,26 +182,45 @@ void SwDoc::CorrAbs( const SwNodeIndex& rOldNode,
         {
             // liegt auf der Position ??
             int bChgd = 0;
-            if( &( pBkmk = (SwBookmark*)rBkmks[ n ])->pPos1->nNode.GetNode() == pOldNode )
+            if( &( pBkmk = (SwBookmark*)rBkmks[ n ])->GetBookmarkPos().nNode.GetNode() == pOldNode )
             {
-                *pBkmk->pPos1 = aNewPos;
-                pBkmk->pPos1->nContent += nOffset;
+                // --> OD 2007-09-26 #i81002# - refactoring
+//                *pBkmk->pPos1 = aNewPos;
+//                pBkmk->pPos1->nContent += nOffset;
+                SwPosition aNewPos1( aNewPos );
+                aNewPos1.nContent += nOffset;
+                pBkmk->SetBookmarkPos( &aNewPos1 );
+                // <--
                 bChgd = 1;
             }
-            if( pBkmk->pPos2 && &pBkmk->pPos2->nNode.GetNode() == pOldNode )
+            if ( pBkmk->GetOtherBookmarkPos() &&
+                 &pBkmk->GetOtherBookmarkPos()->nNode.GetNode() == pOldNode )
             {
-                *pBkmk->pPos2 = aNewPos;
-                pBkmk->pPos2->nContent += nOffset;
+                // --> OD 2007-09-26 #i81002# - refactoring
+//                *pBkmk->pPos2 = aNewPos;
+//                pBkmk->pPos2->nContent += nOffset;
+                SwPosition aNewPos2( aNewPos );
+                aNewPos2.nContent += nOffset;
+                pBkmk->SetOtherBookmarkPos( &aNewPos );
+                // <--
                 bChgd = 2;
             }
             // ungueltige Selektion? Dann die Klammerung aufheben
-            if( bChgd && pBkmk->pPos2 &&
-                pBkmk->pPos2->nNode.GetNode().FindTableBoxStartNode() !=
-                pBkmk->pPos1->nNode.GetNode().FindTableBoxStartNode() )
+            if( bChgd && pBkmk->GetOtherBookmarkPos() &&
+                pBkmk->GetOtherBookmarkPos()->nNode.GetNode().FindTableBoxStartNode() !=
+                pBkmk->GetBookmarkPos().nNode.GetNode().FindTableBoxStartNode() )
             {
                 if( 1 == bChgd )
-                    *pBkmk->pPos1 = *pBkmk->pPos2;
-                delete pBkmk->pPos2, pBkmk->pPos2 = 0;
+                {
+                    // --> OD 2007-09-26 #i81002# - refactoring
+//                    *pBkmk->pPos1 = *pBkmk->pPos2;
+                    pBkmk->SetBookmarkPos( pBkmk->GetOtherBookmarkPos() );
+                    // <--
+                }
+                // --> OD 2007-09-26 #i81002# - refactoring
+//                delete pBkmk->pPos2, pBkmk->pPos2 = 0;
+                pBkmk->SetOtherBookmarkPos( 0 );
+                // <--
                 if( pBkmk->IsServer() )
                     pBkmk->SetRefObject( 0 );
                 // die Sortierung muss aufrecht erhalten bleiben!
@@ -225,8 +244,8 @@ void SwDoc::CorrAbs( const SwNodeIndex& rOldNode,
 
 /*  */
 
-bool _PaMCorrAbs2( SwPaM* pPam, 
-                   const SwPosition& rNewPos, 
+bool _PaMCorrAbs2( SwPaM* pPam,
+                   const SwPosition& rNewPos,
                    ULONG nSttNode, ULONG nEndNode )
 {
     bool bRet = false;
@@ -247,7 +266,7 @@ bool _PaMCorrAbs2( SwPaM* pPam,
 const SwStartNode* lcl_FindUnoCrsrSection( const SwNode& rNode )
 {
     const SwStartNode* pStartNode = rNode.StartOfSectionNode();
-    while( ( pStartNode != NULL ) && 
+    while( ( pStartNode != NULL ) &&
            ( pStartNode->StartOfSectionNode() != pStartNode ) &&
            ( pStartNode->GetStartNodeType() == SwNormalStartNode ) )
         pStartNode = pStartNode->StartOfSectionNode();
@@ -297,10 +316,10 @@ void PaMCorrAbs( const SwNodeIndex &rStartNode,
 
             // determine whether the UNO cursor will leave it's designated
             // section
-            bool bLeaveSection = 
+            bool bLeaveSection =
                 pUnoCursor->IsRemainInSection() &&
                 ( lcl_FindUnoCrsrSection( aNewPos.nNode.GetNode() ) !=
-                  lcl_FindUnoCrsrSection( 
+                  lcl_FindUnoCrsrSection(
                       pUnoCursor->GetPoint()->nNode.GetNode() ) );
 
             FOREACHPAM_START( pUnoCursor )
@@ -311,7 +330,7 @@ void PaMCorrAbs( const SwNodeIndex &rStartNode,
             if( pUnoTblCrsr )
             {
                 FOREACHPAM_START( &pUnoTblCrsr->GetSelRing() )
-                    bChange |= 
+                    bChange |=
                         _PaMCorrAbs2( PCURCRSR, aNewPos, nSttNode, nEndNode );
                 FOREACHPAM_END()
             }
@@ -502,31 +521,54 @@ void SwDoc::CorrRel( const SwNodeIndex& rOldNode,
         {
             // liegt auf der Position ??
             int bChgd = FALSE;
-            if( &( pBkmk = (SwBookmark*)rBkmks[ n ])->pPos1->nNode.GetNode()
+            if( &( pBkmk = (SwBookmark*)rBkmks[ n ])->GetBookmarkPos().nNode.GetNode()
                 == pOldNode )
             {
-                pBkmk->pPos1->nNode = aNewPos.nNode;
-                pBkmk->pPos1->nContent.Assign( (SwIndexReg*)
-                            aNewPos.nContent.GetIdxReg(),
-                            nCntIdx + pBkmk->pPos1->nContent.GetIndex() );
+                // --> OD 2007-09-26 #i81002# - refactoring
+//                pBkmk->pPos1->nNode = aNewPos.nNode;
+//                pBkmk->pPos1->nContent.Assign( (SwIndexReg*)
+//                            aNewPos.nContent.GetIdxReg(),
+//                            nCntIdx + pBkmk->pPos1->nContent.GetIndex() );
+                SwPosition aNewPos1( pBkmk->GetBookmarkPos() );
+                aNewPos1.nNode = aNewPos.nNode;
+                aNewPos1.nContent.Assign( (SwIndexReg*)aNewPos.nContent.GetIdxReg(),
+                                          nCntIdx + pBkmk->GetBookmarkPos().nContent.GetIndex() );
+                pBkmk->SetBookmarkPos( &aNewPos1 );
+                // <--
                 bChgd = 1;
             }
-            if( pBkmk->pPos2 && &pBkmk->pPos2->nNode.GetNode() == pOldNode )
+            if ( pBkmk->GetOtherBookmarkPos() &&
+                 &pBkmk->GetOtherBookmarkPos()->nNode.GetNode() == pOldNode )
             {
-                pBkmk->pPos2->nNode = aNewPos.nNode;
-                pBkmk->pPos2->nContent.Assign( (SwIndexReg*)
-                            aNewPos.nContent.GetIdxReg(),
-                            nCntIdx + pBkmk->pPos2->nContent.GetIndex() );
+                // --> OD 2007-09-26 #i81002# - refactoring
+//                pBkmk->pPos2->nNode = aNewPos.nNode;
+//                pBkmk->pPos2->nContent.Assign( (SwIndexReg*)
+//                            aNewPos.nContent.GetIdxReg(),
+//                            nCntIdx + pBkmk->pPos2->nContent.GetIndex() );
+                SwPosition aNewPos2( *(pBkmk->GetOtherBookmarkPos()) );
+                aNewPos2.nNode = aNewPos.nNode;
+                aNewPos2.nContent.Assign( (SwIndexReg*)aNewPos.nContent.GetIdxReg(),
+                                          nCntIdx + pBkmk->GetOtherBookmarkPos()->nContent.GetIndex() );
+                pBkmk->SetOtherBookmarkPos( &aNewPos2 );
+                // <--
                 bChgd = 2;
             }
             // ungueltige Selektion? Dann die Klammerung aufheben
-            if( bChgd && pBkmk->pPos2 &&
-                pBkmk->pPos2->nNode.GetNode().FindTableBoxStartNode() !=
-                pBkmk->pPos1->nNode.GetNode().FindTableBoxStartNode() )
+            if( bChgd && pBkmk->GetOtherBookmarkPos() &&
+                pBkmk->GetOtherBookmarkPos()->nNode.GetNode().FindTableBoxStartNode() !=
+                pBkmk->GetBookmarkPos().nNode.GetNode().FindTableBoxStartNode() )
             {
                 if( 1 == bChgd )
-                    *pBkmk->pPos1 = *pBkmk->pPos2;
-                delete pBkmk->pPos2, pBkmk->pPos2 = 0;
+                {
+                    // --> OD 2007-09-26 #i81002# - refactoring
+//                    *pBkmk->pPos1 = *pBkmk->pPos2;
+                    pBkmk->SetBookmarkPos( pBkmk->GetOtherBookmarkPos() );
+                    // <--
+                }
+                // --> OD 2007-09-26 #i81002# - refactoring
+//                delete pBkmk->pPos2, pBkmk->pPos2 = 0;
+                pBkmk->SetOtherBookmarkPos( 0 );
+                // <--
                 if( pBkmk->IsServer() )
                     pBkmk->SetRefObject( 0 );
 
