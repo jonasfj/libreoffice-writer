@@ -4,9 +4,9 @@
  *
  *  $RCSfile: doc.cxx,v $
  *
- *  $Revision: 1.62 $
+ *  $Revision: 1.63 $
  *
- *  last change: $Author: obo $ $Date: 2008-02-26 09:45:06 $
+ *  last change: $Author: obo $ $Date: 2008-02-26 10:35:13 $
  *
  *  The Contents of this file are made available subject to
  *  the terms of GNU Lesser General Public License Version 2.1.
@@ -233,7 +233,7 @@
 /* @@@MAINTAINABILITY-HORROR@@@
    Probably unwanted dependency on SwDocShell
 */
-// --> OD 2005-08-29 #TESTING#
+// --> OD 2005-08-29 #125370#
 #ifndef _LAYOUTER_HXX
 #include <layouter.hxx>
 #endif
@@ -409,7 +409,7 @@ void SwDoc::set(/*[in]*/ DocumentSettingId id, /*[in]*/ bool value)
             mbUnixForceZeroExtLeading = value;
             break;
 
-        case USE_OLD_PRINTER_METRICS:            
+        case USE_OLD_PRINTER_METRICS:
             mbOldPrinterMetrics = value;
             break;
         case TABS_RELATIVE_TO_INDENT: 
@@ -575,7 +575,7 @@ void SwDoc::setPrinter(/*[in]*/ SfxPrinter *pP,/*[in]*/ bool bDeleteOld,/*[in]*/
             delete pPrt;
         pPrt = pP;
     }
-    
+
     if ( bCallPrtDataChanged &&
          // --> FME 2005-01-21 #i41075# Do not call PrtDataChanged() if we do not
          // use the printer for formatting:
@@ -830,7 +830,7 @@ bool SwDoc::SplitNode( const SwPosition &rPos, bool bChkTableStart )
     SvULongs aBkmkArr( 15, 15 );
     _SaveCntntIdx( this, rPos.nNode.GetIndex(), rPos.nContent.GetIndex(),
                     aBkmkArr, SAVEFLY_SPLIT );
-    if( 0 != ( pNode = pNode->SplitNode( rPos ) ))
+    if( 0 != ( pNode = pNode->SplitCntntNode( rPos ) ))
     {
         // verschiebe noch alle Bookmarks/TOXMarks/FlyAtCnt
         if( aBkmkArr.Count() )
