@@ -4,9 +4,9 @@
  *
  *  $RCSfile: unotxdoc.hxx,v $
  *
- *  $Revision: 1.26 $
+ *  $Revision: 1.27 $
  *
- *  last change: $Author: obo $ $Date: 2008-02-26 09:44:47 $
+ *  last change: $Author: obo $ $Date: 2008-02-26 15:21:03 $
  *
  *  The Contents of this file are made available subject to
  *  the terms of GNU Lesser General Public License Version 2.1.
@@ -41,7 +41,7 @@
 #ifndef _SVARRAY_HXX //autogen
 #include <svtools/svarray.hxx>
 #endif
-#ifndef _SFX_OBJUNO_HXX
+#ifndef _SFX_SFXBASEMODEL_HXX_
 #include <sfx2/sfxbasemodel.hxx>
 #endif
 #ifndef _COM_SUN_STAR_BEANS_PROPERTYVALUES_HPP_
@@ -502,7 +502,7 @@ public:
 
     // ::com::sun::star::xforms::XFormsSupplier
     virtual ::com::sun::star::uno::Reference< ::com::sun::star::container::XNameContainer > SAL_CALL getXForms(  ) throw (::com::sun::star::uno::RuntimeException);
-    
+
     // ::com::sun::star::document::XDocumentLanguages
     virtual ::com::sun::star::uno::Sequence< ::com::sun::star::lang::Locale > SAL_CALL getDocumentLanguages( ::sal_Int16 nScriptTypes, ::sal_Int16 nCount ) throw (::com::sun::star::lang::IllegalArgumentException, ::com::sun::star::uno::RuntimeException);
 
