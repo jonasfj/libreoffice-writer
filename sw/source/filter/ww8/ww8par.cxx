@@ -4,9 +4,9 @@
  *
  *  $RCSfile: ww8par.cxx,v $
  *
- *  $Revision: 1.187 $
+ *  $Revision: 1.188 $
  *
- *  last change: $Author: rt $ $Date: 2008-02-19 13:51:56 $
+ *  last change: $Author: obo $ $Date: 2008-02-26 10:45:32 $
  *
  *  The Contents of this file are made available subject to
  *  the terms of GNU Lesser General Public License Version 2.1.
@@ -1301,7 +1301,7 @@ void SwWW8FltRefStack::SetAttrInDoc(const SwPosition& rTmpPos,
                 {
                     SwBookmark& rBkMrk = pDoc->getBookmark( nBkmNo, false );
 
-                    const SwPosition& rBkMrkPos = rBkMrk.GetPos();
+                    const SwPosition& rBkMrkPos = rBkMrk.GetBookmarkPos();
 
                     SwTxtNode* pTxt = rBkMrkPos.nNode.GetNode().GetTxtNode();
                     if( pTxt && rBkMrkPos.nContent.GetIndex() )
@@ -1502,11 +1502,11 @@ void SwWW8ImplReader::ImportDop()
     // COMPATIBILITY FLAGS START
     //
 
-    // i#78951, remember the unknown compatability options 
+    // i#78951, remember the unknown compatability options
     // so as to export them out
     rDoc.Setn32DummyCompatabilityOptions1( pWDop->GetCompatabilityOptions());
     rDoc.Setn32DummyCompatabilityOptions2( pWDop->GetCompatabilityOptions2());
-    
+
     // Abstand zwischen zwei Absaetzen ist die SUMME von unterem
     // Abst. des ersten und oberem Abst. des zweiten
     rDoc.set(IDocumentSettingAccess::PARA_SPACE_MAX, pWDop->fDontUseHTMLAutoSpacing);
@@ -2418,10 +2418,10 @@ void SwWW8ImplReader::PostProcessAttrs()
         {
             do
             {
-                pCtrlStck->NewAttr(*mpPostProcessAttrsInfo->mPaM.GetPoint(), 
+                pCtrlStck->NewAttr(*mpPostProcessAttrsInfo->mPaM.GetPoint(),
                                    *pItem);
                 pCtrlStck->SetAttr(*mpPostProcessAttrsInfo->mPaM.GetMark(),
-                                   pItem->Which(), true); 
+                                   pItem->Which(), true);
             }
             while (!aIter.IsAtEnd() && 0 != (pItem = aIter.NextItem()));
         }
@@ -2967,7 +2967,7 @@ long SwWW8ImplReader::ReadTextAttr(WW8_CP& rTxtPos, bool& rbStartLine)
             (*pPlcxMan)++;
         nNext = pPlcxMan->Where();
 
-        if (mpPostProcessAttrsInfo && 
+        if (mpPostProcessAttrsInfo &&
             mpPostProcessAttrsInfo->mnCpStart == nNext)
         {
             mpPostProcessAttrsInfo->mbCopy = true;
@@ -2980,7 +2980,7 @@ long SwWW8ImplReader::ReadTextAttr(WW8_CP& rTxtPos, bool& rbStartLine)
             bIgnoreText = true;
         }
 
-        if (mpPostProcessAttrsInfo && 
+        if (mpPostProcessAttrsInfo &&
             nNext > mpPostProcessAttrsInfo->mnCpEnd)
         {
             mpPostProcessAttrsInfo->mbCopy = false;
