@@ -4,9 +4,9 @@
  *
  *  $RCSfile: textsh.cxx,v $
  *
- *  $Revision: 1.59 $
+ *  $Revision: 1.60 $
  *
- *  last change: $Author: hr $ $Date: 2008-01-04 13:24:08 $
+ *  last change: $Author: kz $ $Date: 2008-03-05 17:26:10 $
  *
  *  The Contents of this file are made available subject to
  *  the terms of GNU Lesser General Public License Version 2.1.
@@ -1004,7 +1004,7 @@ void SwTextShell::StateInsert( SfxItemSet &rSet )
             case SID_HYPERLINK_GETLINK:
                 {
                     SfxItemSet aSet(GetPool(), RES_TXTATR_INETFMT, RES_TXTATR_INETFMT);
-                    rSh.GetAttr( aSet );
+                    rSh.GetCurAttr( aSet );
 
                     SvxHyperlinkItem aHLinkItem;
                     const SfxPoolItem* pItem;
@@ -1066,7 +1066,7 @@ void SwTextShell::StateInsert( SfxItemSet &rSet )
                     rSet.DisableItem(nWhich);
             break;
             case FN_FORMAT_COLUMN :
-            {    
+            {
                 //#i80458# column dialog cannot work if the selection contains different page styles and different sections
                 bool bDisable = true;
                 if( rSh.GetFlyFrmFmt() || rSh.GetSelectedPageDescs() )
@@ -1085,7 +1085,7 @@ void SwTextShell::StateInsert( SfxItemSet &rSet )
                 }
                 if(bDisable)
                     rSet.DisableItem(nWhich);
-            }    
+            }
             break;
         }
         nWhich = aIter.NextWhich();
@@ -1228,7 +1228,7 @@ void SwTextShell::InsertSymbol( SfxRequest& rReq )
                                 RES_CHRATR_CJK_FONT, RES_CHRATR_CJK_FONT,
                                 RES_CHRATR_CTL_FONT, RES_CHRATR_CTL_FONT,
                                 0 );
-    rSh.GetAttr( aSet );
+    rSh.GetCurAttr( aSet );
     USHORT nScript = rSh.GetScriptType();
 
     SvxFontItem aFont( RES_CHRATR_FONT );
@@ -1288,7 +1288,7 @@ void SwTextShell::InsertSymbol( SfxRequest& rReq )
         {
             rSh.DelRight();
             aSet.ClearItem();
-            rSh.GetAttr( aSet );
+            rSh.GetCurAttr( aSet );
 
             SvxScriptSetItem aSetItem( SID_ATTR_CHAR_FONT, *aSet.GetPool() );
             aSetItem.GetItemSet().Put( aSet, FALSE );
