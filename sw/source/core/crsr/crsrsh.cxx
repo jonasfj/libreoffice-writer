@@ -4,9 +4,9 @@
  *
  *  $RCSfile: crsrsh.cxx,v $
  *
- *  $Revision: 1.69 $
+ *  $Revision: 1.70 $
  *
- *  last change: $Author: rt $ $Date: 2008-02-19 13:39:48 $
+ *  last change: $Author: kz $ $Date: 2008-03-05 16:52:33 $
  *
  *  The Contents of this file are made available subject to
  *  the terms of GNU Lesser General Public License Version 2.1.
@@ -141,6 +141,10 @@
 #include <vcl/svapp.hxx>
 #endif
 
+#ifndef _NUMRULE_HXX
+#include <numrule.hxx>
+#endif
+
 #include <globals.hrc>
 
 #include <comcore.hrc>
@@ -213,7 +217,7 @@ SwPaM * SwCrsrShell::CreateCrsr()
 
     // hier den akt. Pam nur logisch Hiden, weil sonst die Invertierung
     // vom kopierten Pam aufgehoben wird !!
-    
+
     // #i75172# to be able to make a complete content swap, i moved this to a method
     // pNew->Insert( pCurCrsr, 0 );
     // pCurCrsr->Remove( 0, pCurCrsr->Count() );
