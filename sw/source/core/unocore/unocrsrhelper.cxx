@@ -4,9 +4,9 @@
  *
  *  $RCSfile: unocrsrhelper.cxx,v $
  *
- *  $Revision: 1.29 $
+ *  $Revision: 1.30 $
  *
- *  last change: $Author: rt $ $Date: 2008-01-29 09:23:14 $
+ *  last change: $Author: kz $ $Date: 2008-03-05 17:11:30 $
  *
  *  The Contents of this file are made available subject to
  *  the terms of GNU Lesser General Public License Version 2.1.
@@ -157,6 +157,9 @@
 #endif
 #ifndef _SWSTYLENAMEMAPPER_HXX
 #include <SwStyleNameMapper.hxx>
+#endif
+#ifndef _NUMRULE_HXX
+#include <numrule.hxx>
 #endif
 #include <comphelper/storagehelper.hxx>
 #include <comphelper/mediadescriptor.hxx>
@@ -745,7 +748,7 @@ void resetCrsrPropertyValue(const SfxItemPropertyMap* pMap, SwPaM& rPam)
         {
             SvUShortsSort aWhichIds;
             aWhichIds.Insert(RES_TXTATR_CHARFMT);
-            pDoc->ResetAttr(rPam, sal_True, &aWhichIds);
+            pDoc->ResetAttrs(rPam, sal_True, &aWhichIds);
         }
         break;
     }
@@ -756,7 +759,7 @@ void resetCrsrPropertyValue(const SfxItemPropertyMap* pMap, SwPaM& rPam)
 void InsertFile(SwUnoCrsr* pUnoCrsr,
     const String& rURL,
     const uno::Sequence< beans::PropertyValue >& rOptions
-    ) throw( lang::IllegalArgumentException, io::IOException, uno::RuntimeException ) 
+    ) throw( lang::IllegalArgumentException, io::IOException, uno::RuntimeException )
 {
     SfxMedium* pMed = 0;
     SwDoc* pDoc = pUnoCrsr->GetDoc();
@@ -780,7 +783,7 @@ void InsertFile(SwUnoCrsr* pUnoCrsr,
     aMediaDescriptor[comphelper::MediaDescriptor::PROP_DOCUMENTBASEURL() ] >>= sBaseURL;
     if ( !xInputStream.is() && xStream.is() )
         xInputStream = xStream->getInputStream();
-    
+
     if(!pDocSh || (!sFileName.getLength() && !xInputStream.is()))
         return;
 
@@ -809,10 +812,10 @@ void InsertFile(SwUnoCrsr* pUnoCrsr,
         {
             pMed = new SfxMedium;
             pMed->setStreamToLoadFrom(xInputStream, sal_True );
-        }    
+        }
         else
-            pMed = xReadStorage.is() ? 
-                new SfxMedium(xReadStorage, sBaseURL, 0 ) : 
+            pMed = xReadStorage.is() ?
+                new SfxMedium(xReadStorage, sBaseURL, 0 ) :
                 new SfxMedium(sFileName, STREAM_READ, sal_True, 0, 0 );
         if( sBaseURL.getLength() )
             pMed->GetItemSet()->Put( SfxStringItem( SID_DOC_BASEURL, sBaseURL ) );
@@ -833,7 +836,7 @@ void InsertFile(SwUnoCrsr* pUnoCrsr,
                 pMed = new SfxMedium;
                 pMed->setStreamToLoadFrom(xInputStream, sal_True );
                 pMed->SetFilter( pFilter );
-            }    
+            }
             else
             {
                 if( xReadStorage.is() )
@@ -841,7 +844,7 @@ void InsertFile(SwUnoCrsr* pUnoCrsr,
                     pMed = new SfxMedium(xReadStorage, sBaseURL, 0 );
                     pMed->SetFilter( pFilter );
                 }
-                else    
+                else
                     pMed = new SfxMedium(sFileName, STREAM_READ, sal_True, pFilter, 0);
             }
         }
