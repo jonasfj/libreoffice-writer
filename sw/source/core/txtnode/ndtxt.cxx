@@ -4,9 +4,9 @@
  *
  *  $RCSfile: ndtxt.cxx,v $
  *
- *  $Revision: 1.78 $
+ *  $Revision: 1.79 $
  *
- *  last change: $Author: kz $ $Date: 2008-03-07 12:00:36 $
+ *  last change: $Author: kz $ $Date: 2008-04-03 16:52:18 $
  *
  *  The Contents of this file are made available subject to
  *  the terms of GNU Lesser General Public License Version 2.1.
@@ -579,7 +579,7 @@ SwCntntNode *SwTxtNode::SplitCntntNode( const SwPosition &rPos )
         if( GetGrammarCheck() )
             pNode->SetGrammarCheck( GetGrammarCheck()->SplitList( nSplitPos ) );
         SetGrammarCheckDirty( true );
-        
+
         // SMARTTAGS
         if( GetSmartTags() )
             pNode->SetSmartTags( GetSmartTags()->SplitList( nSplitPos ) );
@@ -778,7 +778,7 @@ SwCntntNode *SwTxtNode::JoinNext()
         _SaveCntntIdx( pDoc, aIdx.GetIndex(), USHRT_MAX, aBkmkArr, SAVEFLY );
         SwTxtNode *pTxtNode = aIdx.GetNode().GetTxtNode();
         xub_StrLen nOldLen = aText.Len();
-        
+
         SwWrongList *pList = GetWrong();
         if( pList )
         {
@@ -869,7 +869,7 @@ SwCntntNode *SwTxtNode::JoinPrev()
         _SaveCntntIdx( pDoc, aIdx.GetIndex(), USHRT_MAX, aBkmkArr, SAVEFLY );
         SwTxtNode *pTxtNode = aIdx.GetNode().GetTxtNode();
         xub_StrLen nLen = pTxtNode->Len();
-        
+
         SwWrongList *pList = pTxtNode->GetWrong();
         if( pList )
         {
@@ -3515,7 +3515,7 @@ void SwTxtNode::SetRestart(bool bRestart)
 /** Returns if the paragraph has a visible numbering or bullet.
     This includes all kinds of numbering/bullet/outlines.
     OD 2008-02-28 #newlistlevelattrs#
-    The concrete list label string has to be checked.
+    The concrete list label string has to be checked, too.
  */
 bool SwTxtNode::HasVisibleNumberingOrBullet() const
 {
@@ -3524,12 +3524,16 @@ bool SwTxtNode::HasVisibleNumberingOrBullet() const
     const SwNumRule* pRule = GetNum() ? GetNum()->GetNumRule() : 0L;
     if ( pRule && IsCounted())
     {
-//        const SwNumFmt& rFmt = pRule->Get( static_cast<USHORT>(GetNum()->GetLevel() ));
-//        if ( SVX_NUM_NUMBER_NONE != rFmt.GetNumberingType() )
-//        {
-//            bRet = true;
-//        }
-        bRet = pRule->MakeNumString( *(GetNum()) ).Len() > 0;
+        // --> OD 2008-03-19 #i87154#
+        // Correction of #newlistlevelattrs#:
+        // The numbering type has to be checked for bullet lists.
+        const SwNumFmt& rFmt = pRule->Get( static_cast<USHORT>(GetNum()->GetLevel() ));
+        if ( SVX_NUM_NUMBER_NONE != rFmt.GetNumberingType() ||
+             pRule->MakeNumString( *(GetNum()) ).Len() > 0 )
+        {
+            bRet = true;
+        }
+        // <--
     }
 
     return bRet;
