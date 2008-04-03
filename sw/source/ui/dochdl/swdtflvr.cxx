@@ -4,9 +4,9 @@
  *
  *  $RCSfile: swdtflvr.cxx,v $
  *
- *  $Revision: 1.117 $
+ *  $Revision: 1.118 $
  *
- *  last change: $Author: rt $ $Date: 2008-03-12 12:49:03 $
+ *  last change: $Author: kz $ $Date: 2008-04-03 16:58:11 $
  *
  *  The Contents of this file are made available subject to
  *  the terms of GNU Lesser General Public License Version 2.1.
@@ -1331,7 +1331,7 @@ int SwTransferable::Paste( SwWrtShell& rSh, TransferableDataHelper& rData )
     }
 
     // special case for tables from draw application
-    if( EXCHG_OUT_ACTION_INSERT_DRAWOBJ == (nAction & EXCHG_ACTION_MASK) ) 
+    if( EXCHG_OUT_ACTION_INSERT_DRAWOBJ == (nAction & EXCHG_ACTION_MASK) )
     {
         if( rData.HasFormat( SOT_FORMAT_RTF ) )
         {
@@ -3386,7 +3386,7 @@ int SwTransferable::PrivatePaste( SwWrtShell& rShell )
     SwTrnsfrActionAndUndo aAction( &rShell, UNDO_PASTE_CLIPBOARD);
 
     bool bKillPaMs = false;
-    
+
     //Selektierten Inhalt loeschen, nicht bei Tabellen-Selektion und
     //Tabelle im Clipboard
     if( rShell.HasSelection() && !( nSelection & nsSelectionType::SEL_TBL_CELLS))
@@ -3432,7 +3432,7 @@ int SwTransferable::PrivatePaste( SwWrtShell& rShell )
     }
 
     int nRet = rShell.Paste( pClpDocFac->GetDoc() );
-    
+
     if( bKillPaMs )
         rShell.KillPams();
 
@@ -3548,9 +3548,17 @@ int SwTransferable::PrivateDrop( SwWrtShell& rSh, const Point& rDragPt,
     }
     else if( !bTblSel && !bFrmSel )
     {
-        rSh.GoPrevCrsr();
         if( !rSh.IsAddMode() )
+        {
+            // --> OD 2008-03-19 #i87233#
+            if ( rSh.IsBlockMode() )
+            {
+                // preserve order of cursors for block mode
+                rSh.GoPrevCrsr();
+            }
+            // <--
             rSh.SwCrsrShell::CreateCrsr();
+        }
         rSh.SwCrsrShell::SetCrsr( rDragPt, TRUE, false );
         rSh.GoPrevCrsr();
         cWord = rSh.IntelligentCut( rSh.GetSelectionType(), FALSE );
