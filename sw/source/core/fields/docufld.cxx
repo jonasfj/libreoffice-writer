@@ -7,7 +7,7 @@
  * OpenOffice.org - a multi-platform office productivity suite
  *
  * $RCSfile: docufld.cxx,v $
- * $Revision: 1.56 $
+ * $Revision: 1.57 $
  *
  * This file is part of OpenOffice.org.
  *
@@ -110,7 +110,7 @@
 #include <comcore.hrc>
 #endif
 
-#include <svx/outliner.hxx>
+#include <svx/outliner.hxx>	
 #include <svx/outlobj.hxx>
 
 #define URL_DECODE 	INetURLObject::DECODE_UNAMBIGUOUS
