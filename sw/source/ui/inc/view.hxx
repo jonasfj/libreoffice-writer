@@ -7,7 +7,7 @@
  * OpenOffice.org - a multi-platform office productivity suite
  *
  * $RCSfile: view.hxx,v $
- * $Revision: 1.59 $
+ * $Revision: 1.60 $
  *
  * This file is part of OpenOffice.org.
  *
@@ -37,6 +37,7 @@
 #include <sfx2/objsh.hxx>   // SfxObjectShellRef <-> SV_DECL_REF(SfxObjectShell)
 #include <svx/svxenum.hxx>
 #include <svx/zoomitem.hxx>
+#include <svx/editstat.hxx>
 #include "swdllapi.h"
 #include <swtypes.hxx>
 #include <shellid.hxx>
@@ -92,7 +93,7 @@ struct SwConversionArgs;
 class Graphic;
 class GraphicFilter;
 class SwPostItMgr;
-
+    
 namespace com{ namespace sun { namespace star {
     namespace view{ class XSelectionSupplier; }
 }}}
@@ -465,6 +466,7 @@ public:
     // SMARTTAGS
     BOOL            ExecSmartTagPopup( const Point& rPt );
 
+    DECL_LINK( OnlineSpellCallback, SpellCallbackInfo*);
     BOOL			ExecDrwTxtSpellPopup(const Point& rPt);
 
     void			SetTabColFromDocPos( const Point &rPt ) { aTabColFromDocPos = rPt; }
