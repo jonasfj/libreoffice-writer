@@ -7,7 +7,7 @@
  * OpenOffice.org - a multi-platform office productivity suite
  *
  * $RCSfile: calc.cxx,v $
- * $Revision: 1.45 $
+ * $Revision: 1.46 $
  *
  * This file is part of OpenOffice.org.
  *
@@ -140,7 +140,7 @@ _CalcOp	__READONLY_DATA aOpTable[] = {
 /* SUB */     {{sCalc_Sub},        CALC_MINUS},	// Subtraktion
 /* SUM */     {{sCalc_Sum},        CALC_SUM},  	// Summe
 /* TAN */     {{sCalc_Tan},        CALC_TAN},  	// Tangens
-/* XOR */     {{sCalc_Xor},        CALC_XOR}   	// log. xoder
+/* XOR */     {{sCalc_Xor},        CALC_XOR}  	// log. xoder
 };
 
 double __READONLY_DATA nRoundVal[] = {
