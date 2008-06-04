@@ -1,13 +1,13 @@
 /*************************************************************************
  *
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
- * 
+ *
  * Copyright 2008 by Sun Microsystems, Inc.
  *
  * OpenOffice.org - a multi-platform office productivity suite
  *
  * $RCSfile: ww8par6.cxx,v $
- * $Revision: 1.183 $
+ * $Revision: 1.184 $
  *
  * This file is part of OpenOffice.org.
  *
@@ -863,7 +863,7 @@ void wwSectionManager::CreateSep(const long nTxtPos, bool /*bMustHaveBreak*/)
         /*sprmSFTitlePage*/    118,
         /*sprmSNfcPgn*/        122,
         /*sprmSCcolumns*/      119,
-        /*sprmSDxaColumns*/    120, 
+        /*sprmSDxaColumns*/    120,
         /*sprmSLBetween*/      133
     };
 
@@ -873,7 +873,7 @@ void wwSectionManager::CreateSep(const long nTxtPos, bool /*bMustHaveBreak*/)
         /*sprmSFTitlePage*/    143,
         /*sprmSNfcPgn*/        147,
         /*sprmSCcolumns*/      144,
-        /*sprmSDxaColumns*/    145, 
+        /*sprmSDxaColumns*/    145,
         /*sprmSLBetween*/      158
     };
 
@@ -883,7 +883,7 @@ void wwSectionManager::CreateSep(const long nTxtPos, bool /*bMustHaveBreak*/)
         /*sprmSFTitlePage*/    0x300A,
         /*sprmSNfcPgn*/        0x300E,
         /*sprmSCcolumns*/      0x500B,
-        /*sprmSDxaColumns*/    0x900C, 
+        /*sprmSDxaColumns*/    0x900C,
         /*sprmSLBetween*/      0x3019
     };
 
@@ -4173,7 +4173,7 @@ void SwWW8ImplReader::Read_IdctHint( USHORT, const BYTE* pData, short nLen )
 {
     if (nLen < 0)
         nIdctHint = 0;
-    else    
+    else
         nIdctHint = *pData;
 }
 
@@ -5930,6 +5930,8 @@ const wwSprmDispatcher *GetWW8SprmDispatcher()
                                                      //tap.fCantSplit;1 or 0;byte;
         {0x3404, 0},                                 //"sprmTTableHeader"
                                                      //tap.fTableHeader;1 or 0;byte;
+        {0x3466, 0},                                 //"sprmTFCantSplit90"
+                                                     //tap.fCantSplit90;1 or 0;byte;
         {0xD605, 0},                                 //"sprmTTableBorders"
                                                      //tap.rgbrcTable;complex;
                                                      //24 bytes;
