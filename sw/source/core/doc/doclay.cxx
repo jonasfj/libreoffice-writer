@@ -1,13 +1,13 @@
 /*************************************************************************
  *
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
- * 
+ *
  * Copyright 2008 by Sun Microsystems, Inc.
  *
  * OpenOffice.org - a multi-platform office productivity suite
  *
  * $RCSfile: doclay.cxx,v $
- * $Revision: 1.56 $
+ * $Revision: 1.57 $
  *
  * This file is part of OpenOffice.org.
  *
@@ -1205,7 +1205,7 @@ void lcl_CpyAttr( SfxItemSet &rNewSet, const SfxItemSet &rOldSet, sal_uInt16 nWh
 }
 
 
-SwFlyFrmFmt* SwDoc::InsertLabel( const SwLabelType eType, const String &rTxt, const String& rSeparator, 
+SwFlyFrmFmt* SwDoc::InsertLabel( const SwLabelType eType, const String &rTxt, const String& rSeparator,
             const String& rNumberingSeparator,
             const sal_Bool bBefore, const sal_uInt16 nId, const ULONG nNdIdx,
             const String& rCharacterStyle,
@@ -1440,13 +1440,13 @@ SwFlyFrmFmt* SwDoc::InsertLabel( const SwLabelType eType, const String &rTxt, co
     if( pNew )
     {
         //#i61007# order of captions
-        sal_Bool bOrderNumberingFirst = SW_MOD()->GetModuleConfig()->IsCaptionOrderNumberingFirst();  
+        sal_Bool bOrderNumberingFirst = SW_MOD()->GetModuleConfig()->IsCaptionOrderNumberingFirst();
         //String aufbereiten
         String aTxt;
         if( bOrderNumberingFirst )
         {
             aTxt = rNumberingSeparator;
-        }    
+        }
         if( pType)
         {
             aTxt += pType->GetName();
@@ -1724,14 +1724,14 @@ SwFlyFrmFmt* SwDoc::InsertDrawLabel( const String &rTxt,
     if( pNew )
     {
         //#i61007# order of captions
-        sal_Bool bOrderNumberingFirst = SW_MOD()->GetModuleConfig()->IsCaptionOrderNumberingFirst();  
-        
+        sal_Bool bOrderNumberingFirst = SW_MOD()->GetModuleConfig()->IsCaptionOrderNumberingFirst();
+
         // prepare string
         String aTxt;
         if( bOrderNumberingFirst )
         {
             aTxt = rNumberSeparator;
-        }    
+        }
         if ( pType )
         {
             aTxt += pType->GetName();
@@ -1862,12 +1862,18 @@ IMPL_LINK( SwDoc, DoIdleJobs, Timer *, pTimer )
 
             GetRootFrm()->StartAllAction();
 
+            // no jump on update of fields #i85168#
+            const sal_Bool bOldLockView = pStartSh->IsViewLocked();
+            pStartSh->LockView( sal_True );
+
             GetSysFldType( RES_CHAPTERFLD )->Modify( 0, 0 );	// KapitelFld
             UpdateExpFlds( 0, sal_False );		// Expression-Felder Updaten
             UpdateTblFlds(NULL);				// Tabellen
             UpdateRefFlds(NULL);				// Referenzen
 
             GetRootFrm()->EndAllAction();
+
+            pStartSh->LockView( bOldLockView );
 
             GetUpdtFlds().SetInUpdateFlds( sal_False );
             GetUpdtFlds().SetFieldsDirty( sal_False );
