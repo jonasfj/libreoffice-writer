@@ -3437,6 +3437,30 @@ SfxVoidItem GraphicDialog FN_FORMAT_GRAFIC_DLG
     ToolBoxConfig = TRUE,
     GroupId = GID_GRAPHIC;
 ]
+//--------------------------------------------------------------------------
+SfxVoidItem SaveGraphic FN_SAVE_GRAPHIC
+()
+[
+    /* flags: */
+    AutoUpdate = FALSE,
+    Cachable = Cachable,
+    FastCall = FALSE,
+    HasCoreId = FALSE,
+    HasDialog = FALSE,
+    ReadOnlyDoc = TRUE,
+    Toggle = FALSE,
+    Container = FALSE,
+    RecordAbsolute = FALSE,
+    RecordPerSet;
+    Synchron;
+
+    /* config: */
+    AccelConfig = TRUE,
+    MenuConfig = TRUE,
+    StatusBarConfig = FALSE,
+    ToolBoxConfig = TRUE,
+    GroupId = GID_GRAPHIC;
+]
 
 //--------------------------------------------------------------------------
 SfxVoidItem Grow FN_GROW_FONT_SIZE
@@ -6176,7 +6200,7 @@ SfxBoolItem NumberOrNoNumber FN_NUM_OR_NONUM
 ]
 
 //--------------------------------------------------------------------------
-SfxVoidItem ObjectBackOne FN_FRAME_UP
+SfxVoidItem ObjectBackOne FN_FRAME_DOWN
 ()
 [
     /* flags: */
@@ -6201,7 +6225,7 @@ SfxVoidItem ObjectBackOne FN_FRAME_UP
 ]
 
 //--------------------------------------------------------------------------
-SfxVoidItem ObjectForwardOne FN_FRAME_DOWN
+SfxVoidItem ObjectForwardOne FN_FRAME_UP
 ()
 [
     /* flags: */
@@ -9955,7 +9979,7 @@ SfxBoolItem SelectionModeDefault FN_SELECTION_MODE_DEFAULT
     RecordPerSet;
     Synchron;
     Readonly = FALSE,
- 
+
    /* config: */
     AccelConfig = TRUE,
     MenuConfig = TRUE,
@@ -9988,7 +10012,7 @@ SfxVoidItem DeleteNote FN_DELETE_NOTE
     ToolBoxConfig = TRUE,
     GroupId = GID_EDIT;
 ]
-        
+
 //--------------------------------------------------------------------------
 SfxVoidItem DeleteAuthor FN_DELETE_NOTE_AUTHOR ( SfxStringItem Author FN_DELETE_NOTE_AUTHOR )
 [
@@ -10062,7 +10086,7 @@ SfxVoidItem HideNote FN_HIDE_NOTE
     ToolBoxConfig = TRUE,
     GroupId = GID_EDIT;
 ]
-        
+
 //--------------------------------------------------------------------------
 SfxVoidItem HideAuthor FN_HIDE_NOTE_AUTHOR ( SfxStringItem Author FN_HIDE_NOTE_AUTHOR )
 [
