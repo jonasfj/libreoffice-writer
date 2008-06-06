@@ -7,7 +7,7 @@
  * OpenOffice.org - a multi-platform office productivity suite
  *
  * $RCSfile: mailmergehelper.hxx,v $
- * $Revision: 1.10 $
+ * $Revision: 1.11 $
  *
  * This file is part of OpenOffice.org.
  *
@@ -38,8 +38,10 @@
 #include "com/sun/star/uno/XCurrentContext.hpp"
 #include "com/sun/star/mail/XMailMessage.hpp"
 #include "com/sun/star/datatransfer/XTransferable.hpp"
+#include <com/sun/star/beans/XPropertySet.hpp>
 #include <cppuhelper/implbase1.hxx>
 #include <cppuhelper/compbase1.hxx>
+#include <cppuhelper/compbase2.hxx>
 #include <vcl/scrbar.hxx>
 #include "swdllapi.h"
 
@@ -64,11 +66,11 @@ namespace SwMailMergeHelper
 {
     SW_DLLPUBLIC String  CallSaveAsDialog(String& rFilter);
     SW_DLLPUBLIC bool    CheckMailAddress( const ::rtl::OUString& rMailAddress );
-    SW_DLLPUBLIC com::sun::star::uno::Reference< com::sun::star::mail::XSmtpService > 
-                         ConnectToSmtpServer( SwMailMergeConfigItem& rConfigItem, 
+    SW_DLLPUBLIC com::sun::star::uno::Reference< com::sun::star::mail::XSmtpService >
+                         ConnectToSmtpServer( SwMailMergeConfigItem& rConfigItem,
                             com::sun::star::uno::Reference< com::sun::star::mail::XMailService >&  xInMailService,
                             const String& rInMailServerPassword,
-                            const String& rOutMailServerPassword, 
+                            const String& rOutMailServerPassword,
                             Window* pDialogParentWindow = 0 );
 }
 /* -----------------06.04.2004 10:29-----------------
@@ -76,7 +78,7 @@ namespace SwMailMergeHelper
  --------------------------------------------------*/
 class SW_DLLPUBLIC SwBoldFixedInfo : public FixedInfo
 {
-public: 
+public:
     SwBoldFixedInfo(Window* pParent, const ResId& rResId);
     ~SwBoldFixedInfo();
 };
@@ -98,21 +100,21 @@ class SW_DLLPUBLIC SwAddressPreview : public Window
     Link                    m_aSelectHdl;
 
     void DrawText_Impl( const ::rtl::OUString& rAddress, const Point& rTopLeft, const Size& rSize, bool bIsSelected);
-    
+
     virtual void        Paint(const Rectangle&);
     virtual void        MouseButtonDown( const MouseEvent& rMEvt );
     virtual void        KeyInput( const KeyEvent& rKEvt );
     virtual void        StateChanged( StateChangedType nStateChange );
     void                UpdateScrollBar();
-    
+
     DECL_LINK(ScrollHdl, ScrollBar*);
 
-public:    
-    SwAddressPreview(Window* pParent, const ResId rResId);    
+public:
+    SwAddressPreview(Window* pParent, const ResId rResId);
     ~SwAddressPreview();
 
     /** The address string is a list of address elements separated by spaces
-    and breaks. The addresses fit into the given layout. If more addresses then 
+    and breaks. The addresses fit into the given layout. If more addresses then
     rows/columns should be used a scrollbar will be added.
 
      AddAddress appends the new address to the already added ones.
@@ -123,7 +125,7 @@ public:
     void                    SetAddress(const ::rtl::OUString& rAddress);
     // removes all addresses
     void                    Clear();
-    
+
     // returns the selected address
     sal_uInt16              GetSelectedAddress() const;
     void                    SelectAddress(sal_uInt16 nSelect);
@@ -136,7 +138,7 @@ public:
 
     // fill the actual data into a string (address block or greeting)
     static String FillData(
-            const ::rtl::OUString& rAddress, 
+            const ::rtl::OUString& rAddress,
             SwMailMergeConfigItem& rConfigItem,
             const ::com::sun::star::uno::Sequence< ::rtl::OUString>* pAssignments = 0);
 
@@ -153,7 +155,7 @@ struct SwMergeAddressItem
     String  sText;
     bool    bIsColumn;
     bool    bIsReturn;
-    SwMergeAddressItem() : 
+    SwMergeAddressItem() :
         bIsColumn(false),
         bIsReturn(false) {}
 };
@@ -161,17 +163,17 @@ class SW_DLLPUBLIC   SwAddressIterator
 {
     String sAddress;
 public:
-    SwAddressIterator(const String& rAddress) : 
+    SwAddressIterator(const String& rAddress) :
         sAddress(rAddress){}
-    
+
     SwMergeAddressItem  Next();
     bool                HasMore() const{return sAddress.Len() > 0;}
-};            
+};
 
 /*-- 21.05.2004 10:31:15---------------------------------------------------
 
   -----------------------------------------------------------------------*/
-class SW_DLLPUBLIC SwAuthenticator : 
+class SW_DLLPUBLIC SwAuthenticator :
     public cppu::WeakImplHelper1< ::com::sun::star::mail::XAuthenticator>
 {
     ::rtl::OUString m_aUserName;
@@ -185,7 +187,7 @@ public:
         m_pParentWindow( pParent )
     {}
     ~SwAuthenticator();
-    
+
     virtual ::rtl::OUString SAL_CALL getUserName( ) throw (::com::sun::star::uno::RuntimeException);
     virtual ::rtl::OUString SAL_CALL getPassword(  ) throw (::com::sun::star::uno::RuntimeException);
 
@@ -193,18 +195,18 @@ public:
 /*-- 25.08.2004 12:48:47---------------------------------------------------
 
   -----------------------------------------------------------------------*/
-class SW_DLLPUBLIC SwConnectionContext : 
+class SW_DLLPUBLIC SwConnectionContext :
     public cppu::WeakImplHelper1< ::com::sun::star::uno::XCurrentContext >
 {
     ::rtl::OUString     m_sMailServer;
     sal_Int16           m_nPort;
     ::rtl::OUString     m_sConnectionType;
-    
+
 public:
     SwConnectionContext(const ::rtl::OUString& rMailServer, sal_Int16 nPort, const ::rtl::OUString& rConnectionType);
     ~SwConnectionContext();
 
-    virtual ::com::sun::star::uno::Any SAL_CALL     getValueByName( const ::rtl::OUString& Name ) 
+    virtual ::com::sun::star::uno::Any SAL_CALL     getValueByName( const ::rtl::OUString& Name )
                                                             throw (::com::sun::star::uno::RuntimeException);
 };
 /*-- 21.05.2004 10:39:20---------------------------------------------------
@@ -218,10 +220,10 @@ public:
 /*-- 21.05.2004 10:39:20---------------------------------------------------
 
   -----------------------------------------------------------------------*/
-class SW_DLLPUBLIC SwConnectionListener : 
-        public SwMutexBase, 
+class SW_DLLPUBLIC SwConnectionListener :
+        public SwMutexBase,
         public cppu::WeakComponentImplHelper1< ::com::sun::star::mail::XConnectionListener >
-{    
+{
     using cppu::WeakComponentImplHelperBase::disposing;
 
 public:
@@ -229,57 +231,71 @@ public:
         cppu::WeakComponentImplHelper1< ::com::sun::star::mail::XConnectionListener>(m_aMutex)
     {}
     ~SwConnectionListener();
-    
-    virtual void SAL_CALL connected(const ::com::sun::star::lang::EventObject& aEvent) 
+
+    virtual void SAL_CALL connected(const ::com::sun::star::lang::EventObject& aEvent)
         throw (::com::sun::star::uno::RuntimeException);
-    
-    virtual void SAL_CALL disconnected(const ::com::sun::star::lang::EventObject& aEvent) 
+
+    virtual void SAL_CALL disconnected(const ::com::sun::star::lang::EventObject& aEvent)
         throw (::com::sun::star::uno::RuntimeException);
-    
-    virtual void SAL_CALL disposing(const com::sun::star::lang::EventObject& aEvent) 
+
+    virtual void SAL_CALL disposing(const com::sun::star::lang::EventObject& aEvent)
         throw(com::sun::star::uno::RuntimeException);
 };
 
 /*-- 13.07.2004 09:02:12---------------------------------------------------
 
   -----------------------------------------------------------------------*/
-class SwMailTransferable : 
-        public SwMutexBase, 
-        public cppu::WeakComponentImplHelper1< ::com::sun::star::datatransfer::XTransferable >
+class SwMailTransferable :
+        public SwMutexBase,
+        public cppu::WeakComponentImplHelper2
+        <
+            ::com::sun::star::datatransfer::XTransferable,
+            ::com::sun::star::beans::XPropertySet
+        >
 {
     rtl::OUString  m_aMimeType;
     rtl::OUString  m_sBody;
     rtl::OUString  m_aURL;
     rtl::OUString  m_aName;
     bool           m_bIsBody;
-    
+
     public:
     SwMailTransferable(const rtl::OUString& rURL, const rtl::OUString& rName, const rtl::OUString& rMimeType);
     SwMailTransferable(const rtl::OUString& rBody, const rtl::OUString& rMimeType);
     ~SwMailTransferable();
-    virtual ::com::sun::star::uno::Any SAL_CALL 
-                        getTransferData( const ::com::sun::star::datatransfer::DataFlavor& aFlavor ) 
+    virtual ::com::sun::star::uno::Any SAL_CALL
+                        getTransferData( const ::com::sun::star::datatransfer::DataFlavor& aFlavor )
                             throw (::com::sun::star::datatransfer::UnsupportedFlavorException, ::com::sun::star::io::IOException, ::com::sun::star::uno::RuntimeException);
-    virtual ::com::sun::star::uno::Sequence< ::com::sun::star::datatransfer::DataFlavor > SAL_CALL 
-                        getTransferDataFlavors(  ) 
+    virtual ::com::sun::star::uno::Sequence< ::com::sun::star::datatransfer::DataFlavor > SAL_CALL
+                        getTransferDataFlavors(  )
                             throw (::com::sun::star::uno::RuntimeException) ;
-    virtual ::sal_Bool SAL_CALL 
-                        isDataFlavorSupported( const ::com::sun::star::datatransfer::DataFlavor& aFlavor ) 
+    virtual ::sal_Bool SAL_CALL
+                        isDataFlavorSupported( const ::com::sun::star::datatransfer::DataFlavor& aFlavor )
                             throw (::com::sun::star::uno::RuntimeException);
+
+    //XPropertySet
+    virtual ::com::sun::star::uno::Reference< ::com::sun::star::beans::XPropertySetInfo > SAL_CALL getPropertySetInfo(  ) throw(::com::sun::star::uno::RuntimeException);
+    virtual void SAL_CALL setPropertyValue( const ::rtl::OUString& aPropertyName, const ::com::sun::star::uno::Any& aValue ) throw(::com::sun::star::beans::UnknownPropertyException, ::com::sun::star::beans::PropertyVetoException, ::com::sun::star::lang::IllegalArgumentException, ::com::sun::star::lang::WrappedTargetException, ::com::sun::star::uno::RuntimeException);
+    virtual ::com::sun::star::uno::Any SAL_CALL getPropertyValue( const ::rtl::OUString& PropertyName ) throw(::com::sun::star::beans::UnknownPropertyException, ::com::sun::star::lang::WrappedTargetException, ::com::sun::star::uno::RuntimeException);
+    virtual void SAL_CALL addPropertyChangeListener( const ::rtl::OUString& aPropertyName, const ::com::sun::star::uno::Reference< ::com::sun::star::beans::XPropertyChangeListener >& xListener ) throw(::com::sun::star::beans::UnknownPropertyException, ::com::sun::star::lang::WrappedTargetException, ::com::sun::star::uno::RuntimeException);
+    virtual void SAL_CALL removePropertyChangeListener( const ::rtl::OUString& aPropertyName, const ::com::sun::star::uno::Reference< ::com::sun::star::beans::XPropertyChangeListener >& aListener ) throw(::com::sun::star::beans::UnknownPropertyException, ::com::sun::star::lang::WrappedTargetException, ::com::sun::star::uno::RuntimeException);
+    virtual void SAL_CALL addVetoableChangeListener( const ::rtl::OUString& PropertyName, const ::com::sun::star::uno::Reference< ::com::sun::star::beans::XVetoableChangeListener >& aListener ) throw(::com::sun::star::beans::UnknownPropertyException, ::com::sun::star::lang::WrappedTargetException, ::com::sun::star::uno::RuntimeException);
+    virtual void SAL_CALL removeVetoableChangeListener( const ::rtl::OUString& PropertyName, const ::com::sun::star::uno::Reference< ::com::sun::star::beans::XVetoableChangeListener >& aListener ) throw(::com::sun::star::beans::UnknownPropertyException, ::com::sun::star::lang::WrappedTargetException, ::com::sun::star::uno::RuntimeException);
+
 };
 
 /*-- 22.06.2004 16:38:34---------------------------------------------------
 
   -----------------------------------------------------------------------*/
 class SwMailMessage :
-        public SwMutexBase, 
+        public SwMutexBase,
         public cppu::WeakComponentImplHelper1< ::com::sun::star::mail::XMailMessage >
 {
     ::rtl::OUString                                                                         m_sSenderName;
     ::rtl::OUString                                                                         m_sSenderAddress;
     ::rtl::OUString                                                                         m_sReplyToAddress;
     ::rtl::OUString                                                                         m_sSubject;
-    
+
     ::com::sun::star::uno::Reference< ::com::sun::star::datatransfer::XTransferable>        m_xBody;
 //    ::com::sun::star::mail::MailMessageBody                                                 m_aBody;
 
@@ -288,7 +304,7 @@ class SwMailMessage :
     ::com::sun::star::uno::Sequence< ::rtl::OUString >                                      m_aBccRecipients;
 //    ::com::sun::star::uno::Sequence< ::com::sun::star::mail::MailAttachmentDescriptor >     m_aAttachments;
     ::com::sun::star::uno::Sequence<  ::com::sun::star::mail::MailAttachment >              m_aAttachments;
-public:    
+public:
     SwMailMessage();
     ~SwMailMessage();
 
@@ -299,38 +315,38 @@ public:
     virtual void SAL_CALL               setReplyToAddress( const ::rtl::OUString& _replytoaddress ) throw (::com::sun::star::uno::RuntimeException);
     virtual ::rtl::OUString SAL_CALL    getSubject() throw (::com::sun::star::uno::RuntimeException);
     virtual void SAL_CALL               setSubject( const ::rtl::OUString& _subject ) throw (::com::sun::star::uno::RuntimeException);
-    
-    virtual ::com::sun::star::uno::Reference< ::com::sun::star::datatransfer::XTransferable > SAL_CALL 
-                                        getBody() 
+
+    virtual ::com::sun::star::uno::Reference< ::com::sun::star::datatransfer::XTransferable > SAL_CALL
+                                        getBody()
                                                 throw (::com::sun::star::uno::RuntimeException);
-    virtual void SAL_CALL               setBody( const ::com::sun::star::uno::Reference< ::com::sun::star::datatransfer::XTransferable >& _body ) 
+    virtual void SAL_CALL               setBody( const ::com::sun::star::uno::Reference< ::com::sun::star::datatransfer::XTransferable >& _body )
                                                 throw (::com::sun::star::uno::RuntimeException);
 
     // Methods
     virtual void SAL_CALL               addRecipient( const ::rtl::OUString& sRecipientAddress ) throw (::com::sun::star::uno::RuntimeException);
     virtual void SAL_CALL               addCcRecipient( const ::rtl::OUString& sRecipientAddress ) throw (::com::sun::star::uno::RuntimeException);
     virtual void SAL_CALL               addBccRecipient( const ::rtl::OUString& sRecipientAddress ) throw (::com::sun::star::uno::RuntimeException);
-    virtual ::com::sun::star::uno::Sequence< ::rtl::OUString > SAL_CALL 
+    virtual ::com::sun::star::uno::Sequence< ::rtl::OUString > SAL_CALL
                                         getRecipients(  ) throw (::com::sun::star::uno::RuntimeException);
-    virtual ::com::sun::star::uno::Sequence< ::rtl::OUString > SAL_CALL 
+    virtual ::com::sun::star::uno::Sequence< ::rtl::OUString > SAL_CALL
                                         getCcRecipients(  ) throw (::com::sun::star::uno::RuntimeException);
-    virtual ::com::sun::star::uno::Sequence< ::rtl::OUString > SAL_CALL 
+    virtual ::com::sun::star::uno::Sequence< ::rtl::OUString > SAL_CALL
                                         getBccRecipients(  ) throw (::com::sun::star::uno::RuntimeException);
-    virtual void SAL_CALL               addAttachment( const ::com::sun::star::mail::MailAttachment& aMailAttachment ) 
+    virtual void SAL_CALL               addAttachment( const ::com::sun::star::mail::MailAttachment& aMailAttachment )
                                             throw (::com::sun::star::uno::RuntimeException);
-    virtual ::com::sun::star::uno::Sequence< ::com::sun::star::mail::MailAttachment > SAL_CALL 
+    virtual ::com::sun::star::uno::Sequence< ::com::sun::star::mail::MailAttachment > SAL_CALL
                                         getAttachments(  ) throw (::com::sun::star::uno::RuntimeException);
-    void                                SetSenderName(const ::rtl::OUString& rSenderName) 
+    void                                SetSenderName(const ::rtl::OUString& rSenderName)
                                                 {m_sSenderName = rSenderName;}
-    void                                SetSenderAddress(const ::rtl::OUString& rSenderAddress) 
+    void                                SetSenderAddress(const ::rtl::OUString& rSenderAddress)
                                                 {m_sSenderAddress = rSenderAddress;}
 };
 /*-- 21.05.2004 10:17:22---------------------------------------------------
-    
+
   -----------------------------------------------------------------------*/
-SW_DLLPUBLIC ::com::sun::star::uno::Reference< ::com::sun::star::uno::XComponentContext> 
+SW_DLLPUBLIC ::com::sun::star::uno::Reference< ::com::sun::star::uno::XComponentContext>
         getCurrentCmpCtx(
-            ::com::sun::star::uno::Reference< 
+            ::com::sun::star::uno::Reference<
                 ::com::sun::star::lang::XMultiServiceFactory> rSrvMgr);
 #endif
 
