@@ -1,13 +1,13 @@
 /*************************************************************************
  *
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
- * 
+ *
  * Copyright 2008 by Sun Microsystems, Inc.
  *
  * OpenOffice.org - a multi-platform office productivity suite
  *
  * $RCSfile: SwNumberTree.cxx,v $
- * $Revision: 1.17 $
+ * $Revision: 1.18 $
  *
  * This file is part of OpenOffice.org.
  *
@@ -349,7 +349,11 @@ void SwNumberTreeNode::ValidateContinuous(const SwNumberTreeNode * pNode) const
     }
     while (aIt != mChildren.end() && *aIt != pNode);
 
-    SetLastValid(aIt);
+    // --> OD 2008-05-21 #i74748# - applied patch from garnier_romain
+    // number tree node has to be validated.
+//    SetLastValid(aIt);
+    SetLastValid( aIt, true );
+    // <--
 }
 
 void SwNumberTreeNode::Validate(const SwNumberTreeNode * pNode) const
@@ -1038,7 +1042,7 @@ SwNumberTreeNode::GetIterator(const SwNumberTreeNode * pChild) const
     tSwNumberTreeChildren::iterator aItResult =
         mChildren.find(const_cast<SwNumberTreeNode *>(pChild));
 
-    ASSERT( aItResult != mChildren.end(), 
+    ASSERT( aItResult != mChildren.end(),
             "something went wrong getting the iterator for a child");
 
     return aItResult;
