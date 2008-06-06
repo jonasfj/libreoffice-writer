@@ -7,7 +7,7 @@
  * OpenOffice.org - a multi-platform office productivity suite
  *
  * $RCSfile: cmdid.h,v $
- * $Revision: 1.78 $
+ * $Revision: 1.79 $
  *
  * This file is part of OpenOffice.org.
  *
@@ -595,7 +595,7 @@ Achtung: Ab sofort sind in diesem File keine C++-Kommentare (//) mehr
 #define FN_GOTO_PREV_CELL           (FN_FORMAT + 146)  /* Table: go to previous cell */
 
 
-#define FN_TABLE_HEADLINE_COUNT     (FN_FORMAT + 147) /* number of repeated headlines of tables */ 
+#define FN_TABLE_HEADLINE_COUNT     (FN_FORMAT + 147) /* number of repeated headlines of tables */
 //hier geht's weiter !
 /*--------------------------------------------------------------------
     Bereich: Ribbon
@@ -710,6 +710,8 @@ Achtung: Ab sofort sind in diesem File keine C++-Kommentare (//) mehr
 #define FN_FORMAT_APPLY_DEFAULT				(FN_FORMAT2 + 157)
 #define FN_FORMAT_APPLY_TEXTBODY			(FN_FORMAT2 + 158)
 #define FN_REMOVE_DIRECT_CHAR_FORMATS       (FN_FORMAT2 + 159)
+
+#define FN_SAVE_GRAPHIC                     (FN_FORMAT2 + 160)
 
 /*--------------------------------------------------------------------
     Bereich: Extras
