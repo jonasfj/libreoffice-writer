@@ -7,7 +7,7 @@
  * OpenOffice.org - a multi-platform office productivity suite
  *
  * $RCSfile: ww8par.hxx,v $
- * $Revision: 1.155 $
+ * $Revision: 1.156 $
  *
  * This file is part of OpenOffice.org.
  *
@@ -475,7 +475,7 @@ private:
     //No copying
     WW8FormulaCheckBox(const WW8FormulaCheckBox&);
     WW8FormulaCheckBox& operator=(const WW8FormulaCheckBox&);
-    
+
     using OCX_Control::Import;
 
 public:
@@ -494,7 +494,7 @@ private:
     //No copying
     WW8FormulaListBox(const WW8FormulaListBox&);
     WW8FormulaListBox& operator=(const WW8FormulaListBox&);
-    
+
     using OCX_Control::Import;
 
 public:
@@ -808,7 +808,7 @@ private:
     SwPaM* pPaM;
 
     SwWW8FltControlStack* pCtrlStck;    // Stack fuer die Attribute
-    
+
     /*
     This stack is for redlines, because their sequence of discovery can
     be out of order of their order of insertion into the document.
@@ -1371,6 +1371,11 @@ private:
         {return !maFieldStack.empty() ? maFieldStack.back().mnFieldId == 95 : false; };
 
     void StoreMacroCmds();
+
+    // --> OD 2008-04-10 #i84783#
+    // determine object attribute "Layout in Table Cell"
+    bool IsObjectLayoutInTableCell( const UINT32 nLayoutInTableCell ) const;
+    // <--
 
     //No copying
     SwWW8ImplReader(const SwWW8ImplReader &);
