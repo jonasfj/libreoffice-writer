@@ -7,7 +7,7 @@
  * OpenOffice.org - a multi-platform office productivity suite
  *
  * $RCSfile: crsrsh.hxx,v $
- * $Revision: 1.43 $
+ * $Revision: 1.44 $
  *
  * This file is part of OpenOffice.org.
  *
@@ -142,7 +142,7 @@ struct SwContentAtPos
 // ReturnWerte von SetCrsr (werden verodert)
 const int CRSR_POSOLD = 0x01,   // Cursor bleibt an alter Doc-Position
           CRSR_POSCHG = 0x02;   // Position vom Layout veraendert
-          
+
 // Helperfunction to resolve backward references in regular expressions
 
 String *ReplaceBackReferences( const com::sun::star::util::SearchOptions& rSearchOpt, SwPaM* pPam );
@@ -214,26 +214,11 @@ private:
     USHORT nCrsrMove;
     USHORT nBasicActionCnt;		// Actions, die vom Basic geklammert wurden
     CrsrMoveState eMvState;		// Status fuers Crsr-Travelling - GetCrsrOfst
-    // -> #i27615#
-    /**
-       marked numbering rule
 
-       If a numbering level/rule are marked, changes to character
-       attributes are propagated to the according numbering style.
-
-    */
-    String sMarkedNumRule;
-
-    /**
-       marked numbering level
-
-       If a numbering level/rule are marked, changes to character
-       attributes are propagated to the according numbering style.
-
-    */
-    BYTE nMarkedNumLevel;
-    // <- #i27615#
-
+    // --> OD 2008-04-02 #refactorlists#
+    String sMarkedListId;
+    int nMarkedListLevel;
+    // <--
 
     BOOL bHasFocus : 1;         // Shell ist in einem Window "aktiv"
     BOOL bSVCrsrVis : 1;		// SV-Cursor Un-/Sichtbar
@@ -269,15 +254,18 @@ private:
 
     // -> #i27615#
 
-    /**
-       Set the marked numbering level stored in this shell.
+    /** Mark a certain list level of a certain list
 
-       @param sNumRule   the name of the marked numbering rule
-       @param nLevel     the marked numbering level
+        OD 2008-04-02 #refactorlists#
+        levels of a certain lists are marked now
 
-       The empty string denotes that no numbering rule is marked.
+        @param sListId    list Id of the list whose level is marked
+        @param nLevel     to be marked list level
+
+        An empty sListId denotes that no level of a list is marked.
      */
-    SW_DLLPRIVATE void SetMarkedNumLevel(const String & sNumRule, BYTE nLevel);
+    SW_DLLPRIVATE void MarkListLevel( const String& sListId,
+                                      const int nLevel );
     // <- #i27615#
 
     // private method(s) accessed from public inline method(s) must be exported.
@@ -326,11 +314,9 @@ protected:
 
     void RefreshBlockCursor();
 
-    /**
-       Updates the marked numbering level stored in this shell
-       according to the cursor.
-     */
-    SW_DLLPRIVATE void UpdateMarkedNumLevel();
+    /** Updates the marked list level according to the cursor.
+    */
+    SW_DLLPRIVATE void UpdateMarkedListLevel();
 
 public:
     TYPEINFO();
@@ -672,13 +658,13 @@ public:
         otherwise pCurCrsr
     */
     SwShellCrsr* getShellCrsr( bool bBlock );
-    const SwShellCrsr* getShellCrsr( bool bBlock ) const 
+    const SwShellCrsr* getShellCrsr( bool bBlock ) const
         { return (const_cast<SwCrsrShell*>(this))->getShellCrsr( bBlock ); }
 
     FASTBOOL IsBlockMode() const { return 0 != pBlockCrsr; }
     const IBlockCursor* GetBlockCrsr() const { return pBlockCrsr; }
     IBlockCursor* GetBlockCrsr() { return pBlockCrsr; }
-    
+
         // ist der Crsr in einer Tabelle und ist die Selection ueber
         // zwei Spalten
     BOOL IsTableMode() const { return 0 != pTblCrsr; }
@@ -806,7 +792,7 @@ public:
                             SwContentAtPos& rCntntAtPos,
                             BOOL bSetCrsr = FALSE,
                             SwRect* pFldRect = 0 );
-    
+
     // get smart tags at point position
     void GetSmartTagTerm( const Point& rPt,
                           SwRect& rSelectRect,
@@ -818,7 +804,7 @@ public:
     void GetSmartTagTerm( ::com::sun::star::uno::Sequence< rtl::OUString >& rSmartTagTypes,
                           ::com::sun::star::uno::Sequence< ::com::sun::star::uno::Reference< ::com::sun::star::container::XStringKeyMap > >& rStringKeyMaps,
                           ::com::sun::star::uno::Reference<com::sun::star::text::XTextRange>& rRange ) const;
-    
+
     BOOL IsPageAtPos( const Point &rPt ) const;
 
         // Attribut selelktieren
