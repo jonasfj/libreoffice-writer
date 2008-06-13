@@ -1,13 +1,13 @@
 /*************************************************************************
  *
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
- * 
+ *
  * Copyright 2008 by Sun Microsystems, Inc.
  *
  * OpenOffice.org - a multi-platform office productivity suite
  *
  * $RCSfile: num.hxx,v $
- * $Revision: 1.13 $
+ * $Revision: 1.14 $
  *
  * This file is part of OpenOffice.org.
  *
@@ -130,7 +130,6 @@ class SwNumPositionTabPage : public SfxTabPage
     USHORT				nActNumLvl;
 
     BOOL				bModified 			: 1;
-    BOOL				bHasChild 			: 1;
     BOOL				bPreset				: 1;
     BOOL				bInInintControl		: 1;  //Modify-Fehler umgehen, soll ab 391 behoben sein
     // --> OD 2008-02-01 #newlistlevelattrs#
