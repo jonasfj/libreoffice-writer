@@ -7,7 +7,7 @@
  * OpenOffice.org - a multi-platform office productivity suite
  *
  * $RCSfile: w1filter.cxx,v $
- * $Revision: 1.20 $
+ * $Revision: 1.21 $
  *
  * This file is part of OpenOffice.org.
  *
@@ -1038,12 +1038,12 @@ void Ww1Sep::Start(Ww1Shell& rOut, Ww1Manager& rMan)
         SwFmtFrmSize aSz(rFmt.GetFrmSize());
         aSz.SetWidth(rDOP.xaPageGet());
         aSz.SetHeight(rDOP.yaPageGet());
-        rFmt.SetAttr(aSz);
+        rFmt.SetFmtAttr(aSz);
         SvxLRSpaceItem aLR(rDOP.dxaLeftGet()+rDOP.dxaGutterGet(),
          rDOP.dxaRightGet(), 0, 0, RES_LR_SPACE);
-        rFmt.SetAttr(aLR);
+        rFmt.SetFmtAttr(aLR);
         SvxULSpaceItem aUL(rDOP.dyaTopGet(), rDOP.dyaBottomGet(), RES_UL_SPACE);
-        rFmt.SetAttr(aUL);
+        rFmt.SetFmtAttr(aUL);
     // sobald wir mit dem lesen der zeichen soweit sind, wo sep's
     // momentanes attribut beginnt, wird dieses attribut eingefuegt.
     // diese methode ist bei den meisten start/stop methoden der
@@ -1480,12 +1480,12 @@ void Ww1Dop::Out(Ww1Shell& rOut)
     SwFmtFrmSize aSz(rFmt.GetFrmSize());
     aSz.SetWidth(rDOP.xaPageGet());
     aSz.SetHeight(rDOP.yaPageGet());
-    rFmt.SetAttr(aSz);
+    rFmt.SetFmtAttr(aSz);
     SvxLRSpaceItem aLR(rDOP.dxaLeftGet()+rDOP.dxaGutterGet(),
      rDOP.dxaRightGet(), 0, 0, RES_LR_SPACE);
-    rFmt.SetAttr(aLR);
+    rFmt.SetFmtAttr(aLR);
     SvxULSpaceItem aUL(rDOP.dyaTopGet(), rDOP.dyaBottomGet(), RES_UL_SPACE);
-    rFmt.SetAttr(aUL);
+    rFmt.SetFmtAttr(aUL);
 
     SwFtnInfo aInfo;
     aInfo = rOut.GetDoc().GetFtnInfo();		// Copy-Ctor privat
@@ -1802,26 +1802,26 @@ void Ww1Picture::WriteBmp(SvStream& rOut)
     USHORT maxx = pPic->mfp.xExtGet();
     USHORT padx = ((maxx + 7) / 8) * 8;
     USHORT maxy = pPic->mfp.yExtGet();
-    
+
     /*USHORT unknown1 = SVBT16ToShort(p);*/ p+= sizeof(SVBT16); nSize -= sizeof(SVBT16);
     /*USHORT unknown2 = SVBT16ToShort(p);*/ p+= sizeof(SVBT16); nSize -= sizeof(SVBT16);
 #if OSL_DEBUG_LEVEL > 1
-    USHORT x = SVBT16ToShort(p); 
+    USHORT x = SVBT16ToShort(p);
     (void) x;
 #endif
     p+= sizeof(SVBT16); nSize -= sizeof(SVBT16);
 #if OSL_DEBUG_LEVEL > 1
-    USHORT y = SVBT16ToShort(p); 
+    USHORT y = SVBT16ToShort(p);
     (void) y;
 #endif
     p+= sizeof(SVBT16); nSize -= sizeof(SVBT16);
 #if OSL_DEBUG_LEVEL > 1
-    USHORT planes = SVBT16ToShort(p); 
+    USHORT planes = SVBT16ToShort(p);
     (void) planes;
 #endif
     p+= sizeof(SVBT16); nSize -= sizeof(SVBT16);
 #if OSL_DEBUG_LEVEL > 1
-    USHORT bitcount = SVBT16ToShort(p); 
+    USHORT bitcount = SVBT16ToShort(p);
     (void) bitcount;
 #endif
     p+= sizeof(SVBT16); nSize -= sizeof(SVBT16);
@@ -1831,7 +1831,7 @@ void Ww1Picture::WriteBmp(SvStream& rOut)
     DBG_ASSERT(y==maxy, "Ww1Picture");
     DBG_ASSERT(planes==1, "Ww1Picture");
     DBG_ASSERT(bitcount==4, "Ww1Picture");
-#endif	
+#endif
 
     DBG_ASSERT(16*3+padx*maxy/2==nSize, "Ww1Picture");
 
