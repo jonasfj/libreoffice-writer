@@ -7,7 +7,7 @@
  * OpenOffice.org - a multi-platform office productivity suite
  *
  * $RCSfile: SwUndoPageDesc.cxx,v $
- * $Revision: 1.11 $
+ * $Revision: 1.12 $
  *
  * This file is part of OpenOffice.org.
  *
@@ -212,7 +212,7 @@ SwUndoPageDesc::SwUndoPageDesc(const SwPageDesc & _aOld,
                 SwFmtFooter aFormatFooter( pFormat );
             }
         }
-    
+
         // After this exchange method the old page description will point to zero,
         // the new one will point to the node position of the original content nodes.
         ExchangeContentNodes( (SwPageDesc&)aOld, (SwPageDesc&)aNew );
@@ -247,7 +247,7 @@ void SwUndoPageDesc::ExchangeContentNodes( SwPageDesc& rSource, SwPageDesc &rDes
         const SwFmtCntnt& rDestCntnt = rDestHead.GetHeaderFmt()->GetCntnt();
         (void)rDestCntnt;
 #endif
-        pNewFmt->SetAttr( rSourceHead.GetHeaderFmt()->GetCntnt() );
+        pNewFmt->SetFmtAttr( rSourceHead.GetHeaderFmt()->GetCntnt() );
         delete pNewItem;
 
         // Let the source page description point to zero node position,
@@ -255,9 +255,9 @@ void SwUndoPageDesc::ExchangeContentNodes( SwPageDesc& rSource, SwPageDesc &rDes
         rSource.GetMaster().GetAttrSet().GetItemState( RES_HEADER, FALSE, &pItem );
         pNewItem = pItem->Clone();
         pNewFmt = ((SwFmtHeader*)pNewItem)->GetHeaderFmt();
-        pNewFmt->SetAttr( SwFmtCntnt() );
+        pNewFmt->SetFmtAttr( SwFmtCntnt() );
         delete pNewItem;
-        
+
         if( !rDest.IsHeaderShared() )
         {
             // Same procedure for unshared header..
@@ -271,12 +271,12 @@ void SwUndoPageDesc::ExchangeContentNodes( SwPageDesc& rSource, SwPageDesc &rDes
             const SwFmtCntnt& rDestCntnt1 = rDest.GetLeft().GetHeader().GetHeaderFmt()->GetCntnt();
             (void)rDestCntnt1;
 #endif
-            pNewFmt->SetAttr( rSourceLeftHead.GetHeaderFmt()->GetCntnt() );
+            pNewFmt->SetFmtAttr( rSourceLeftHead.GetHeaderFmt()->GetCntnt() );
             delete pNewItem;
             rSource.GetLeft().GetAttrSet().GetItemState( RES_HEADER, FALSE, &pItem );
             pNewItem = pItem->Clone();
             pNewFmt = ((SwFmtHeader*)pNewItem)->GetHeaderFmt();
-            pNewFmt->SetAttr( SwFmtCntnt() );
+            pNewFmt->SetFmtAttr( SwFmtCntnt() );
             delete pNewItem;
         }
     }
@@ -289,7 +289,7 @@ void SwUndoPageDesc::ExchangeContentNodes( SwPageDesc& rSource, SwPageDesc &rDes
         rDest.GetMaster().GetAttrSet().GetItemState( RES_FOOTER, FALSE, &pItem );
         SfxPoolItem *pNewItem = pItem->Clone();
         SwFrmFmt *pNewFmt = ((SwFmtFooter*)pNewItem)->GetFooterFmt();
-        pNewFmt->SetAttr( rSourceFoot.GetFooterFmt()->GetCntnt() );
+        pNewFmt->SetFmtAttr( rSourceFoot.GetFooterFmt()->GetCntnt() );
         delete pNewItem;
 
 #ifdef DEBUG
@@ -301,9 +301,9 @@ void SwUndoPageDesc::ExchangeContentNodes( SwPageDesc& rSource, SwPageDesc &rDes
         rSource.GetMaster().GetAttrSet().GetItemState( RES_FOOTER, FALSE, &pItem );
         pNewItem = pItem->Clone();
         pNewFmt = ((SwFmtFooter*)pNewItem)->GetFooterFmt();
-        pNewFmt->SetAttr( SwFmtCntnt() );
+        pNewFmt->SetFmtAttr( SwFmtCntnt() );
         delete pNewItem;
-        
+
         if( !rDest.IsFooterShared() )
         {
             const SwFmtFooter& rSourceLeftFoot = rSource.GetLeft().GetFooter();
@@ -317,12 +317,12 @@ void SwUndoPageDesc::ExchangeContentNodes( SwPageDesc& rSource, SwPageDesc &rDes
             rDest.GetLeft().GetAttrSet().GetItemState( RES_FOOTER, FALSE, &pItem );
             pNewItem = pItem->Clone();
             pNewFmt = ((SwFmtFooter*)pNewItem)->GetFooterFmt();
-            pNewFmt->SetAttr( rSourceLeftFoot.GetFooterFmt()->GetCntnt() );
+            pNewFmt->SetFmtAttr( rSourceLeftFoot.GetFooterFmt()->GetCntnt() );
             delete pNewItem;
             rSource.GetLeft().GetAttrSet().GetItemState( RES_FOOTER, FALSE, &pItem );
             pNewItem = pItem->Clone();
             pNewFmt = ((SwFmtFooter*)pNewItem)->GetFooterFmt();
-            pNewFmt->SetAttr( SwFmtCntnt() );
+            pNewFmt->SetFmtAttr( SwFmtCntnt() );
             delete pNewItem;
         }
     }
@@ -333,10 +333,10 @@ void SwUndoPageDesc::Undo(SwUndoIter &)
     BOOL bUndo = pDoc->DoesUndo();
 
     pDoc->DoUndo(FALSE);
-    
+
     // Move (header/footer)content node responsibility from new page descriptor to old one again.
     if( bExchange )
-        ExchangeContentNodes( (SwPageDesc&)aNew, (SwPageDesc&)aOld ); 
+        ExchangeContentNodes( (SwPageDesc&)aNew, (SwPageDesc&)aOld );
     pDoc->ChgPageDesc(aOld.GetName(), aOld);
     pDoc->DoUndo(bUndo);
 }
@@ -349,7 +349,7 @@ void SwUndoPageDesc::Redo(SwUndoIter &)
 
     // Move (header/footer)content node responsibility from old page descriptor to new one again.
     if( bExchange )
-        ExchangeContentNodes( (SwPageDesc&)aOld, (SwPageDesc&)aNew ); 
+        ExchangeContentNodes( (SwPageDesc&)aOld, (SwPageDesc&)aNew );
     pDoc->ChgPageDesc(aNew.GetName(), aNew);
     pDoc->DoUndo(bUndo);
 }
@@ -370,9 +370,9 @@ SwRewriter SwUndoPageDesc::GetRewriter() const
 }
 
 // #116530#
-SwUndoPageDescCreate::SwUndoPageDescCreate(const SwPageDesc * pNew, 
+SwUndoPageDescCreate::SwUndoPageDescCreate(const SwPageDesc * pNew,
                                            SwDoc * _pDoc)
-    : SwUndo(UNDO_CREATE_PAGEDESC), pDesc(pNew), aNew(*pNew, _pDoc), 
+    : SwUndo(UNDO_CREATE_PAGEDESC), pDesc(pNew), aNew(*pNew, _pDoc),
       pDoc(_pDoc)
 {
     ASSERT(0 != pDoc, "no document?");
@@ -406,7 +406,7 @@ void SwUndoPageDescCreate::Redo(SwUndoIter &)
     BOOL bUndo = pDoc->DoesUndo();
 
     pDoc->DoUndo(FALSE);
-    
+
     SwPageDesc aPageDesc = aNew;
     pDoc->MakePageDesc(aNew.GetName(), &aPageDesc, FALSE, TRUE); // #116530#
 
@@ -426,7 +426,7 @@ SwRewriter SwUndoPageDescCreate::GetRewriter() const
         aResult.AddRule(UNDO_ARG1, pDesc->GetName());
     else
         aResult.AddRule(UNDO_ARG1, aNew.GetName());
-        
+
 
     return aResult;
 }
@@ -437,7 +437,7 @@ SwUndoPageDescDelete::SwUndoPageDescDelete(const SwPageDesc & _aOld,
 {
     ASSERT(0 != pDoc, "no document?");
 }
-                                           
+
 SwUndoPageDescDelete::~SwUndoPageDescDelete()
 {
 }
