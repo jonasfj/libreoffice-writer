@@ -1,13 +1,13 @@
 /*************************************************************************
  *
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
- * 
+ *
  * Copyright 2008 by Sun Microsystems, Inc.
  *
  * OpenOffice.org - a multi-platform office productivity suite
  *
  * $RCSfile: unotxdoc.cxx,v $
- * $Revision: 1.130 $
+ * $Revision: 1.131 $
  *
  * This file is part of OpenOffice.org.
  *
@@ -131,9 +131,7 @@
 #include <unostyle.hxx>   //SwAutoStyleFamily
 #include <istyleaccess.hxx> // handling of automatic styles
 
-#ifndef _STYLEPOOL_HXX
 #include <svtools/stylepool.hxx>
-#endif
 #include <swatrset.hxx>
 
 //#include <com/sun/star/i18n/ScriptType.hpp>
@@ -1092,10 +1090,10 @@ String lcl_CreateOutlineString( USHORT nIndex,
 {
     String sEntry;
     const SwTxtNode * pTxtNd = rOutlineNodes[ nIndex ]->GetTxtNode();
-    SwNodeNum::tNumberVector aNumVector = pTxtNd->GetNumberVector();
+    SwNumberTree::tNumberVector aNumVector = pTxtNd->GetNumberVector();
     if( pOutlRule && pTxtNd->GetNumRule())
         for( sal_Int8 nLevel = 0;
-             nLevel <= pTxtNd->GetLevel();
+             nLevel <= pTxtNd->GetActualListLevel();
              nLevel++ )
         {
             long nVal = aNumVector[nLevel];
@@ -2448,7 +2446,7 @@ class SwViewOptionAdjust_Impl
     bool m_bSwitchOff_IsFldName;
     bool m_bSwitchOff_HiddenChar;
     bool m_bSwitchOff_HiddenParagraphs;
-    bool m_bSwitchOff_IsShowHiddenField; 
+    bool m_bSwitchOff_IsShowHiddenField;
 
     SwViewOption* m_pViewOption;
     SwWrtShell& m_rShell;
@@ -2849,19 +2847,19 @@ void SAL_CALL SwXTextDocument::operator delete( void * p) throw()
 /*---------------------------------------------------
 retrieve languages already used in current document
 -----------------------------------------------------*/
-uno::Sequence< lang::Locale > SAL_CALL SwXTextDocument::getDocumentLanguages( 
-        ::sal_Int16 nScriptTypes, 
-        ::sal_Int16 nMaxCount ) 
+uno::Sequence< lang::Locale > SAL_CALL SwXTextDocument::getDocumentLanguages(
+        ::sal_Int16 nScriptTypes,
+        ::sal_Int16 nMaxCount )
     throw (lang::IllegalArgumentException, uno::RuntimeException)
 {
     ::vos::OGuard aGuard(Application::GetSolarMutex());
-    
+
     // possible canonical values for nScriptTypes
     // any bit wise combination is allowed
     const sal_Int16 nLatin   = 0x001;
     const sal_Int16 nAsian   = 0x002;
     const sal_Int16 nComplex = 0x004;
-    
+
     // script types for which to get the languages
     const bool bLatin   = 0 != (nScriptTypes & nLatin);
     const bool bAsian   = 0 != (nScriptTypes & nAsian);
@@ -2877,7 +2875,7 @@ uno::Sequence< lang::Locale > SAL_CALL SwXTextDocument::getDocumentLanguages(
     std::set< LanguageType > aAllLangs;
 
     //USER STYLES
-    
+
     const SwCharFmts *pFmts = pDoc->GetCharFmts();
     for(USHORT i = 0; i < pFmts->Count(); ++i)
     {
@@ -2901,7 +2899,7 @@ uno::Sequence< lang::Locale > SAL_CALL SwXTextDocument::getDocumentLanguages(
             if (nLang != LANGUAGE_DONTKNOW && nLang != LANGUAGE_SYSTEM)
                 aAllLangs.insert( nLang );
         }
-    } 
+    }
 
     const SwTxtFmtColls *pColls = pDoc->GetTxtFmtColls();
     for (USHORT i = 0; i < pColls->Count(); ++i)
@@ -2943,7 +2941,7 @@ uno::Sequence< lang::Locale > SAL_CALL SwXTextDocument::getDocumentLanguages(
             SfxItemSet_Pointer_t pStyle = rStyles.back();
             rStyles.pop_back();
             const SfxItemSet *pSet = dynamic_cast< const SfxItemSet * >(pStyle.get());
-            
+
             LanguageType nLang = LANGUAGE_DONTKNOW;
             if (bLatin)
             {
@@ -3012,13 +3010,13 @@ uno::Sequence< lang::Locale > SAL_CALL SwXTextDocument::getDocumentLanguages(
                             aAllLangs.insert( nLang );
                     }
                 }
-            }	
+            }
         }
     }
     // less than nMaxCount languages
     if (nMaxCount > static_cast< sal_Int16 >( aAllLangs.size() ))
         nMaxCount = static_cast< sal_Int16 >( aAllLangs.size() );
-    
+
     // build return value
     sal_Int32 nCount = 0;
     uno::Sequence< lang::Locale > aLanguages( nMaxCount );
