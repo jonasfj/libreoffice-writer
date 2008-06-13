@@ -7,7 +7,7 @@
  * OpenOffice.org - a multi-platform office productivity suite
  *
  * $RCSfile: swstylemanager.cxx,v $
- * $Revision: 1.6 $
+ * $Revision: 1.7 $
  *
  * This file is part of OpenOffice.org.
  *
@@ -76,9 +76,17 @@ class SwStyleManager : public IStyleAccess
     StylePool aAutoParaPool;
     SwStyleCache *mpCharCache;
     SwStyleCache *mpParaCache;
-    
+
 public:
-    SwStyleManager() : mpCharCache(0), mpParaCache(0) {}
+    // --> OD 2008-03-07 #refactorlists#
+    // accept empty item set for ignorable paragraph items.
+    SwStyleManager( SfxItemSet* pIgnorableParagraphItems )
+        : aAutoCharPool(),
+          aAutoParaPool( pIgnorableParagraphItems ),
+          mpCharCache(0),
+          mpParaCache(0)
+    {}
+    // <--
     virtual ~SwStyleManager();
     virtual StylePool::SfxItemSet_Pointer_t getAutomaticStyle( const SfxItemSet& rSet,
                                                                IStyleAccess::SwAutoStyleFamily eFamily );
@@ -91,9 +99,9 @@ public:
     virtual void clearCaches();
 };
 
-IStyleAccess *createStyleManager()
+IStyleAccess *createStyleManager( SfxItemSet* pIgnorableParagraphItems )
 {
-    return new SwStyleManager();
+    return new SwStyleManager( pIgnorableParagraphItems );
 }
 
 SwStyleManager::~SwStyleManager()
@@ -122,7 +130,7 @@ StylePool::SfxItemSet_Pointer_t SwStyleManager::cacheAutomaticStyle( const SfxIt
 {
     StylePool& rAutoPool = eFamily == IStyleAccess::AUTO_STYLE_CHAR ? aAutoCharPool : aAutoParaPool;
     StylePool::SfxItemSet_Pointer_t pStyle = rAutoPool.insertItemSet( rSet );
-    SwStyleCache* &rpCache = eFamily == IStyleAccess::AUTO_STYLE_CHAR ? 
+    SwStyleCache* &rpCache = eFamily == IStyleAccess::AUTO_STYLE_CHAR ?
                              mpCharCache : mpParaCache;
     if( !rpCache )
         rpCache = new SwStyleCache();
@@ -142,24 +150,26 @@ StylePool::SfxItemSet_Pointer_t SwStyleManager::getByName( const rtl::OUString& 
     {
         // Ok, ok, it's allowed to ask for uncached styles (from UNO) but it should not be done
         // during loading a document
-        ASSERT( false, "Don't ask for uncached styles" ); 
+        ASSERT( false, "Don't ask for uncached styles" );
         rpCache->addCompletePool( rAutoPool );
         pStyle = rpCache->getByName( rName );
     }
-    return pStyle; 
+    return pStyle;
 }
 
 void SwStyleManager::getAllStyles( std::vector<StylePool::SfxItemSet_Pointer_t> &rStyles,
                                    IStyleAccess::SwAutoStyleFamily eFamily )
 {
     StylePool& rAutoPool = eFamily == IStyleAccess::AUTO_STYLE_CHAR ? aAutoCharPool : aAutoParaPool;
-    IStylePoolIteratorAccess *pIter = rAutoPool.createIterator();
+    // --> OD 2008-03-07 #refactorlists#
+    // setup <StylePool> iterator, which skips unused styles and ignorable items
+    IStylePoolIteratorAccess *pIter = rAutoPool.createIterator( true, true );
+    // <--
     StylePool::SfxItemSet_Pointer_t pStyle = pIter->getNext();
     while( pStyle.get() )
     {
-        // Do not consider styles which aren't used.
-        if ( pStyle.use_count() > 2 )
-            rStyles.push_back( pStyle );
+        rStyles.push_back( pStyle );
+
         pStyle = pIter->getNext();
     }
     delete pIter;
