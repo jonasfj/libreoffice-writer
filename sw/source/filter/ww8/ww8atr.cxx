@@ -1,13 +1,13 @@
 /*************************************************************************
  *
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
- * 
+ *
  * Copyright 2008 by Sun Microsystems, Inc.
  *
  * OpenOffice.org - a multi-platform office productivity suite
  *
  * $RCSfile: ww8atr.cxx,v $
- * $Revision: 1.111 $
+ * $Revision: 1.112 $
  *
  * This file is part of OpenOffice.org.
  *
@@ -3061,7 +3061,7 @@ static bool lcl_IsAtTxtEnd(const SwFmtFtn& rFtn)
                                                         FindSectionNode();
         while( pSectNd && FTNEND_ATPGORDOCEND ==
                 ((const SwFmtFtnAtTxtEnd&)pSectNd->GetSection().GetFmt()->
-                GetAttr( nWh, true)).GetValue() )
+                GetFmtAttr( nWh, true)).GetValue() )
             pSectNd = pSectNd->StartOfSectionNode()->FindSectionNode();
 
         if (!pSectNd)
@@ -3203,13 +3203,13 @@ static Writer& OutWW8_SwNumRuleItem( Writer& rWrt, const SfxPoolItem& rHt )
                 {
                     pTxtNd = (SwTxtNode*)rWW8Wrt.pOutFmtNode;
 
-                    if( pTxtNd->IsCounted())
+                    if( pTxtNd->IsCountedInList())
                     {
-                        nLvl = static_cast< BYTE >(pTxtNd->GetLevel());
+                        nLvl = static_cast< BYTE >(pTxtNd->GetActualListLevel());
 
-                        if (pTxtNd->IsRestart())
+                        if (pTxtNd->IsListRestart())
                         {
-                            USHORT nStartWith = static_cast< USHORT >(pTxtNd->GetStart());
+                            USHORT nStartWith = static_cast< USHORT >(pTxtNd->GetActualListStartValue());
                             nNumId = rWW8Wrt.DupNumRuleWithLvlStart(pRule,nLvl,nStartWith);
                             if (USHRT_MAX != nNumId)
                                 ++nNumId;
@@ -3594,7 +3594,7 @@ static Writer& OutWW8_SwTextGrid( Writer& rWrt, const SfxPoolItem& rHt )
                     }
                     else
                     {
-                        nGridType = 1; 
+                        nGridType = 1;
                     }
                 }
                 break;
@@ -3608,21 +3608,21 @@ static Writer& OutWW8_SwTextGrid( Writer& rWrt, const SfxPoolItem& rHt )
            sal_uInt32 nPageCharSize = ItemGet<SvxFontHeightItem>(*(rWrtWW8.pStyles->GetSwFmt()),
                 RES_CHRATR_CJK_FONTSIZE).GetHeight();
 
-        INT32 nCharWidth = rItem.GetBaseWidth() - nPageCharSize;	   
+        INT32 nCharWidth = rItem.GetBaseWidth() - nPageCharSize;
            INT32 nFraction = 0;
            nFraction = nCharWidth%20;
            if( nCharWidth < 0 )
             nFraction = 20 + nFraction;
           nFraction = ((nFraction)*0xFFF)/20;
            nFraction = (nFraction & 0x00000FFF);
-   
+
            INT32 nMain = 0;
            nMain = nCharWidth/20;
            if( nCharWidth < 0 )
             nMain -= 1;
            nMain = nMain * 0x1000;
            nMain = (nMain & 0xFFFFF000);
-   
+
            UINT32 nCharSpace = nFraction + nMain;
            rWrtWW8.InsUInt16(0x7030);
            rWrtWW8.InsUInt32(nCharSpace);
@@ -4227,7 +4227,7 @@ static Writer& OutWW8_SwFmtCol( Writer& rWrt, const SfxPoolItem& rHt )
             const SvxULSpaceItem &rUL = pFmt->GetULSpace();
             nPageSize = pFmt->GetFrmSize().GetHeight();
             nPageSize -= rUL.GetUpper() + rUL.GetLower();
-            
+
             const SwFmtHeader *header = dynamic_cast<const SwFmtHeader *>(pFmt->GetAttrSet().GetItem(RES_HEADER));
             if (header)
             {
@@ -4967,11 +4967,13 @@ SwAttrFnTab aWW8AttrFnTab = {
 /* RES_PARATR_FORBIDDEN_RULES */    OutWW8_SfxBoolItem,
 /* RES_PARATR_VERTALIGN */          OutWW8_SvxParaVertAlignItem,
 /* RES_PARATR_SNAPTOGRID*/          OutWW8_SvxParaGridItem,
-/* RES_PARATR_DUMMY4 */             0, // Dummy:
-/* RES_PARATR_DUMMY5 */             0, // Dummy:
-/* RES_PARATR_DUMMY6 */             0, // Dummy:
-/* RES_PARATR_DUMMY7 */             0, // Dummy:
-/* RES_PARATR_DUMMY8 */             0, // Dummy:
+/* RES_PARATR_CONNECT_TO_BORDER */  0, // new
+
+/* RES_PARATR_LIST_ID */            0, // new
+/* RES_PARATR_LIST_LEVEL */         0, // new
+/* RES_PARATR_LIST_ISRESTART */     0, // new
+/* RES_PARATR_LIST_RESTARTVALUE */  0, // new
+/* RES_PARATR_LIST_ISCOUNTED */     0, // new
 
 /* RES_FILL_ORDER   */              0, // OutW4W_SwFillOrder,
 /* RES_FRM_SIZE */                  OutWW8_SwFrmSize,
