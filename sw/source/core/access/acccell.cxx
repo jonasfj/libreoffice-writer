@@ -7,7 +7,7 @@
  * OpenOffice.org - a multi-platform office productivity suite
  *
  * $RCSfile: acccell.cxx,v $
- * $Revision: 1.22 $
+ * $Revision: 1.23 $
  *
  * This file is part of OpenOffice.org.
  *
@@ -277,7 +277,7 @@ void SwAccessibleCell::InvalidatePosOrSize( const SwRect& rOldBox )
 
 // =====  XAccessibleInterface  ===========================================
 
-uno::Any SwAccessibleCell::queryInterface( const uno::Type& rType ) 
+uno::Any SwAccessibleCell::queryInterface( const uno::Type& rType )
     throw( uno::RuntimeException )
 {
     if ( rType == ::getCppuType( static_cast< uno::Reference< XAccessibleValue > * >( 0 ) ) )
@@ -294,7 +294,7 @@ uno::Any SwAccessibleCell::queryInterface( const uno::Type& rType )
 }
 
 //====== XTypeProvider ====================================================
-uno::Sequence< uno::Type > SAL_CALL SwAccessibleCell::getTypes() 
+uno::Sequence< uno::Type > SAL_CALL SwAccessibleCell::getTypes()
     throw(uno::RuntimeException)
 {
     uno::Sequence< uno::Type > aTypes( SwAccessibleContext::getTypes() );
@@ -308,7 +308,7 @@ uno::Sequence< uno::Type > SAL_CALL SwAccessibleCell::getTypes()
     return aTypes;
 }
 
-uno::Sequence< sal_Int8 > SAL_CALL SwAccessibleCell::getImplementationId() 
+uno::Sequence< sal_Int8 > SAL_CALL SwAccessibleCell::getImplementationId()
         throw(uno::RuntimeException)
 {
     vos::OGuard aGuard(Application::GetSolarMutex());
@@ -345,7 +345,7 @@ uno::Any SwAccessibleCell::getCurrentValue( )
     return aAny;
 }
 
-sal_Bool SwAccessibleCell::setCurrentValue( const uno::Any& aNumber ) 
+sal_Bool SwAccessibleCell::setCurrentValue( const uno::Any& aNumber )
     throw( uno::RuntimeException )
 {
     vos::OGuard aGuard(Application::GetSolarMutex());
@@ -356,12 +356,12 @@ sal_Bool SwAccessibleCell::setCurrentValue( const uno::Any& aNumber )
     if( bValid )
     {
         SwTblBoxValue aValue( fValue );
-        GetTblBoxFormat()->SetAttr( aValue );
+        GetTblBoxFormat()->SetFmtAttr( aValue );
     }
     return bValid;
 }
 
-uno::Any SwAccessibleCell::getMaximumValue( ) 
+uno::Any SwAccessibleCell::getMaximumValue( )
     throw( uno::RuntimeException )
 {
     uno::Any aAny;
@@ -369,7 +369,7 @@ uno::Any SwAccessibleCell::getMaximumValue( )
     return aAny;
 }
 
-uno::Any SwAccessibleCell::getMinimumValue(  ) 
+uno::Any SwAccessibleCell::getMinimumValue(  )
     throw( uno::RuntimeException )
 {
     uno::Any aAny;
