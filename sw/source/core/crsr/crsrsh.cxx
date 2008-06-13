@@ -7,7 +7,7 @@
  * OpenOffice.org - a multi-platform office productivity suite
  *
  * $RCSfile: crsrsh.cxx,v $
- * $Revision: 1.73 $
+ * $Revision: 1.74 $
  *
  * This file is part of OpenOffice.org.
  *
@@ -410,54 +410,54 @@ BOOL SwCrsrShell::LeftRight( BOOL bLeft, USHORT nCnt, USHORT nMode,
     return bRet;
 }
 
-// -> #i27615#
-void SwCrsrShell::SetMarkedNumLevel(const String & sNumRule, BYTE nLevel)
+// --> OD 2008-04-02 #refactorlists#
+void SwCrsrShell::MarkListLevel( const String& sListId,
+                                 const int nListLevel )
 {
-    if (sNumRule != sMarkedNumRule || nLevel != nMarkedNumLevel)
+    if ( sListId != sMarkedListId ||
+         nListLevel != nMarkedListLevel)
     {
-        if (sMarkedNumRule.Len() > 0)
-            pDoc->SetMarkedNumLevel(sMarkedNumRule, nMarkedNumLevel, FALSE);
+        if ( sMarkedListId.Len() > 0 )
+            pDoc->MarkListLevel( sMarkedListId, nMarkedListLevel, FALSE );
 
-        if (sNumRule.Len() > 0)
+        if ( sListId.Len() > 0 )
         {
-            pDoc->SetMarkedNumLevel(sNumRule, nLevel, TRUE);
+            pDoc->MarkListLevel( sListId, nListLevel, TRUE );
         }
 
-        sMarkedNumRule = sNumRule;
-        nMarkedNumLevel = nLevel;
+        sMarkedListId = sListId;
+        nMarkedListLevel = nListLevel;
     }
 }
 
-void SwCrsrShell::UpdateMarkedNumLevel()
+void SwCrsrShell::UpdateMarkedListLevel()
 {
     SwTxtNode * pTxtNd = _GetCrsr()->GetNode()->GetTxtNode();
 
-    if ( pTxtNd ) // #i27615#
+    if ( pTxtNd )
     {
-        if (! pTxtNd->IsNumbered())
+        if ( !pTxtNd->IsNumbered() )
         {
             pCurCrsr->_SetInFrontOfLabel( FALSE );
-            SetMarkedNumLevel(String(), 0);
+            MarkListLevel( String(), 0 );
         }
-        else if (pCurCrsr->IsInFrontOfLabel())
+        else if ( pCurCrsr->IsInFrontOfLabel() )
         {
-            SwNumRule * pNumRule = pTxtNd->GetNumRule();
-
-            if (pNumRule)
+            if ( pTxtNd->IsInList() )
             {
-                ASSERT( pTxtNd->GetLevel() >= 0 &&
-                        pTxtNd->GetLevel() < MAXLEVEL, "Which level?")
-                SetMarkedNumLevel(pNumRule->GetName(),
-                                  static_cast<BYTE>(pTxtNd->GetLevel()));
+                ASSERT( pTxtNd->GetActualListLevel() >= 0 &&
+                        pTxtNd->GetActualListLevel() < MAXLEVEL, "Which level?")
+                MarkListLevel( pTxtNd->GetListId(),
+                               pTxtNd->GetActualListLevel() );
             }
         }
         else
         {
-            SetMarkedNumLevel(String(), 0);
+            MarkListLevel( String(), 0 );
         }
     }
 }
-// <- #i27615#
+// <--
 
 BOOL SwCrsrShell::UpDown( BOOL bUp, USHORT nCnt )
 {
@@ -1023,7 +1023,7 @@ bool SwCrsrShell::SetInFrontOfLabel( BOOL bNew )
     if ( bNew != IsInFrontOfLabel() )
     {
         pCurCrsr->_SetInFrontOfLabel( bNew );
-        UpdateMarkedNumLevel();
+        UpdateMarkedListLevel();
         return true;
     }
     return false;
@@ -1757,7 +1757,7 @@ void SwCrsrShell::UpdateCrsr( USHORT eFlags, BOOL bIdleEnd )
     {
         if( pTblCrsr )
             pTblCrsr->SwSelPaintRects::Show();
-        else 
+        else
         {
             pCurCrsr->SwSelPaintRects::Show();
             if( pBlockCrsr )
@@ -1802,7 +1802,7 @@ void SwCrsrShell::UpdateCrsr( USHORT eFlags, BOOL bIdleEnd )
         aSettings.SetStyleSettings( aStyleSettings );
         GetOut()->SetSettings( aSettings );
     }
-    
+
     if( bSVCrsrVis )
         pVisCrsr->Show();           // wieder anzeigen
 }
@@ -1834,7 +1834,7 @@ void SwCrsrShell::RefreshBlockCursor()
     SwRect aRect( aMk, aPt );
     aRect.Justify();
     SwSelectionList aSelList( pFrm );
-    
+
     if( GetLayout()->FillSelection( aSelList, aRect ) )
     {
         SwCursor* pNxt = (SwCursor*)pCurCrsr->GetNext();
@@ -1879,7 +1879,7 @@ void SwCrsrShell::RefreshBlockCursor()
             while( pPam != pStart )
             {
                 --pPam;
-                
+
                 SwShellCrsr* pNew = new SwShellCrsr( *pCurCrsr );
                 pNew->Insert( pCurCrsr, 0 );
                 pCurCrsr->Remove( 0, pCurCrsr->Count() );
@@ -2569,7 +2569,10 @@ SwCrsrShell::SwCrsrShell( SwCrsrShell& rShell, Window *pInitWin )
     SwModify( 0 ), pCrsrStk( 0 ), pBlockCrsr( 0 ), pTblCrsr( 0 ),
     pBoxIdx( 0 ), pBoxPtr( 0 ), nCrsrMove( 0 ), nBasicActionCnt( 0 ),
     eMvState( MV_NONE ),
-    nMarkedNumLevel( 0 ) // #i27615#
+    // --> OD 2008-04-02 #refactorlists#
+    sMarkedListId(),
+    nMarkedListLevel( 0 )
+    // <--
 {
     SET_CURR_SHELL( this );
     // Nur die Position vom aktuellen Cursor aus der Copy-Shell uebernehmen
@@ -2598,7 +2601,10 @@ SwCrsrShell::SwCrsrShell( SwDoc& rDoc, Window *pInitWin,
     SwModify( 0 ), pCrsrStk( 0 ), pBlockCrsr( 0 ), pTblCrsr( 0 ),
     pBoxIdx( 0 ), pBoxPtr( 0 ), nCrsrMove( 0 ), nBasicActionCnt( 0 ),
     eMvState( MV_NONE ), // state for crsr-travelling - GetCrsrOfst
-    nMarkedNumLevel( 0 ) // #i27615#
+    // --> OD 2008-04-02 #refactorlists#
+    sMarkedListId(),
+    nMarkedListLevel( 0 )
+    // <--
 {
     SET_CURR_SHELL( this );
     /*
@@ -3305,7 +3311,7 @@ String SwCrsrShell::GetCrsrDescr() const
 }
 
 SwRect SwCrsrShell::GetRectOfCurrentChar()
-{   
+{
     SwCntntFrm* pFrm = pCurCrsr->GetCntntNode()->GetFrm( 0, pCurCrsr->GetPoint(), FALSE );
     SwRect aRet;
     SwCrsrMoveState aTmpState( MV_NONE );
@@ -3326,7 +3332,7 @@ void lcl_FillRecognizerData( uno::Sequence< rtl::OUString >& rSmartTagTypes,
     // Insert smart tag information
     std::vector< rtl::OUString > aSmartTagTypes;
     std::vector< uno::Reference< container::XStringKeyMap > > aStringKeyMaps;
-    
+
     for ( USHORT i = 0; i < rSmartTagList.Count(); ++i )
     {
         const xub_StrLen nSTPos = rSmartTagList.Pos( i );
@@ -3342,12 +3348,12 @@ void lcl_FillRecognizerData( uno::Sequence< rtl::OUString >& rSmartTagTypes,
             }
         }
     }
-    
+
     if ( aSmartTagTypes.size() )
     {
         rSmartTagTypes.realloc( aSmartTagTypes.size() );
         rStringKeyMaps.realloc( aSmartTagTypes.size() );
-        
+
         std::vector< rtl::OUString >::const_iterator aTypesIter = aSmartTagTypes.begin();
         USHORT i = 0;
         for ( aTypesIter = aSmartTagTypes.begin(); aTypesIter != aSmartTagTypes.end(); ++aTypesIter )
@@ -3360,7 +3366,7 @@ void lcl_FillRecognizerData( uno::Sequence< rtl::OUString >& rSmartTagTypes,
     }
 }
 
-void lcl_FillTextRange( uno::Reference<text::XTextRange>& rRange, 
+void lcl_FillTextRange( uno::Reference<text::XTextRange>& rRange,
                    SwTxtNode& rNode, xub_StrLen nBegin, xub_StrLen nLen )
 {
     // create SwPosition for nStartIndex
@@ -3370,7 +3376,7 @@ void lcl_FillTextRange( uno::Reference<text::XTextRange>& rRange,
     // create SwPosition for nEndIndex
     SwPosition aEndPos( aStartPos );
     aEndPos.nContent = nBegin + nLen;
-    
+
     uno::Reference<text::XTextRange> xRange =
         SwXTextRange::CreateTextRangeFromPosition( rNode.GetDoc(), aStartPos, &aEndPos);
 
@@ -3378,12 +3384,12 @@ void lcl_FillTextRange( uno::Reference<text::XTextRange>& rRange,
 }
 
 void SwCrsrShell::GetSmartTagTerm( uno::Sequence< rtl::OUString >& rSmartTagTypes,
-                                   uno::Sequence< uno::Reference< container::XStringKeyMap > >& rStringKeyMaps, 
+                                   uno::Sequence< uno::Reference< container::XStringKeyMap > >& rStringKeyMaps,
                                    uno::Reference< text::XTextRange>& rRange ) const
 {
     if ( !SwSmartTagMgr::Get().IsSmartTagsEnabled() )
         return;
-    
+
     SwPaM* pCrsr = GetCrsr();
     SwPosition aPos( *pCrsr->GetPoint() );
     SwTxtNode *pNode = aPos.nNode.GetNode().GetTxtNode();
@@ -3395,7 +3401,7 @@ void SwCrsrShell::GetSmartTagTerm( uno::Sequence< rtl::OUString >& rSmartTagType
             xub_StrLen nCurrent = aPos.nContent.GetIndex();
             xub_StrLen nBegin = nCurrent;
             xub_StrLen nLen = 1;
-        
+
             if( pSmartTagList->InWrongWord( nBegin, nLen ) && !pNode->IsSymbol(nBegin) )
             {
                 const USHORT nIndex = pSmartTagList->GetWrongPos( nBegin );
@@ -3405,7 +3411,7 @@ void SwCrsrShell::GetSmartTagTerm( uno::Sequence< rtl::OUString >& rSmartTagType
                     pSmartTagList = pSubList;
                     nCurrent = 0;
                 }
-                
+
                 lcl_FillRecognizerData( rSmartTagTypes, rStringKeyMaps, *pSmartTagList, nCurrent );
                 lcl_FillTextRange( rRange, *pNode, nBegin, nLen );
             }
@@ -3416,8 +3422,8 @@ void SwCrsrShell::GetSmartTagTerm( uno::Sequence< rtl::OUString >& rSmartTagType
 // see also SwEditShell::GetCorrection( const Point* pPt, SwRect& rSelectRect )
 void SwCrsrShell::GetSmartTagTerm( const Point& rPt, SwRect& rSelectRect,
                                    uno::Sequence< rtl::OUString >& rSmartTagTypes,
-                                   uno::Sequence< uno::Reference< container::XStringKeyMap > >& rStringKeyMaps,                                
-                                   uno::Reference<text::XTextRange>& rRange ) 
+                                   uno::Sequence< uno::Reference< container::XStringKeyMap > >& rStringKeyMaps,
+                                   uno::Reference<text::XTextRange>& rRange )
 {
     if ( !SwSmartTagMgr::Get().IsSmartTagsEnabled() )
         return;
@@ -3439,7 +3445,7 @@ void SwCrsrShell::GetSmartTagTerm( const Point& rPt, SwRect& rSelectRect,
         xub_StrLen nCurrent = aPos.nContent.GetIndex();
         xub_StrLen nBegin = nCurrent;
         xub_StrLen nLen = 1;
-        
+
         if( pSmartTagList->InWrongWord( nBegin, nLen ) && !pNode->IsSymbol(nBegin) )
         {
             const USHORT nIndex = pSmartTagList->GetWrongPos( nBegin );
@@ -3449,7 +3455,7 @@ void SwCrsrShell::GetSmartTagTerm( const Point& rPt, SwRect& rSelectRect,
                 pSmartTagList = pSubList;
                 nCurrent = eTmpState.pSpecialPos->nCharOfst;
             }
-            
+
             lcl_FillRecognizerData( rSmartTagTypes, rStringKeyMaps, *pSmartTagList, nCurrent );
             lcl_FillTextRange( rRange, *pNode, nBegin, nLen );
 
