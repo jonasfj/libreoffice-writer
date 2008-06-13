@@ -7,7 +7,7 @@
  * OpenOffice.org - a multi-platform office productivity suite
  *
  * $RCSfile: ftnidx.cxx,v $
- * $Revision: 1.10 $
+ * $Revision: 1.11 $
  *
  * This file is part of OpenOffice.org.
  *
@@ -336,13 +336,13 @@ SwTxtFtn* SwFtnIdxs::SeekEntry( const SwNodeIndex& rPos, USHORT* pFndPos ) const
 const SwSectionNode* SwUpdFtnEndNtAtEnd::FindSectNdWithEndAttr(
                 const SwTxtFtn& rTxtFtn )
 {
-    USHORT nWh = static_cast<USHORT>( rTxtFtn.GetFtn().IsEndNote() ? 
+    USHORT nWh = static_cast<USHORT>( rTxtFtn.GetFtn().IsEndNote() ?
                         RES_END_AT_TXTEND :	RES_FTN_AT_TXTEND );
     USHORT nVal;
     const SwSectionNode* pNd = rTxtFtn.GetTxtNode().FindSectionNode();
     while( pNd && FTNEND_ATTXTEND_OWNNUMSEQ != ( nVal =
             ((const SwFmtFtnAtTxtEnd&)pNd->GetSection().GetFmt()->
-            GetAttr( nWh, TRUE )).GetValue() ) &&
+            GetFmtAttr( nWh, TRUE )).GetValue() ) &&
             FTNEND_ATTXTEND_OWNNUMANDFMT != nVal )
         pNd = pNd->StartOfSectionNode()->FindSectionNode();
 
@@ -380,7 +380,7 @@ USHORT SwUpdFtnEndNtAtEnd::GetNumber( const SwTxtFtn& rTxtFtn,
     {
         pArr->Insert( pNd, pArr->Count() );
         nRet = ((SwFmtFtnEndAtTxtEnd&)rNd.GetSection().GetFmt()->
-                                GetAttr( nWh )).GetOffset();
+                                GetFmtAttr( nWh )).GetOffset();
         ++nRet;
         pNum->Insert( nRet, pNum->Count() );
     }
