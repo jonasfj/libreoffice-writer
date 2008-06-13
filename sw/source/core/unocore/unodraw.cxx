@@ -7,7 +7,7 @@
  * OpenOffice.org - a multi-platform office productivity suite
  *
  * $RCSfile: unodraw.cxx,v $
- * $Revision: 1.80 $
+ * $Revision: 1.81 $
  *
  * This file is part of OpenOffice.org.
  *
@@ -1101,7 +1101,7 @@ void SwXShape::setPropertyValue(const rtl::OUString& rPropertyName, const uno::A
                             aAnchor.SetAnchor(&aPos);
                             aAnchor.SetType(FLY_AT_FLY);
                             aItemSet.Put(aAnchor);
-                            pFmt->SetAttr(aItemSet);
+                            pFmt->SetFmtAttr(aItemSet);
                             bDone = sal_True;
                         }
                     }
@@ -1168,17 +1168,17 @@ void SwXShape::setPropertyValue(const rtl::OUString& rPropertyName, const uno::A
 
                                 //The connection is removed now the attribute can be deleted.
                                 pTxtNode->Delete( RES_TXTATR_FLYCNT, nIdx, nIdx );
-                                //create a new one 
+                                //create a new one
                                 SwTxtNode *pNd = pInternalPam->GetNode()->GetTxtNode();
                                 DBG_ASSERT( pNd, "Crsr steht nicht auf TxtNode." );
                                 pNd->InsertItem( SwFmtFlyCnt( pFmt ),
                                                 pInternalPam->GetPoint()->nContent.GetIndex(), 0 );
-                            }    
+                            }
                             else
                             {
                                 aAnchor.SetAnchor( pInternalPam->GetPoint() );
                                 aSet.Put(aAnchor);
-                                pFmt->SetAttr(aSet);
+                                pFmt->SetFmtAttr(aSet);
                             }
                         }
                         else
@@ -1213,13 +1213,13 @@ void SwXShape::setPropertyValue(const rtl::OUString& rPropertyName, const uno::A
                     else
                     {
                         aPropSet.setPropertyValue(*pMap, aValue, aSet);
-                        pFmt->SetAttr(aSet);
+                        pFmt->SetFmtAttr(aSet);
                     }
                 }
                 else
                 {
                     aPropSet.setPropertyValue(*pMap, aValue, aSet);
-                    
+
                     if(RES_ANCHOR == pMap->nWID && MID_ANCHOR_ANCHORTYPE == pMap->nMemberId)
                     {
                         bool bSetAttr = true;
@@ -1231,7 +1231,7 @@ void SwXShape::setPropertyValue(const rtl::OUString& rPropertyName, const uno::A
                         SdrObject* pObj = pFmt->FindSdrObject();
                         SwFrmFmt *pFlyFmt = FindFrmFmt( pObj );
                         pFlyFmt->DelFrms();
-                        if( text::TextContentAnchorType_AS_CHARACTER != eNewAnchor && 
+                        if( text::TextContentAnchorType_AS_CHARACTER != eNewAnchor &&
                             FLY_IN_CNTNT == eOldAnchorId )
                         {
                             //With AnchorAsCharacter the current TxtAttribute has to be deleted.
@@ -1255,7 +1255,7 @@ void SwXShape::setPropertyValue(const rtl::OUString& rPropertyName, const uno::A
                                 FLY_PAGE == eOldAnchorId )
                         {
                             SwFmtAnchor aNewAnchor( dynamic_cast< const SwFmtAnchor& >( aSet.Get( RES_ANCHOR ) ) );
-                            //if the fly has been anchored at page then it needs to be connected 
+                            //if the fly has been anchored at page then it needs to be connected
                             //to the content position
                             SwPaM aPam(pDoc->GetNodes().GetEndOfContent());
                             if( pDoc->GetRootFrm() )
@@ -1264,7 +1264,7 @@ void SwXShape::setPropertyValue(const rtl::OUString& rPropertyName, const uno::A
                                 Point aTmp( pObj->GetSnapRect().TopLeft() );
                                 pDoc->GetRootFrm()->GetCrsrOfst( aPam.GetPoint(), aTmp, &aState );
                             }
-                            else 
+                            else
                             {
                                 //without access to the layout the last node of the body will be used as anchor position
                                 aPam.Move( fnMoveBackward, fnGoDoc );
@@ -1272,9 +1272,9 @@ void SwXShape::setPropertyValue(const rtl::OUString& rPropertyName, const uno::A
                             //anchor position has to be inserted after the text attribute has been inserted
                             aNewAnchor.SetAnchor( aPam.GetPoint() );
                             aSet.Put( aNewAnchor );
-                            pFmt->SetAttr(aSet);
+                            pFmt->SetFmtAttr(aSet);
                             bSetAttr = false;
-                            if( text::TextContentAnchorType_AS_CHARACTER == eNewAnchor && 
+                            if( text::TextContentAnchorType_AS_CHARACTER == eNewAnchor &&
                                 FLY_IN_CNTNT != eOldAnchorId )
                             {
                                 //the RES_TXTATR_FLYCNT needs to be added now
@@ -1283,14 +1283,14 @@ void SwXShape::setPropertyValue(const rtl::OUString& rPropertyName, const uno::A
                                 pNd->InsertItem( SwFmtFlyCnt( pFlyFmt ),
                                                 aPam.GetPoint()->nContent.GetIndex(), 0 );
                                 //aPam.GetPoint()->nContent--;
-                                
-                            }    
+
+                            }
                         }
                         if( bSetAttr )
-                            pFmt->SetAttr(aSet);
+                            pFmt->SetFmtAttr(aSet);
                     }
-                    else    
-                        pFmt->SetAttr(aSet);
+                    else
+                        pFmt->SetFmtAttr(aSet);
                 }
             }
             else
