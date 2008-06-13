@@ -1,13 +1,13 @@
 /*************************************************************************
  *
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
- * 
+ *
  * Copyright 2008 by Sun Microsystems, Inc.
  *
  * OpenOffice.org - a multi-platform office productivity suite
  *
  * $RCSfile: feshview.cxx,v $
- * $Revision: 1.60 $
+ * $Revision: 1.61 $
  *
  * This file is part of OpenOffice.org.
  *
@@ -1014,7 +1014,7 @@ void SwFEShell::ChangeOpaque( SdrLayerID nLayerId )
                     SwFmt *pFmt = ((SwVirtFlyDrawObj*)pObj)->GetFlyFrm()->GetFmt();
                     SvxOpaqueItem aOpa( pFmt->GetOpaque() );
                     aOpa.SetValue(  nLayerId == pIDDMA->GetHellId() );
-                    pFmt->SetAttr( aOpa );
+                    pFmt->SetFmtAttr( aOpa );
                 }
             }
         }
@@ -1877,7 +1877,7 @@ BOOL SwFEShell::ImpEndCreate()
                             aAnch.GetCntntAnchor()->nContent.GetIndex(), 0 );
             SwFmtVertOrient aVertical( pFmt->GetVertOrient() );
             aVertical.SetVertOrient( text::VertOrientation::LINE_CENTER );
-            pFmt->SetAttr( aVertical );
+            pFmt->SetFmtAttr( aVertical );
         }
         if( pAnch->IsTxtFrm() && ((SwTxtFrm*)pAnch)->IsFollow() )
         {
@@ -2368,8 +2368,6 @@ void SwFEShell::GroupSelection()
         StartUndo( UNDO_START );
 
         GetDoc()->GroupSelection( *Imp()->GetDrawView() );
-        // OD 2004-04-01 #i26791# - no longer needed
-        //ChgAnchor( 0, TRUE );
 
         EndUndo( UNDO_END );
         EndAllAction();
@@ -2395,8 +2393,6 @@ void SwFEShell::UnGroupSelection()
         StartUndo( UNDO_START );
 
         GetDoc()->UnGroupSelection( *Imp()->GetDrawView() );
-        // --> OD 2004-06-15 #i30010# - change of anchor no longer needed
-        //ChgAnchor( 0, TRUE );
 
         EndUndo( UNDO_END );
         EndAllAction();
@@ -2944,9 +2940,9 @@ void SwFEShell::CreateDefaultShape( UINT16 /*SdrObjKind ?*/ eSdrObjectKind, cons
                 case OBJ_FREELINE:
                 {
                     basegfx::B2DPolygon aInnerPoly;
-                    
+
                     aInnerPoly.append(basegfx::B2DPoint(aRect.Left(), aRect.Bottom()));
-                    
+
                     aInnerPoly.appendBezierSegment(
                         basegfx::B2DPoint(aRect.Left(), aRect.Top()),
                         basegfx::B2DPoint(aRect.Center().X(), aRect.Top()),
@@ -2956,7 +2952,7 @@ void SwFEShell::CreateDefaultShape( UINT16 /*SdrObjKind ?*/ eSdrObjectKind, cons
                         basegfx::B2DPoint(aRect.Center().X(), aRect.Bottom()),
                         basegfx::B2DPoint(aRect.Right(), aRect.Bottom()),
                         basegfx::B2DPoint(aRect.Right(), aRect.Top()));
-                    
+
                     aInnerPoly.append(basegfx::B2DPoint(aRect.Right(), aRect.Bottom()));
                     aInnerPoly.setClosed(true);
                     aPoly.append(aInnerPoly);
