@@ -7,7 +7,7 @@
  * OpenOffice.org - a multi-platform office productivity suite
  *
  * $RCSfile: cption.cxx,v $
- * $Revision: 1.28 $
+ * $Revision: 1.29 $
  *
  * This file is part of OpenOffice.org.
  *
@@ -85,21 +85,21 @@ class SwSequenceOptionDialog : public SvxStandardDialog
     ListBox 		aLbLevel;
     FixedText 		aFtDelim;
     Edit 			aEdDelim;
-    
+
     FixedLine       aFlCatAndFrame;
     FixedText		aFtCharStyle;
     ListBox			aLbCharStyle;
     CheckBox        aApplyBorderAndShadowCB;
-    
+
     //#i61007# order of captions
-    FixedLine       aFlCaptionOrder; 
+    FixedLine       aFlCaptionOrder;
     FixedText       aFtCaptionOrder;
     ListBox         aLbCaptionOrder;
-    
+
     OKButton        aOKButton;
     CancelButton	aCancelButton;
     HelpButton 		aHelpButton;
-    
+
     SwView&         rView;
     String			aFldTypeName;
 
@@ -410,7 +410,7 @@ void SwCaptionDialog::DrawSample()
             if( pFldType && pFldType->GetOutlineLvl() < MAXLEVEL )
             {
                 sal_Int8 nLvl = pFldType->GetOutlineLvl();
-                SwNodeNum::tNumberVector aNumVector;
+                SwNumberTree::tNumberVector aNumVector;
                 for( sal_Int8 i = 0; i <= nLvl; ++i )
                     aNumVector.push_back(1);
 
@@ -613,14 +613,14 @@ long SwCaptionDialog::CategoryBox::PreNotify( NotifyEvent& rNEvt )
     return nHandled;
 }
 /*-- 01.11.2007 10:45:51---------------------------------------------------
-    //#i61007# order of captions       
+    //#i61007# order of captions
   -----------------------------------------------------------------------*/
 void lcl_MoveH( Window& rWin, sal_Int32 nMove )
 {
     Point aPos( rWin.GetPosPixel() );
     aPos.Y() += nMove;
     rWin.SetPosPixel(aPos);
-}    
+}
 void SwCaptionDialog::ApplyCaptionOrder()
 {
     //have the settings changed?
