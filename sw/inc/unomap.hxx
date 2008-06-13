@@ -7,7 +7,7 @@
  * OpenOffice.org - a multi-platform office productivity suite
  *
  * $RCSfile: unomap.hxx,v $
- * $Revision: 1.62 $
+ * $Revision: 1.63 $
  *
  * This file is part of OpenOffice.org.
  *
@@ -317,7 +317,8 @@
 #define WID_CONTINUOUS 	                1
 #define WID_RULE_NAME	                2
 #define WID_IS_ABS_MARGINS				3
-#define WID_IS_OUTLINE				    4
+#define WID_IS_OUTLINE                  4
+#define WID_DEFAULT_LIST_ID             5
 
 //TextColumns
 #define WID_TXTCOL_LINE_WIDTH			0
