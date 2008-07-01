@@ -1,13 +1,13 @@
 /*************************************************************************
  *
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
- * 
+ *
  * Copyright 2008 by Sun Microsystems, Inc.
  *
  * OpenOffice.org - a multi-platform office productivity suite
  *
  * $RCSfile: txtedt.cxx,v $
- * $Revision: 1.90 $
+ * $Revision: 1.91 $
  *
  * This file is part of OpenOffice.org.
  *
@@ -1863,6 +1863,13 @@ SwWrongList* SwTxtNode::GetWrong()
 {
     return pParaIdleData_Impl ? pParaIdleData_Impl->pWrong : 0;
 }
+
+// --> OD 2008-05-27 #i71360#
+const SwWrongList* SwTxtNode::GetWrong() const
+{
+    return pParaIdleData_Impl ? pParaIdleData_Impl->pWrong : 0;
+}
+// <--
 
 void SwTxtNode::SetGrammarCheck( SwWrongList* pNew, bool bDelete )
 {
