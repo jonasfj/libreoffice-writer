@@ -1,13 +1,13 @@
 /*************************************************************************
  *
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
- * 
+ *
  * Copyright 2008 by Sun Microsystems, Inc.
  *
  * OpenOffice.org - a multi-platform office productivity suite
  *
  * $RCSfile: drwtxtex.cxx,v $
- * $Revision: 1.45 $
+ * $Revision: 1.46 $
  *
  * This file is part of OpenOffice.org.
  *
@@ -161,12 +161,12 @@ void SwDrawTextShell::Execute( SfxRequest &rReq )
             if( !pPool2 )
                 pPool2 = aEditAttr.GetPool();
             SvxScriptSetItem aSetItem( nSlot, *pPool2 );
-            
+
             // #i78017 establish the same behaviour as in Writer
             USHORT nScriptTypes = SCRIPTTYPE_LATIN | SCRIPTTYPE_ASIAN | SCRIPTTYPE_COMPLEX;
             if (nSlot == SID_ATTR_CHAR_FONT)
                 nScriptTypes = pOLV->GetSelectedScriptType();
-            
+
             aSetItem.PutItemForScriptType( nScriptTypes, pNewAttrs->Get( nWhich ) );
             aNewAttr.Put( aSetItem.GetItemSet() );
         }
@@ -265,7 +265,7 @@ void SwDrawTextShell::Execute( SfxRequest &rReq )
                 {
                     // select current paragraph (and restore selection later on...)
                     EditView & rEditView = pOLV->GetEditView();
-                    SwLangHelper::SelectPara( rEditView, rEditView.GetSelection() );		
+                    SwLangHelper::SelectPara( rEditView, rEditView.GetSelection() );
                     bRestoreSelection = true;
                 }
 
@@ -482,7 +482,7 @@ void SwDrawTextShell::Execute( SfxRequest &rReq )
 
     if (IsTextEdit() && pOLV->GetOutliner()->IsModified())
         rSh.SetModified();
-    
+
     if (bRestoreSelection)
     {
         // restore selection
@@ -825,6 +825,11 @@ void SwDrawTextShell::StateClpbrd(SfxItemSet &rSet)
             case FN_PASTESPECIAL:
                 rSet.DisableItem( FN_PASTESPECIAL );
                 break;
+            // --> OD 2008-06-20 #151110#
+            case SID_CLIPBOARD_FORMAT_ITEMS:
+                rSet.DisableItem( SID_CLIPBOARD_FORMAT_ITEMS );
+                break;
+            // <--
         }
         nWhich = aIter.NextWhich();
     }
