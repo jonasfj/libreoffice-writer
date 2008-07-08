@@ -1,13 +1,13 @@
 /*************************************************************************
  *
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
- * 
+ *
  * Copyright 2008 by Sun Microsystems, Inc.
  *
  * OpenOffice.org - a multi-platform office productivity suite
  *
  * $RCSfile: txttab.cxx,v $
- * $Revision: 1.31 $
+ * $Revision: 1.32 $
  *
  * This file is part of OpenOffice.org.
  *
@@ -47,6 +47,9 @@
 #include "itrform2.hxx"
 #include "txtfrm.hxx"
 #include <numrule.hxx>
+// --> OD 2008-06-05 #i89179#
+#include <porfld.hxx>
+// <--
 
 
 /*************************************************************************
@@ -125,7 +128,7 @@ SwTabPortion *SwTxtFormatter::NewTabPortion( SwTxtFormatInfo &rInf, bool bAuto )
             nTabLeft = bRTL ? pFrm->Frm().Right() : pFrm->Frm().Left();
         }
         // <--
-                                   
+
         //
         // nLinePos: The absolute position, where we started the line formatting.
         //
@@ -243,7 +246,7 @@ SwTabPortion *SwTxtFormatter::NewTabPortion( SwTxtFormatInfo &rInf, bool bAuto )
             if( pPor )
                 nForced += pPor->Width();
         }
-       
+
         // <--
         // --> OD 2008-02-07 #newlistlevelattrs#
         // In case that the proposed new tab stop position is the list tab stop
@@ -251,7 +254,23 @@ SwTabPortion *SwTxtFormatter::NewTabPortion( SwTxtFormatInfo &rInf, bool bAuto )
 //        if( nNextPos > 0 &&
 //             (  bRTL && nTabLeft - nForced < nCurrentAbsPos ||
 //               !bRTL && nTabLeft + nForced > nCurrentAbsPos ) )
-        if ( 
+        // --> OD 2008-06-05 #i89181#
+        // Now the application of a tab stop at the left margin in case a list
+        // tab stop is processed depends on compatibility option TAB_AT_LEFT_INDENT_FOR_PARA_IN_LIST.
+//        const bool bIsListTabStopPosition( pTabStop &&
+//                                aLineInf.IsListTabStopIncluded() &&
+//                                nNextPos == aLineInf.GetListTabStopPosition() );
+//        if ( !bIsListTabStopPosition &&
+        const bool bTabAtLeftMargin =
+            // it is not the list tab stop:
+            ( !pTabStop ||
+              !aLineInf.IsListTabStopIncluded() ||
+              nNextPos != aLineInf.GetListTabStopPosition() ) ||
+            // compatibility option TAB_AT_LEFT_INDENT_FOR_PARA_IN_LIST:
+            pFrm->GetTxtNode()->getIDocumentSettingAccess()->
+                get(IDocumentSettingAccess::TAB_AT_LEFT_INDENT_FOR_PARA_IN_LIST);
+        if ( bTabAtLeftMargin &&
+        // <--
              ( ( bRTL && nCurrentAbsPos > nTabLeft - nForced ) ||
                ( !bRTL && nCurrentAbsPos < nTabLeft + nForced ) ) &&
              nNextPos > nForced )
@@ -381,6 +400,19 @@ sal_Bool SwTabPortion::PreFormat( SwTxtFormatInfo &rInf )
     // <--
     if ( !bTabCompat )
     {
+        // --> OD 2008-06-05 #i89179#
+        // tab portion representing the list tab of a list label gets the
+        // same font as the corresponding number portion
+        std::auto_ptr< SwFontSave > pSave( 0 );
+        if ( GetLen() == 0 &&
+             rInf.GetLast() && rInf.GetLast()->InNumberGrp() &&
+             static_cast<SwNumberPortion*>(rInf.GetLast())->HasFont() )
+        {
+            const SwFont* pNumberPortionFont =
+                    static_cast<SwNumberPortion*>(rInf.GetLast())->GetFont();
+            pSave.reset( new SwFontSave( rInf, const_cast<SwFont*>(pNumberPortionFont) ) );
+        }
+        // <--
         XubString aTmp( ' ' );
         SwTxtSizeInfo aInf( rInf, aTmp );
         nMinimumTabWidth = aInf.GetTxtSize().Width();
@@ -558,6 +590,24 @@ void SwTabPortion::Paint( const SwTxtPaintInfo &rInf ) const
     }
 #endif
 
+    // --> OD 2008-06-05 #i89179#
+    // tab portion representing the list tab of a list label gets the
+    // same font as the corresponding number portion
+    std::auto_ptr< SwFontSave > pSave( 0 );
+    if ( GetLen() == 0 )
+    {
+        const SwLinePortion* pPrevPortion =
+            const_cast<SwTabPortion*>(this)->FindPrevPortion( rInf.GetParaPortion() );
+        if ( pPrevPortion &&
+             pPrevPortion->InNumberGrp() &&
+             static_cast<const SwNumberPortion*>(pPrevPortion)->HasFont() )
+        {
+            const SwFont* pNumberPortionFont =
+                    static_cast<const SwNumberPortion*>(pPrevPortion)->GetFont();
+            pSave.reset( new SwFontSave( rInf, const_cast<SwFont*>(pNumberPortionFont) ) );
+        }
+    }
+    // <--
     rInf.DrawBackBrush( *this );
 
     // do we have to repaint a post it portion?
