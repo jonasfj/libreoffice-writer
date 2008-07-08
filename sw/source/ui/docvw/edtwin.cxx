@@ -1,13 +1,13 @@
 /*************************************************************************
  *
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
- * 
+ *
  * Copyright 2008 by Sun Microsystems, Inc.
  *
  * OpenOffice.org - a multi-platform office productivity suite
  *
  * $RCSfile: edtwin.cxx,v $
- * $Revision: 1.161 $
+ * $Revision: 1.162 $
  *
  * This file is part of OpenOffice.org.
  *
@@ -1335,7 +1335,7 @@ void SwEditWin::KeyInput(const KeyEvent &rKEvt)
 
     // enable switching to notes ankor with Ctrl - Alt - Page Up/Down
     // pressing this inside a note will switch to next/previous note
-    if ((rKeyCode.IsMod1() && rKeyCode.IsMod2()) && ((rKeyCode.GetCode() == KEY_PAGEUP) || (rKeyCode.GetCode() == KEY_PAGEDOWN))) 
+    if ((rKeyCode.IsMod1() && rKeyCode.IsMod2()) && ((rKeyCode.GetCode() == KEY_PAGEUP) || (rKeyCode.GetCode() == KEY_PAGEDOWN)))
     {
         bool bNext = rKeyCode.GetCode()==KEY_PAGEDOWN ? true : false;
         SwFieldType* pFldType = rSh.GetFldType(0, RES_POSTITFLD);
@@ -2285,12 +2285,16 @@ KEYINPUT_CHECKTABLE_INSDEL:
 
                 // -> #i23726#
             case KS_NumIndentInc:
-                rSh.NumIndent(360);
+                // --> OD 2008-06-16 #i90078#
+                rSh.ChangeIndentOfAllListLevels(360);
+                // <--
                 nKS_NUMINDENTINC_Count = 2;
                 break;
 
             case KS_NumIndentDec:
-                rSh.NumIndent(-360);
+                // --> OD 2008-06-16 #i90078#
+                rSh.ChangeIndentOfAllListLevels(-360);
+                // <--
                 break;
                 // <- #i23726#
 
