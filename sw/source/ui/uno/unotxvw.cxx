@@ -1,13 +1,13 @@
 /*************************************************************************
  *
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
- * 
+ *
  * Copyright 2008 by Sun Microsystems, Inc.
  *
  * OpenOffice.org - a multi-platform office productivity suite
  *
  * $RCSfile: unotxvw.cxx,v $
- * $Revision: 1.70 $
+ * $Revision: 1.71 $
  *
  * This file is part of OpenOffice.org.
  *
@@ -1245,11 +1245,11 @@ awt::Point SwXTextViewCursor::getPosition(void) throw( uno::RuntimeException )
         const SwRect aCharRect(rSh.GetCharRect());
 
         const SwFrmFmt& rMaster = rSh.GetPageDesc( rSh.GetCurPageDesc() ).GetMaster();
-        
-        const SvxULSpaceItem& rUL = rMaster.GetULSpace(); 
+
+        const SvxULSpaceItem& rUL = rMaster.GetULSpace();
         const long nY = aCharRect.Top() - (rUL.GetUpper() + DOCUMENTBORDER);
         aRet.Y = TWIP_TO_MM100(nY);
-        
+
         const SvxLRSpaceItem& rLR = rMaster.GetLRSpace();
         const long nX = aCharRect.Left() - (rLR.GetLeft() + DOCUMENTBORDER);
         aRet.X = TWIP_TO_MM100(nX);
@@ -2194,6 +2194,8 @@ uno::Reference< datatransfer::XTransferable > SAL_CALL SwXTextView::getTransfera
 
 void SAL_CALL SwXTextView::insertTransferable( const uno::Reference< datatransfer::XTransferable >& xTrans ) throw (datatransfer::UnsupportedFlavorException, uno::RuntimeException)
 {
+    ::vos::OGuard aGuard(Application::GetSolarMutex());
+
     //force immediat shell update
     GetView()->StopShellTimer();
     SwWrtShell& rSh = GetView()->GetWrtShell();
