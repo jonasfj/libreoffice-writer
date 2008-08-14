@@ -7,7 +7,7 @@
  * OpenOffice.org - a multi-platform office productivity suite
  *
  * $RCSfile: postit.cxx,v $
- * $Revision: 1.8 $
+ * $Revision: 1.9 $
  *
  * This file is part of OpenOffice.org.
  *
@@ -353,6 +353,12 @@ IMPL_LINK(PostItTxt, OnlineSpellCallback, SpellCallbackInfo*, pInfo)
     return 0;
 }
 
+IMPL_LINK( PostItTxt, Select, Menu*, pSelMenu )
+{
+    mpPostIt->ExecuteCommand( pSelMenu->GetCurItemId() );
+    return 0;
+}
+
 void PostItTxt::Command( const CommandEvent& rCEvt )
 {
     if ( rCEvt.GetCommand() == COMMAND_CONTEXTMENU )
@@ -371,6 +377,10 @@ void PostItTxt::Command( const CommandEvent& rCEvt )
             aRewriter.AddRule(UNDO_ARG1, mpPostIt->GetAuthor());
             aText = aRewriter.Apply(aText);
             ((PopupMenu*)aMgr->GetSVMenu())->SetItemText(FN_DELETE_NOTE_AUTHOR,aText);
+            // SwPostItLinkForwarder_Impl aFwd( ((PopupMenu*)aMgr->GetSVMenu())->pSvMenu->GetSelectHdl(), mpPostIt );
+            // ((PopupMenu*)aMgr->GetSVMenu())->pSvMenu->SetSelectHdl( LINK(&aFwd, SwPostItLinkForwarder_Impl, Select) );
+
+            ((PopupMenu*)aMgr->GetSVMenu())->SetSelectHdl( LINK(this, PostItTxt, Select) );
 
             if (rCEvt.IsMouseEvent())
                 ((PopupMenu*)aMgr->GetSVMenu())->Execute(this,rCEvt.GetMousePosPixel());
@@ -379,7 +389,7 @@ void PostItTxt::Command( const CommandEvent& rCEvt )
                 const Size aSize = GetSizePixel();
                 const Point aPos = Point( aSize.getWidth()/2, aSize.getHeight()/2 );
                 ((PopupMenu*)aMgr->GetSVMenu())->Execute(this,aPos);
-            }	
+            }
             delete aMgr;
         }
     }
@@ -492,11 +502,11 @@ SwPostIt::SwPostIt( Window* pParent, WinBits nBits, SwFmtFld* aField,SwPostItMgr
     if(pPaintWindow)
     {
         pOverlayManager = pPaintWindow->GetOverlayManager();
-        
+
         mpShadow = new SwPostItShadow(basegfx::B2DPoint(0,0),basegfx::B2DPoint(0,0),Color(0,0,0),SS_NORMAL);
         mpShadow->setVisible(false);
         pOverlayManager->add(*mpShadow);
-    }	
+    }
 
     InitControls();
     SetPostItText();
@@ -584,7 +594,7 @@ SwPostIt::~SwPostIt()
 void SwPostIt::Paint( const Rectangle& rRect)
 {
     Window::Paint(rRect);
-    
+
     if (mpMeta->IsVisible() )
     {
         //draw left over space
@@ -662,7 +672,7 @@ void SwPostIt::TranslateTopPosition(const long aAmount)
 
 void SwPostIt::ShowAnkorOnly(const Point &aPoint)
 {
-    HideNote();	
+    HideNote();
     SetPosAndSize();
     if (mpAnkor)
     {
@@ -1349,6 +1359,9 @@ void SwPostIt::ExecuteCommand(USHORT nSlot)
             aItems[1] = 0;
             mpView->GetViewFrame()->GetBindings().Execute( nSlot, aItems, 0, SFX_CALLMODE_ASYNCHRON );
         }
+        default:
+            mpView->GetViewFrame()->GetBindings().Execute( nSlot );
+            break;
     }
 }
 
@@ -1497,7 +1510,7 @@ void SwPostItShadow::drawGeometry(OutputDevice& rOutputDevice)
     const Point aEndBig(FRound(GetSecondPosition().getX()), FRound(GetSecondPosition().getY() + rOutputDevice.PixelToLogic(Size(0,aBigHeight)).Height()));
     Rectangle aSmallRectangle(aStart, aEndSmall);
     Rectangle aBigRectangle(aStart, aEndBig);
-            
+
     switch(mShadowState)
     {
         case SS_NORMAL:
@@ -1507,7 +1520,7 @@ void SwPostItShadow::drawGeometry(OutputDevice& rOutputDevice)
             rOutputDevice.DrawGradient(aSmallRectangle, aGradient);
             break;
         }
-        case SS_VIEW: 
+        case SS_VIEW:
         {
             Gradient aGradient(GRADIENT_LINEAR,Color(230,230,230),POSTIT_SHADOW_BRIGHT);
             aGradient.SetAngle(1800);
