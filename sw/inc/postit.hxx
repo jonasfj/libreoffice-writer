@@ -1,14 +1,14 @@
 /*************************************************************************
  *
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
- * 
+ *
  * Copyright 2008 by Sun Microsystems, Inc.
  *
  * OpenOffice.org - a multi-platform office productivity suite
  *
  * $RCSfile: postit.hxx,v $
  *
- * $Revision: 1.8 $
+ * $Revision: 1.9 $
  *
  * This file is part of OpenOffice.org.
  *
@@ -148,10 +148,10 @@ class SwPostItShadow: public sdr::overlay::OverlayObjectWithBasePosition
     public:
         SwPostItShadow(const basegfx::B2DPoint& rBasePos, const basegfx::B2DPoint& rSecondPosition, Color aBaseColor,ShadowState aState);
         virtual ~SwPostItShadow();
-        
+
         void SetShadowState(ShadowState aState);
         ShadowState GetShadowState() {return mShadowState;}
-        
+
         const basegfx::B2DPoint& GetSecondPosition() const { return maSecondPosition; }
         void SetSecondPosition(const basegfx::B2DPoint& rNew);
         void SetPosition(const basegfx::B2DPoint& rPoint1,const basegfx::B2DPoint& rPoint2);
@@ -179,6 +179,7 @@ class PostItTxt : public Window
         virtual void	DataChanged( const DataChangedEvent& aData);
         virtual void 	LoseFocus();
         virtual void	RequestHelp(const HelpEvent &rEvt);
+        DECL_LINK( Select, Menu* );
 
     public:
             PostItTxt(Window* pParent, WinBits nBits);
