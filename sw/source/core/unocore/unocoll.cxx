@@ -7,7 +7,7 @@
  * OpenOffice.org - a multi-platform office productivity suite
  *
  * $RCSfile: unocoll.cxx,v $
- * $Revision: 1.40 $
+ * $Revision: 1.41 $
  *
  * This file is part of OpenOffice.org.
  *
@@ -200,6 +200,8 @@ const ProvNamesId_Type __FAR_DATA aProvNamesId[] =
     { "com.sun.star.image.ImageMapCircleObject",              SW_SERVICE_IMAP_CIRCLE },
     { "com.sun.star.image.ImageMapPolygonObject",             SW_SERVICE_IMAP_POLYGON },
     { "com.sun.star.text.TextGraphicObject",                  SW_SERVICE_TYPE_TEXT_GRAPHIC },
+    { "com.sun.star.text.Fieldmark",                          SW_SERVICE_TYPE_FIELDMARK },
+    { "com.sun.star.text.FormFieldmark",                      SW_SERVICE_TYPE_FORMFIELDMARK },
     { "com.sun.star.chart2.data.DataProvider",                SW_SERVICE_CHART2_DATA_PROVIDER },
 
     // case-correct versions of the service names (see #i67811)
@@ -331,7 +333,7 @@ sal_uInt16	SwXServiceProvider::GetProviderType(const OUString& rServiceName)
 /* -----------------13.01.99 14:37-------------------
  *
  * --------------------------------------------------*/
-uno::Reference< uno::XInterface >  	SwXServiceProvider::MakeInstance(sal_uInt16 nObjectType, SwDoc* pDoc)
+uno::Reference< uno::XInterface >   SwXServiceProvider::MakeInstance(sal_uInt16 nObjectType, SwDoc* pDoc)
 {
     vos::OGuard aGuard(Application::GetSolarMutex());
     uno::Reference< uno::XInterface >  xRet;
@@ -367,6 +369,18 @@ uno::Reference< uno::XInterface >  	SwXServiceProvider::MakeInstance(sal_uInt16 
         {
             SwXBookmark* pBookmark = new SwXBookmark;
             xRet =  (cppu::OWeakObject*)pBookmark;
+        }
+        break;
+        case  SW_SERVICE_TYPE_FIELDMARK :
+        {
+            SwXFieldmark* pFieldmark = new SwXFieldmark(false);
+            xRet =  (cppu::OWeakObject*)pFieldmark;
+        }
+        break;
+        case  SW_SERVICE_TYPE_FORMFIELDMARK :
+        {
+            SwXFieldmark* pFieldmark = new SwXFieldmark(true);
+            xRet =  (cppu::OWeakObject*)pFieldmark;
         }
         break;
         case  SW_SERVICE_TYPE_FOOTNOTE :
@@ -434,7 +448,7 @@ uno::Reference< uno::XInterface >  	SwXServiceProvider::MakeInstance(sal_uInt16 
         case SW_SERVICE_STYLE_PAGE_STYLE:
         case SW_SERVICE_STYLE_NUMBERING_STYLE:
         {
-            SfxStyleFamily 	eFamily = SFX_STYLE_FAMILY_CHAR;
+            SfxStyleFamily  eFamily = SFX_STYLE_FAMILY_CHAR;
             switch(nObjectType)
             {
                 case SW_SERVICE_STYLE_PARAGRAPH_STYLE:
@@ -459,11 +473,11 @@ uno::Reference< uno::XInterface >  	SwXServiceProvider::MakeInstance(sal_uInt16 
             xRet = (cppu::OWeakObject*)pNewStyle;
         }
         break;
-//		SW_SERVICE_DUMMY_5
-//		SW_SERVICE_DUMMY_6
-//		SW_SERVICE_DUMMY_7
-//		SW_SERVICE_DUMMY_8
-//		SW_SERVICE_DUMMY_9
+//      SW_SERVICE_DUMMY_5
+//      SW_SERVICE_DUMMY_6
+//      SW_SERVICE_DUMMY_7
+//      SW_SERVICE_DUMMY_8
+//      SW_SERVICE_DUMMY_9
         case SW_SERVICE_FIELDTYPE_DATETIME:
         case SW_SERVICE_FIELDTYPE_USER:
         case SW_SERVICE_FIELDTYPE_SET_EXP:
@@ -497,7 +511,7 @@ uno::Reference< uno::XInterface >  	SwXServiceProvider::MakeInstance(sal_uInt16 
         case SW_SERVICE_FIELDTYPE_TABLE_COUNT     :
         case SW_SERVICE_FIELDTYPE_GRAPHIC_OBJECT_COUNT    :
         case SW_SERVICE_FIELDTYPE_EMBEDDED_OBJECT_COUNT   :
-        case SW_SERVICE_FIELDTYPE_DOCINFO_CHANGE_AUTHOR		:
+        case SW_SERVICE_FIELDTYPE_DOCINFO_CHANGE_AUTHOR     :
         case SW_SERVICE_FIELDTYPE_DOCINFO_CHANGE_DATE_TIME  :
         case SW_SERVICE_FIELDTYPE_DOCINFO_EDIT_TIME         :
         case SW_SERVICE_FIELDTYPE_DOCINFO_DESCRIPTION       :
@@ -511,9 +525,9 @@ uno::Reference< uno::XInterface >  	SwXServiceProvider::MakeInstance(sal_uInt16 
         case SW_SERVICE_FIELDTYPE_DOCINFO_TITLE             :
         case SW_SERVICE_FIELDTYPE_DOCINFO_REVISION          :
         case SW_SERVICE_FIELDTYPE_BIBLIOGRAPHY:
-        case SW_SERVICE_FIELDTYPE_INPUT_USER				:
-        case SW_SERVICE_FIELDTYPE_HIDDEN_TEXT				:
-        case SW_SERVICE_FIELDTYPE_COMBINED_CHARACTERS		:
+        case SW_SERVICE_FIELDTYPE_INPUT_USER                :
+        case SW_SERVICE_FIELDTYPE_HIDDEN_TEXT               :
+        case SW_SERVICE_FIELDTYPE_COMBINED_CHARACTERS       :
         case SW_SERVICE_FIELDTYPE_DROPDOWN                  :
         case SW_SERVICE_FIELDTYPE_TABLE_FORMULA:
             xRet = (cppu::OWeakObject*)new SwXTextField(nObjectType);
@@ -1570,7 +1584,14 @@ SwXBookmark* 	SwXBookmarks::GetObject( SwBookmark& rBkm, SwDoc* pDoc )
     SwXBookmark* pBkm = (SwXBookmark*)SwClientIter( rBkm ).
                                     First( TYPE( SwXBookmark ));
     if( !pBkm )
-        pBkm = new SwXBookmark(&rBkm, pDoc);
+    {
+        if (IDocumentBookmarkAccess::FORM_FIELDMARK_TEXT==rBkm.GetType()) 
+            pBkm = new SwXFieldmark(false, &rBkm, pDoc);
+        else if (IDocumentBookmarkAccess::FORM_FIELDMARK_NO_TEXT==rBkm.GetType()) 
+            pBkm = new SwXFieldmark(true, &rBkm, pDoc);
+        else
+            pBkm = new SwXBookmark(&rBkm, pDoc);
+    }
     return pBkm;
 }
 /******************************************************************
