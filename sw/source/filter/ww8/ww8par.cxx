@@ -1843,8 +1843,12 @@ void SwWW8ImplReader::Read_HdFt(bool bIsTitle, int nSect,
     }
     else
     {
-        nWhichItems =
-            rSection.maSep.grpfIhdt & (WW8_HEADER_FIRST | WW8_FOOTER_FIRST),
+        // --> OD 2008-08-06 #150965#
+        // Always read title page header/footer data - it could be used by following sections
+//        nWhichItems =
+//            rSection.maSep.grpfIhdt & (WW8_HEADER_FIRST | WW8_FOOTER_FIRST),
+        nWhichItems = ( WW8_HEADER_FIRST | WW8_FOOTER_FIRST );
+        // <--
         pPD = rSection.mpTitlePage;
     }
 
@@ -2373,7 +2377,7 @@ sal_Unicode Custom8BitToUnicode(rtl_TextToUnicodeConverter hConverter,
 bool SwWW8ImplReader::LangUsesHindiNumbers(USHORT nLang)
 {
     bool bResult = false;
-    
+
     switch (nLang)
     {
         case 0x1401: // Arabic(Algeria)
@@ -2397,7 +2401,7 @@ bool SwWW8ImplReader::LangUsesHindiNumbers(USHORT nLang)
         default:
             break;
     }
-    
+
     return bResult;
 }
 
@@ -2448,7 +2452,7 @@ bool SwWW8ImplReader::ReadPlainChars(WW8_CP& rPos, long nEnd, long nCpOfs)
     const SfxPoolItem * pItem = GetFmtAttr(RES_CHRATR_CTL_LANGUAGE);
     if (pItem != NULL)
         nCTLLang = dynamic_cast<const SvxLanguageItem *>(pItem)->GetLanguage();
-    
+
     for( nL2 = 0; nL2 < nLen; ++nL2, ++pWork )
     {
         if (bIsUnicode)
@@ -3416,7 +3420,10 @@ SwFmtPageDesc wwSectionManager::SetSwFmtPageDesc(mySegIter &rIter,
     mySegIter &rStart, bool bIgnoreCols)
 {
     SwFmtPageDesc aEmpty;
-    if (rIter->HasTitlePage())
+    // --> OD 2008-08-06 #150965#
+    // Always read title page header/footer data - it could be used by following sections
+//    if (rIter->HasTitlePage())
+    // <--
     {
         if (IsNewDoc() && rIter == rStart)
         {
@@ -4678,7 +4685,7 @@ ULONG SwWW8ImplReader::LoadDoc( SwPaM& rPaM,WW8Glossary *pGloss)
             "WinWord/RegardHindiDigits"
         };
         sal_uInt32 aVal[ 13 ];
- 
+
         SwFilterOptions aOpt( 13, aNames, aVal );
 
         nIniFlags = aVal[ 0 ];

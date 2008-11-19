@@ -1,13 +1,13 @@
 /*************************************************************************
  *
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
- * 
+ *
  * Copyright 2008 by Sun Microsystems, Inc.
  *
  * OpenOffice.org - a multi-platform office productivity suite
  *
  * $RCSfile: fntcache.cxx,v $
- * $Revision: 1.98 $
+ * $Revision: 1.98.56.1 $
  *
  * This file is part of OpenOffice.org.
  *
@@ -100,12 +100,12 @@ USHORT GetDefaultFontHeight( SwDrawTextInfo &rInf )
 {
     SwDocShell* pDocShell = rInf.GetShell()->GetDoc()->GetDocShell();
     SfxStyleSheetBasePool* pBasePool = pDocShell->GetStyleSheetPool();
-    
+
     String aString(SW_RES(STR_POOLCOLL_STANDARD));
-    
+
     SfxStyleSheetBase* pStyle = pBasePool->Find( aString, (SfxStyleFamily)SFX_STYLE_FAMILY_PARA );
     SfxItemSet& aTmpSet = pStyle->GetItemSet();
-    SvxFontHeightItem &aDefaultFontItem = (SvxFontHeightItem&)aTmpSet.Get(RES_CHRATR_CJK_FONTSIZE); 
+    SvxFontHeightItem &aDefaultFontItem = (SvxFontHeightItem&)aTmpSet.Get(RES_CHRATR_CJK_FONTSIZE);
     return (USHORT)aDefaultFontItem.GetHeight();
 }
 
@@ -257,9 +257,9 @@ struct CalcLinePosData
         pKernArray( _pKernArray ),
         bBidiPor( _bBidiPor )
     {
-    }    
+    }
 };
-    
+
 /** Function: lcl_calcLinePos
 
    Computes the start and end position of an underline. This function is called
@@ -898,12 +898,12 @@ static sal_Bool lcl_IsMonoSpaceFont( const OutputDevice& rOut )
 
 /* This helper structure (SwForbidden) contains the already marked parts of the string
     to avoid double lines (e.g grammar + spell check error) */
-   
+
 typedef std::vector< std::pair< xub_StrLen, xub_StrLen > > SwForbidden;
 
 static void lcl_DrawLineForWrongListData(
     SwForbidden &rForbidden,
-    const SwDrawTextInfo    &rInf, 
+    const SwDrawTextInfo    &rInf,
     const SwWrongList       *pWList,
     const CalcLinePosData   &rCalcLinePosData,
     const Size              &rPrtFontSize )
@@ -980,18 +980,18 @@ static void lcl_DrawLineForWrongListData(
                     Point aStart( rInf.GetPos() );
                     Point aEnd;
                     lcl_calcLinePos( rCalcLinePosData, aStart, aEnd, nNextStart, nNextEnd - nNextStart );
-    
+
                     // draw line for smart tags?
                     if (pWList == rInf.GetSmartTags())
                     {
                         aStart.Y() +=30;
                         aEnd.Y() +=30;
-    
+
                         LineInfo aLineInfo( LINE_DASH );
                         aLineInfo.SetDistance( 40 );
                         aLineInfo.SetDashLen( 1 );
                         aLineInfo.SetDashCount(1);
-    
+
                         rInf.GetOut().DrawLine( aStart, aEnd, aLineInfo );
                     }
                     else    // draw wavy lines for spell or grammar errors
@@ -1000,11 +1000,11 @@ static void lcl_DrawLineForWrongListData(
                         USHORT nWave =
                             WRONG_SHOW_MEDIUM < nHght ? WAVE_NORMAL :
                             ( WRONG_SHOW_SMALL < nHght ? WAVE_SMALL : WAVE_FLAT );
-    
+
                         rInf.GetOut().DrawWaveLine( aStart, aEnd, nWave );
                     }
                 }
-                                
+
                 nStart = nEnd + rInf.GetIdx();
                 nWrLen = rInf.GetIdx() + rInf.GetLen() - nStart;
             }
@@ -1193,7 +1193,7 @@ void SwFntObj::DrawText( SwDrawTextInfo &rInf )
         {
             //for textgrid refactor
             //const USHORT nGridWidth = pGrid->GetBaseHeight();
-            const SwDoc* pDoc = rInf.GetShell()->GetDoc();	
+            const SwDoc* pDoc = rInf.GetShell()->GetDoc();
             const USHORT nGridWidth = GETGRIDWIDTH(pGrid, pDoc);
             sal_Int32* pKernArray = new sal_Int32[rInf.GetLen()];
 
@@ -1271,19 +1271,20 @@ void SwFntObj::DrawText( SwDrawTextInfo &rInf )
             return;
         }
     }
-    
+
     // For text grid refactor
     // ASIAN LINE AND CHARACTER GRID MODE START: not snap to characters
     //
-    if ( rInf.GetFrm() && rInf.SnapToGrid() && rInf.GetFont() )
+    if ( rInf.GetFrm() && rInf.SnapToGrid() && rInf.GetFont() &&
+         SW_CJK == rInf.GetFont()->GetActual() )
     {
         GETGRID( rInf.GetFrm()->FindPageFrm() )
-        
+
         if ( pGrid && GRID_LINES_CHARS == pGrid->GetGridType() && !pGrid->IsSnapToChars() )
         {
             const USHORT  nDefaultFontHeight = GetDefaultFontHeight( rInf );
-            
-            const SwDoc* pDoc = rInf.GetShell()->GetDoc();	
+
+            const SwDoc* pDoc = rInf.GetShell()->GetDoc();
             long nGridWidthAdd = GETGRIDWIDTH(pGrid, pDoc);
             if( SW_LATIN == rInf.GetFont()->GetActual() )
                 nGridWidthAdd = ( nGridWidthAdd - nDefaultFontHeight ) / 2;
@@ -1984,10 +1985,10 @@ void SwFntObj::DrawText( SwDrawTextInfo &rInf )
                 // anything to do?
                 if (rInf.GetWrong() || rInf.GetGrammarCheck() || rInf.GetSmartTags())
                 {
-                    CalcLinePosData aCalcLinePosData(rInf, *GetFont(), 
+                    CalcLinePosData aCalcLinePosData(rInf, *GetFont(),
                             nCnt, bSwitchH2V, bSwitchL2R,
                             nHalfSpace, pKernArray, bBidiPor);
-                    
+
                     SwForbidden aForbidden;
                     // draw line for smart tag data
                     lcl_DrawLineForWrongListData( aForbidden, rInf, rInf.GetSmartTags(), aCalcLinePosData, Size() );
@@ -2091,7 +2092,7 @@ Size SwFntObj::GetTextSize( SwDrawTextInfo& rInf )
         GETGRID( rInf.GetFrm()->FindPageFrm() )
         if ( pGrid && GRID_LINES_CHARS == pGrid->GetGridType() && pGrid->IsSnapToChars() )
         {
-            const SwDoc* pDoc = rInf.GetShell()->GetDoc();	
+            const SwDoc* pDoc = rInf.GetShell()->GetDoc();
             const USHORT nGridWidth = GETGRIDWIDTH(pGrid, pDoc);
 
             OutputDevice* pOutDev;
@@ -2125,16 +2126,17 @@ Size SwFntObj::GetTextSize( SwDrawTextInfo& rInf )
             return aTxtSize;
         }
     }
-    
+
     //for textgrid refactor
-    if ( rInf.GetFrm() && nLn && rInf.SnapToGrid() && rInf.GetFont())
+    if ( rInf.GetFrm() && nLn && rInf.SnapToGrid() && rInf.GetFont() &&
+         SW_CJK == rInf.GetFont()->GetActual() )
     {
         GETGRID( rInf.GetFrm()->FindPageFrm() )
         if ( pGrid && GRID_LINES_CHARS == pGrid->GetGridType() && !pGrid->IsSnapToChars() )
         {
             const USHORT nDefaultFontHeight = GetDefaultFontHeight( rInf );
 
-            const SwDoc* pDoc = rInf.GetShell()->GetDoc();	
+            const SwDoc* pDoc = rInf.GetShell()->GetDoc();
             long nGridWidthAdd = GETGRIDWIDTH(pGrid, pDoc);
             if( SW_LATIN == rInf.GetFont()->GetActual() )
                 nGridWidthAdd = ( nGridWidthAdd - nDefaultFontHeight ) / 2;
@@ -2152,7 +2154,7 @@ Size SwFntObj::GetTextSize( SwDrawTextInfo& rInf )
             aTxtSize.Width() = pOutDev->GetTextWidth( rInf.GetText(), rInf.GetIdx(), nLn );
             aTxtSize.Height() = pOutDev->GetTextHeight() +
                                 GetFontLeading( rInf.GetShell(), rInf.GetOut() );
-            aTxtSize.Width() += (nLn) * long( nGridWidthAdd ); 
+            aTxtSize.Width() += (nLn) * long( nGridWidthAdd );
             //if ( rInf.GetKern() && nLn )
             //    aTxtSize.Width() += ( nLn ) * long( rInf.GetKern() );
 
@@ -2379,7 +2381,7 @@ xub_StrLen SwFntObj::GetCrsrOfst( SwDrawTextInfo &rInf )
         GETGRID( rInf.GetFrm()->FindPageFrm() )
         if ( pGrid && GRID_LINES_CHARS == pGrid->GetGridType() && pGrid->IsSnapToChars() )
         {
-            const SwDoc* pDoc = rInf.GetShell()->GetDoc();	
+            const SwDoc* pDoc = rInf.GetShell()->GetDoc();
             const USHORT nGridWidth = GETGRIDWIDTH(pGrid, pDoc);
 
             long nWidthPerChar = pKernArray[ rInf.GetLen() - 1 ] / rInf.GetLen();
@@ -2398,10 +2400,10 @@ xub_StrLen SwFntObj::GetCrsrOfst( SwDrawTextInfo &rInf )
             return nCnt;
         }
     }
-    
+
     //for textgrid refactor
     if ( rInf.GetFrm() && rInf.GetLen() && rInf.SnapToGrid() &&
-        rInf.GetFont() )
+         rInf.GetFont() && SW_CJK == rInf.GetFont()->GetActual() )
     {
         GETGRID( rInf.GetFrm()->FindPageFrm() )
         if ( pGrid && GRID_LINES_CHARS == pGrid->GetGridType() && !pGrid->IsSnapToChars() )
@@ -2409,13 +2411,13 @@ xub_StrLen SwFntObj::GetCrsrOfst( SwDrawTextInfo &rInf )
 
             const USHORT nDefaultFontHeight = GetDefaultFontHeight( rInf );
 
-            const SwDoc* pDoc = rInf.GetShell()->GetDoc();	
+            const SwDoc* pDoc = rInf.GetShell()->GetDoc();
             long nGridWidthAdd = GETGRIDWIDTH(pGrid, pDoc);
-            if( SW_LATIN == rInf.GetFont()->GetActual() )   
+            if( SW_LATIN == rInf.GetFont()->GetActual() )
                 nGridWidthAdd = ( nGridWidthAdd - nDefaultFontHeight ) / 2;
             else
                 nGridWidthAdd = nGridWidthAdd - nDefaultFontHeight;
-            
+
             for(xub_StrLen j = 0; j < rInf.GetLen(); j++)
             {
                 long nScr = pKernArray[ j ] + ( nSpaceAdd + nGridWidthAdd  ) * ( j + 1 );
@@ -2638,7 +2640,7 @@ xub_StrLen SwFont::GetTxtBreak( SwDrawTextInfo& rInf, long nTextWidth )
         GETGRID( rInf.GetFrm()->FindPageFrm() )
         if ( pGrid && GRID_LINES_CHARS == pGrid->GetGridType() && pGrid->IsSnapToChars() )
         {
-            const SwDoc* pDoc = rInf.GetShell()->GetDoc();	
+            const SwDoc* pDoc = rInf.GetShell()->GetDoc();
             const USHORT nGridWidth = GETGRIDWIDTH(pGrid, pDoc);
 
             sal_Int32* pKernArray = new sal_Int32[rInf.GetLen()];
@@ -2664,16 +2666,17 @@ xub_StrLen SwFont::GetTxtBreak( SwDrawTextInfo& rInf, long nTextWidth )
             return nTxtBreak + rInf.GetIdx();
         }
     }
-    
+
     //for text grid enhancement
-    if ( rInf.GetFrm() && nLn && rInf.SnapToGrid() && rInf.GetFont() )
+    if ( rInf.GetFrm() && nLn && rInf.SnapToGrid() && rInf.GetFont() &&
+         SW_CJK == rInf.GetFont()->GetActual() )
     {
         GETGRID( rInf.GetFrm()->FindPageFrm() )
         if ( pGrid && GRID_LINES_CHARS == pGrid->GetGridType() && !pGrid->IsSnapToChars() )
         {
             const USHORT nDefaultFontHeight = GetDefaultFontHeight( rInf );
 
-            const SwDoc* pDoc = rInf.GetShell()->GetDoc();	
+            const SwDoc* pDoc = rInf.GetShell()->GetDoc();
             long nGridWidthAdd = GETGRIDWIDTH(pGrid, pDoc);
             if( SW_LATIN == rInf.GetFont()->GetActual() )
                 nGridWidthAdd = ( nGridWidthAdd - nDefaultFontHeight ) / 2 ;

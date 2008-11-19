@@ -220,7 +220,13 @@ void DelHFFormat( SwClient *pToRemove, SwFrmFmt *pFmt )
         {
             SwNode *pNode = 0;
             {
-                SwNodeIndex aIdx( *rCnt.GetCntntIdx(), 1 );
+                // --> OD 2008-10-07 #i92993#
+                // Begin with start node of page header/footer to assure that
+                // complete content is checked for cursors and the complete content
+                // is deleted on below made method call <pDoc->DeleteSection(pNode)>
+//                SwNodeIndex aIdx( *rCnt.GetCntntIdx(), 1 );
+                SwNodeIndex aIdx( *rCnt.GetCntntIdx(), 0 );
+                // <--
                 //Wenn in einem der Nodes noch ein Crsr angemeldet ist, muss das
                 //ParkCrsr einer (beliebigen) Shell gerufen werden.
                 pNode = pDoc->GetNodes()[ aIdx ];
@@ -2161,8 +2167,8 @@ int SwTextGridItem::operator==( const SfxPoolItem& rAttr ) const
            bRubyTextBelow == ((SwTextGridItem&)rAttr).GetRubyTextBelow() &&
            bDisplayGrid == ((SwTextGridItem&)rAttr).GetDisplayGrid() &&
            bPrintGrid == ((SwTextGridItem&)rAttr).GetPrintGrid() &&
-           aColor == ((SwTextGridItem&)rAttr).GetColor() && 
-           nBaseWidth == ((SwTextGridItem&)rAttr).GetBaseWidth() && 
+           aColor == ((SwTextGridItem&)rAttr).GetColor() &&
+           nBaseWidth == ((SwTextGridItem&)rAttr).GetBaseWidth() &&
            bSnapToChars == ((SwTextGridItem&)rAttr).GetSnapToChars() &&
            bSquaredMode == ((SwTextGridItem&)rAttr).GetSquaredMode();
 }
@@ -2361,7 +2367,7 @@ void SwTextGridItem::SwitchPaperMode(BOOL bNew)
         //same paper mode, not switch
         return;
     }
-    
+
     // use default value when grid is disable
     if( eGridType == GRID_NONE )
     {
@@ -2369,7 +2375,7 @@ void SwTextGridItem::SwitchPaperMode(BOOL bNew)
         Init();
         return;
     }
-    
+
     if( bSquaredMode )
     {
         //switch from "squared mode" to "standard mode"
@@ -2414,7 +2420,7 @@ void SwTextGridItem::Init()
         bSnapToChars = 1;
 
         //default grid type is line only in CJK env
-        //disable this function due to type area change 
+        //disable this function due to type area change
         //if grid type change.
         //if(SvtCJKOptions().IsAsianTypographyEnabled())
         //{
