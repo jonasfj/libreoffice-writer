@@ -84,6 +84,9 @@
 #include <comphelper/sequenceashashmap.hxx>
 #include <com/sun/star/embed/ElementModes.hpp>
 #include <com/sun/star/embed/XStorage.hpp>
+// --> OD 2008-11-26 #158694#
+#include <SwNodeNum.hxx>
+// <--
 
 using namespace ::com::sun::star;
 using namespace ::com::sun::star::uno;
@@ -112,6 +115,45 @@ sal_Bool getCrsrPropertyValue(const SfxItemPropertyMap* pMap
     sal_Bool bDone = sal_True;
     switch(pMap->nWID)
     {
+        // --> OD 2008-11-26 #158694#
+        case FN_UNO_PARA_CONT_PREV_SUBTREE:
+            if (pAny)
+            {
+                const SwTxtNode * pTmpNode = pNode;
+
+                if (!pTmpNode)
+                    pTmpNode = rPam.GetNode()->GetTxtNode();
+
+                bool bRet = false;
+
+                if ( pTmpNode &&
+                     pTmpNode->GetNum() &&
+                     pTmpNode->GetNum()->IsContinueingPreviousSubTree() )
+                {
+                    bRet = true;
+                }
+
+                *pAny <<= bRet;
+            }
+        break;
+        case FN_UNO_PARA_NUM_STRING:
+            if (pAny)
+            {
+                const SwTxtNode * pTmpNode = pNode;
+
+                if (!pTmpNode)
+                    pTmpNode = rPam.GetNode()->GetTxtNode();
+
+                String sRet;
+                if ( pTmpNode && pTmpNode->GetNum() )
+                {
+                    sRet = pTmpNode->GetNumString();
+                }
+
+                *pAny <<= OUString(sRet);
+            }
+        break;
+        // <--
         case FN_UNO_PARA_CHAPTER_NUMBERING_LEVEL:
             if (pAny)
             {
@@ -914,12 +956,12 @@ sal_Bool DocInsertStringSplitCR(
 
   -----------------------------------------------------------------------*/
 void makeRedline( SwPaM& rPaM,
-    const ::rtl::OUString& rRedlineType, 
-    const uno::Sequence< beans::PropertyValue >& rRedlineProperties ) 
+    const ::rtl::OUString& rRedlineType,
+    const uno::Sequence< beans::PropertyValue >& rRedlineProperties )
         throw (lang::IllegalArgumentException, uno::RuntimeException)
 {
     IDocumentRedlineAccess* pRedlineAccess = rPaM.GetDoc();
-     
+
     RedlineType_t eType = nsRedlineType_t::REDLINE_INSERT;
     if( rRedlineType.equalsAsciiL( RTL_CONSTASCII_STRINGPARAM ( "Delete" ) ))
         eType = nsRedlineType_t::REDLINE_DELETE;
@@ -929,7 +971,7 @@ void makeRedline( SwPaM& rPaM,
         eType = nsRedlineType_t::REDLINE_TABLE;
     else if( !rRedlineType.equalsAsciiL( RTL_CONSTASCII_STRINGPARAM ( "Insert" ) ))
         throw lang::IllegalArgumentException();
-    
+
     //todo: what about REDLINE_FMTCOLL?
     comphelper::SequenceAsHashMap aPropMap( rRedlineProperties );
     uno::Any aAuthorValue;
@@ -938,11 +980,11 @@ void makeRedline( SwPaM& rPaM,
     ::rtl::OUString sAuthor;
     if( aAuthorValue >>= sAuthor )
         nAuthor = pRedlineAccess->InsertRedlineAuthor(sAuthor);
-    
+
     ::rtl::OUString sComment;
     uno::Any aCommentValue;
     aCommentValue = aPropMap.getUnpackedValueOrDefault( ::rtl::OUString::createFromAscii("RedlineComment"), aCommentValue);
-    
+
     SwRedlineData aRedlineData( eType, nAuthor );
     if( aCommentValue >>= sComment )
         aRedlineData.SetComment( sComment );
@@ -952,7 +994,7 @@ void makeRedline( SwPaM& rPaM,
     aDateTimeValue = aPropMap.getUnpackedValueOrDefault( ::rtl::OUString::createFromAscii("RedlineDateTime"), aDateTimeValue);
     if( aDateTimeValue >>= aStamp )
     {
-       aRedlineData.SetTimeStamp( 
+       aRedlineData.SetTimeStamp(
         DateTime( Date( aStamp.Day, aStamp.Month, aStamp.Year ), Time( aStamp.Hours, aStamp.Minutes, aStamp.Seconds ) ) );
     }
 
