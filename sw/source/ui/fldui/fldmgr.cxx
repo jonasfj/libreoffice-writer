@@ -1201,7 +1201,7 @@ BOOL SwFldMgr::InsertFld(  const SwInsertFld_Data& rData )
                                                 pCurShell->GetFldType(0, RES_DBSETNUMBERFLD);
                     pFld = new SwDBSetNumberField( pTyp, aDBData, nFormatId);
                     bExp = TRUE;
-                    break;
+                    break;	
                 }
             }
             break;

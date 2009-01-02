@@ -270,11 +270,6 @@ interface Annotation : _Annotation
         ExecMethod = Exec ;
         DisableFlags="SW_DISABLE_ON_PROTECTED_CURSOR";
     ]
-    
-    SID_SEARCH_DLG
-    [
-        StateMethod = StateDisableItems
-    ]
 
     SID_STYLE_FAMILY1
     [

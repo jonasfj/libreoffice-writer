@@ -802,8 +802,10 @@ sal_Int32 SwXTextDocument::replaceAll(const Reference< util::XSearchDescriptor >
     }
     else
     {
+        //todo/mba: assuming that notes should be omitted
+        BOOL bSearchInNotes = FALSE;
         BOOL bCancel;
-        nResult = pUnoCrsr->Find( aSearchOpt,
+        nResult = pUnoCrsr->Find( aSearchOpt, bSearchInNotes,
             eStart, eEnd, bCancel,
             (FindRanges)eRanges,
             sal_True );
@@ -930,9 +932,11 @@ SwUnoCrsr* 	SwXTextDocument::FindAny(const Reference< util::XSearchDescriptor > 
                         (FindRanges)eRanges, pReplaceColl );
         }
         else
-        {
+        {          
+            //todo/mba: assuming that notes should be omitted
+            BOOL bSearchInNotes = FALSE;
             BOOL bCancel;
-            nResult = (sal_Int32)pUnoCrsr->Find( aSearchOpt,
+            nResult = (sal_Int32)pUnoCrsr->Find( aSearchOpt, bSearchInNotes,
                     eStart, eEnd, bCancel,
                     (FindRanges)eRanges,
                     /*int bReplace =*/sal_False );
