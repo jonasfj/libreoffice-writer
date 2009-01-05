@@ -1,13 +1,13 @@
 /*************************************************************************
  *
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
- * 
+ *
  * Copyright 2008 by Sun Microsystems, Inc.
  *
  * OpenOffice.org - a multi-platform office productivity suite
  *
  * $RCSfile: portxt.cxx,v $
- * $Revision: 1.52 $
+ * $Revision: 1.51.112.3 $
  *
  * This file is part of OpenOffice.org.
  *
@@ -131,6 +131,19 @@ USHORT lcl_AddSpace( const SwTxtSizeInfo &rInf, const XubString* pStr,
         }
     }
 
+    // Kashida Justification: Insert Kashidas
+    if ( nEnd > nPos && pSI && COMPLEX == nScript )
+    {
+        if ( SwScriptInfo::IsArabicText( *pStr, nPos, nEnd - nPos ) )
+        {
+            const USHORT nKashRes = pSI->KashidaJustify( 0, 0, nPos, nEnd - nPos );
+            // i60591: need to check result of KashidaJustify
+            // determine if kashida justification is applicable
+            if( nKashRes != STRING_LEN )
+                return nKashRes;
+        }
+    }
+
     // Thai Justification: Each character cell gets some extra space
     if ( nEnd > nPos && COMPLEX == nScript )
     {
@@ -152,16 +165,6 @@ USHORT lcl_AddSpace( const SwTxtSizeInfo &rInf, const XubString* pStr,
 
             return nCnt;
         }
-    }
-
-    // Kashida Justification: Insert Kashidas
-    if ( nEnd > nPos && pSI && COMPLEX == nScript )
-    {
-        LanguageType aLang =
-            rInf.GetTxtFrm()->GetTxtNode()->GetLang( rInf.GetIdx(), 1, nScript );
-
-        if ( SwScriptInfo::IsArabicLanguage( aLang ) )
-            return pSI->KashidaJustify( 0, 0, nPos, nEnd - nPos );
     }
 
     // Here starts the good old "Look for blanks and add space to them" part.
@@ -572,13 +575,13 @@ void SwTxtPortion::Paint( const SwTxtPaintInfo &rInf ) const
     {
         rInf.DrawBackBrush( *this );
         const XubString aTxt = XubString::CreateFromAscii(CH_TXT_ATR_SUBST_FIELDEND);
-        rInf.DrawText( aTxt, *this, 0, aTxt.Len(), false );   
+        rInf.DrawText( aTxt, *this, 0, aTxt.Len(), false );
     }
     else if (rInf.OnWin() && 1==rInf.GetLen() && CH_TXT_ATR_FIELDSTART==rInf.GetTxt().GetChar(rInf.GetIdx()))
     {
         rInf.DrawBackBrush( *this );
         const XubString aTxt = XubString::CreateFromAscii(CH_TXT_ATR_SUBST_FIELDSTART);
-        rInf.DrawText( aTxt, *this, 0, aTxt.Len(), false );   
+        rInf.DrawText( aTxt, *this, 0, aTxt.Len(), false );
     }
     else if( GetLen() )
     {
@@ -771,7 +774,7 @@ void SwFieldMarkPortion::Paint( const SwTxtPaintInfo & ) const
 //	SwTxtPortion::Paint(rInf);
 }
 
-sal_Bool SwFieldMarkPortion::Format( SwTxtFormatInfo & ) 
+sal_Bool SwFieldMarkPortion::Format( SwTxtFormatInfo & )
 {
     sal_Bool ret=0;
     Width(0);
@@ -791,10 +794,10 @@ void SwFieldFormPortion::Paint( const SwTxtPaintInfo &rInf ) const
     bool checked=(pBM!=NULL?pBM->IsChecked():false);
     rInf.DrawCheckBox( *this , checked);
 //    const XubString aTxt = XubString::CreateFromAscii("[ ]");
-//    rInf.DrawText( aTxt, *this, 0, aTxt.Len(), false );	  
+//    rInf.DrawText( aTxt, *this, 0, aTxt.Len(), false );
 }
 
-sal_Bool SwFieldFormPortion::Format( SwTxtFormatInfo &rInf ) 
+sal_Bool SwFieldFormPortion::Format( SwTxtFormatInfo &rInf )
 {
     sal_Bool ret=0;
 //	ret=SwTxtPortion::Format(rInf);
@@ -803,7 +806,7 @@ sal_Bool SwFieldFormPortion::Format( SwTxtFormatInfo &rInf )
     Height(rInf.GetTxtHeight());
     SetAscent(rInf.GetAscent());
     //int h=rInf.GetTxtHeight();
-    
+
 /*
     Height(100);
     SetAscent(100);
