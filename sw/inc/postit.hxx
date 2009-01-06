@@ -251,7 +251,8 @@ class SwMarginWin : public Window
         virtual void	MouseMove( const MouseEvent& rMEvt );
         virtual void	Paint( const Rectangle& rRect);
         virtual void 	GetFocus();
-        void			SetPosAndSize();
+        
+        void            SetPosAndSize();
         void			SetSizePixel( const Size& rNewSize );
 
         DECL_LINK(ModifyHdl, void*);
