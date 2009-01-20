@@ -345,6 +345,8 @@ class SwRTFParser : public SvxRTFParser
     bool bForceNewTable;     // Forces a beginning of a new table
     bool bNestedField;
     bool bTrowdRead;         // True, iff an \trowd definition was read after the last \row
+    
+    int nReadFlyDepth;
 
     int nZOrder;
     /*
