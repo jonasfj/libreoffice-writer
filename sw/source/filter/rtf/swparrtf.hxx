@@ -1,7 +1,7 @@
 /*************************************************************************
  *
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
- * 
+ *
  * Copyright 2008 by Sun Microsystems, Inc.
  *
  * OpenOffice.org - a multi-platform office productivity suite
@@ -333,6 +333,9 @@ class SwRTFParser : public SvxRTFParser
 
     bool bSwPageDesc;
     bool bReadSwFly;		// lese Swg-Fly (wichtig fuer Bitmaps!)
+    // --> OD 2008-12-22 #i83368#
+    bool mbReadCellWhileReadSwFly;
+    // <--
     bool mbReadNoTbl;		// verhinder Tabelle in Tabelle/FootNote
     bool mbIsFootnote;
     bool bFootnoteAutoNum;	// automatische Numerierung ?

@@ -1,7 +1,7 @@
 /*************************************************************************
  *
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
- * 
+ *
  * Copyright 2008 by Sun Microsystems, Inc.
  *
  * OpenOffice.org - a multi-platform office productivity suite
@@ -222,6 +222,9 @@ SwRTFParser::SwRTFParser(SwDoc* pD,
     nInsTblRow(USHRT_MAX),
     nNewNumSectDef(USHRT_MAX),
     nRowsToRepeat(0),
+    // --> OD 2008-12-22 #i83368#
+    mbReadCellWhileReadSwFly( false ),
+    // <--
     bTrowdRead(0),
     nReadFlyDepth(0),
     nZOrder(0)
@@ -1827,6 +1830,9 @@ void SwRTFParser::NextToken( int nToken )
         ReadSectControls( nToken );
         break;
     case RTF_CELL:
+        // --> OD 2008-12-22 #i83368#
+        mbReadCellWhileReadSwFly = bReadSwFly;
+        // <--
         if (CantUseTables())
             InsertPara();
         else
