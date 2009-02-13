@@ -1513,9 +1513,9 @@ Writer& OutWW8_SwTxtNode( Writer& rWrt, SwCntntNode& rNode )
 
     String aStr( pNd->GetTxt() );
 
-    ww8::WW8TableNodeInfo::Pointer_t pTextNodeInfo = 
+    ww8::WW8TableNodeInfo::Pointer_t pTextNodeInfo =
     rWW8Wrt.mpTableInfo->getTableNodeInfo(pNd);
-        
+
     xub_StrLen nAktPos = 0;
     xub_StrLen nEnd = aStr.Len();
     bool bUnicode = rWW8Wrt.bWrtWW8, bRedlineAtEnd = false;
@@ -1548,7 +1548,7 @@ Writer& OutWW8_SwTxtNode( Writer& rWrt, SwCntntNode& rNode )
                 if (pFieldmark!=NULL) {
                     rWW8Wrt.AppendBookmark( pFieldmark->GetName(), 1);
                 }
-                rWW8Wrt.OutField(NULL, ww::eFORMTEXT, String::CreateFromAscii(" FORMTEXT "), WRITEFIELD_START | WRITEFIELD_CMD_START);	
+                rWW8Wrt.OutField(NULL, ww::eFORMTEXT, String::CreateFromAscii(" FORMTEXT "), WRITEFIELD_START | WRITEFIELD_CMD_START);
                 if (pFieldmark!=NULL) {
                     rWW8Wrt.WriteFormData( *pFieldmark );
                 }
@@ -1650,14 +1650,14 @@ Writer& OutWW8_SwTxtNode( Writer& rWrt, SwCntntNode& rNode )
             rWW8Wrt.WriteCR(pTextNodeInfo);
 
             if (pTextNodeInfo.get() != NULL)
-            { 
-#ifdef DEBUG            
+            {
+#ifdef DEBUG
                 ::std::clog << pTextNodeInfo->toString() << ::std::endl;
 #endif
 
-                rWW8Wrt.OutWW8TableInfoCell(pTextNodeInfo);        
+                rWW8Wrt.OutWW8TableInfoCell(pTextNodeInfo);
             }
- 
+
              rWW8Wrt.pPapPlc->AppendFkpEntry( rWrt.Strm().Tell(), pO->Count(),
                 pO->GetData() );
             pO->Remove( 0, pO->Count() );
@@ -1793,14 +1793,14 @@ Writer& OutWW8_SwTxtNode( Writer& rWrt, SwCntntNode& rNode )
         rWW8Wrt.Out_SwFmt(rWW8Wrt.mpParentFrame->GetFrmFmt(), false, false, true);
 
     if (pTextNodeInfo.get() != NULL)
-    { 
+    {
 #ifdef DEBUG
         ::std::clog << pTextNodeInfo->toString() << ::std::endl;
 #endif
 
-        rWW8Wrt.OutWW8TableInfoCell(pTextNodeInfo);        
-    } 
-    
+        rWW8Wrt.OutWW8TableInfoCell(pTextNodeInfo);
+    }
+
     if( !bFlyInTable )
     {
         SfxItemSet* pTmpSet = 0;
@@ -1870,18 +1870,20 @@ Writer& OutWW8_SwTxtNode( Writer& rWrt, SwCntntNode& rNode )
                             aLR.SetTxtFirstLineOfstValue(pFmt->GetAbsLSpace() - pFmt->GetFirstLineOffset());
                     else
                             aLR.SetTxtFirstLineOfst(GetWordFirstLineOffset(*pFmt));
+
+                    // --> OD 2009-01-12 #i94187#
+                    // set list style directly only in position and space mode LABEL_WIDTH_AND_POSITION
+                    if (SFX_ITEM_SET !=
+                        pTmpSet->GetItemState(RES_PARATR_NUMRULE, false) )
+                    {
+                        //If the numbering is not outline, and theres no numrule
+                        //name in the itemset, put one in there
+
+                        // NumRule from a template - then put it into the itemset
+                        pTmpSet->Put( SwNumRuleItem( pRule->GetName() ));
+                    }
                 }
                 // <--
-
-                if (SFX_ITEM_SET !=
-                    pTmpSet->GetItemState(RES_PARATR_NUMRULE, false) )
-                {
-                    //If the numbering is not outline, and theres no numrule
-                    //name in the itemset, put one in there
-
-                    // NumRule from a template - then put it into the itemset
-                    pTmpSet->Put( SwNumRuleItem( pRule->GetName() ));
-                }
             }
             else
                 pTmpSet->ClearItem(RES_PARATR_NUMRULE);
@@ -2077,17 +2079,17 @@ Writer& OutWW8_SwTxtNode( Writer& rWrt, SwCntntNode& rNode )
                 delete pNewSet;
         }
     }
-               
+
     rWW8Wrt.pPapPlc->AppendFkpEntry( rWrt.Strm().Tell(), pO->Count(),
                                     pO->GetData() );
     pO->Remove( 0, pO->Count() );                       // leeren
-    
+
     if (pTextNodeInfo.get() != NULL)
-    {         
+    {
         if (pTextNodeInfo->isEndOfLine())
         {
             rWW8Wrt.WriteRowEnd(pTextNodeInfo->getDepth());
-            
+
             pO->Insert( (BYTE*)&nSty, 2, pO->Count() );     // Style #
             rWW8Wrt.OutWW8TableInfoRow(pTextNodeInfo);
             rWW8Wrt.pPapPlc->AppendFkpEntry( rWrt.Strm().Tell(), pO->Count(),
