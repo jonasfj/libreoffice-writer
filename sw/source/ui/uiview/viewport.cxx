@@ -1,7 +1,7 @@
 /*************************************************************************
  *
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
- * 
+ *
  * Copyright 2008 by Sun Microsystems, Inc.
  *
  * OpenOffice.org - a multi-platform office productivity suite
@@ -319,7 +319,7 @@ void SwView::SetVisArea( const Rectangle &rRect, BOOL bUpdateScrollbar )
     SwEditWin::ClearTip();
 
     if ( bOuterResize && !bInOuterResizePixel && !bInInnerResizePixel)
-            OuterResizePixel( Point(), 
+            OuterResizePixel( Point(),
                 GetViewFrame()->GetWindow().GetOutputSizePixel() );
 }
 
@@ -739,8 +739,7 @@ IMPL_LINK( SwView, ScrollHdl, SwScrollbar *, pScrollbar )
 //				S F X_BINDINGS().Update(FN_STAT_PAGE);
 
             //QuickHelp:
-            USHORT nPageCnt = pWrtShell->GetPageCnt();
-            if( nPageCnt > 1 && Help::IsQuickHelpEnabled() )
+            if( pWrtShell->GetPageCnt() > 1 && Help::IsQuickHelpEnabled() )
             {
                 if( !nPgNum || nPgNum != nPhNum )
                 {
@@ -814,7 +813,7 @@ IMPL_LINK( SwView, EndScrollHdl, SwScrollbar *, pScrollbar )
  --------------------------------------------------------------------*/
 
 void SwView::CalcVisArea( const Size &rOutPixel )
-{	
+{
     Point aTopLeft;
     Rectangle aRect( aTopLeft, rOutPixel );
     aTopLeft = GetEditWin().PixelToLogic( aTopLeft );

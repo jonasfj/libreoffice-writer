@@ -1,7 +1,7 @@
 /*************************************************************************
  *
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
- * 
+ *
  * Copyright 2008 by Sun Microsystems, Inc.
  *
  * OpenOffice.org - a multi-platform office productivity suite
@@ -93,7 +93,7 @@ struct SwConversionArgs;
 class Graphic;
 class GraphicFilter;
 class SwPostItMgr;
-    
+
 namespace com{ namespace sun { namespace star {
     namespace view{ class XSelectionSupplier; }
 }}}
@@ -250,6 +250,8 @@ class SW_DLLPUBLIC SwView: public SfxViewShell
     static const int MASTERENUMCOMMANDS = 6;
 
     String			aCurrShapeEnumCommand[ MASTERENUMCOMMANDS ];
+
+    USHORT          nPageCnt;
 
     // Aktueller Drawmode
     USHORT			nDrawSfxId;
