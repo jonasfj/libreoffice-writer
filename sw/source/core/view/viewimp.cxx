@@ -1,7 +1,7 @@
 /*************************************************************************
  *
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
- * 
+ *
  * Copyright 2008 by Sun Microsystems, Inc.
  *
  * OpenOffice.org - a multi-platform office productivity suite
@@ -566,6 +566,27 @@ void SwViewImp::_InvalidateAccessibleParaTextSelection()
         if ( pTmp->Imp()->IsAccessible() )
         {
             pTmp->Imp()->GetAccessibleMap().InvalidateTextSelectionOfAllParas();
+        }
+
+        pTmp = (ViewShell *)pTmp->GetNext();
+    } while ( pTmp != pVSh );
+}
+
+/** invalidate attributes for paragraphs
+
+    OD 2009-01-06 #i88069#
+
+    @author OD
+*/
+void SwViewImp::_InvalidateAccessibleParaAttrs( const SwTxtFrm& rTxtFrm )
+{
+    ViewShell* pVSh = GetShell();
+    ViewShell* pTmp = pVSh;
+    do
+    {
+        if ( pTmp->Imp()->IsAccessible() )
+        {
+            pTmp->Imp()->GetAccessibleMap().InvalidateAttr( rTxtFrm );
         }
 
         pTmp = (ViewShell *)pTmp->GetNext();
