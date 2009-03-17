@@ -1515,10 +1515,10 @@ Writer& OutWW8_SwTxtNode( Writer& rWrt, SwCntntNode& rNode )
 
     ww8::WW8TableNodeInfo::Pointer_t pTextNodeInfo(rWW8Wrt.mpTableInfo->getTableNodeInfo(pNd));
     ww8::WW8TableNodeInfoInner::Pointer_t pTextNodeInfoInner;
-    
+
     if (pTextNodeInfo.get() != NULL)
         pTextNodeInfoInner = pTextNodeInfo->getFirstInner();
-    
+
     xub_StrLen nAktPos = 0;
     xub_StrLen nEnd = aStr.Len();
     bool bUnicode = rWW8Wrt.bWrtWW8, bRedlineAtEnd = false;
@@ -1889,20 +1889,29 @@ Writer& OutWW8_SwTxtNode( Writer& rWrt, SwCntntNode& rNode )
                             aLR.SetTxtFirstLineOfstValue(pFmt->GetAbsLSpace() - pFmt->GetFirstLineOffset());
                     else
                             aLR.SetTxtFirstLineOfst(GetWordFirstLineOffset(*pFmt));
-
-                    // --> OD 2009-01-12 #i94187#
-                    // set list style directly only in position and space mode LABEL_WIDTH_AND_POSITION
-                    if (SFX_ITEM_SET !=
-                        pTmpSet->GetItemState(RES_PARATR_NUMRULE, false) )
-                    {
-                        //If the numbering is not outline, and theres no numrule
-                        //name in the itemset, put one in there
-
-                        // NumRule from a template - then put it into the itemset
-                        pTmpSet->Put( SwNumRuleItem( pRule->GetName() ));
-                    }
                 }
                 // <--
+
+                // --> OD 2009-03-09 #100020#
+                // correct fix for issue i94187
+                if (SFX_ITEM_SET !=
+                    pTmpSet->GetItemState(RES_PARATR_NUMRULE, false) )
+                {
+                    // List style set via paragraph style - then put it into the itemset.
+                    // This is needed to get list level and list id exported for
+                    // the paragraph.
+                    pTmpSet->Put( SwNumRuleItem( pRule->GetName() ));
+
+                    // Put indent values into the itemset in case that the list
+                    // style is applied via paragraph style and the list level
+                    // indent values are not applicable.
+                    if ( pFmt->GetPositionAndSpaceMode() ==
+                                            SvxNumberFormat::LABEL_ALIGNMENT &&
+                         !pNd->AreListLevelIndentsApplicable() )
+                    {
+                        pTmpSet->Put( aLR );
+                    }
+                }
             }
             else
                 pTmpSet->ClearItem(RES_PARATR_NUMRULE);
@@ -2108,15 +2117,15 @@ Writer& OutWW8_SwTxtNode( Writer& rWrt, SwCntntNode& rNode )
         if (pTextNodeInfoInner->isEndOfLine())
         {
             rWW8Wrt.WriteRowEnd(pTextNodeInfoInner->getDepth());
-            
+
             pO->Insert( (BYTE*)&nSty, 2, pO->Count() );     // Style #
             rWW8Wrt.OutWW8TableInfoRow(pTextNodeInfoInner);
             rWW8Wrt.pPapPlc->AppendFkpEntry( rWrt.Strm().Tell(), pO->Count(),
                                             pO->GetData() );
-            pO->Remove( 0, pO->Count() );                       // leeren            
+            pO->Remove( 0, pO->Count() );                       // leeren
         }
     }
-    
+
 #ifdef DEBUG
     ::std::clog << "</OutWW8_SwTxtNode>" << ::std::endl;
 #endif
@@ -2133,25 +2142,25 @@ void SwWW8Writer::OutWW8TableNodeInfo(ww8::WW8TableNodeInfo::Pointer_t pNodeInfo
     (pNodeInfo->getInners().begin());
     ww8::WW8TableNodeInfo::Inners_t::const_iterator aItEnd
     (pNodeInfo->getInners().end());
-    
+
     while (aIt != aItEnd)
     {
         ww8::WW8TableNodeInfoInner::Pointer_t pInner = aIt->second;
         if (pInner->isEndOfCell())
         {
             WriteRowEnd(pInner->getDepth());
-                
+
             pO->Insert( (BYTE*)&nSty, 2, pO->Count() );     // Style #
             OutWW8TableInfoRow(pInner);
             pPapPlc->AppendFkpEntry( Strm().Tell(), pO->Count(),
                                     pO->GetData() );
             pO->Remove( 0, pO->Count() );                       // leeren
         }
-        
+
         if (pInner->isEndOfLine())
         {
         }
-                
+
         aIt++;
     }
 }
