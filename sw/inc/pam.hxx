@@ -256,6 +256,8 @@ public:
     { return *Start() <= rPos && rPos <= *End(); }
     
     static BOOL Overlap(const SwPaM & a, const SwPaM & b);
+    
+    static BOOL LessThan(const SwPaM & a, const SwPaM & b);
 
     DECL_FIXEDMEMPOOL_NEWDEL(SwPaM);
 
