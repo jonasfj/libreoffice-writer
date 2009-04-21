@@ -38,7 +38,7 @@
 #include <hintids.hxx>
 #include <cmdid.h>
 #include <hints.hxx>
-#include <bookmrk.hxx>
+#include <IMark.hxx>
 #include <frmfmt.hxx>
 #include <doc.hxx>
 #include <istyleaccess.hxx>
@@ -1101,9 +1101,7 @@ void SwXTextCursor::gotoEnd(sal_Bool Expand) throw( uno::RuntimeException )
         throw uno::RuntimeException();
     }
 }
-/* -----------------05.03.99 07:27-------------------
- *
- * --------------------------------------------------*/
+
 void SwXTextCursor::gotoRange(const uno::Reference< XTextRange > & xRange, sal_Bool bExpand )
                                 throw( uno::RuntimeException )
 {
@@ -1119,7 +1117,7 @@ void SwXTextCursor::gotoRange(const uno::Reference< XTextRange > & xRange, sal_B
     OTextCursorHelper* pCursor = 0;
     if(xRangeTunnel.is())
     {
-        pRange 	= reinterpret_cast< SwXTextRange * >(
+        pRange  = reinterpret_cast< SwXTextRange * >(
                 sal::static_int_cast< sal_IntPtr >( xRangeTunnel->getSomething( SwXTextRange::getUnoTunnelId()) ));
         pCursor = reinterpret_cast< OTextCursorHelper * >(
                 sal::static_int_cast< sal_IntPtr >( xRangeTunnel->getSomething( OTextCursorHelper::getUnoTunnelId()) ));
@@ -1128,11 +1126,11 @@ void SwXTextCursor::gotoRange(const uno::Reference< XTextRange > & xRange, sal_B
     SwStartNodeType eSearchNodeType = SwNormalStartNode;
     switch(eType)
     {
-        case CURSOR_FRAME:		eSearchNodeType = SwFlyStartNode;		break;
-        case CURSOR_TBLTEXT: 	eSearchNodeType = SwTableBoxStartNode;	break;
-        case CURSOR_FOOTNOTE: 	eSearchNodeType = SwFootnoteStartNode; 	break;
-        case CURSOR_HEADER:		eSearchNodeType = SwHeaderStartNode;	break;
-        case CURSOR_FOOTER:		eSearchNodeType = SwFooterStartNode;	break;
+        case CURSOR_FRAME:      eSearchNodeType = SwFlyStartNode;       break;
+        case CURSOR_TBLTEXT:    eSearchNodeType = SwTableBoxStartNode;  break;
+        case CURSOR_FOOTNOTE:   eSearchNodeType = SwFootnoteStartNode;  break;
+        case CURSOR_HEADER:     eSearchNodeType = SwHeaderStartNode;    break;
+        case CURSOR_FOOTER:     eSearchNodeType = SwFooterStartNode;    break;
         //case CURSOR_INVALID:
         //case CURSOR_BODY:
         default:
@@ -1148,8 +1146,8 @@ void SwXTextCursor::gotoRange(const uno::Reference< XTextRange > & xRange, sal_B
     }
     else if(pRange && pRange->GetBookmark())
     {
-        SwBookmark* pBkm = pRange->GetBookmark();
-        pSrcNode = &pBkm->GetBookmarkPos().nNode.GetNode();
+        ::sw::mark::IMark const * const pBkmk = pRange->GetBookmark();
+        pSrcNode = &pBkmk->GetMarkPos().nNode.GetNode();
     }
     const SwStartNode* pTmp = pSrcNode ? pSrcNode->FindSttNodeByType(eSearchNodeType) : 0;
 
@@ -1190,9 +1188,9 @@ void SwXTextCursor::gotoRange(const uno::Reference< XTextRange > & xRange, sal_B
         }
         else
         {
-            SwBookmark* pBkm = pRange->GetBookmark();
-            pParamLeft = new SwPosition(pBkm->GetBookmarkPos());
-            pParamRight = new SwPosition(pBkm->GetOtherBookmarkPos() ? *pBkm->GetOtherBookmarkPos() : *pParamLeft);
+            ::sw::mark::IMark const * const pBkmk = pRange->GetBookmark();
+            pParamLeft = new SwPosition(pBkmk->GetMarkPos());
+            pParamRight = new SwPosition(pBkmk->IsExpanded() ? pBkmk->GetOtherMarkPos() : *pParamLeft);
         }
         if(*pParamRight < *pParamLeft)
         {
@@ -1230,12 +1228,12 @@ void SwXTextCursor::gotoRange(const uno::Reference< XTextRange > & xRange, sal_B
         }
         else
         {
-            SwBookmark* pBkm = pRange->GetBookmark();
-            *pOwnCursor->GetPoint() = pBkm->GetBookmarkPos();
-            if(pBkm->GetOtherBookmarkPos())
+            ::sw::mark::IMark const * const pBkmk = pRange->GetBookmark();
+            *pOwnCursor->GetPoint() = pBkmk->GetMarkPos();
+            if(pBkmk->IsExpanded())
             {
                 pOwnCursor->SetMark();
-                *pOwnCursor->GetMark() = *pBkm->GetOtherBookmarkPos();
+                *pOwnCursor->GetMark() = pBkmk->GetOtherMarkPos();
             }
             else
                 pOwnCursor->DeleteMark();
