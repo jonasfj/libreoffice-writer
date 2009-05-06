@@ -1,7 +1,7 @@
 /*************************************************************************
  *
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
- * 
+ *
  * Copyright 2008 by Sun Microsystems, Inc.
  *
  * OpenOffice.org - a multi-platform office productivity suite
@@ -349,9 +349,9 @@ void SwAnnotationShell::Exec( SfxRequest &rReq )
             }
             pOLV->InsertText( String(cIns), TRUE );
             rReq.Done();
-            break;	
+            break;
         }
-        case FN_INSERT_SYMBOL:
+        case SID_CHARMAP:
         {
             if (pPostItMgr->GetActivePostIt()->GetStatus()!=SwPostItHelper::DELETED)
                 InsertSymbol(rReq);
@@ -821,7 +821,7 @@ void SwAnnotationShell::ExecClpbrd(SfxRequest &rReq)
                 TransferableDataHelper aDataHelper( TransferableDataHelper::CreateFromSystemClipboard( &rView.GetEditWin() ) );
 
                 ULONG nFormat = pDlg->GetFormat( aDataHelper.GetTransferable() );
-                
+
                 if (nFormat > 0)
                 {
                     if (nFormat == SOT_FORMAT_STRING)
@@ -837,7 +837,7 @@ void SwAnnotationShell::ExecClpbrd(SfxRequest &rReq)
         {
             ULONG nFormat = 0;
             const SfxPoolItem* pItem;
-            if ( rReq.GetArgs() && rReq.GetArgs()->GetItemState(nSlot, TRUE, &pItem) == SFX_ITEM_SET && 
+            if ( rReq.GetArgs() && rReq.GetArgs()->GetItemState(nSlot, TRUE, &pItem) == SFX_ITEM_SET &&
                                     pItem->ISA(SfxUInt32Item) )
             {
                 nFormat = ((const SfxUInt32Item*)pItem)->GetValue();
@@ -862,7 +862,7 @@ void SwAnnotationShell::StateClpbrd(SfxItemSet &rSet)
     if ( !pPostItMgr || !pPostItMgr->GetActivePostIt() )
         return;
     OutlinerView* pOLV = pPostItMgr->GetActivePostIt()->View();
-    
+
     TransferableDataHelper aDataHelper( TransferableDataHelper::CreateFromSystemClipboard( &rView.GetEditWin() ) );
     bool bPastePossible = ( aDataHelper.HasFormat( SOT_FORMAT_STRING ) || aDataHelper.HasFormat( SOT_FORMAT_RTF ) );
     bPastePossible = bPastePossible &&  (pPostItMgr->GetActivePostIt()->GetStatus()!=SwPostItHelper::DELETED);
@@ -922,7 +922,7 @@ void SwAnnotationShell::StateStatusLine(SfxItemSet &rSet)
         switch( nWhich )
         {
             case FN_STAT_SELMODE:
-            {	
+            {
                 rSet.Put(SfxUInt16Item(FN_STAT_SELMODE, 0));
                 rSet.DisableItem( nWhich );
                 break;
@@ -1094,10 +1094,10 @@ void SwAnnotationShell::GetNoteState(SfxItemSet &rSet)
 
         if (pPostItMgr->GetActivePostIt())
         {
-            if ( (pPostItMgr->GetActivePostIt()->IsProtected()) && 
+            if ( (pPostItMgr->GetActivePostIt()->IsProtected()) &&
                     ( (nSlotId==FN_DELETE_NOTE) || (nSlotId==FN_REPLY) ) )
                 rSet.DisableItem( nWhich );
-        }	
+        }
         nWhich = aIter.NextWhich();
     }
 }
@@ -1475,7 +1475,7 @@ void SwAnnotationShell::StateUndo(SfxItemSet &rSet)
             }
 
         }
-        
+
         if (pPostItMgr->GetActivePostIt()->GetStatus()==SwPostItHelper::DELETED)
             rSet.DisableItem( nWhich );
 
@@ -1505,7 +1505,7 @@ void SwAnnotationShell::InsertSymbol(SfxRequest& rReq)
     const SfxItemSet *pArgs = rReq.GetArgs();
     const SfxPoolItem* pItem = 0;
     if( pArgs )
-        pArgs->GetItemState(GetPool().GetWhich(FN_INSERT_SYMBOL), FALSE, &pItem);
+        pArgs->GetItemState(GetPool().GetWhich(SID_CHARMAP), FALSE, &pItem);
 
     String sSym;
     String sFontName;
@@ -1513,7 +1513,7 @@ void SwAnnotationShell::InsertSymbol(SfxRequest& rReq)
     {
         sSym = ((const SfxStringItem*)pItem)->GetValue();
         const SfxPoolItem* pFtItem = NULL;
-        pArgs->GetItemState( GetPool().GetWhich(FN_PARAM_1), FALSE, &pFtItem);
+        pArgs->GetItemState( GetPool().GetWhich(SID_ATTR_SPECIALCHAR), FALSE, &pFtItem);
         const SfxStringItem* pFontItem = PTR_CAST( SfxStringItem, pFtItem );
         if ( pFontItem )
             sFontName = pFontItem->GetValue();
@@ -1532,36 +1532,50 @@ void SwAnnotationShell::InsertSymbol(SfxRequest& rReq)
             aSetDlgFont = (SvxFontItem&)aSet.Get( GetWhichOfScript(
                         SID_ATTR_CHAR_FONT,
                         GetI18NScriptTypeOfLanguage( (USHORT)GetAppLanguage() ) ));
+        if (!sFontName.Len())
+            sFontName = aSetDlgFont.GetFamilyName();
     }
 
-
     Font aFont(sFontName, Size(1,1));
-    if(!sSym.Len())
+    if( !sSym.Len() )
     {
-        //CHINA001 SvxCharacterMap* pDlg = new SvxCharacterMap( NULL, FALSE );
         SvxAbstractDialogFactory* pFact = SvxAbstractDialogFactory::Create();
-        DBG_ASSERT(pFact, "Dialogdiet fail!");//CHINA001
-        AbstractSvxCharacterMap* pDlg = pFact->CreateSvxCharacterMap( NULL, RID_SVXDLG_CHARMAP, FALSE );
-        DBG_ASSERT(pDlg, "Dialogdiet fail!");//CHINA001
 
-        Font aDlgFont( pDlg->GetCharFont() );
+        SfxAllItemSet aAllSet( GetPool() );
+        aAllSet.Put( SfxBoolItem( FN_PARAM_1, FALSE ) );
+
         SwViewOption aOpt(*rView.GetWrtShell().GetViewOptions());
         String sSymbolFont = aOpt.GetSymbolFont();
-        if(sSymbolFont.Len())
-            aDlgFont.SetName(sSymbolFont);
+        if( sSymbolFont.Len() )
+            aAllSet.Put( SfxStringItem( SID_FONT_NAME, sSymbolFont ) );
         else
-            aDlgFont.SetName( aSetDlgFont.GetFamilyName() );
+            aAllSet.Put( SfxStringItem( SID_FONT_NAME, aSetDlgFont.GetFamilyName() ) );
 
         // Wenn Zeichen selektiert ist kann es angezeigt werden
-        pDlg->SetFont( aDlgFont );
+        SfxAbstractDialog* pDlg = pFact->CreateSfxDialog( rView.GetWindow(), aAllSet,
+            rView.GetViewFrame()->GetFrame()->GetFrameInterface(), RID_SVXDLG_CHARMAP );
+
         USHORT nResult = pDlg->Execute();
         if( nResult == RET_OK )
         {
-            aFont = pDlg->GetCharFont();
-            sSym  = pDlg->GetCharacters();
-            aOpt.SetSymbolFont(aFont.GetName());
-            SW_MOD()->ApplyUsrPref(aOpt, &rView);
+            SFX_ITEMSET_ARG( pDlg->GetOutputItemSet(), pCItem, SfxStringItem, SID_CHARMAP, FALSE );
+            SFX_ITEMSET_ARG( pDlg->GetOutputItemSet(), pFontItem, SvxFontItem, SID_ATTR_CHAR_FONT, FALSE );
+            if ( pFontItem )
+            {
+                aFont.SetName( pFontItem->GetFamilyName() );
+                aFont.SetStyleName( pFontItem->GetStyleName() );
+                aFont.SetCharSet( pFontItem->GetCharSet() );
+                aFont.SetPitch( pFontItem->GetPitch() );
+            }
+
+            if ( pCItem )
+            {
+                sSym  = pCItem->GetValue();
+                aOpt.SetSymbolFont(aFont.GetName());
+                SW_MOD()->ApplyUsrPref(aOpt, &rView);
+            }
         }
+
         delete( pDlg );
     }
 
@@ -1611,9 +1625,9 @@ void SwAnnotationShell::InsertSymbol(SfxRequest& rReq)
         pOutliner->SetUpdateMode(TRUE);
         pOLV->ShowCursor();
 
-        rReq.AppendItem( SfxStringItem( GetPool().GetWhich(FN_INSERT_SYMBOL), sSym ) );
+        rReq.AppendItem( SfxStringItem( GetPool().GetWhich(SID_CHARMAP), sSym ) );
         if(aFont.GetName().Len())
-            rReq.AppendItem( SfxStringItem( FN_PARAM_1, aFont.GetName() ) );
+            rReq.AppendItem( SfxStringItem( SID_ATTR_SPECIALCHAR, aFont.GetName() ) );
         rReq.Done();
     }
 }
