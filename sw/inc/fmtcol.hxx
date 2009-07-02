@@ -118,7 +118,7 @@ public:
     int  GetAssignedOutlineStyleLevel() const;
     inline bool IsAssignedToListLevelOfOutlineStyle() const
     {
-        return mbAssignedToOutlineStyle;			
+        return mbAssignedToOutlineStyle;
     }
     void AssignToListLevelOfOutlineStyle(const int nAssignedListLevel);
     void DeleteAssignmentToListLevelOfOutlineStyle();
