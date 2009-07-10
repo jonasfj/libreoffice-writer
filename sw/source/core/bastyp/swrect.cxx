@@ -1,7 +1,7 @@
 /*************************************************************************
  *
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
- * 
+ *
  * Copyright 2008 by Sun Microsystems, Inc.
  *
  * OpenOffice.org - a multi-platform office productivity suite
@@ -32,7 +32,7 @@
 #include "precompiled_sw.hxx"
 
 
-#ifndef PRODUCT
+#ifdef DBG_UTIL
 #ifndef _STREAM_HXX //autogen
 #include <tools/stream.hxx>
 #endif
@@ -310,7 +310,7 @@ void SwRect::SetUpperRightCorner(  const Point& rNew )
 void SwRect::SetLowerLeftCorner(  const Point& rNew )
     { nX = rNew.nA; nY = rNew.nB - nHeight; }
 
-#ifndef PRODUCT
+#ifdef DBG_UTIL
 /*************************************************************************
  *					operator<<( ostream&, SwRect&)
  *************************************************************************/

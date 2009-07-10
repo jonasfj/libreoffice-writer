@@ -283,7 +283,7 @@ void sw::util::RedlineStack::close( const SwPosition& rPos,
     {
         if( pTabDesc && pTabDesc->getOldRedlineStack() )
         {
-#ifndef PRODUCT
+#ifdef DBG_UTIL
             ASSERT( pTabDesc->getOldRedlineStack()->close(rPos, eType), "close without open!");
 #else
             pTabDesc->getOldRedlineStack()->close( rPos, eType );
@@ -1469,7 +1469,7 @@ void WW8TabBandDesc::ProcessSpacing(const BYTE* pParams)
     if (nLen != 6)
         return;
     mbHasSpacing=true;
-#ifndef PRODUCT
+#ifdef DBG_UTIL
     BYTE nWhichCell =
 #endif
             *pParams++;
@@ -1523,7 +1523,7 @@ void WW8TabBandDesc::ProcessSpecificSpacing(const BYTE* pParams)
 
     ASSERT(nOverrideSpacing[nWhichCell] < 0x10,
         "Unexpected value for nSideBits");
-#ifndef PRODUCT
+#ifdef DBG_UTIL
     BYTE nUnknown2 =
 #endif
             *pParams++;
@@ -1840,7 +1840,7 @@ WW8TabDesc::WW8TabDesc(SwWW8ImplReader* pIoClass, WW8_CP nStartCp) :
                         const BYTE b0 = pParams[0];
                         const BYTE b1 = pParams[1];
                         const BYTE b2 = pParams[2];
-                        if (b0 == 3) // Twips 
+                        if (b0 == 3) // Twips
                             nPreferredWidth = b2 * 0x100 + b1;
                         }
                         break;
@@ -2509,7 +2509,7 @@ void WW8TabDesc::CreateSwTable()
             //ability to set the margin.
             SvxLRSpaceItem aL( RES_LR_SPACE );
             // set right to original DxaLeft (i28656)
-            aL.SetLeft( !bIsBiDi ? 
+            aL.SetLeft( !bIsBiDi ?
                 static_cast<long>(GetMinLeft()) :
                 static_cast<long>(pIo->maSectionManager.GetTextAreaWidth() - nPreferredWidth  - nOrgDxaLeft) );
             aItemSet.Put(aL);
@@ -3534,9 +3534,9 @@ void SwWW8ImplReader::TabCellEnd()
     {
         pTableDesc->TableCellEnd();
 
-        if (bReadTable 
-            && pWFlyPara == NULL 
-            && mpTableEndPaM.get() != NULL 
+        if (bReadTable
+            && pWFlyPara == NULL
+            && mpTableEndPaM.get() != NULL
             && (! SwPaM::Overlap(*pPaM, *mpTableEndPaM))
             && SwPaM::LessThan(*mpTableEndPaM, *pPaM))
         {
@@ -3544,9 +3544,9 @@ void SwWW8ImplReader::TabCellEnd()
             {
                 rDoc.DelFullPara(*mpTableEndPaM);
             }
-        }    
+        }
     }
-    
+
     bFirstPara = true;    // We have come to the end of a cell so FirstPara flag
     bReadTable = false;
     mpTableEndPaM.reset();
@@ -3601,7 +3601,7 @@ void SwWW8ImplReader::StopTable()
         maTracer.EnterEnvironment(sw::log::eTable, rtl::OUString::valueOf(
             static_cast<sal_Int32>(maTableStack.size())));
     }
-    
+
     bReadTable = true;
     // --> OD 2009-04-16 #i101116#
     // Keep PaM on table end only for nested tables

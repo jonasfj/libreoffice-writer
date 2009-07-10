@@ -324,7 +324,7 @@ SwDoc::SwDoc() :
     mbInsOnlyTxtGlssry =
     mbContains_MSVBasic =
     mbKernAsianPunctuation =
-#ifndef PRODUCT
+#ifdef DBG_UTIL
     mbXMLExport =
 #endif
     // --> OD 2006-03-21 #b6375613#
@@ -379,7 +379,7 @@ SwDoc::SwDoc() :
     //
 
     pMacroTable = new SvxMacroTableDtor;
-    
+
     mpGrammarContact = ::createGrammarContact();
 
     /*
@@ -494,7 +494,7 @@ SwDoc::~SwDoc()
     // this assures that dipose gets called if there is need for it.
     aChartDataProviderImplRef.reset();
     delete pChartControllerHelper;
-    
+
     delete mpGrammarContact;
     mpGrammarContact = 0;
 

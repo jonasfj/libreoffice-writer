@@ -1,7 +1,7 @@
 /*************************************************************************
  *
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
- * 
+ *
  * Copyright 2008 by Sun Microsystems, Inc.
  *
  * OpenOffice.org - a multi-platform office productivity suite
@@ -453,7 +453,7 @@ class SwHTMLParser : public SfxHTMLParser, public SwClient
     enum JumpToMarks { JUMPTO_NONE, JUMPTO_MARK, JUMPTO_TABLE, JUMPTO_FRAME,
                         JUMPTO_REGION, JUMPTO_GRAPHIC } eJumpTo;
 
-#ifndef PRODUCT
+#ifdef DBG_UTIL
     sal_uInt16	nContinue;			// Tiefe der Continue-Aufrufe
 #endif
 

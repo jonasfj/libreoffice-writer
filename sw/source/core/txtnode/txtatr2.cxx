@@ -1,7 +1,7 @@
 /*************************************************************************
  *
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
- * 
+ *
  * Copyright 2008 by Sun Microsystems, Inc.
  *
  * OpenOffice.org - a multi-platform office productivity suite
@@ -86,7 +86,7 @@ SwTxtCharFmt::~SwTxtCharFmt( )
 void SwTxtCharFmt::Modify( SfxPoolItem* pOld, SfxPoolItem* pNew )
 {
     USHORT nWhich = pOld ? pOld->Which() : pNew ? pNew->Which() : 0;
-#ifndef PRODUCT
+#ifdef DBG_UTIL
     if ( (nWhich<RES_CHRATR_BEGIN || nWhich>RES_CHRATR_END)
             && (nWhich!=RES_OBJECTDYING)
             && (nWhich!=RES_ATTRSET_CHG)
@@ -184,7 +184,7 @@ SwCharFmt* SwTxtINetFmt::GetCharFmt()
 void SwTxtINetFmt::Modify( SfxPoolItem* pOld, SfxPoolItem* pNew )
 {
     USHORT nWhich = pOld ? pOld->Which() : pNew ? pNew->Which() : 0;
-#ifndef PRODUCT
+#ifdef DBG_UTIL
     if ( (nWhich<RES_CHRATR_BEGIN || nWhich>RES_CHRATR_END)
             && (nWhich!=RES_OBJECTDYING)
             && (nWhich!=RES_ATTRSET_CHG)
@@ -247,7 +247,7 @@ SwTxtRuby::~SwTxtRuby()
 void SwTxtRuby::Modify( SfxPoolItem *pOld, SfxPoolItem *pNew )
 {
     USHORT nWhich = pOld ? pOld->Which() : pNew ? pNew->Which() : 0;
-#ifndef PRODUCT
+#ifdef DBG_UTIL
     if ( (nWhich<RES_CHRATR_BEGIN || nWhich>RES_CHRATR_END)
             && (nWhich!=RES_OBJECTDYING)
             && (nWhich!=RES_ATTRSET_CHG)

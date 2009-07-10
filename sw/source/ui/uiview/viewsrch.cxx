@@ -1,7 +1,7 @@
 /*************************************************************************
  *
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
- * 
+ *
  * Copyright 2008 by Sun Microsystems, Inc.
  *
  * OpenOffice.org - a multi-platform office productivity suite
@@ -157,7 +157,7 @@ void SwView::ExecSearch(SfxRequest& rReq, BOOL bNoMessage)
         break;
 
     case FID_SEARCH_OFF:
-        if(pArgs)	
+        if(pArgs)
         {
             // Dialog abmelden
             delete pSrchItem;
@@ -428,7 +428,7 @@ void SwView::ExecSearch(SfxRequest& rReq, BOOL bNoMessage)
         }
         break;
         default:
-#ifndef PRODUCT
+#ifdef DBG_UTIL
             if(nSlot)
             {
                 ByteString sStr( "nSlot: " );

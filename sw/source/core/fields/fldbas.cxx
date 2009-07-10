@@ -1,7 +1,7 @@
 /*************************************************************************
  *
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
- * 
+ *
  * Copyright 2008 by Sun Microsystems, Inc.
  *
  * OpenOffice.org - a multi-platform office productivity suite
@@ -167,7 +167,7 @@ SwFieldType::SwFieldType( USHORT nWhichId )
     DBG_CTOR( SwFieldType, 0 );
 }
 
-#ifndef PRODUCT
+#ifdef DBG_UTIL
 
 SwFieldType::~SwFieldType()
 {
@@ -213,7 +213,7 @@ SwField::~SwField()
     Beschreibung: Statt Umweg ueber den Typ
  --------------------------------------------------------------------*/
 
-#ifndef PRODUCT
+#ifdef DBG_UTIL
 USHORT SwField::Which() const
 {
     ASSERT(pType, "Kein Typ vorhanden");

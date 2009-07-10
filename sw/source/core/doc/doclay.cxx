@@ -212,7 +212,7 @@ SwFrmFmt *SwDoc::MakeLayoutFmt( RndStdIds eRequest, const SfxItemSet* pSet )
         }
         break;
 
-#ifndef PRODUCT
+#ifdef DBG_UTIL
     case FLY_PAGE:
     case FLY_AUTO_CNTNT:
     case FLY_AT_FLY:
@@ -694,9 +694,9 @@ SwFlyFrmFmt* SwDoc::_MakeFlySection( const SwPosition& rAnchPos,
     {
         xub_StrLen nStt = rAnchPos.nContent.GetIndex();
         SwTxtNode * pTxtNode = rAnchPos.nNode.GetNode().GetTxtNode();
-        
+
         ASSERT(pTxtNode!= 0, "There should be a SwTxtNode!");
-        
+
         if (pTxtNode != NULL)
             pTxtNode->InsertItem(SwFmtFlyCnt( pFmt ), nStt, nStt );
     }
@@ -1381,7 +1381,7 @@ SwFlyFrmFmt* SwDoc::InsertLabel( const SwLabelType eType, const String &rTxt, co
                     const xub_StrLen nIdx = pPos->nContent.GetIndex();
                     SwTxtAttr *pHnt = pTxtNode->GetTxtAttr( nIdx, RES_TXTATR_FLYCNT );
 
-#ifndef PRODUCT
+#ifdef DBG_UTIL
                     ASSERT( pHnt && pHnt->Which() == RES_TXTATR_FLYCNT,
                                 "Missing FlyInCnt-Hint." );
                     ASSERT( pHnt && ((SwFmtFlyCnt&)pHnt->GetFlyCnt()).
@@ -1674,7 +1674,7 @@ SwFlyFrmFmt* SwDoc::InsertDrawLabel( const String &rTxt,
         const xub_StrLen nIdx = pPos->nContent.GetIndex();
         SwTxtAttr *pHnt = pTxtNode->GetTxtAttr( nIdx, RES_TXTATR_FLYCNT );
 
-#ifndef PRODUCT
+#ifdef DBG_UTIL
         ASSERT( pHnt && pHnt->Which() == RES_TXTATR_FLYCNT,
                     "Missing FlyInCnt-Hint." );
         ASSERT( pHnt && ((SwFmtFlyCnt&)pHnt->GetFlyCnt()).
@@ -1854,14 +1854,14 @@ IMPL_LINK( SwDoc, DoIdleJobs, Timer *, pTimer )
         if (GetRootFrm()->IsNeedGrammarCheck())
         {
             BOOL bIsOnlineSpell = pSh->GetViewOptions()->IsOnlineSpell();
-            
+
             sal_Bool bIsAutoGrammar = sal_False;
             SvtLinguConfig().GetProperty( C2U( UPN_IS_GRAMMAR_AUTO ) ) >>= bIsAutoGrammar;
 
             if (bIsOnlineSpell && bIsAutoGrammar)
                 StartGrammarChecking( *this );
         }
-    
+
         sal_uInt16 nFldUpdFlag;
         if( GetRootFrm()->IsIdleFormat() )
             GetRootFrm()->GetCurrShell()->LayoutIdle();

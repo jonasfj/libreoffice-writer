@@ -1,7 +1,7 @@
 /*************************************************************************
  *
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
- * 
+ *
  * Copyright 2008 by Sun Microsystems, Inc.
  *
  * OpenOffice.org - a multi-platform office productivity suite
@@ -691,7 +691,7 @@ void SwFmtPageDesc::Modify( SfxPoolItem* pOld, SfxPoolItem* pNew )
                 //mich also bei meinem Format aus.
                 //Dabei werden ich Deletet!!!
             if( IS_TYPE( SwFmt, pDefinedIn ))
-#ifndef PRODUCT
+#ifdef DBG_UTIL
             {
                 sal_Bool bDel = ((SwFmt*)pDefinedIn)->ResetFmtAttr( RES_PAGEDESC );
                 ASSERT( bDel, ";-) FmtPageDesc nicht zerstoert." );
@@ -700,7 +700,7 @@ void SwFmtPageDesc::Modify( SfxPoolItem* pOld, SfxPoolItem* pNew )
                 ((SwFmt*)pDefinedIn)->ResetFmtAttr( RES_PAGEDESC );
 #endif
             else if( IS_TYPE( SwCntntNode, pDefinedIn ))
-#ifndef PRODUCT
+#ifdef DBG_UTIL
             {
                 sal_Bool bDel = ((SwCntntNode*)pDefinedIn)->ResetAttr( RES_PAGEDESC );
                 ASSERT( bDel, ";-) FmtPageDesc nicht zerstoert." );

@@ -1,7 +1,7 @@
 /*************************************************************************
  *
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
- * 
+ *
  * Copyright 2008 by Sun Microsystems, Inc.
  *
  * OpenOffice.org - a multi-platform office productivity suite
@@ -546,7 +546,7 @@ String lcl_dbg_out(const SwNode & rNode)
     aTmpStr += String::CreateFromInt32(rNode.GetIndex());
     aTmpStr += String("\"", RTL_TEXTENCODING_ASCII_US);
 
-#ifndef PRODUCT
+#ifdef DBG_UTIL
     aTmpStr += String(" serial=\"", RTL_TEXTENCODING_ASCII_US);
     aTmpStr += String::CreateFromInt32(rNode.GetSerial());
     aTmpStr += String("\"", RTL_TEXTENCODING_ASCII_US);
@@ -725,13 +725,13 @@ String lcl_dbg_out(SwNodes & rNodes)
     for (ULONG i = 0; i < rNodes.Count(); i++)
     {
         SwNode * pNode = rNodes[i];
-        
+
         if (pNode->IsEndNode())
             aStr += String("</nodes>\n", RTL_TEXTENCODING_ASCII_US);
-            
+
         aStr += lcl_dbg_out(*pNode);
         aStr += String("\n", RTL_TEXTENCODING_ASCII_US);
-        
+
         if (pNode->IsStartNode())
             aStr += String("<nodes>", RTL_TEXTENCODING_ASCII_US);
     }

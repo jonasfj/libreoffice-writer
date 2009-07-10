@@ -1,7 +1,7 @@
 /*************************************************************************
  *
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
- * 
+ *
  * Copyright 2008 by Sun Microsystems, Inc.
  *
  * OpenOffice.org - a multi-platform office productivity suite
@@ -110,7 +110,7 @@
 #include <comcore.hrc>
 #endif
 
-#include <svx/outliner.hxx>	
+#include <svx/outliner.hxx>
 #include <svx/outlobj.hxx>
 
 #define URL_DECODE 	INetURLObject::DECODE_UNAMBIGUOUS
@@ -1130,7 +1130,7 @@ String SwDocInfoField::Expand() const
             uno::Reference<document::XDocumentProperties> xDocProps( xDPS->getDocumentProperties());
             uno::Reference < beans::XPropertySet > xSet( xDocProps->getUserDefinedProperties(), uno::UNO_QUERY_THROW);
             uno::Reference < beans::XPropertySetInfo > xSetInfo = xSet->getPropertySetInfo();
-            
+
             uno::Any aAny;
             if( xSetInfo->hasPropertyByName( aName ) )
                 aAny = xSet->getPropertyValue( aName );
@@ -1880,7 +1880,7 @@ void SwPostItField::SetTextObject( OutlinerParaObject* pText )
 --------------------------------------------------*/
 BOOL SwPostItField::QueryValue( uno::Any& rAny, USHORT nWhichId ) const
 {
-    switch( nWhichId )	
+    switch( nWhichId )
     {
     case FIELD_PROP_PAR1:
         rAny <<= OUString(sAuthor);
@@ -2318,7 +2318,7 @@ sal_uInt16 SwRefPageGetFieldType::MakeSetList( _SetGetExpFlds& rTmpLst )
                 {
                     // einen sdbcx::Index fuers bestimmen vom TextNode anlegen
                     SwPosition aPos( pDoc->GetNodes().GetEndOfPostIts() );
-#ifndef PRODUCT
+#ifdef DBG_UTIL
                     ASSERT( GetBodyTxtNode( *pDoc, aPos, *pFrm ),
                             "wo steht das Feld" );
 #else

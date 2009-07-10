@@ -407,7 +407,7 @@ void ViewShell::ImplEndAction( const BOOL bIdleEnd )
     UISizeNotify();
     ++nStartAction;
 
-#ifndef PRODUCT
+#ifdef DBG_UTIL
     // test option 'No Scroll' suppresses the automatic repair of the scrolled area
     if ( !GetViewOptions()->IsTest8() )
 #endif
@@ -589,7 +589,7 @@ void ViewShell::MakeVisible( const SwRect &rRect )
                     EndAction();
                 } while( nOldH != pRoot->Frm().Height() && nLoopCnt-- );
             }
-#ifndef PRODUCT
+#ifdef DBG_UTIL
             else
             {
                 //MA: 04. Nov. 94, braucht doch keiner oder??
@@ -746,7 +746,7 @@ void ViewShell::LayoutIdle()
 
     SET_CURR_SHELL( this );
 
-#ifndef PRODUCT
+#ifdef DBG_UTIL
     // Wenn Test5 gedrueckt ist, wird der IdleFormatierer abgeknipst.
     if( pOpt->IsTest5() )
         return;
@@ -1146,7 +1146,7 @@ void ViewShell::VisPortChgd( const SwRect &rRect)
     if ( rRect == VisArea() )
         return;
 
-#ifndef PRODUCT
+#ifdef DBG_UTIL
     if ( bInEndAction )
     {
         //Da Rescheduled doch schon wieder irgendwo einer?
@@ -1744,7 +1744,7 @@ void ViewShell::_PaintDesktop( const SwRegionRects &rRegion )
         // (3) expand DLPostPaint2 with a flag to signal if FormControl paints shall
         //     be done or not
         //
-        // Currently, (3) will be the best possible solution. It will keep overlay and 
+        // Currently, (3) will be the best possible solution. It will keep overlay and
         // buffering intact and work without MapMode for single pages. In the medium
         // to long run, (1) will need to be used and the bool bPaintFormLayer needs
         // to be removed again

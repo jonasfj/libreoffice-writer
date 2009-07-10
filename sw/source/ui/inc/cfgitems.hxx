@@ -1,7 +1,7 @@
 /*************************************************************************
  *
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
- * 
+ *
  * Copyright 2008 by Sun Microsystems, Inc.
  *
  * OpenOffice.org - a multi-platform office productivity suite
@@ -39,7 +39,7 @@
 
 class SwWriterApp;
 class SwModule;
-#ifndef PRODUCT
+#ifdef DBG_UTIL
 class SwTestTabPage;
 #endif
 class SwAddPrinterTabPage;
@@ -170,7 +170,7 @@ public:
     BOOL IsPrintPageBackground() const { return bPrintPageBackground; }
     BOOL IsPrintBlackFont() const { return bPrintBlackFont; }
     //#i81434# - printing of hidden text
-    sal_Bool IsPrintHiddenText() const { return bPrintHiddenText; } 
+    sal_Bool IsPrintHiddenText() const { return bPrintHiddenText; }
     sal_Bool IsPrintTextPlaceholder() const { return bPrintTextPlaceholder; }
 
     BOOL IsPrintSingleJobs() const { return bPrintSingleJobs; }
@@ -207,7 +207,7 @@ public:
     void SetOn( BOOL bFlag ) 			{ bOn = bFlag; }
 };
 
-#ifndef PRODUCT
+#ifdef DBG_UTIL
 /*--------OS 12.01.95 -----------------------------------
 Item fuer Einstellungsdialog - Testeinstellungen
 --------------------------------------------------------- */

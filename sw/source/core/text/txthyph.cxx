@@ -1,7 +1,7 @@
 /*************************************************************************
  *
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
- * 
+ *
  * Copyright 2008 by Sun Microsystems, Inc.
  *
  * OpenOffice.org - a multi-platform office productivity suite
@@ -47,7 +47,7 @@
 #include <guess.hxx>	//
 #include <splargs.hxx>	// SwInterHyphInfo
 
-#ifndef PRODUCT
+#ifdef DBG_UTIL
 extern const sal_Char *GetLangName( const MSHORT nLang );
 #endif
 

@@ -1,7 +1,7 @@
 /*************************************************************************
  *
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
- * 
+ *
  * Copyright 2008 by Sun Microsystems, Inc.
  *
  * OpenOffice.org - a multi-platform office productivity suite
@@ -494,7 +494,7 @@ void SwPaM::SetMark()
     (*pMark) = (*pPoint);
 }
 
-#ifndef PRODUCT
+#ifdef DBG_UTIL
 
 void SwPaM::Exchange()
 {
@@ -1151,12 +1151,12 @@ String SwPaM::GetTxt() const
     return aResult;
 }
 
-BOOL SwPaM::Overlap(const SwPaM & a, const SwPaM & b) 
+BOOL SwPaM::Overlap(const SwPaM & a, const SwPaM & b)
 {
     return !(*b.End() <= *a.Start() || *a.End() <= *b.End());
 }
 
 BOOL SwPaM::LessThan(const SwPaM & a, const SwPaM & b)
 {
-    return (*a.Start() < *b.Start()) || (*a.Start() == *b.Start() && *a.End() < *b.End()); 
+    return (*a.Start() < *b.Start()) || (*a.Start() == *b.Start() && *a.End() < *b.End());
 }

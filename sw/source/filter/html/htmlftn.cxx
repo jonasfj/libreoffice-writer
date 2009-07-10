@@ -1,7 +1,7 @@
 /*************************************************************************
  *
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
- * 
+ *
  * Copyright 2008 by Sun Microsystems, Inc.
  *
  * OpenOffice.org - a multi-platform office productivity suite
@@ -355,7 +355,7 @@ void SwHTMLWriter::OutFootEndNotes()
     if( !pFootEndNotes )
         return;
 
-#ifndef PRODUCT
+#ifdef DBG_UTIL
     USHORT nFtn = nFootNote, nEn = nEndNote;
 #endif
     nFootNote = 0, nEndNote = 0;
@@ -420,7 +420,7 @@ void SwHTMLWriter::OutFootEndNotes()
         }
     }
 
-#ifndef PRODUCT
+#ifdef DBG_UTIL
     ASSERT( nFtn == nFootNote,
             "SwHTMLWriter::OutFootEndNotes: Anzahl Fussnoten stimmt nicht" );
     ASSERT( nEn == nEndNote,

@@ -1,7 +1,7 @@
 /*************************************************************************
  *
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
- * 
+ *
  * Copyright 2008 by Sun Microsystems, Inc.
  *
  * OpenOffice.org - a multi-platform office productivity suite
@@ -70,7 +70,7 @@ USHORT SwFEShell::GetPageDescCnt() const
 
 void SwFEShell::ChgCurPageDesc( const SwPageDesc& rDesc )
 {
-#ifndef PRODUCT
+#ifdef DBG_UTIL
     //Die SS veraendert keinen PageDesc, sondern setzt nur das Attribut.
     //Der Pagedesc muss im Dokument vorhanden sein!
     BOOL bFound = FALSE;

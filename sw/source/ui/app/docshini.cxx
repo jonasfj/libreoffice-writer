@@ -1,7 +1,7 @@
 /*************************************************************************
  *
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
- * 
+ *
  * Copyright 2008 by Sun Microsystems, Inc.
  *
  * OpenOffice.org - a multi-platform office productivity suite
@@ -653,7 +653,7 @@ sal_Bool  SwDocShell::Load( SfxMedium& rMedium )
                             pDoc->set(IDocumentSettingAccess::GLOBAL_DOCUMENT, true);
                     }
                 }
-#ifndef PRODUCT
+#ifdef DBG_UTIL
                 else
                     ASSERT( !this, "ohne Sw3Reader geht nichts" );
 #endif
@@ -822,7 +822,7 @@ void SwDocShell::SubInitNew()
         sal_Bool bSquaredPageMode = SW_MOD()->GetUsrPref(FALSE)->IsSquaredPageMode();
         pDoc->SetDefaultPageMode( bSquaredPageMode );
     }
-    
+
     pDoc->ResetModified();
 }
 

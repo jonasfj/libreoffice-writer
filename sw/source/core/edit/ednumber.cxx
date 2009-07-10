@@ -565,7 +565,7 @@ BOOL SwEditShell::IsProtectedOutlinePara() const
 //            BYTE nTmpLvl = GetRealLevel( pTmpNd->GetTxtNode()->
 //                                    GetTxtColl()->GetOutlineLevel() );
  //           int nTmpLvl = pTmpNd->GetTxtNode()->GetOutlineLevel();//#outline level,zhaojianwei
-            int nTmpLvl = pTmpNd->GetTxtNode()->GetAttrOutlineLevel();	
+            int nTmpLvl = pTmpNd->GetTxtNode()->GetAttrOutlineLevel();
  //           ASSERT( nTmpLvl >= 0 && nTmpLvl < MAXLEVEL,
             ASSERT( nTmpLvl >= 0 && nTmpLvl <= MAXLEVEL,			//<-end,zhaojianwei
                     "<SwEditShell::IsProtectedOutlinePara()>" );
@@ -585,7 +585,7 @@ BOOL SwEditShell::IsProtectedOutlinePara() const
             }
         }
     }
-#ifndef PRODUCT
+#ifdef DBG_UTIL
     else
     {
         ASSERT(!this, "Cursor not on an outline node" );

@@ -1,7 +1,7 @@
 /*************************************************************************
  *
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
- * 
+ *
  * Copyright 2008 by Sun Microsystems, Inc.
  *
  * OpenOffice.org - a multi-platform office productivity suite
@@ -68,7 +68,7 @@ public:
     SwNodeIndex* GetMvSttIdx() const
         { return SwUndoSaveSection::GetMvSttIdx(); }
 
-#ifndef PRODUCT
+#ifdef DBG_UTIL
     USHORT nRedlineCount;
 #endif
 };
@@ -788,8 +788,8 @@ void SwUndoSaveCntnt::DelCntntIndex( const SwPosition& rMark,
                         pHistory = new SwHistory;
 
                     pHistory->Add( *pBkmk, bSavePos, bSaveOtherPos );
-                    if(bSavePos && 
-                        (bSaveOtherPos || !pBkmk->IsExpanded()))     
+                    if(bSavePos &&
+                        (bSaveOtherPos || !pBkmk->IsExpanded()))
                     {
                         pMarkAccess->deleteMark(pMarkAccess->getMarksBegin()+n);
                         n--;
@@ -1071,7 +1071,7 @@ SwRedlineSaveData::SwRedlineSaveData( SwComparePosition eCmpPos,
         ASSERT( !this, "keine gueltigen Daten!" )
     }
 
-#ifndef PRODUCT
+#ifdef DBG_UTIL
     nRedlineCount = rSttPos.nNode.GetNode().GetDoc()->GetRedlineTbl().Count();
 #endif
 }

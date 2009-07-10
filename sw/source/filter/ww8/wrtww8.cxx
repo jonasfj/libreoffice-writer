@@ -1,7 +1,7 @@
 /*************************************************************************
  *
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
- * 
+ *
  * Copyright 2008 by Sun Microsystems, Inc.
  *
  * OpenOffice.org - a multi-platform office productivity suite
@@ -721,7 +721,7 @@ ULONG SwWW8Writer::FillUntil( SvStream& rStrm, ULONG nEndPos )
 
     if( nEndPos > nCurPos )
         SwWW8Writer::FillCount( rStrm, nEndPos - nCurPos );
-#ifndef PRODUCT
+#ifdef DBG_UTIL
     else
         ASSERT( nEndPos == nCurPos, "Falsches FillUntil()" );
 #endif
@@ -1581,7 +1581,7 @@ void SwWW8Writer::WriteString_xstz(SvStream& rStrm, const String& rStr, bool bAd
     ww::bytes aBytes;
     SwWW8Writer::InsUInt16(aBytes, rStr.Len());
     SwWW8Writer::InsAsString16(aBytes, rStr);
-    if (bAddZero) 
+    if (bAddZero)
         SwWW8Writer::InsUInt16(aBytes, 0);
     rStrm.Write(&aBytes[0], aBytes.size());
 }
@@ -1667,7 +1667,7 @@ void SwWW8Writer::OutSwString(const String& rStr, xub_StrLen nStt,
         if( nStt || nLen != rStr.Len() )
         {
             String sOut( rStr.Copy( nStt, nLen ) );
-            
+
 #ifdef DEBUG
             ::std::clog << ::rtl::OUStringToOString(sOut, RTL_TEXTENCODING_ASCII_US).getStr() << ::std::endl;
 #endif
@@ -1677,7 +1677,7 @@ void SwWW8Writer::OutSwString(const String& rStr, xub_StrLen nStt,
             else
                 SwWW8Writer::WriteString8(Strm(), sOut, false, eChrSet);
         }
-        else 
+        else
         {
 #ifdef DEBUG
             ::std::clog << ::rtl::OUStringToOString(rStr, RTL_TEXTENCODING_ASCII_US).getStr() << ::std::endl;
@@ -1689,9 +1689,9 @@ void SwWW8Writer::OutSwString(const String& rStr, xub_StrLen nStt,
                 SwWW8Writer::WriteString8(Strm(), rStr, false, eChrSet);
         }
     }
-    
+
 #ifdef DEBUG
-    ::std::clog << "</OutSwString>" << ::std::endl;    
+    ::std::clog << "</OutSwString>" << ::std::endl;
 #endif
 }
 
@@ -1701,7 +1701,7 @@ void SwWW8Writer::WriteCR(ww8::WW8TableNodeInfoInner::Pointer_t pTableTextNodeIn
         WriteChar('\007');
     else
         WriteChar( '\015' );
-        
+
     pPiece->SetParaBreak();
 }
 
@@ -1789,18 +1789,18 @@ void SwWW8Writer::OutWW8TableInfoCell
     sal_uInt32 nDepth = pTableTextNodeInfoInner->getDepth();
 
     if (nDepth > 0)
-    {    
-        /* Cell */        
+    {
+        /* Cell */
         InsUInt16(0x2416);
         pO->Insert((BYTE)0x1, pO->Count());
         InsUInt16(0x6649);
         InsUInt32(nDepth);
-        
+
         if (nDepth > 1 && pTableTextNodeInfoInner->isEndOfCell())
         {
             InsUInt16(0x244b);
             pO->Insert((BYTE)0x1, pO->Count());
-        }            
+        }
     }
 }
 
@@ -1808,38 +1808,38 @@ void SwWW8Writer::OutWW8TableInfoRow
 (ww8::WW8TableNodeInfoInner::Pointer_t pTableTextNodeInfoInner)
 {
     sal_uInt32 nDepth = pTableTextNodeInfoInner->getDepth();
-    
+
     if (nDepth > 0)
     {
-        
+
         /* Row */
         if (pTableTextNodeInfoInner->isEndOfLine())
         {
             InsUInt16(0x2416);
             pO->Insert((BYTE)0x1, pO->Count());
-            
+
             if (nDepth == 1)
             {
                 InsUInt16(0x2417);
                 pO->Insert((BYTE)0x1, pO->Count());
             }
-            
+
             InsUInt16(0x6649);
             InsUInt32(nDepth);
-            
+
             if (nDepth > 1)
             {
                 InsUInt16(0x244b);
                 pO->Insert((BYTE)0x1, pO->Count());
                 InsUInt16(0x244c);
                 pO->Insert((BYTE)0x1, pO->Count());
-            }            
-            
+            }
+
             OutWW8TableDefinition(pTableTextNodeInfoInner);
-            OutWW8TableHeight(pTableTextNodeInfoInner);  
+            OutWW8TableHeight(pTableTextNodeInfoInner);
             OutWW8TableBackgrounds(pTableTextNodeInfoInner);
-            OutWW8TableDefaultBorders(pTableTextNodeInfoInner); 
-            OutWW8TableCanSplit(pTableTextNodeInfoInner);         
+            OutWW8TableDefaultBorders(pTableTextNodeInfoInner);
+            OutWW8TableCanSplit(pTableTextNodeInfoInner);
             OutWW8TableBidi(pTableTextNodeInfoInner);
             OutWW8TableVerticalCell(pTableTextNodeInfoInner);
             OutWW8TableOrientation(pTableTextNodeInfoInner);
@@ -1850,14 +1850,14 @@ void SwWW8Writer::OutWW8TableInfoRow
 static sal_uInt16 lcl_TCFlags(const SwTableBox * pBox)
 {
     sal_uInt16 nFlags = 0;
-    
+
     long nRowSpan = pBox->getRowSpan();
-    
+
     if (nRowSpan > 1)
         nFlags |= (3 << 5);
     else if (nRowSpan < 0)
         nFlags |= (1 << 5);
-    
+
     const SwFrmFmt * pFmt = pBox->GetFrmFmt();
     switch (pFmt->GetVertOrient().GetVertOrient())
     {
@@ -1868,9 +1868,9 @@ static sal_uInt16 lcl_TCFlags(const SwTableBox * pBox)
             nFlags |= (2 << 7);
             break;
         default:
-            break;            
+            break;
     }
-    
+
     return nFlags;
 }
 
@@ -1878,22 +1878,22 @@ void SwWW8Writer::OutWW8TableVerticalCell
 (ww8::WW8TableNodeInfoInner::Pointer_t pTableTextNodeInfoInner)
 {
     const SwTableBox * pTabBox = pTableTextNodeInfoInner->getTableBox();
-    const SwTableLine * pTabLine = pTabBox->GetUpper();    
+    const SwTableLine * pTabLine = pTabBox->GetUpper();
     const SwTableBoxes & rTblBoxes = pTabLine->GetTabBoxes();
-    
+
     sal_uInt8 nBoxes = rTblBoxes.Count();
     for (sal_uInt8 n = 0; n < nBoxes; n++)
     {
         const SwTableBox * pTabBox1 = rTblBoxes[n];
         const SwFrmFmt * pFrmFmt = pTabBox1->GetFrmFmt();
-        
+
         if (FRMDIR_VERT_TOP_RIGHT == TrueFrameDirection(*pFrmFmt))
         {
             InsUInt16(0x7629);
             pO->Insert(BYTE(n), pO->Count());        //start range
             pO->Insert(BYTE(n + 1), pO->Count());    //end range
             InsUInt16(5); //Equals vertical writing
-        }        
+        }
     }
 }
 
@@ -1901,7 +1901,7 @@ void SwWW8Writer::OutWW8TableCanSplit
 (ww8::WW8TableNodeInfoInner::Pointer_t pTableTextNodeInfoInner)
 {
     const SwTableBox * pTabBox = pTableTextNodeInfoInner->getTableBox();
-    const SwTableLine * pTabLine = pTabBox->GetUpper();    
+    const SwTableLine * pTabLine = pTabBox->GetUpper();
     const SwFrmFmt * pLineFmt = pTabLine->GetFrmFmt();
 
     /*
@@ -1909,7 +1909,7 @@ void SwWW8Writer::OutWW8TableCanSplit
      feature equivalent to this, Word stores 1 for fCantSplit if the row
      cannot be split, we set true if we can split it. An example is #i4569#
      */
-     
+
     const SwFmtRowSplit& rSplittable = pLineFmt->GetRowSplit();
     BYTE nCantSplit = (!rSplittable.GetValue()) ? 1 : 0;
     if (bWrtWW8)
@@ -1930,7 +1930,7 @@ void SwWW8Writer::OutWW8TableBidi
 {
     const SwTable * pTable = pTableTextNodeInfoInner->getTable();
     const SwFrmFmt * pFrmFmt = pTable->GetFrmFmt();
-    
+
     if (bWrtWW8)
     {
         if (TrueFrameDirection(*pFrmFmt) == FRMDIR_HORI_RIGHT_TOP)
@@ -1945,10 +1945,10 @@ void SwWW8Writer::OutWW8TableHeight
 (ww8::WW8TableNodeInfoInner::Pointer_t pTableTextNodeInfoInner)
 {
     const SwTableBox * pTabBox = pTableTextNodeInfoInner->getTableBox();
-    const SwTableLine * pTabLine = pTabBox->GetUpper();    
+    const SwTableLine * pTabLine = pTabBox->GetUpper();
     const SwFrmFmt * pLineFmt = pTabLine->GetFrmFmt();
 
-#if 0    
+#if 0
     const SwTable * pTable = pTableTextNodeInfo->getTable();
     bool bNewTableModel = pTable->IsNewModel();
     bool bFixRowHeight = false;
@@ -1956,7 +1956,7 @@ void SwWW8Writer::OutWW8TableHeight
     if (! bNewModel)
     {
         sal_uInt32 nBoxes = rTabBoxes.Count();
-        
+
         for (sal_uInt32 n = 0; n < nBoxes; n++)
         {
             SwTableBox * pBox1 = rTabBoxes[n];
@@ -1988,22 +1988,22 @@ void SwWW8Writer::OutWW8TableHeight
             pO->Insert( 189, pO->Count() );
         InsUInt16( (USHORT)nHeight );
     }
-    
+
 }
 
 void SwWW8Writer::OutWW8TableOrientation
 (ww8::WW8TableNodeInfoInner::Pointer_t pTableTextNodeInfoInner)
 {
     const SwTable * pTable = pTableTextNodeInfoInner->getTable();
-    
+
     const SwFrmFmt *pFmt = pTable->GetFrmFmt();
     ASSERT(pFmt,"Impossible");
     if (!pFmt)
         return;
-    
+
     const SwFmtHoriOrient &rHori = pFmt->GetHoriOrient();
     const SwFmtVertOrient &rVert = pFmt->GetVertOrient();
-    
+
     if (
         (text::RelOrientation::PRINT_AREA == rHori.GetRelationOrient() ||
          text::RelOrientation::FRAME == rHori.GetRelationOrient())
@@ -2037,7 +2037,7 @@ void SwWW8Writer::OutWW8TableDefinition
     const SwTableBoxes & rTabBoxes = pTabLine->GetTabBoxes();
     const SwNode * pTxtNd = pTableTextNodeInfoInner->getNode();
     const SwTable * pTable = pTableTextNodeInfoInner->getTable();
-    
+
     if( pTable->GetRowsToRepeat() > pTableTextNodeInfoInner->getRow())
     {
         if( bWrtWW8 )
@@ -2051,7 +2051,7 @@ void SwWW8Writer::OutWW8TableDefinition
     sal_uInt32 nBoxes = rTabBoxes.Count();
     if (nBoxes > 32)
         nBoxes = 32;
-        
+
     // sprm header
     InsUInt16(0xd608);
     sal_uInt16 nSprmSize = 2 + (nBoxes + 1) * 2 + nBoxes * 20;
@@ -2059,9 +2059,9 @@ void SwWW8Writer::OutWW8TableDefinition
 
     // number of boxes
     pO->Insert(static_cast<BYTE>(nBoxes), pO->Count());
-        
 
-    /* cellxs */       
+
+    /* cellxs */
     /*
      ALWAYS relative when text::HoriOrientation::NONE (nPageSize + ( nPageSize / 10 )) < nTblSz,
      in that case the cell width's and table width's are not real. The table
@@ -2076,9 +2076,9 @@ void SwWW8Writer::OutWW8TableDefinition
 
     const SwFmtHoriOrient &rHori = pFmt->GetHoriOrient();
     const SwFmtVertOrient &rVert = pFmt->GetVertOrient();
-    
+
     sal_uInt16 nTblOffset = 0;
-    
+
     if (
         (text::RelOrientation::PRINT_AREA == rHori.GetRelationOrient() ||
          text::RelOrientation::FRAME == rHori.GetRelationOrient())
@@ -2094,14 +2094,14 @@ void SwWW8Writer::OutWW8TableDefinition
             case text::HoriOrientation::RIGHT:
                 break;
                 default:
-                
+
                 nTblOffset = rHori.GetPos();
                 const SvxLRSpaceItem& rLRSp = pFmt->GetLRSpace();
                 nTblOffset += rLRSp.GetLeft();
                 break;
         }
     }
-    
+
     const SwFmtFrmSize &rSize = pFmt->GetFrmSize();
     int nWidthPercent = rSize.GetWidthPercent();
     bool bManualAligned = pFmt->GetHoriOrient().GetHoriOrient() == text::HoriOrientation::NONE;
@@ -2114,7 +2114,7 @@ void SwWW8Writer::OutWW8TableDefinition
         ASSERT(bRelBoxSize, "huge table width but not relative, suspicious");
         bRelBoxSize = true;
     }
-    
+
     unsigned long nPageSize = nTblSz;
     if (bRelBoxSize)
     {
@@ -2144,9 +2144,9 @@ void SwWW8Writer::OutWW8TableDefinition
                 const SvxLRSpaceItem &rLR = pFmt->GetLRSpace();
                 nPageSize -= (rLR.GetLeft() + rLR.GetRight());
             }
-            
+
         }
-        
+
         ASSERT(nWidthPercent, "Impossible");
         if (nWidthPercent)
         {
@@ -2157,8 +2157,8 @@ void SwWW8Writer::OutWW8TableDefinition
 
     SwTwips nSz = 0;
     sal_uInt32 n = 0;
-    InsUInt16(nTblOffset); 
-    
+    InsUInt16(nTblOffset);
+
     for (n = 0; n < nBoxes; n++)
     {
         const SwFrmFmt* pBoxFmt = rTabBoxes[ n ]->GetFrmFmt();
@@ -2167,32 +2167,32 @@ void SwWW8Writer::OutWW8TableDefinition
         SwTwips nCalc = nSz;
         if (bRelBoxSize)
             nCalc = (nCalc * nPageSize) / nTblSz;
-            
+
         nCalc += nTblOffset;
-        
-        InsUInt16(static_cast<USHORT>(nCalc));        
-    }    
-    
+
+        InsUInt16(static_cast<USHORT>(nCalc));
+    }
+
     /* TCs */
     for (n = 0; n < nBoxes; n++)
     {
 #ifdef DEBUG
         sal_uInt16 npOCount = pO->Count();
 #endif
-        
+
         SwTableBox * pTabBox1 = rTabBoxes[n];
         const SwFrmFmt & rBoxFmt = *(pTabBox1->GetFrmFmt());
         if( bWrtWW8 )
         {
-            sal_uInt16 nFlags = lcl_TCFlags(pTabBox1);            
+            sal_uInt16 nFlags = lcl_TCFlags(pTabBox1);
             InsUInt16( nFlags );
         }
-        
+
         static BYTE aNullBytes[] = { 0x0, 0x0 };
-        
+
         pO->Insert( aNullBytes, 2, pO->Count() );   // dummy
         Out_SwFmtTableBox( *pO, rBoxFmt.GetBox() ); // 8/16 Byte
-        
+
 #ifdef DEBUG
         ::std::clog << "<tclength>" << pO->Count() - npOCount << "</tclength>"
         << ::std::endl;
@@ -2213,7 +2213,7 @@ void SwWW8Writer::OutWW8TableDefaultBorders
         BOX_LINE_TOP, BOX_LINE_LEFT,
         BOX_LINE_BOTTOM, BOX_LINE_RIGHT
     };
-    
+
     for( int i = 0; i < 4; ++i)
     {
         SwWW8Writer::InsUInt16(*pO, 0xD634);
@@ -2222,11 +2222,11 @@ void SwWW8Writer::OutWW8TableDefaultBorders
         pO->Insert( BYTE(1), pO->Count() );
         pO->Insert( BYTE(1 << i), pO->Count() );
         pO->Insert( BYTE(3), pO->Count() );
-        
+
         SwWW8Writer::InsUInt16(*pO,
                                pFrmFmt->GetBox().GetDistance(aBorders[i]));
     }
-        
+
 }
 
 void SwWW8Writer::OutWW8TableBackgrounds
@@ -2242,18 +2242,18 @@ void SwWW8Writer::OutWW8TableBackgrounds
     else
         pO->Insert( (BYTE)191, pO->Count() );
     pO->Insert( (BYTE)(nBoxes * 2), pO->Count() );  // Len
-    
+
     for (sal_uInt8 n = 0; n < nBoxes; n++)
     {
         const SwTableBox * pBox1 = rTabBoxes[n];
         const SwFrmFmt * pFrmFmt = pBox1->GetFrmFmt();
         const SfxPoolItem * pI = NULL;
         Color aColor;
-        
-        if (SFX_ITEM_ON == pFrmFmt->GetAttrSet().GetItemState(RES_BACKGROUND, 
+
+        if (SFX_ITEM_ON == pFrmFmt->GetAttrSet().GetItemState(RES_BACKGROUND,
                                                               false, &pI))
         {
-            aColor = dynamic_cast<const SvxBrushItem *>(pI)->GetColor(); 
+            aColor = dynamic_cast<const SvxBrushItem *>(pI)->GetColor();
         }
         else
             aColor = COL_AUTO;
@@ -2268,28 +2268,28 @@ void SwWW8Writer::OutWW8TableBackgrounds
         sal_uInt8 nBoxes0 = rTabBoxes.Count();
         if (nBoxes0 > 21)
             nBoxes0 = 21;
-        
+
         InsUInt16(0xd612);
         pO->Insert(static_cast<BYTE>(nBoxes0 * 10), pO->Count());
-        
+
         for (sal_uInt8 n = 0; n < nBoxes0; n++)
         {
             const SwTableBox * pBox1 = rTabBoxes[n];
             const SwFrmFmt * pFrmFmt = pBox1->GetFrmFmt();
             const SfxPoolItem * pI = NULL;
             Color aColor;
-        
-            if (SFX_ITEM_ON == pFrmFmt->GetAttrSet().GetItemState(RES_BACKGROUND, 
+
+            if (SFX_ITEM_ON == pFrmFmt->GetAttrSet().GetItemState(RES_BACKGROUND,
                                                                   false, &pI))
             {
-                aColor = dynamic_cast<const SvxBrushItem *>(pI)->GetColor(); 
+                aColor = dynamic_cast<const SvxBrushItem *>(pI)->GetColor();
             }
             else
                 aColor = COL_AUTO;
-            
+
             WW8SHDLong aSHD;
             aSHD.setCvFore(0xFF000000);
-            
+
             sal_uInt32 nBgColor = aColor.GetColor();
             if (nBgColor == COL_AUTO)
                 aSHD.setCvBack(0xFF000000);
@@ -2297,7 +2297,7 @@ void SwWW8Writer::OutWW8TableBackgrounds
                 aSHD.setCvBack(wwUtility::RGBToBGR(nBgColor));
 
             aSHD.Write(*this);
-        } 
+        }
     }
 }
 
@@ -2385,16 +2385,16 @@ void SwWW8Writer::WriteText()
 
         SwNode * pCurrentNode = &pCurPam->GetPoint()->nNode.GetNode();
         const SwNode * pNextNode = mpTableInfo->getNextNode(pCurrentNode);
-        
+
         if (pNextNode != NULL)
             pCurPam->GetPoint()->nNode = SwNodeIndex(*pNextNode);
         else
             pCurPam->GetPoint()->nNode++;
-            
+
         ULONG nPos = pCurPam->GetPoint()->nNode.GetIndex();
         ::SetProgressState( nPos, pCurPam->GetDoc()->GetDocShell() );   // Wie weit ?
     }
-    
+
 #ifdef DEBUG
     ::std::clog << "</WriteText>" << ::std::endl;
 #endif
@@ -3056,7 +3056,7 @@ ULONG SwWW8Writer::WriteMedium( SfxMedium& )
 
 SwWW8Writer::SwWW8Writer(const String& rFltName, const String& rBaseURL)
     : aMainStg(sMainStream), pISet(0), pUsedNumTbl(0), mpTopNodeOfHdFtPage(0),
-    pBmpPal(0), pKeyMap(0), pOLEExp(0), pOCXExp(0), pOleMap(0), 
+    pBmpPal(0), pKeyMap(0), pOLEExp(0), pOCXExp(0), pOleMap(0),
     mpTableInfo(new ww8::WW8TableInfo()), nUniqueList(0),
     mnHdFtIndex(0), pAktPageDesc(0), pPapPlc(0), pChpPlc(0), pChpIter(0), pO(0),
     bHasHdr(false), bHasFtr(false)
@@ -3196,7 +3196,7 @@ void SwWW8Writer::WriteFormData(const ::sw::mark::IFieldmark& rFieldmark)
     int type=0; // TextFieldmark
     if(pAsCheckbox) type=1;
 
-    const ::rtl::OUString ffname = rFieldmark.GetFieldname(); 
+    const ::rtl::OUString ffname = rFieldmark.GetFieldname();
 
     ULONG nDataStt = pDataStrm->Tell();
     pChpPlc->AppendFkpEntry(Strm().Tell());
@@ -3215,7 +3215,7 @@ void SwWW8Writer::WriteFormData(const ::sw::mark::IFieldmark& rFieldmark)
 
     pChpPlc->AppendFkpEntry(Strm().Tell(), sizeof(aArr1), aArr1);
 
-    sal_uInt8 aFldHeader[] = 
+    sal_uInt8 aFldHeader[] =
     {
         0xFF, 0xFF, 0xFF, 0xFF, // Unicode Marker...
         0, 0, 0, 0//, 0, 0, 0, 0
@@ -3237,7 +3237,7 @@ void SwWW8Writer::WriteFormData(const ::sw::mark::IFieldmark& rFieldmark)
     const sal_uInt8 aFldData[] =
     {
         0,0,0,0,        // len of struct
-        0x44,0,         // the start of "next" data             
+        0x44,0,         // the start of "next" data
         0,0,0,0,0,0,0,0,0,0,                // PIC-Structure!  /10
         0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,    //  |              /16
         0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,    //  |              /16
@@ -3297,34 +3297,34 @@ void SwWW8Writer::OutWW8_TableNodeInfoInner(ww8::WW8TableNodeInfoInner::Pointer_
 #endif
 
     pO->Remove( 0, pO->Count() );                       // leeren
-    
+
     if (pNodeInfoInner->isEndOfCell())
     {
 #ifdef DEBUG
         ::std::clog << "<endOfCell/>" << ::std::endl;
 #endif
         WriteCR(pNodeInfoInner);
-        
+
         pO->Insert( (BYTE*)&nStyle, 2, pO->Count() );     // Style #
         OutWW8TableInfoCell(pNodeInfoInner);
         pPapPlc->AppendFkpEntry( Strm().Tell(), pO->Count(),
                                 pO->GetData() );
-        
+
         pO->Remove( 0, pO->Count() );                       // leeren
     }
-    
+
     if (pNodeInfoInner->isEndOfLine())
     {
 #ifdef DEBUG
         ::std::clog << "<endOfLine/>" << ::std::endl;
 #endif
         WriteRowEnd(pNodeInfoInner->getDepth());
-        
+
         pO->Insert( (BYTE*)&nStyle, 2, pO->Count() );     // Style #
         OutWW8TableInfoRow(pNodeInfoInner);
         pPapPlc->AppendFkpEntry( Strm().Tell(), pO->Count(),
                                 pO->GetData() );
-        
+
         pO->Remove( 0, pO->Count() );                       // leeren
     }
 #ifdef DEBUG
@@ -3338,17 +3338,17 @@ void SwWW8Writer::OutWW8_SwEndNode(SwNode * pNode)
     ::std::clog << "<OutWW8_SwEndNode>" << dbg_out(pNode) << ::std::endl;
 #endif
 
-    ww8::WW8TableNodeInfo::Pointer_t pNodeInfo = 
+    ww8::WW8TableNodeInfo::Pointer_t pNodeInfo =
     mpTableInfo->getTableNodeInfo(pNode);
-    
+
     if (pNodeInfo)
-    {        
+    {
         if (pNodeInfo.get() != NULL)
-        { 
-#ifdef DEBUG            
+        {
+#ifdef DEBUG
             ::std::clog << pNodeInfo->toString() << ::std::endl;
 #endif
-            
+
             const ww8::WW8TableNodeInfo::Inners_t aInners = pNodeInfo->getInners();
             ww8::WW8TableNodeInfo::Inners_t::const_iterator aIt(aInners.begin());
             ww8::WW8TableNodeInfo::Inners_t::const_iterator aEnd(aInners.end());
@@ -3358,14 +3358,14 @@ void SwWW8Writer::OutWW8_SwEndNode(SwNode * pNode)
                 OutWW8_TableNodeInfoInner(pInner);
                 aIt++;
             }
-        }        
+        }
     }
 #ifdef DEBUG
     ::std::clog << "</OutWW8_SwEndNode>" << ::std::endl;
 #endif
-    
+
 }
-    
-    
+
+
 
 /* vi:set tabstop=4 shiftwidth=4 expandtab: */
