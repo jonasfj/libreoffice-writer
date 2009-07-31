@@ -1,7 +1,7 @@
 /*************************************************************************
  *
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
- * 
+ *
  * Copyright 2008 by Sun Microsystems, Inc.
  *
  * OpenOffice.org - a multi-platform office productivity suite
@@ -121,7 +121,7 @@ protected:
     SdrLayerID GetInvisibleHellId() const;
 
 public:
-    SwBasicEscherEx(SvStream* pStrm, SwWW8Writer& rWrt, UINT32 nDrawings = 1);
+    SwBasicEscherEx(SvStream* pStrm, SwWW8Writer& rWrt);
     INT32 WriteGrfFlyFrame(const SwFrmFmt& rFmt, UINT32 nShapeId);
     INT32 WriteOLEFlyFrame(const SwFrmFmt& rFmt, UINT32 nShapeId);
     void WriteEmptyFlyFrame(const SwFrmFmt& rFmt, UINT32 nShapeId);
