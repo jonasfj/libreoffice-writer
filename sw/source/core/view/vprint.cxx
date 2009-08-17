@@ -486,7 +486,7 @@ bool SwPrintUIOptions::IsPrintDrawings() const
     // for compatibility the old name should win
 
     bool bRes = getBoolValue( "PrintTablesGraphicsAndDiagrams", sal_True );
-    bRes = getBoolValue( "PrintDDrawings", bRes );
+    bRes = getBoolValue( "PrintDrawings", bRes );
     return bRes;
 }
 
