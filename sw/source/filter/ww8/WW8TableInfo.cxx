@@ -359,7 +359,7 @@ void WW8TableInfo::processSwTable(const SwTable * pTable)
         
         pPrev = processTableLine(pTable, pLine, n, 1, pPrev);
     }
-    
+
 #ifdef DEBUG
     ::std::clog << "</processSwTable>" << ::std::endl;
 #endif
@@ -498,7 +498,7 @@ WW8TableInfo::processTableBox(const SwTable * pTable,
             {
                 if (nDepthInsideCell > 0)
                     pEndOfCellInfo.reset();
-                    
+
                 nDepthInsideCell++;
             }
             
@@ -557,8 +557,7 @@ WW8TableNodeInfo::Pointer_t WW8TableInfo::insertTableNodeInfo
     
     if (pNodeInfo.get() == NULL)
     {
-        pNodeInfo = WW8TableNodeInfo::Pointer_t
-        (new WW8TableNodeInfo(pNode));
+        pNodeInfo = WW8TableNodeInfo::Pointer_t(new WW8TableNodeInfo(pNode));
         mMap.insert(Map_t::value_type(pNode, pNodeInfo));
     }
 
@@ -566,7 +565,7 @@ WW8TableNodeInfo::Pointer_t WW8TableInfo::insertTableNodeInfo
 
     pNodeInfo->setTable(pTable);
     pNodeInfo->setTableBox(pTableBox);
-    
+
     pNodeInfo->setCell(nCell);
     pNodeInfo->setRow(nRow);
     
