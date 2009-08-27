@@ -487,8 +487,8 @@ public:
     // <--
     // detect highest and lowest level to check moving of outline levels
     void GetCurrentOutlineLevels( sal_uInt8& rUpper, sal_uInt8& rLower );
-    
-    
+
+
     // get Outline level of current paragraph
     int GetCurrentParaOutlineLevel( ) const;// #outlinelevel add by zhaojianwei
 
@@ -622,9 +622,9 @@ public:
                   const Graphic* pGraphic = 0,
                   const GraphicObject* pGrafObj = 0 );
 
-    // alternativen Text einer Grafik/OLe-Objectes abfragen/setzen
-    const String& GetAlternateText() const;
-    void SetAlternateText( const String& rTxt );
+//    // alternativen Text einer Grafik/OLe-Objectes abfragen/setzen
+//    const String& GetAlternateText() const;
+//    void SetAlternateText( const String& rTxt );
 
     //eindeutige Identifikation des Objektes (fuer ImageMapDlg)
     void    *GetIMapInventor() const;
@@ -753,7 +753,7 @@ public:
         ::com::sun::star::linguistic2::XSpellAlternatives >
             GetCorrection( const Point* pPt, SwRect& rSelectRect );
 
-    
+
     bool GetGrammarCorrection( ::com::sun::star::linguistic2::ProofreadingResult /*out*/ &rResult,
             sal_Int32 /*out*/ &rErrorPosInText,
             sal_Int32 /*out*/ &rErrorIndexInResult,
