@@ -1,7 +1,7 @@
 /*************************************************************************
  *
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
- * 
+ *
  * Copyright 2008 by Sun Microsystems, Inc.
  *
  * OpenOffice.org - a multi-platform office productivity suite
@@ -1219,20 +1219,11 @@ bool SwDoc::Move( SwPaM& rPaM, SwPosition& rPos, SwMoveFlags eMvFlags )
         {
             if( pTNd->CanJoinNext())
             {
-                SwTxtNode *pNextTNd = 0;
-                if( !pTNd->Len() )
-                {
-                    SwNodeIndex aTmpIdx( *pTNd, 1 );
-                    pNextTNd = aTmpIdx.GetNode().GetTxtNode();
-                }
-                if( pNextTNd )
-                {
-                    if( !bNullCntnt )
-                        pSavePam->Move( fnMoveForward, fnGoCntnt );
-                    pNextTNd->JoinPrev();
-                }
-                else
-                    pTNd->JoinNext();
+                // --> OD 2009-08-20 #i100466#
+                // Always join next, because <pTNd> has to stay as it is.
+                // A join previous from its next would more or less delete <pTNd>
+                pTNd->JoinNext();
+                // <--
                 bRemove = false;
             }
         }
@@ -1602,12 +1593,26 @@ void lcl_JoinText( SwPaM& rPam, sal_Bool bJoinPrev )
             }
 
             pDoc->CorrRel( aIdx, *rPam.GetPoint(), 0, sal_True );
+            // --> OD 2009-08-20 #i100466#
+            // adjust given <rPam>, if it does not belong to the cursors
+            if ( pDelNd == rPam.GetBound( sal_True ).nContent.GetIdxReg() )
+            {
+                rPam.GetBound( sal_True ) = SwPosition( SwNodeIndex( *pTxtNd ), SwIndex( pTxtNd ) );
+            }
+            if( pDelNd == rPam.GetBound( sal_False ).nContent.GetIdxReg() )
+            {
+                rPam.GetBound( sal_False ) = SwPosition( SwNodeIndex( *pTxtNd ), SwIndex( pTxtNd ) );
+            }
+            // <--
             pTxtNd->JoinNext();
         }
     }
 }
 
-bool SwDoc::DeleteAndJoin( SwPaM & rPam )
+// OD 2009-08-20 #i100466#
+// Add handling of new optional parameter <bForceJoinNext>
+bool SwDoc::DeleteAndJoin( SwPaM & rPam,
+                           const bool bForceJoinNext )
 {
     if( lcl_StrLenOverFlow( rPam ) )
         return sal_False;
@@ -1656,7 +1661,12 @@ SetRedlineMode( eOld );
 
     sal_Bool bJoinTxt, bJoinPrev;
     lcl_GetJoinFlags( rPam, bJoinTxt, bJoinPrev );
-
+    // --> OD 2009-08-20 #i100466#
+    if ( bForceJoinNext )
+    {
+        bJoinPrev = sal_False;
+    }
+    // <--
     {
         // dann eine Kopie vom Cursor erzeugen um alle Pams aus den
         // anderen Sichten aus dem Loeschbereich zu verschieben
@@ -1881,7 +1891,7 @@ void lcl_syncGrammarError( SwTxtNode &rTxtNode, linguistic2::ProofreadingResult&
 uno::Any SwDoc::Spell( SwPaM& rPaM,
                     uno::Reference< XSpellChecker1 >  &xSpeller,
                     sal_uInt16* pPageCnt, sal_uInt16* pPageSt,
-                    bool bGrammarCheck, 
+                    bool bGrammarCheck,
                     SwConversionArgs *pConvArgs  ) const
 {
     SwPosition* pSttPos = rPaM.Start(), *pEndPos = rPaM.End();
@@ -1897,7 +1907,7 @@ uno::Any SwDoc::Spell( SwPaM& rPaM,
     else
         pSpellArgs = new SwSpellArgs( xSpeller,
                             pSttPos->nNode.GetNode().GetTxtNode(), pSttPos->nContent,
-                            pEndPos->nNode.GetNode().GetTxtNode(), pEndPos->nContent, 
+                            pEndPos->nNode.GetNode().GetTxtNode(), pEndPos->nContent,
                             bGrammarCheck );
 
     ULONG nCurrNd = pSttPos->nNode.GetIndex();
@@ -1957,11 +1967,11 @@ uno::Any SwDoc::Spell( SwPaM& rPaM,
                                 if( aOrigPos != *aCrsr.GetPoint() )
                                 {
                                     nBeginGrammarCheck = aCrsr.GetPoint()->nContent.GetIndex();
-                                }    
+                                }
                             }
                             nEndGrammarCheck = pSpellArgs->pEndNode == pNd ? pSpellArgs->pEndIdx->GetIndex() : ((SwTxtNode*)pNd)->GetTxt().Len();
                         }
-                        
+
                         xub_StrLen nSpellErrorPosition = ((SwTxtNode*)pNd)->GetTxt().Len();
                         if( (!pConvArgs &&
                                 ((SwTxtNode*)pNd)->Spell( pSpellArgs )) ||
@@ -1973,12 +1983,12 @@ uno::Any SwDoc::Spell( SwPaM& rPaM,
                             pEndPos->nNode = nCurrNd;
                             nCurrNd = nEndNd;
                             if( pSpellArgs )
-                                nSpellErrorPosition = pSpellArgs->pStartIdx->GetIndex() > pSpellArgs->pEndIdx->GetIndex() ? 
-                                            pSpellArgs->pEndIdx->GetIndex() : 
+                                nSpellErrorPosition = pSpellArgs->pStartIdx->GetIndex() > pSpellArgs->pEndIdx->GetIndex() ?
+                                            pSpellArgs->pEndIdx->GetIndex() :
                                             pSpellArgs->pStartIdx->GetIndex();
                         }
-                        
-                        
+
+
                         if( pSpellArgs && pSpellArgs->bIsGrammarCheck )
                         {
                             uno::Reference< linguistic2::XProofreadingIterator >  xGCIterator( GetGCIterator() );
@@ -1992,7 +2002,7 @@ uno::Any SwDoc::Spell( SwPaM& rPaM,
                                         ((SwTxtNode*)pNd)->BuildConversionMap( aExpandText );
                                 // get XFlatParagraph to use...
                                 uno::Reference< text::XFlatParagraph > xFlatPara = new SwXFlatParagraph( *((SwTxtNode*)pNd), aExpandText, pConversionMap );
-            
+
                                 // get error position of cursor in XFlatParagraph
                                 sal_Int32 nGrammarErrorPosInText;
                                 linguistic2::ProofreadingResult aResult;
@@ -2000,11 +2010,11 @@ uno::Any SwDoc::Spell( SwPaM& rPaM,
                                 do
                                 {
                                     nGrammarErrorPosInText = ModelToViewHelper::ConvertToViewPosition( pConversionMap, nBeginGrammarCheck );
-                                    aResult = xGCIterator->checkSentenceAtPosition( 
+                                    aResult = xGCIterator->checkSentenceAtPosition(
                                             xDoc, xFlatPara, aExpandText, lang::Locale(), nBeginGrammarCheck, -1, -1 );
-                                    
+
                                     lcl_syncGrammarError( *((SwTxtNode*)pNd), aResult, nBeginGrammarCheck, pConversionMap );
-                
+
                                     // get suggestions to use for the specific error position
                                     nGrammarErrors = aResult.aErrors.getLength();
                                     // if grammar checking doesn't have any progress then quit
