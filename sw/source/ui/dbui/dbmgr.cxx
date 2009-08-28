@@ -925,8 +925,8 @@ BOOL SwNewDBMgr::MergePrint( SwView& rView,
 //TLPDF    if( rOpt.IsPrintSingleJobs()  )
 //TLPDF     pPrt->SetEndPrintHdl( Link() );
 
-    BOOL bUserBreak = FALSE,
-         bRet = FALSE;
+//TLPDF    BOOL bUserBreak = FALSE;
+    BOOL bRet = FALSE;
     long nStartRow, nEndRow;
     //calculate number of data sets to be printed
 
