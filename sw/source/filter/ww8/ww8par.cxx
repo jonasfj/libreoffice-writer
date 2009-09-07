@@ -46,7 +46,7 @@
 #include <unotools/tempfile.hxx>
 #include <svtools/sfxecode.hxx>
 
-#include <svtools/docpasswdrequest.hxx>
+#include <comphelper/docpasswordrequest.hxx>
 #include <hintids.hxx>
 
 #include <svx/tstpitem.hxx>
@@ -579,7 +579,7 @@ SdrObject* SwMSDffManager::ProcessObj(SvStream& rSt,
             pObj->SetMergedItemSet(aSet);
             pObj->SetModel(pSdrModel);
 
-            if (bVerticalText && dynamic_cast< SdrTextObj* >( pObj ) )				
+            if (bVerticalText && dynamic_cast< SdrTextObj* >( pObj ) )
                 dynamic_cast< SdrTextObj* >( pObj )->SetVerticalWriting(sal_True);
 
             if ( bIsSimpleDrawingTextBox )
@@ -2221,7 +2221,7 @@ void SwWW8ImplReader::PostProcessAttrs()
  is only in use for 6/7 and for 8+ if we are in 8bit mode then the encoding
  is always 1252.
 
- So a encoding converter that on an undefined character attempts to 
+ So a encoding converter that on an undefined character attempts to
  convert from 1252 on the undefined character
 */
 sal_Size Custom8BitToUnicode(rtl_TextToUnicodeConverter hConverter,
@@ -2612,7 +2612,7 @@ bool SwWW8ImplReader::ReadChar(long nPosCp, long nCpOfs)
                     SwPosition aEndPos = *pPaM->GetPoint();
                     SwPaM aFldPam(pFieldCtx->GetPtNode(), pFieldCtx->GetPtCntnt(), aEndPos.nNode, aEndPos.nContent.GetIndex());
                     IDocumentMarkAccess* const pMarkAccess = rDoc.getIDocumentMarkAccess();
-                    ::sw::mark::IFieldmark* pFieldmark = 
+                    ::sw::mark::IFieldmark* pFieldmark =
                         dynamic_cast< ::sw::mark::IFieldmark*>(pMarkAccess->makeMark(
                             aFldPam,
                             pFieldCtx->GetBookmarkName(),
@@ -4171,8 +4171,8 @@ namespace
                 uno::Reference< task::XInteractionHandler > xHandler( rMedium.GetInteractionHandler() );
                 if( xHandler.is() )
                 {
-                    RequestDocumentPassword* pRequest = new RequestDocumentPassword(
-                        task::PasswordRequestMode_PASSWORD_ENTER,
+                    ::comphelper::DocPasswordRequest* pRequest = new ::comphelper::DocPasswordRequest(
+                        ::comphelper::DocPasswordRequestType_MS, task::PasswordRequestMode_PASSWORD_ENTER,
                         INetURLObject( rMedium.GetOrigURL() ).GetName( INetURLObject::DECODE_WITH_CHARSET ) );
                     uno::Reference< task::XInteractionRequest > xRequest( pRequest );
 
@@ -4348,7 +4348,7 @@ ULONG SwWW8ImplReader::LoadThroughDecryption(SwPaM& rPaM ,WW8Glossary *pGloss)
                         if ( pMedium )
                         {
                             SfxItemSet* pSet = pMedium->GetItemSet();
-                            if ( pSet )								
+                            if ( pSet )
                                 pSet->Put( SfxStringItem(SID_PASSWORD, sUniPassword) );
                         }
                     }
