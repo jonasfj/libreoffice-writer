@@ -565,7 +565,7 @@ BOOL SwEditShell::IsProtectedOutlinePara() const
 //            BYTE nTmpLvl = GetRealLevel( pTmpNd->GetTxtNode()->
 //                                    GetTxtColl()->GetOutlineLevel() );
  //           int nTmpLvl = pTmpNd->GetTxtNode()->GetOutlineLevel();//#outline level,zhaojianwei
-            int nTmpLvl = pTmpNd->GetTxtNode()->GetAttrOutlineLevel();	
+            int nTmpLvl = pTmpNd->GetTxtNode()->GetAttrOutlineLevel();
  //           ASSERT( nTmpLvl >= 0 && nTmpLvl < MAXLEVEL,
             ASSERT( nTmpLvl >= 0 && nTmpLvl <= MAXLEVEL,			//<-end,zhaojianwei
                     "<SwEditShell::IsProtectedOutlinePara()>" );
@@ -825,9 +825,9 @@ USHORT SwEditShell::GetNodeNumStart() const
 
   -----------------------------------------------------------------------*/
 // --> OD 2008-03-18 #refactorlists#
-const SwNumRule * SwEditShell::SearchNumRule( BOOL bForward,
-                                              BOOL bNum,
-                                              BOOL bOutline,
+const SwNumRule * SwEditShell::SearchNumRule( const bool bForward,
+                                              const bool bNum,
+                                              const bool bOutline,
                                               int nNonEmptyAllowed,
                                               String& sListId )
 {
