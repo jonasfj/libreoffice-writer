@@ -190,7 +190,9 @@ WW8TableNodeInfo::~WW8TableNodeInfo()
     }
                 
 #ifdef DEBUG
-    sResult += dbg_out(*mpNode);
+//!! does not compile with debug=t -> unresolved external (dbg_out),
+//!! sommeone who knows what he wants to get should fix this
+//    sResult += dbg_out(*mpNode);
 #endif
 
     sResult +="</tableNodeInfo>";
@@ -359,7 +361,7 @@ void WW8TableInfo::processSwTable(const SwTable * pTable)
         
         pPrev = processTableLine(pTable, pLine, n, 1, pPrev);
     }
-    
+
 #ifdef DEBUG
     ::std::clog << "</processSwTable>" << ::std::endl;
 #endif
@@ -498,7 +500,7 @@ WW8TableInfo::processTableBox(const SwTable * pTable,
             {
                 if (nDepthInsideCell > 0)
                     pEndOfCellInfo.reset();
-                    
+
                 nDepthInsideCell++;
             }
             
@@ -557,8 +559,7 @@ WW8TableNodeInfo::Pointer_t WW8TableInfo::insertTableNodeInfo
     
     if (pNodeInfo.get() == NULL)
     {
-        pNodeInfo = WW8TableNodeInfo::Pointer_t
-        (new WW8TableNodeInfo(pNode));
+        pNodeInfo = WW8TableNodeInfo::Pointer_t(new WW8TableNodeInfo(pNode));
         mMap.insert(Map_t::value_type(pNode, pNodeInfo));
     }
 
@@ -566,7 +567,7 @@ WW8TableNodeInfo::Pointer_t WW8TableInfo::insertTableNodeInfo
 
     pNodeInfo->setTable(pTable);
     pNodeInfo->setTableBox(pTableBox);
-    
+
     pNodeInfo->setCell(nCell);
     pNodeInfo->setRow(nRow);
     

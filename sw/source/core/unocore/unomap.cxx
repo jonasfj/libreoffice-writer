@@ -164,7 +164,7 @@ SwUnoPropertyMapProvider::~SwUnoPropertyMapProvider()
         { SW_PROP_NMID(UNO_NAME_PARA_IS_NUMBERING_RESTART), FN_NUMBER_NEWSTART,     CPPU_E2T(CPPUTYPE_BOOLEAN),     PropertyAttribute::MAYBEVOID, 0 }, \
         { SW_PROP_NMID(UNO_NAME_PARA_CONTINUEING_PREVIOUS_SUB_TREE), FN_UNO_PARA_CONT_PREV_SUBTREE, CPPU_E2T(CPPUTYPE_BOOLEAN), PropertyAttribute::READONLY, 0 }, \
         { SW_PROP_NMID(UNO_NAME_PARA_LIST_LABEL_STRING), FN_UNO_PARA_NUM_STRING, CPPU_E2T(CPPUTYPE_OUSTRING), PropertyAttribute::READONLY, 0 }, \
-        { SW_PROP_NMID(UNO_NAME_OUTLINE_LEVEL), RES_PARATR_OUTLINELEVEL,        CPPU_E2T(CPPUTYPE_INT16),                PropertyAttribute::MAYBEVOID,     0}, //#outline level, zhaojianwei 
+        { SW_PROP_NMID(UNO_NAME_OUTLINE_LEVEL), RES_PARATR_OUTLINELEVEL,        CPPU_E2T(CPPUTYPE_INT16),                PropertyAttribute::MAYBEVOID,     0}, //#outline level, zhaojianwei
 
 #define COMMON_HYPERLINK_PROPERTIES \
         { SW_PROP_NMID(UNO_NAME_HYPER_LINK_U_R_L), RES_TXTATR_INETFMT,          CPPU_E2T(CPPUTYPE_OUSTRING), PropertyAttribute::MAYBEVOID ,MID_URL_URL},                \
@@ -309,6 +309,7 @@ SwUnoPropertyMapProvider::~SwUnoPropertyMapProvider()
 
 // OD 18.09.2003 #i18732# - add property
 // OD 2004-05-05 #i28701# - add property 'WrapInfluenceOnObjPos'
+// OD 2009-07-13 #i73249# - add properties 'Title' and 'Description'
 #define COMMON_FRAME_PROPERTIES \
     { SW_PROP_NMID(UNO_NAME_ANCHOR_PAGE_NO), RES_ANCHOR, 			CPPU_E2T(CPPUTYPE_INT16), 			PROPERTY_NONE, MID_ANCHOR_PAGENUM		},              \
     { SW_PROP_NMID(UNO_NAME_ANCHOR_TYPE), RES_ANCHOR, 			CPPU_E2T(CPPUTYPE_TXTCNTANCHOR), 			PROPERTY_NONE, MID_ANCHOR_ANCHORTYPE},             \
@@ -369,6 +370,8 @@ SwUnoPropertyMapProvider::~SwUnoPropertyMapProvider()
     { SW_PROP_NMID(UNO_NAME_Z_ORDER), FN_UNO_Z_ORDER,           CPPU_E2T(CPPUTYPE_INT32),       PROPERTY_NONE, 0}, \
     { SW_PROP_NMID(UNO_NAME_IS_FOLLOWING_TEXT_FLOW), RES_FOLLOW_TEXT_FLOW,     CPPU_E2T(CPPUTYPE_BOOLEAN), PROPERTY_NONE, 0}, \
     { SW_PROP_NMID(UNO_NAME_WRAP_INFLUENCE_ON_POSITION), RES_WRAP_INFLUENCE_ON_OBJPOS, CPPU_E2T(CPPUTYPE_INT8), PROPERTY_NONE, MID_WRAP_INFLUENCE}, \
+    { SW_PROP_NMID(UNO_NAME_TITLE), FN_UNO_TITLE, CPPU_E2T(CPPUTYPE_OUSTRING), PROPERTY_NONE, 0}, \
+    { SW_PROP_NMID(UNO_NAME_DESCRIPTION), FN_UNO_DESCRIPTION, CPPU_E2T(CPPUTYPE_OUSTRING), PROPERTY_NONE, 0}, \
     { SW_PROP_NMID(UNO_NAME_LAYOUT_SIZE), WID_LAYOUT_SIZE, CPPU_E2T(CPPUTYPE_AWTSIZE), PropertyAttribute::MAYBEVOID | PropertyAttribute::READONLY, 0 },
 
 
@@ -487,7 +490,7 @@ SwUnoPropertyMapProvider::~SwUnoPropertyMapProvider()
                     { SW_PROP_NMID(UNO_NAME_WRITING_MODE), RES_FRAMEDIR, CPPU_E2T(CPPUTYPE_INT16), PROPERTY_NONE, 0 },\
                     { SW_PROP_NMID(UNO_NAME_PARA_IS_CONNECT_BORDER), RES_PARATR_CONNECT_BORDER, CPPU_E2T(CPPUTYPE_BOOLEAN), PropertyAttribute::MAYBEVOID, 0},\
                     { SW_PROP_NMID(UNO_NAME_SNAP_TO_GRID), RES_PARATR_SNAPTOGRID, CPPU_E2T(CPPUTYPE_BOOLEAN), PropertyAttribute::MAYBEVOID, 0 }, \
-                    { SW_PROP_NMID(UNO_NAME_OUTLINE_LEVEL), RES_PARATR_OUTLINELEVEL,CPPU_E2T(CPPUTYPE_INT16), PropertyAttribute::MAYBEVOID, 0}, 
+                    { SW_PROP_NMID(UNO_NAME_OUTLINE_LEVEL), RES_PARATR_OUTLINELEVEL,CPPU_E2T(CPPUTYPE_INT16), PropertyAttribute::MAYBEVOID, 0},
 
 
 #define COMMON_FLDTYP_PROPERTIES \
@@ -1123,7 +1126,7 @@ const SfxItemPropertyMapEntry* SwUnoPropertyMapProvider::GetPropertyMapEntries(s
                     { SW_PROP_NMID(UNO_NAME_GRAPHIC_FILTER), FN_UNO_GRAPHIC_FILTER,      CPPU_E2T(CPPUTYPE_OUSTRING), 0, 0 },
                     { SW_PROP_NMID(UNO_NAME_GRAPHIC), FN_UNO_GRAPHIC, CPPU_E2T(CPPUTYPE_REFXGRAPHIC), 0, 0 },
                     { SW_PROP_NMID(UNO_NAME_ACTUAL_SIZE), FN_UNO_ACTUAL_SIZE,    CPPU_E2T(CPPUTYPE_AWTSIZE),  PropertyAttribute::READONLY, CONVERT_TWIPS},
-                    { SW_PROP_NMID(UNO_NAME_ALTERNATIVE_TEXT), FN_UNO_ALTERNATIVE_TEXT,CPPU_E2T(CPPUTYPE_OUSTRING),   PROPERTY_NONE , 0   },
+//                    { SW_PROP_NMID(UNO_NAME_ALTERNATIVE_TEXT), FN_UNO_ALTERNATIVE_TEXT,CPPU_E2T(CPPUTYPE_OUSTRING),   PROPERTY_NONE , 0   },
                     { SW_PROP_NMID(UNO_NAME_CONTOUR_POLY_POLYGON), FN_PARAM_COUNTOUR_PP, CPPU_E2T(CPPUTYPE_PNTSEQSEQ), PropertyAttribute::MAYBEVOID, 0 },
                     { SW_PROP_NMID(UNO_NAME_IS_PIXEL_CONTOUR), FN_UNO_IS_PIXEL_CONTOUR, CPPU_E2T(CPPUTYPE_BOOLEAN), PROPERTY_NONE, 0 },
                     { SW_PROP_NMID(UNO_NAME_IS_AUTOMATIC_CONTOUR), FN_UNO_IS_AUTOMATIC_CONTOUR , CPPU_E2T(CPPUTYPE_BOOLEAN), PROPERTY_NONE, 0 },
@@ -1158,7 +1161,7 @@ const SfxItemPropertyMapEntry* SwUnoPropertyMapProvider::GetPropertyMapEntries(s
                     { SW_PROP_NMID(UNO_NAME_GRAPHIC_URL), FN_UNO_REPLACEMENT_GRAPHIC_URL, CPPU_E2T(CPPUTYPE_OUSTRING), PropertyAttribute::MAYBEVOID, 0 },
                     { SW_PROP_NMID(UNO_NAME_GRAPHIC), FN_UNO_REPLACEMENT_GRAPHIC, CPPU_E2T(CPPUTYPE_REFXGRAPHIC), PropertyAttribute::MAYBEVOID, 0 },
                     { SW_PROP_NMID(UNO_NAME_COMPONENT),FN_UNO_COMPONENT, CPPU_E2T(CPPUTYPE_REFCOMPONENT), PropertyAttribute::READONLY, 0},
-                    { SW_PROP_NMID(UNO_NAME_ALTERNATIVE_TEXT), FN_UNO_ALTERNATIVE_TEXT,CPPU_E2T(CPPUTYPE_OUSTRING),   PROPERTY_NONE , 0   },
+//                    { SW_PROP_NMID(UNO_NAME_ALTERNATIVE_TEXT), FN_UNO_ALTERNATIVE_TEXT,CPPU_E2T(CPPUTYPE_OUSTRING),   PROPERTY_NONE , 0   },
                     {0,0,0,0,0,0}
                 };
                 aMapEntriesArr[nPropertyId] = aEmbeddedPropertyMap_Impl;
@@ -2513,583 +2516,583 @@ const SfxItemPropertySet*  SwUnoPropertyMapProvider::GetPropertySet( sal_uInt16 
         switch( nPropertyId )
         {
             case PROPERTY_MAP_TEXT_CURSOR:
-            {    
+            {
                 static SfxItemPropertySet aPROPERTY_MAP_TEXT_CURSOR(pEntries);
                 aPropertySetArr[nPropertyId] = &aPROPERTY_MAP_TEXT_CURSOR;
             }
             break;
-            case PROPERTY_MAP_CHAR_STYLE:             
-            {    
+            case PROPERTY_MAP_CHAR_STYLE:
+            {
                 static SfxItemPropertySet aPROPERTY_MAP_CHAR_STYLE(pEntries);
                 aPropertySetArr[nPropertyId] = &aPROPERTY_MAP_CHAR_STYLE;
             }
             break;
-            case PROPERTY_MAP_PARA_STYLE:             
-            {    
+            case PROPERTY_MAP_PARA_STYLE:
+            {
                 static SfxItemPropertySet aPROPERTY_MAP_PARA_STYLE(pEntries);
                 aPropertySetArr[nPropertyId] = &aPROPERTY_MAP_PARA_STYLE;
             }
             break;
-            case PROPERTY_MAP_FRAME_STYLE:            
-            {    
+            case PROPERTY_MAP_FRAME_STYLE:
+            {
                 static SfxItemPropertySet aPROPERTY_MAP_FRAME_STYLE(pEntries);
                 aPropertySetArr[nPropertyId] = &aPROPERTY_MAP_FRAME_STYLE;
             }
             break;
             case PROPERTY_MAP_PAGE_STYLE:
-            {    
+            {
                 static SfxItemPropertySet aPROPERTY_MAP_PAGE_STYLE(pEntries);
                 aPropertySetArr[nPropertyId] = &aPROPERTY_MAP_PAGE_STYLE;
             }
             break;
             case PROPERTY_MAP_NUM_STYLE:
-            {    
+            {
                 static SfxItemPropertySet aPROPERTY_MAP_NUM_STYLE(pEntries);
                 aPropertySetArr[nPropertyId] = &aPROPERTY_MAP_NUM_STYLE;
             }
             break;
             case PROPERTY_MAP_SECTION:
-            {    
+            {
                 static SfxItemPropertySet aPROPERTY_MAP_SECTION(pEntries);
                 aPropertySetArr[nPropertyId] = &aPROPERTY_MAP_SECTION;
             }
             break;
-            case PROPERTY_MAP_TEXT_TABLE:             
-            {    
+            case PROPERTY_MAP_TEXT_TABLE:
+            {
                 static SfxItemPropertySet aPROPERTY_MAP_TEXT_TABLE(pEntries);
                 aPropertySetArr[nPropertyId] = &aPROPERTY_MAP_TEXT_TABLE;
             }
             break;
-            case PROPERTY_MAP_TABLE_CELL:             
-            {    
+            case PROPERTY_MAP_TABLE_CELL:
+            {
                 static SfxItemPropertySet aPROPERTY_MAP_TABLE_CELL(pEntries);
                 aPropertySetArr[nPropertyId] = &aPROPERTY_MAP_TABLE_CELL;
             }
             break;
-            case PROPERTY_MAP_TABLE_RANGE:            
-            {    
+            case PROPERTY_MAP_TABLE_RANGE:
+            {
                 static SfxItemPropertySet aPROPERTY_MAP_TABLE_RANGE(pEntries);
                 aPropertySetArr[nPropertyId] = &aPROPERTY_MAP_TABLE_RANGE;
             }
             break;
-            case PROPERTY_MAP_TEXT_SEARCH:            
-            {    
+            case PROPERTY_MAP_TEXT_SEARCH:
+            {
                 static SfxItemPropertySet aPROPERTY_MAP_TEXT_SEARCH(pEntries);
                 aPropertySetArr[nPropertyId] = &aPROPERTY_MAP_TEXT_SEARCH;
             }
             break;
-            case PROPERTY_MAP_TEXT_FRAME:             
-            {    
+            case PROPERTY_MAP_TEXT_FRAME:
+            {
                 static SfxItemPropertySet aPROPERTY_MAP_TEXT_FRAME(pEntries);
                 aPropertySetArr[nPropertyId] = &aPROPERTY_MAP_TEXT_FRAME;
             }
             break;
-            case PROPERTY_MAP_TEXT_GRAPHIC:           
-            {    
+            case PROPERTY_MAP_TEXT_GRAPHIC:
+            {
                 static SfxItemPropertySet aPROPERTY_MAP_TEXT_GRAPHIC(pEntries);
                 aPropertySetArr[nPropertyId] = &aPROPERTY_MAP_TEXT_GRAPHIC;
             }
             break;
-            case PROPERTY_MAP_TEXT_SHAPE:             
-            {    
+            case PROPERTY_MAP_TEXT_SHAPE:
+            {
                 static SfxItemPropertySet aPROPERTY_MAP_TEXT_SHAPE(pEntries);
                 aPropertySetArr[nPropertyId] = &aPROPERTY_MAP_TEXT_SHAPE;
             }
             break;
-            case PROPERTY_MAP_INDEX_USER:             
-            {    
+            case PROPERTY_MAP_INDEX_USER:
+            {
                 static SfxItemPropertySet aPROPERTY_MAP_INDEX_USER(pEntries);
                 aPropertySetArr[nPropertyId] = &aPROPERTY_MAP_INDEX_USER;
             }
             break;
-            case PROPERTY_MAP_INDEX_CNTNT:            
-            {    
+            case PROPERTY_MAP_INDEX_CNTNT:
+            {
                 static SfxItemPropertySet aPROPERTY_MAP_INDEX_CNTNT(pEntries);
                 aPropertySetArr[nPropertyId] = &aPROPERTY_MAP_INDEX_CNTNT;
             }
             break;
             case PROPERTY_MAP_INDEX_IDX:
-            {    
+            {
                 static SfxItemPropertySet aPROPERTY_MAP_INDEX_IDX(pEntries);
                 aPropertySetArr[nPropertyId] = &aPROPERTY_MAP_INDEX_IDX;
             }
             break;
             case PROPERTY_MAP_USER_MARK:
-            {    
+            {
                 static SfxItemPropertySet aPROPERTY_MAP_USER_MARK(pEntries);
                 aPropertySetArr[nPropertyId] = &aPROPERTY_MAP_USER_MARK;
             }
             break;
-            case PROPERTY_MAP_CNTIDX_MARK:            
-            {    
+            case PROPERTY_MAP_CNTIDX_MARK:
+            {
                 static SfxItemPropertySet aPROPERTY_MAP_CNTIDX_MARK(pEntries);
                 aPropertySetArr[nPropertyId] = &aPROPERTY_MAP_CNTIDX_MARK;
             }
             break;
-            case PROPERTY_MAP_INDEX_MARK:             
-            {    
+            case PROPERTY_MAP_INDEX_MARK:
+            {
                 static SfxItemPropertySet aPROPERTY_MAP_INDEX_MARK(pEntries);
                 aPropertySetArr[nPropertyId] = &aPROPERTY_MAP_INDEX_MARK;
             }
             break;
             case PROPERTY_MAP_TEXT_TABLE_ROW:
-            {    
+            {
                 static SfxItemPropertySet aPROPERTY_MAP_TEXT_TABLE_ROW(pEntries);
                 aPropertySetArr[nPropertyId] = &aPROPERTY_MAP_TEXT_TABLE_ROW;
             }
             break;
-            case PROPERTY_MAP_TEXT_SHAPE_DESCRIPTOR: 
-            {    
+            case PROPERTY_MAP_TEXT_SHAPE_DESCRIPTOR:
+            {
                 static SfxItemPropertySet aPROPERTY_MAP_TEXT_SHAPE_DESCRIPTOR(pEntries);
                 aPropertySetArr[nPropertyId] = &aPROPERTY_MAP_TEXT_SHAPE_DESCRIPTOR;
             }
             break;
-            case PROPERTY_MAP_TEXT_TABLE_CURSOR:      
-            {    
+            case PROPERTY_MAP_TEXT_TABLE_CURSOR:
+            {
                 static SfxItemPropertySet aPROPERTY_MAP_TEXT_TABLE_CURSOR(pEntries);
                 aPropertySetArr[nPropertyId] = &aPROPERTY_MAP_TEXT_TABLE_CURSOR;
             }
             break;
-            case PROPERTY_MAP_BOOKMARK:              
-            {    
+            case PROPERTY_MAP_BOOKMARK:
+            {
                 static SfxItemPropertySet aPROPERTY_MAP_BOOKMARK(pEntries);
                 aPropertySetArr[nPropertyId] = &aPROPERTY_MAP_BOOKMARK;
             }
             break;
-            case PROPERTY_MAP_PARAGRAPH_EXTENSIONS:   
-            {    
+            case PROPERTY_MAP_PARAGRAPH_EXTENSIONS:
+            {
                 static SfxItemPropertySet aPROPERTY_MAP_PARAGRAPH_EXTENSIONS(pEntries);
                 aPropertySetArr[nPropertyId] = &aPROPERTY_MAP_PARAGRAPH_EXTENSIONS;
             }
             break;
-            case PROPERTY_MAP_INDEX_ILLUSTRATIONS:    
-            {    
+            case PROPERTY_MAP_INDEX_ILLUSTRATIONS:
+            {
                 static SfxItemPropertySet aPROPERTY_MAP_INDEX_ILLUSTRATIONS(pEntries);
                 aPropertySetArr[nPropertyId] = &aPROPERTY_MAP_INDEX_ILLUSTRATIONS;
             }
             break;
-            case PROPERTY_MAP_INDEX_OBJECTS:          
-            {    
+            case PROPERTY_MAP_INDEX_OBJECTS:
+            {
                 static SfxItemPropertySet aPROPERTY_MAP_INDEX_OBJECTS(pEntries);
                 aPropertySetArr[nPropertyId] = &aPROPERTY_MAP_INDEX_OBJECTS;
             }
             break;
             case PROPERTY_MAP_INDEX_TABLES:
-            {    
+            {
                 static SfxItemPropertySet aPROPERTY_MAP_INDEX_TABLES(pEntries);
                 aPropertySetArr[nPropertyId] = &aPROPERTY_MAP_INDEX_TABLES;
             }
             break;
             case PROPERTY_MAP_BIBLIOGRAPHY           :
-            {    
+            {
                 static SfxItemPropertySet aPROPERTY_MAP_BIBLIOGRAPHY(pEntries);
                 aPropertySetArr[nPropertyId] = &aPROPERTY_MAP_BIBLIOGRAPHY;
             }
             break;
             case PROPERTY_MAP_TEXT_DOCUMENT:
-            {    
+            {
                 static SfxItemPropertySet aPROPERTY_MAP_TEXT_DOCUMENT(pEntries);
                 aPropertySetArr[nPropertyId] = &aPROPERTY_MAP_TEXT_DOCUMENT;
             }
             break;
             case PROPERTY_MAP_LINK_TARGET            :
-            {    
+            {
                 static SfxItemPropertySet aPROPERTY_MAP_LINK_TARGET(pEntries);
                 aPropertySetArr[nPropertyId] = &aPROPERTY_MAP_LINK_TARGET;
             }
             break;
             case PROPERTY_MAP_AUTO_TEXT_GROUP        :
-            {    
+            {
                 static SfxItemPropertySet aPROPERTY_MAP_AUTO_TEXT_GROUP(pEntries);
                 aPropertySetArr[nPropertyId] = &aPROPERTY_MAP_AUTO_TEXT_GROUP;
             }
             break;
             case PROPERTY_MAP_TEXTPORTION_EXTENSIONS :
-            {    
+            {
                 static SfxItemPropertySet aPROPERTY_MAP_TEXTPORTION_EXTENSIONS(pEntries);
                 aPropertySetArr[nPropertyId] = &aPROPERTY_MAP_TEXTPORTION_EXTENSIONS;
             }
             break;
             case PROPERTY_MAP_FOOTNOTE               :
-            {    
+            {
                 static SfxItemPropertySet aPROPERTY_MAP_FOOTNOTE(pEntries);
                 aPropertySetArr[nPropertyId] = &aPROPERTY_MAP_FOOTNOTE;
             }
             break;
             case PROPERTY_MAP_TEXT_COLUMS            :
-            {    
+            {
                 static SfxItemPropertySet aPROPERTY_MAP_TEXT_COLUMS(pEntries);
                 aPropertySetArr[nPropertyId] = &aPROPERTY_MAP_TEXT_COLUMS;
             }
             break;
             case PROPERTY_MAP_PARAGRAPH              :
-            {    
+            {
                 static SfxItemPropertySet aPROPERTY_MAP_PARAGRAPH(pEntries);
                 aPropertySetArr[nPropertyId] = &aPROPERTY_MAP_PARAGRAPH;
             }
             break;
             case PROPERTY_MAP_EMBEDDED_OBJECT        :
-            {    
+            {
                 static SfxItemPropertySet aPROPERTY_MAP_EMBEDDED_OBJECT(pEntries);
                 aPropertySetArr[nPropertyId] = &aPROPERTY_MAP_EMBEDDED_OBJECT;
             }
             break;
             case PROPERTY_MAP_REDLINE                :
-            {    
+            {
                 static SfxItemPropertySet aPROPERTY_MAP_REDLINE(pEntries);
                 aPropertySetArr[nPropertyId] = &aPROPERTY_MAP_REDLINE;
             }
             break;
             case PROPERTY_MAP_TEXT_DEFAULT           :
-            {    
+            {
                 static SfxItemPropertySet aPROPERTY_MAP_TEXT_DEFAULT(pEntries);
                 aPropertySetArr[nPropertyId] = &aPROPERTY_MAP_TEXT_DEFAULT;
             }
             break;
-            case PROPERTY_MAP_FLDTYP_DATETIME:        
-            {    
+            case PROPERTY_MAP_FLDTYP_DATETIME:
+            {
                 static SfxItemPropertySet aPROPERTY_MAP_FLDTYP_DATETIME(pEntries);
                 aPropertySetArr[nPropertyId] = &aPROPERTY_MAP_FLDTYP_DATETIME;
             }
             break;
-            case PROPERTY_MAP_FLDTYP_USER:            
-            {    
+            case PROPERTY_MAP_FLDTYP_USER:
+            {
                 static SfxItemPropertySet aPROPERTY_MAP_FLDTYP_USER(pEntries);
                 aPropertySetArr[nPropertyId] = &aPROPERTY_MAP_FLDTYP_USER;
             }
             break;
-            case PROPERTY_MAP_FLDTYP_SET_EXP:         
-            {    
+            case PROPERTY_MAP_FLDTYP_SET_EXP:
+            {
                 static SfxItemPropertySet aPROPERTY_MAP_FLDTYP_SET_EXP(pEntries);
                 aPropertySetArr[nPropertyId] = &aPROPERTY_MAP_FLDTYP_SET_EXP;
             }
             break;
-            case PROPERTY_MAP_FLDTYP_GET_EXP:         
-            {    
+            case PROPERTY_MAP_FLDTYP_GET_EXP:
+            {
                 static SfxItemPropertySet aPROPERTY_MAP_FLDTYP_GET_EXP(pEntries);
                 aPropertySetArr[nPropertyId] = &aPROPERTY_MAP_FLDTYP_GET_EXP;
             }
             break;
-            case PROPERTY_MAP_FLDTYP_FILE_NAME:       
-            {    
+            case PROPERTY_MAP_FLDTYP_FILE_NAME:
+            {
                 static SfxItemPropertySet aPROPERTY_MAP_FLDTYP_FILE_NAME(pEntries);
                 aPropertySetArr[nPropertyId] = &aPROPERTY_MAP_FLDTYP_FILE_NAME;
             }
             break;
-            case PROPERTY_MAP_FLDTYP_PAGE_NUM:        
-            {    
+            case PROPERTY_MAP_FLDTYP_PAGE_NUM:
+            {
                 static SfxItemPropertySet aPROPERTY_MAP_FLDTYP_PAGE_NUM(pEntries);
                 aPropertySetArr[nPropertyId] = &aPROPERTY_MAP_FLDTYP_PAGE_NUM;
             }
             break;
-            case PROPERTY_MAP_FLDTYP_AUTHOR:          
-            {    
+            case PROPERTY_MAP_FLDTYP_AUTHOR:
+            {
                 static SfxItemPropertySet aPROPERTY_MAP_FLDTYP_AUTHOR(pEntries);
                 aPropertySetArr[nPropertyId] = &aPROPERTY_MAP_FLDTYP_AUTHOR;
             }
             break;
-            case PROPERTY_MAP_FLDTYP_CHAPTER:         
-            {    
+            case PROPERTY_MAP_FLDTYP_CHAPTER:
+            {
                 static SfxItemPropertySet aPROPERTY_MAP_FLDTYP_CHAPTER(pEntries);
                 aPropertySetArr[nPropertyId] = &aPROPERTY_MAP_FLDTYP_CHAPTER;
             }
             break;
-            case PROPERTY_MAP_FLDTYP_GET_REFERENCE:   
-            {    
+            case PROPERTY_MAP_FLDTYP_GET_REFERENCE:
+            {
                 static SfxItemPropertySet aPROPERTY_MAP_FLDTYP_GET_REFERENCE(pEntries);
                 aPropertySetArr[nPropertyId] = &aPROPERTY_MAP_FLDTYP_GET_REFERENCE;
             }
             break;
             case PROPERTY_MAP_FLDTYP_CONDITIONED_TEXT:
-            {    
+            {
                 static SfxItemPropertySet aPROPERTY_MAP_FLDTYP_CONDITIONED_TEXT(pEntries);
                 aPropertySetArr[nPropertyId] = &aPROPERTY_MAP_FLDTYP_CONDITIONED_TEXT;
             }
             break;
-            case PROPERTY_MAP_FLDTYP_HIDDEN_TEXT:     
-            {    
+            case PROPERTY_MAP_FLDTYP_HIDDEN_TEXT:
+            {
                 static SfxItemPropertySet aPROPERTY_MAP_FLDTYP_HIDDEN_TEXT(pEntries);
                 aPropertySetArr[nPropertyId] = &aPROPERTY_MAP_FLDTYP_HIDDEN_TEXT;
             }
             break;
-            case PROPERTY_MAP_FLDTYP_ANNOTATION :     
-            {    
+            case PROPERTY_MAP_FLDTYP_ANNOTATION :
+            {
                 static SfxItemPropertySet aPROPERTY_MAP_FLDTYP_ANNOTATION(pEntries);
                 aPropertySetArr[nPropertyId] = &aPROPERTY_MAP_FLDTYP_ANNOTATION;
             }
             break;
-            case PROPERTY_MAP_FLDTYP_INPUT:           
-            {    
+            case PROPERTY_MAP_FLDTYP_INPUT:
+            {
                 static SfxItemPropertySet aPROPERTY_MAP_FLDTYP_INPUT(pEntries);
                 aPropertySetArr[nPropertyId] = &aPROPERTY_MAP_FLDTYP_INPUT;
             }
             break;
-            case PROPERTY_MAP_FLDTYP_MACRO:           
-            {    
+            case PROPERTY_MAP_FLDTYP_MACRO:
+            {
                 static SfxItemPropertySet aPROPERTY_MAP_FLDTYP_MACRO(pEntries);
                 aPropertySetArr[nPropertyId] = &aPROPERTY_MAP_FLDTYP_MACRO;
             }
             break;
-            case PROPERTY_MAP_FLDTYP_DDE:             
-            {    
+            case PROPERTY_MAP_FLDTYP_DDE:
+            {
                 static SfxItemPropertySet aPROPERTY_MAP_FLDTYP_DDE(pEntries);
                 aPropertySetArr[nPropertyId] = &aPROPERTY_MAP_FLDTYP_DDE;
             }
             break;
-            case PROPERTY_MAP_FLDTYP_HIDDEN_PARA:     
-            {    
+            case PROPERTY_MAP_FLDTYP_HIDDEN_PARA:
+            {
                 static SfxItemPropertySet aPROPERTY_MAP_FLDTYP_HIDDEN_PARA(pEntries);
                 aPropertySetArr[nPropertyId] = &aPROPERTY_MAP_FLDTYP_HIDDEN_PARA;
             }
             break;
-            case PROPERTY_MAP_FLDTYP_DOC_INFO :       
-            {    
+            case PROPERTY_MAP_FLDTYP_DOC_INFO :
+            {
                 static SfxItemPropertySet aPROPERTY_MAP_FLDTYP_DOC_INFO(pEntries);
                 aPropertySetArr[nPropertyId] = &aPROPERTY_MAP_FLDTYP_DOC_INFO;
             }
             break;
-            case PROPERTY_MAP_FLDTYP_TEMPLATE_NAME:   
-            {    
+            case PROPERTY_MAP_FLDTYP_TEMPLATE_NAME:
+            {
                 static SfxItemPropertySet aPROPERTY_MAP_FLDTYP_TEMPLATE_NAME(pEntries);
                 aPropertySetArr[nPropertyId] = &aPROPERTY_MAP_FLDTYP_TEMPLATE_NAME;
             }
             break;
-            case PROPERTY_MAP_FLDTYP_USER_EXT :       
-            {    
+            case PROPERTY_MAP_FLDTYP_USER_EXT :
+            {
                 static SfxItemPropertySet aPROPERTY_MAP_FLDTYP_USER_EXT(pEntries);
                 aPropertySetArr[nPropertyId] = &aPROPERTY_MAP_FLDTYP_USER_EXT;
             }
             break;
-            case PROPERTY_MAP_FLDTYP_REF_PAGE_SET:    
-            {    
+            case PROPERTY_MAP_FLDTYP_REF_PAGE_SET:
+            {
                 static SfxItemPropertySet aPROPERTY_MAP_FLDTYP_REF_PAGE_SET(pEntries);
                 aPropertySetArr[nPropertyId] = &aPROPERTY_MAP_FLDTYP_REF_PAGE_SET;
             }
             break;
-            case PROPERTY_MAP_FLDTYP_REF_PAGE_GET:    
-            {    
+            case PROPERTY_MAP_FLDTYP_REF_PAGE_GET:
+            {
                 static SfxItemPropertySet aPROPERTY_MAP_FLDTYP_REF_PAGE_GET(pEntries);
                 aPropertySetArr[nPropertyId] = &aPROPERTY_MAP_FLDTYP_REF_PAGE_GET;
             }
             break;
-            case PROPERTY_MAP_FLDTYP_JUMP_EDIT:       
-            {    
+            case PROPERTY_MAP_FLDTYP_JUMP_EDIT:
+            {
                 static SfxItemPropertySet aPROPERTY_MAP_FLDTYP_JUMP_EDIT(pEntries);
                 aPropertySetArr[nPropertyId] = &aPROPERTY_MAP_FLDTYP_JUMP_EDIT;
             }
             break;
-            case PROPERTY_MAP_FLDTYP_SCRIPT:          
-            {    
+            case PROPERTY_MAP_FLDTYP_SCRIPT:
+            {
                 static SfxItemPropertySet aPROPERTY_MAP_FLDTYP_SCRIPT(pEntries);
                 aPropertySetArr[nPropertyId] = &aPROPERTY_MAP_FLDTYP_SCRIPT;
             }
             break;
             case PROPERTY_MAP_FLDTYP_DATABASE_NEXT_SET:
-            {    
+            {
                 static SfxItemPropertySet aPROPERTY_MAP_FLDTYP_DATABASE_NEXT_SET(pEntries);
                 aPropertySetArr[nPropertyId] = &aPROPERTY_MAP_FLDTYP_DATABASE_NEXT_SET;
             }
             break;
             case PROPERTY_MAP_FLDTYP_DATABASE_NUM_SET:
-            {    
+            {
                 static SfxItemPropertySet aPROPERTY_MAP_FLDTYP_DATABASE_NUM_SET(pEntries);
                 aPropertySetArr[nPropertyId] = &aPROPERTY_MAP_FLDTYP_DATABASE_NUM_SET;
             }
             break;
             case PROPERTY_MAP_FLDTYP_DATABASE_SET_NUM:
-            {    
+            {
                 static SfxItemPropertySet aPROPERTY_MAP_FLDTYP_DATABASE_SET_NUM(pEntries);
                 aPropertySetArr[nPropertyId] = &aPROPERTY_MAP_FLDTYP_DATABASE_SET_NUM;
             }
             break;
             case PROPERTY_MAP_FLDTYP_DATABASE:
-            {    
+            {
                 static SfxItemPropertySet aPROPERTY_MAP_FLDTYP_DATABASE(pEntries);
                 aPropertySetArr[nPropertyId] = &aPROPERTY_MAP_FLDTYP_DATABASE;
             }
             break;
             case PROPERTY_MAP_FLDTYP_DATABASE_NAME:
-            {    
+            {
                 static SfxItemPropertySet aPROPERTY_MAP_FLDTYP_DATABASE_NAME(pEntries);
                 aPropertySetArr[nPropertyId] = &aPROPERTY_MAP_FLDTYP_DATABASE_NAME;
             }
             break;
             case PROPERTY_MAP_FLDTYP_DOCSTAT:
-            {    
+            {
                 static SfxItemPropertySet aPROPERTY_MAP_FLDTYP_DOCSTAT(pEntries);
                 aPropertySetArr[nPropertyId] = &aPROPERTY_MAP_FLDTYP_DOCSTAT;
             }
             break;
             case PROPERTY_MAP_FLDTYP_DOCINFO_AUTHOR:
-            {    
+            {
                 static SfxItemPropertySet aPROPERTY_MAP_FLDTYP_DOCINFO_AUTHOR(pEntries);
                 aPropertySetArr[nPropertyId] = &aPROPERTY_MAP_FLDTYP_DOCINFO_AUTHOR;
             }
             break;
-            case PROPERTY_MAP_FLDTYP_DOCINFO_DATE_TIME:          
-            {    
+            case PROPERTY_MAP_FLDTYP_DOCINFO_DATE_TIME:
+            {
                 static SfxItemPropertySet aPROPERTY_MAP_FLDTYP_DOCINFO_DATE_TIME(pEntries);
                 aPropertySetArr[nPropertyId] = &aPROPERTY_MAP_FLDTYP_DOCINFO_DATE_TIME;
             }
             break;
-            case PROPERTY_MAP_FLDTYP_DOCINFO_CHANGE_DATE_TIME:   
-            {    
+            case PROPERTY_MAP_FLDTYP_DOCINFO_CHANGE_DATE_TIME:
+            {
                 static SfxItemPropertySet aPROPERTY_MAP_FLDTYP_DOCINFO_CHANGE_DATE_TIME(pEntries);
                 aPropertySetArr[nPropertyId] = &aPROPERTY_MAP_FLDTYP_DOCINFO_CHANGE_DATE_TIME;
             }
             break;
-            case PROPERTY_MAP_FLDTYP_DOCINFO_CREATE_DATE_TIME:   
-            {    
+            case PROPERTY_MAP_FLDTYP_DOCINFO_CREATE_DATE_TIME:
+            {
                 static SfxItemPropertySet aPROPERTY_MAP_FLDTYP_DOCINFO_CREATE_DATE_TIME(pEntries);
                 aPropertySetArr[nPropertyId] = &aPROPERTY_MAP_FLDTYP_DOCINFO_CREATE_DATE_TIME;
             }
             break;
-            case PROPERTY_MAP_FLDTYP_DOCINFO_EDIT_TIME:         
-            {    
+            case PROPERTY_MAP_FLDTYP_DOCINFO_EDIT_TIME:
+            {
                 static SfxItemPropertySet aPROPERTY_MAP_FLDTYP_DOCINFO_EDIT_TIME(pEntries);
                 aPropertySetArr[nPropertyId] = &aPROPERTY_MAP_FLDTYP_DOCINFO_EDIT_TIME;
             }
             break;
-            case PROPERTY_MAP_FLDTYP_DOCINFO_MISC :              
-            {    
+            case PROPERTY_MAP_FLDTYP_DOCINFO_MISC :
+            {
                 static SfxItemPropertySet aPROPERTY_MAP_FLDTYP_DOCINFO_MISC(pEntries);
                 aPropertySetArr[nPropertyId] = &aPROPERTY_MAP_FLDTYP_DOCINFO_MISC;
             }
             break;
-            case PROPERTY_MAP_FLDTYP_DOCINFO_REVISION:           
-            {    
+            case PROPERTY_MAP_FLDTYP_DOCINFO_REVISION:
+            {
                 static SfxItemPropertySet aPROPERTY_MAP_FLDTYP_DOCINFO_REVISION(pEntries);
                 aPropertySetArr[nPropertyId] = &aPROPERTY_MAP_FLDTYP_DOCINFO_REVISION;
             }
             break;
-            case PROPERTY_MAP_FLDTYP_COMBINED_CHARACTERS:        
-            {    
+            case PROPERTY_MAP_FLDTYP_COMBINED_CHARACTERS:
+            {
                 static SfxItemPropertySet aPROPERTY_MAP_FLDTYP_COMBINED_CHARACTERS(pEntries);
                 aPropertySetArr[nPropertyId] = &aPROPERTY_MAP_FLDTYP_COMBINED_CHARACTERS;
             }
             break;
-            case PROPERTY_MAP_FLDTYP_DUMMY_0:                    
-            {    
+            case PROPERTY_MAP_FLDTYP_DUMMY_0:
+            {
                 static SfxItemPropertySet aPROPERTY_MAP_FLDTYP_DUMMY_0(pEntries);
                 aPropertySetArr[nPropertyId] = &aPROPERTY_MAP_FLDTYP_DUMMY_0;
             }
             break;
-            case PROPERTY_MAP_FLDTYP_TABLE_FORMULA:              
-            {    
+            case PROPERTY_MAP_FLDTYP_TABLE_FORMULA:
+            {
                 static SfxItemPropertySet aPROPERTY_MAP_FLDTYP_TABLE_FORMULA(pEntries);
                 aPropertySetArr[nPropertyId] = &aPROPERTY_MAP_FLDTYP_TABLE_FORMULA;
             }
             break;
-            case PROPERTY_MAP_FLDMSTR_USER:                      
-            {    
+            case PROPERTY_MAP_FLDMSTR_USER:
+            {
                 static SfxItemPropertySet aPROPERTY_MAP_FLDMSTR_USER(pEntries);
                 aPropertySetArr[nPropertyId] = &aPROPERTY_MAP_FLDMSTR_USER;
             }
             break;
-            case PROPERTY_MAP_FLDMSTR_DDE:                       
-            {    
+            case PROPERTY_MAP_FLDMSTR_DDE:
+            {
                 static SfxItemPropertySet aPROPERTY_MAP_FLDMSTR_DDE(pEntries);
                 aPropertySetArr[nPropertyId] = &aPROPERTY_MAP_FLDMSTR_DDE;
             }
             break;
-            case PROPERTY_MAP_FLDMSTR_SET_EXP:                   
-            {    
+            case PROPERTY_MAP_FLDMSTR_SET_EXP:
+            {
                 static SfxItemPropertySet aPROPERTY_MAP_FLDMSTR_SET_EXP(pEntries);
                 aPropertySetArr[nPropertyId] = &aPROPERTY_MAP_FLDMSTR_SET_EXP;
             }
             break;
-            case PROPERTY_MAP_FLDMSTR_DATABASE:                  
-            {    
+            case PROPERTY_MAP_FLDMSTR_DATABASE:
+            {
                 static SfxItemPropertySet aPROPERTY_MAP_FLDMSTR_DATABASE(pEntries);
                 aPropertySetArr[nPropertyId] = &aPROPERTY_MAP_FLDMSTR_DATABASE;
             }
             break;
-            case PROPERTY_MAP_FLDMSTR_DUMMY0:                    
-            {    
+            case PROPERTY_MAP_FLDMSTR_DUMMY0:
+            {
                 static SfxItemPropertySet aPROPERTY_MAP_FLDMSTR_DUMMY0(pEntries);
                 aPropertySetArr[nPropertyId] = &aPROPERTY_MAP_FLDMSTR_DUMMY0;
             }
             break;
-            case PROPERTY_MAP_FLDTYP_BIBLIOGRAPHY: 
-            {    
+            case PROPERTY_MAP_FLDTYP_BIBLIOGRAPHY:
+            {
                 static SfxItemPropertySet aPROPERTY_MAP_FLDTYP_BIBLIOGRAPHY(pEntries);
                 aPropertySetArr[nPropertyId] = &aPROPERTY_MAP_FLDTYP_BIBLIOGRAPHY;
             }
             break;
-            case PROPERTY_MAP_FLDMSTR_BIBLIOGRAPHY:              
-            {    
+            case PROPERTY_MAP_FLDMSTR_BIBLIOGRAPHY:
+            {
                 static SfxItemPropertySet aPROPERTY_MAP_FLDMSTR_BIBLIOGRAPHY(pEntries);
                 aPropertySetArr[nPropertyId] = &aPROPERTY_MAP_FLDMSTR_BIBLIOGRAPHY;
             }
             break;
-            case PROPERTY_MAP_TEXT:                              
-            {    
+            case PROPERTY_MAP_TEXT:
+            {
                 static SfxItemPropertySet aPROPERTY_MAP_TEXT(pEntries);
                 aPropertySetArr[nPropertyId] = &aPROPERTY_MAP_TEXT;
             }
             break;
-            case PROPERTY_MAP_REDLINE_PORTION:                   
-            {    
+            case PROPERTY_MAP_REDLINE_PORTION:
+            {
                 static SfxItemPropertySet aPROPERTY_MAP_REDLINE_PORTION(pEntries);
                 aPropertySetArr[nPropertyId] = &aPROPERTY_MAP_REDLINE_PORTION;
             }
             break;
-            case PROPERTY_MAP_MAILMERGE:                         
-            {    
+            case PROPERTY_MAP_MAILMERGE:
+            {
                 static SfxItemPropertySet aPROPERTY_MAP_MAILMERGE(pEntries);
                 aPropertySetArr[nPropertyId] = &aPROPERTY_MAP_MAILMERGE;
             }
             break;
-            case PROPERTY_MAP_FLDTYP_DROPDOWN:                   
-            {    
+            case PROPERTY_MAP_FLDTYP_DROPDOWN:
+            {
                 static SfxItemPropertySet aPROPERTY_MAP_FLDTYP_DROPDOWN(pEntries);
                 aPropertySetArr[nPropertyId] = &aPROPERTY_MAP_FLDTYP_DROPDOWN;
             }
             break;
-            case PROPERTY_MAP_CHART2_DATA_SEQUENCE:              
-            {    
+            case PROPERTY_MAP_CHART2_DATA_SEQUENCE:
+            {
                 static SfxItemPropertySet aPROPERTY_MAP_CHART2_DATA_SEQUENCE(pEntries);
                 aPropertySetArr[nPropertyId] = &aPROPERTY_MAP_CHART2_DATA_SEQUENCE;
             }
             break;
-            case PROPERTY_MAP_TEXT_VIEW:                         
-            {    
+            case PROPERTY_MAP_TEXT_VIEW:
+            {
                 static SfxItemPropertySet aPROPERTY_MAP_TEXT_VIEW(pEntries);
                 aPropertySetArr[nPropertyId] = &aPROPERTY_MAP_TEXT_VIEW;
             }
             break;
-            case PROPERTY_MAP_CONDITIONAL_PARA_STYLE:            
-            {    
+            case PROPERTY_MAP_CONDITIONAL_PARA_STYLE:
+            {
                 static SfxItemPropertySet aPROPERTY_MAP_CONDITIONAL_PARA_STYLE(pEntries);
                 aPropertySetArr[nPropertyId] = &aPROPERTY_MAP_CONDITIONAL_PARA_STYLE;
             }
             break;
-            case PROPERTY_MAP_CHAR_AUTO_STYLE:                   
-            {    
+            case PROPERTY_MAP_CHAR_AUTO_STYLE:
+            {
                 static SfxItemPropertySet aPROPERTY_MAP_CHAR_AUTO_STYLE(pEntries);
                 aPropertySetArr[nPropertyId] = &aPROPERTY_MAP_CHAR_AUTO_STYLE;
             }
             break;
-            case PROPERTY_MAP_RUBY_AUTO_STYLE:                   
-            {    
+            case PROPERTY_MAP_RUBY_AUTO_STYLE:
+            {
                 static SfxItemPropertySet aPROPERTY_MAP_RUBY_AUTO_STYLE(pEntries);
                 aPropertySetArr[nPropertyId] = &aPROPERTY_MAP_RUBY_AUTO_STYLE;
             }
             break;
-            case PROPERTY_MAP_PARA_AUTO_STYLE:                   
-            {    
+            case PROPERTY_MAP_PARA_AUTO_STYLE:
+            {
                 static SfxItemPropertySet aPROPERTY_MAP_PARA_AUTO_STYLE(pEntries);
                 aPropertySetArr[nPropertyId] = &aPROPERTY_MAP_PARA_AUTO_STYLE;
             }
             break;
-            case PROPERTY_MAP_FLDTYP_DOCINFO_CUSTOM:            
-            {    
+            case PROPERTY_MAP_FLDTYP_DOCINFO_CUSTOM:
+            {
                 static SfxItemPropertySet aPROPERTY_MAP_FLDTYP_DOCINFO_CUSTOM(pEntries);
                 aPropertySetArr[nPropertyId] = &aPROPERTY_MAP_FLDTYP_DOCINFO_CUSTOM;
             }
             break;
-        }    
-    }    
+        }
+    }
     return aPropertySetArr[nPropertyId];
 }
 

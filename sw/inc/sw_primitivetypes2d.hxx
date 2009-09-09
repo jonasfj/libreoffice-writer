@@ -6,8 +6,9 @@
  *
  * OpenOffice.org - a multi-platform office productivity suite
  *
- * $RCSfile: insrc.hxx,v $
- * $Revision: 1.4 $
+ * $RCSfile: sd_primitivetypes2d.hxx,v $
+ *
+ * $Revision: 1.2 $
  *
  * This file is part of OpenOffice.org.
  *
@@ -27,59 +28,23 @@
  * for a copy of the LGPLv3 License.
  *
  ************************************************************************/
-#ifndef _INSRC_HXX
-#define _INSRC_HXX
 
-#include <svx/stddlg.hxx>
+#ifndef INCLUDED_SW_PRIMITIVETYPES2D_HXX
+#define INCLUDED_SW_PRIMITIVETYPES2D_HXX
 
-#ifndef _FIXED_HXX //autogen
-#include <vcl/fixed.hxx>
+#ifndef INCLUDED_DRAWINGLAYER_PRIMITIVE2D_PRIMITIVETYPES2D_HXX
+#include <drawinglayer/primitive2d/drawinglayer_primitivetypes2d.hxx>
 #endif
 
-#ifndef _FIELD_HXX //autogen
-#include <vcl/field.hxx>
-#endif
+//////////////////////////////////////////////////////////////////////////////
 
-#ifndef _BUTTON_HXX //autogen
-#include <vcl/button.hxx>
-#endif
+#define PRIMITIVE2D_ID_SWVIRTFLYDRAWOBJPRIMITIVE2D				(PRIMITIVE2D_ID_RANGE_SW| 0)
+#define PRIMITIVE2D_ID_SWPOSTITANKORPRIMITIVE					(PRIMITIVE2D_ID_RANGE_SW| 1)
+#define PRIMITIVE2D_ID_SWPOSTITSHADOWPRIMITIVE					(PRIMITIVE2D_ID_RANGE_SW| 2)
 
-#ifndef _GROUP_HXX //autogen
-#include <vcl/group.hxx>
-#endif
-#include <tools/string.hxx>
+//////////////////////////////////////////////////////////////////////////////
 
-#ifndef _BUTTON_HXX //autogen
-#include <vcl/button.hxx>
-#endif
+#endif // INCLUDED_SW_PRIMITIVETYPES2D_HXX
 
-class SwView;
-class SwInsRowColDlg : public SvxStandardDialog
-{
-    FixedText 		aCount;
-    NumericField 	aCountEdit;
-    FixedLine        aInsFL;
-
-    RadioButton 	aBeforeBtn;
-    RadioButton 	aAfterBtn;
-    FixedLine        aPosFL;
-
-    String 			aRow;
-    String 			aCol;
-
-    OKButton 		aOKBtn;
-    CancelButton 	aCancelBtn;
-    HelpButton 		aHelpBtn;
-
-    SwView& 		rView;
-    BOOL  			bColumn;
-
-protected:
-    virtual void Apply();
-
-public:
-    SwInsRowColDlg( SwView& rView, BOOL bCol );
-};
-
-#endif
-
+//////////////////////////////////////////////////////////////////////////////
+// eof
