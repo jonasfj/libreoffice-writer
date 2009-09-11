@@ -450,7 +450,7 @@ BOOL SwNodes::_MoveNodes( const SwNodeRange& aRange, SwNodes & rNodes,
         ( (pAktNode = &aIndex.GetNode())->GetStartNode() &&
           !pAktNode->StartOfSectionIndex() ))
         return FALSE;
-
+    
     SwNodeRange aRg( aRange );
 
     // "einfache" StartNodes oder EndNodes ueberspringen
@@ -912,7 +912,7 @@ BOOL SwNodes::_MoveNodes( const SwNodeRange& aRange, SwNodes & rNodes,
             ASSERT( FALSE, "was ist das fuer ein Node??" );
             break;
         }
-
+    
     if( nInsPos )							// kopiere den Rest
     {
         // der Rest muesste so stimmen
