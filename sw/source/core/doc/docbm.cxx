@@ -1,7 +1,7 @@
 /*************************************************************************
  *
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
- * 
+ *
  * Copyright 2008 by Sun Microsystems, Inc.
  *
  * OpenOffice.org - a multi-platform office productivity suite
@@ -114,8 +114,8 @@ namespace
         return pResult;
     }
 
-    // return a position at the begin of rEnd, if it is a CntntNode 
-    // else set it to the begin of the Node after rEnd, if there is one 
+    // return a position at the begin of rEnd, if it is a CntntNode
+    // else set it to the begin of the Node after rEnd, if there is one
     // else set it to the end of the node before rStt
     // else set it to the CntntNode of the Pos outside the Range
     static inline auto_ptr<SwPosition> lcl_FindExpelPosition(const SwNodeIndex& rStt,
@@ -485,7 +485,7 @@ namespace sw { namespace mark
             // illegal selection? collapse the mark and restore sorting later
             isSortingNeeded |= lcl_FixCorrectedMark(bChangedPos, bChangedOPos, pMark);
         }
-        // restore sorting if needed 
+        // restore sorting if needed
         if(isSortingNeeded)
             sortMarks();
 #if FALSE
@@ -525,7 +525,7 @@ namespace sw { namespace mark
             // illegal selection? collapse the mark and restore sorting later
             isSortingNeeded |= lcl_FixCorrectedMark(bChangedPos, bChangedOPos, pMark);
         }
-        // restore sorting if needed 
+        // restore sorting if needed
         if(isSortingNeeded)
             sortMarks();
 #if FALSE
@@ -535,11 +535,11 @@ namespace sw { namespace mark
     }
 
     void MarkManager::deleteMarks(
-        const SwNodeIndex& rStt,
-        const SwNodeIndex& rEnd,
-        ::std::vector<SaveBookmark>* pSaveBkmk,
-        const SwIndex* pSttIdx,
-        const SwIndex* pEndIdx)
+            const SwNodeIndex& rStt,
+            const SwNodeIndex& rEnd,
+            ::std::vector<SaveBookmark>* pSaveBkmk,
+            const SwIndex* pSttIdx,
+            const SwIndex* pEndIdx )
     {
         vector<const_iterator_t> vMarksToDelete;
         bool isSortingNeeded = false;
@@ -561,7 +561,7 @@ namespace sw { namespace mark
             bool isOtherPosInRange = (pMark->IsExpanded() &&
                 lcl_GreaterThan(pMark->GetOtherMarkPos(), rStt, pSttIdx) &&
                 lcl_Lower(pMark->GetOtherMarkPos(), rEnd, pEndIdx));
-            // special case: completely in range, touching the end? 
+            // special case: completely in range, touching the end?
             if(pEndIdx &&
                     ((isOtherPosInRange
                     && pMark->GetMarkPos().nNode == rEnd
@@ -574,12 +574,29 @@ namespace sw { namespace mark
                 isPosInRange = true, isOtherPosInRange = true;
             }
 
-            if(isPosInRange && isOtherPosInRange)
+            if(isPosInRange && (isOtherPosInRange || !pMark->IsExpanded()))
             {
                 // completely in range
-                if(pSaveBkmk)
-                    pSaveBkmk->push_back(SaveBookmark(true, true, *pMark, rStt, pSttIdx));
-                vMarksToDelete.push_back(ppMark);
+
+                // --> OD 2009-08-07 #i92125#
+                bool bKeepCrossRefBkmk( false );
+                {
+                    if ( rStt == rEnd &&
+                         ( IDocumentMarkAccess::GetType(*pMark) ==
+                            IDocumentMarkAccess::CROSSREF_HEADING_BOOKMARK ||
+                           IDocumentMarkAccess::GetType(*pMark) ==
+                            IDocumentMarkAccess::CROSSREF_NUMITEM_BOOKMARK ) )
+                    {
+                        bKeepCrossRefBkmk = true;
+                    }
+                }
+                if ( !bKeepCrossRefBkmk )
+                {
+                    if(pSaveBkmk)
+                        pSaveBkmk->push_back(SaveBookmark(true, true, *pMark, rStt, pSttIdx));
+                    vMarksToDelete.push_back(ppMark);
+                }
+                // <--
             }
             else if(isPosInRange ^ isOtherPosInRange)
             {
@@ -596,24 +613,37 @@ namespace sw { namespace mark
                         rEnd,
                         isPosInRange ? pMark->GetOtherMarkPos() : pMark->GetMarkPos());
 
-                if(isPosInRange)
-                    pMark->SetMarkPos(*pNewPos);
-                else
-                    pMark->SetOtherMarkPos(*pNewPos);
+                // --> OD 2009-08-06 #i92125#
+                // no move of position for cross-reference bookmarks,
+                // if move occurs inside a certain node
+                if ( ( IDocumentMarkAccess::GetType(*pMark) !=
+                                IDocumentMarkAccess::CROSSREF_HEADING_BOOKMARK &&
+                       IDocumentMarkAccess::GetType(*pMark) !=
+                                IDocumentMarkAccess::CROSSREF_NUMITEM_BOOKMARK ) ||
+                     pMark->GetMarkPos().nNode != pNewPos->nNode )
+                {
+                    if(isPosInRange)
+                        pMark->SetMarkPos(*pNewPos);
+                    else
+                        pMark->SetOtherMarkPos(*pNewPos);
 
-                // illegal selection? collapse the mark and restore sorting later
-                isSortingNeeded |= lcl_FixCorrectedMark(isPosInRange, isOtherPosInRange, pMark);
+                    // illegal selection? collapse the mark and restore sorting later
+                    isSortingNeeded |= lcl_FixCorrectedMark(isPosInRange, isOtherPosInRange, pMark);
+                }
+                // <--
             }
         }
 
         // we just remembered the iterators to delete, so we do not need to search
         // for the shared_ptr<> (the entry in m_vMarks) again
         // reverse iteration, since erasing an entry invalidates iterators
-        // behind it (the iterators in vMarksToDelete are sorted)  
+        // behind it (the iterators in vMarksToDelete are sorted)
         for(vector<const_iterator_t>::reverse_iterator pppMark = vMarksToDelete.rbegin();
             pppMark != vMarksToDelete.rend();
             pppMark++)
+        {
             deleteMark(*pppMark);
+        }
         if(isSortingNeeded)
             sortMarks();
 #if FALSE
@@ -965,6 +995,14 @@ SaveBookmark::SaveBookmark(
     {
         m_aShortName = pBookmark->GetShortName();
         m_aCode = pBookmark->GetKeyCode();
+
+        ::sfx2::Metadatable * const pMetadatable(
+            const_cast< ::sfx2::Metadatable * >( // CreateUndo should be const?
+                dynamic_cast< ::sfx2::Metadatable const* >(pBookmark)));
+        if (pMetadatable)
+        {
+            m_pMetadataUndo = pMetadatable->CreateUndo();
+        }
     }
     m_nNode1 = rBkmk.GetMarkPos().nNode.GetIndex();
     m_nCntnt1 = rBkmk.GetMarkPos().nContent.GetIndex();
@@ -1043,6 +1081,16 @@ void SaveBookmark::SetInDoc(
         {
             pBookmark->SetKeyCode(m_aCode);
             pBookmark->SetShortName(m_aShortName);
+            if (m_pMetadataUndo)
+            {
+                ::sfx2::Metadatable * const pMeta(
+                    dynamic_cast< ::sfx2::Metadatable* >(pBookmark));
+                OSL_ENSURE(pMeta, "metadata undo, but not metadatable?");
+                if (pMeta)
+                {
+                    pMeta->RestoreMetadata(m_pMetadataUndo);
+                }
+            }
         }
     }
 }

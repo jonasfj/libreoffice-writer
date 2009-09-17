@@ -1,7 +1,7 @@
 /*************************************************************************
  *
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
- * 
+ *
  * Copyright 2008 by Sun Microsystems, Inc.
  *
  * OpenOffice.org - a multi-platform office productivity suite
@@ -175,6 +175,15 @@ public:
     virtual Graphic MakeGraphic( ImageMap* pMap = NULL );
 
     virtual BOOL GetInfo( SfxPoolItem& rInfo ) const;
+
+    // --> OD 2009-07-14 #i73249#
+    const String GetObjTitle() const;
+    void SetObjTitle( const String& rTitle,
+                      bool bBroadcast = false );
+    const String GetObjDescription() const;
+    void SetObjDescription( const String& rDescription,
+                            bool bBroadcast = false );
+    // <--
 
     /** SwFlyFrmFmt::IsBackgroundTransparent - for #99657#
 

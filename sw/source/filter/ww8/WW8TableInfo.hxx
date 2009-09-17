@@ -62,7 +62,7 @@ class WW8TableNodeInfoInner
     
 public:
     typedef boost::shared_ptr<WW8TableNodeInfoInner> Pointer_t;
-    
+
     WW8TableNodeInfoInner(WW8TableNodeInfo * pParent);
     ~WW8TableNodeInfoInner();
     
@@ -83,7 +83,7 @@ public:
     const SwTable * getTable() const;
     
     const SwNode * getNode() const;
-    
+
     string toString() const;
 };
  
@@ -100,7 +100,7 @@ private:
     
 public:
     typedef boost::shared_ptr<WW8TableNodeInfo> Pointer_t;
-    
+
     WW8TableNodeInfo(const SwNode * pTxtNode);
     virtual ~WW8TableNodeInfo();
     
@@ -127,7 +127,7 @@ public:
     
     sal_uInt32 getCell() const;
     sal_uInt32 getRow() const;
-    
+
     ::std::string toString() const;
 };
  

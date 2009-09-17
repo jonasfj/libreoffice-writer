@@ -181,7 +181,7 @@ class SW_DLLPUBLIC SwEditShell: public SwCrsrShell
 public:
     // Editieren (immer auf allen selektierten Bereichen)
     void Insert( sal_Unicode, BOOL bOnlyCurrCrsr = FALSE );
-    void Insert( const String &);
+    void Insert2( const String &, const bool bForceExpandHints = false );
     void Overwrite( const String & );
 
     // Ersetz einen selektierten Bereich in einem TextNode mit dem
@@ -332,7 +332,7 @@ public:
         { return (SwCharFmt*)SwEditShell::GetFmtFromPool( nId ); }
 
     // Felder
-    void Insert(SwField&);
+    void Insert2(SwField&, const bool bForceExpandHints = false);
     SwField* GetCurFld() const;
 
     void UpdateFlds( SwField & );		// ein einzelnes Feld
@@ -487,8 +487,8 @@ public:
     // <--
     // detect highest and lowest level to check moving of outline levels
     void GetCurrentOutlineLevels( sal_uInt8& rUpper, sal_uInt8& rLower );
-    
-    
+
+
     // get Outline level of current paragraph
     int GetCurrentParaOutlineLevel( ) const;// #outlinelevel add by zhaojianwei
 
@@ -512,9 +512,9 @@ public:
     // --> OD 2008-03-18 #refactorlists# - add output parameter <sListId>
     // in case a list style is found, <sListId> holds the list id, to which the
     // text node belongs, which applies the found list style.
-    const SwNumRule * SearchNumRule(BOOL bForward,
-                                    BOOL bNum,
-                                    BOOL bOutline,
+    const SwNumRule * SearchNumRule(const bool bForward,
+                                    const bool bNum,
+                                    const bool bOutline,
                                     int nNonEmptyAllowed,
                                     String& sListId );
     // <--
@@ -622,9 +622,9 @@ public:
                   const Graphic* pGraphic = 0,
                   const GraphicObject* pGrafObj = 0 );
 
-    // alternativen Text einer Grafik/OLe-Objectes abfragen/setzen
-    const String& GetAlternateText() const;
-    void SetAlternateText( const String& rTxt );
+//    // alternativen Text einer Grafik/OLe-Objectes abfragen/setzen
+//    const String& GetAlternateText() const;
+//    void SetAlternateText( const String& rTxt );
 
     //eindeutige Identifikation des Objektes (fuer ImageMapDlg)
     void    *GetIMapInventor() const;
@@ -753,7 +753,7 @@ public:
         ::com::sun::star::linguistic2::XSpellAlternatives >
             GetCorrection( const Point* pPt, SwRect& rSelectRect );
 
-    
+
     bool GetGrammarCorrection( ::com::sun::star::linguistic2::ProofreadingResult /*out*/ &rResult,
             sal_Int32 /*out*/ &rErrorPosInText,
             sal_Int32 /*out*/ &rErrorIndexInResult,
