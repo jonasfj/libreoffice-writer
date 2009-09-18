@@ -1,7 +1,7 @@
 /*************************************************************************
  *
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
- * 
+ *
  * Copyright 2008 by Sun Microsystems, Inc.
  *
  * OpenOffice.org - a multi-platform office productivity suite
@@ -28,7 +28,7 @@
  *
  ************************************************************************/
 
-interface BaseTextDocument : OfficeDocument
+interface BaseTextDocument
 [
     Automation = FALSE;
 ]
@@ -72,7 +72,7 @@ interface BaseTextDocument : OfficeDocument
     [
         ExecMethod = Execute ;
     ]
-    
+
     SID_SPELLCHECKER_CHANGED
     [
         ExecMethod = Execute ;
@@ -122,7 +122,7 @@ interface BaseTextDocument : OfficeDocument
         ExecMethod = Execute ;
         StateMethod = GetState;
     ]
-    
+
     SID_ATTR_CHAR_FONTLIST
     [
         StateMethod = GetState ;
@@ -132,7 +132,7 @@ interface BaseTextDocument : OfficeDocument
     [
         ExecMethod = Execute;
         StateMethod = GetState;
-    ]       
+    ]
     FN_PRINT_LAYOUT
     [
         ExecMethod = Execute;
