@@ -1,7 +1,7 @@
 /*************************************************************************
  *
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
- * 
+ *
  * Copyright 2008 by Sun Microsystems, Inc.
  *
  * OpenOffice.org - a multi-platform office productivity suite
@@ -53,8 +53,8 @@
 #include <svtools/svstdarr.hxx>
 #endif
 #include <svtools/stritem.hxx>
-#include <svtools/pathoptions.hxx>
-#include <svtools/lingucfg.hxx>
+#include <unotools/pathoptions.hxx>
+#include <unotools/lingucfg.hxx>
 #include <sfx2/request.hxx>
 #include <sfx2/fcontnr.hxx>
 

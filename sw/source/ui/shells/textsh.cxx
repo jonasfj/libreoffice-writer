@@ -45,7 +45,7 @@
 #include <svx/svdview.hxx>
 #include <svtools/ptitem.hxx>
 #include <svtools/stritem.hxx>
-#include <svtools/moduleoptions.hxx>
+#include <unotools/moduleoptions.hxx>
 #include <vcl/msgbox.hxx>
 #include <sfx2/fcontnr.hxx>
 #include <svx/hlnkitem.hxx>
@@ -832,7 +832,7 @@ void SwTextShell::StateInsert( SfxItemSet &rSet )
             case SID_INSERT_SOUND:
             case SID_INSERT_VIDEO:
                 /*!SvxPluginFileDlg::IsAvailable( nWhich ) ||
-                
+
                 discussed with mba: for performance reasons we skip the IsAvailable call here
                 */
                 if ( GetShell().IsSelFrmMode() ||

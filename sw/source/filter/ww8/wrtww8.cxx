@@ -48,7 +48,7 @@
 #define _SVSTDARR_BOOLS
 #include <svtools/svstdarr.hxx>
 
-#include <svtools/fltrcfg.hxx>
+#include <unotools/fltrcfg.hxx>
 #include <vcl/salbtype.hxx>
 #include <sot/storage.hxx>
 #include <svtools/zformat.hxx>
@@ -1604,7 +1604,7 @@ void SwWW8Writer::WriteString_xstz(SvStream& rStrm, const String& rStr, bool bAd
     ww::bytes aBytes;
     SwWW8Writer::InsUInt16(aBytes, rStr.Len());
     SwWW8Writer::InsAsString16(aBytes, rStr);
-    if (bAddZero) 
+    if (bAddZero)
         SwWW8Writer::InsUInt16(aBytes, 0);
     rStrm.Write(&aBytes[0], aBytes.size());
 }
@@ -2161,34 +2161,34 @@ void WW8AttributeOutput::TableDefinition( ww8::WW8TableNodeInfoInner::Pointer_t 
     }
 
     sal_uInt32 n = 0;
-    m_rWW8Export.InsUInt16( nTblOffset ); 
-   
+    m_rWW8Export.InsUInt16( nTblOffset );
+
     std::vector<SwTwips> gridCols = GetGridCols( pTableTextNodeInfoInner );
     for ( std::vector<SwTwips>::const_iterator it = gridCols.begin(), end = gridCols.end(); it != end; ++it )
     {
         m_rWW8Export.InsUInt16( static_cast<USHORT>( *it ) + nTblOffset );
     }
-    
+
     /* TCs */
     for ( n = 0; n < nBoxes; n++ )
     {
 #ifdef DEBUG
         sal_uInt16 npOCount = m_rWW8Export.pO->Count();
 #endif
-        
+
         SwTableBox * pTabBox1 = rTabBoxes[n];
         const SwFrmFmt & rBoxFmt = *(pTabBox1->GetFrmFmt());
         if ( m_rWW8Export.bWrtWW8 )
         {
-            sal_uInt16 nFlags = lcl_TCFlags(pTabBox1);            
+            sal_uInt16 nFlags = lcl_TCFlags(pTabBox1);
             m_rWW8Export.InsUInt16( nFlags );
         }
-        
+
         static BYTE aNullBytes[] = { 0x0, 0x0 };
-        
+
         m_rWW8Export.pO->Insert( aNullBytes, 2, m_rWW8Export.pO->Count() );   // dummy
         m_rWW8Export.Out_SwFmtTableBox( *m_rWW8Export.pO, rBoxFmt.GetBox() ); // 8/16 Byte
-        
+
 #ifdef DEBUG
         ::std::clog << "<tclength>" << m_rWW8Export.pO->Count() - npOCount << "</tclength>"
         << ::std::endl;
@@ -2204,7 +2204,7 @@ std::vector<SwTwips> AttributeOutputBase::GetGridCols( ww8::WW8TableNodeInfoInne
     const SwTableLine * pTabLine = pTabBox->GetUpper();
     const SwTableBoxes & rTabBoxes = pTabLine->GetTabBoxes();
     const SwTable *pTable = pTableTextNodeInfoInner->getTable( );
-    
+
     // number of cell written
     sal_uInt32 nBoxes = rTabBoxes.Count();
     if ( nBoxes > 32 )
@@ -2797,7 +2797,7 @@ namespace
             rCtx.Encode(in, nBS, in, nBS);
             rOut.Write(in, nBS);
         }
-    }    
+    }
 }
 
 void MSWordExportBase::ExportDocument( bool bWriteAll )
@@ -3002,12 +3002,12 @@ void WW8Export::ExportDocument_Impl()
     StoreDoc1();
 
     if ( bEncrypt )
-    {	
+    {
         // Generate random number with a seed of time as salt.
         TimeValue aTime;
         osl_getSystemTime( &aTime );
         rtlRandomPool aRandomPool = rtl_random_createPool ();
-        rtl_random_addBytes ( aRandomPool, &aTime, 8 ); 
+        rtl_random_addBytes ( aRandomPool, &aTime, 8 );
 
         sal_uInt8 aDocId[ 16 ] = {0};
         rtl_random_getBytes( aRandomPool, aDocId, 16 );
@@ -3027,11 +3027,11 @@ void WW8Export::ExportDocument_Impl()
         pDataStrmTemp = &xDataStrm;
 
         if ( pDataStrmTemp && pDataStrmTemp != pStrmTemp)
-            EncryptRC4(aCtx, *pDataStrm, *pDataStrmTemp);			
+            EncryptRC4(aCtx, *pDataStrm, *pDataStrmTemp);
 
         EncryptRC4(aCtx, *pTableStrm, *pTableStrmTemp);
 
-        // Write Unencrypted Header 52 bytes to the start of the table stream 
+        // Write Unencrypted Header 52 bytes to the start of the table stream
         // EncryptionVersionInfo (4 bytes): A Version structure where Version.vMajor MUST be 0x0001, and Version.vMinor MUST be 0x0001.
         pTableStrmTemp->Seek( 0 );
         sal_uInt32 nEncType = 0x10001;
@@ -3043,19 +3043,19 @@ void WW8Export::ExportDocument_Impl()
 
         pTableStrmTemp->Write( aDocId, 16 );
         pTableStrmTemp->Write( pSaltData, 16 );
-        pTableStrmTemp->Write( pSaltDigest, 16 );			
+        pTableStrmTemp->Write( pSaltDigest, 16 );
 
         EncryptRC4(aCtx, GetWriter().Strm(), *pStrmTemp);
 
-        // Write Unencrypted Fib 68 bytes to the start of the workdocument stream 	
+        // Write Unencrypted Fib 68 bytes to the start of the workdocument stream
         pFib->fEncrypted = 1; // fEncrypted indicates the document is encrypted.
         pFib->fObfuscated = 0; // Must be 0 for RC4.
         pFib->nHash = 0x34; // encrypt header bytes count of table stream.
         pFib->nKey = 0; // lkey2 must be 0 for RC4.
 
-        pStrmTemp->Seek( 0 );				
-        pFib->WriteHeader( *pStrmTemp );		
-    }		
+        pStrmTemp->Seek( 0 );
+        pFib->WriteHeader( *pStrmTemp );
+    }
 
     if (pUsedNumTbl)           // all used NumRules
     {

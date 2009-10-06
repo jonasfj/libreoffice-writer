@@ -1,7 +1,7 @@
 /*************************************************************************
  *
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
- * 
+ *
  * Copyright 2008 by Sun Microsystems, Inc.
  *
  * OpenOffice.org - a multi-platform office productivity suite
@@ -37,8 +37,8 @@
 #define _SVSTDARR_STRINGSDTOR
 #include <svtools/svstdarr.hxx>
 #endif
-#include <svtools/lingucfg.hxx>
-#include <svtools/linguprops.hxx>
+#include <unotools/lingucfg.hxx>
+#include <unotools/linguprops.hxx>
 #include <svtools/filter.hxx>
 #include <svx/impgrf.hxx>
 #include <svx/svxacorr.hxx>
@@ -69,7 +69,7 @@
 #include <svx/splwrap.hxx>
 #include <vcl/svapp.hxx>
 #include <vcl/settings.hxx>
-#include <svtools/lingucfg.hxx>
+#include <unotools/lingucfg.hxx>
 #include <svx/acorrcfg.hxx>
 #include <swmodule.hxx>
 #include <cmdid.h>
@@ -645,7 +645,7 @@ aInfo16( SW_RES(IMG_INFO_16) )
         }
         InsertSeparator( nPos++ );
     }
-    
+
     OUString aIgnoreSelection( String( SW_RES( STR_IGNORE_SELECTION ) ) );
     OUString aSpellingAndGrammar = RetrieveLabelFromCommand( C2U(".uno:SpellingAndGrammarDialog") );
     SetItemText( MN_SPELLING, aSpellingAndGrammar );

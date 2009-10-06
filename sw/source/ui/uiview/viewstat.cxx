@@ -1,7 +1,7 @@
 /*************************************************************************
  *
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
- * 
+ *
  * Copyright 2008 by Sun Microsystems, Inc.
  *
  * OpenOffice.org - a multi-platform office productivity suite
@@ -68,7 +68,7 @@
 #endif
 #include <globdoc.hxx>
 #include <svtools/stritem.hxx>
-#include <svtools/moduleoptions.hxx>
+#include <unotools/moduleoptions.hxx>
 #include <svtools/visitem.hxx>
 
 #ifndef _CMDID_H
@@ -299,7 +299,7 @@ void SwView::GetState(SfxItemSet &rSet)
             break;
             case FN_REDLINE_ACCEPT_DIRECT:
             case FN_REDLINE_REJECT_DIRECT:
-            {    
+            {
                 SwContentAtPos aCntntAtPos( SwContentAtPos::SW_REDLINE );
                 Point aCrsrPos = pWrtShell->GetCrsrDocPos( sal_True );
                 if( !pWrtShell->GetContentAtPos( aCrsrPos, aCntntAtPos ) )

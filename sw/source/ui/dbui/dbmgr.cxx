@@ -63,7 +63,7 @@
 #include <pagedesc.hxx>
 #include <vcl/lstbox.hxx>
 #include <unotools/tempfile.hxx>
-#include <svtools/pathoptions.hxx>
+#include <unotools/pathoptions.hxx>
 #include <svtools/urihelper.hxx>
 #ifndef _SVSTDARR_HXX
 #define _SVSTDARR_STRINGSDTOR
@@ -3233,7 +3233,7 @@ sal_Int32 SwNewDBMgr::MergeDocuments( SwMailMergeConfigItem& rMMConfig,
             if(nDocNo == 1 )
             {
                 uno::Reference< util::XCloneable > xClone( rSourceView.GetDocShell()->GetModel(), uno::UNO_QUERY);
-                uno::Reference< lang::XUnoTunnel > xWorkDocShell( xClone->createClone(), uno::UNO_QUERY); 
+                uno::Reference< lang::XUnoTunnel > xWorkDocShell( xClone->createClone(), uno::UNO_QUERY);
                 SwXTextDocument* pWorkModel = reinterpret_cast<SwXTextDocument*>(xWorkDocShell->getSomething(SwXTextDocument::getUnoTunnelId()));
                 xWorkDocSh = pWorkModel->GetDocShell();
             }
@@ -3242,7 +3242,7 @@ sal_Int32 SwNewDBMgr::MergeDocuments( SwMailMergeConfigItem& rMMConfig,
                 SwDoc* pNewDoc = rSourceView.GetDocShell()->GetDoc()->CreateCopy();
                 xWorkDocSh = new SwDocShell( pNewDoc, SFX_CREATE_MODE_STANDARD );
                 xWorkDocSh->DoInitNew();
-            }    
+            }
             //create a ViewFrame
             SwView* pWorkView = static_cast< SwView* >( SfxViewFrame::CreateViewFrame( *xWorkDocSh, 0, sal_True )->GetViewShell() );
             SwWrtShell& rWorkShell = pWorkView->GetWrtShell();
@@ -3288,7 +3288,7 @@ sal_Int32 SwNewDBMgr::MergeDocuments( SwMailMergeConfigItem& rMMConfig,
                 pTargetShell->GetDoc()->MakePageDesc( sNewPageDescName );
                 SwPageDesc* pTargetPageDesc = pTargetShell->FindPageDescByName( sNewPageDescName );
                 const SwPageDesc* pWorkPageDesc = rWorkShell.FindPageDescByName( sStartingPageDesc );
-                    
+
                 if(pWorkPageDesc && pTargetPageDesc)
                 {
                     pTargetDoc->CopyPageDesc( *pWorkPageDesc, *pTargetPageDesc, sal_False );

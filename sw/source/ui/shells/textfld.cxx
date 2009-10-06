@@ -1,7 +1,7 @@
 /************ *************************************************************
  *
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
- * 
+ *
  * Copyright 2008 by Sun Microsystems, Inc.
  *
  * OpenOffice.org - a multi-platform office productivity suite
@@ -39,7 +39,7 @@
 #include <tools/urlobj.hxx>
 #include <vcl/msgbox.hxx>
 #include <svtools/itempool.hxx>
-#include <svtools/useroptions.hxx>
+#include <unotools/useroptions.hxx>
 #include <svtools/whiter.hxx>
 #include <svtools/eitem.hxx>
 #include <svtools/macitem.hxx>
@@ -391,8 +391,8 @@ void SwTextShell::ExecField(SfxRequest &rReq)
             }
             break;
             case FN_REDLINE_COMMENT:
-            {				
-                /*	this code can be used once we want redline comments in the margin, all other stuff can 
+            {
+                /*	this code can be used once we want redline comments in the margin, all other stuff can
                     then be deleted
                 String sComment;
                 const SwRedline *pRedline = rSh.GetCurrRedline();

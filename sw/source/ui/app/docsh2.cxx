@@ -1,7 +1,7 @@
 /*************************************************************************
  *
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
- * 
+ *
  * Copyright 2008 by Sun Microsystems, Inc.
  *
  * OpenOffice.org - a multi-platform office productivity suite
@@ -56,7 +56,7 @@
 */
 #include <svtools/zforlist.hxx>
 #include <svtools/zformat.hxx>
-#include <svtools/pathoptions.hxx>
+#include <unotools/pathoptions.hxx>
 #include <svtools/transfer.hxx>
 #ifndef _SFXSIDS_HRC //autogen
 #include <sfx2/dialogs.hrc>
@@ -641,7 +641,7 @@ void SwDocShell::Execute(SfxRequest& rReq)
             SvStringsISortDtor aTmpLst;
             aTmpLst.Insert( &rACW.GetWordList() );
             pAFlags->pAutoCmpltList = &aTmpLst;
-            
+
             SfxApplication* pApp = SFX_APP();
             SfxRequest aAppReq(SID_AUTO_CORRECT_DLG, SFX_CALLMODE_SYNCHRON, pApp->GetPool());
             SfxBoolItem aSwOptions( SID_AUTO_CORRECT_DLG, TRUE );
@@ -1230,7 +1230,7 @@ void SwDocShell::Execute(SfxRequest& rReq)
             {
                 bDone = FALSE;
                 BOOL bCreateHtml = FN_NEW_HTML_DOC == nWhich;
-                
+
                 BOOL bCreateByOutlineLevel = false;		//#outline level,add by zhaojianwei
                 sal_Int32  nTemplateOutlineLevel = 0 ;		//#outline level,add by zhaojianwei
 
@@ -1342,7 +1342,7 @@ void SwDocShell::Execute(SfxRequest& rReq)
         //                aListBoxEntries.realloc(nIdx);
                 //<-end,zhaojianwei
 
-        
+
                     //#outline level,add by zhaojianwei
                     /////////////////////////////////////////////////////////////////////
 
@@ -1352,7 +1352,7 @@ void SwDocShell::Execute(SfxRequest& rReq)
                         {
                             int nLevel;
                             for(USHORT n = 0; n < rOutlNds.Count(); ++n )
-                                if( ( nLevel = rOutlNds[n]->GetTxtNode()->GetAttrOutlineLevel()) > 0 && 
+                                if( ( nLevel = rOutlNds[n]->GetTxtNode()->GetAttrOutlineLevel()) > 0 &&
                                     ! bOutline[nLevel-1] )
                                 {
                                     bOutline[nLevel-1] = true;
@@ -1450,7 +1450,7 @@ void SwDocShell::Execute(SfxRequest& rReq)
                     if( PrepareClose( FALSE ) )
                     {
                         SwWait aWait( *this, TRUE );
-                        
+
                         //bDone = bCreateHtml			//#outline level,removed by zhaojianwei
                         //	? pDoc->GenerateHTMLDoc( aFileName, pSplitColl )
                         //	: pDoc->GenerateGlobalDoc( aFileName, pSplitColl );
@@ -1609,7 +1609,7 @@ void SwDocShell::SetModified( BOOL bSet )
     {
          if (!pDoc->IsInCallModified() )
          {
-            EnableSetModified( FALSE );	
+            EnableSetModified( FALSE );
             if( bSet )
             {
                 BOOL bOld = pDoc->IsModified();
@@ -1813,7 +1813,7 @@ void    SwDocShell::ToggleBrowserMode(BOOL bSet, SwView* _pView )
         } while ( pTmpFrm );
 
         const SwViewOption& rViewOptions = *pTempView->GetWrtShell().GetViewOptions();
-        
+
         // set view columns before toggling:
         if ( bSet )
         {

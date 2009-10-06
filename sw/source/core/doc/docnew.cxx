@@ -53,8 +53,8 @@
 #include <svx/linkmgr.hxx>
 #include <svx/forbiddencharacterstable.hxx>
 #include <svtools/zforlist.hxx>
-#include <svtools/compatibility.hxx>
-#include <svtools/lingucfg.hxx>
+#include <unotools/compatibility.hxx>
+#include <unotools/lingucfg.hxx>
 #include <svx/svdpage.hxx>
 #include <paratr.hxx>
 #include <fchrfmt.hxx>
@@ -1047,7 +1047,7 @@ SwDoc::GetMetaFieldManager()
     return *m_pMetaFieldManager;
 }
 
-void SwDoc::InitTOXTypes() 
+void SwDoc::InitTOXTypes()
 {
    ShellResource* pShellRes = ViewShell::GetShellRes();
    SwTOXType * pNew = new SwTOXType(TOX_CONTENT,   pShellRes->aTOXContentName        );
@@ -1104,7 +1104,7 @@ SwDoc* SwDoc::CreateCopy() const
     }
     if( aNewDefaults.Count() )
         pRet->SetDefault( aNewDefaults );
-    
+
     /*
     pDfltFrmFmt( new SwFrmFmt( GetAttrPool(), sFrmFmtStr, 0 ) ),
     pEmptyPageFmt( new SwFrmFmt( GetAttrPool(), sEmptyPageStr, pDfltFrmFmt ) ),
@@ -1241,7 +1241,7 @@ SwDoc* SwDoc::CreateCopy() const
     // by asking SvtCompatibilityOptions, see below.
     //
     const SvtCompatibilityOptions aOptions;
-     */ 
+     */
     pRet->mbParaSpaceMax                          = mbParaSpaceMax                          ;
     pRet->mbParaSpaceMaxAtPages                   = mbParaSpaceMaxAtPages                   ;
     pRet->mbTabCompat                             = mbTabCompat                             ;
@@ -1267,20 +1267,20 @@ SwDoc* SwDoc::CreateCopy() const
     pRet->mbOldPrinterMetrics                     = mbOldPrinterMetrics                     ;
     pRet->mbTabRelativeToIndent                   = mbTabRelativeToIndent                   ;
     pRet->mbTabAtLeftIndentForParagraphsInList    = mbTabAtLeftIndentForParagraphsInList    ;
-                                            
-    //                                      
+
+    //
     // COMPATIBILITY FLAGS END
     //
     /*
     pMacroTable = new SvxMacroTableDtor;
-    
+
     mpGrammarContact = ::createGrammarContact();
 
     // Formate
     pFrmFmtTbl->Insert(pDfltFrmFmt, 0 );
     pCharFmtTbl->Insert(pDfltCharFmt, 0 );
 
-    // FmtColls 
+    // FmtColls
     // TXT
     pTxtFmtCollTbl->Insert(pDfltTxtFmtColl, 0 );
     // GRF
@@ -1352,8 +1352,8 @@ SwDoc* SwDoc::CreateCopy() const
 
     ResetModified();
 
-*/    
-    //copy content 
+*/
+    //copy content
     pRet->Paste( *this );
     return pRet;
 }

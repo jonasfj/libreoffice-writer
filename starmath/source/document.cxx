@@ -1,7 +1,7 @@
 /*************************************************************************
  *
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
- * 
+ *
  * Copyright 2008 by Sun Microsystems, Inc.
  *
  * OpenOffice.org - a multi-platform office productivity suite
@@ -59,9 +59,9 @@
 #include <svtools/fstathelper.hxx>
 #include <svtools/intitem.hxx>
 #include <svtools/itempool.hxx>
-#include <svtools/lingucfg.hxx>
-#include <svtools/linguprops.hxx>
-#include <svtools/pathoptions.hxx>
+#include <unotools/lingucfg.hxx>
+#include <unotools/linguprops.hxx>
+#include <unotools/pathoptions.hxx>
 #include <svtools/ptitem.hxx>
 #include <svtools/sfxecode.hxx>
 #include <svtools/slstitm.hxx>
@@ -823,7 +823,7 @@ BOOL SmDocShell::Load( SfxMedium& rMedium )
              xStorage->isStreamElement( C2S( "content.xml" ) )
             ) ||
             (
-             xAccess->hasByName( C2S( "Content.xml" ) ) && 
+             xAccess->hasByName( C2S( "Content.xml" ) ) &&
              xStorage->isStreamElement( C2S( "Content.xml" ) )
             )
            )
