@@ -1,7 +1,7 @@
 /*************************************************************************
  *
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
- * 
+ *
  * Copyright 2008 by Sun Microsystems, Inc.
  *
  * OpenOffice.org - a multi-platform office productivity suite
@@ -874,7 +874,7 @@ void lcl_SetWrong( SwTxtFrm& rFrm, xub_StrLen nPos, long nCnt, bool bMove )
     if (pRootFrm)
     {
         pRootFrm->SetNeedGrammarCheck( TRUE );
-    }    
+    }
 
     SwPageFrm *pPage = rFrm.FindPageFrm();
     if( pPage )
@@ -1296,6 +1296,13 @@ void SwTxtFrm::Modify( SfxPoolItem *pOld, SfxPoolItem *pNew )
                 else
                     SwCntntFrm::Modify( pOld, pNew );
             }
+
+            // --> OD 2009-01-06 #i88069#
+            if ( GetShell() )
+            {
+                GetShell()->InvalidateAccessibleParaAttrs( *this );
+            }
+            // <--
         }
         break;
 

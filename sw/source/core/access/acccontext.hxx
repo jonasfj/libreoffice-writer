@@ -1,7 +1,7 @@
 /*************************************************************************
  *
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
- * 
+ *
  * Copyright 2008 by Sun Microsystems, Inc.
  *
  * OpenOffice.org - a multi-platform office productivity suite
@@ -375,6 +375,14 @@ public:
         @author OD
     */
     void InvalidateTextSelection();
+
+    /** attributes has changed
+
+        OD 2009-01-06 #i88069#
+
+        @author OD
+    */
+    void InvalidateAttr();
 
     const ::rtl::OUString& GetName() const { return sName; }
 

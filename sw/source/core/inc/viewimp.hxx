@@ -1,7 +1,7 @@
 /*************************************************************************
  *
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
- * 
+ *
  * Copyright 2008 by Sun Microsystems, Inc.
  *
  * OpenOffice.org - a multi-platform office productivity suite
@@ -200,6 +200,16 @@ private:
         @author OD
     */
     void _InvalidateAccessibleParaTextSelection();
+
+    /** invalidate attributes for paragraphs
+
+        OD 2009-01-06 #i88069#
+        implementation for wrapper method
+        <ViewShell::InvalidateAccessibleParaAttrs(..)>
+
+        @author OD
+    */
+    void _InvalidateAccessibleParaAttrs( const SwTxtFrm& rTxtFrm );
 
 public:
     SwViewImp( ViewShell * );

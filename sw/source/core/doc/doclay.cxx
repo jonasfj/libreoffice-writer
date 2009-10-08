@@ -104,10 +104,8 @@
 #include <ftnidx.hxx>
 #include <ftninfo.hxx>
 #include <pagedesc.hxx>
-
-#ifndef _COMCORE_HRC
+#include <PostItMgr.hxx>
 #include <comcore.hrc>		// STR-ResId's
-#endif
 
 // #i11176#
 #include <unoframe.hxx>
@@ -1864,7 +1862,7 @@ IMPL_LINK( SwDoc, DoIdleJobs, Timer *, pTimer )
             if (bIsOnlineSpell && bIsAutoGrammar)
                 StartGrammarChecking( *this, *GetRootFrm() );
         }
-
+    
         sal_uInt16 nFldUpdFlag;
         if( GetRootFrm()->IsIdleFormat() )
             GetRootFrm()->GetCurrShell()->LayoutIdle();

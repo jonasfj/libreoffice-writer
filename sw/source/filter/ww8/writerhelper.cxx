@@ -1,7 +1,7 @@
 /*************************************************************************
  *
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
- * 
+ *
  * Copyright 2008 by Sun Microsystems, Inc.
  *
  * OpenOffice.org - a multi-platform office productivity suite
@@ -98,17 +98,39 @@ namespace
         return res;
     }
 
-    //Utility to sort SwTxtFmtColl's by their outline numbering level
+    // --> OD 2009-02-04 #i98791# - adjust sorting
+    //Utility to sort SwTxtFmtColl's by their assigned outline style list level
     class outlinecmp : public
         std::binary_function<const SwTxtFmtColl*, const SwTxtFmtColl*, bool>
     {
     public:
         bool operator()(const SwTxtFmtColl *pA, const SwTxtFmtColl *pB) const
         {
-            //return pA->GetOutlineLevel() < pB->GetOutlineLevel();			//#outline level,zhaojianwei
-            return pA->GetAttrOutlineLevel() < pB->GetAttrOutlineLevel();	//<-end,zhaojianwei
+            // --> OD 2009-02-04 #i98791#
+//            return pA->GetAttrOutlineLevel() < pB->GetAttrOutlineLevel();   //<-end,zhaojianwei
+            bool bResult( false );
+            const bool bIsAAssignedToOutlineStyle( pA->IsAssignedToListLevelOfOutlineStyle() );
+            const bool bIsBAssignedToOutlineStyle( pB->IsAssignedToListLevelOfOutlineStyle() );
+            if ( bIsAAssignedToOutlineStyle != bIsBAssignedToOutlineStyle )
+            {
+                bResult = bIsBAssignedToOutlineStyle;
+            }
+            else if ( !bIsAAssignedToOutlineStyle )
+            {
+                // pA and pB are equal regarding the sorting criteria.
+                // Thus return value does not matter.
+                bResult = false;
+            }
+            else
+            {
+                bResult = pA->GetAssignedOutlineStyleLevel() < pB->GetAssignedOutlineStyleLevel();
+            }
+
+            return bResult;
+            // <--
        }
     };
+    // <--
 
     bool IsValidSlotWhich(USHORT nSlotId, USHORT nWhichId)
     {
@@ -554,10 +576,12 @@ namespace sw
             return pFmt;
         }
 
-        void SortByOutline(ParaStyles &rStyles)
+        // --> OD 2009-02-04 #i98791# - adjust sorting algorithm
+        void SortByAssignedOutlineStyleListLevel(ParaStyles &rStyles)
         {
             std::sort(rStyles.begin(), rStyles.end(), outlinecmp());
         }
+        // <--
 
         Frames GetAllFrames(const SwDoc &rDoc, SwPaM *pPaM)
         {
