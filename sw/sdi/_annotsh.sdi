@@ -117,7 +117,7 @@ interface _Annotation
         ExecMethod = ExecClpbrd ;
         DisableFlags="SW_DISABLE_ON_PROTECTED_CURSOR";
     ]
-    
+
     SID_CLIPBOARD_FORMAT_ITEMS  // status(final|play)
     [
         StateMethod = StateClpbrd ;
