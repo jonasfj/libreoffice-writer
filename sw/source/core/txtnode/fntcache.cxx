@@ -1,13 +1,13 @@
 /*************************************************************************
  *
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
- * 
+ *
  * Copyright 2008 by Sun Microsystems, Inc.
  *
  * OpenOffice.org - a multi-platform office productivity suite
  *
  * $RCSfile: fntcache.cxx,v $
- * $Revision: 1.98 $
+ * $Revision: 1.98.56.1 $
  *
  * This file is part of OpenOffice.org.
  *
@@ -100,12 +100,12 @@ USHORT GetDefaultFontHeight( SwDrawTextInfo &rInf )
 {
     SwDocShell* pDocShell = rInf.GetShell()->GetDoc()->GetDocShell();
     SfxStyleSheetBasePool* pBasePool = pDocShell->GetStyleSheetPool();
-    
+
     String aString(SW_RES(STR_POOLCOLL_STANDARD));
-    
+
     SfxStyleSheetBase* pStyle = pBasePool->Find( aString, (SfxStyleFamily)SFX_STYLE_FAMILY_PARA );
     SfxItemSet& aTmpSet = pStyle->GetItemSet();
-    SvxFontHeightItem &aDefaultFontItem = (SvxFontHeightItem&)aTmpSet.Get(RES_CHRATR_CJK_FONTSIZE); 
+    SvxFontHeightItem &aDefaultFontItem = (SvxFontHeightItem&)aTmpSet.Get(RES_CHRATR_CJK_FONTSIZE);
     return (USHORT)aDefaultFontItem.GetHeight();
 }
 
@@ -175,8 +175,9 @@ SwFntObj::SwFntObj( const SwSubFont &rFont, const void *pOwn, ViewShell *pSh ) :
     nPrtAscent = USHRT_MAX;
     nPrtHeight = USHRT_MAX;
     bPaintBlank = ( UNDERLINE_NONE != aFont.GetUnderline()
-                  || STRIKEOUT_NONE != aFont.GetStrikeout() )
-                  && !aFont.IsWordLineMode();
+                 || UNDERLINE_NONE != aFont.GetOverline()
+                 || STRIKEOUT_NONE != aFont.GetStrikeout() )
+                 && !aFont.IsWordLineMode();
 }
 
 SwFntObj::~SwFntObj()
@@ -257,9 +258,9 @@ struct CalcLinePosData
         pKernArray( _pKernArray ),
         bBidiPor( _bBidiPor )
     {
-    }    
+    }
 };
-    
+
 /** Function: lcl_calcLinePos
 
    Computes the start and end position of an underline. This function is called
@@ -898,12 +899,12 @@ static sal_Bool lcl_IsMonoSpaceFont( const OutputDevice& rOut )
 
 /* This helper structure (SwForbidden) contains the already marked parts of the string
     to avoid double lines (e.g grammar + spell check error) */
-   
+
 typedef std::vector< std::pair< xub_StrLen, xub_StrLen > > SwForbidden;
 
 static void lcl_DrawLineForWrongListData(
     SwForbidden &rForbidden,
-    const SwDrawTextInfo    &rInf, 
+    const SwDrawTextInfo    &rInf,
     const SwWrongList       *pWList,
     const CalcLinePosData   &rCalcLinePosData,
     const Size              &rPrtFontSize )
@@ -937,10 +938,10 @@ static void lcl_DrawLineForWrongListData(
             if (rInf.GetOut().GetConnectMetaFile())
                 rInf.GetOut().Push();
 
-            const Color aCol( rInf.GetOut().GetLineColor() );
+            const Color aCol( rInf.GetOut().GetTextLineColor() );
             const BOOL bColSave = aCol != aLineColor;
             if (bColSave)
-                rInf.GetOut().SetLineColor( aLineColor );
+                rInf.GetOut().SetTextLineColor( aLineColor );
 
             // iterate over all ranges stored in the respective SwWrongList
             do
@@ -980,18 +981,18 @@ static void lcl_DrawLineForWrongListData(
                     Point aStart( rInf.GetPos() );
                     Point aEnd;
                     lcl_calcLinePos( rCalcLinePosData, aStart, aEnd, nNextStart, nNextEnd - nNextStart );
-    
+
                     // draw line for smart tags?
                     if (pWList == rInf.GetSmartTags())
                     {
                         aStart.Y() +=30;
                         aEnd.Y() +=30;
-    
+
                         LineInfo aLineInfo( LINE_DASH );
                         aLineInfo.SetDistance( 40 );
                         aLineInfo.SetDashLen( 1 );
                         aLineInfo.SetDashCount(1);
-    
+
                         rInf.GetOut().DrawLine( aStart, aEnd, aLineInfo );
                     }
                     else    // draw wavy lines for spell or grammar errors
@@ -1000,18 +1001,18 @@ static void lcl_DrawLineForWrongListData(
                         USHORT nWave =
                             WRONG_SHOW_MEDIUM < nHght ? WAVE_NORMAL :
                             ( WRONG_SHOW_SMALL < nHght ? WAVE_SMALL : WAVE_FLAT );
-    
+
                         rInf.GetOut().DrawWaveLine( aStart, aEnd, nWave );
                     }
                 }
-                                
+
                 nStart = nEnd + rInf.GetIdx();
                 nWrLen = rInf.GetIdx() + rInf.GetLen() - nStart;
             }
             while (nWrLen && pWList->Check( nStart, nWrLen ));
 
             if (bColSave)
-                rInf.GetOut().SetLineColor( aCol );
+                rInf.GetOut().SetTextLineColor( aCol );
 
             if (rInf.GetOut().GetConnectMetaFile())
                 rInf.GetOut().Pop();
@@ -1193,7 +1194,7 @@ void SwFntObj::DrawText( SwDrawTextInfo &rInf )
         {
             //for textgrid refactor
             //const USHORT nGridWidth = pGrid->GetBaseHeight();
-            const SwDoc* pDoc = rInf.GetShell()->GetDoc();	
+            const SwDoc* pDoc = rInf.GetShell()->GetDoc();
             const USHORT nGridWidth = GETGRIDWIDTH(pGrid, pDoc);
             sal_Int32* pKernArray = new sal_Int32[rInf.GetLen()];
 
@@ -1271,19 +1272,20 @@ void SwFntObj::DrawText( SwDrawTextInfo &rInf )
             return;
         }
     }
-    
+
     // For text grid refactor
     // ASIAN LINE AND CHARACTER GRID MODE START: not snap to characters
     //
-    if ( rInf.GetFrm() && rInf.SnapToGrid() && rInf.GetFont() )
+    if ( rInf.GetFrm() && rInf.SnapToGrid() && rInf.GetFont() &&
+         SW_CJK == rInf.GetFont()->GetActual() )
     {
         GETGRID( rInf.GetFrm()->FindPageFrm() )
-        
+
         if ( pGrid && GRID_LINES_CHARS == pGrid->GetGridType() && !pGrid->IsSnapToChars() )
         {
             const USHORT  nDefaultFontHeight = GetDefaultFontHeight( rInf );
-            
-            const SwDoc* pDoc = rInf.GetShell()->GetDoc();	
+
+            const SwDoc* pDoc = rInf.GetShell()->GetDoc();
             long nGridWidthAdd = GETGRIDWIDTH(pGrid, pDoc);
             if( SW_LATIN == rInf.GetFont()->GetActual() )
                 nGridWidthAdd = ( nGridWidthAdd - nDefaultFontHeight ) / 2;
@@ -1511,10 +1513,24 @@ void SwFntObj::DrawText( SwDrawTextInfo &rInf )
                     }
                 }
 
+                // Kashida Justification
+                if ( SW_CTL == nActual && nSpaceAdd )
+                {
+                    if ( SwScriptInfo::IsArabicText( rInf.GetText(), rInf.GetIdx(), rInf.GetLen() ) )
+                    {
+                        if ( pSI && pSI->CountKashida() &&
+                            pSI->KashidaJustify( pKernArray, 0, rInf.GetIdx(),
+                                                 rInf.GetLen(), nSpaceAdd ) != STRING_LEN )
+                        {
+                            bSpecialJust = sal_True;
+                            nSpaceAdd = 0;
+                        }
+                    }
+                }
+
                 // Thai Justification
                 if ( SW_CTL == nActual && nSpaceAdd )
                 {
-
                     LanguageType aLang = rInf.GetFont()->GetLanguage( SW_CTL );
 
                     if ( LANGUAGE_THAI == aLang )
@@ -1527,21 +1543,6 @@ void SwFntObj::DrawText( SwDrawTextInfo &rInf )
                                                    rInf.GetSpace() );
 
                         // adding space to blanks is already done
-                        bSpecialJust = sal_True;
-                        nSpaceAdd = 0;
-                    }
-                }
-
-                // Kashida Justification
-                if ( SW_CTL == nActual && nSpaceAdd )
-                {
-                    if ( SwScriptInfo::IsArabicLanguage( rInf.GetFont()->
-                                                         GetLanguage( SW_CTL ) ) )
-                    {
-                        if ( pSI && pSI->CountKashida() )
-                            pSI->KashidaJustify( pKernArray, 0, rInf.GetIdx(),
-                                                rInf.GetLen(), nSpaceAdd );
-
                         bSpecialJust = sal_True;
                         nSpaceAdd = 0;
                     }
@@ -1697,6 +1698,7 @@ void SwFntObj::DrawText( SwDrawTextInfo &rInf )
         // Modify Printer and ScreenArrays for special justifications
         //
         long nSpaceAdd = rInf.GetSpace() / SPACING_PRECISION_FACTOR;
+        bool bNoHalfSpace = false;
 
         if ( rInf.GetFont() && rInf.GetLen() )
         {
@@ -1736,6 +1738,20 @@ void SwFntObj::DrawText( SwDrawTextInfo &rInf )
                 }
             }
 
+            // Kashida Justification
+            if ( SW_CTL == nActual && nSpaceAdd )
+            {
+                if ( SwScriptInfo::IsArabicText( rInf.GetText(), rInf.GetIdx(), rInf.GetLen() ) )
+                {
+                    if ( pSI && pSI->CountKashida() &&
+                         pSI->KashidaJustify( pKernArray, pScrArray, rInf.GetIdx(),
+                                              rInf.GetLen(), nSpaceAdd ) != STRING_LEN )
+                        nSpaceAdd = 0;
+                    else
+                        bNoHalfSpace = true;
+                }
+            }
+
             // Thai Justification
             if ( SW_CTL == nActual && nSpaceAdd )
             {
@@ -1750,19 +1766,6 @@ void SwFntObj::DrawText( SwDrawTextInfo &rInf )
                                                rInf.GetSpace() );
 
                     // adding space to blanks is already done
-                    nSpaceAdd = 0;
-                }
-            }
-
-            // Kashida Justification
-            if ( SW_CTL == nActual && nSpaceAdd )
-            {
-                if ( SwScriptInfo::IsArabicLanguage( rInf.GetFont()->
-                                                        GetLanguage( SW_CTL ) ) )
-                {
-                    if ( pSI && pSI->CountKashida() )
-                        pSI->KashidaJustify( pKernArray, pScrArray, rInf.GetIdx(),
-                                             rInf.GetLen(), nSpaceAdd );
                     nSpaceAdd = 0;
                 }
             }
@@ -1842,8 +1845,9 @@ void SwFntObj::DrawText( SwDrawTextInfo &rInf )
             // vor bzw. hinter den kompletten Zwischenraum gesetzt werden,
             // sonst wuerde das Durch-/Unterstreichen Luecken aufweisen.
             long nSpaceSum = 0;
-            long nHalfSpace = pPrtFont->IsWordLineMode() ? 0 : nSpaceAdd / 2;
-            long nOtherHalf = nSpaceAdd - nHalfSpace;
+            // in word line mode and for Arabic, we disable the half space trick:
+            const long nHalfSpace = pPrtFont->IsWordLineMode() || bNoHalfSpace ? 0 : nSpaceAdd / 2;
+            const long nOtherHalf = nSpaceAdd - nHalfSpace;
             if ( nSpaceAdd && ( cChPrev == CH_BLANK ) )
                 nSpaceSum = nHalfSpace;
             for ( xub_StrLen i=1; i<nCnt; ++i,nKernSum += rInf.GetKern() )
@@ -1902,6 +1906,12 @@ void SwFntObj::DrawText( SwDrawTextInfo &rInf )
                 }
                 cChPrev = nCh;
                 pKernArray[i-1] = nScrPos - nScr + nKernSum + nSpaceSum;
+                // In word line mode and for Arabic, we disabled the half space trick. If a portion
+                // ends with a blank, the full nSpaceAdd value has been added to the character in
+                // front of the blank. This leads to painting artifacts, therefore we remove the
+                // nSpaceAdd value again:
+                if ( (bNoHalfSpace || pPrtFont->IsWordLineMode()) && i+1 == nCnt && nCh == CH_BLANK )
+                    pKernArray[i-1] = pKernArray[i-1] - nSpaceAdd;
             }
 
             // the layout engine requires the total width of the output
@@ -1922,10 +1932,10 @@ void SwFntObj::DrawText( SwDrawTextInfo &rInf )
                             WRONG_SHOW_MEDIUM < nHght ? WAVE_NORMAL :
                             ( WRONG_SHOW_SMALL < nHght ? WAVE_SMALL :
                             WAVE_FLAT );
-                        Color aCol( rInf.GetOut().GetLineColor() );
+                        Color aCol( rInf.GetOut().GetTextLineColor() );
                         BOOL bColSave = aCol != *pWaveCol;
                         if ( bColSave )
-                            rInf.GetOut().SetLineColor( *pWaveCol );
+                            rInf.GetOut().SetTextLineColor( *pWaveCol );
 
                         Point aEnd;
                         long nKernVal = pKernArray[ USHORT( rInf.GetLen() - 1 ) ];
@@ -1972,7 +1982,7 @@ void SwFntObj::DrawText( SwDrawTextInfo &rInf )
                         rInf.GetOut().DrawWaveLine( aCurrPos, aEnd, nWave );
 
                         if ( bColSave )
-                            rInf.GetOut().SetLineColor( aCol );
+                            rInf.GetOut().SetTextLineColor( aCol );
 
                         if ( rInf.GetOut().GetConnectMetaFile() )
                             rInf.GetOut().Pop();
@@ -1984,10 +1994,10 @@ void SwFntObj::DrawText( SwDrawTextInfo &rInf )
                 // anything to do?
                 if (rInf.GetWrong() || rInf.GetGrammarCheck() || rInf.GetSmartTags())
                 {
-                    CalcLinePosData aCalcLinePosData(rInf, *GetFont(), 
+                    CalcLinePosData aCalcLinePosData(rInf, *GetFont(),
                             nCnt, bSwitchH2V, bSwitchL2R,
                             nHalfSpace, pKernArray, bBidiPor);
-                    
+
                     SwForbidden aForbidden;
                     // draw line for smart tag data
                     lcl_DrawLineForWrongListData( aForbidden, rInf, rInf.GetSmartTags(), aCalcLinePosData, Size() );
@@ -2091,7 +2101,7 @@ Size SwFntObj::GetTextSize( SwDrawTextInfo& rInf )
         GETGRID( rInf.GetFrm()->FindPageFrm() )
         if ( pGrid && GRID_LINES_CHARS == pGrid->GetGridType() && pGrid->IsSnapToChars() )
         {
-            const SwDoc* pDoc = rInf.GetShell()->GetDoc();	
+            const SwDoc* pDoc = rInf.GetShell()->GetDoc();
             const USHORT nGridWidth = GETGRIDWIDTH(pGrid, pDoc);
 
             OutputDevice* pOutDev;
@@ -2125,16 +2135,17 @@ Size SwFntObj::GetTextSize( SwDrawTextInfo& rInf )
             return aTxtSize;
         }
     }
-    
+
     //for textgrid refactor
-    if ( rInf.GetFrm() && nLn && rInf.SnapToGrid() && rInf.GetFont())
+    if ( rInf.GetFrm() && nLn && rInf.SnapToGrid() && rInf.GetFont() &&
+         SW_CJK == rInf.GetFont()->GetActual() )
     {
         GETGRID( rInf.GetFrm()->FindPageFrm() )
         if ( pGrid && GRID_LINES_CHARS == pGrid->GetGridType() && !pGrid->IsSnapToChars() )
         {
             const USHORT nDefaultFontHeight = GetDefaultFontHeight( rInf );
 
-            const SwDoc* pDoc = rInf.GetShell()->GetDoc();	
+            const SwDoc* pDoc = rInf.GetShell()->GetDoc();
             long nGridWidthAdd = GETGRIDWIDTH(pGrid, pDoc);
             if( SW_LATIN == rInf.GetFont()->GetActual() )
                 nGridWidthAdd = ( nGridWidthAdd - nDefaultFontHeight ) / 2;
@@ -2152,7 +2163,7 @@ Size SwFntObj::GetTextSize( SwDrawTextInfo& rInf )
             aTxtSize.Width() = pOutDev->GetTextWidth( rInf.GetText(), rInf.GetIdx(), nLn );
             aTxtSize.Height() = pOutDev->GetTextHeight() +
                                 GetFontLeading( rInf.GetShell(), rInf.GetOut() );
-            aTxtSize.Width() += (nLn) * long( nGridWidthAdd ); 
+            aTxtSize.Width() += (nLn) * long( nGridWidthAdd );
             //if ( rInf.GetKern() && nLn )
             //    aTxtSize.Width() += ( nLn ) * long( rInf.GetKern() );
 
@@ -2290,6 +2301,7 @@ xub_StrLen SwFntObj::GetCrsrOfst( SwDrawTextInfo &rInf )
 
     sal_Int32 *pKernArray = new sal_Int32[ rInf.GetLen() ];
 
+    // be sure to have the correct layout mode at the printer
     if ( pPrinter )
     {
         pPrinter->SetLayoutMode( rInf.GetOut().GetLayoutMode() );
@@ -2335,6 +2347,18 @@ xub_StrLen SwFntObj::GetCrsrOfst( SwDrawTextInfo &rInf )
 
         }
 
+        // Kashida Justification
+        if ( SW_CTL == nActual && rInf.GetSpace() )
+        {
+            if ( SwScriptInfo::IsArabicText( rInf.GetText(), rInf.GetIdx(), rInf.GetLen() ) )
+            {
+                if ( pSI && pSI->CountKashida() &&
+                    pSI->KashidaJustify( pKernArray, 0, rInf.GetIdx(), rInf.GetLen(),
+                                         nSpaceAdd ) != STRING_LEN )
+                    nSpaceAdd = 0;
+            }
+        }
+
         // Thai Justification
         if ( SW_CTL == nActual && nSpaceAdd )
         {
@@ -2348,20 +2372,6 @@ xub_StrLen SwFntObj::GetCrsrOfst( SwDrawTextInfo &rInf )
                                            rInf.GetSpace() );
 
                 // adding space to blanks is already done
-                nSpaceAdd = 0;
-            }
-        }
-
-        // Kashida Justification
-        if ( SW_CTL == nActual && rInf.GetSpace() )
-        {
-            if ( SwScriptInfo::IsArabicLanguage( rInf.GetFont()->
-                                                    GetLanguage( SW_CTL ) ) )
-            {
-                if ( pSI && pSI->CountKashida() )
-                    pSI->KashidaJustify( pKernArray, 0, rInf.GetIdx(), rInf.GetLen(),
-                                         nSpaceAdd );
-
                 nSpaceAdd = 0;
             }
         }
@@ -2379,7 +2389,7 @@ xub_StrLen SwFntObj::GetCrsrOfst( SwDrawTextInfo &rInf )
         GETGRID( rInf.GetFrm()->FindPageFrm() )
         if ( pGrid && GRID_LINES_CHARS == pGrid->GetGridType() && pGrid->IsSnapToChars() )
         {
-            const SwDoc* pDoc = rInf.GetShell()->GetDoc();	
+            const SwDoc* pDoc = rInf.GetShell()->GetDoc();
             const USHORT nGridWidth = GETGRIDWIDTH(pGrid, pDoc);
 
             long nWidthPerChar = pKernArray[ rInf.GetLen() - 1 ] / rInf.GetLen();
@@ -2398,10 +2408,10 @@ xub_StrLen SwFntObj::GetCrsrOfst( SwDrawTextInfo &rInf )
             return nCnt;
         }
     }
-    
+
     //for textgrid refactor
     if ( rInf.GetFrm() && rInf.GetLen() && rInf.SnapToGrid() &&
-        rInf.GetFont() )
+         rInf.GetFont() && SW_CJK == rInf.GetFont()->GetActual() )
     {
         GETGRID( rInf.GetFrm()->FindPageFrm() )
         if ( pGrid && GRID_LINES_CHARS == pGrid->GetGridType() && !pGrid->IsSnapToChars() )
@@ -2409,13 +2419,13 @@ xub_StrLen SwFntObj::GetCrsrOfst( SwDrawTextInfo &rInf )
 
             const USHORT nDefaultFontHeight = GetDefaultFontHeight( rInf );
 
-            const SwDoc* pDoc = rInf.GetShell()->GetDoc();	
+            const SwDoc* pDoc = rInf.GetShell()->GetDoc();
             long nGridWidthAdd = GETGRIDWIDTH(pGrid, pDoc);
-            if( SW_LATIN == rInf.GetFont()->GetActual() )   
+            if( SW_LATIN == rInf.GetFont()->GetActual() )
                 nGridWidthAdd = ( nGridWidthAdd - nDefaultFontHeight ) / 2;
             else
                 nGridWidthAdd = nGridWidthAdd - nDefaultFontHeight;
-            
+
             for(xub_StrLen j = 0; j < rInf.GetLen(); j++)
             {
                 long nScr = pKernArray[ j ] + ( nSpaceAdd + nGridWidthAdd  ) * ( j + 1 );
@@ -2638,7 +2648,7 @@ xub_StrLen SwFont::GetTxtBreak( SwDrawTextInfo& rInf, long nTextWidth )
         GETGRID( rInf.GetFrm()->FindPageFrm() )
         if ( pGrid && GRID_LINES_CHARS == pGrid->GetGridType() && pGrid->IsSnapToChars() )
         {
-            const SwDoc* pDoc = rInf.GetShell()->GetDoc();	
+            const SwDoc* pDoc = rInf.GetShell()->GetDoc();
             const USHORT nGridWidth = GETGRIDWIDTH(pGrid, pDoc);
 
             sal_Int32* pKernArray = new sal_Int32[rInf.GetLen()];
@@ -2664,16 +2674,17 @@ xub_StrLen SwFont::GetTxtBreak( SwDrawTextInfo& rInf, long nTextWidth )
             return nTxtBreak + rInf.GetIdx();
         }
     }
-    
+
     //for text grid enhancement
-    if ( rInf.GetFrm() && nLn && rInf.SnapToGrid() && rInf.GetFont() )
+    if ( rInf.GetFrm() && nLn && rInf.SnapToGrid() && rInf.GetFont() &&
+         SW_CJK == rInf.GetFont()->GetActual() )
     {
         GETGRID( rInf.GetFrm()->FindPageFrm() )
         if ( pGrid && GRID_LINES_CHARS == pGrid->GetGridType() && !pGrid->IsSnapToChars() )
         {
             const USHORT nDefaultFontHeight = GetDefaultFontHeight( rInf );
 
-            const SwDoc* pDoc = rInf.GetShell()->GetDoc();	
+            const SwDoc* pDoc = rInf.GetShell()->GetDoc();
             long nGridWidthAdd = GETGRIDWIDTH(pGrid, pDoc);
             if( SW_LATIN == rInf.GetFont()->GetActual() )
                 nGridWidthAdd = ( nGridWidthAdd - nDefaultFontHeight ) / 2 ;
@@ -2805,27 +2816,28 @@ sal_Bool SwDrawTextInfo::ApplyAutoColor( Font* pFont )
     sal_Bool bPrt = GetShell() && ! GetShell()->GetWin();
     ColorData nNewColor = COL_BLACK;
     sal_Bool bChgFntColor = sal_False;
-    sal_Bool bChgUnderColor = sal_False;
+    sal_Bool bChgLineColor = sal_False;
 
     if( bPrt && GetShell() && GetShell()->GetViewOptions()->IsBlackFont() )
     {
         if ( COL_BLACK != rFnt.GetColor().GetColor() )
             bChgFntColor = sal_True;
 
-        if ( COL_BLACK != GetOut().GetTextLineColor().GetColor() )
-            bChgUnderColor = sal_True;
+        if ( (COL_BLACK != GetOut().GetTextLineColor().GetColor()) ||
+             (COL_BLACK != GetOut().GetOverlineColor().GetColor()) )
+            bChgLineColor = sal_True;
     }
     else
     {
         // FontColor has to be changed if:
         // 1. FontColor = AUTO or 2. IsAlwaysAutoColor is set
-        // UnderLineColor has to be changed if:
+        // LineColor has to be changed if:
         // 1. IsAlwaysAutoColor is set
 
-        bChgUnderColor = ! bPrt && GetShell() &&
+        bChgLineColor = ! bPrt && GetShell() &&
                 GetShell()->GetAccessibilityOptions()->IsAlwaysAutoColor();
 
-        bChgFntColor = COL_AUTO == rFnt.GetColor().GetColor() || bChgUnderColor;
+        bChgFntColor = COL_AUTO == rFnt.GetColor().GetColor() || bChgLineColor;
 
         if ( bChgFntColor )
         {
@@ -2883,7 +2895,7 @@ sal_Bool SwDrawTextInfo::ApplyAutoColor( Font* pFont )
         }
     }
 
-    if ( bChgFntColor || bChgUnderColor )
+    if ( bChgFntColor || bChgLineColor )
     {
         Color aNewColor( nNewColor );
 
@@ -2903,13 +2915,15 @@ sal_Bool SwDrawTextInfo::ApplyAutoColor( Font* pFont )
             }
         }
 
-        // the underline color has to be set separately
-        if ( bChgUnderColor )
+        // the underline and overline colors have to be set separately
+        if ( bChgLineColor )
         {
             // get current font color or color set at output device
             aNewColor = pFont ? pFont->GetColor() : GetOut().GetFont().GetColor();
             if ( aNewColor != GetOut().GetTextLineColor() )
                 GetOut().SetTextLineColor( aNewColor );
+            if ( aNewColor != GetOut().GetOverlineColor() )
+                GetOut().SetOverlineColor( aNewColor );
         }
 
         return sal_True;

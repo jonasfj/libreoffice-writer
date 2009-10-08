@@ -125,7 +125,8 @@ public:
                                         SwPaM* ) const;
 
 
-    ULONG Find( const com::sun::star::util::SearchOptions& rSearchOpt,
+    ULONG Find( const com::sun::star::util::SearchOptions& rSearchOpt, 
+                BOOL bSearchInNotes,
                 SwDocPositions nStart, SwDocPositions nEnde,
                 BOOL& bCancel,
                 FindRanges = FND_IN_BODY,

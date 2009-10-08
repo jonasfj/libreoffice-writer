@@ -32,10 +32,11 @@
 
 #include <com/sun/star/linguistic2/XDictionary.hpp>
 #include <com/sun/star/linguistic2/XSpellAlternatives.hpp>
-#include <com/sun/star/linguistic2/GrammarCheckingResult.hpp>
+#include <com/sun/star/linguistic2/ProofreadingResult.hpp>
 #include <com/sun/star/uno/Sequence.h>
 
 #include <rtl/ustring.hxx>
+#include <vcl/image.hxx>
 #include <vcl/menu.hxx>
 
 #include <map>
@@ -66,6 +67,8 @@ class SwSpellPopup : public PopupMenu
     std::map< sal_Int16, ::rtl::OUString > aLangTable_Document;
 
     bool    bGrammarResults;    // show grammar results? Or show spellcheck results?
+
+    Image   aInfo16;
     
     USHORT fillLangPopupMenu( PopupMenu *pPopupMenu , USHORT Lang_Start, ::com::sun::star::uno::Sequence< ::rtl::OUString > aSeq,SwWrtShell* pWrtSh, USHORT nLangTable);
 
@@ -78,7 +81,7 @@ public:
             const String & rParaText );
 
     SwSpellPopup( SwWrtShell *pWrtSh,
-            const ::com::sun::star::linguistic2::GrammarCheckingResult &rResult,
+            const ::com::sun::star::linguistic2::ProofreadingResult &rResult,
             sal_Int32 nErrorInResult,
             const ::com::sun::star::uno::Sequence< rtl::OUString > &rSuggestions,
             const String & rParaText );

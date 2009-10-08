@@ -1,7 +1,7 @@
 /*************************************************************************
  *
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
- * 
+ *
  * Copyright 2008 by Sun Microsystems, Inc.
  *
  * OpenOffice.org - a multi-platform office productivity suite
@@ -80,6 +80,11 @@ class SwRelNumRuleSpaces;
 class SwNodeNum;
 class SwTxtNode;
 struct SvxRTFPictureType;
+
+class RtfReader: public Reader
+{
+    virtual ULONG Read( SwDoc &, const String& rBaseURL, SwPaM &,const String &);
+};
 
 class SwNodeIdx : public SvxNodeIdx
 {
@@ -328,6 +333,9 @@ class SwRTFParser : public SvxRTFParser
 
     bool bSwPageDesc;
     bool bReadSwFly;		// lese Swg-Fly (wichtig fuer Bitmaps!)
+    // --> OD 2008-12-22 #i83368#
+    bool mbReadCellWhileReadSwFly;
+    // <--
     bool mbReadNoTbl;		// verhinder Tabelle in Tabelle/FootNote
     bool mbIsFootnote;
     bool bFootnoteAutoNum;	// automatische Numerierung ?
@@ -340,6 +348,8 @@ class SwRTFParser : public SvxRTFParser
     bool bForceNewTable;     // Forces a beginning of a new table
     bool bNestedField;
     bool bTrowdRead;         // True, iff an \trowd definition was read after the last \row
+    
+    int nReadFlyDepth;
 
     int nZOrder;
     /*

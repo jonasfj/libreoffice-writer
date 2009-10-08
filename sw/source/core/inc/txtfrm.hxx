@@ -1,13 +1,13 @@
 /*************************************************************************
  *
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
- * 
+ *
  * Copyright 2008 by Sun Microsystems, Inc.
  *
  * OpenOffice.org - a multi-platform office productivity suite
  *
  * $RCSfile: txtfrm.hxx,v $
- * $Revision: 1.56.212.1 $
+ * $Revision: 1.56.110.1 $
  *
  * This file is part of OpenOffice.org.
  *
@@ -822,6 +822,15 @@ public:
     ~SwLayoutModeModifier();
     void Modify( sal_Bool bChgToRTL );
     void SetAuto();
+};
+
+class SwDigitModeModifier
+{
+    const OutputDevice& rOut;
+    LanguageType nOldLanguageType;
+public:
+    SwDigitModeModifier( const OutputDevice& rOutp, LanguageType eCurLang );
+    ~SwDigitModeModifier();
 };
 
 #endif

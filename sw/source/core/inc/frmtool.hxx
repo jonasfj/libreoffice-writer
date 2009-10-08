@@ -1,7 +1,7 @@
 /*************************************************************************
  *
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
- * 
+ *
  * Copyright 2008 by Sun Microsystems, Inc.
  *
  * OpenOffice.org - a multi-platform office productivity suite
@@ -33,6 +33,9 @@
 #include "layfrm.hxx"
 #include "frmatr.hxx"
 #include "swcache.hxx"
+// --> OD 2008-12-04 #i96772#
+#include <svx/lrspitem.hxx>
+// <--
 
 class SwPageFrm;
 class SwFlyFrm;
@@ -252,7 +255,9 @@ class SwBorderAttrs : public SwCacheObj
 {
     const SwAttrSet		 &rAttrSet;
     const SvxULSpaceItem &rUL;
-    const SvxLRSpaceItem &rLR;
+    // --> OD 2008-12-04 #i96772#
+    SvxLRSpaceItem rLR;
+    // <--
     const SvxBoxItem	 &rBox;
     const SvxShadowItem  &rShadow;
     const Size			  aFrmSize;		//Die FrmSize

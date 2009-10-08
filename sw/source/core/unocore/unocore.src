@@ -1,7 +1,7 @@
 /*************************************************************************
  *
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
- * 
+ *
  * Copyright 2008 by Sun Microsystems, Inc.
  *
  * OpenOffice.org - a multi-platform office productivity suite
@@ -40,4 +40,28 @@ String STR_CHART2_COL_LABEL_TEXT
     Text [ en-US ] = "Column %COLUMNLETTER" ;
 };
 
+String STR_STYLE_FAMILY_CHARACTER
+{
+    Text [ en-US ] = "Character" ;
+};
+
+String STR_STYLE_FAMILY_PARAGRAPH
+{
+    Text [ en-US ] = "Paragraph" ;
+};
+
+String STR_STYLE_FAMILY_FRAME
+{
+    Text [ en-US ] = "Frame" ;
+};
+
+String STR_STYLE_FAMILY_PAGE
+{
+    Text [ en-US ] = "Pages" ;
+};
+
+String STR_STYLE_FAMILY_NUMBERING
+{
+    Text [ en-US ] = "Numbering" ;
+};
 

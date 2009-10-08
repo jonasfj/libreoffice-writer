@@ -84,7 +84,7 @@ typedef BOOL (*FnForEach_SwNodes)( const SwNodePtr&, void* pArgs );
 
 SV_DECL_PTRARR_SORT( SwOutlineNodes, SwNodePtr, 0, 10 )
 
-class SwNodes: private BigPtrArray
+class SW_DLLPUBLIC SwNodes: private BigPtrArray
 {
     friend class SwDoc;
     friend class SwNode;
@@ -250,9 +250,9 @@ public:
         // Array aller GliederiungsNodes;
     const SwOutlineNodes& GetOutLineNds() const;
 
-    void UpdateOutlineNode( const SwNode&, BYTE nOldLevel, BYTE nNewLevel );
+    //void UpdateOutlineNode( const SwNode&, BYTE nOldLevel, BYTE nNewLevel );//#outline level,removed by zhaojianwei
         // alle Nodes Updaten - Rule/Format-Aenderung
-    void UpdateOutlineNode(SwNode & rNd);
+    void UpdateOutlineNode(SwNode & rNd); 
 
         // fuege die Nodes fuer die Tabelle ein
         // wenn Lines angegeben, erzeuge die Matrix aus Lines & Boxen

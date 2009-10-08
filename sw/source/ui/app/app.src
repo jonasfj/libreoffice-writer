@@ -473,8 +473,21 @@ String STR_FDLG_TEMPLATE_BUTTON
 
 String STR_FDLG_TEMPLATE_NAME
 {
-    Text [ en-US ] = "Styles: " ;
+    //Text [ en-US ] = "Styles: " ;			//#outline level,removed by zhaojianwei
+    Text [ en-US ] = "separated by: " ;	//<-end,add by zhaojianwei
 };
+//#outline level,add by zhaojianwei
+String STR_FDLG_OUTLINE_LEVEL
+{
+    Text [ en-US ] = "Outline: Level ";
+};
+
+String STR_FDLG_STYLE
+{
+    Text [ en-US ] = "Style: "; 
+};
+//<-end
+
 
 String STR_PAGEOFFSET
 {
@@ -536,13 +549,13 @@ ModalDialog DLG_MERGE_SOURCE_UNAVAILABLE
         Pos = MAP_APPFONT ( 12 , 6 ) ;
         Size = MAP_APPFONT ( 178 , 40 ) ;
         WordBreak = TRUE;
-        Text [ en-US ] = "The data source \'%1\' was not found. Thus the connection to the data source could not be established.\n\nPlease check the connections settings."; 
+        Text [ en-US ] = "The data source \'%1\' was not found. Thus the connection to the data source could not be established.\n\nPlease check the connections settings.";
     };
     OKButton PB_MERGE_OK
     {
         Pos = MAP_APPFONT ( 12 , 52 ) ;
         Size = MAP_APPFONT ( 125 , 14 ) ;
-        Text [ en-US ] = "Check Connection Settings..."; 
+        Text [ en-US ] = "Check Connection Settings...";
     };
     CancelButton PB_MERGE_CANCEL
     {
@@ -565,7 +578,11 @@ String  STR_DONT_ASK_AGAIN
 {
     Text [ en-US ] = "~Do not show warning again" ;
 };
-
+// --> OD 2008-04-14 #outlinelevel#
+String STR_OUTLINE_NUMBERING
+{
+    Text [ en-US ] = "Outline Numbering";
+};
 ToolBox RID_MODULE_TOOLBOX
 {
     HelpID = HID_MODULE_TOOLBOX ;
