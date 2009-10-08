@@ -1,7 +1,7 @@
 /*************************************************************************
  *
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
- * 
+ *
  * Copyright 2008 by Sun Microsystems, Inc.
  *
  * OpenOffice.org - a multi-platform office productivity suite
@@ -53,7 +53,7 @@
 #include "format.hxx"
 #include "symbol.hxx"
 
-
+class SubsetMap;
 #define CATEGORY_NONE	0xFFFF
 
 /**************************************************************************/
@@ -365,7 +365,7 @@ class SmSymbolDialog : public ModalDialog
     SmViewShell        &rViewSh;
     SmSymSetManager    &rSymSetMgr;
     const SmSymSet	   *pSymSet;
-    
+
     OutputDevice       *pFontListDev;
 
     DECL_LINK(SymbolSetChangeHdl, ListBox *);
@@ -383,7 +383,7 @@ class SmSymbolDialog : public ModalDialog
     virtual void    DataChanged( const DataChangedEvent& rDCEvt );
 
 public:
-    SmSymbolDialog(Window * pParent, OutputDevice *pFntListDevice, 
+    SmSymbolDialog(Window * pParent, OutputDevice *pFntListDevice,
             SmSymSetManager &rSymSetMgr, SmViewShell &rViewShell, BOOL bFreeRes = TRUE);
     virtual ~SmSymbolDialog();
 
