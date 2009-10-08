@@ -5624,13 +5624,14 @@ WW8Fib::WW8Fib(BYTE nVer)
     // <-- #i90932# 
 }
 
-bool WW8Fib::Write(SvStream& rStrm)
-{
-    BYTE *pDataPtr = new BYTE[ fcMin ];
-    BYTE *pData = pDataPtr;
-    memset( pData, 0, fcMin );
-
+bool WW8Fib::WriteHeader(SvStream& rStrm)
+{	
     bool bVer8 = 8 == nVersion;
+
+    size_t nUnencryptedHdr = bVer8 ? 0x44 : 0x24;
+    BYTE *pDataPtr = new BYTE[ nUnencryptedHdr ];
+    BYTE *pData = pDataPtr;
+    memset( pData, 0, nUnencryptedHdr );
 
     ULONG nPos = rStrm.Tell();
     cbMac = rStrm.Seek( STREAM_SEEK_TO_END );
@@ -5643,15 +5644,16 @@ bool WW8Fib::Write(SvStream& rStrm)
     Set_UInt16( pData, pnNext );
 
     UINT16 nBits16 = 0;
-    if( fDot )          nBits16 |= 0x0001;
-    if( fGlsy)          nBits16 |= 0x0002;
-    if( fComplex )      nBits16 |= 0x0004;
-    if( fHasPic )       nBits16 |= 0x0008;
+    if( fDot ) 			nBits16 |= 0x0001;
+    if( fGlsy) 			nBits16 |= 0x0002;
+    if( fComplex )		nBits16 |= 0x0004;
+    if( fHasPic ) 		nBits16 |= 0x0008;
     nBits16 |= (0xf0 & ( cQuickSaves << 4 ));
-    if( fEncrypted )    nBits16 |= 0x0100;
-    if( fWhichTblStm )  nBits16 |= 0x0200;
-    if( fExtChar )      nBits16 |= 0x1000;
+    if( fEncrypted ) 	nBits16 |= 0x0100;
+    if( fWhichTblStm ) 	nBits16 |= 0x0200;
+    if( fExtChar ) 		nBits16 |= 0x1000;
     if( fFarEast )      nBits16 |= 0x4000;  // #i90932#
+    if( fObfuscated )	nBits16 |= 0x8000;
     Set_UInt16( pData, nBits16 );
 
     Set_UInt16( pData, nFibBack );
@@ -5662,11 +5664,11 @@ bool WW8Fib::Write(SvStream& rStrm)
     BYTE nBits8 = 0;
     if( bVer8 )
     {
-        if( fMac )                  nBits8 |= 0x0001;
-        if( fEmptySpecial )         nBits8 |= 0x0002;
-        if( fLoadOverridePage )     nBits8 |= 0x0004;
-        if( fFuturesavedUndo )      nBits8 |= 0x0008;
-        if( fWord97Saved )          nBits8 |= 0x0010;
+        if( fMac ) 					nBits8 |= 0x0001;
+        if( fEmptySpecial ) 		nBits8 |= 0x0002;
+        if( fLoadOverridePage )		nBits8 |= 0x0004;
+        if( fFuturesavedUndo ) 		nBits8 |= 0x0008;
+        if( fWord97Saved ) 			nBits8 |= 0x0010;
         if( fWord2000Saved )        nBits8 |= 0x0020;
     }
     // unter Ver67 these are only reserved
@@ -5696,6 +5698,27 @@ bool WW8Fib::Write(SvStream& rStrm)
 
     // Marke: "rglw"  Beginning of the array of longs
     Set_UInt32( pData, cbMac );
+
+    rStrm.Write( pDataPtr, nUnencryptedHdr );
+    delete[] pDataPtr;
+    return 0 == rStrm.GetError();
+}
+
+bool WW8Fib::Write(SvStream& rStrm)
+{
+    bool bVer8 = 8 == nVersion;
+
+    WriteHeader( rStrm );
+
+    size_t nUnencryptedHdr = bVer8 ? 0x44 : 0x24;
+
+    BYTE *pDataPtr = new BYTE[ fcMin - nUnencryptedHdr ];
+    BYTE *pData = pDataPtr;
+    memset( pData, 0, fcMin - nUnencryptedHdr );
+
+    ULONG nPos = rStrm.Tell();
+    cbMac = rStrm.Seek( STREAM_SEEK_TO_END );
+    rStrm.Seek( nPos );    
 
     // 2 Longs uebergehen, da unwichtiger Quatsch
     pData += 2 * sizeof( INT32);
@@ -5905,7 +5928,7 @@ bool WW8Fib::Write(SvStream& rStrm)
         Set_UInt32( pData, 0);
     }
 
-    rStrm.Write( pDataPtr, fcMin );
+    rStrm.Write( pDataPtr, fcMin - nUnencryptedHdr );
     delete[] pDataPtr;
     return 0 == rStrm.GetError();
 }
