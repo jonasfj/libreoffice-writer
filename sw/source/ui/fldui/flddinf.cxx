@@ -264,7 +264,6 @@ IMPL_LINK( SwFldDokInfPage, TypeHdl, ListBox *, EMPTYARG )
 /*--------------------------------------------------------------------
     Beschreibung:
  --------------------------------------------------------------------*/
-
 IMPL_LINK( SwFldDokInfPage, SubTypeHdl, ListBox *, EMPTYARG )
 {
     USHORT nSubType = (USHORT)(ULONG)pSelEntry->GetUserData();
@@ -360,7 +359,7 @@ IMPL_LINK( SwFldDokInfPage, SubTypeHdl, ListBox *, EMPTYARG )
     if (IsFldEdit())
     {
         nPos = aSelectionLB.GetSelectEntryPos();
-        if (nPos != LISTBOX_ENTRY_NOTFOUND)
+        if (nPos != LISTBOX_ENTRY_NOTFOUND )
         {
             nSubType = (USHORT)(ULONG)aSelectionLB.GetEntryData(nPos);
 
@@ -372,17 +371,20 @@ IMPL_LINK( SwFldDokInfPage, SubTypeHdl, ListBox *, EMPTYARG )
                     SwWrtShell *pSh = GetWrtShell();
                     if(pSh)
                     {
-
                         SvNumberFormatter* pFormatter = pSh->GetNumberFormatter();
                         LanguageType eLang = aFormatLB.GetCurLanguage();
                         if (nNewType == NUMBERFORMAT_DATE)
                             nFormat = pFormatter->GetFormatIndex( NF_DATE_SYSTEM_SHORT, eLang);
                         else if (nNewType == NUMBERFORMAT_TIME)
-                            nFormat = pFormatter->GetFormatIndex( NF_TIME_HHMM, eLang);
+                            nFormat = pFormatter->GetFormatIndex( NF_TIME_HHMM, eLang);                        
                     }
                 }
                 aFormatLB.SetDefFormat(nFormat);
             }
+        }
+        else if( (nSubType == DI_CUSTOM)  && (nNewType != 0) )
+        {
+            aFormatLB.SetDefFormat(nFormat);
         }
     }
 
