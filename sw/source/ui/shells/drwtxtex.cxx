@@ -736,9 +736,9 @@ ASK_ESCAPE:
             SvtCTLOptions aCTLOptions;
             sal_Bool bEnabled = aCTLOptions.IsCTLFontEnabled();
             GetView().GetViewFrame()->GetBindings().SetVisibleState( nWhich, bEnabled );
-            if(!bEnabled)        
-                rSet.DisableItem(nWhich);        
-        }	
+            if(!bEnabled)
+                rSet.DisableItem(nWhich);
+        }
         break;
         default:
             nSlotId = 0;			    // don't know this slot
@@ -828,15 +828,20 @@ void SwDrawTextShell::ExecClpbrd(SfxRequest &rReq)
         return;
 
     OutlinerView* pOLV = pSdrView->GetTextEditOutlinerView();
+
+    ESelection aSel(pOLV->GetSelection());
+    const sal_Bool bCopy = (aSel.nStartPara != aSel.nEndPara) || (aSel.nStartPos != aSel.nEndPos);
     sal_uInt16 nId = rReq.GetSlot();
     switch( nId )
     {
         case SID_CUT:
-            pOLV->Cut();
+            if (bCopy)
+                pOLV->Cut();
             return;
 
         case SID_COPY:
-            pOLV->Copy();
+            if (bCopy)
+                pOLV->Copy();
             return;
 
         case SID_PASTE:
@@ -888,8 +893,8 @@ void SwDrawTextShell::StateClpbrd(SfxItemSet &rSet)
                 }
                 break;
 
-            case FN_PASTESPECIAL:
-                rSet.DisableItem( FN_PASTESPECIAL );
+            case SID_PASTE_SPECIAL:
+                rSet.DisableItem( SID_PASTE_SPECIAL );
                 break;
             // --> OD 2008-06-20 #151110#
             case SID_CLIPBOARD_FORMAT_ITEMS:

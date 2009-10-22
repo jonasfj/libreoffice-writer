@@ -1,7 +1,7 @@
 /*************************************************************************
  *
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
- * 
+ *
  * Copyright 2008 by Sun Microsystems, Inc.
  *
  * OpenOffice.org - a multi-platform office productivity suite
@@ -36,7 +36,7 @@ interface _Annotation
         ExecMethod = NoteExec ;
         StateMethod = GetNoteState ;
     ]
-    
+
     FN_DELETE_NOTE
     [
         ExecMethod = NoteExec ;
@@ -72,7 +72,7 @@ interface _Annotation
         ExecMethod = NoteExec ;
         StateMethod = GetNoteState ;
     ]
-    
+
     FN_POSTIT
         [
                 ExecMethod = NoteExec ;
@@ -88,12 +88,11 @@ interface _Annotation
     [
         ExecMethod = NoteExec ;
     ]
-    
+
     SfxVoidItem Cut SID_CUT ( )  // api:
     [
         ExecMethod = ExecClpbrd ;
         StateMethod = StateClpbrd ;
-        Volatile ;
         DisableFlags="SW_DISABLE_ON_PROTECTED_CURSOR";
     ]
 
@@ -101,7 +100,6 @@ interface _Annotation
     [
         ExecMethod = ExecClpbrd ;
         StateMethod = StateClpbrd ;
-        Volatile ;
     ]
 
     SID_PASTE   // api:
@@ -111,7 +109,7 @@ interface _Annotation
         DisableFlags="SW_DISABLE_ON_PROTECTED_CURSOR";
     ]
 
-    FN_PASTESPECIAL  // api:
+    SID_PASTE_SPECIAL  // api:
     [
         StateMethod = StateClpbrd ;
         ExecMethod = ExecClpbrd ;
@@ -124,13 +122,13 @@ interface _Annotation
         ExecMethod = ExecClpbrd ;
         DisableFlags="SW_DISABLE_ON_PROTECTED_CURSOR";
     ]
-    
+
     SID_SELECTALL  // api:
     [
         ExecMethod = Exec ;
         StateMethod = NoState ;
     ]
-    
+
     SID_UNDO // api:
     [
         ExecMethod = ExecUndo ;
@@ -143,7 +141,7 @@ interface _Annotation
     [
         ExecMethod = ExecUndo ;
         StateMethod = StateUndo ;
-        
+
     ]
 
     SID_REPEAT // api:
@@ -167,12 +165,12 @@ interface _Annotation
         StateMethod = NoState ;
         DisableFlags="SW_DISABLE_ON_PROTECTED_CURSOR";
     ]
-    
+
     FN_FORMAT_FOOTNOTE_DLG // status()
     [
         ExecMethod = Exec ;
     ]
-    
+
     SID_OPEN_XML_FILTERSETTINGS // ole : no, status : ?
     [
         ExecMethod = Exec ;
@@ -193,7 +191,7 @@ interface _Annotation
         ExecMethod = Exec ;
         DisableFlags="SW_DISABLE_ON_PROTECTED_CURSOR";
     ]
-    
+
     FN_INSERT_STRING
     [
             ExecMethod = Exec ;
