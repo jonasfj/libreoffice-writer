@@ -650,7 +650,7 @@ void __EXPORT SwView::Execute(SfxRequest &rReq)
         break;
         case FN_REDLINE_ACCEPT_DIRECT:
         case FN_REDLINE_REJECT_DIRECT:
-        {    
+        {
             SwContentAtPos aCntntAtPos( SwContentAtPos::SW_REDLINE );
             Point aCrsrPos = pWrtShell->GetCrsrDocPos( sal_True );
             if( pWrtShell->GetContentAtPos( aCrsrPos, aCntntAtPos ) )
@@ -1067,23 +1067,23 @@ void __EXPORT SwView::Execute(SfxRequest &rReq)
         }
         break;
         case SID_RECHECK_DOCUMENT:
-        {    
+        {
             SwDocShell* pDocShell = GetDocShell();
             SwDoc* pDoc = pDocShell->GetDoc();
             uno::Reference< linguistic2::XProofreadingIterator >  xGCIterator( pDoc->GetGCIterator() );
             if( xGCIterator.is() )
             {
                 xGCIterator->resetIgnoreRules();
-            }    
+            }
             // reset ignore lists
             pDoc->SpellItAgainSam( sal_True, sal_False, sal_False );
-            // clear ignore dictionary 
+            // clear ignore dictionary
             uno::Reference< linguistic2::XDictionary > xDictionary( SvxGetIgnoreAllList(), uno::UNO_QUERY );
             if( xDictionary.is() )
                 xDictionary->clear();
             // put cursor to the start of the document
             pWrtShell->SttDoc();
-        }    
+        }
         // no break; - but call spell/grammar dialog
         case FN_SPELL_GRAMMAR_DIALOG:
         {
@@ -1233,7 +1233,7 @@ void SwView::StateStatusLine(SfxItemSet &rSet)
                 if (nPageCnt != nCnt)	// Basic benachrichtigen
                 {
                     nPageCnt = nCnt;
-                    SFX_APP()->NotifyEvent(SfxEventHint(SW_EVENT_PAGE_COUNT, GetViewFrame()->GetObjectShell()), FALSE);
+                    SFX_APP()->NotifyEvent(SfxEventHint(SW_EVENT_PAGE_COUNT, SwDocShell::GetEventName(STR_SW_EVENT_PAGE_COUNT), GetViewFrame()->GetObjectShell()), FALSE);
                 }
             }
             break;
@@ -1404,7 +1404,7 @@ void SwView::StateStatusLine(SfxItemSet &rSet)
                         }
                     }
                 }
-            
+
                 //#outline level, removed by zhaojianwei
                 //const SwNumRule* pNumRule = rShell.GetCurNumRule();
                 //if (pNumRule)	// Cursor in Numerierung
@@ -1443,11 +1443,11 @@ void SwView::StateStatusLine(SfxItemSet &rSet)
                 //	}
                 //}//<-removed end ,zhaojianwei
 
-                //-->#outline level,added by zhaojianwei			
+                //-->#outline level,added by zhaojianwei
                 const SwNumRule* pNumRule = rShell.GetCurNumRule();
                 const bool bOutlineNum = pNumRule ? pNumRule->IsOutlineRule() : 0;
                        //((SwTxtFmtColl*)rShell.GetCrsr()->GetNode()->GetTxtNode()->GetFmtColl())->IsAssignedToListLevelOfOutlineStyle();
-                
+
                 if (pNumRule && !bOutlineNum )	// Cursor in Numerierung
                 {
                     BYTE nNumLevel = rShell.GetNumLevel();
@@ -1481,9 +1481,9 @@ void SwView::StateStatusLine(SfxItemSet &rSet)
                                 }
                             }
                         }
-                        if( sStr.Len() )		
+                        if( sStr.Len() )
                             sStr.AppendAscii(sStatusDelim);
-                        sStr += SW_RESSTR(STR_NUM_LEVEL);			
+                        sStr += SW_RESSTR(STR_NUM_LEVEL);
                         sStr += String::CreateFromInt32( nNumLevel + 1 );
 
                     }
@@ -1495,9 +1495,9 @@ void SwView::StateStatusLine(SfxItemSet &rSet)
                         sStr.AppendAscii(sStatusComma);
                     if( bOutlineNum )
                     {
-                        sStr += SW_RESSTR(STR_OUTLINE_NUMBERING);	
+                        sStr += SW_RESSTR(STR_OUTLINE_NUMBERING);
                         sStr.AppendAscii(sStatusDelim);
-                        sStr += SW_RESSTR(STR_NUM_LEVEL);			
+                        sStr += SW_RESSTR(STR_NUM_LEVEL);
                     }
                     else
                         sStr += SW_RESSTR(STR_NUM_OUTLINE);
@@ -2469,8 +2469,8 @@ IMPL_LINK( SwView, DialogClosedHdl, sfx2::FileDialogHelper*, _pFileDlg )
 }
 
 void SwView::ExecuteScan( SfxRequest& rReq )
-{ 
-    if (pViewImpl) 
+{
+    if (pViewImpl)
         pViewImpl->ExecuteScan(rReq) ;
 }
 
