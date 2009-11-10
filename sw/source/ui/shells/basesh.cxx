@@ -1,7 +1,7 @@
 /*************************************************************************
  *
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
- * 
+ *
  * Copyright 2008 by Sun Microsystems, Inc.
  *
  * OpenOffice.org - a multi-platform office productivity suite
@@ -301,11 +301,9 @@ void SwBaseShell::ExecClpbrd(SfxRequest &rReq)
             if ( rSh.HasSelection() )
             {
                 SwTransferable* pTransfer = new SwTransferable( rSh );
-/*??*/          uno::Reference<
-                    datatransfer::XTransferable > xRef(
-                                                                pTransfer );
+/*??*/          uno::Reference< datatransfer::XTransferable > xRef( pTransfer );
 
-                if ( nId == SID_CUT )
+                if ( nId == SID_CUT && !rSh.IsSelObjProtected(FLYPROTECT_CONTENT|FLYPROTECT_PARENT) )
                     pTransfer->Cut();
                 else
                 {
@@ -395,7 +393,7 @@ void SwBaseShell::ExecClpbrd(SfxRequest &rReq)
                             aReq.Done();
                         }
                     }
-                    
+
                     if (rSh.IsFrmSelected() || rSh.IsObjSelected())
                         rSh.EnterSelFrmMode();
                     pView->AttrChangedNotify( &rSh );
@@ -404,8 +402,8 @@ void SwBaseShell::ExecClpbrd(SfxRequest &rReq)
                     return;
             }
             break;
-            
-        case FN_PASTESPECIAL:
+
+        case SID_PASTE_SPECIAL:
             {
                 TransferableDataHelper aDataHelper(
                         TransferableDataHelper::CreateFromSystemClipboard(
@@ -481,10 +479,10 @@ void SwBaseShell::StateClpbrd(SfxItemSet &rSet)
                 rSet.DisableItem( SID_PASTE );
             break;
 
-        case FN_PASTESPECIAL:
+        case SID_PASTE_SPECIAL:
             if( !GetView().IsPasteSpecialAllowed() )
             {
-                rSet.DisableItem( FN_PASTESPECIAL );
+                rSet.DisableItem( SID_PASTE_SPECIAL );
                 rSet.DisableItem( SID_PASTE_UNFORMATTED );
             }
             break;
@@ -539,6 +537,8 @@ void SwBaseShell::ExecUndo(SfxRequest &rReq)
         default:
             DBG_ERROR("falscher Dispatcher");
     }
+
+    GetView().GetViewFrame()->GetBindings().InvalidateAll(sal_False);
 }
 
 /*--------------------------------------------------------------------
@@ -2547,7 +2547,7 @@ void SwBaseShell::ExecDlg(SfxRequest &rReq)
                 //Hintergrundattribute der Tabelle holen und in den Set packen
                 SvxBrushItem aBrush(RES_BACKGROUND);
                 rSh.GetBoxBackground( aBrush );
-                pDlg = pFact->CreateSfxDialog( pMDI, aSet, 
+                pDlg = pFact->CreateSfxDialog( pMDI, aSet,
                     rView.GetViewFrame()->GetFrame()->GetFrameInterface(),
                     RC_SWDLG_BACKGROUND );
                 DBG_ASSERT(pDlg, "Dialogdiet fail!");
@@ -2566,7 +2566,7 @@ void SwBaseShell::ExecDlg(SfxRequest &rReq)
 
                 rSh.GetFlyFrmAttr( aSet );
 
-                pDlg = pFact->CreateSfxDialog( pMDI, aSet, 
+                pDlg = pFact->CreateSfxDialog( pMDI, aSet,
                     rView.GetViewFrame()->GetFrame()->GetFrameInterface(),
                     RC_SWDLG_BACKGROUND );
                 DBG_ASSERT(pDlg, "Dialogdiet fail!");
@@ -2581,7 +2581,7 @@ void SwBaseShell::ExecDlg(SfxRequest &rReq)
                 // Umrandungsattribute ganz normal ueber Shell setzen
                 rSh.GetCurAttr( aSet );
 
-                pDlg = pFact->CreateSfxDialog( pMDI, aSet, 
+                pDlg = pFact->CreateSfxDialog( pMDI, aSet,
                     rView.GetViewFrame()->GetFrame()->GetFrameInterface(),
                     RC_SWDLG_BACKGROUND );
                 DBG_ASSERT(pDlg, "Dialogdiet fail!");
