@@ -2382,7 +2382,7 @@ void SmXMLRootContext_Impl::EndElement()
         "Root tag is missing component");
 
     SmToken aToken;
-    aToken.cMathChar = MS_SQRT;  //Temporary: alert, based on StarSymbol font
+    aToken.cMathChar = MS_SQRT;  //Temporary: alert, based on OpenSymbol font
     aToken.nGroup = 0;
     aToken.nLevel = 0;
     aToken.eType = TNROOT;
@@ -2406,7 +2406,7 @@ void SmXMLSqrtContext_Impl::EndElement()
         SmXMLRowContext_Impl::EndElement();
 
     SmToken aToken;
-    aToken.cMathChar = MS_SQRT;  //Temporary: alert, based on StarSymbol font
+    aToken.cMathChar = MS_SQRT;  //Temporary: alert, based on OpenSymbol font
     aToken.nGroup = 0;
     aToken.nLevel = 0;
     aToken.eType = TSQRT;
