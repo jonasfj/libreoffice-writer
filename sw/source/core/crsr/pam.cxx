@@ -1,7 +1,7 @@
 /*************************************************************************
  *
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
- * 
+ *
  * Copyright 2008 by Sun Microsystems, Inc.
  *
  * OpenOffice.org - a multi-platform office productivity suite
@@ -869,14 +869,14 @@ SwCntntNode* GetNode( SwPaM & rPam, BOOL& rbFirst, SwMoveFn fnMove,
             pNd = rPam.GetCntntNode();
             if( pNd )
             {
-                if( 
-                    ( 
+                if(
+                    (
                         0 == ( pFrm = pNd->GetFrm()) ||
                         ( !bInReadOnly && pFrm->IsProtected() ) ||
-                        (pFrm->IsTxtFrm() && ((SwTxtFrm*)pFrm)->IsHiddenNow()) 
+                        (pFrm->IsTxtFrm() && ((SwTxtFrm*)pFrm)->IsHiddenNow())
                     ) ||
                     ( !bInReadOnly && pNd->FindSectionNode() &&
-                        pNd->FindSectionNode()->GetSection().IsProtect() 
+                        pNd->FindSectionNode()->GetSection().IsProtect()
                     )
                   )
                     {
@@ -1224,7 +1224,7 @@ String SwPaM::GetTxt() const
     return aResult;
 }
 
-BOOL SwPaM::Overlap(const SwPaM & a, const SwPaM & b) 
+BOOL SwPaM::Overlap(const SwPaM & a, const SwPaM & b)
 {
     return !(*b.End() <= *a.Start() || *a.End() <= *b.End());
 }
@@ -1233,15 +1233,17 @@ void SwPaM::InvalidatePaM()
 {
     const SwNode *_pNd=this->GetNode();
     const SwTxtNode *_pTxtNd=(_pNd!=NULL?_pNd->GetTxtNode():NULL);
-    if (_pTxtNd!=NULL) {
-    //pretent we've added a char to force layout to recalc the portion...
-    SwInsChr aHint(_pTxtNd->GetIndex());
-    SwModify *_pModify=(SwModify*)_pTxtNd;
-    _pModify->Modify( 0, &aHint);
+    if (_pTxtNd!=NULL)
+    {
+        // pretent that the PaM marks inserted text to recalc the portion...
+        SwInsTxt aHint( Start()->nContent.GetIndex(),
+                        End()->nContent.GetIndex() - Start()->nContent.GetIndex() + 1 );
+        SwModify *_pModify=(SwModify*)_pTxtNd;
+        _pModify->Modify( 0, &aHint);
     }
 }
 
 BOOL SwPaM::LessThan(const SwPaM & a, const SwPaM & b)
 {
-    return (*a.Start() < *b.Start()) || (*a.Start() == *b.Start() && *a.End() < *b.End()); 
+    return (*a.Start() < *b.Start()) || (*a.Start() == *b.Start() && *a.End() < *b.End());
 }
