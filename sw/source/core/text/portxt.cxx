@@ -785,12 +785,12 @@ sal_Bool SwFieldMarkPortion::Format( SwTxtFormatInfo & )
 }
 
 namespace ecma {
-    static int getCurrentListIndex( IFieldmark* pBM, 
+    static int getCurrentListIndex( IFieldmark* pBM,
             ::rtl::OUString *currentText = NULL )
     {
         int currentIndex = pBM->getParam( ECMA_FORMDROPDOWN_RESULT, "0" ).second.toInt32();
         int idx = 0;
-        for( int i = 0; i < pBM->getNumOfParams(); i++ ) 
+        for( int i = 0; i < pBM->getNumOfParams(); i++ )
         {
             IFieldmark::ParamPair_t p = pBM->getParam( i );
             if ( p.first.compareToAscii( ECMA_FORMDROPDOWN_LISTENTRY ) == 0 )
@@ -799,11 +799,11 @@ namespace ecma {
                 {
                      if ( currentText!=NULL ) *currentText=p.second;
                          break;
-                 } 
+                 }
                 else
                      idx++;
-            }			       
-        }	
+            }
+        }
         return idx;
     }
 } /* ecma */
@@ -822,20 +822,20 @@ void SwFieldFormPortion::Paint( const SwTxtPaintInfo& rInf ) const
         "SwFieldFormPortion::Paint(..)"
         " - Where is my form field bookmark???");
 
-    if ( pBM != NULL ) 
+    if ( pBM != NULL )
     {
         if ( pBM->GetFieldname( ).equalsAscii( ECMA_FORMCHECKBOX ) )
         { // a checkbox...
             bool checked = pBM->getParam( ECMA_FORMCHECKBOX_CHECKED ).second.compareToAscii("on") == 0;
             rInf.DrawCheckBox( *this , checked);
-        } 
+        }
         else if ( pBM->GetFieldname( ).equalsAscii(  ECMA_FORMDROPDOWN ) )
         { // a list...
              rtl::OUString aTxt;
              rInf.DrawViewOpt( *this, POR_FLD );
-             rInf.DrawText( aTxt, *this, 0, aTxt.getLength(), false );	  
-        } 
-        else 
+            rInf.DrawText( aTxt, *this, 0, 0/*aTxt.getLength()*/, false );
+        }
+        else
         {
              assert(0); // unknown type...
         }

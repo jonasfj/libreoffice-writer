@@ -1,7 +1,7 @@
 /*************************************************************************
  *
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
- * 
+ *
  * Copyright 2008 by Sun Microsystems, Inc.
  *
  * OpenOffice.org - a multi-platform office productivity suite
@@ -116,7 +116,7 @@ namespace sw { namespace mark
 
     bool MarkBase::IsCoveringPosition(const SwPosition& rPos) const
     {
-        return GetMarkStart() <= rPos && rPos <= GetMarkEnd(); 
+        return GetMarkStart() <= rPos && rPos <= GetMarkEnd();
     }
 
     void MarkBase::SetMarkPos(const SwPosition& rNewPos)
@@ -283,8 +283,8 @@ namespace sw { namespace mark
         if(!IsExpanded())
             SetOtherMarkPos(GetMarkPos());
     }
-    
-    rtl::OUString Fieldmark::toString( ) const 
+
+    rtl::OUString Fieldmark::toString( ) const
     {
         rtl::OUStringBuffer buf;
         buf.appendAscii( "Fieldmark: ( Name, Type, [ Nd1, Id1 ], [ Nd2, Id2 ] ): ( " );
@@ -363,13 +363,15 @@ namespace sw { namespace mark
             }
         }
         return ParamPair_t( rtl::OUString(  ),
-                            ( defaultValue ? 
+                            ( defaultValue ?
                                 rtl::OUString::createFromAscii( defaultValue ) :
                                 rtl::OUString(  ) ) );
     }
 
     void Fieldmark::invalidate( )
     {
+        // @TODO: Does exist a better solution to trigger a format of the
+        //        fieldmark portion? If yes, please use it.
         SwPaM aPaM( this->GetMarkPos(), this->GetOtherMarkPos() );
         aPaM.InvalidatePaM();
     }
@@ -393,7 +395,7 @@ namespace sw { namespace mark
     {
         lcl_AssureFieldMarksSet(this, io_pDoc, CH_TXT_ATR_FORMELEMENT, CH_TXT_ATR_FIELDEND);
 
-        // For some reason the end mark is moved from 1 by the Insert: we don't 
+        // For some reason the end mark is moved from 1 by the Insert: we don't
         // want this for checkboxes
         this->GetMarkEnd( ).nContent--;
     }
