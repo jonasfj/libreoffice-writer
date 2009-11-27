@@ -51,12 +51,12 @@ namespace sw { namespace mark
     {
         public:
             //getters
-            virtual SwPosition& GetMarkPos() const =0;
+            virtual const SwPosition& GetMarkPos() const =0;
             // GetOtherMarkPos() is only guaranteed to return a valid
             // reference if IsExpanded() returned true
-            virtual SwPosition& GetOtherMarkPos() const =0;
-            virtual SwPosition& GetMarkStart() const =0;
-            virtual SwPosition& GetMarkEnd() const =0;
+            virtual const SwPosition& GetOtherMarkPos() const =0;
+            virtual const SwPosition& GetMarkStart() const =0;
+            virtual const SwPosition& GetMarkEnd() const =0;
             virtual const ::rtl::OUString& GetName() const =0;
             virtual bool IsExpanded() const =0;
             virtual bool IsCoveringPosition(const SwPosition& rPos) const =0;
@@ -104,7 +104,7 @@ namespace sw { namespace mark
             virtual ::rtl::OUString GetFieldname() const =0;
             virtual ::rtl::OUString GetFieldHelptext() const =0;
 
-            virtual void addParam( rtl::OUString rParamName, 
+            virtual void addParam( rtl::OUString rParamName,
                     rtl::OUString rParamValue,
                     bool bReplaceExisting = true ) = 0;
             virtual void addParam( const char* paramName, int value ) = 0;
