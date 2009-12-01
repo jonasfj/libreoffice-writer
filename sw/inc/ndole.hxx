@@ -1,7 +1,7 @@
 /*************************************************************************
  *
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
- * 
+ *
  * Copyright 2008 by Sun Microsystems, Inc.
  *
  * OpenOffice.org - a multi-platform office productivity suite
@@ -121,7 +121,7 @@ public:
     virtual SwCntntNode* MakeCopy( SwDoc*, const SwNodeIndex& ) const;
 
     virtual Size GetTwipSize() const;
-    
+
     Graphic* GetGraphic();
 
     Graphic* GetHCGraphic(); // tries to retrieve HighContrast representation if possible
@@ -148,6 +148,10 @@ public:
     void DisconnectFileLink_Impl();
 
     void CheckFileLink_Impl();
+
+    // --> OD 2009-03-05 #i99665#
+    bool IsChart() const;
+    // <--
 
 #ifndef _FESHVIEW_ONLY_INLINE_NEEDED
     const String& GetChartTblName() const 		{ return sChartTblName; }

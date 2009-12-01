@@ -1,7 +1,7 @@
 /*************************************************************************
  *
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
- * 
+ *
  * Copyright 2008 by Sun Microsystems, Inc.
  *
  * OpenOffice.org - a multi-platform office productivity suite
@@ -145,6 +145,13 @@ SwDrawView::SwDrawView( SwViewImp &rI, SdrModel *pMd, OutputDevice *pOutDev) :
     // #i74769#, #i75172# Use default from the configuration
     SetBufferedOutputAllowed(getOptionsDrawinglayer().IsPaintBuffer_Writer());
 }
+
+// --> OD 2009-03-05 #i99665#
+sal_Bool SwDrawView::IsAntiAliasing() const
+{
+    return getOptionsDrawinglayer().IsAntiAliasing();
+}
+// <--
 
 /*************************************************************************
 |*

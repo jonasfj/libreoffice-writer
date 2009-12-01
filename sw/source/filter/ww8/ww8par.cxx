@@ -1886,7 +1886,7 @@ void SwWW8ImplReader::AppendTxtNode(SwPosition& rPos)
     SwTxtNode* pTxt = pPaM->GetNode()->GetTxtNode();
 
     const SwNumRule* pRule = NULL;
-    
+
     if (pTxt != NULL)
         pRule = sw::util::GetNumRuleFromTxtNode(*pTxt);
 
@@ -3436,7 +3436,7 @@ void wwSectionManager::InsertSegments()
             bool bThisAndNextAreCompatible = (aNext != aEnd) ? ((aIter->GetPageWidth() == aNext->GetPageWidth()) &&
                 (aIter->GetPageHeight() == aNext->GetPageHeight()) && (aIter->IsLandScape() == aNext->IsLandScape())) : true;
 
-            if ((aNext != aEnd && aNext->IsContinous() && bThisAndNextAreCompatible || bProtected))
+            if ((aNext != aEnd && aNext->IsContinous() && bThisAndNextAreCompatible) || bProtected)
             {
                 bIgnoreCols = true;
                 if ((aIter->NoCols() > 1) || bProtected)
@@ -4391,7 +4391,9 @@ void SwWW8ImplReader::SetOutLineStyles()
     // <--
 
     sw::ParaStyles aOutLined(sw::util::GetParaStyles(rDoc));
-    sw::util::SortByOutline(aOutLined);
+    // --> OD 2009-02-04 #i98791# - sorting algorithm adjusted
+    sw::util::SortByAssignedOutlineStyleListLevel(aOutLined);
+    // <--
 
     typedef sw::ParaStyleIter myParaStyleIter;
     /*

@@ -1,7 +1,7 @@
  /*************************************************************************
  *
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
- * 
+ *
  * Copyright 2008 by Sun Microsystems, Inc.
  *
  * OpenOffice.org - a multi-platform office productivity suite
@@ -1328,6 +1328,20 @@ void SwAccessibleContext::InvalidateTextSelection()
 {
     AccessibleEventObject aEvent;
     aEvent.EventId = AccessibleEventId::TEXT_SELECTION_CHANGED;
+
+    FireAccessibleEvent( aEvent );
+}
+
+/** attributes has changed
+
+    OD 2009-01-06 #i88069#
+
+    @author OD
+*/
+void SwAccessibleContext::InvalidateAttr()
+{
+    AccessibleEventObject aEvent;
+    aEvent.EventId = AccessibleEventId::TEXT_ATTRIBUTE_CHANGED;
 
     FireAccessibleEvent( aEvent );
 }
