@@ -6,8 +6,8 @@
  *
  * OpenOffice.org - a multi-platform office productivity suite
  *
- * $RCSfile: insrc.hrc,v $
- * $Revision: 1.4 $
+ * $RCSfile:$
+ * $Revision:$
  *
  * This file is part of OpenOffice.org.
  *
@@ -27,17 +27,39 @@
  * for a copy of the LGPLv3 License.
  *
  ************************************************************************/
-#define FT_COUNT	1
-#define ED_COUNT	2
-#define FL_INS          3
+/* -*- Mode: C; tab-width: 4; indent-tabs-mode: nil -*- */
 
-#define CB_POS_BEFORE	10
-#define CB_POS_AFTER	11
-#define FL_POS                  12
+#include "WW8FibData.hxx"
 
-#define STR_ROW			20
-#define STR_COL			21
+namespace ww8
+{
+WW8FibData::WW8FibData()
+  : m_bReadOnlyRecommended(false),
+    m_bWriteReservation(false)
+{
+}
 
-#define BT_OK 		100
-#define BT_CANCEL 	101
-#define BT_HELP 	102
+WW8FibData::~WW8FibData()
+{
+}
+
+void WW8FibData::setReadOnlyRecommended(bool bReadOnlyRecommended)
+{
+    m_bReadOnlyRecommended = bReadOnlyRecommended;
+}
+
+void WW8FibData::setWriteReservation(bool bWriteReservation)
+{
+    m_bWriteReservation = bWriteReservation;
+}
+
+bool WW8FibData::getReadOnlyRecommended() const
+{
+    return m_bReadOnlyRecommended;
+}
+
+bool WW8FibData::getWriteReservation() const
+{
+    return m_bWriteReservation;
+}
+}

@@ -1,7 +1,7 @@
 /*************************************************************************
  *
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
- * 
+ *
  * Copyright 2008 by Sun Microsystems, Inc.
  *
  * OpenOffice.org - a multi-platform office productivity suite
@@ -626,7 +626,6 @@
 #include "svtools/ctloptions.hxx"
 #include "svtools/ctrlbox.hxx"
 #include "svtools/ctrltool.hxx"
-#include "svtools/docpasswdrequest.hxx"
 #include "svtools/editbrowsebox.hxx"
 #include "svtools/ehdl.hxx"
 #include "svtools/eitem.hxx"
