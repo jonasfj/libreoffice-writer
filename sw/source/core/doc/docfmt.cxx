@@ -256,7 +256,7 @@ BOOL lcl_RstAttr( const SwNodePtr& rpNd, void* pArgs )
   //                                              RES_PARATR_NUMRULE };
         //for( USHORT n = 0; n < 3; ++n )
         USHORT __READONLY_DATA aSavIds[ 4 ] = { RES_PAGEDESC, RES_BREAK,	//->add by zhaojianwei
-                                                RES_PARATR_NUMRULE, 
+                                                RES_PARATR_NUMRULE,
                                                 RES_PARATR_OUTLINELEVEL };
         for( USHORT n = 0; n < 4; ++n )										//<-end,zhaojianwei
         {
@@ -280,7 +280,7 @@ BOOL lcl_RstAttr( const SwNodePtr& rpNd, void* pArgs )
                     {
                         bSave = pPara && pPara->bKeepOutlineLevelAttr;
                     }
-                    break;										//<-end,zhaojianwei	
+                    break;										//<-end,zhaojianwei
                 }
                 if( bSave )
                 {
@@ -1721,12 +1721,12 @@ BOOL lcl_SetTxtFmtColl( const SwNodePtr& rpNode, void* pArgs )
         SwTxtFmtColl* pFmt = static_cast<SwTxtFmtColl*>(pPara->pFmtColl);
         if ( pPara->bReset )
         {
-    
+
             if( pFmt->GetAttrOutlineLevel() == 0 && pPara )
                 pPara->bKeepOutlineLevelAttr = true;
 
             lcl_RstAttr( pCNd, pPara );
-            
+
             // --> OD 2007-11-06 #i62675#
             // --> OD 2008-04-15 #refactorlists#
             // check, if paragraph style has changed
@@ -1912,7 +1912,7 @@ SwTxtFmtColl* SwDoc::CopyTxtColl( const SwTxtFmtColl& rColl )
     pNewColl->CopyAttrs( rColl, TRUE );
 
     // setze noch den Outline-Level
-    //if( NO_NUMBERING != rColl.GetOutlineLevel() )	//#outline level,zhaojianwei 
+    //if( NO_NUMBERING != rColl.GetOutlineLevel() )	//#outline level,zhaojianwei
     //	pNewColl->SetOutlineLevel( rColl.GetOutlineLevel() );
     if(rColl.IsAssignedToListLevelOfOutlineStyle())
         pNewColl->AssignToListLevelOfOutlineStyle(rColl.GetAssignedOutlineStyleLevel());//<-end,zhaojianwei
@@ -2028,24 +2028,34 @@ void SwDoc::CopyFmtArr( const SvPtrarr& rSourceArr,
 //		pDest->CopyAttrs( *pSrc, TRUE );			// kopiere Attribute
 //JP 19.02.96: ist so wohl optimaler - loest ggfs. kein Modify aus!
         pDest->DelDiffs( *pSrc );
-        pDest->SetFmtAttr( pSrc->GetAttrSet() );      // kopiere Attribute
-
-        //JP 18.08.98: Bug 55115 - PageDescAttribute in diesem Fall doch
-        //				kopieren
+        // --> OD 2009-03-23 #i94285#
+        // copy existing <SwFmtPageDesc> instance, before copying attributes
+//        pDest->SetFmtAttr( pSrc->GetAttrSet() );      // kopiere Attribute
+        //JP 18.08.98: Bug 55115 - copy PageDescAttribute in this case
         const SfxPoolItem* pItem;
         if( &GetAttrPool() != pSrc->GetAttrSet().GetPool() &&
             SFX_ITEM_SET == pSrc->GetAttrSet().GetItemState(
             RES_PAGEDESC, FALSE, &pItem ) &&
             ((SwFmtPageDesc*)pItem)->GetPageDesc() )
         {
-            SwFmtPageDesc aDesc( *(SwFmtPageDesc*)pItem );
-            const String& rNm = aDesc.GetPageDesc()->GetName();
-            SwPageDesc* pDesc = ::lcl_FindPageDesc( aPageDescs, rNm );
-            if( !pDesc )
-                pDesc = aPageDescs[ MakePageDesc( rNm ) ];
-            pDesc->Add( &aDesc );
-            pDest->SetFmtAttr( aDesc );
+            SwFmtPageDesc aPageDesc( *(SwFmtPageDesc*)pItem );
+            const String& rNm = aPageDesc.GetPageDesc()->GetName();
+            SwPageDesc* pPageDesc = ::lcl_FindPageDesc( aPageDescs, rNm );
+            if( !pPageDesc )
+            {
+                pPageDesc = aPageDescs[ MakePageDesc( rNm ) ];
+            }
+            pPageDesc->Add( &aPageDesc );
+//            pDest->SetFmtAttr( aPageDesc );
+            SwAttrSet aTmpAttrSet( pSrc->GetAttrSet() );
+            aTmpAttrSet.Put( aPageDesc );
+            pDest->SetFmtAttr( aTmpAttrSet );
         }
+        else
+        {
+            pDest->SetFmtAttr( pSrc->GetAttrSet() );
+        }
+        // <--
 
         pDest->SetPoolFmtId( pSrc->GetPoolFmtId() );
         pDest->SetPoolHelpId( pSrc->GetPoolHelpId() );
@@ -2066,7 +2076,7 @@ void SwDoc::CopyFmtArr( const SvPtrarr& rSourceArr,
                     rDestArr, pSrcColl->GetNextTxtFmtColl().GetName() ) );
 
             // setze noch den Outline-Level
-            //if( NO_NUMBERING != pSrcColl->GetOutlineLevel() )	//#outline level,zhaojianwei 
+            //if( NO_NUMBERING != pSrcColl->GetOutlineLevel() )	//#outline level,zhaojianwei
             //	pDstColl->SetOutlineLevel( pSrcColl->GetOutlineLevel() );
             if(pSrcColl->IsAssignedToListLevelOfOutlineStyle())
                 pDstColl->AssignToListLevelOfOutlineStyle(pSrcColl->GetAssignedOutlineStyleLevel());//<-end,zhaojianwei

@@ -152,7 +152,7 @@ SwUndoDelete::SwUndoDelete( SwPaM& rPam, BOOL bFullPara, BOOL bCalledByTblCpy )
 
         BOOL bDoesUndo = pDoc->DoesUndo();
         pDoc->DoUndo( FALSE );
-        _DelBookmarks( pStt->nNode, pEnd->nNode );
+        _DelBookmarks(pStt->nNode, pEnd->nNode);
         pDoc->DoUndo( bDoesUndo );
     }
     else
@@ -855,11 +855,11 @@ void SwUndoDelete::Redo( SwUndoIter& rUndoIter )
         RemoveIdxFromRange( rPam, FALSE );
         aTmpRng.SetPaM( rPam );
 
-        if( !bJoinNext )			// Dann Selektion von unten nach oben
-            rPam.Exchange();		// wieder herstellen!
+        if( !bJoinNext )            // Dann Selektion von unten nach oben
+            rPam.Exchange();        // wieder herstellen!
     }
 
-    if( pHistory )		// wurden Attribute gesichert ?
+    if( pHistory )      // wurden Attribute gesichert ?
     {
         pHistory->SetTmpEnd( pHistory->Count() );
         SwHistory aHstr;
@@ -871,7 +871,7 @@ void SwUndoDelete::Redo( SwUndoIter& rUndoIter )
             DelCntntIndex( *rPam.GetMark(), *rPam.GetPoint(),
                             DelCntntType(nsDelCntntType::DELCNT_ALL | nsDelCntntType::DELCNT_CHKNOCNTNT) );
 
-            _DelBookmarks( rPam.GetMark()->nNode, rPam.GetPoint()->nNode );
+            _DelBookmarks(rPam.GetMark()->nNode, rPam.GetPoint()->nNode);
         }
         else
             DelCntntIndex( *rPam.GetMark(), *rPam.GetPoint() );
