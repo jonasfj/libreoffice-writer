@@ -701,7 +701,8 @@ sal_uInt16 SwWW8ImplReader::End_Field()
                         aFldPam, maFieldStack.back().GetBookmarkName(), ::rtl::OUString::createFromAscii(ECMA_FORMTEXT ) ) );
             ASSERT(pFieldmark!=NULL, "hmmm; why was the bookmark not created?");
             if (pFieldmark!=NULL) {
-            pFieldmark->addParams(maFieldStack.back().getParams());
+                const IFieldmark::parameter_map_t& pParametersToAdd = maFieldStack.back().getParameters();
+                pFieldmark->GetParameters()->insert(pParametersToAdd.begin(), pParametersToAdd.end());
             }
         }
         break;
@@ -711,17 +712,18 @@ sal_uInt16 SwWW8ImplReader::End_Field()
         case 88: // HYPERLINK
         case 37: // REF
         if (pPaM!=NULL && pPaM->GetPoint()!=NULL) {
-            
+
             SwPosition aEndPos = *pPaM->GetPoint();
             SwPaM aFldPam( maFieldStack.back().GetPtNode(), maFieldStack.back().GetPtCntnt(), aEndPos.nNode, aEndPos.nContent.GetIndex());
             SwFieldBookmark *pFieldmark=(SwFieldBookmark*)rDoc.makeFieldBookmark(aFldPam, maFieldStack.back().GetBookmarkName(), maFieldStack.back().GetBookmarkType());
             ASSERT(pFieldmark!=NULL, "hmmm; why was the bookmark not created?");
             if (pFieldmark!=NULL) {
-            pFieldmark->addParams(maFieldStack.back().getParams());
+                const IFieldmark::parameter_map_t& pParametersToAdd = maFieldStack.back().getParameters();
+                pFieldmark->GetParameters()->insert(pParameters.begin(), pParameters.end());
             }
         }
-        break;	  
-#else     
+        break;
+#else
             case 88:
                 pCtrlStck->SetAttr(*pPaM->GetPoint(),RES_TXTATR_INETFMT);
             break;
@@ -805,12 +807,8 @@ void FieldEntry::SetBookmarkType(::rtl::OUString bookmarkType)
     msMarkType=bookmarkType;
 }
 
-void FieldEntry::AddParam(::rtl::OUString name, ::rtl::OUString value)
-{
-    maParams.push_back( IFieldmark::ParamPair_t( name, value ) );
-}
 
-FieldEntry::Params_t &FieldEntry::getParams() {
+::sw::mark::IFieldmark::parameter_map_t& FieldEntry::getParameters() {
     return maParams;
 }
 
@@ -2706,8 +2704,8 @@ bool SwWW8ImplReader::AddExtraOutlinesAsExtraStyles(SwTOXBase& rBase)
             sal_uInt16 nStyleLevel = rSI.nOutlineLevel;
             sal_uInt16 nMaxLevel = rBase.GetLevel();
             if (
-                 //nStyleLevel != pFmt->GetOutlineLevel() &&		//#outline level,zhaojianwei
-                 nStyleLevel != (pFmt->GetAttrOutlineLevel()-1) &&	//<-end,zhaojianwei
+                 //nStyleLevel != pFmt->GetOutlineLevel() &&        //#outline level,zhaojianwei
+                 nStyleLevel != (pFmt->GetAttrOutlineLevel()-1) &&  //<-end,zhaojianwei
                  nStyleLevel < nMaxLevel
                )
             {
