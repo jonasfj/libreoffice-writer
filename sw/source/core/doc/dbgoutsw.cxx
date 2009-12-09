@@ -1,7 +1,7 @@
 /*************************************************************************
  *
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
- * 
+ *
  * Copyright 2008 by Sun Microsystems, Inc.
  *
  * OpenOffice.org - a multi-platform office productivity suite
@@ -33,8 +33,8 @@
 #ifdef DEBUG
 
 #include <tools/string.hxx>
-#include <svtools/poolitem.hxx>
-#include <svtools/itemiter.hxx>
+#include <svl/poolitem.hxx>
+#include <svl/itemiter.hxx>
 #include <string>
 #include <map>
 #include <node.hxx>
@@ -551,7 +551,7 @@ String lcl_dbg_out(const SwNode & rNode)
     aTmpStr += String::CreateFromInt32(rNode.GetIndex());
     aTmpStr += String("\"", RTL_TEXTENCODING_ASCII_US);
 
-#ifndef PRODUCT
+#ifdef DBG_UTIL
     aTmpStr += String(" serial=\"", RTL_TEXTENCODING_ASCII_US);
     aTmpStr += String::CreateFromInt32(rNode.GetSerial());
     aTmpStr += String("\"", RTL_TEXTENCODING_ASCII_US);
@@ -743,7 +743,7 @@ void lcl_dbg_nodes_inner(String & aStr, SwNodes & rNodes, ULONG & nIndex)
     SwNode * pEndNode = NULL;
     if (pStartNode != NULL)
         pEndNode = pStartNode->EndOfSectionNode();
-        
+
     ULONG nCount = rNodes.Count();
     ULONG nStartIndex = nIndex;
 

@@ -1,7 +1,7 @@
 /*************************************************************************
  *
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
- * 
+ *
  * Copyright 2008 by Sun Microsystems, Inc.
  *
  * OpenOffice.org - a multi-platform office productivity suite
@@ -64,9 +64,9 @@
 #ifndef _APP_HXX //autogen
 #include <vcl/svapp.hxx>
 #endif
-#include <svtools/urihelper.hxx>
-#include <svtools/useroptions.hxx>
-#include <svtools/syslocale.hxx>
+#include <svl/urihelper.hxx>
+#include <unotools/useroptions.hxx>
+#include <unotools/syslocale.hxx>
 
 #include <tools/time.hxx>
 #include <tools/datetime.hxx>
@@ -111,7 +111,7 @@
 #include <comcore.hrc>
 #endif
 
-#include <svx/outliner.hxx>	
+#include <svx/outliner.hxx>
 #include <svx/outlobj.hxx>
 
 #define URL_DECODE 	INetURLObject::DECODE_UNAMBIGUOUS
@@ -1880,7 +1880,7 @@ sal_uInt32 SwPostItField::GetNumberOfParagraphs() const
 --------------------------------------------------*/
 BOOL SwPostItField::QueryValue( uno::Any& rAny, USHORT nWhichId ) const
 {
-    switch( nWhichId )	
+    switch( nWhichId )
     {
     case FIELD_PROP_PAR1:
         rAny <<= OUString(sAuthor);
@@ -2318,7 +2318,7 @@ sal_uInt16 SwRefPageGetFieldType::MakeSetList( _SetGetExpFlds& rTmpLst )
                 {
                     // einen sdbcx::Index fuers bestimmen vom TextNode anlegen
                     SwPosition aPos( pDoc->GetNodes().GetEndOfPostIts() );
-#ifndef PRODUCT
+#ifdef DBG_UTIL
                     ASSERT( GetBodyTxtNode( *pDoc, aPos, *pFrm ),
                             "wo steht das Feld" );
 #else

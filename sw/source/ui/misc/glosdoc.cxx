@@ -1,7 +1,7 @@
 /*************************************************************************
  *
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
- * 
+ *
  * Copyright 2008 by Sun Microsystems, Inc.
  *
  * OpenOffice.org - a multi-platform office productivity suite
@@ -38,17 +38,17 @@
 #define _SVSTDARR_STRINGS
 #include <unotools/transliterationwrapper.hxx>
 
-#include <svtools/svstdarr.hxx>
+#include <svl/svstdarr.hxx>
 
 #ifndef __RSC //autogen
 #include <tools/errinf.hxx>
 #endif
 #include <tools/debug.hxx>
-#include <svtools/urihelper.hxx>
+#include <svl/urihelper.hxx>
 #ifndef SVTOOLS_FSTATHELPER_HXX
-#include <svtools/fstathelper.hxx>
+#include <svl/fstathelper.hxx>
 #endif
-#include <svtools/pathoptions.hxx>
+#include <unotools/pathoptions.hxx>
 #include <unotools/tempfile.hxx>
 #include <swtypes.hxx>
 #include <errhdl.hxx>		// ASSERT
