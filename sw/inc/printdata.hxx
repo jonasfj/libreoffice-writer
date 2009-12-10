@@ -52,6 +52,139 @@ class SwPrtOptions;
 class SwWrtShell;
 class SfxViewShell;
 
+// forward declarations
+class SwPrintUIOptions;
+class SwRenderData;
+
+////////////////////////////////////////////////////////////
+
+
+class SwPrintData
+{
+    const SwPrintUIOptions *    m_pPrintUIOptions;  // not owner
+    const SwRenderData *        m_pRenderData;      // not owner
+
+public:
+
+    sal_Bool bPrintGraphic, bPrintTable, bPrintDraw, bPrintControl, bPrintPageBackground,
+             bPrintBlackFont, 
+             //#i81434# - printing of hidden text
+             bPrintHiddenText, bPrintTextPlaceholder,
+             bPrintLeftPages, bPrintRightPages, bPrintReverse, bPrintProspect,
+             bPrintProspectRTL,
+             bPrintSingleJobs, bPaperFromSetup,
+             // --> FME 2005-12-13 #b6354161# Print empty pages
+             bPrintEmptyPages,
+             // <--
+             // #i56195# no field update while printing mail merge documents
+             bUpdateFieldsInPrinting,
+             bModified;
+
+    sal_Int16           nPrintPostIts;
+    rtl::OUString       sFaxName;
+
+    SwPrintData()
+    {
+        m_pPrintUIOptions       = NULL;
+        m_pRenderData        = NULL;
+
+        bPrintGraphic           =
+        bPrintTable             =
+        bPrintDraw              =
+        bPrintControl           =
+        bPrintLeftPages         =
+        bPrintRightPages        =
+        bPrintPageBackground    =
+        bPrintEmptyPages        = 
+        bUpdateFieldsInPrinting = sal_True;
+
+        bPaperFromSetup         =
+        bPrintReverse           =
+        bPrintProspect          =
+        bPrintProspectRTL       =
+        bPrintSingleJobs        =
+        bModified               =
+        bPrintBlackFont         = 
+        bPrintHiddenText        = 
+        bPrintTextPlaceholder   = sal_False;
+
+        nPrintPostIts           = 0;
+    }
+
+    virtual ~SwPrintData() {}
+
+    sal_Bool operator==(const SwPrintData& rData)const
+    {
+        return
+        bPrintGraphic       ==   rData.bPrintGraphic        &&
+        bPrintTable         ==   rData.bPrintTable          &&
+        bPrintDraw          ==   rData.bPrintDraw           &&
+        bPrintControl       ==   rData.bPrintControl        &&
+        bPrintPageBackground==   rData.bPrintPageBackground &&
+        bPrintBlackFont     ==   rData.bPrintBlackFont      &&
+        bPrintLeftPages     ==   rData.bPrintLeftPages      &&
+        bPrintRightPages    ==   rData.bPrintRightPages     &&
+        bPrintReverse       ==   rData.bPrintReverse        &&
+        bPrintProspect      ==   rData.bPrintProspect       &&
+        bPrintProspectRTL   ==   rData.bPrintProspectRTL    &&
+        bPrintSingleJobs    ==   rData.bPrintSingleJobs     &&
+        bPaperFromSetup     ==   rData.bPaperFromSetup      &&
+        bPrintEmptyPages    ==   rData.bPrintEmptyPages     &&
+        bUpdateFieldsInPrinting == rData.bUpdateFieldsInPrinting &&
+        nPrintPostIts       ==   rData.nPrintPostIts        &&
+        sFaxName            ==   rData.sFaxName             &&
+        bPrintHiddenText    ==   rData.bPrintHiddenText     &&
+        bPrintTextPlaceholder   ==   rData.bPrintTextPlaceholder;
+    }
+    
+    // Note: in the context where this class ist used the pointers should always be valid
+    // during the lifetime of this object
+    const SwPrintUIOptions &    GetPrintUIOptions() const       { return *m_pPrintUIOptions; }
+    const SwRenderData &        GetRenderData() const           { return *m_pRenderData; }
+    void  SetPrintUIOptions( const SwPrintUIOptions *pOpt )     { m_pPrintUIOptions = pOpt; }
+    void  SetRenderData( const SwRenderData *pData )            { m_pRenderData = pData; }
+
+    sal_Bool IsPrintGraphic() const             { return bPrintGraphic; }
+    sal_Bool IsPrintTable() const               { return bPrintTable; }
+    sal_Bool IsPrintDraw() const                { return bPrintDraw; }
+    sal_Bool IsPrintControl() const             { return bPrintControl; }
+    sal_Bool IsPrintLeftPage() const            { return bPrintLeftPages; }
+    sal_Bool IsPrintRightPage() const           { return bPrintRightPages; }
+    sal_Bool IsPrintReverse() const             { return bPrintReverse; }
+    sal_Bool IsPaperFromSetup() const           { return bPaperFromSetup; }
+    sal_Bool IsPrintEmptyPages() const          { return bPrintEmptyPages; }
+    sal_Bool IsPrintProspect() const            { return bPrintProspect; }
+    sal_Bool IsPrintProspectRTL() const         { return bPrintProspectRTL; }
+    sal_Bool IsPrintPageBackground() const      { return bPrintPageBackground; }
+    sal_Bool IsPrintBlackFont() const           { return bPrintBlackFont; }
+    sal_Bool IsPrintSingleJobs() const          { return bPrintSingleJobs; }
+    sal_Int16 GetPrintPostIts() const           { return nPrintPostIts; }
+    const rtl::OUString GetFaxName() const      { return sFaxName; }
+    sal_Bool IsPrintHiddenText() const          { return bPrintHiddenText; } 
+    sal_Bool IsPrintTextPlaceholder() const     { return bPrintTextPlaceholder; }
+
+    void SetPrintGraphic( sal_Bool b )              { doSetModified(); bPrintGraphic = b; }
+    void SetPrintTable( sal_Bool b )                { doSetModified(); bPrintTable = b; }
+    void SetPrintDraw( sal_Bool b )                 { doSetModified(); bPrintDraw = b; }
+    void SetPrintControl( sal_Bool b )              { doSetModified(); bPrintControl = b; }
+    void SetPrintLeftPage( sal_Bool b )             { doSetModified(); bPrintLeftPages = b; }
+    void SetPrintRightPage( sal_Bool b )            { doSetModified(); bPrintRightPages = b; }
+    void SetPrintReverse( sal_Bool b )              { doSetModified(); bPrintReverse = b; }
+    void SetPaperFromSetup( sal_Bool b )            { doSetModified(); bPaperFromSetup = b; }
+    void SetPrintEmptyPages( sal_Bool b )           { doSetModified(); bPrintEmptyPages = b; }
+    void SetPrintPostIts( sal_Int16 n )             { doSetModified(); nPrintPostIts = n; }
+    void SetPrintProspect( sal_Bool b )             { doSetModified(); bPrintProspect = b; }
+    void SetPrintProspect_RTL( sal_Bool b )         { doSetModified(); bPrintProspectRTL = b; }
+    void SetPrintPageBackground( sal_Bool b )       { doSetModified(); bPrintPageBackground = b; }
+    void SetPrintBlackFont( sal_Bool b )            { doSetModified(); bPrintBlackFont = b; }
+    void SetPrintSingleJobs( sal_Bool b )           { doSetModified(); bPrintSingleJobs = b; }
+    void SetFaxName( const rtl::OUString& rSet )    { sFaxName = rSet; }
+    void SetPrintHiddenText( sal_Bool b )           { doSetModified(); bPrintHiddenText = b; }
+    void SetPrintTextPlaceholder( sal_Bool b )      { doSetModified(); bPrintTextPlaceholder = b; }
+    
+    virtual void doSetModified () { bModified = sal_True;}
+};
+
 
 ////////////////////////////////////////////////////////////
 
@@ -59,13 +192,25 @@ class SfxViewShell;
 class SwPrintUIOptions : public vcl::PrinterOptionsHelper
 {
     OutputDevice* m_pLast;
+    const SwPrintData & m_rDefaultPrintData;
 
 public:
-    SwPrintUIOptions( bool bWeb, bool bSwSrcView, bool bHasSelection, bool bHasPostIts );
-    ~SwPrintUIOptions();
+    SwPrintUIOptions( bool bWeb, bool bSwSrcView, bool bHasSelection, bool bHasPostIts, const SwPrintData &rDefaultPrintData );
+    virtual ~SwPrintUIOptions();
     
     bool processPropertiesAndCheckFormat( const com::sun::star::uno::Sequence< com::sun::star::beans::PropertyValue >& i_rNewProp );
     
+    bool IsPrintFormControls() const            { return getBoolValue( "PrintControls",        m_rDefaultPrintData.bPrintControl ); }
+    bool IsPrintPageBackground() const          { return getBoolValue( "PrintPageBackground",  m_rDefaultPrintData.bPrintPageBackground ); }
+    bool IsPrintProspect() const                { return getBoolValue( "PrintProspect",        m_rDefaultPrintData.bPrintProspect ); }
+    bool IsPrintProspectRTL() const             { return getIntValue( "PrintProspectRTL",      m_rDefaultPrintData.bPrintProspectRTL ) ? true : false; }
+    bool IsPrintTextPlaceholders() const        { return getBoolValue( "PrintTextPlaceholder", m_rDefaultPrintData.bPrintTextPlaceholder ); }
+    bool IsPrintHiddenText() const              { return getBoolValue( "PrintHiddenText",      m_rDefaultPrintData.bPrintHiddenText ); }
+    bool IsPrintWithBlackTextColor() const      { return getBoolValue( "PrintBlackFonts",      m_rDefaultPrintData.bPrintBlackFont ); }
+    sal_Int16 GetPrintPostItsType() const       { return static_cast< sal_Int16 >(getIntValue( "PrintAnnotationMode", m_rDefaultPrintData.nPrintPostIts )); }
+    bool IsPaperFromSetup() const               { return getBoolValue( "PrintPaperFromSetup",  m_rDefaultPrintData.bPaperFromSetup ); }
+    bool IsPrintReverse() const                 { return false; /*handled by print dialog now*/ /*getBoolValue( "PrintReversed",        m_rDefaultPrintData.bPrintReverse );*/ }
+
     bool IsPrintLeftPages() const;
     bool IsPrintRightPages() const;
     bool IsPrintEmptyPages( bool bIsPDFExport ) const;
@@ -130,8 +275,7 @@ public:
     const SwPrtOptions *    GetSwPrtOptions() const { return m_pPrtOptions; }
     SwPrtOptions &          GetSwPrtOptionsRef()    { return *m_pPrtOptions; }
     void MakeSwPrtOptions( SwPrtOptions &rOptions, const SwDocShell *pDocShell,
-            const SwPrintUIOptions *pOpt, const SwRenderData *pData, 
-            bool bIsSkipEmptyPages, bool bIsPDFExport );
+            const SwPrintUIOptions *pOpt, const SwRenderData *pData, bool bIsPDFExport );
 
 
     typedef std::map< sal_Int32, const SwPageFrm * >            ValidStartFramesMap_t;
@@ -166,135 +310,6 @@ public:
     void            SetPageRange( const rtl::OUString &rRange )     { m_aPageRange = rRange; }
 };    
 
-
-////////////////////////////////////////////////////////////
-
-
-class SwPrintData
-{
-    const SwPrintUIOptions *    m_pPrintUIOptions;  // not owner
-    const SwRenderData *        m_pRenderData;      // not owner
-
-public:
-
-    sal_Bool bPrintGraphic, bPrintTable, bPrintDraw, bPrintControl, bPrintPageBackground,
-             bPrintBlackFont, 
-             //#i81434# - printing of hidden text
-             bPrintHiddenText, bPrintTextPlaceholder,
-             bPrintLeftPages, bPrintRightPages, bPrintReverse, bPrintProspect,
-             bPrintProspectRTL,
-             bPrintSingleJobs, bPaperFromSetup,
-             // --> FME 2005-12-13 #b6354161# Print empty pages
-             bPrintEmptyPages,
-             // <--
-             // #i56195# no field update while printing mail merge documents
-             bUpdateFieldsInPrinting,
-             bModified;
-
-    sal_Int16           nPrintPostIts;
-    rtl::OUString       sFaxName;
-
-    SwPrintData()
-    {
-        m_pPrintUIOptions       = NULL;
-        m_pRenderData        = NULL;
-
-        bPrintGraphic           =
-        bPrintTable             =
-        bPrintDraw              =
-        bPrintControl           =
-        bPrintLeftPages         =
-        bPrintRightPages        =
-        bPrintPageBackground    =
-        bPrintEmptyPages        = 
-        bUpdateFieldsInPrinting = sal_True;
-
-        bPaperFromSetup         =
-        bPrintReverse           =
-        bPrintProspect          =
-        bPrintProspectRTL       =
-        bPrintSingleJobs        =
-        bModified        		=
-        bPrintBlackFont         = 
-        bPrintHiddenText        = 
-        bPrintTextPlaceholder   = sal_False;
-
-        nPrintPostIts           = 0;
-    }
-
-    virtual ~SwPrintData() {}
-
-    sal_Bool operator==(const SwPrintData& rData)const
-    {
-        return
-        bPrintGraphic       ==   rData.bPrintGraphic        &&
-        bPrintTable         ==   rData.bPrintTable          &&
-        bPrintDraw          ==   rData.bPrintDraw           &&
-        bPrintControl       ==   rData.bPrintControl        &&
-        bPrintPageBackground==   rData.bPrintPageBackground &&
-        bPrintBlackFont     ==   rData.bPrintBlackFont      &&
-        bPrintLeftPages     ==   rData.bPrintLeftPages      &&
-        bPrintRightPages    ==   rData.bPrintRightPages     &&
-        bPrintReverse       ==   rData.bPrintReverse        &&
-        bPrintProspect      ==   rData.bPrintProspect       &&
-        bPrintProspectRTL   ==   rData.bPrintProspectRTL    &&
-        bPrintSingleJobs    ==   rData.bPrintSingleJobs     &&
-        bPaperFromSetup     ==   rData.bPaperFromSetup      &&
-        bPrintEmptyPages    ==   rData.bPrintEmptyPages     &&
-        bUpdateFieldsInPrinting == rData.bUpdateFieldsInPrinting &&
-        nPrintPostIts       ==   rData.nPrintPostIts        &&
-        sFaxName            ==   rData.sFaxName             &&
-        bPrintHiddenText    ==   rData.bPrintHiddenText     &&
-        bPrintTextPlaceholder   ==   rData.bPrintTextPlaceholder;
-    }
-    
-    // Note:  in the context where this class ist used the pointers should always be valid
-    // during the lifetime of this object
-    const SwPrintUIOptions &    GetPrintUIOptions() const       { return *m_pPrintUIOptions; }
-    void  SetPrintUIOptions( const SwPrintUIOptions *pOpt )     { m_pPrintUIOptions = pOpt; }
-    const SwRenderData &        GetRenderData() const           { return *m_pRenderData; }
-    void  SetRenderData( const SwRenderData *pData )            { m_pRenderData = pData; }
-
-    sal_Bool IsPrintGraphic()   const { return bPrintGraphic; }
-    sal_Bool IsPrintTable()		const { return bPrintTable; }
-    sal_Bool IsPrintDraw()		const { return bPrintDraw; }
-    sal_Bool IsPrintControl()	const { return bPrintControl; }
-    sal_Bool IsPrintLeftPage()  const { return bPrintLeftPages; }
-    sal_Bool IsPrintRightPage() const { return bPrintRightPages; }
-    sal_Bool IsPrintReverse()   const { return bPrintReverse; }
-    sal_Bool IsPaperFromSetup()	const { return bPaperFromSetup; }
-    sal_Bool IsPrintEmptyPages() const{ return bPrintEmptyPages; }
-    sal_Bool IsPrintProspect()	const { return bPrintProspect; }
-    sal_Bool IsPrintProspectRTL()   const { return bPrintProspectRTL; }
-    sal_Bool IsPrintPageBackground() const { return bPrintPageBackground; }
-    sal_Bool IsPrintBlackFont() const { return bPrintBlackFont; }
-    sal_Bool IsPrintSingleJobs() const { return bPrintSingleJobs; }
-    sal_Int16 GetPrintPostIts() const { return nPrintPostIts; }
-    const rtl::OUString     GetFaxName() const{return sFaxName; }
-    sal_Bool IsPrintHiddenText() const {return bPrintHiddenText;} 
-    sal_Bool IsPrintTextPlaceholder() const {return bPrintTextPlaceholder; }
-
-    void SetPrintGraphic  ( sal_Bool b ) { doSetModified(); bPrintGraphic = b;}
-    void SetPrintTable    ( sal_Bool b ) { doSetModified(); bPrintTable = b;}
-    void SetPrintDraw     ( sal_Bool b ) { doSetModified(); bPrintDraw = b;}
-    void SetPrintControl  ( sal_Bool b ) { doSetModified(); bPrintControl = b; }
-    void SetPrintLeftPage ( sal_Bool b ) { doSetModified(); bPrintLeftPages = b;}
-    void SetPrintRightPage( sal_Bool b ) { doSetModified(); bPrintRightPages = b;}
-    void SetPrintReverse  ( sal_Bool b ) { doSetModified(); bPrintReverse = b;}
-    void SetPaperFromSetup( sal_Bool b ) { doSetModified(); bPaperFromSetup = b;}
-    void SetPrintEmptyPages(sal_Bool b ) { doSetModified(); bPrintEmptyPages = b;}
-    void SetPrintPostIts    ( sal_Int16 n){ doSetModified(); nPrintPostIts = n; }
-    void SetPrintProspect   ( sal_Bool b ) { doSetModified(); bPrintProspect = b; }
-    void SetPrintProspect_RTL   ( sal_Bool b ) { doSetModified(); bPrintProspectRTL = b; }
-    void SetPrintPageBackground(sal_Bool b){ doSetModified(); bPrintPageBackground = b;}
-    void SetPrintBlackFont(sal_Bool b){ doSetModified(); bPrintBlackFont = b;}
-    void SetPrintSingleJobs(sal_Bool b){ doSetModified(); bPrintSingleJobs = b;}
-    void SetFaxName(const rtl::OUString& rSet){sFaxName = rSet;}
-    void SetPrintHiddenText(sal_Bool b){ doSetModified(); bPrintHiddenText = b;}
-    void SetPrintTextPlaceholder(sal_Bool b){ doSetModified(); bPrintTextPlaceholder = b;}
-    
-    virtual void doSetModified () { bModified = sal_True;}
-};
 
 ////////////////////////////////////////////////////////////
 
