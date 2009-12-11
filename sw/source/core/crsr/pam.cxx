@@ -66,11 +66,11 @@ inline xub_StrLen GetSttOrEnd( BOOL bCondition, const SwCntntNode& rNd )
 
 /*************************************************************************
 |*
-|*	SwPosition
+|*  SwPosition
 |*
-|*	Beschreibung		PAM.DOC
-|*	Ersterstellung		VB	4.3.91
-|*	Letzte Aenderung	VB	4.3.91
+|*  Beschreibung        PAM.DOC
+|*  Ersterstellung      VB  4.3.91
+|*  Letzte Aenderung    VB  4.3.91
 |*
 *************************************************************************/
 
@@ -288,7 +288,7 @@ BOOL lcl_ChkOneRange( CHKSECTION eSec, BOOL bChkSections,
         pNd = pNd->StartOfSectionNode();
 
     if( pNd == rNds[ nEnd ]->StartOfSectionNode() )
-        return TRUE;		// der gleiche StartNode, die selbe Section
+        return TRUE;        // der gleiche StartNode, die selbe Section
 
     // steht schon auf einem GrundSection Node ? Fehler !!!
     if( !pNd->StartOfSectionIndex() )
@@ -332,7 +332,7 @@ BOOL CheckNodesRange( const SwNodeIndex& rStt,
         return lcl_ChkOneRange( eSec, bChkSection,
                             rNds.GetEndOfRedlines(), nStt, nEnd );
 
-    return FALSE;		// liegt irgendwo dazwischen, FEHLER
+    return FALSE;       // liegt irgendwo dazwischen, FEHLER
 }
 
 
@@ -387,11 +387,11 @@ SwCntntNode* GoPreviousNds( SwNodeIndex * pIdx, BOOL bChk )
 
 /*************************************************************************
 |*
-|*	SwPointAndMark
+|*  SwPointAndMark
 |*
-|*	Beschreibung		PAM.DOC
-|*	Ersterstellung		VB	4.3.91
-|*	Letzte Aenderung	JP	6.5.91
+|*  Beschreibung        PAM.DOC
+|*  Ersterstellung      VB  4.3.91
+|*  Letzte Aenderung    JP  6.5.91
 |*
 *************************************************************************/
 
@@ -579,20 +579,20 @@ BOOL SwPaM::Move( SwMoveFn fnMove, SwGoInDoc fnGo )
 
 /*************************************************************************
 |*
-|*	  void SwPaM::MakeRegion( SwMoveFn, SwPaM*, const SwPaM* )
+|*    void SwPaM::MakeRegion( SwMoveFn, SwPaM*, const SwPaM* )
 |*
-|*	  Beschreibung		Setzt den 1. SwPaM auf den uebergebenen SwPaM
-|*						oder setzt auf den Anfang oder Ende vom Document.
-|*						SPoint bleibt auf der Position stehen, GetMark aendert
-|*						sich entsprechend !
+|*    Beschreibung      Setzt den 1. SwPaM auf den uebergebenen SwPaM
+|*                      oder setzt auf den Anfang oder Ende vom Document.
+|*                      SPoint bleibt auf der Position stehen, GetMark aendert
+|*                      sich entsprechend !
 |*
-|*	  Parameter 		SwDirection 	gibt an, ob an Anfang / Ende
-|*						SwPaM * 		der zu setzende Bereich
-|*						const SwPaM&	der enventuell vorgegeben Bereich
-|*	  Return-Werte		SwPaM*			der entsprehend neu gesetzte Bereich
+|*    Parameter         SwDirection     gibt an, ob an Anfang / Ende
+|*                      SwPaM *         der zu setzende Bereich
+|*                      const SwPaM&    der enventuell vorgegeben Bereich
+|*    Return-Werte      SwPaM*          der entsprehend neu gesetzte Bereich
 |*
-|*	  Ersterstellung	JP 26.04.91
-|*	  Letzte Aenderung	JP 26.04.91
+|*    Ersterstellung    JP 26.04.91
+|*    Letzte Aenderung  JP 26.04.91
 |*
 *************************************************************************/
 
@@ -603,17 +603,17 @@ SwPaM* SwPaM::MakeRegion( SwMoveFn fnMove, const SwPaM * pOrigRg )
     if( pOrigRg == 0 )
     {
         pPam = new SwPaM( *m_pPoint );
-        pPam->SetMark();					// setze Anfang fest
-        pPam->Move( fnMove, fnGoSection);		// an Anfang / Ende vom Node
+        pPam->SetMark();                    // setze Anfang fest
+        pPam->Move( fnMove, fnGoSection);       // an Anfang / Ende vom Node
 
         // stelle SPoint wieder auf alte Position, GetMark auf das "Ende"
         pPam->Exchange();
     }
     else
     {
-        pPam = new SwPaM( *(SwPaM*)pOrigRg );	// die Suchregion ist vorgegeben
+        pPam = new SwPaM( *(SwPaM*)pOrigRg );   // die Suchregion ist vorgegeben
         // sorge dafuer, dass SPoint auf dem "echten" StartPunkt steht
-        // FORWARD	--> SPoint immer kleiner  als GetMark
+        // FORWARD  --> SPoint immer kleiner  als GetMark
         // BACKWARD --> SPoint immer groesser als GetMark
         if( (pPam->GetMark()->*fnMove->fnCmpOp)( *pPam->GetPoint() ) )
             pPam->Exchange();
@@ -774,7 +774,7 @@ BOOL SwPaM::HasReadonlySel( bool bFormView ) const
                         if( nSttIdx <= nIdx && nEndIdx >= nIdx &&
                             rCntnt.GetCntntIdx()->GetNode().GetNodes().IsDocNodes() )
                         {
-/* 							// ist es keine gelinkte Section, dann kann sie auch
+/*                          // ist es keine gelinkte Section, dann kann sie auch
                             // nicht mitselektiert werden
                             const SwSection& rSect = *pFmt->GetSection();
                             if( CONTENT_SECTION == rSect.GetType() )
@@ -791,8 +791,8 @@ BOOL SwPaM::HasReadonlySel( bool bFormView ) const
 
 #ifdef CHECK_CELL_READONLY
 //JP 22.01.99: bisher wurden Tabelle, die in der Text-Selektion standen
-//				nicht beachtet. Wollte man das haben, dann muss dieser
-//				Code freigeschaltet werden
+//              nicht beachtet. Wollte man das haben, dann muss dieser
+//              Code freigeschaltet werden
 
                 if( !bRet )
                 {
@@ -828,25 +828,25 @@ BOOL SwPaM::HasReadonlySel( bool bFormView ) const
     }
     //FIXME FieldBk
     // TODO: Form Protection when Enhanced Fields are enabled
-     if (!bRet) {
-         const SwDoc *pDoc = GetDoc();
+    if (!bRet) {
+        const SwDoc *pDoc = GetDoc();
         sw::mark::IMark* pA = NULL;
         sw::mark::IMark* pB = NULL;
         if ( pDoc )
         {
             const IDocumentMarkAccess* pMarksAccess = pDoc->getIDocumentMarkAccess( );
-             pA = GetPoint() ? pMarksAccess->getFieldmarkFor( *GetPoint( ) ) : NULL;
-             pB = GetMark( ) ? pMarksAccess->getFieldmarkFor( *GetMark( ) ) : pA;
-             bRet = ( pA != pB );
+            pA = GetPoint() ? pMarksAccess->getFieldmarkFor( *GetPoint( ) ) : NULL;
+            pB = GetMark( ) ? pMarksAccess->getFieldmarkFor( *GetMark( ) ) : pA;
+            bRet = ( pA != pB );
         }
-         bool bProtectForm = pDoc->get( IDocumentSettingAccess::PROTECT_FORM );
-         if ( bProtectForm )
-             bRet |= ( pA == NULL || pB == NULL );
-     }
+        bool bProtectForm = pDoc->get( IDocumentSettingAccess::PROTECT_FORM );
+        if ( bProtectForm )
+            bRet |= ( pA == NULL || pB == NULL );
+    }
     return bRet;
 }
 
-//--------------------	Suche nach Formaten( FormatNamen ) -----------------
+//--------------------  Suche nach Formaten( FormatNamen ) -----------------
 
 // die Funktion gibt in Suchrichtung den folgenden Node zurueck.
 // Ist in der Richtung keiner mehr vorhanden oder ist dieser ausserhalb
@@ -885,7 +885,7 @@ SwCntntNode* GetNode( SwPaM & rPam, BOOL& rbFirst, SwMoveFn fnMove,
             }
         }
 
-        if( !pNd )			// steht Cursor auf keinem ContentNode ?
+        if( !pNd )          // steht Cursor auf keinem ContentNode ?
         {
             SwPosition aPos( *rPam.GetPoint() );
             BOOL bSrchForward = fnMove == fnMoveForward;
@@ -894,7 +894,7 @@ SwCntntNode* GetNode( SwPaM & rPam, BOOL& rbFirst, SwMoveFn fnMove,
             // zum naechsten / vorherigen ContentNode
 // Funktioniert noch alles, wenn die Uerbpruefung vom ueberspringen der
 // Sektions herausgenommen wird ??
-//			if( (*fnMove->fnNds)( rNodes, &aPos.nNode ) )
+//          if( (*fnMove->fnNds)( rNodes, &aPos.nNode ) )
             while( TRUE )
             {
                 pNd = bSrchForward
@@ -913,19 +913,19 @@ SwCntntNode* GetNode( SwPaM & rPam, BOOL& rbFirst, SwMoveFn fnMove,
                             ( pFrm->IsTxtFrm() &&
                                 ((SwTxtFrm*)pFrm)->IsHiddenNow() ) )
 
-//							rNodes[ rNodes.EndOfAutotext ]->StartOfSection().GetIndex()
-//							< aPos.nNode.GetIndex() && aPos.nNode.GetIndex()
-//							< rNodes.EndOfAutotext.GetIndex() &&
-//							0 == ( pFrm = pNd->GetFrm()) &&
-//							pFrm->IsProtected() )
+//                          rNodes[ rNodes.EndOfAutotext ]->StartOfSection().GetIndex()
+//                          < aPos.nNode.GetIndex() && aPos.nNode.GetIndex()
+//                          < rNodes.EndOfAutotext.GetIndex() &&
+//                          0 == ( pFrm = pNd->GetFrm()) &&
+//                          pFrm->IsProtected() )
                         {
                             pNd = 0;
-                            continue;		// suche weiter
+                            continue;       // suche weiter
                         }
                         *(SwPosition*)rPam.GetPoint() = aPos;
                     }
                     else
-                        pNd = 0;			// kein gueltiger Node
+                        pNd = 0;            // kein gueltiger Node
                     break;
                 }
                 break;
@@ -1117,14 +1117,14 @@ BOOL GoNextPara( SwPaM & rPam, SwPosPara aPosPara )
 BOOL GoCurrSection( SwPaM & rPam, SwMoveFn fnMove )
 {
     SwPosition& rPos = *rPam.GetPoint();
-    SwPosition aSavePos( rPos );		// eine Vergleichsposition
+    SwPosition aSavePos( rPos );        // eine Vergleichsposition
     SwNodes& rNds = aSavePos.nNode.GetNodes();
     (rNds.*fnMove->fnSection)( &rPos.nNode );
     SwCntntNode *pNd;
     if( 0 == ( pNd = rPos.nNode.GetNode().GetCntntNode()) &&
         0 == ( pNd = (*fnMove->fnNds)( &rPos.nNode, TRUE )) )
     {
-        rPos = aSavePos;		// Cusror nicht veraendern
+        rPos = aSavePos;        // Cusror nicht veraendern
         return FALSE;
     }
 
@@ -1137,14 +1137,14 @@ BOOL GoCurrSection( SwPaM & rPam, SwMoveFn fnMove )
 BOOL GoNextSection( SwPaM & rPam, SwMoveFn fnMove )
 {
     SwPosition& rPos = *rPam.GetPoint();
-    SwPosition aSavePos( rPos );		// eine Vergleichsposition
+    SwPosition aSavePos( rPos );        // eine Vergleichsposition
     SwNodes& rNds = aSavePos.nNode.GetNodes();
     rNds.GoEndOfSection( &rPos.nNode );
 
     // kein weiterer ContentNode vorhanden ?
     if( !GoInCntnt( rPam, fnMoveForward ) )
     {
-        rPos = aSavePos;		// Cusror nicht veraendern
+        rPos = aSavePos;        // Cusror nicht veraendern
         return FALSE;
     }
     (rNds.*fnMove->fnSection)( &rPos.nNode );
@@ -1158,14 +1158,14 @@ BOOL GoNextSection( SwPaM & rPam, SwMoveFn fnMove )
 BOOL GoPrevSection( SwPaM & rPam, SwMoveFn fnMove )
 {
     SwPosition& rPos = *rPam.GetPoint();
-    SwPosition aSavePos( rPos );		// eine Vergleichsposition
+    SwPosition aSavePos( rPos );        // eine Vergleichsposition
     SwNodes& rNds = aSavePos.nNode.GetNodes();
     rNds.GoStartOfSection( &rPos.nNode );
 
     // kein weiterer ContentNode vorhanden ?
     if( !GoInCntnt( rPam, fnMoveBackward ))
     {
-        rPos = aSavePos;		// Cusror nicht veraendern
+        rPos = aSavePos;        // Cusror nicht veraendern
         return FALSE;
     }
     (rNds.*fnMove->fnSection)( &rPos.nNode );
