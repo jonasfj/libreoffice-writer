@@ -106,6 +106,7 @@
 #include <ndgrf.hxx>
 #include <ndole.hxx>
 
+
 using namespace ::com::sun::star;
 using namespace ::com::sun::star::i18n;
 using namespace sw::util;
@@ -149,7 +150,7 @@ ww::eField lcl_getFieldId( const IFieldmark* pFieldmark ) {
         return ww::ePAGEREF;
     } else {
         return ww::eUNKNOWN;
-    }    
+    }
 }
 
 /*  */

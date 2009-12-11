@@ -1225,18 +1225,18 @@ void SwTxtPaintInfo::_DrawBackBrush( const SwLinePortion &rPor ) const
             if(pFieldmark) {
                 OSL_TRACE("Found Fieldmark");
 #if DEBUG
-                rtl::OUString str = pFieldmark->toString( );
+                rtl::OUString str = pFieldmark->ToString( );
                 fprintf( stderr, "%s\n", rtl::OUStringToOString( str, RTL_TEXTENCODING_UTF8 ).getStr( ) );
 #endif
             }
             if(bIsStartMark) OSL_TRACE("Found StartMark");
-            if (OnWin() && (pFieldmark!=NULL || bIsStartMark) && 
-                    SwViewOption::IsFieldShadings() && 
+            if (OnWin() && (pFieldmark!=NULL || bIsStartMark) &&
+                    SwViewOption::IsFieldShadings() &&
                     !GetOpt().IsPagePreview())
             {
                 OutputDevice* pOutDev = (OutputDevice*)GetOut();
                 pOutDev->Push( PUSH_LINECOLOR | PUSH_FILLCOLOR );
-                 pOutDev->SetFillColor( SwViewOption::GetFieldShadingsColor() );
+                pOutDev->SetFillColor( SwViewOption::GetFieldShadingsColor() );
                 pOutDev->SetLineColor( );
                 pOutDev->DrawRect( aIntersect.SVRect() );
                 pOutDev->Pop();
