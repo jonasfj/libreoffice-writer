@@ -1352,8 +1352,9 @@ SwDoc* SwDoc::CreateCopy() const
 
     ResetModified();
 
-*/
-    //copy content
+*/    
+    pRet->ReplaceStyles( *(SwDoc*)this );
+    //copy content 
     pRet->Paste( *this );
     return pRet;
 }
