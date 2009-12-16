@@ -1,7 +1,7 @@
 /*************************************************************************
  *
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
- * 
+ *
  * Copyright 2008 by Sun Microsystems, Inc.
  *
  * OpenOffice.org - a multi-platform office productivity suite
@@ -289,7 +289,7 @@ void lcl_addOutplaceProperties(
     {
         MapMode aMode( MAP_100TH_MM ); // the API expects this map mode for the embedded objects
         Size aSize = rObj.GetSize( &aMode ); // get the size in the requested map mode
-        
+
         if( aSize.Width() && aSize.Height() )
         {
             Any aAny;
@@ -464,8 +464,6 @@ void SwXMLTextParagraphExport::_exportTextEmbedded(
         aAny = rPropSet->getPropertyValue( sFrameStyleName );
         aAny >>= sStyle;
     }
-    // svg:desc
-    exportAlternativeText( rPropSet, rPropSetInfo );
 
     const XMLPropertyState *aStates[8] = { 0, 0, 0, 0, 0, 0, 0, 0 };
     switch( nType )
@@ -766,6 +764,8 @@ void SwXMLTextParagraphExport::_exportTextEmbedded(
 
     // Lastly the stuff common to each of Applet/Plugin/Floating Frame
     exportEvents( rPropSet );
-    exportAlternativeText( rPropSet, rPropSetInfo );
+    // --> OD 2009-07-22 #i73249#
+    exportTitleAndDescription( rPropSet, rPropSetInfo );
+    // <--
     exportContour( rPropSet, rPropSetInfo );
 }

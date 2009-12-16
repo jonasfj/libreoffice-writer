@@ -1,7 +1,7 @@
 /*************************************************************************
  *
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
- * 
+ *
  * Copyright 2008 by Sun Microsystems, Inc.
  *
  * OpenOffice.org - a multi-platform office productivity suite
@@ -352,6 +352,13 @@ public:
     //Pfad und sonst den Grafiknamen. rbLink ist TRU bei gelinkten Grafiken.
     const Graphic *GetGrfAtPos( const Point &rDocPos,
                                 String &rName, BOOL &rbLink ) const;
+
+    // --> OD 2009-07-13 #i73249#
+    const String GetObjTitle() const;
+    void SetObjTitle( const String& rTitle );
+    const String GetObjDescription() const;
+    void SetObjDescription( const String& rDescription );
+    // <--
 
 //SS fuer Rahmen --------------------------------------------
 

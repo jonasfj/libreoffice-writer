@@ -1,7 +1,7 @@
 /*************************************************************************
  *
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
- * 
+ *
  * Copyright 2008 by Sun Microsystems, Inc.
  *
  * OpenOffice.org - a multi-platform office productivity suite
@@ -141,6 +141,10 @@ void SetPrinter( IDocumentDeviceAccess* pIDDA, SfxPrinter* pNew, BOOL bWeb )
 USHORT __EXPORT SwView::SetPrinter(SfxPrinter* pNew, USHORT nDiffFlags, bool  )
 {
     SwWrtShell &rSh = GetWrtShell();
+    SfxPrinter* pOld = rSh.getIDocumentDeviceAccess()->getPrinter( false );
+    if ( pOld && pOld->IsPrinting() )
+        return SFX_PRINTERROR_BUSY;
+
     if ( (SFX_PRINTER_JOBSETUP | SFX_PRINTER_PRINTER) & nDiffFlags )
     {
         rSh.getIDocumentDeviceAccess()->setPrinter( pNew, true, true );
@@ -231,12 +235,12 @@ ErrCode SwView::DoPrint( SfxPrinter *pPrinter, PrintDialog *pDlg, BOOL bSilent, 
         SwPrtOptions aOpts( sDocumentTitle );
         BOOL bWeb = 0 != PTR_CAST(SwWebView, this);
         nMergeType = pMgr->GetMergeType();
-        
+
         BOOL bPrtPros;
         BOOL bPrtPros_RTL;
         SwView::MakeOptions( pDlg, aOpts, &bPrtPros, &bPrtPros_RTL, bWeb, GetPrinter(),
                         pSh->getIDocumentDeviceAccess()->getPrintData() );
-        
+
         //set the appropriate view options to print
         //on silent mode the field commands have to be switched off always
         //on default print the user is asked what to do
@@ -259,7 +263,7 @@ ErrCode SwView::DoPrint( SfxPrinter *pPrinter, PrintDialog *pDlg, BOOL bSilent, 
         //switch off display of hidden characters if on and hidden characters are in use
         const sal_Bool bOldShowHiddenChar = pCurrentViewOptions->IsShowHiddenChar();
         const sal_Bool bOldMetaChars = pCurrentViewOptions->IsViewMetaChars();
-        if( bOldShowHiddenChar != aOpts.IsPrintHiddenText() 
+        if( bOldShowHiddenChar != aOpts.IsPrintHiddenText()
             && pSh->GetDoc()->ContainsHiddenChars())
             bApplyViewOptions |= true;
         //switch off display of hidden paragraphs if on and hidden paragraphs are in use
@@ -294,7 +298,7 @@ ErrCode SwView::DoPrint( SfxPrinter *pPrinter, PrintDialog *pDlg, BOOL bSilent, 
 
             SW_MOD()->ApplyUsrPref(*pOrgViewOption, this, VIEWOPT_DEST_VIEW_ONLY );
         }
-        
+
         if( nMergeType == DBMGR_MERGE_MAILMERGE ||
                 DBMGR_MERGE_DOCUMENTS == nMergeType )
         {
@@ -431,9 +435,19 @@ ErrCode SwView::DoPrint( SfxPrinter *pPrinter, PrintDialog *pDlg, BOOL bSilent, 
     }
 
     pProgress->Stop();
-    pProgress->DeleteOnEndPrint();
-    pPrinter->EndJob();
-    return pPrinter->GetError();
+    if ( pPrinter->IsJobActive() )
+    {
+        pProgress->DeleteOnEndPrint();
+        pPrinter->EndJob();
+        return pPrinter->GetError();
+    }
+    else
+    {
+        // the next call might destroy pPrinter (in case it is not the usual document printer); so get the error before
+        ULONG nError = pPrinter->GetError();
+        pProgress->DeleteOnEndPrint();
+        return nError;
+    }
 }
 
 
