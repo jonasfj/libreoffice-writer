@@ -1,7 +1,7 @@
 /*************************************************************************
  *
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
- * 
+ *
  * Copyright 2008 by Sun Microsystems, Inc.
  *
  * OpenOffice.org - a multi-platform office productivity suite
@@ -407,7 +407,7 @@ void SwShadowCursorItem::FillViewOptions( SwViewOption& rVOpt ) const
     rVOpt.SetShdwCrsrFillMode( eMode );
 }
 
-#ifndef PRODUCT
+#ifdef DBG_UTIL
 /*--------------------------------------------------------------------
     Beschreibung:
  --------------------------------------------------------------------*/
