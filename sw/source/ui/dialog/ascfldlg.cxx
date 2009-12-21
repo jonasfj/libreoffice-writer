@@ -1,7 +1,7 @@
 /*************************************************************************
  *
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
- * 
+ *
  * Copyright 2008 by Sun Microsystems, Inc.
  *
  * OpenOffice.org - a multi-platform office productivity suite
@@ -37,7 +37,7 @@
 #include <rtl/textenc.h>
 #include <i18npool/mslangid.hxx>
 #include <com/sun/star/i18n/ScriptType.hpp>
-#include <svtools/lingucfg.hxx>
+#include <unotools/lingucfg.hxx>
 #include <fontcfg.hxx>
 #include <swmodule.hxx>
 #include <svx/unolingu.hxx>

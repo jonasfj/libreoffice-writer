@@ -1,7 +1,7 @@
 /*************************************************************************
  *
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
- * 
+ *
  * Copyright 2008 by Sun Microsystems, Inc.
  *
  * OpenOffice.org - a multi-platform office productivity suite
@@ -218,13 +218,13 @@ class SwLayIdle
     BOOL		bPageValid;		// Konnte die Seite alles validiert werden?
     BOOL		bAllValid;      // Konnte alles validiert werden?
 
-#ifndef PRODUCT
+#ifdef DBG_UTIL
     BOOL bIndicator;
 #endif
 
 #ifdef _LAYACT_CXX
 
-#ifndef PRODUCT
+#ifdef DBG_UTIL
     void ShowIdle( ColorData eName );
 #endif
 
