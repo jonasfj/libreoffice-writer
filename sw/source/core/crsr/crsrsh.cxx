@@ -1,7 +1,7 @@
 /*************************************************************************
  *
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
- * 
+ *
  * Copyright 2008 by Sun Microsystems, Inc.
  *
  * OpenOffice.org - a multi-platform office productivity suite
@@ -1772,13 +1772,6 @@ void SwCrsrShell::UpdateCrsr( USHORT eFlags, BOOL bIdleEnd )
             }
         }
     }
-
-    //Ggf. gescrollten Bereicht korrigieren (Alignment).
-    //Nur wenn gescrollt wurde, und wenn keine Selektion existiert.
-    if( pFrm && Imp()->IsScrolled() &&
-            pShellCrsr->GetNext() == pShellCrsr && !pShellCrsr->HasMark() )
-        Imp()->RefreshScrolledArea( aCharRect );
-
 
     eMvState = MV_NONE;		// Status fuers Crsr-Travelling - GetCrsrOfst
 
