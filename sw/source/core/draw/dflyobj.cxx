@@ -1,7 +1,7 @@
 /*************************************************************************
  *
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
- * 
+ *
  * Copyright 2008 by Sun Microsystems, Inc.
  *
  * OpenOffice.org - a multi-platform office productivity suite
@@ -305,9 +305,9 @@ namespace drawinglayer
 } // end of namespace drawinglayer
 
 //////////////////////////////////////////////////////////////////////////////////////
-// AW: own sdr::contact::ViewContact (VC) sdr::contact::ViewObjectContact (VOC) needed 
-// since offset is defined different from SdrVirtObj's sdr::contact::ViewContactOfVirtObj. 
-// For paint, that offset is used by setting at the OutputDevice; for primitives this is 
+// AW: own sdr::contact::ViewContact (VC) sdr::contact::ViewObjectContact (VOC) needed
+// since offset is defined different from SdrVirtObj's sdr::contact::ViewContactOfVirtObj.
+// For paint, that offset is used by setting at the OutputDevice; for primitives this is
 // not possible since we have no OutputDevice, but define the geometry itself.
 
 namespace sdr
@@ -328,7 +328,7 @@ namespace sdr
             {
             }
             virtual ~VCOfSwVirtFlyDrawObj();
-            
+
             // access to SwVirtFlyDrawObj
             SwVirtFlyDrawObj& GetSwVirtFlyDrawObj() const
             {
@@ -357,7 +357,7 @@ namespace sdr
                 {
                     const drawinglayer::primitive2d::Primitive2DReference xPrimitive(
                         new drawinglayer::primitive2d::SwVirtFlyDrawObjPrimitive(
-                            GetSwVirtFlyDrawObj(), 
+                            GetSwVirtFlyDrawObj(),
                             aOuterRange));
 
                     xRetval = drawinglayer::primitive2d::Primitive2DSequence(&xPrimitive, 1);
@@ -388,8 +388,8 @@ basegfx::B2DRange SwVirtFlyDrawObj::getOuterBound() const
         {
             const Rectangle aOuterRectangle(pFlyFrame->Frm().Pos(), pFlyFrame->Frm().SSize());
 
-            if(!aOuterRectangle.IsEmpty() 
-                && RECT_EMPTY != aOuterRectangle.Right() 
+            if(!aOuterRectangle.IsEmpty()
+                && RECT_EMPTY != aOuterRectangle.Right()
                 && RECT_EMPTY != aOuterRectangle.Bottom())
             {
                 aOuterRange.expand(basegfx::B2DTuple(aOuterRectangle.Left(), aOuterRectangle.Top()));
@@ -414,8 +414,8 @@ basegfx::B2DRange SwVirtFlyDrawObj::getInnerBound() const
         {
             const Rectangle aInnerRectangle(pFlyFrame->Frm().Pos() + pFlyFrame->Prt().Pos(), pFlyFrame->Prt().SSize());
 
-            if(!aInnerRectangle.IsEmpty() 
-                && RECT_EMPTY != aInnerRectangle.Right() 
+            if(!aInnerRectangle.IsEmpty()
+                && RECT_EMPTY != aInnerRectangle.Right()
                 && RECT_EMPTY != aInnerRectangle.Bottom())
             {
                 aInnerRange.expand(basegfx::B2DTuple(aInnerRectangle.Left(), aInnerRectangle.Top()));
@@ -501,7 +501,7 @@ void SwVirtFlyDrawObj::wrap_DoPaintObject() const
 
         if(bDrawObject)
         {
-            if(!pFlyFrm->IsFlyInCntFrm()) 
+            if(!pFlyFrm->IsFlyInCntFrm())
             {
                 // it is also necessary to restore the VCL MapMode from ViewInformation since e.g.
                 // the VCL PixelRenderer resets it at the used OutputDevice. Unfortunately, this
@@ -510,10 +510,10 @@ void SwVirtFlyDrawObj::wrap_DoPaintObject() const
 
                 pOut->Push(PUSH_MAPMODE);
                 pOut->SetMapMode(pShell->getPrePostMapMode());
-                
+
                 // paint the FlyFrame (use standard VCL-Paint)
                 pFlyFrm->Paint(GetFlyFrm()->Frm());
-                
+
                 pOut->Pop();
             }
         }
@@ -564,6 +564,11 @@ const Rectangle& __EXPORT SwVirtFlyDrawObj::GetCurrentBoundRect() const
 {
     SetRect();
     return aOutRect;
+}
+
+const Rectangle& __EXPORT SwVirtFlyDrawObj::GetLastBoundRect() const
+{
+    return GetCurrentBoundRect();
 }
 
 
