@@ -1,7 +1,7 @@
 /*************************************************************************
  *
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
- * 
+ *
  * Copyright 2008 by Sun Microsystems, Inc.
  *
  * OpenOffice.org - a multi-platform office productivity suite
@@ -174,7 +174,7 @@ void SwView::ExecDraw(SfxRequest& rReq)
 
                     // TODO: unmark all other
                     pWrtShell->EnterStdMode();
-                    pWrtShell->SwFEShell::Insert( *pObj, 0, 0, &aStartPos );
+                    pWrtShell->SwFEShell::InsertDrawObj( *pObj, aStartPos );
                 }
             }
         }
@@ -221,7 +221,7 @@ void SwView::ExecDraw(SfxRequest& rReq)
                     aSize = Size( 2835, 2835 );
 
                 pWrtShell->EnterStdMode();
-                pWrtShell->SwFEShell::Insert( *pObj, 0, 0, &aPos );
+                pWrtShell->SwFEShell::InsertDrawObj( *pObj, aPos );
                 rReq.Ignore ();
             }
         }
@@ -246,8 +246,8 @@ void SwView::ExecDraw(SfxRequest& rReq)
     }
 
     //deselect if same shape is selected again (but different custom shapes do have same slot id)
-    if ( bDeselect || (nSlotId == nDrawSfxId && 
-            (!pStringItem || (pStringItem->GetValue() == sDrawCustom)) 
+    if ( bDeselect || (nSlotId == nDrawSfxId &&
+            (!pStringItem || (pStringItem->GetValue() == sDrawCustom))
                 && (nSlotId != SID_DRAW_CS_ID) ) )
     {
         if (GetDrawFuncPtr())
@@ -421,7 +421,7 @@ void SwView::ExitDraw()
     NoRotate();
 
     if(pShell)
-    {   
+    {
         //#126062 # the shell may be invalid at close/reload/SwitchToViewShell
         SfxDispatcher* pDispatch = GetViewFrame()->GetDispatcher();
         USHORT nIdx = 0;
@@ -431,7 +431,7 @@ void SwView::ExitDraw()
             pTest = pDispatch->GetShell(nIdx++);
         }
         while( pTest && pTest != this && pTest != pShell);
-        if(pTest == pShell && 
+        if(pTest == pShell &&
             // don't call LeaveSelFrmMode() etc. for the below,
             // because objects may still be selected:
             !pShell->ISA(SwDrawBaseShell) &&

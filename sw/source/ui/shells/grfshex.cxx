@@ -1,7 +1,7 @@
 /*************************************************************************
  *
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
- * 
+ *
  * Copyright 2008 by Sun Microsystems, Inc.
  *
  * OpenOffice.org - a multi-platform office productivity suite
@@ -161,7 +161,7 @@ bool SwTextShell::InsertMediaDlg( SfxRequest& rReq )
 
             pObj->setURL( aURL );
             rSh.EnterStdMode();
-            rSh.SwFEShell::Insert( *pObj, 0, 0, &aPos );
+            rSh.SwFEShell::InsertDrawObj( *pObj, aPos );
             bRet = true;
 
             if( pWindow )
