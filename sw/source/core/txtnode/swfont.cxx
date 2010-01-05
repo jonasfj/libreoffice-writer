@@ -1,7 +1,7 @@
 /*************************************************************************
  *
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
- * 
+ *
  * Copyright 2008 by Sun Microsystems, Inc.
  *
  * OpenOffice.org - a multi-platform office productivity suite
@@ -88,7 +88,7 @@
 #define FNT_ATM_HACK
 #endif
 
-#ifndef PRODUCT
+#ifdef DBG_UTIL
 // globale Variable
 SvStatistics aSvStat;
 #endif
@@ -825,7 +825,7 @@ Size SwSubFont::_GetTxtSize( SwDrawTextInfo& rInf )
         rInf.SetText( aNewText );
         rInf.SetIdx( 0 );
         rInf.SetLen( aNewText.Len() );
-        aTxtSize = pLastFont->GetTextSize( rInf );      
+        aTxtSize = pLastFont->GetTextSize( rInf );
         rInf.SetIdx( nOldIdx );
         rInf.SetLen( nOldLen );
     }
@@ -837,9 +837,9 @@ Size SwSubFont::_GetTxtSize( SwDrawTextInfo& rInf )
         rInf.SetText( aNewText );
         rInf.SetIdx( 0 );
         rInf.SetLen( aNewText.Len() );
-        aTxtSize = pLastFont->GetTextSize( rInf );      
+        aTxtSize = pLastFont->GetTextSize( rInf );
         rInf.SetIdx( nOldIdx );
-        rInf.SetLen( nOldLen ); 
+        rInf.SetLen( nOldLen );
     }
 
     return aTxtSize;

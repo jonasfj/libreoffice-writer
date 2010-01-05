@@ -1,7 +1,7 @@
 /*************************************************************************
  *
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
- * 
+ *
  * Copyright 2008 by Sun Microsystems, Inc.
  *
  * OpenOffice.org - a multi-platform office productivity suite
@@ -50,7 +50,7 @@ BOOL SwOutlineNodes::Seek_Entry( const SwNodePtr rSrch, USHORT* pFndPos ) const
 //JP 17.03.98: aufgrund des Bug 48592 - wo unter anderem nach Undo/Redo
 //				Nodes aus dem falschen NodesArray im OutlineArray standen,
 //				jetzt mal einen Check eingebaut.
-#ifndef PRODUCT
+#ifdef DBG_UTIL
         {
             for( USHORT n = 1; n < nO; ++n )
                 if( &(*this)[ n-1 ]->GetNodes() !=
@@ -125,7 +125,7 @@ void SwNodes::UpdateOutlineNode(SwNode & rNd)
         // die Gliederungs-Felder Updaten
         GetDoc()->GetSysFldType( RES_CHAPTERFLD )->UpdateFlds();
     }
-} 
+}
 
 //void SwNodes::UpdateOutlineNode( const SwNode& rNd, BYTE nOldLevel, //#outline level,removed by zhaojianwei
 //                                 BYTE nNewLevel )

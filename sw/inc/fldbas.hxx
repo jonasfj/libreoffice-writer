@@ -1,7 +1,7 @@
 /*************************************************************************
  *
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
- * 
+ *
  * Copyright 2008 by Sun Microsystems, Inc.
  *
  * OpenOffice.org - a multi-platform office productivity suite
@@ -278,7 +278,7 @@ protected:
 
 public:
 
-#ifndef PRODUCT
+#ifdef DBG_UTIL
     virtual ~SwFieldType();
 #endif
     static	const String&	GetTypeStr( USHORT nTypeId );
@@ -337,7 +337,7 @@ public:
 
     // ResId
     USHORT              Which() const
-#ifdef PRODUCT
+#ifndef DBG_UTIL
         { return pType->Which(); }
 #else
         ;       // in fldbas.cxx implementiert

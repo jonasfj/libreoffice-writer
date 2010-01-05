@@ -1,7 +1,7 @@
 /*************************************************************************
  *
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
- * 
+ *
  * Copyright 2008 by Sun Microsystems, Inc.
  *
  * OpenOffice.org - a multi-platform office productivity suite
@@ -34,11 +34,11 @@
 
 #ifndef _ZFORLIST_HXX
 #define _ZFORLIST_DECLARE_TABLE
-#include <svtools/zforlist.hxx>
+#include <svl/zforlist.hxx>
 #endif
-#include <svtools/stritem.hxx>
-#include <svtools/whiter.hxx>
-#include <svtools/moduleoptions.hxx>
+#include <svl/stritem.hxx>
+#include <svl/whiter.hxx>
+#include <unotools/moduleoptions.hxx>
 #include <svx/rulritem.hxx>
 #include <svx/srchitem.hxx>
 #include <svx/lrspitem.hxx>
@@ -55,7 +55,7 @@
 #include <svx/numinf.hxx>
 #include <svx/svddef.hxx>
 #include <svx/svxdlg.hxx>
-#include <svtools/zformat.hxx>
+#include <svl/zformat.hxx>
 #include <sfx2/bindings.hxx>
 #include <vcl/msgbox.hxx>
 #include <sfx2/request.hxx>
@@ -735,7 +735,7 @@ void SwTableShell::Execute(SfxRequest &rReq)
                 SwAbstractDialogFactory* pFact = SwAbstractDialogFactory::Create();
                 DBG_ASSERT(pFact, "SwAbstractDialogFactory fail!");
 
-                SfxAbstractDialog* pDlg = pFact->CreateSfxDialog( GetView().GetWindow(),aCoreSet, 
+                SfxAbstractDialog* pDlg = pFact->CreateSfxDialog( GetView().GetWindow(),aCoreSet,
                     pView->GetViewFrame()->GetFrame()->GetFrameInterface(),
                     RC_DLG_SWNUMFMTDLG );
                 DBG_ASSERT(pDlg, "Dialogdiet fail!");
@@ -969,7 +969,7 @@ void SwTableShell::Execute(SfxRequest &rReq)
         case FN_TABLE_INSERT_ROW_DLG:
         {
             if ( FN_TABLE_INSERT_ROW_DLG != nSlot || !rSh.IsInRepeatedHeadline())
-            {			
+            {
                 SvxAbstractDialogFactory* pFact = SvxAbstractDialogFactory::Create();
                 ::std::auto_ptr<SvxAbstractInsRowColDlg> pDlg( pFact ? pFact->CreateSvxInsRowColDlg( GetView().GetWindow(), nSlot == FN_TABLE_INSERT_COL_DLG, nSlot) : 0);
 
@@ -1046,7 +1046,7 @@ void SwTableShell::Execute(SfxRequest &rReq)
                         rSh.SplitTable(pType->GetValue()) ;
                     default: ;//wrong parameter, do nothing
                 }
-            }    
+            }
             else
             {
                 SwAbstractDialogFactory* pFact = SwAbstractDialogFactory::Create();
