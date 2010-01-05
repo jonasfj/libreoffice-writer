@@ -1,7 +1,7 @@
 /*************************************************************************
  *
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
- * 
+ *
  * Copyright 2008 by Sun Microsystems, Inc.
  *
  * OpenOffice.org - a multi-platform office productivity suite
@@ -311,7 +311,7 @@ void _FrmInit()
 {
     SwRootFrm::pVout = new SwLayVout();
     SwCache *pNew = new SwCache( 100, 100
-#ifndef PRODUCT
+#ifdef DBG_UTIL
     , "static SwBorderAttrs::pCache"
 #endif
     );
@@ -322,7 +322,7 @@ void _FrmInit()
 
 void _FrmFinit()
 {
-#ifndef PRODUCT
+#ifdef DBG_UTIL
     // im Chache duerfen nur noch 0-Pointer stehen
     for( USHORT n = SwFrm::GetCachePtr()->Count(); n; )
         if( (*SwFrm::GetCachePtr())[ --n ] )

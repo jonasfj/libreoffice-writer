@@ -1,7 +1,7 @@
 /*************************************************************************
  *
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
- * 
+ *
  * Copyright 2008 by Sun Microsystems, Inc.
  *
  * OpenOffice.org - a multi-platform office productivity suite
@@ -38,14 +38,14 @@
 #include <svx/galbrws.hxx>
 #include <svx/srchitem.hxx>
 #include <SwSpellDialogChildWindow.hxx>
-#include <svtools/eitem.hxx>
-#include <svtools/linguprops.hxx>
-#include <svtools/lingucfg.hxx>
+#include <svl/eitem.hxx>
+#include <unotools/linguprops.hxx>
+#include <unotools/lingucfg.hxx>
 #include <viewopt.hxx>
 #include <globals.h>
 #include <sfx2/app.hxx>
 #include <sfx2/request.hxx>
-#include <svtools/whiter.hxx>
+#include <svl/whiter.hxx>
 #include <svx/srchdlg.hxx>
 #include <sfx2/templdlg.hxx>
 #include <uivwimp.hxx>
@@ -99,7 +99,7 @@
 using namespace ::com::sun::star;
 using ::rtl::OUString;
 
-#include <svtools/moduleoptions.hxx>
+#include <unotools/moduleoptions.hxx>
 
 #include <IDocumentSettingAccess.hxx>
 
@@ -275,7 +275,7 @@ void SwView::StateViewOptions(SfxItemSet &rSet)
                 aBool.SetValue( SwViewOption::IsTableBoundaries() ); break;
             case FN_VIEW_NOTES:
             {
-                aBool.SetValue( pOpt->IsPostIts()); 
+                aBool.SetValue( pOpt->IsPostIts());
                 if (!GetPostItMgr()->HasNotes())
                 {
                     aBool.SetWhich( nWhich );
@@ -400,7 +400,7 @@ void SwView::ExecViewOptions(SfxRequest &rReq)
     case FN_VIEW_NOTES:
                 if ( STATE_TOGGLE == eState )
                     bFlag = !pOpt->IsPostIts();
-                
+
                 GetPostItMgr()->SetLayout();
                 pOpt->SetPostIts( bFlag );
                    if (pOpt->IsPostIts())
@@ -502,7 +502,7 @@ void SwView::ExecViewOptions(SfxRequest &rReq)
 
                     if (pDoc && bIsAutoGrammar)
                         StartGrammarChecking( *pDoc );
-                }    
+                }
             }
         break;
         case FN_SHADOWCURSOR:
@@ -537,7 +537,7 @@ void SwView::ExecViewOptions(SfxRequest &rReq)
         rSh.ResetModified();
 
     pModule->ApplyUsrPref( *pOpt, this, bWebView ? VIEWOPT_DEST_WEB : VIEWOPT_DEST_TEXT );
-    
+
     //mod #i6193# let postits know about new spellcheck setting
     if ( nSlot == SID_AUTOSPELL_CHECK )
         GetPostItMgr()->SetSpellChecking();

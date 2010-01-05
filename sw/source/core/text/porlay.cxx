@@ -195,7 +195,7 @@ sal_Bool lcl_ConnectToPrev( xub_Unicode cCh, xub_Unicode cPrevCh )
     // to the left. So we look for the characters that are actually connectable
     // to the left. Here is the complete list of WH:
 
-    // (hennerdrewes): 
+    // (hennerdrewes):
     // added lam forms 0x06B5..0x06B8
     // added 0x6FA..0x6FC, according to unicode documentation, although not present in my fonts
     // added heh goal 0x6C1
@@ -210,7 +210,7 @@ sal_Bool lcl_ConnectToPrev( xub_Unicode cCh, xub_Unicode cPrevCh )
                   ( 0x6FA <= cPrevCh && cPrevCh <= 0x6FC )  ;
 
     // check for ligatures cPrevChar + cChar
-    if( bRet ) 
+    if( bRet )
         bRet = !lcl_IsLigature( cPrevCh, cCh );
     return bRet;
 }
@@ -1163,7 +1163,7 @@ void SwScriptInfo::InitScriptInfo( const SwTxtNode& rNode, sal_Bool bRTL )
                     // after a Seen or Sad
                     if (nPriorityLevel >= 1 && nIdx < nWordLen - 1)
                     {
-                        if( isSeenOrSadChar( cCh ) 
+                        if( isSeenOrSadChar( cCh )
                          && (rWord.GetChar( nIdx+1 ) != 0x200C) ) // #i98410#: prevent ZWNJ expansion
                         {
                             nKashidaPos  = aScanner.GetBegin() + nIdx;
@@ -1293,7 +1293,7 @@ void SwScriptInfo::InitScriptInfo( const SwTxtNode& rNode, sal_Bool bRTL )
         nLastKashida = nChg;
     };
 
-#ifndef PRODUCT
+#ifdef DBG_UTIL
     // check kashida data
     long nTmpKashidaPos = -1;
     sal_Bool bWrongKash = sal_False;

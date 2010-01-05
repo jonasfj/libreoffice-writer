@@ -285,7 +285,7 @@ void sw::util::RedlineStack::close( const SwPosition& rPos,
     {
         if( pTabDesc && pTabDesc->getOldRedlineStack() )
         {
-#ifndef PRODUCT
+#ifdef DBG_UTIL
             ASSERT( pTabDesc->getOldRedlineStack()->close(rPos, eType), "close without open!");
 #else
             pTabDesc->getOldRedlineStack()->close( rPos, eType );
@@ -1170,6 +1170,7 @@ void WW8TabBandDesc::ReadDef(bool bVer67, const BYTE* pS)
         pS++;
 
     short nLen = (INT16)SVBT16ToShort( pS - 2 ); // nicht schoen
+
     BYTE nCols = *pS;                       // Anzahl der Zellen
     short nOldCols = nWwCols;
 
@@ -1200,7 +1201,11 @@ void WW8TabBandDesc::ReadDef(bool bVer67, const BYTE* pS)
         setcelldefaults(pTCs,nCols);
     }
 
-    if( nFileCols )
+    short nColsToRead = nFileCols;
+    if (nColsToRead > nCols)
+        nColsToRead = nCols;
+
+    if( nColsToRead )
     {
         // lies TCs ein
 
@@ -1216,9 +1221,9 @@ void WW8TabBandDesc::ReadDef(bool bVer67, const BYTE* pS)
         if( bVer67 )
         {
             WW8_TCellVer6* pTc = (WW8_TCellVer6*)pT;
-            for(i=0; i<nFileCols; i++, ++pAktTC,++pTc)
+            for(i=0; i<nColsToRead; i++, ++pAktTC,++pTc)
             {
-                if( i < nFileCols )
+                if( i < nColsToRead )
                 {               // TC aus File ?
                     BYTE aBits1 = SVBT8ToByte( pTc->aBits1Ver6 );
                     pAktTC->bFirstMerged    = ( ( aBits1 & 0x01 ) != 0 );
@@ -1248,7 +1253,7 @@ void WW8TabBandDesc::ReadDef(bool bVer67, const BYTE* pS)
         else
         {
             WW8_TCellVer8* pTc = (WW8_TCellVer8*)pT;
-            for (int k = 0; k < nFileCols; ++k, ++pAktTC, ++pTc )
+            for (int k = 0; k < nColsToRead; ++k, ++pAktTC, ++pTc )
             {
                 UINT16 aBits1 = SVBT16ToShort( pTc->aBits1Ver8 );
                 pAktTC->bFirstMerged    = ( ( aBits1 & 0x0001 ) != 0 );
@@ -1295,6 +1300,12 @@ void WW8TabBandDesc::ProcessSprmTSetBRC(bool bVer67, const BYTE* pParamsTSetBRC)
         BYTE nitcFirst= pParamsTSetBRC[0];// first col to be changed
         BYTE nitcLim  = pParamsTSetBRC[1];// (last col to be changed)+1
         BYTE nFlag    = *(pParamsTSetBRC+2);
+
+        if (nitcFirst >= nWwCols)
+            return;
+
+        if (nitcLim > nWwCols)
+            nitcLim = nWwCols;
 
         bool bChangeRight  = (nFlag & 0x08) ? true : false;
         bool bChangeBottom = (nFlag & 0x04) ? true : false;
@@ -1491,7 +1502,7 @@ void WW8TabBandDesc::ProcessSpacing(const BYTE* pParams)
     if (nLen != 6)
         return;
     mbHasSpacing=true;
-#ifndef PRODUCT
+#ifdef DBG_UTIL
     BYTE nWhichCell =
 #endif
             *pParams++;
@@ -1545,7 +1556,7 @@ void WW8TabBandDesc::ProcessSpecificSpacing(const BYTE* pParams)
 
     ASSERT(nOverrideSpacing[nWhichCell] < 0x10,
         "Unexpected value for nSideBits");
-#ifndef PRODUCT
+#ifdef DBG_UTIL
     BYTE nUnknown2 =
 #endif
             *pParams++;
@@ -1879,7 +1890,7 @@ WW8TabDesc::WW8TabDesc(SwWW8ImplReader* pIoClass, WW8_CP nStartCp) :
                         const BYTE b0 = pParams[0];
                         const BYTE b1 = pParams[1];
                         const BYTE b2 = pParams[2];
-                        if (b0 == 3) // Twips 
+                        if (b0 == 3) // Twips
                             nPreferredWidth = b2 * 0x100 + b1;
                         }
                         break;
@@ -3624,9 +3635,9 @@ void SwWW8ImplReader::TabCellEnd()
     {
         pTableDesc->TableCellEnd();
 
-        if (bReadTable 
-            && pWFlyPara == NULL 
-            && mpTableEndPaM.get() != NULL 
+        if (bReadTable
+            && pWFlyPara == NULL
+            && mpTableEndPaM.get() != NULL
             && (! SwPaM::Overlap(*pPaM, *mpTableEndPaM))
             && SwPaM::LessThan(*mpTableEndPaM, *pPaM)
             && mpTableEndPaM->GetPoint()->nNode.GetNode().IsTxtNode()
@@ -3636,7 +3647,7 @@ void SwWW8ImplReader::TabCellEnd()
             rDoc.DelFullPara(*mpTableEndPaM);
         }
     }
-    
+
     bFirstPara = true;    // We have come to the end of a cell so FirstPara flag
     bReadTable = false;
     mpTableEndPaM.reset();
@@ -3691,7 +3702,7 @@ void SwWW8ImplReader::StopTable()
         maTracer.EnterEnvironment(sw::log::eTable, rtl::OUString::valueOf(
             static_cast<sal_Int32>(maTableStack.size())));
     }
-    
+
     bReadTable = true;
     // --> OD 2009-04-16 #i101116#
     // Keep PaM on table end only for nested tables

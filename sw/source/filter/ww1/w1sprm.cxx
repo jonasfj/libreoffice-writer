@@ -1,7 +1,7 @@
 /*************************************************************************
  *
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
- * 
+ *
  * Copyright 2008 by Sun Microsystems, Inc.
  *
  * OpenOffice.org - a multi-platform office productivity suite
@@ -267,7 +267,7 @@ void Ww1SingleSprmPBrc::Start(
     Ww1Shell& rOut, BYTE,
     W1_BRC10* pBrc,
     USHORT
-#ifndef PRODUCT
+#ifdef DBG_UTIL
     nSize
 #endif
     ,
@@ -467,7 +467,7 @@ void Ww1SingleSprmPFInTable::Start(
 
 void Ww1SingleSprmPFInTable::Stop(
     Ww1Shell&
-#ifndef PRODUCT
+#ifdef DBG_UTIL
     rOut
 #endif
     ,
