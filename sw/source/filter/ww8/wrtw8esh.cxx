@@ -1,6 +1,7 @@
 /*************************************************************************
  *
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
+ *
  * 
  * Copyright 2008 by Sun Microsystems, Inc.
  *
@@ -38,14 +39,14 @@
 
 #define _SVSTDARR_ULONGSSORT
 #define _SVSTDARR_USHORTS
-#include <svtools/svstdarr.hxx>
+#include <svl/svstdarr.hxx>
 #include <vcl/cvtgrf.hxx>
 #include <vcl/virdev.hxx>
 #include <com/sun/star/drawing/XShape.hpp>
 #include <vcl/svapp.hxx>
 #include <sot/storage.hxx>
 #include <svtools/filter.hxx>
-#include <svtools/itemiter.hxx>
+#include <svl/itemiter.hxx>
 #include <svx/svdobj.hxx>
 #include <svx/svdotext.hxx>
 #include <svx/svdmodel.hxx>
@@ -204,9 +205,9 @@ void WW8Export::DoComboBox(const rtl::OUString &rName,
     // write the refence to the "picture" structure
     ULONG nDataStt = pDataStrm->Tell();
     pChpPlc->AppendFkpEntry( Strm().Tell() );
-    
+
     WriteChar( 0x01 );
-    
+
     static BYTE aArr1[] =
     {
         0x03, 0x6a, 0,0,0,0,    // sprmCPicLocation
@@ -216,29 +217,29 @@ void WW8Export::DoComboBox(const rtl::OUString &rName,
     };
     BYTE* pDataAdr = aArr1 + 2;
     Set_UInt32( pDataAdr, nDataStt );
-    
+
     pChpPlc->AppendFkpEntry(Strm().Tell(), sizeof(aArr1), aArr1);
-    
+
     OutputField(0, ww::eFORMDROPDOWN, FieldString(ww::eFORMDROPDOWN),
              WRITEFIELD_CLOSE);
-    
+
     ::sw::WW8FFData aFFData;
-    
-    aFFData.setType(2); 
+
+    aFFData.setType(2);
     aFFData.setName(rName);
     aFFData.setHelp(rHelp);
     aFFData.setStatus(rToolTip);
-    
+
     sal_uInt32 nListItems = rListItems.getLength();
-    
+
     for (sal_uInt32 i = 0; i < nListItems; i++)
     {
         if (i < 0x20 && rSelected == rListItems[i])
             aFFData.setResult(::sal::static_int_cast<sal_uInt8>(i));
         aFFData.addListboxEntry(rListItems[i]);
     }
-        
-    aFFData.Write(pDataStrm);    
+
+    aFFData.Write(pDataStrm);
 }
 
 void WW8Export::DoCheckBox(uno::Reference<beans::XPropertySet> xPropSet)
@@ -265,12 +266,12 @@ void WW8Export::DoCheckBox(uno::Reference<beans::XPropertySet> xPropSet)
 
     pChpPlc->AppendFkpEntry(Strm().Tell(),
                 sizeof( aArr1 ), aArr1 );
-                
+
     ::sw::WW8FFData aFFData;
-    
+
     aFFData.setType(1);
     aFFData.setCheckboxHeight(0x14);
-    
+
     sal_Int16 nTemp = 0;
     xPropSet->getPropertyValue(C2U("DefaultState")) >>= nTemp;
     sal_uInt32 nIsDefaultChecked(nTemp);
@@ -292,7 +293,7 @@ void WW8Export::DoCheckBox(uno::Reference<beans::XPropertySet> xPropSet)
                 ASSERT(!this, "how did that happen");
         }
     }
-    
+
     ::rtl::OUString aStr;
     static ::rtl::OUString sName(C2U("Name"));
     if (xPropSetInfo->hasPropertyByName(sName))
@@ -342,7 +343,7 @@ void WW8Export::DoFormText(const SwInputField * pFld)
                 sizeof( aArr1 ), aArr1 );
 
     ::sw::WW8FFData aFFData;
-    
+
     aFFData.setType(0);
     aFFData.setName(pFld->GetPar2());
     aFFData.setHelp(pFld->GetHelp());
@@ -2018,7 +2019,7 @@ SwEscherEx::SwEscherEx(SvStream* pStrm, WW8Export& rWW8Wrt)
                         if (bSwapInPage)
                             (const_cast<SdrObject*>(pSdrObj))->SetPage(0);
                     }
-#ifndef PRODUCT
+#ifdef DBG_UTIL
                     else
                         ASSERT( !this, "Where is the SDR-Object?" );
 #endif

@@ -1,7 +1,7 @@
 /*************************************************************************
  *
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
- * 
+ *
  * Copyright 2008 by Sun Microsystems, Inc.
  *
  * OpenOffice.org - a multi-platform office productivity suite
@@ -203,9 +203,9 @@ void SwDoc::AppendUndo( SwUndo* pUndo )
     USHORT nEnde = UNDO_ACTION_LIMIT;
 
 // nur zum Testen der neuen DOC-Member
-#ifndef PRODUCT
+#ifdef DBG_UTIL
 {
-    SwUndoId nId = UNDO_EMPTY; 
+    SwUndoId nId = UNDO_EMPTY;
     USHORT nUndosCnt = 0, nSttEndCnt = 0;
     for( USHORT nCnt = 0; nCnt < nUndoPos; ++nCnt )
     {
@@ -551,7 +551,7 @@ SwUndoId SwDoc::EndUndo(SwUndoId eUndoId, const SwRewriter * pRewriter)
     pUndoEnd->SetSttOffset( nSize );
 
 // nur zum Testen der Start/End-Verpointerung vom Start/End Undo
-#ifndef PRODUCT
+#ifdef DBG_UTIL
     {
         USHORT nEndCnt = 1, nCnt = pUndos->Count();
         SwUndoId nTmpId = UNDO_EMPTY;

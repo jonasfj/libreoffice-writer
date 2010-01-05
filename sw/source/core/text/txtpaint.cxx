@@ -1,7 +1,7 @@
 /*************************************************************************
  *
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
- * 
+ *
  * Copyright 2008 by Sun Microsystems, Inc.
  *
  * OpenOffice.org - a multi-platform office productivity suite
@@ -122,7 +122,7 @@ void SwSaveClip::_ChgClip( const SwRect &rRect, const SwTxtFrm* pFrm,
 #endif
         }
 #if OSL_DEBUG_LEVEL > 1
-#ifndef PRODUCT
+#ifdef DBG_UTIL
         static sal_Bool bDbg = sal_False;
         if( bDbg )
         {
