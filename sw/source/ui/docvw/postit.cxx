@@ -68,11 +68,11 @@
 #include <svx/unolingu.hxx>
 
 #include <svtools/langtab.hxx>
-#include <svtools/slstitm.hxx>
-#include <svtools/securityoptions.hxx>
-#include <svtools/useroptions.hxx>
-#include <svtools/languageoptions.hxx>
-#include <svtools/zforlist.hxx>
+#include <svl/slstitm.hxx>
+#include <unotools/securityoptions.hxx>
+#include <unotools/useroptions.hxx>
+#include <svl/languageoptions.hxx>
+#include <svl/zforlist.hxx>
 #include <svtools/svmedit.hxx>
 
 #include <linguistic/lngprops.hxx>
@@ -268,7 +268,7 @@ void PostItTxt::KeyInput( const KeyEvent& rKeyEvt )
                     ( (aStatus==SwPostItHelper::DELETED) && (!mpMarginWin->Engine()->GetEditEngine().DoesKeyChangeText(rKeyEvt))) )
             */
             bool bIsProtected = mpMarginWin->IsProtected();
-            if (!bIsProtected || (bIsProtected && !mpMarginWin->Engine()->GetEditEngine().DoesKeyChangeText(rKeyEvt)) ) 
+            if (!bIsProtected || (bIsProtected && !mpMarginWin->Engine()->GetEditEngine().DoesKeyChangeText(rKeyEvt)) )
                 bDone = mpOutlinerView->PostKeyEvent( rKeyEvt );
             else
                 InfoBox( this, SW_RES( MSG_READONLY_CONTENT )).Execute();
@@ -540,7 +540,7 @@ SwMarginWin::SwMarginWin(Window* pParent, WinBits nBits,SwPostItMgr* aMgr,SwPost
         mpShadow = new SwPostItShadow(basegfx::B2DPoint(0,0),basegfx::B2DPoint(0,0),Color(0,0,0),SS_NORMAL);
         mpShadow->setVisible(false);
         pOverlayManager->add(*mpShadow);
-    }	
+    }
 }
 
 SwMarginWin::~SwMarginWin()
@@ -828,7 +828,7 @@ void SwMarginWin::Rescale()
     //aMode.SetScaleX( aMode.GetScaleX() * Fraction( 8, 10 ) );
     //aMode.SetScaleY( aMode.GetScaleY() * Fraction( 8, 10 ) );
     mpOutliner->SetRefMapMode( aMode );
-    SetMapMode( aMode );	
+    SetMapMode( aMode );
     mpPostItTxt->SetMapMode( aMode );
     if ( mpMeta )
     {
@@ -890,7 +890,7 @@ void SwMarginWin::SetPosAndSize()
                                             basegfx::B2DPoint( mAnkorRect.Left(), mAnkorRect.Bottom()+2*15),
                                             basegfx::B2DPoint( mPageBorder ,mAnkorRect.Bottom()+2*15),
                                             basegfx::B2DPoint( aLineStart.X(),aLineStart.Y()),
-                                            basegfx::B2DPoint( aLineEnd.X(),aLineEnd.Y()) , 
+                                            basegfx::B2DPoint( aLineEnd.X(),aLineEnd.Y()) ,
                                             mColorAnkor,
                                             false,
                                             false);
@@ -921,7 +921,7 @@ void SwMarginWin::SetPosAndSize()
         Point aEnd = EditWin()->PixelToLogic(GetPosPixel()+Point(GetSizePixel().Width()-1,GetSizePixel().Height()));
         mpShadow->SetPosition(basegfx::B2DPoint(aStart.X(),aStart.Y()), basegfx::B2DPoint(aEnd.X(),aEnd.Y()));
     }
-    
+
     if (mpMgr->ShowNotes())
     {
         if (IsFollow() && !HasChildPathFocus())
@@ -965,7 +965,7 @@ void SwMarginWin::DoResize()
     {
         mpVScrollbar->Hide();
     }
-    
+
     mpMeta->SetPosSizePixel(0,aHeight,GetSizePixel().Width()-GetMetaButtonAreaWidth(),GetMetaHeight());
     mpOutliner->SetPaperSize( PixelToLogic( Size(aWidth,aHeight) ) ) ;
     mpOutlinerView->SetOutputArea( PixelToLogic( Rectangle(0,0,aWidth,aHeight) ) );
@@ -984,7 +984,7 @@ void SwMarginWin::DoResize()
         mpPostItTxt->SetPosSizePixel((aTextHeight > aHeight) && !IsPreview() ? GetScrollbarWidth() : 0 , 0, aWidth, aHeight);
         mpVScrollbar->SetPosSizePixel( 0, 0, GetScrollbarWidth(), aHeight);
     }
-    
+
     mpVScrollbar->SetVisibleSize( PixelToLogic(Size(0,aHeight)).Height() );
     mpVScrollbar->SetPageSize( PixelToLogic(Size(0,aHeight)).Height() * 8 / 10 );
     mpVScrollbar->SetLineSize( mpOutliner->GetTextHeight() / 10 );
@@ -1180,7 +1180,7 @@ void SwMarginWin::HideNote()
     if (IsVisible())
         Window::Hide();
     if (mpAnkor)
-    {	
+    {
         if (mpMgr->IsShowAnkor())
             mpAnkor->SetAnkorState(AS_TRI);
         else
@@ -1193,7 +1193,7 @@ void SwMarginWin::HideNote()
 void SwMarginWin::ActivatePostIt()
 {
     mpMgr->AssureStdModeAtShell();
-    
+
     mpOutliner->ClearModifyFlag();
     mpOutliner->GetUndoManager().Clear();
 
@@ -1260,7 +1260,7 @@ void SwMarginWin::ExecuteCommand(USHORT nSlot)
     {
         case FN_POSTIT:
         case FN_REPLY:
-        {			
+        {
             // if this note is empty, it will be deleted once losing the focus, so no reply, but only a new note
             // will be created
             SwView* pView = DocView();
@@ -1284,7 +1284,7 @@ void SwMarginWin::ExecuteCommand(USHORT nSlot)
         /*
         case FN_HIDE_NOTE:
             if ( Mgr()->GetActivePostIt() == this )
-            {	
+            {
                 Mgr()->SetActivePostIt(0);
                 // put the cursor back into the document
                 SwitchToFieldPos();
@@ -1740,7 +1740,7 @@ void SwPostIt::MouseButtonDown( const MouseEvent& rMEvt )
                 if( !(sAuthor = aUserOpt.GetID()).Len() )
                     sAuthor = String( SW_RES( STR_REDLINE_UNKNOWN_AUTHOR ));
             // do not allow to reply to ourself and no answer possible if this note is in a protected section
-            if ((sAuthor == GetAuthor()) || (IsProtected())) 
+            if ((sAuthor == GetAuthor()) || (IsProtected()))
                 mpButtonPopup->EnableItem(FN_REPLY,false);
             else
                 mpButtonPopup->EnableItem(FN_REPLY,true);
@@ -1778,7 +1778,7 @@ void SwPostIt::InitAnswer(OutlinerParaObject* pText)
 
     // insert old, selected text or "..."
     // TOOD: iterate over all paragraphs, not only first one to find out if it is empty
-    if (pText->GetTextObject().GetText(0) != String(EMPTYSTRING))	
+    if (pText->GetTextObject().GetText(0) != String(EMPTYSTRING))
         View()->GetEditView().InsertText(pText->GetTextObject());
     else
         View()->InsertText(rtl::OUString::createFromAscii("..."),false);
@@ -1790,7 +1790,7 @@ void SwPostIt::InitAnswer(OutlinerParaObject* pText)
     aAnswerSet.Put(SvxPostureItem(ITALIC_NORMAL,EE_CHAR_ITALIC));
     View()->SetAttribs(aAnswerSet);
     View()->SetSelection(ESelection(0xFFFF,0xFFFF,0xFFFF,0xFFFF));
-    
+
     //remove all attributes and reset our standard ones
     View()->GetEditView().RemoveAttribsKeepLanguages(true);
     View()->SetAttribs(DefaultItem());
@@ -1828,7 +1828,7 @@ SvxLanguageItem SwPostIt::GetLanguage(void)
 bool SwPostIt::IsProtected()
 {
     bool aReturn;
-    aReturn = mpFmtFld ? (SwMarginWin::IsProtected() || (mStatus==SwPostItHelper::DELETED) || 
+    aReturn = mpFmtFld ? (SwMarginWin::IsProtected() || (mStatus==SwPostItHelper::DELETED) ||
         mpFmtFld->IsProtect()) : (SwMarginWin::IsProtected() || (mStatus==SwPostItHelper::DELETED));
     return aReturn;
 }
@@ -1864,12 +1864,12 @@ void SwRedComment::SetPostItText()
 {
     Engine()->SetModifyHdl( Link() );
     Engine()->EnableUndo( FALSE );
-    
+
     Engine()->Clear();
     View()->SetAttribs(DefaultItem());
     View()->InsertText(pRedline->GetComment(),false);
 
-    Engine()->ClearModifyFlag();	
+    Engine()->ClearModifyFlag();
     Engine()->GetUndoManager().Clear();
     Engine()->EnableUndo( TRUE );
     Engine()->SetModifyHdl( LINK( this, SwMarginWin, ModifyHdl ) );
@@ -1890,7 +1890,7 @@ void SwRedComment::ActivatePostIt()
     // do we want the redline selected?
     // otherwise, SwRedComment::ActivatePostIt() as well as SwRedComment::DeactivatePostIt()
     // can be thrown out completly
-    DocView()->GetDocShell()->GetWrtShell()->GotoRedline( 
+    DocView()->GetDocShell()->GetWrtShell()->GotoRedline(
         DocView()->GetDocShell()->GetWrtShell()->FindRedlineOfData(pRedline->GetRedlineData()),true);
 }
 
@@ -1914,9 +1914,9 @@ void SwRedComment::Delete()
     Mgr()->RemoveItem(pRedline);
 }
 
-void SwRedComment::GotoPos() 
+void SwRedComment::GotoPos()
 {
-    DocView()->GetDocShell()->GetWrtShell()->GotoRedline( 
+    DocView()->GetDocShell()->GetWrtShell()->GotoRedline(
         DocView()->GetDocShell()->GetWrtShell()->FindRedlineOfData(pRedline->GetRedlineData()));
 }
 
@@ -1945,8 +1945,8 @@ bool SwRedComment::IsProtected()
 // helper SwPostItShadowPrimitive
 //
 // Used to allow view-dependent primitive definition. For that purpose, the
-// initially created primitive (this one) always has to be view-independent, 
-// but the decomposition is made view-dependent. Very simple primitive which 
+// initially created primitive (this one) always has to be view-independent,
+// but the decomposition is made view-dependent. Very simple primitive which
 // just remembers the discrete data and applies it at decomposition time.
 
 class SwPostItShadowPrimitive : public drawinglayer::primitive2d::DiscreteMetricDependentPrimitive2D
@@ -2135,7 +2135,7 @@ private:
     basegfx::B2DPolygon				maLineTop;
     AnkorState						maAnkorState;
     basegfx::BColor					maColor;
-    
+
     // discrete line width
     double							mfLogicLineWidth;
 
@@ -2223,11 +2223,11 @@ drawinglayer::primitive2d::Primitive2DSequence SwPostItAnkorPrimitive::createLoc
 
             aDotDashArray.push_back(fDashLen);
             aDotDashArray.push_back(fDistance);
-            
+
             const drawinglayer::attribute::StrokeAttribute aStrokeAttribute(
                 aDotDashArray,
                 fDistance + fDashLen);
-            
+
             const drawinglayer::primitive2d::Primitive2DReference aStrokedLine(
                 new drawinglayer::primitive2d::PolygonStrokePrimitive2D(
                     getLine(),
@@ -2294,7 +2294,7 @@ drawinglayer::primitive2d::Primitive2DSequence SwPostItAnkorPrimitive::createLoc
 
         drawinglayer::primitive2d::appendPrimitive2DReferenceToPrimitive2DSequence(aRetval, aLineTop);
     }
-    
+
     return aRetval;
 }
 

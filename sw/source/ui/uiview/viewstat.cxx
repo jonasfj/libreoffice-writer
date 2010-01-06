@@ -1,7 +1,7 @@
 /*************************************************************************
  *
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
- * 
+ *
  * Copyright 2008 by Sun Microsystems, Inc.
  *
  * OpenOffice.org - a multi-platform office productivity suite
@@ -33,14 +33,14 @@
 #include <hintids.hxx>
 #include <com/sun/star/linguistic2/XThesaurus.hpp>
 #include <com/sun/star/uno/Sequence.hxx>
-#include <svtools/aeitem.hxx>
-#include <svtools/whiter.hxx>
-#include <svtools/cjkoptions.hxx>
+#include <svl/aeitem.hxx>
+#include <svl/whiter.hxx>
+#include <svl/cjkoptions.hxx>
 
 #include <sfx2/viewfrm.hxx>
 #include <sfx2/objitem.hxx>
-#include <svtools/imageitm.hxx>
-#include <svtools/languageoptions.hxx>
+#include <svl/imageitm.hxx>
+#include <svl/languageoptions.hxx>
 #include <svx/protitem.hxx>
 #include <svx/linkmgr.hxx>
 #include <svx/langitem.hxx>
@@ -67,9 +67,9 @@
 #include <wview.hxx>
 #endif
 #include <globdoc.hxx>
-#include <svtools/stritem.hxx>
-#include <svtools/moduleoptions.hxx>
-#include <svtools/visitem.hxx>
+#include <svl/stritem.hxx>
+#include <unotools/moduleoptions.hxx>
+#include <svl/visitem.hxx>
 
 #ifndef _CMDID_H
 #include <cmdid.h>
@@ -299,7 +299,7 @@ void SwView::GetState(SfxItemSet &rSet)
             break;
             case FN_REDLINE_ACCEPT_DIRECT:
             case FN_REDLINE_REJECT_DIRECT:
-            {    
+            {
                 SwContentAtPos aCntntAtPos( SwContentAtPos::SW_REDLINE );
                 Point aCrsrPos = pWrtShell->GetCrsrDocPos( sal_True );
                 if( !pWrtShell->GetContentAtPos( aCrsrPos, aCntntAtPos ) )
