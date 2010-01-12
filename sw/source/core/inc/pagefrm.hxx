@@ -1,7 +1,7 @@
 /*************************************************************************
  *
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
- * 
+ *
  * Copyright 2008 by Sun Microsystems, Inc.
  *
  * OpenOffice.org - a multi-platform office productivity suite
@@ -35,6 +35,8 @@
 
 #include "ftnboss.hxx"
 #include <tools/mempool.hxx>
+
+#include <SidebarWindowsTypes.hxx>
 
 class SwFlyFrm;
 class SwFlyFrmFmt;
@@ -386,7 +388,7 @@ public:
     static void GetBorderAndShadowBoundRect( const SwRect& _rPageRect,
                                              ViewShell*    _pViewShell,
                                              SwRect& _orBorderAndShadowBoundRect,
-                                             bool bRightSidebar );
+                                             const bool bRightSidebar );
 
     static void PaintNotesSidebar(const SwRect& _rPageRect, ViewShell* _pViewShell, USHORT nPageNum, bool bRight);
     static void PaintNotesSidebarArrows(const Point &aMiddleFirst, const Point &aMiddleSecond, ViewShell* _pViewShell, const Color aColorUp, const Color aColorDown);
@@ -396,7 +398,7 @@ public:
         asks the page on which side a margin should be shown, e.g for notes
         returns true for left side, false for right side
     */
-    bool MarginSide() const;
+    sw::sidebarwindows::SidebarPosition SidebarPosition() const;
 
     virtual bool FillSelection( SwSelectionList& rList, const SwRect& rRect ) const;
 
@@ -538,6 +540,6 @@ inline BOOL SwPageFrm::IsInvalidFly() const
 #define GETGRIDWIDTH( pGrid , pDoc )  pDoc->IsSquaredPageMode() ? \
     pGrid->GetBaseHeight(): pGrid->GetBaseWidth()
 
-            
+
 
 #endif	//_PAGEFRM_HXX

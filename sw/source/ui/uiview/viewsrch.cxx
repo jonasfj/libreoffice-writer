@@ -1,7 +1,7 @@
 /*************************************************************************
  *
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
- * 
+ *
  * Copyright 2008 by Sun Microsystems, Inc.
  *
  * OpenOffice.org - a multi-platform office productivity suite
@@ -157,7 +157,7 @@ void SwView::ExecSearch(SfxRequest& rReq, BOOL bNoMessage)
         break;
 
     case FID_SEARCH_OFF:
-        if(pArgs)	
+        if(pArgs)
         {
             // Dialog abmelden
             delete pSrchItem;
@@ -605,7 +605,7 @@ void SwView::Replace()
     }
     else
     {
-        if (GetPostItMgr()->GetActivePostIt())
+        if (GetPostItMgr()->HasActiveSidebarWin())
             GetPostItMgr()->Replace(pSrchItem);
         sal_Bool bReplaced = pWrtShell->SwEditShell::Replace( pSrchItem->GetReplaceString(),
                                             pSrchItem->GetRegExp());

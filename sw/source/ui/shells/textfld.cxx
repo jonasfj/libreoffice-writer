@@ -1,7 +1,7 @@
 /************ *************************************************************
  *
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
- * 
+ *
  * Copyright 2008 by Sun Microsystems, Inc.
  *
  * OpenOffice.org - a multi-platform office productivity suite
@@ -83,8 +83,7 @@
 
 #include <app.hrc>
 
-#include "PostItMgr.hxx"
-#include "postit.hxx"
+#include <PostItMgr.hxx>
 
 using namespace nsSwDocInfoSubType;
 
@@ -318,8 +317,11 @@ void SwTextShell::ExecField(SfxRequest &rReq)
             }
             break;
             case FN_DELETE_NOTE:
-                if ( GetView().GetPostItMgr() && GetView().GetPostItMgr()->GetActivePostIt() )
-                    GetView().GetPostItMgr()->GetActivePostIt()->Delete();
+                if ( GetView().GetPostItMgr() &&
+                     GetView().GetPostItMgr()->HasActiveSidebarWin() )
+                {
+                    GetView().GetPostItMgr()->DeleteActiveSidebarWin();
+                }
             break;
             case FN_DELETE_ALL_NOTES:
                 if ( GetView().GetPostItMgr() )
@@ -333,8 +335,11 @@ void SwTextShell::ExecField(SfxRequest &rReq)
             }
             break;
             case FN_HIDE_NOTE:
-                if ( GetView().GetPostItMgr() && GetView().GetPostItMgr()->GetActivePostIt() )
-                    GetView().GetPostItMgr()->GetActivePostIt()->Hide();
+                if ( GetView().GetPostItMgr() &&
+                     GetView().GetPostItMgr()->HasActiveSidebarWin() )
+                {
+                    GetView().GetPostItMgr()->HideActiveSidebarWin();
+                }
             break;
             case FN_HIDE_ALL_NOTES:
                 if ( GetView().GetPostItMgr() )
@@ -391,8 +396,8 @@ void SwTextShell::ExecField(SfxRequest &rReq)
             }
             break;
             case FN_REDLINE_COMMENT:
-            {				
-                /*	this code can be used once we want redline comments in the margin, all other stuff can 
+            {
+                /*	this code can be used once we want redline comments in the margin, all other stuff can
                     then be deleted
                 String sComment;
                 const SwRedline *pRedline = rSh.GetCurrRedline();
@@ -630,7 +635,7 @@ void SwTextShell::StateField( SfxItemSet &rSet )
                     SwPostItMgr* pPostItMgr = GetView().GetPostItMgr();
                     if ( !pPostItMgr )
                         rSet.InvalidateItem( nWhich );
-                    else if ( !pPostItMgr->GetActivePostIt() )
+                    else if ( !pPostItMgr->HasActiveSidebarWin() )
                     {
                         rSet.InvalidateItem( FN_DELETE_NOTE );
                         rSet.InvalidateItem( FN_HIDE_NOTE );

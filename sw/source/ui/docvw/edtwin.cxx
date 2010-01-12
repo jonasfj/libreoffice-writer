@@ -69,9 +69,6 @@
 #include <svx/langitem.hxx>
 #include <svx/htmlmode.hxx>
 #include <svx/svdview.hxx>
-//#ifndef _SVDVMARK_HXX //autogen
-//#include <svx/svdvmark.hxx>
-//#endif
 #include <svx/svdhdl.hxx>
 #include <svx/svdoutl.hxx>
 #include <svx/editeng.hxx>
@@ -152,8 +149,7 @@
 #include <IMark.hxx>
 #include <doc.hxx>
 
-#include "PostItMgr.hxx"
-#include "postit.hxx"
+#include <PostItMgr.hxx>
 
 //JP 11.10.2001: enable test code for bug fix 91313
 #if !defined( PRODUCT ) && (OSL_DEBUG_LEVEL > 1)
@@ -1765,7 +1761,7 @@ KEYINPUT_CHECKTABLE_INSDEL:
                                  !rSh.GetCurNumRule()->IsOutlineRule() &&
                                  !rSh.HasSelection() &&
                                 rSh.IsSttPara() && rSh.IsEndPara() )
-                            eKeyState = KS_NumOff, eNextKeyState = KS_OutlineLvOff;  
+                            eKeyState = KS_NumOff, eNextKeyState = KS_OutlineLvOff;
 
                         //RETURN fuer neuen Absatz mit AutoFormatierung
                         else if( pACfg && pACfg->IsAutoFmtByInput() &&
@@ -1899,7 +1895,7 @@ KEYINPUT_CHECKTABLE_INSDEL:
 #endif
                     if (rSh.IsFormProtected() || rSh.GetCurrentFieldmark() || rSh.GetChar(FALSE)==CH_TXT_ATR_FORMELEMENT)
                     {
-                        eKeyState=KS_GotoNextFieldMark; 
+                        eKeyState=KS_GotoNextFieldMark;
                     }
                     else
                     if( rSh.GetCurNumRule() && rSh.IsSttOfPara() &&
@@ -1954,7 +1950,7 @@ KEYINPUT_CHECKTABLE_INSDEL:
                     BOOL bOld = rSh.ChgCrsrTimerFlag( FALSE );
 #endif
                     if (rSh.IsFormProtected() || rSh.GetCurrentFieldmark()|| rSh.GetChar(FALSE)==CH_TXT_ATR_FORMELEMENT) {
-                        eKeyState=KS_GotoPrevFieldMark; 
+                        eKeyState=KS_GotoPrevFieldMark;
                     }
                     else if( rSh.GetCurNumRule() && rSh.IsSttOfPara() &&
                          !rSh.HasReadonlySel() )
@@ -1991,7 +1987,7 @@ KEYINPUT_CHECKTABLE_INSDEL:
                             SwTxtFmtColl* pColl = rSh.GetCurTxtFmtColl();
                             //if( pColl && 0 < pColl->GetOutlineLevel() &&	//#outline level,zhaojianwei
                             //	MAXLEVEL - 1 >= pColl->GetOutlineLevel() )
-                            if( pColl && 
+                            if( pColl &&
                                 pColl->IsAssignedToListLevelOfOutlineStyle() &&
                                 0 < pColl->GetAssignedOutlineStyleLevel())
                                 eKeyState = KS_OutlineUp;
@@ -2369,14 +2365,14 @@ KEYINPUT_CHECKTABLE_INSDEL:
                 nKS_NUMINDENTINC_Count = 2;
                 break;
 
-            case KS_GotoNextFieldMark:      
+            case KS_GotoNextFieldMark:
                 {
                     ::sw::mark::IFieldmark const * const pFieldmark = rSh.GetFieldmarkAfter();
                     if(pFieldmark) rSh.GotoFieldmark(pFieldmark);
                 }
                 break;
 
-            case KS_GotoPrevFieldMark:      
+            case KS_GotoPrevFieldMark:
                 {
                     ::sw::mark::IFieldmark const * const pFieldmark = rSh.GetFieldmarkBefore();
                     if(pFieldmark) rSh.GotoFieldmark(pFieldmark);
@@ -2607,7 +2603,7 @@ void SwEditWin::MouseButtonDown(const MouseEvent& _rMEvt)
     if (rView.GetPostItMgr()->IsHit(rMEvt.GetPosPixel()))
         return;
 
-    rView.GetPostItMgr()->SetActivePostIt(0);
+    rView.GetPostItMgr()->SetActiveSidebarWin(0);
 
     GrabFocus();
 
@@ -4675,8 +4671,10 @@ BOOL SwEditWin::IsDrawSelMode()
 
 void SwEditWin::GetFocus()
 {
-    if (rView.GetPostItMgr()->GetActivePostIt())
-        rView.GetPostItMgr()->GetActivePostIt()->GrabFocus();
+    if ( rView.GetPostItMgr()->HasActiveSidebarWin() )
+    {
+        rView.GetPostItMgr()->GrabFocusOnActiveSidebarWin();
+    }
     else
     {
         rView.GotFocus();
@@ -4775,7 +4773,7 @@ void SwEditWin::Command( const CommandEvent& rCEvt )
                         aEvent.ExecutePosition.X = aPixPos.X();
                         aEvent.ExecutePosition.Y = aPixPos.Y();
                         Menu* pMenu = 0;
-                        ::rtl::OUString sMenuName = 
+                        ::rtl::OUString sMenuName =
                             ::rtl::OUString::createFromAscii( "private:resource/ReadonlyContextMenu");
                         if( GetView().TryContextMenuInterception( *pROPopup, sMenuName, pMenu, aEvent ) )
                         {

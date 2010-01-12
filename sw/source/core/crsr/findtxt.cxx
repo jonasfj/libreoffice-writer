@@ -1,7 +1,7 @@
 /*************************************************************************
  *
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
- * 
+ *
  * Copyright 2008 by Sun Microsystems, Inc.
  *
  * OpenOffice.org - a multi-platform office productivity suite
@@ -51,7 +51,6 @@
 #include <swundo.hxx>
 #include <breakit.hxx>
 
-/*testarea*/
 #include <docsh.hxx>
 #include <PostItMgr.hxx>
 #include <viewsh.hxx>
@@ -90,7 +89,7 @@ String& lcl_CleanStr( const SwTxtNode& rNd, xub_StrLen nStart,
                          STRING_LEN;
 
         if ( bNewSoftHyphen )
-            nSoftHyphen = bRemoveSoftHyphen ? 
+            nSoftHyphen = bRemoveSoftHyphen ?
                           rNd.GetTxt().Search( CHAR_SOFTHYPHEN, nSoftHyphen ) :
                           STRING_LEN;
 
@@ -205,7 +204,7 @@ xub_StrLen GetPostIt(xub_StrLen aCount,const SwpHints *pHts)
         {
             aIndex++;
             const SwTxtAttr* pTxtAttr = (*pHts)[i];
-            if ( (pTxtAttr->Which()==RES_TXTATR_FIELD) && 
+            if ( (pTxtAttr->Which()==RES_TXTATR_FIELD) &&
                     (pTxtAttr->GetFld().GetFld()->Which()==RES_POSTITFLD))
             {
                 aCount--;
@@ -218,12 +217,12 @@ xub_StrLen GetPostIt(xub_StrLen aCount,const SwpHints *pHts)
     for (xub_StrLen i = aIndex; i <pHts->Count();i++)
     {
         const SwTxtAttr* pTxtAttr = (*pHts)[i];
-        if ( (pTxtAttr->Which()==RES_TXTATR_FIELD) && 
+        if ( (pTxtAttr->Which()==RES_TXTATR_FIELD) &&
                 (pTxtAttr->GetFld().GetFld()->Which()==RES_POSTITFLD))
             break;
         else
             aIndex++;
-    }	
+    }
     return aIndex;
 }
 
@@ -308,12 +307,12 @@ BYTE SwPaM::Find( const SearchOptions& rSearchOpt, BOOL bSearchInNotes , utl::Te
                     nEnde = nStart;
                     nStart = swap;
                 }
-                
+
                 for (xub_StrLen i = 0; i <pHts->Count();i++)
                 {
                     xub_StrLen aPos = *(*pHts)[i]->GetStart();
                     const SwTxtAttr* pTxtAttr = (*pHts)[i];
-                    if ( (pTxtAttr->Which()==RES_TXTATR_FIELD) && 
+                    if ( (pTxtAttr->Which()==RES_TXTATR_FIELD) &&
                                 (pTxtAttr->GetFld().GetFld()->Which()==RES_POSTITFLD))
                     {
                         if ( (aPos >= nStart) && (aPos <= nEnde) )
@@ -325,7 +324,7 @@ BYTE SwPaM::Find( const SearchOptions& rSearchOpt, BOOL bSearchInNotes , utl::Te
                         }
                     }
                 }
-                
+
                 if (!bSrchForward)
                 {
                     xub_StrLen swap = nEnde;
@@ -334,10 +333,10 @@ BYTE SwPaM::Find( const SearchOptions& rSearchOpt, BOOL bSearchInNotes , utl::Te
                 }
 
             }
-            
+
             xub_StrLen aStart = 0;
-            // do we need to finish a note? 
-            if (POSTITMGR->GetActivePostIt())
+            // do we need to finish a note?
+            if (POSTITMGR->HasActiveSidebarWin())
             {
                 if (bSearchInNotes)
                 {
@@ -357,7 +356,7 @@ BYTE SwPaM::Find( const SearchOptions& rSearchOpt, BOOL bSearchInNotes , utl::Te
                 }
                 else
                 {
-                    POSTITMGR->SetActivePostIt(0);
+                    POSTITMGR->SetActiveSidebarWin(0);
                 }
             }
 
@@ -367,9 +366,9 @@ BYTE SwPaM::Find( const SearchOptions& rSearchOpt, BOOL bSearchInNotes , utl::Te
                 xub_StrLen nStartInside = 0;
                 xub_StrLen nEndeInside = 0;
                 sal_Int16 aLoop= bSrchForward ? aStart : aNumberPostits;
-                
+
                 while ( (aLoop>=0) && (aLoop<=aNumberPostits))
-                {	
+                {
                     if (bSrchForward)
                     {
                         nStartInside =  aLoop==0 ? nStart : *(*pHts)[GetPostIt(aLoop+aIgnore-1,pHts)]->GetStart()+1;
@@ -400,7 +399,7 @@ BYTE SwPaM::Find( const SearchOptions& rSearchOpt, BOOL bSearchInNotes , utl::Te
                             }
                         }
                     }
-                    aLoop = bSrchForward ? aLoop+1 : aLoop-1;						
+                    aLoop = bSrchForward ? aLoop+1 : aLoop-1;
                 }
             }
             else
@@ -441,8 +440,8 @@ bool SwPaM::DoSearch( const SearchOptions& rSearchOpt, utl::TextSearch& rSTxt,
         if ( 1 == rSearchOpt.searchString.getLength() &&
              CHAR_SOFTHYPHEN == rSearchOpt.searchString.toChar() )
              bRemoveSoftHyphens = false;
-    }                                            
-    
+    }
+
     if( bSrchForward )
         lcl_CleanStr( *(SwTxtNode*)pNode, nStart, nEnde,
                         aFltArr, sCleanStr, bRemoveSoftHyphens );
@@ -596,7 +595,7 @@ int SwFindParaText::Find( SwPaM* pCrsr, SwMoveFn fnMove,
         SwIndex& rSttCntIdx = pCrsr->Start()->nContent;
         xub_StrLen nSttCnt = rSttCntIdx.GetIndex();
         // damit die Region auch verschoben wird, in den Shell-Cursr-Ring
-        // mit aufnehmen !!	
+        // mit aufnehmen !!
         Ring *pPrev(0);
         if( bRegExp )
         {
