@@ -1,7 +1,7 @@
 /*************************************************************************
  *
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
- * 
+ *
  * Copyright 2008 by Sun Microsystems, Inc.
  *
  * OpenOffice.org - a multi-platform office productivity suite
@@ -41,7 +41,7 @@
 #include <com/sun/star/linguistic2/XProofreadingIterator.hpp>
 #include <com/sun/star/linguistic2/LinguServiceEventFlags.hpp>
 
-#include <svtools/lingucfg.hxx>
+#include <unotools/lingucfg.hxx>
 
 #include <com/sun/star/uno/Reference.h>
 #include <comphelper/processfactory.hxx>
@@ -92,12 +92,12 @@ SwLinguServiceEventListener::SwLinguServiceEventListener()
                 Reference< XLinguServiceEventBroadcaster > xBC( xGCIterator, UNO_QUERY );
                 if (xBC.is())
                     xBC->addLinguServiceEventListener( (XLinguServiceEventListener *) this );
-            }    
+            }
         }
         catch (uno::Exception &)
         {
             DBG_ASSERT(0, "exception caught in SwLinguServiceEventListener c-tor" );
-        }    
+        }
     }
 }
 /* -----------------------------17.03.00 09:07--------------------------------

@@ -1,7 +1,7 @@
 /*************************************************************************
  *
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
- * 
+ *
  * Copyright 2008 by Sun Microsystems, Inc.
  *
  * OpenOffice.org - a multi-platform office productivity suite
@@ -67,7 +67,7 @@
 #include <htmlnum.hxx>
 #include <wrthtml.hxx>
 #include <wrtswtbl.hxx>
-#ifndef PRODUCT
+#ifdef DBG_UTIL
 #ifndef _VIEWSH_HXX
 #include <viewsh.hxx>
 #endif
@@ -1200,7 +1200,7 @@ Writer& OutHTML_SwTblNode( Writer& rWrt, SwTableNode & rNode,
 
     const SwHTMLTableLayout *pLayout = rTbl.GetHTMLTableLayout();
 
-#ifndef PRODUCT
+#ifdef DBG_UTIL
     ViewShell *pSh;
     rWrt.pDoc->GetEditShell( &pSh );
     if ( pSh && pSh->GetViewOptions()->IsTest1() )

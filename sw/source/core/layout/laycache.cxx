@@ -1,7 +1,7 @@
 /*************************************************************************
  *
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
- * 
+ *
  * Copyright 2008 by Sun Microsystems, Inc.
  *
  * OpenOffice.org - a multi-platform office productivity suite
@@ -348,7 +348,7 @@ void SwLayoutCache::Write( SvStream &rStream, const SwDoc& rDoc )
     }
 }
 
-#ifndef PRODUCT
+#ifdef DBG_UTIL
 sal_Bool SwLayoutCache::CompareLayout( const SwDoc& rDoc ) const
 {
     sal_Bool bRet = sal_True;
