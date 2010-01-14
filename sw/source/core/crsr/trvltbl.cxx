@@ -1,7 +1,7 @@
 /*************************************************************************
  *
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
- * 
+ *
  * Copyright 2008 by Sun Microsystems, Inc.
  *
  * OpenOffice.org - a multi-platform office productivity suite
@@ -307,7 +307,7 @@ BOOL SwCrsrShell::SelTblBox()
     const SwStartNode* pStartNode =
         pCurCrsr->GetPoint()->nNode.GetNode().FindTableBoxStartNode();
 
-#ifndef PRODUCT
+#ifdef DBG_UTIL
     // the old code checks whether we're in a table by asking the
     // frame. This should yield the same result as searching for the
     // table box start node, right?

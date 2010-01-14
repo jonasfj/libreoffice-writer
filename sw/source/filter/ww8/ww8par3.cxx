@@ -33,7 +33,7 @@
 /* -*- Mode: C; tab-width: 4; indent-tabs-mode: nil -*- */
 
 
-#include <svtools/itemiter.hxx>
+#include <svl/itemiter.hxx>
 #include <vcl/svapp.hxx>
 #include <vcl/outdev.hxx>
 
@@ -75,7 +75,7 @@
 #include <svx/crsditem.hxx>
 #include <svx/udlnitem.hxx>
 #include <svx/postitem.hxx>
-#include <svx/msocximex.hxx>
+#include <filter/msfilter/msocximex.hxx>
 #include <errhdl.hxx>
 #include <unoobj.hxx>
 #include <doc.hxx>
@@ -95,7 +95,7 @@
 #include "ww8par2.hxx"  // wg. Listen-Attributen in Styles
 
 #include <IMark.hxx>
-#include <svtools/fltrcfg.hxx>
+#include <unotools/fltrcfg.hxx>
 
 #include <stdio.h>
 
@@ -255,7 +255,7 @@ eF_ResT SwWW8ImplReader::Read_F_FormCheckBox( WW8FieldDesc* pF, String& rStr )
     sal_Bool bUseEnhFields=(pOpt && pOpt->IsUseEnhancedFields());
 
     if (!bUseEnhFields) {
-    pFormImpl->InsertFormula(aFormula); 
+    pFormImpl->InsertFormula(aFormula);
     return FLD_OK;
     } else {
     String aBookmarkName;
@@ -267,7 +267,7 @@ eF_ResT SwWW8ImplReader::Read_F_FormCheckBox( WW8FieldDesc* pF, String& rStr )
         USHORT bkmFindIdx;
         String aBookmarkFind=pB->GetBookmark(currentCP-1, currentCP+currentLen-1, bkmFindIdx);
 
-        if (aBookmarkFind.Len()>0) { 
+        if (aBookmarkFind.Len()>0) {
             pB->SetStatus(bkmFindIdx, BOOK_FIELD); // mark as consumed by field
             if (aBookmarkFind.Len()>0) {
                 aBookmarkName=aBookmarkFind;
@@ -280,7 +280,7 @@ eF_ResT SwWW8ImplReader::Read_F_FormCheckBox( WW8FieldDesc* pF, String& rStr )
     }
 
     if (aBookmarkName.Len()>0) {
-        ::sw::mark::ICheckboxFieldmark* pFieldmark = 
+        ::sw::mark::ICheckboxFieldmark* pFieldmark =
             dynamic_cast< ::sw::mark::ICheckboxFieldmark*>(rDoc.getIDocumentMarkAccess()->makeMark(
                 *pPaM,
                 aBookmarkName,

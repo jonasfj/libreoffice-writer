@@ -1,7 +1,7 @@
 /*************************************************************************
  *
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
- * 
+ *
  * Copyright 2008 by Sun Microsystems, Inc.
  *
  * OpenOffice.org - a multi-platform office productivity suite
@@ -201,7 +201,7 @@ void SwLooping::Control( SwPageFrm* pPage )
     }
     else if( ++nCount > LOOP_DETECT )
     {
-#ifndef PRODUCT
+#ifdef DBG_UTIL
 #if OSL_DEBUG_LEVEL > 1
         static BOOL bNoLouie = FALSE;
         if( bNoLouie )
