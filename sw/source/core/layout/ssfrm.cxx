@@ -1,7 +1,7 @@
 /*************************************************************************
  *
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
- * 
+ *
  * Copyright 2008 by Sun Microsystems, Inc.
  *
  * OpenOffice.org - a multi-platform office productivity suite
@@ -411,7 +411,7 @@ SwFrm::~SwFrm()
             delete pDrawObjs;
     }
 
-#ifndef PRODUCT
+#ifdef DBG_UTIL
     // JP 15.10.2001: for detection of access to deleted frames
     pDrawObjs = (SwSortedObjs*)0x33333333;
 #endif

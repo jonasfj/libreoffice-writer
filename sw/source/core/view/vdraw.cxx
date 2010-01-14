@@ -1,7 +1,7 @@
 /*************************************************************************
  *
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
- * 
+ *
  * Copyright 2008 by Sun Microsystems, Inc.
  *
  * OpenOffice.org - a multi-platform office productivity suite
@@ -45,7 +45,7 @@
 /// include <svx/svdoutl.hxx>
 #include <svx/svdoutl.hxx>
 
-#ifndef PRODUCT
+#ifdef DBG_UTIL
 #ifndef _SVX_FMGLOB_HXX
 #include <svx/fmglob.hxx>
 #endif

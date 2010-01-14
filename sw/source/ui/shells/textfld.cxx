@@ -1,7 +1,7 @@
 /************ *************************************************************
  *
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
- * 
+ *
  * Copyright 2008 by Sun Microsystems, Inc.
  *
  * OpenOffice.org - a multi-platform office productivity suite
@@ -38,11 +38,11 @@
 #include <fmtfld.hxx>
 #include <tools/urlobj.hxx>
 #include <vcl/msgbox.hxx>
-#include <svtools/itempool.hxx>
-#include <svtools/useroptions.hxx>
-#include <svtools/whiter.hxx>
-#include <svtools/eitem.hxx>
-#include <svtools/macitem.hxx>
+#include <svl/itempool.hxx>
+#include <unotools/useroptions.hxx>
+#include <svl/whiter.hxx>
+#include <svl/eitem.hxx>
+#include <svl/macitem.hxx>
 #include <sfx2/viewfrm.hxx>
 #include <sfx2/request.hxx>
 #include <svx/postattr.hxx>
@@ -391,8 +391,8 @@ void SwTextShell::ExecField(SfxRequest &rReq)
             }
             break;
             case FN_REDLINE_COMMENT:
-            {				
-                /*	this code can be used once we want redline comments in the margin, all other stuff can 
+            {
+                /*	this code can be used once we want redline comments in the margin, all other stuff can
                     then be deleted
                 String sComment;
                 const SwRedline *pRedline = rSh.GetCurrRedline();
@@ -463,7 +463,7 @@ void SwTextShell::ExecField(SfxRequest &rReq)
 
                     SvxAbstractDialogFactory* pFact2 = SvxAbstractDialogFactory::Create();
                     DBG_ASSERT(pFact2, "Dialogdiet fail!");
-                    AbstractSvxPostItDialog* pDlg = pFact2->CreateSvxPostItDialog( pMDI, aSet, RID_SVXDLG_POSTIT, bTravel, TRUE );
+                    AbstractSvxPostItDialog* pDlg = pFact2->CreateSvxPostItDialog( pMDI, aSet, bTravel, TRUE );
                     DBG_ASSERT(pDlg, "Dialogdiet fail!");
                     pDlg->HideAuthor();
 

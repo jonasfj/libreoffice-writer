@@ -1,7 +1,7 @@
 /*************************************************************************
  *
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
- * 
+ *
  * Copyright 2008 by Sun Microsystems, Inc.
  *
  * OpenOffice.org - a multi-platform office productivity suite
@@ -44,12 +44,6 @@
 SwFmtChg::SwFmtChg( SwFmt *pFmt )
     : SwMsgPoolItem( RES_FMT_CHG ),
     pChangedFmt( pFmt )
-{}
-
-
-SwInsChr::SwInsChr( xub_StrLen nP )
-    : SwMsgPoolItem( RES_INS_CHR ),
-    nPos( nP )
 {}
 
 
@@ -147,7 +141,7 @@ SwAttrSetChg::~SwAttrSetChg()
 }
 
 
-#ifndef PRODUCT
+#ifdef DBG_UTIL
 
 void SwAttrSetChg::ClearItem( USHORT nWhch )
 {
@@ -183,7 +177,7 @@ SfxPoolItem* SwMsgPoolItem::Clone( SfxItemPool* ) const
  * Ist keines vorhanden, returnt ein 0-Pointer !!!
  * Used to be inlined (hintids.hxx) in PRODUCT.
  ******************************************************************************/
-#ifdef PRODUCT
+#ifndef DBG_UTIL
 const SfxPoolItem* GetDfltAttr( USHORT nWhich )
 {
     return aAttrTab[ nWhich - POOLATTR_BEGIN ];
@@ -226,12 +220,6 @@ SwVirtPageNumInfo::SwVirtPageNumInfo( const SwPageFrm *pPg ) :
 //{
 //    aList.Insert(rNd.GetIndex(), &rNd);
 //}
-
-SwNRuleLowerLevel::SwNRuleLowerLevel( const String& rRuleName, BYTE nSrchLvl )
-    : SwMsgPoolItem( RES_GETLOWERNUMLEVEL ), rName( rRuleName ),
-    nLvl(nSrchLvl)
-{
-}
 
 
 SwFindNearestNode::SwFindNearestNode( const SwNode& rNd )

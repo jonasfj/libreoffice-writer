@@ -1,7 +1,7 @@
 /*************************************************************************
  *
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
- * 
+ *
  * Copyright 2008 by Sun Microsystems, Inc.
  *
  * OpenOffice.org - a multi-platform office productivity suite
@@ -576,17 +576,17 @@ void SwXPrintSettings::_getSingleValue( const comphelper::PropertyInfo & rInfo, 
         break;
         case HANDLE_PRINTSET_PROSPECT_RTL:
         {
-            rValue <<= mpPrtOpt->IsPrintProspectRTL();
+            bBoolVal = mpPrtOpt->IsPrintProspectRTL();
         }
         break;
         case HANDLE_PRINTSET_PLACEHOLDER:
         {
-            rValue <<= mpPrtOpt->IsPrintTextPlaceholder();
+            bBoolVal = mpPrtOpt->IsPrintTextPlaceholder();
         }
         break;
         case HANDLE_PRINTSET_HIDDEN_TEXT:
         {
-            rValue <<= mpPrtOpt->IsPrintHiddenText();
+            bBoolVal = mpPrtOpt->IsPrintHiddenText();
         }
         break;
         default:
@@ -823,7 +823,7 @@ void SwXViewSettings::_setSingleValue( const comphelper::PropertyInfo & rInfo, c
         break;
         case HANDLE_VIEWSET_HORI_RULER_METRIC:
         case HANDLE_VIEWSET_VERT_RULER_METRIC:
-        {    
+        {
             sal_Int32 nUnit = -1;
             if( rValue >>= nUnit )
             switch( nUnit )
@@ -844,9 +844,9 @@ void SwXViewSettings::_setSingleValue( const comphelper::PropertyInfo & rInfo, c
                     mbApplyVRulerMetric = sal_True;
                 }
                 break;
-                default: 
+                default:
                     throw IllegalArgumentException();
-            }    
+            }
         }
         break;
         default:
@@ -862,17 +862,17 @@ void SwXViewSettings::_postSetValues ()
         if(mbApplyZoom )
             pView->SetZoom( (SvxZoomType)mpViewOption->GetZoomType(),
                             mpViewOption->GetZoom(), sal_True );
-        if(mbApplyHRulerMetric) 
+        if(mbApplyHRulerMetric)
             pView->ChangeTabMetric((FieldUnit)eHRulerUnit);
-        if(mbApplyVRulerMetric) 
+        if(mbApplyVRulerMetric)
             pView->ChangeVLinealMetric((FieldUnit)eVRulerUnit);
-        
+
     }
     else
     {
-        if(mbApplyHRulerMetric) 
+        if(mbApplyHRulerMetric)
             SW_MOD()->ApplyRulerMetric( (FieldUnit)eHRulerUnit, sal_True, bWeb );
-        if(mbApplyVRulerMetric) 
+        if(mbApplyVRulerMetric)
             SW_MOD()->ApplyRulerMetric( (FieldUnit)eVRulerUnit, sal_False, bWeb );
     }
 
@@ -880,7 +880,7 @@ void SwXViewSettings::_postSetValues ()
     SW_MOD()->ApplyUsrPref( *mpViewOption, pView, pView ? VIEWOPT_DEST_VIEW_ONLY
                                                   : bWeb ? VIEWOPT_DEST_WEB
                                                           : VIEWOPT_DEST_TEXT );
-    
+
 
     delete mpViewOption;
     mpViewOption = NULL;
@@ -1004,7 +1004,7 @@ void SwXViewSettings::_getSingleValue( const comphelper::PropertyInfo & rInfo, u
         }
         break;
         case HANDLE_VIEWSET_HORI_RULER_METRIC:
-        {    
+        {
             if ( pView )
             {
                 FieldUnit eUnit;
@@ -1015,12 +1015,12 @@ void SwXViewSettings::_getSingleValue( const comphelper::PropertyInfo & rInfo, u
             {
                 const SwMasterUsrPref* pUsrPref = SW_MOD()->GetUsrPref( bWeb );
                 rValue <<= (sal_Int32)pUsrPref->GetHScrollMetric();
-            }    
+            }
             bBool = sal_False;
         }
         break;
         case HANDLE_VIEWSET_VERT_RULER_METRIC:
-        {    
+        {
             if ( pView )
             {
                 FieldUnit eUnit;
@@ -1031,7 +1031,7 @@ void SwXViewSettings::_getSingleValue( const comphelper::PropertyInfo & rInfo, u
             {
                 const SwMasterUsrPref* pUsrPref = SW_MOD()->GetUsrPref( bWeb );
                 rValue <<= (sal_Int32)pUsrPref->GetVScrollMetric();
-            }    
+            }
             bBool = sal_False;
         }
         break;
