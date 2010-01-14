@@ -1,7 +1,7 @@
 /*************************************************************************
  *
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
- * 
+ *
  * Copyright 2008 by Sun Microsystems, Inc.
  *
  * OpenOffice.org - a multi-platform office productivity suite
@@ -47,8 +47,8 @@
 #include <svx/svdview.hxx>
 #include <svx/svditer.hxx>
 #include <svx/svdogrp.hxx>
-#include <svtools/linguprops.hxx>
-#include <svtools/lingucfg.hxx>
+#include <unotools/linguprops.hxx>
+#include <unotools/lingucfg.hxx>
 #include <doc.hxx>
 #ifndef _DOCSH_HXX
 #include <docsh.hxx>
@@ -414,7 +414,7 @@ svx::SpellPortions SwSpellDialogChildWindow::GetNextWrongSentence (void)
                 String sInfo(SW_RES(STR_SPELLING_COMPLETED));
                 //#i84610#
                 Window* pTemp = GetWindow();    // temporary needed for g++ 3.3.5
-                InfoBox(pTemp, sInfo ).Execute();                
+                InfoBox(pTemp, sInfo ).Execute();
                 LockFocusNotification( false );
                 //take care that the now valid selection is stored
                 LoseFocus();
@@ -493,7 +493,7 @@ void SwSpellDialogChildWindow::SetGrammarChecking(bool bOn)
     m_bIsGrammarCheckingOn = bOn;
     String aPropName( C2S(UPN_IS_GRAMMAR_INTERACTIVE ) );
     SvtLinguConfig().SetProperty( aPropName, aVal );
-    // set current spell position to the start of the current sentence to 
+    // set current spell position to the start of the current sentence to
     // continue with this sentence after grammar checking state has been changed
     SwWrtShell* pWrtShell = GetWrtShell_Impl();
     if(pWrtShell)
@@ -517,7 +517,7 @@ void SwSpellDialogChildWindow::SetGrammarChecking(bool bOn)
                 pOutliner->PutSpellingToSentenceStart( pSdrView->GetTextEditOutlinerView()->GetEditView() );
             }
         }
-    }    
+    }
 }
 /*-- 28.10.2003 08:41:09---------------------------------------------------
 
