@@ -1,7 +1,7 @@
 /*************************************************************************
  *
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
- * 
+ *
  * Copyright 2008 by Sun Microsystems, Inc.
  *
  * OpenOffice.org - a multi-platform office productivity suite
@@ -49,9 +49,9 @@
 #include <unotools/charclass.hxx>
 #include <svx/unolingu.hxx>
 #include <svx/scripttypeitem.hxx>
-#include <svtools/useroptions.hxx>
+#include <unotools/useroptions.hxx>
 #include <tools/datetime.hxx>
-#include <svtools/zforlist.hxx>
+#include <svl/zforlist.hxx>
 #include <swmodule.hxx>
 #include <doc.hxx>
 #include <viewsh.hxx>
@@ -1142,7 +1142,7 @@ else
                                 case CALC_DATE  : eCurrListOper = CALC_MONTH;
                                                     break;
                                 default :
-                                    break;                    
+                                    break;
                             }
                             return eCurrOper;
                         }
