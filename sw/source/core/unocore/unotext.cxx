@@ -1817,13 +1817,31 @@ uno::Reference< text::XTextTable > SwXText::convertToTable(
             const uno::Reference< text::XTextRange > xStartRange = pRow[nCell][0];
             const uno::Reference< text::XTextRange > xEndRange = pRow[nCell][1];
             SwUnoInternalPaM aStartCellPam(*pDoc);
-            SwUnoInternalPaM aEndCellPam(*pDoc);
+            SwUnoInternalPaM aEndCellPam(*pDoc);                    
 
             // !!! TODO - PaMs in tables and sections do not work here - the same applies to PaMs in frames !!!
 
             if(!SwXTextRange::XTextRangeToSwPaM(aStartCellPam, xStartRange) ||
                 !SwXTextRange::XTextRangeToSwPaM(aEndCellPam, xEndRange) )
                 throw lang::IllegalArgumentException();
+            
+            SwNodeRange aTmpRange( aStartCellPam.Start()->nNode, aEndCellPam.End()->nNode);
+            SwNodeRange * pCorrectedRange = pDoc->GetNodes().ExpandRangeForTableBox(aTmpRange);
+
+            if (pCorrectedRange != NULL)
+            {
+                SwPaM aNewStartPaM(pCorrectedRange->aStart, 0);
+                aStartCellPam = aNewStartPaM;
+                
+                xub_StrLen nEndLen = 0;                
+                SwTxtNode * pTxtNode = pCorrectedRange->aEnd.GetNode().GetTxtNode();
+                if (pTxtNode != NULL)
+                    nEndLen = pTxtNode->Len();
+                
+                SwPaM aNewEndPaM(pCorrectedRange->aEnd, nEndLen);
+                aEndCellPam = aNewEndPaM;
+            }
+            
             /** check the nodes between start and end
                 it is allowed to have pairs of StartNode/EndNodes
              */
@@ -1852,7 +1870,7 @@ uno::Reference< text::XTextTable > SwXText::convertToTable(
                     break;
                 }
             }
-
+            
             /** The vector<vector> NodeRanges has to contain consecutive nodes.
                 In rTableRanges the ranges don't need to be full paragraphs but they have to follow
                 each other. To process the ranges they have to be aligned on paragraph borders
