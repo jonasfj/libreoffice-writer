@@ -1,7 +1,7 @@
 /*************************************************************************
  *
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
- * 
+ *
  * Copyright 2008 by Sun Microsystems, Inc.
  *
  * OpenOffice.org - a multi-platform office productivity suite
@@ -67,8 +67,8 @@
 #include <com/sun/star/frame/XStorable.hpp>
 #include <swunohelper.hxx>
 #include <vcl/waitobj.hxx>
-#include <svtools/pathoptions.hxx>
-#include <svtools/urihelper.hxx>
+#include <unotools/pathoptions.hxx>
+#include <svl/urihelper.hxx>
 #include <addresslistdialog.hrc>
 #include <dbui.hrc>
 
@@ -271,7 +271,7 @@ SwAddressListDialog::SwAddressListDialog(SwMailMergeAddressBlockPage* pParent) :
                     m_xDBContext->getByName(pNames[nName]) >>= xSourceProperties;
                     pUserData->sURL = lcl_getFlatURL( xSourceProperties );
                     bEnableEdit = pUserData->sURL.getLength() > 0 &&
-                        SWUnoHelper::UCB_IsFile( pUserData->sURL ) && //#i97577# 
+                        SWUnoHelper::UCB_IsFile( pUserData->sURL ) && //#i97577#
                         !SWUnoHelper::UCB_IsReadOnlyFileName( pUserData->sURL );
                 }
                 catch(const uno::Exception& )
