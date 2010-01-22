@@ -259,7 +259,7 @@ eF_ResT SwWW8ImplReader::Read_F_FormListBox( WW8FieldDesc* pF, String& rStr)
 
     const SvtFilterOptions* pOpt = SvtFilterOptions::Get();
     sal_Bool bUseEnhFields=(pOpt && pOpt->IsUseEnhancedFields());
- 
+
     if (!bUseEnhFields)
     {
         SwDropDownField aFld((SwDropDownFieldType*)rDoc.GetSysFldType(RES_DROPDOWN));
@@ -280,16 +280,14 @@ eF_ResT SwWW8ImplReader::Read_F_FormListBox( WW8FieldDesc* pF, String& rStr)
     }
     else
     {
-        //@TODO fix: copy pasting here!!!!!!!!!!!!!!
-        //REVIEW: don't let this throught.... sometime I forget to get rid of my proof of concept stuff. Please kindly remind me!!!!!
- 
+        // TODO: review me
         String aBookmarkName;
         WW8PLCFx_Book* pB = pPlcxMan->GetBook();
         if (pB!=NULL)
         {
             WW8_CP currentCP=pF->nSCode;
             WW8_CP currentLen=pF->nLen;
- 
+
             USHORT bkmFindIdx;
             String aBookmarkFind=pB->GetBookmark(currentCP-1, currentCP+currentLen-1, bkmFindIdx);
 
