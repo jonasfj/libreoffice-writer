@@ -1,7 +1,7 @@
 /*************************************************************************
  *
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
- * 
+ *
  * Copyright 2008 by Sun Microsystems, Inc.
  *
  * OpenOffice.org - a multi-platform office productivity suite
@@ -36,19 +36,19 @@
 #include <com/sun/star/document/XDocumentProperties.hpp>
 #include <com/sun/star/i18n/ScriptType.hpp>
 
-#ifndef PRODUCT
+#ifdef DBG_UTIL
 #include <stdlib.h>
 #endif
 #include <hintids.hxx>
 
 #define _SVSTDARR_STRINGS
-#include <svtools/svstdarr.hxx>
-#include <svtools/stritem.hxx>
+#include <svl/svstdarr.hxx>
+#include <svl/stritem.hxx>
 #include <svtools/imap.hxx>
 #include <svtools/htmltokn.h>
 #include <svtools/htmlkywd.hxx>
 #include <svtools/ctrltool.hxx>
-#include <svtools/pathoptions.hxx>
+#include <unotools/pathoptions.hxx>
 #include <vcl/svapp.hxx>
 #include <vcl/wrkwin.hxx>
 #include <sfx2/fcontnr.hxx>
@@ -307,7 +307,7 @@ SwHTMLParser::SwHTMLParser( SwDoc* pD, const SwPaM& rCrsr, SvStream& rIn,
     // <--
     nOpenParaToken( 0 ),
     eJumpTo( JUMPTO_NONE ),
-#ifndef PRODUCT
+#ifdef DBG_UTIL
     nContinue( 0 ),
 #endif
     eParaAdjust( SVX_ADJUST_END ),
@@ -437,7 +437,7 @@ SwHTMLParser::SwHTMLParser( SwDoc* pD, const SwPaM& rCrsr, SvStream& rIn,
 
 __EXPORT SwHTMLParser::~SwHTMLParser()
 {
-#ifndef PRODUCT
+#ifdef DBG_UTIL
     ASSERT( !nContinue, "DTOR im Continue - Das geht schief!!!" );
 #endif
     BOOL bAsync = pDoc->IsInLoadAsynchron();
@@ -588,7 +588,7 @@ SvParserState __EXPORT SwHTMLParser::CallParser()
 
 void __EXPORT SwHTMLParser::Continue( int nToken )
 {
-#ifndef PRODUCT
+#ifdef DBG_UTIL
     ASSERT( !nContinue, "Continue im Continue - Das sollte doch nicht sein, oder?" );
     nContinue++;
 #endif
@@ -603,7 +603,7 @@ void __EXPORT SwHTMLParser::Continue( int nToken )
 
     // Die ViewShell vom Dokument holen, merken und als aktuelle setzen.
     ViewShell *pInitVSh = CallStartAction();
-    
+
     if( SVPAR_ERROR != eState && GetMedium() && !bViewCreated )
     {
         // Beim ersten Aufruf erstmal returnen, Doc anzeigen
@@ -614,7 +614,7 @@ void __EXPORT SwHTMLParser::Continue( int nToken )
         bViewCreated = TRUE;
         pDoc->SetInLoadAsynchron( TRUE );
 
-#ifndef PRODUCT
+#ifdef DBG_UTIL
         nContinue--;
 #endif
 
@@ -724,7 +724,7 @@ void __EXPORT SwHTMLParser::Continue( int nToken )
                     pPam->GetPoint()->nContent.Assign( pTxtNode, nStt );
                 }
 
-#ifndef PRODUCT
+#ifdef DBG_UTIL
 // !!! sollte nicht moeglich sein, oder ??
 ASSERT( pSttNdIdx->GetIndex()+1 != pPam->GetBound( TRUE ).nNode.GetIndex(),
             "Pam.Bound1 steht noch im Node" );
@@ -922,7 +922,7 @@ if( pSttNdIdx->GetIndex()+1 == pPam->GetBound( FALSE ).nNode.GetIndex() )
     // wieder rekonstruieren.
     CallEndAction( TRUE );
 
-#ifndef PRODUCT
+#ifdef DBG_UTIL
     nContinue--;
 #endif
 }
@@ -977,7 +977,7 @@ void __EXPORT SwHTMLParser::NextToken( int nToken )
             return ;
     }
 
-#ifndef PRODUCT
+#ifdef DBG_UTIL
     if( pPendStack )
     {
         switch( nToken )
@@ -2471,12 +2471,12 @@ ViewShell *SwHTMLParser::CallStartAction( ViewShell *pVSh, BOOL bChkPtr )
 
     if( !pVSh || bChkPtr )
     {
-#ifndef PRODUCT
+#ifdef DBG_UTIL
         ViewShell *pOldVSh = pVSh;
 #endif
         pDoc->GetEditShell( &pVSh );
         ASSERT( !pVSh || !pOldVSh || pOldVSh == pVSh, "CallStartAction: Wer hat die ViewShell ausgetauscht?" );
-#ifndef PRODUCT
+#ifdef DBG_UTIL
         if( pOldVSh && !pVSh )
             pVSh = 0;
 #endif
@@ -2757,7 +2757,7 @@ void SwHTMLParser::_SetAttr( BOOL bChkEnd, BOOL bBeforeTable,
 
                 switch( nWhich )
                 {
-                case RES_FLTR_BOOKMARK: // insert bookmark 
+                case RES_FLTR_BOOKMARK: // insert bookmark
                     {
                         const String sName( ((SfxStringItem*)pAttr->pItem)->GetValue() );
                         IDocumentMarkAccess* const pMarkAccess = pDoc->getIDocumentMarkAccess();
@@ -2771,7 +2771,7 @@ void SwHTMLParser::_SetAttr( BOOL bChkEnd, BOOL bBeforeTable,
                             sName,
                             IDocumentMarkAccess::BOOKMARK );
 
-                        // jump to bookmark 
+                        // jump to bookmark
                         if( JUMPTO_MARK == eJumpTo && pNewMark->GetName() == ::rtl::OUString(sJmpMark) )
                         {
                             bChkJumpMark = TRUE;
@@ -3882,7 +3882,7 @@ void SwHTMLParser::EndPara( BOOL bReal )
 {
     if( HTML_LI_ON==nOpenParaToken && pTable )
     {
-#ifndef PRODUCT
+#ifdef DBG_UTIL
         const SwNumRule *pNumRule = pPam->GetNode()->GetTxtNode()->GetNumRule();
 #endif
         ASSERT( pNumRule, "Wo ist die Numrule geblieben" );

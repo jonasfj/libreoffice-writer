@@ -1,7 +1,7 @@
 /*************************************************************************
  *
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
- * 
+ *
  * Copyright 2008 by Sun Microsystems, Inc.
  *
  * OpenOffice.org - a multi-platform office productivity suite
@@ -277,7 +277,7 @@ void SwFlyFreeFrm::MakeAll()
     }
     Unlock();
 
-#ifndef PRODUCT
+#ifdef DBG_UTIL
     SWRECTFN( this )
     ASSERT( bHeightClipped || ( (Frm().*fnRect->fnGetHeight)() > 0 &&
             (Prt().*fnRect->fnGetHeight)() > 0),
@@ -966,7 +966,7 @@ void SwPageFrm::AppendDrawObjToPage( SwAnchoredObject& _rNewObj )
     }
     if ( !pSortedObjs->Insert( _rNewObj ) )
     {
-#ifndef PRODUCT
+#ifdef DBG_UTIL
         ASSERT( pSortedObjs->Contains( _rNewObj ),
                 "Drawing object not appended into list <pSortedObjs>." );
 #endif

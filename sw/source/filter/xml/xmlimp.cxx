@@ -1,7 +1,7 @@
 /*************************************************************************
  *
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
- * 
+ *
  * Copyright 2008 by Sun Microsystems, Inc.
  *
  * OpenOffice.org - a multi-platform office productivity suite
@@ -64,7 +64,7 @@
 #include <sfx2/printer.hxx>
 #include <ForbiddenCharactersEnum.hxx>
 #include <xmloff/xmluconv.hxx>
-#include <svtools/saveopt.hxx>
+#include <unotools/saveopt.hxx>
 #include <tools/diagnose_ex.h>
 #include <hash_set>
 #include <stringhash.hxx>
@@ -178,7 +178,7 @@ SvXMLImportContext *SwXMLBodyContext_Impl::CreateChildContext(
 // --> OD 2006-10-11 #i69629#
 // enhance class <SwXMLDocContext_Impl> in order to be able to create subclasses
 // NB: virtually inherit so we can multiply inherit properly
-//     in SwXMLOfficeDocContext_Impl 
+//     in SwXMLOfficeDocContext_Impl
 class SwXMLDocContext_Impl : public virtual SvXMLImportContext
 {
 // --> OD 2006-10-11 #i69629#
@@ -384,7 +384,7 @@ void SwXMLDocStylesContext_Impl::EndElement()
     // assign paragraph styles to list levels of outline style after all styles
     // are imported and finished.
     SwXMLImport& rSwImport = dynamic_cast<SwXMLImport&>( GetImport());
-    GetImport().GetTextImport()->SetOutlineStyles( 
+    GetImport().GetTextImport()->SetOutlineStyles(
             (rSwImport.GetStyleFamilyMask() & SFX_STYLE_FAMILY_PARA ) ? sal_True : sal_False);
     // <--
 }
@@ -841,7 +841,7 @@ void SwXMLImport::endDocument( void )
                                             pTxtNode->GetTxt().Len() );
                 }
 
-#ifndef PRODUCT
+#ifdef DBG_UTIL
                 // !!! This should be impossible !!!!
                 ASSERT( pSttNdIdx->GetIndex()+1 !=
                                         pPaM->GetBound( sal_True ).nNode.GetIndex(),

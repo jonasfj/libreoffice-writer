@@ -37,9 +37,9 @@
 
 #include <tools/errinf.hxx>
 #include <tools/stream.hxx>
-#include <svtools/itemiter.hxx>
+#include <svl/itemiter.hxx>
 #include <svtools/rtftoken.h>
-#include <svtools/intitem.hxx>
+#include <svl/intitem.hxx>
 #include <svx/fhgtitem.hxx>
 #include <svx/ulspitem.hxx>
 #include <svx/tstpitem.hxx>
@@ -379,7 +379,7 @@ void SwRTFParser::Continue( int nToken )
                 pPam->GetPoint()->nContent.Assign( pTxtNode, nStt );
             }
 
-#ifndef PRODUCT
+#ifdef DBG_UTIL
 // !!! sollte nicht moeglich sein, oder ??
 ASSERT( pSttNdIdx->GetIndex()+1 != pPam->GetBound( TRUE ).nNode.GetIndex(),
             "Pam.Bound1 steht noch im Node" );
@@ -1053,7 +1053,7 @@ void rtfSections::InsertSegments(bool bNewDoc)
 
 namespace sw{
     namespace util{
-    
+
 InsertedTableClient::InsertedTableClient(SwTableNode & rNode)
 {
     rNode.Add(this);
@@ -1063,7 +1063,7 @@ SwTableNode * InsertedTableClient::GetTableNode()
 {
     return dynamic_cast<SwTableNode *> (pRegisteredIn);
 }
-    
+
 InsertedTablesManager::InsertedTablesManager(const SwDoc &rDoc)
     : mbHasRoot(rDoc.GetRootFrm())
 {
@@ -1083,7 +1083,7 @@ void InsertedTablesManager::DelAndMakeTblFrms()
         if (pTable)
         {
             SwFrmFmt * pFrmFmt = pTable->GetTable().GetFrmFmt();
-            
+
             if (pFrmFmt != NULL)
             {
                 SwNodeIndex *pIndex = aIter->second;
@@ -1100,9 +1100,9 @@ void InsertedTablesManager::InsertTable(SwTableNode &rTableNode, SwPaM &rPaM)
         return;
     //Associate this tablenode with this after position, replace an //old
     //node association if necessary
-    
+
     InsertedTableClient * pClient = new InsertedTableClient(rTableNode);
-    
+
     maTables.insert(TblMap::value_type(pClient, &(rPaM.GetPoint()->nNode)));
 }
 }
@@ -2199,7 +2199,7 @@ void SwRTFParser::SetAttrInDoc( SvxRTFItemStackType &rSet )
 
     SwPaM aPam( *pPam->GetPoint() );
 
-#ifndef PRODUCT
+#ifdef DBG_UTIL
     ASSERT( nSNd <= nENd, "Start groesser als Ende" );
     SwNode* pDebugNd = pDoc->GetNodes()[ nSNd ];
     ASSERT( pDebugNd->IsCntntNode(), "Start kein ContentNode" );
@@ -2788,7 +2788,7 @@ void SwRTFParser::MakeStyleTab()
             for( USHORT n = rColls.Count(); n; )
                 //if( MAXLEVEL > (nLvl = rColls[ --n ]->GetOutlineLevel() ))//#outline level,zhaojianwei
                 //	nValidOutlineLevels |= 1 << nLvl;
-                if( rColls[ --n ]->IsAssignedToListLevelOfOutlineStyle())	
+                if( rColls[ --n ]->IsAssignedToListLevelOfOutlineStyle())
                     nValidOutlineLevels |= 1 << rColls[ n ]->GetAssignedOutlineStyleLevel();//<-end,zhaojianwei
         }
 
@@ -3969,7 +3969,7 @@ SwTxtFmtColl* SwRTFParser::MakeColl(const String& rName, USHORT nPos,
         {
             pColl = pDoc->GetTxtCollFromPool( RES_POOLCOLL_STANDARD, false );
             //pColl->SetOutlineLevel( nOutlineLevel );		//#outline level,removed by zhaojianwei
-            if(nOutlineLevel < MAXLEVEL )							//->add by zhaojianwei	
+            if(nOutlineLevel < MAXLEVEL )							//->add by zhaojianwei
                 pColl->AssignToListLevelOfOutlineStyle( nOutlineLevel );
             else
                 pColl->DeleteAssignmentToListLevelOfOutlineStyle();	//<-end,zhaojianwei

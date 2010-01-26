@@ -1,7 +1,7 @@
 /*************************************************************************
  *
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
- * 
+ *
  * Copyright 2008 by Sun Microsystems, Inc.
  *
  * OpenOffice.org - a multi-platform office productivity suite
@@ -250,7 +250,7 @@ SwDrawContact* SwDoc::GroupSelection( SdrView& rDrawView )
             SwDrawContact *pContact = (SwDrawContact*)GetUserCall(pObj);
 
             // --> OD 2005-08-16 #i53320#
-#ifndef PRODUCT
+#ifdef DBG_UTIL
             SwAnchoredDrawObject* pAnchoredDrawObj =
                 static_cast<SwAnchoredDrawObject*>(pContact->GetAnchoredObj( pObj ));
             ASSERT( bGroupMembersNotPositioned == pAnchoredDrawObj->NotYetPositioned(),

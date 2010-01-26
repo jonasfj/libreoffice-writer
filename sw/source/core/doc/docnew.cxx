@@ -46,15 +46,16 @@
 #include <sfx2/printer.hxx>
 #include <sfx2/docfile.hxx>
 #include <sfx2/frame.hxx>
+#include <sfx2/viewfrm.hxx>
 
-#include <svtools/macitem.hxx>
+#include <svl/macitem.hxx>
 #include <svx/svxids.hrc>
 #include <svx/svdogrp.hxx>
 #include <svx/linkmgr.hxx>
 #include <svx/forbiddencharacterstable.hxx>
-#include <svtools/zforlist.hxx>
-#include <svtools/compatibility.hxx>
-#include <svtools/lingucfg.hxx>
+#include <svl/zforlist.hxx>
+#include <unotools/compatibility.hxx>
+#include <unotools/lingucfg.hxx>
 #include <svx/svdpage.hxx>
 #include <paratr.hxx>
 #include <fchrfmt.hxx>
@@ -168,15 +169,33 @@ SV_IMPL_PTRARR( SwGrfFmtColls, SwGrfFmtCollPtr)
 
 void StartGrammarChecking( SwDoc &rDoc )
 {
-    uno::Reference< linguistic2::XProofreadingIterator > xGCIterator( rDoc.GetGCIterator() );
-    if ( xGCIterator.is() )
+    // check for a visible view
+    bool bVisible = false;
+    const SwDocShell *pDocShell = rDoc.GetDocShell();
+    SfxViewFrame    *pFrame = SfxViewFrame::GetFirst( pDocShell, 0, sal_False );
+    while (pFrame && !bVisible)
     {
-        uno::Reference< lang::XComponent >  xDoc( rDoc.GetDocShell()->GetBaseModel(), uno::UNO_QUERY );
-        uno::Reference< text::XFlatParagraphIteratorProvider >  xFPIP( xDoc, uno::UNO_QUERY );
+        if (pFrame->IsVisible())
+            bVisible = true;
+        pFrame = SfxViewFrame::GetNext( *pFrame, pDocShell, 0, sal_False );
+    }
+    
+    //!! only documents with visible views need to be checked
+    //!! (E.g. don't check temporary documents created for printing, see printing of notes and selections.
+    //!! Those get created on the fly and get hard deleted a bit later as well, and no one should have
+    //!! a uno reference to them)
+    if (bVisible)
+    {
+        uno::Reference< linguistic2::XProofreadingIterator > xGCIterator( rDoc.GetGCIterator() );
+        if ( xGCIterator.is() )
+        {
+            uno::Reference< lang::XComponent >  xDoc( rDoc.GetDocShell()->GetBaseModel(), uno::UNO_QUERY );
+            uno::Reference< text::XFlatParagraphIteratorProvider >  xFPIP( xDoc, uno::UNO_QUERY );
 
-        // start automatic background checking if not active already
-        if ( xFPIP.is() && !xGCIterator->isProofreading( xDoc ) )
-            xGCIterator->startProofreading( xDoc, xFPIP );
+            // start automatic background checking if not active already
+            if ( xFPIP.is() && !xGCIterator->isProofreading( xDoc ) )
+                xGCIterator->startProofreading( xDoc, xFPIP );
+        }
     }
 }
 
@@ -318,7 +337,7 @@ SwDoc::SwDoc() :
     mbInsOnlyTxtGlssry =
     mbContains_MSVBasic =
     mbKernAsianPunctuation =
-#ifndef PRODUCT
+#ifdef DBG_UTIL
     mbXMLExport =
 #endif
     // --> OD 2006-03-21 #b6375613#
@@ -373,7 +392,7 @@ SwDoc::SwDoc() :
     //
 
     pMacroTable = new SvxMacroTableDtor;
-    
+
     mpGrammarContact = ::createGrammarContact();
 
     /*
@@ -473,7 +492,7 @@ SwDoc::~SwDoc()
     // this assures that dipose gets called if there is need for it.
     aChartDataProviderImplRef.reset();
     delete pChartControllerHelper;
-    
+
     delete mpGrammarContact;
     mpGrammarContact = 0;
 
@@ -1046,7 +1065,7 @@ SwDoc::GetMetaFieldManager()
     return *m_pMetaFieldManager;
 }
 
-void SwDoc::InitTOXTypes() 
+void SwDoc::InitTOXTypes()
 {
    ShellResource* pShellRes = ViewShell::GetShellRes();
    SwTOXType * pNew = new SwTOXType(TOX_CONTENT,   pShellRes->aTOXContentName        );
@@ -1103,7 +1122,7 @@ SwDoc* SwDoc::CreateCopy() const
     }
     if( aNewDefaults.Count() )
         pRet->SetDefault( aNewDefaults );
-    
+
     /*
     pDfltFrmFmt( new SwFrmFmt( GetAttrPool(), sFrmFmtStr, 0 ) ),
     pEmptyPageFmt( new SwFrmFmt( GetAttrPool(), sEmptyPageStr, pDfltFrmFmt ) ),
@@ -1240,7 +1259,7 @@ SwDoc* SwDoc::CreateCopy() const
     // by asking SvtCompatibilityOptions, see below.
     //
     const SvtCompatibilityOptions aOptions;
-     */ 
+     */
     pRet->mbParaSpaceMax                          = mbParaSpaceMax                          ;
     pRet->mbParaSpaceMaxAtPages                   = mbParaSpaceMaxAtPages                   ;
     pRet->mbTabCompat                             = mbTabCompat                             ;
@@ -1266,20 +1285,20 @@ SwDoc* SwDoc::CreateCopy() const
     pRet->mbOldPrinterMetrics                     = mbOldPrinterMetrics                     ;
     pRet->mbTabRelativeToIndent                   = mbTabRelativeToIndent                   ;
     pRet->mbTabAtLeftIndentForParagraphsInList    = mbTabAtLeftIndentForParagraphsInList    ;
-                                            
-    //                                      
+
+    //
     // COMPATIBILITY FLAGS END
     //
     /*
     pMacroTable = new SvxMacroTableDtor;
-    
+
     mpGrammarContact = ::createGrammarContact();
 
     // Formate
     pFrmFmtTbl->Insert(pDfltFrmFmt, 0 );
     pCharFmtTbl->Insert(pDfltCharFmt, 0 );
 
-    // FmtColls 
+    // FmtColls
     // TXT
     pTxtFmtCollTbl->Insert(pDfltTxtFmtColl, 0 );
     // GRF
@@ -1352,6 +1371,7 @@ SwDoc* SwDoc::CreateCopy() const
     ResetModified();
 
 */    
+    pRet->ReplaceStyles( *(SwDoc*)this );
     //copy content 
     pRet->Paste( *this );
     return pRet;
@@ -1416,7 +1436,7 @@ void SwDoc::Paste( const SwDoc& rSource )
                     SwFmtAnchor aAnchor( rCpyFmt.GetAnchor() );
                     if (FLY_AT_PAGE == aAnchor.GetAnchorId())
                     {
-                        aAnchor.SetPageNum( aAnchor.GetPageNum() + /*nStartPageNumber - */1 );
+                        aAnchor.SetPageNum( aAnchor.GetPageNum() /*+ nStartPageNumber - */);
                     }
                     else
                         continue;

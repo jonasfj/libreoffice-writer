@@ -31,8 +31,8 @@
 // MARKER(update_precomp.py): autogen include statement, do not remove
 #include "precompiled_sw.hxx"
 
-#include <svtools/linguprops.hxx>
-#include <svtools/lingucfg.hxx>
+#include <unotools/linguprops.hxx>
+#include <unotools/lingucfg.hxx>
 #include <com/sun/star/embed/EmbedStates.hpp>
 #include <hintids.hxx>
 #include <com/sun/star/util/XCloseable.hpp>
@@ -208,7 +208,7 @@ SwFrmFmt *SwDoc::MakeLayoutFmt( RndStdIds eRequest, const SfxItemSet* pSet )
         }
         break;
 
-#ifndef PRODUCT
+#ifdef DBG_UTIL
     case FLY_AT_PAGE:
     case FLY_AT_CHAR:
     case FLY_AT_FLY:
@@ -1693,7 +1693,7 @@ SwFlyFrmFmt* SwDoc::InsertDrawLabel( const String &rTxt,
         SwTxtAttr * const pHnt =
             pTxtNode->GetTxtAttrForCharAt( nIdx, RES_TXTATR_FLYCNT );
 
-#ifndef PRODUCT
+#ifdef DBG_UTIL
         ASSERT( pHnt && pHnt->Which() == RES_TXTATR_FLYCNT,
                     "Missing FlyInCnt-Hint." );
         ASSERT( pHnt && ((SwFmtFlyCnt&)pHnt->GetFlyCnt()).
@@ -1878,7 +1878,7 @@ IMPL_LINK( SwDoc, DoIdleJobs, Timer *, pTimer )
         if (GetRootFrm()->IsNeedGrammarCheck())
         {
             BOOL bIsOnlineSpell = pSh->GetViewOptions()->IsOnlineSpell();
-            
+
             sal_Bool bIsAutoGrammar = sal_False;
             SvtLinguConfig().GetProperty( ::rtl::OUString::createFromAscii(
                         UPN_IS_GRAMMAR_AUTO ) ) >>= bIsAutoGrammar;
@@ -1886,7 +1886,7 @@ IMPL_LINK( SwDoc, DoIdleJobs, Timer *, pTimer )
             if (bIsOnlineSpell && bIsAutoGrammar)
                 StartGrammarChecking( *this );
         }
-    
+
         sal_uInt16 nFldUpdFlag;
         if( GetRootFrm()->IsIdleFormat() )
             GetRootFrm()->GetCurrShell()->LayoutIdle();
