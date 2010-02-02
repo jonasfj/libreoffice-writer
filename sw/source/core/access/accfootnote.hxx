@@ -1,7 +1,7 @@
 /*************************************************************************
  *
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
- * 
+ *
  * Copyright 2008 by Sun Microsystems, Inc.
  *
  * OpenOffice.org - a multi-platform office productivity suite
@@ -29,9 +29,13 @@
  ************************************************************************/
 #ifndef _ACCFOOTNOTE_HXX
 #define _ACCFOOTNOTE_HXX
-#ifndef _ACCCONTEXT_HXX
-#include "acccontext.hxx"
-#endif
+
+#include <sal/types.h>
+
+#include <acccontext.hxx>
+
+class SwAccessibleMap;
+class SwFtnFrm;
 
 class SwAccessibleFootnote : public SwAccessibleContext
 {

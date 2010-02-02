@@ -1,7 +1,7 @@
 /*************************************************************************
  *
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
- * 
+ *
  * Copyright 2008 by Sun Microsystems, Inc.
  *
  * OpenOffice.org - a multi-platform office productivity suite
@@ -29,13 +29,15 @@
  ************************************************************************/
 #ifndef _ACCFRAMEBASE_HXX
 #define _ACCFRAMEBASE_HXX
-#ifndef _ACCCONTEXT_HXX
-#include "acccontext.hxx"
-#endif
+
+#include <acccontext.hxx>
+
+#include <calbck.hxx>
 
 class SwFlyFrm;
 
-class SwAccessibleFrameBase : public SwAccessibleContext, public SwClient
+class SwAccessibleFrameBase : public SwAccessibleContext,
+                              public SwClient
 {
     sal_Bool	bIsSelected;	// protected by base class mutex
 
