@@ -35,18 +35,14 @@
 
 #include <stack>
 
-#ifndef __RSC //autogen
 #include <tools/errinf.hxx>
-#endif
 #include <tools/stream.hxx>
-#include <svtools/itemiter.hxx>
+#include <svl/itemiter.hxx>
 #include <svtools/rtftoken.h>
-#include <svtools/intitem.hxx>
+#include <svl/intitem.hxx>
 #include <svx/fhgtitem.hxx>
 #include <svx/ulspitem.hxx>
-#ifndef _SVX_TSTPITEM_HXX //autogen
 #include <svx/tstpitem.hxx>
-#endif
 #include <svx/lspcitem.hxx>
 #include <svx/lrspitem.hxx>
 #include <svx/escpitem.hxx>
@@ -82,18 +78,14 @@
 #include <fltini.hxx>
 #include <fchrfmt.hxx>
 #include <paratr.hxx>
-#ifndef _SECTIOM_HXX
 #include <section.hxx>
-#endif
 #include <fmtclbl.hxx>
 #include <viewsh.hxx>
 #include <shellres.hxx>
 #include <hfspacingitem.hxx>
 #include <tox.hxx>
 #include <swerror.h>
-#ifndef _CMDID_H
 #include <cmdid.h>
-#endif
 #ifndef _STATSTR_HRC
 #include <statstr.hrc>          // ResId fuer Statusleiste
 #endif
@@ -387,7 +379,7 @@ void SwRTFParser::Continue( int nToken )
                 pPam->GetPoint()->nContent.Assign( pTxtNode, nStt );
             }
 
-#ifndef PRODUCT
+#ifdef DBG_UTIL
 // !!! sollte nicht moeglich sein, oder ??
 ASSERT( pSttNdIdx->GetIndex()+1 != pPam->GetBound( TRUE ).nNode.GetIndex(),
             "Pam.Bound1 steht noch im Node" );
@@ -471,8 +463,8 @@ if( pSttNdIdx->GetIndex()+1 == pPam->GetBound( FALSE ).nNode.GetIndex() )
                         for ( USHORT nI = pFrmFmts->Count(); nI; --nI )
                         {
                             const SwFmtAnchor & rAnchor = (*pFrmFmts)[ nI - 1 ]->GetAnchor();
-                            if ( FLY_AT_CNTNT == rAnchor.GetAnchorId() ||
-                                 FLY_AUTO_CNTNT == rAnchor.GetAnchorId() )
+                            if ((FLY_AT_PARA == rAnchor.GetAnchorId()) ||
+                                (FLY_AT_CHAR == rAnchor.GetAnchorId()))
                             {
                                 const SwPosition * pObjPos = rAnchor.GetCntntAnchor();
                                 if ( pObjPos && nNodeIdx == pObjPos->nNode.GetIndex() )
@@ -1061,7 +1053,7 @@ void rtfSections::InsertSegments(bool bNewDoc)
 
 namespace sw{
     namespace util{
-    
+
 InsertedTableClient::InsertedTableClient(SwTableNode & rNode)
 {
     rNode.Add(this);
@@ -1071,7 +1063,7 @@ SwTableNode * InsertedTableClient::GetTableNode()
 {
     return dynamic_cast<SwTableNode *> (pRegisteredIn);
 }
-    
+
 InsertedTablesManager::InsertedTablesManager(const SwDoc &rDoc)
     : mbHasRoot(rDoc.GetRootFrm())
 {
@@ -1091,7 +1083,7 @@ void InsertedTablesManager::DelAndMakeTblFrms()
         if (pTable)
         {
             SwFrmFmt * pFrmFmt = pTable->GetTable().GetFrmFmt();
-            
+
             if (pFrmFmt != NULL)
             {
                 SwNodeIndex *pIndex = aIter->second;
@@ -1108,9 +1100,9 @@ void InsertedTablesManager::InsertTable(SwTableNode &rTableNode, SwPaM &rPaM)
         return;
     //Associate this tablenode with this after position, replace an //old
     //node association if necessary
-    
+
     InsertedTableClient * pClient = new InsertedTableClient(rTableNode);
-    
+
     maTables.insert(TblMap::value_type(pClient, &(rPaM.GetPoint()->nNode)));
 }
 }
@@ -1270,14 +1262,7 @@ void SwRTFParser::ReadDrawingObject()
         sw::util::SetLayer aSetLayer(*pDoc);
         aSetLayer.SendObjectToHeaven(*pStroke);
         */
-        /*
-            FLY_AT_CNTNT,       //Absatzgebundener Rahmen <to paragraph>
-        FLY_IN_CNTNT,       //Zeichengebundener Rahmen <as character>
-        FLY_PAGE,           //Seitengebundener Rahmen <to page>
-        FLY_AT_FLY,         //Rahmengebundener Rahmen ( LAYER_IMPL ) <to frame>
-        FLY_AUTO_CNTNT,     //Automatisch positionierter, absatzgebundener Rahmen <to character>
-        */
-        SwFmtAnchor aAnchor( FLY_AT_CNTNT );
+        SwFmtAnchor aAnchor( FLY_AT_PARA );
         aAnchor.SetAnchor( pPam->GetPoint() );
         aFlySet.Put( aAnchor );
 
@@ -1343,7 +1328,7 @@ void SwRTFParser::InsertShpObject(SdrObject* pStroke, int _nZOrder)
         SwFmtFollowTextFlow aFollowTextFlow( FALSE );
         aFlySet.Put( aFollowTextFlow );
 
-        SwFmtAnchor aAnchor( FLY_AT_CNTNT );
+        SwFmtAnchor aAnchor( FLY_AT_PARA );
         aAnchor.SetAnchor( pPam->GetPoint() );
         aFlySet.Put( aAnchor );
 
@@ -2214,7 +2199,7 @@ void SwRTFParser::SetAttrInDoc( SvxRTFItemStackType &rSet )
 
     SwPaM aPam( *pPam->GetPoint() );
 
-#ifndef PRODUCT
+#ifdef DBG_UTIL
     ASSERT( nSNd <= nENd, "Start groesser als Ende" );
     SwNode* pDebugNd = pDoc->GetNodes()[ nSNd ];
     ASSERT( pDebugNd->IsCntntNode(), "Start kein ContentNode" );
@@ -2803,7 +2788,7 @@ void SwRTFParser::MakeStyleTab()
             for( USHORT n = rColls.Count(); n; )
                 //if( MAXLEVEL > (nLvl = rColls[ --n ]->GetOutlineLevel() ))//#outline level,zhaojianwei
                 //	nValidOutlineLevels |= 1 << nLvl;
-                if( rColls[ --n ]->IsAssignedToListLevelOfOutlineStyle())	
+                if( rColls[ --n ]->IsAssignedToListLevelOfOutlineStyle())
                     nValidOutlineLevels |= 1 << rColls[ n ]->GetAssignedOutlineStyleLevel();//<-end,zhaojianwei
         }
 
@@ -3710,8 +3695,9 @@ void SwRTFParser::ReadHeaderFooter( int nToken, SwPageDesc* pPageDesc )
             xub_StrLen nPos = pPam->GetPoint()->nContent.GetIndex();
             SfxItemSet aSet( pDoc->GetAttrPool(), RES_FRMATR_BEGIN,
                                             RES_FRMATR_END-1 );
-            aSet.Put( SwFmtAnchor( FLY_IN_CNTNT ));
-            pHdFtFmt = pDoc->MakeFlySection( FLY_IN_CNTNT, pPam->GetPoint(), &aSet );
+            aSet.Put( SwFmtAnchor( FLY_AS_CHAR ));
+            pHdFtFmt = pDoc->MakeFlySection( FLY_AS_CHAR,
+                            pPam->GetPoint(), &aSet );
 
             pTxtAttr = pPam->GetNode()->GetTxtNode()->GetTxtAttrForCharAt(
                                                 nPos, RES_TXTATR_FLYCNT );
@@ -3983,7 +3969,7 @@ SwTxtFmtColl* SwRTFParser::MakeColl(const String& rName, USHORT nPos,
         {
             pColl = pDoc->GetTxtCollFromPool( RES_POOLCOLL_STANDARD, false );
             //pColl->SetOutlineLevel( nOutlineLevel );		//#outline level,removed by zhaojianwei
-            if(nOutlineLevel < MAXLEVEL )							//->add by zhaojianwei	
+            if(nOutlineLevel < MAXLEVEL )							//->add by zhaojianwei
                 pColl->AssignToListLevelOfOutlineStyle( nOutlineLevel );
             else
                 pColl->DeleteAssignmentToListLevelOfOutlineStyle();	//<-end,zhaojianwei

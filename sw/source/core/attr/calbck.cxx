@@ -1,7 +1,7 @@
 /*************************************************************************
  *
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
- * 
+ *
  * Copyright 2008 by Sun Microsystems, Inc.
  *
  * OpenOffice.org - a multi-platform office productivity suite
@@ -38,7 +38,7 @@
 #include <swcache.hxx>
 #include <swfntcch.hxx>
 
-#ifndef PRODUCT
+#ifdef DBG_UTIL
 #include <unotextmarkup.hxx>
 #endif
 
@@ -211,7 +211,7 @@ void SwModify::Modify( SfxPoolItem* pOldValue, SfxPoolItem* pNewValue )
 
     LockModify();
 
-#ifdef PRODUCT
+#ifndef DBG_UTIL
     bInModify = TRUE;
 #else
     if( !pOldValue )
@@ -287,7 +287,7 @@ void SwModify::Add(SwClient *pDepend)
     // nur wenn das hier noch nicht eingetragen ist einfuegen
     if(pDepend->pRegisteredIn != this )
     {
-#ifndef PRODUCT
+#ifdef DBG_UTIL
         SwClientIter* pTmp = pClientIters;
         while( pTmp )
         {
@@ -463,7 +463,7 @@ BOOL SwDepend::GetInfo( SfxPoolItem& rInfo ) const
 /********************************************************************/
 
 
-SwClientIter::SwClientIter( SwModify& rModify )
+SwClientIter::SwClientIter( SwModify const& rModify )
     : rRoot( rModify )
 {
     // hinten einketten!

@@ -1,7 +1,7 @@
 /*************************************************************************
  *
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
- * 
+ *
  * Copyright 2008 by Sun Microsystems, Inc.
  *
  * OpenOffice.org - a multi-platform office productivity suite
@@ -30,6 +30,7 @@
 
 // MARKER(update_precomp.py): autogen include statement, do not remove
 #include "precompiled_sw.hxx"
+
 #include <SwSpellDialogChildWindow.hxx>
 #include <vcl/msgbox.hxx>
 #include <svx/svxacorr.hxx>
@@ -47,23 +48,22 @@
 #include <svx/svdview.hxx>
 #include <svx/svditer.hxx>
 #include <svx/svdogrp.hxx>
-#include <svtools/linguprops.hxx>
-#include <svtools/lingucfg.hxx>
+#include <unotools/linguprops.hxx>
+#include <unotools/lingucfg.hxx>
 #include <doc.hxx>
-#ifndef _DOCSH_HXX
 #include <docsh.hxx>
-#endif
 #include <docary.hxx>
 #include <frmfmt.hxx>
 #include <dcontact.hxx>
 #include <edtwin.hxx>
 #include <pam.hxx>
 #include <drawbase.hxx>
-#include <unoobj.hxx>
+#include <unotextrange.hxx>
 #ifndef _DIALOG_HXX
 #include <dialog.hrc>
 #endif
 #include <cmdid.h>
+
 
 using namespace ::com::sun::star;
 using namespace ::com::sun::star::uno;
@@ -258,8 +258,10 @@ svx::SpellPortions SwSpellDialogChildWindow::GetNextWrongSentence (void)
                     //mark the start position only if not at start of doc
                     if(!pWrtShell->IsStartOfDoc())
                     {
-                        m_pSpellState->m_xStartRange = SwXTextRange::CreateTextRangeFromPosition(
-                                pWrtShell->GetDoc(), *pCrsr->Start(), pCrsr->End());
+                        m_pSpellState->m_xStartRange =
+                            SwXTextRange::CreateXTextRange(
+                                *pWrtShell->GetDoc(),
+                                *pCrsr->Start(), pCrsr->End());
                     }
                     pWrtShell->SpellStart( DOCPOS_START, DOCPOS_END, DOCPOS_CURR, FALSE );
                 }
@@ -390,7 +392,8 @@ svx::SpellPortions SwSpellDialogChildWindow::GetNextWrongSentence (void)
                 if(RET_YES == nRet)
                 {
                     SwUnoInternalPaM aPam(*pWrtShell->GetDoc());
-                    if(SwXTextRange::XTextRangeToSwPaM(aPam, m_pSpellState->m_xStartRange))
+                    if (::sw::XTextRangeToSwPaM(aPam,
+                                m_pSpellState->m_xStartRange))
                     {
                         pWrtShell->SetSelection(aPam);
                         pWrtShell->SpellStart(DOCPOS_START, DOCPOS_CURR, DOCPOS_START);
@@ -414,7 +417,7 @@ svx::SpellPortions SwSpellDialogChildWindow::GetNextWrongSentence (void)
                 String sInfo(SW_RES(STR_SPELLING_COMPLETED));
                 //#i84610#
                 Window* pTemp = GetWindow();    // temporary needed for g++ 3.3.5
-                InfoBox(pTemp, sInfo ).Execute();                
+                InfoBox(pTemp, sInfo ).Execute();
                 LockFocusNotification( false );
                 //take care that the now valid selection is stored
                 LoseFocus();
@@ -493,7 +496,7 @@ void SwSpellDialogChildWindow::SetGrammarChecking(bool bOn)
     m_bIsGrammarCheckingOn = bOn;
     String aPropName( C2S(UPN_IS_GRAMMAR_INTERACTIVE ) );
     SvtLinguConfig().SetProperty( aPropName, aVal );
-    // set current spell position to the start of the current sentence to 
+    // set current spell position to the start of the current sentence to
     // continue with this sentence after grammar checking state has been changed
     SwWrtShell* pWrtShell = GetWrtShell_Impl();
     if(pWrtShell)
@@ -517,7 +520,7 @@ void SwSpellDialogChildWindow::SetGrammarChecking(bool bOn)
                 pOutliner->PutSpellingToSentenceStart( pSdrView->GetTextEditOutlinerView()->GetEditView() );
             }
         }
-    }    
+    }
 }
 /*-- 28.10.2003 08:41:09---------------------------------------------------
 

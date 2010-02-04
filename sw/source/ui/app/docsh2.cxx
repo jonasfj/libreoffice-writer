@@ -1,7 +1,7 @@
 /*************************************************************************
  *
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
- * 
+ *
  * Copyright 2008 by Sun Microsystems, Inc.
  *
  * OpenOffice.org - a multi-platform office productivity suite
@@ -30,33 +30,22 @@
 
 // MARKER(update_precomp.py): autogen include statement, do not remove
 #include "precompiled_sw.hxx"
-#ifndef _COM_SUN_STAR_LANG_XMultiServiceFactory_HPP_
-#include <com/sun/star/lang/XMultiServiceFactory.hpp>
-#endif
 
-#ifndef _UNOTOOLS_PROCESSFACTORY_HXX
-#include <comphelper/processfactory.hxx>
-#endif
+#include <com/sun/star/lang/XMultiServiceFactory.hpp>
 #include <com/sun/star/frame/XDispatchHelper.hpp>
 
+#include <comphelper/processfactory.hxx>
 
 #include <hintids.hxx>
 #include <tools/urlobj.hxx>
 #include <unotools/tempfile.hxx>
-#ifndef _WRKWIN_HXX //autogen
 #include <vcl/wrkwin.hxx>
-#endif
-#ifndef _MSGBOX_HXX //autogen
 #include <vcl/msgbox.hxx>
-#endif
-#include <svtools/lckbitem.hxx>
-#include <svtools/eitem.hxx>
-/*
-#include <svtools/macitem.hxx>
-*/
-#include <svtools/zforlist.hxx>
-#include <svtools/zformat.hxx>
-#include <svtools/pathoptions.hxx>
+#include <svl/lckbitem.hxx>
+#include <svl/eitem.hxx>
+#include <svl/zforlist.hxx>
+#include <svl/zformat.hxx>
+#include <unotools/pathoptions.hxx>
 #include <svtools/transfer.hxx>
 #ifndef _SFXSIDS_HRC //autogen
 #include <sfx2/dialogs.hrc>
@@ -90,51 +79,33 @@
 #include <swunodef.hxx>
 #include <fmtcol.hxx>
 #include <swevent.hxx>
-#ifndef _VIEW_HXX
 #include <view.hxx> 		// fuer die aktuelle Sicht
-#endif
-#ifndef _DOCSH_HXX
 #include <docsh.hxx>	  	// Dokumenterzeugung
-#endif
 #include <wrtsh.hxx>
 #include <fldbas.hxx>
 #include <viewopt.hxx>
-#ifndef _GLOBDOC_HXX
 #include <globdoc.hxx>
-#endif
 #include <fldwrap.hxx>
-#ifndef _REDLNDLG_HXX
 #include <redlndlg.hxx>
-#endif
 #include <docstyle.hxx>
 #include <doc.hxx>
 #include <pagedesc.hxx>
 #include <shellio.hxx>
-#ifndef _PVIEW_HXX
 #include <pview.hxx>
-#endif
-#ifndef _SRCVIEW_HXX
 #include <srcview.hxx>
-#endif
 #include <poolfmt.hxx>
 #include <usrpref.hxx>
-#ifndef _WDOCSH_HXX
 #include <wdocsh.hxx>
-#endif
 #include <unotxdoc.hxx>
 #include <acmplwrd.hxx>
 #include <swmodule.hxx>
-#include <unoobj.hxx>
+#include <unobaseclass.hxx>
 #include <swwait.hxx>
 #include <swcli.hxx>
 
-#ifndef _CMDID_H
 #include <cmdid.h>
-#endif
 #include <globals.h>
-#ifndef _HELPID_H
 #include <helpid.h>
-#endif
 #ifndef _APP_HRC
 #include <app.hrc>
 #endif
@@ -180,8 +151,6 @@ SfxDocumentInfoDialog* SwDocShell::CreateDocumentInfoDialog(
                                 Window *pParent, const SfxItemSet &rSet)
 {
     SfxDocumentInfoDialog* pDlg = new SfxDocumentInfoDialog(pParent, rSet);
-//	const SfxDocumentInfoItem& rItem = (const SfxDocumentInfoItem&)rSet.Get(SID_DOCINFO);
-//	if(rItem.IsOwnFormat())
     //nur mit Statistik, wenn dieses Doc auch angezeigt wird, nicht
     //aus dem Doc-Manager
     SwDocShell* pDocSh = (SwDocShell*) SfxObjectShell::Current();
@@ -641,7 +610,7 @@ void SwDocShell::Execute(SfxRequest& rReq)
             SvStringsISortDtor aTmpLst;
             aTmpLst.Insert( &rACW.GetWordList() );
             pAFlags->pAutoCmpltList = &aTmpLst;
-            
+
             SfxApplication* pApp = SFX_APP();
             SfxRequest aAppReq(SID_AUTO_CORRECT_DLG, SFX_CALLMODE_SYNCHRON, pApp->GetPool());
             SfxBoolItem aSwOptions( SID_AUTO_CORRECT_DLG, TRUE );
@@ -1134,7 +1103,7 @@ void SwDocShell::Execute(SfxRequest& rReq)
                                                         xRef( pClipCntnr );
 
                         pClipCntnr->CopyAnyData( FORMAT_RTF, (sal_Char*)
-                                        pStrm->GetData(), pStrm->GetSize() );
+                                    pStrm->GetData(), pStrm->GetEndOfData() );
                         pClipCntnr->CopyToClipboard(
                             GetView()? (Window*)&GetView()->GetEditWin() : 0 );
                         delete pStrm;
@@ -1230,7 +1199,7 @@ void SwDocShell::Execute(SfxRequest& rReq)
             {
                 bDone = FALSE;
                 BOOL bCreateHtml = FN_NEW_HTML_DOC == nWhich;
-                
+
                 BOOL bCreateByOutlineLevel = false;		//#outline level,add by zhaojianwei
                 sal_Int32  nTemplateOutlineLevel = 0 ;		//#outline level,add by zhaojianwei
 
@@ -1342,7 +1311,7 @@ void SwDocShell::Execute(SfxRequest& rReq)
         //                aListBoxEntries.realloc(nIdx);
                 //<-end,zhaojianwei
 
-        
+
                     //#outline level,add by zhaojianwei
                     /////////////////////////////////////////////////////////////////////
 
@@ -1352,7 +1321,7 @@ void SwDocShell::Execute(SfxRequest& rReq)
                         {
                             int nLevel;
                             for(USHORT n = 0; n < rOutlNds.Count(); ++n )
-                                if( ( nLevel = rOutlNds[n]->GetTxtNode()->GetAttrOutlineLevel()) > 0 && 
+                                if( ( nLevel = rOutlNds[n]->GetTxtNode()->GetAttrOutlineLevel()) > 0 &&
                                     ! bOutline[nLevel-1] )
                                 {
                                     bOutline[nLevel-1] = true;
@@ -1450,7 +1419,7 @@ void SwDocShell::Execute(SfxRequest& rReq)
                     if( PrepareClose( FALSE ) )
                     {
                         SwWait aWait( *this, TRUE );
-                        
+
                         //bDone = bCreateHtml			//#outline level,removed by zhaojianwei
                         //	? pDoc->GenerateHTMLDoc( aFileName, pSplitColl )
                         //	: pDoc->GenerateGlobalDoc( aFileName, pSplitColl );
@@ -1609,7 +1578,7 @@ void SwDocShell::SetModified( BOOL bSet )
     {
          if (!pDoc->IsInCallModified() )
          {
-            EnableSetModified( FALSE );	
+            EnableSetModified( FALSE );
             if( bSet )
             {
                 BOOL bOld = pDoc->IsModified();
@@ -1813,7 +1782,7 @@ void    SwDocShell::ToggleBrowserMode(BOOL bSet, SwView* _pView )
         } while ( pTmpFrm );
 
         const SwViewOption& rViewOptions = *pTempView->GetWrtShell().GetViewOptions();
-        
+
         // set view columns before toggling:
         if ( bSet )
         {

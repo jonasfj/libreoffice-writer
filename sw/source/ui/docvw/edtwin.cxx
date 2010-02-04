@@ -48,30 +48,23 @@
 #include <vcl/msgbox.hxx>
 #include <vcl/cmdevt.h>
 #include <sot/storage.hxx>
-#include <svtools/macitem.hxx>
-#include <svtools/securityoptions.hxx>
-#ifndef __SBX_SBXVARIABLE_HXX //autogen
+#include <svl/macitem.hxx>
+#include <unotools/securityoptions.hxx>
 #include <basic/sbxvar.hxx>
-#endif
-#include <svtools/ctloptions.hxx>
+#include <svl/ctloptions.hxx>
 #include <basic/sbx.hxx>
-#include <svtools/eitem.hxx>
-#include <svtools/stritem.hxx>
-#ifndef _SFX_CLIENTSH_HXX
+#include <svl/eitem.hxx>
+#include <svl/stritem.hxx>
 #include <sfx2/ipclient.hxx>
-#endif
 #include <sfx2/viewfrm.hxx>
 #include <sfx2/request.hxx>
 #include <sfx2/bindings.hxx>
 #include <sfx2/dispatch.hxx>
-#include <svtools/ptitem.hxx>
+#include <svl/ptitem.hxx>
 #include <svx/sizeitem.hxx>
 #include <svx/langitem.hxx>
 #include <svx/htmlmode.hxx>
 #include <svx/svdview.hxx>
-//#ifndef _SVDVMARK_HXX //autogen
-//#include <svx/svdvmark.hxx>
-//#endif
 #include <svx/svdhdl.hxx>
 #include <svx/svdoutl.hxx>
 #include <svx/editeng.hxx>
@@ -128,12 +121,8 @@
 #include <breakit.hxx>
 #include <checkit.hxx>
 
-#ifndef _HELPID_H
 #include <helpid.h>
-#endif
-#ifndef _CMDID_H
 #include <cmdid.h>
-#endif
 #ifndef _DOCVW_HRC
 #include <docvw.hrc>
 #endif
@@ -156,7 +145,7 @@
 #include "postit.hxx"
 
 //JP 11.10.2001: enable test code for bug fix 91313
-#if !defined( PRODUCT ) && (OSL_DEBUG_LEVEL > 1)
+#if defined(DBG_UTIL) && (OSL_DEBUG_LEVEL > 1)
 //#define TEST_FOR_BUG91313
 #endif
 
@@ -1019,7 +1008,7 @@ void SwEditWin::ChangeFly( BYTE nDir, BOOL bWeb )
             default: ASSERT( TRUE, "ChangeFly: Unknown direction." );
         }
         BOOL bSet = FALSE;
-        if( FLY_IN_CNTNT == eAnchorId && ( nDir % 2 ) )
+        if ((FLY_AS_CHAR == eAnchorId) && ( nDir % 2 ))
         {
             long aDiff = aTmp.Top() - aRefPoint.Y();
             if( aDiff > 0 )
@@ -1064,7 +1053,8 @@ void SwEditWin::ChangeFly( BYTE nDir, BOOL bWeb )
             aSet.Put( aVert );
             bSet = TRUE;
         }
-        if( bWeb && FLY_AT_CNTNT == eAnchorId && ( nDir==MOVE_LEFT_SMALL || nDir==MOVE_RIGHT_BIG ) )
+        if (bWeb && (FLY_AT_PARA == eAnchorId)
+            && ( nDir==MOVE_LEFT_SMALL || nDir==MOVE_RIGHT_BIG ))
         {
             SwFmtHoriOrient aHori( (SwFmtHoriOrient&)aSet.Get(RES_HORI_ORIENT) );
             sal_Int16 eNew;
@@ -1091,11 +1081,13 @@ void SwEditWin::ChangeFly( BYTE nDir, BOOL bWeb )
         rSh.StartAllAction();
         if( bSet )
             rSh.SetFlyFrmAttr( aSet );
-        BOOL bSetPos = FLY_IN_CNTNT != eAnchorId;
+        BOOL bSetPos = (FLY_AS_CHAR != eAnchorId);
         if(bSetPos && bWeb)
         {
-            if(FLY_PAGE != eAnchorId)
+            if (FLY_AT_PAGE != eAnchorId)
+            {
                 bSetPos = FALSE;
+            }
             else
             {
                 bSetPos = (::GetHtmlMode(rView.GetDocShell()) & HTMLMODE_SOME_ABS_POS) ?
@@ -1185,7 +1177,8 @@ void SwEditWin::ChangeDrawing( BYTE nDir )
                 BOOL bDummy;
                 const bool bVertAnchor = rSh.IsFrmVertical( TRUE, bDummy );
                 const bool bHoriMove = !bVertAnchor == !( nDir % 2 );
-                const bool bMoveAllowed = !bHoriMove || rSh.GetAnchorId() != FLY_IN_CNTNT;
+                const bool bMoveAllowed =
+                    !bHoriMove || (rSh.GetAnchorId() != FLY_AS_CHAR);
                 if ( bMoveAllowed )
                 {
                 // <--
@@ -1503,7 +1496,7 @@ void SwEditWin::KeyInput(const KeyEvent &rKEvt)
         case KS_CheckKey:
             eKeyState = KS_KeyToView;		// default weiter zur View
 
-#ifndef PRODUCT
+#ifdef DBG_UTIL
 //!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
             // JP 19.01.99: zum Umschalten des Cursor Verhaltens in ReadOnly
             //				Bereichen
@@ -1765,7 +1758,7 @@ KEYINPUT_CHECKTABLE_INSDEL:
                                  !rSh.GetCurNumRule()->IsOutlineRule() &&
                                  !rSh.HasSelection() &&
                                 rSh.IsSttPara() && rSh.IsEndPara() )
-                            eKeyState = KS_NumOff, eNextKeyState = KS_OutlineLvOff;  
+                            eKeyState = KS_NumOff, eNextKeyState = KS_OutlineLvOff;
 
                         //RETURN fuer neuen Absatz mit AutoFormatierung
                         else if( pACfg && pACfg->IsAutoFmtByInput() &&
@@ -1899,7 +1892,7 @@ KEYINPUT_CHECKTABLE_INSDEL:
 #endif
                     if (rSh.IsFormProtected() || rSh.GetCurrentFieldmark() || rSh.GetChar(FALSE)==CH_TXT_ATR_FORMELEMENT)
                     {
-                        eKeyState=KS_GotoNextFieldMark; 
+                        eKeyState=KS_GotoNextFieldMark;
                     }
                     else
                     if( rSh.GetCurNumRule() && rSh.IsSttOfPara() &&
@@ -1954,7 +1947,7 @@ KEYINPUT_CHECKTABLE_INSDEL:
                     BOOL bOld = rSh.ChgCrsrTimerFlag( FALSE );
 #endif
                     if (rSh.IsFormProtected() || rSh.GetCurrentFieldmark()|| rSh.GetChar(FALSE)==CH_TXT_ATR_FORMELEMENT) {
-                        eKeyState=KS_GotoPrevFieldMark; 
+                        eKeyState=KS_GotoPrevFieldMark;
                     }
                     else if( rSh.GetCurNumRule() && rSh.IsSttOfPara() &&
                          !rSh.HasReadonlySel() )
@@ -1991,7 +1984,7 @@ KEYINPUT_CHECKTABLE_INSDEL:
                             SwTxtFmtColl* pColl = rSh.GetCurTxtFmtColl();
                             //if( pColl && 0 < pColl->GetOutlineLevel() &&	//#outline level,zhaojianwei
                             //	MAXLEVEL - 1 >= pColl->GetOutlineLevel() )
-                            if( pColl && 
+                            if( pColl &&
                                 pColl->IsAssignedToListLevelOfOutlineStyle() &&
                                 0 < pColl->GetAssignedOutlineStyleLevel())
                                 eKeyState = KS_OutlineUp;
@@ -2369,14 +2362,14 @@ KEYINPUT_CHECKTABLE_INSDEL:
                 nKS_NUMINDENTINC_Count = 2;
                 break;
 
-            case KS_GotoNextFieldMark:      
+            case KS_GotoNextFieldMark:
                 {
                     ::sw::mark::IFieldmark const * const pFieldmark = rSh.GetFieldmarkAfter();
                     if(pFieldmark) rSh.GotoFieldmark(pFieldmark);
                 }
                 break;
 
-            case KS_GotoPrevFieldMark:      
+            case KS_GotoPrevFieldMark:
                 {
                     ::sw::mark::IFieldmark const * const pFieldmark = rSh.GetFieldmarkBefore();
                     if(pFieldmark) rSh.GotoFieldmark(pFieldmark);
@@ -4775,7 +4768,7 @@ void SwEditWin::Command( const CommandEvent& rCEvt )
                         aEvent.ExecutePosition.X = aPixPos.X();
                         aEvent.ExecutePosition.Y = aPixPos.Y();
                         Menu* pMenu = 0;
-                        ::rtl::OUString sMenuName = 
+                        ::rtl::OUString sMenuName =
                             ::rtl::OUString::createFromAscii( "private:resource/ReadonlyContextMenu");
                         if( GetView().TryContextMenuInterception( *pROPopup, sMenuName, pMenu, aEvent ) )
                         {

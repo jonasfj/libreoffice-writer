@@ -1,7 +1,7 @@
 /*************************************************************************
  *
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
- * 
+ *
  * Copyright 2008 by Sun Microsystems, Inc.
  *
  * OpenOffice.org - a multi-platform office productivity suite
@@ -326,6 +326,16 @@ SwTxtMeta::~SwTxtMeta()
     if (rFmtMeta.GetTxtAttr() == this)
     {
         rFmtMeta.SetTxtAttr(0);
+    }
+}
+
+void SwTxtMeta::ChgTxtNode(SwTxtNode * const pNode)
+{
+    m_pTxtNode = pNode; // before Notify!
+    SwFmtMeta & rFmtMeta( static_cast<SwFmtMeta &>(GetAttr()) );
+    if (rFmtMeta.GetTxtAttr() == this)
+    {
+        rFmtMeta.NotifyChangeTxtNode(pNode);
     }
 }
 

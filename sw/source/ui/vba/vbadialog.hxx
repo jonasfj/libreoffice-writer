@@ -6,8 +6,8 @@
  *
  * OpenOffice.org - a multi-platform office productivity suite
  *
- * $RCSfile: unoclbck.hxx,v $
- * $Revision: 1.6 $
+ * $RCSfile: vbadialog.hxx,v $
+ * $Revision: 1.4 $
  *
  * This file is part of OpenOffice.org.
  *
@@ -27,26 +27,27 @@
  * for a copy of the LGPLv3 License.
  *
  ************************************************************************/
-#ifndef _UNOCLBCK_HXX
-#define _UNOCLBCK_HXX
-#include <calbck.hxx>
+#ifndef SW_VBA_DIALOG_HXX
+#define SW_VBA_DIALOG_HXX
 
-class SwXReferenceMark;
-class SwFmtRefMark;
-class SwFmtFtn;
-class SwXFootnote;
-class SwTOXMark;
-class SwXDocumentIndexMark;
+#include <cppuhelper/implbase1.hxx>
+#include <ooo/vba/word/XDialog.hpp>
+#include <vbahelper/vbahelperinterface.hxx>
+#include <vbahelper/vbadialogbase.hxx>
 
-class SwUnoCallBack : public SwModify
+typedef cppu::ImplInheritanceHelper1< VbaDialogBase, ov::word::XDialog > SwVbaDialog_BASE;
+
+class SwVbaDialog : public SwVbaDialog_BASE
 {
 public:
-    SwUnoCallBack(SwModify *pToRegisterIn);
-    virtual ~SwUnoCallBack();
+    SwVbaDialog( const css::uno::Reference< ov::XHelperInterface >& xParent, const css::uno::Reference< css::uno::XComponentContext > xContext, const css::uno::Reference< css::frame::XModel >& xModel, sal_Int32 nIndex ):SwVbaDialog_BASE( xParent, xContext, xModel, nIndex ) {}
+    virtual ~SwVbaDialog() {}
 
-    // returns the API object of a reference mark if available
-    SwXReferenceMark* 	GetRefMark(const SwFmtRefMark& rMark);
-    SwXFootnote*		GetFootnote(const SwFmtFtn& rMark);
-    SwXDocumentIndexMark* GetTOXMark(const SwTOXMark& rMark);
+    // Methods
+    virtual rtl::OUString mapIndexToName( sal_Int32 nIndex );
+    // XHelperInterface
+    virtual rtl::OUString& getServiceImplName();
+    virtual css::uno::Sequence<rtl::OUString> getServiceNames();
 };
-#endif
+
+#endif /* SW_VBA_DIALOG_HXX */
