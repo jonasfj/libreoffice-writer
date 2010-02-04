@@ -36,9 +36,7 @@
 #include <com/sun/star/text/VertOrientation.hpp>
 #include <com/sun/star/text/RelOrientation.hpp>
 #include <hintids.hxx>
-#ifndef _KEYCOD_HXX //autogen
 #include <vcl/keycod.hxx>
-#endif
 #include <tools/datetime.hxx>
 #include <editeng/brkitem.hxx>
 #include <poolfmt.hxx>
@@ -150,12 +148,12 @@ class SW_DLLPUBLIC SwFltAnchor : public SfxPoolItem
 {
     SwFrmFmt* pFrmFmt;
     SwFltAnchorClient * pClient;
-    
+
 public:
     SwFltAnchor(SwFrmFmt* pFlyFmt);
     SwFltAnchor(const SwFltAnchor&);
     virtual ~SwFltAnchor();
-    
+
     // "pure virtual Methoden" vom SfxPoolItem
     virtual int operator==(const SfxPoolItem&) const;
     virtual SfxPoolItem* Clone(SfxItemPool* = 0) const;
@@ -167,10 +165,10 @@ public:
 class SwFltAnchorClient : public SwClient
 {
     SwFltAnchor * m_pFltAnchor;
-    
+
 public:
     SwFltAnchorClient(SwFltAnchor * pFltAnchor);
-    
+
     virtual void Modify (SfxPoolItem *pOld, SfxPoolItem *pNew);
 };
 
@@ -556,7 +554,7 @@ public:
         pOut->EndTable(); }
 // methoden zur verwaltung von Flys
     BOOL IsInFly() { return pOut->IsInFly(); }
-    BOOL BeginFly( RndStdIds eAnchor = FLY_AT_CNTNT, BOOL bAbsolutePos = FALSE );
+    BOOL BeginFly( RndStdIds eAnchor = FLY_AT_PARA, BOOL bAbsolutePos = FALSE );
     void SetFlyAnchor( RndStdIds eAnchor )
         { pOut->SetFlyAnchor( eAnchor ); }
     void SetFlyXPos( short nXPos, sal_Int16 eHRel = com::sun::star::text::RelOrientation::FRAME,
