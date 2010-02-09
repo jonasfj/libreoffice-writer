@@ -1083,11 +1083,13 @@ void SwEditWin::ChangeFly( BYTE nDir, BOOL bWeb )
         rSh.StartAllAction();
         if( bSet )
             rSh.SetFlyFrmAttr( aSet );
-        BOOL bSetPos = FLY_IN_CNTNT != eAnchorId;
+        BOOL bSetPos = (FLY_AS_CHAR != eAnchorId);
         if(bSetPos && bWeb)
         {
-            if(FLY_PAGE != eAnchorId)
+            if (FLY_AT_PAGE != eAnchorId)
+            {
                 bSetPos = FALSE;
+            }
             else
             {
                 bSetPos = (::GetHtmlMode(rView.GetDocShell()) & HTMLMODE_SOME_ABS_POS) ?
@@ -1758,7 +1760,7 @@ KEYINPUT_CHECKTABLE_INSDEL:
                                  !rSh.GetCurNumRule()->IsOutlineRule() &&
                                  !rSh.HasSelection() &&
                                 rSh.IsSttPara() && rSh.IsEndPara() )
-                            eKeyState = KS_NumOff, eNextKeyState = KS_OutlineLvOff;  
+                            eKeyState = KS_NumOff, eNextKeyState = KS_OutlineLvOff;
 
                         //RETURN fuer neuen Absatz mit AutoFormatierung
                         else if( pACfg && pACfg->IsAutoFmtByInput() &&
@@ -1892,7 +1894,7 @@ KEYINPUT_CHECKTABLE_INSDEL:
 #endif
                     if (rSh.IsFormProtected() || rSh.GetCurrentFieldmark() || rSh.GetChar(FALSE)==CH_TXT_ATR_FORMELEMENT)
                     {
-                        eKeyState=KS_GotoNextFieldMark; 
+                        eKeyState=KS_GotoNextFieldMark;
                     }
                     else
                     if( rSh.GetCurNumRule() && rSh.IsSttOfPara() &&
@@ -1947,7 +1949,7 @@ KEYINPUT_CHECKTABLE_INSDEL:
                     BOOL bOld = rSh.ChgCrsrTimerFlag( FALSE );
 #endif
                     if (rSh.IsFormProtected() || rSh.GetCurrentFieldmark()|| rSh.GetChar(FALSE)==CH_TXT_ATR_FORMELEMENT) {
-                        eKeyState=KS_GotoPrevFieldMark; 
+                        eKeyState=KS_GotoPrevFieldMark;
                     }
                     else if( rSh.GetCurNumRule() && rSh.IsSttOfPara() &&
                          !rSh.HasReadonlySel() )
@@ -1984,7 +1986,7 @@ KEYINPUT_CHECKTABLE_INSDEL:
                             SwTxtFmtColl* pColl = rSh.GetCurTxtFmtColl();
                             //if( pColl && 0 < pColl->GetOutlineLevel() &&  //#outline level,zhaojianwei
                             //  MAXLEVEL - 1 >= pColl->GetOutlineLevel() )
-                            if( pColl && 
+                            if( pColl &&
                                 pColl->IsAssignedToListLevelOfOutlineStyle() &&
                                 0 < pColl->GetAssignedOutlineStyleLevel())
                                 eKeyState = KS_OutlineUp;
@@ -2362,14 +2364,14 @@ KEYINPUT_CHECKTABLE_INSDEL:
                 nKS_NUMINDENTINC_Count = 2;
                 break;
 
-            case KS_GotoNextFieldMark:      
+            case KS_GotoNextFieldMark:
                 {
                     ::sw::mark::IFieldmark const * const pFieldmark = rSh.GetFieldmarkAfter();
                     if(pFieldmark) rSh.GotoFieldmark(pFieldmark);
                 }
                 break;
 
-            case KS_GotoPrevFieldMark:      
+            case KS_GotoPrevFieldMark:
                 {
                     ::sw::mark::IFieldmark const * const pFieldmark = rSh.GetFieldmarkBefore();
                     if(pFieldmark) rSh.GotoFieldmark(pFieldmark);
@@ -4224,7 +4226,7 @@ void SwEditWin::MouseButtonUp(const MouseEvent& rMEvt)
                                     }
                                 }
                             }
-                else // if ( SwContentAtPos::SW_INETATTR == aCntntAtPos.eCntntAtPos )
+                            else // if ( SwContentAtPos::SW_INETATTR == aCntntAtPos.eCntntAtPos )
                             {
                                 if ( bExecHyperlinks )
                                     rSh.ClickToINetAttr( *(SwFmtINetFmt*)aCntntAtPos.aFnd.pAttr, nFilter );
@@ -4791,7 +4793,7 @@ void SwEditWin::Command( const CommandEvent& rCEvt )
                         aEvent.ExecutePosition.X = aPixPos.X();
                         aEvent.ExecutePosition.Y = aPixPos.Y();
                         Menu* pMenu = 0;
-                        ::rtl::OUString sMenuName = 
+                        ::rtl::OUString sMenuName =
                             ::rtl::OUString::createFromAscii( "private:resource/ReadonlyContextMenu");
                         if( GetView().TryContextMenuInterception( *pROPopup, sMenuName, pMenu, aEvent ) )
                         {
