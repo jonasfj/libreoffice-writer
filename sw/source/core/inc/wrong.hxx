@@ -1,7 +1,7 @@
 /*************************************************************************
  *
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
- * 
+ *
  * Copyright 2008 by Sun Microsystems, Inc.
  *
  * OpenOffice.org - a multi-platform office productivity suite
@@ -60,7 +60,13 @@ public:
         : maType(rType), mxPropertyBag(xPropertyBag), mnPos(nPos), mnLen(nLen), mpSubList(pSubList) {}
 };
 
-enum WrongListType  { WRONGLIST_SPELL, WRONGLIST_GRAMMAR, WRONGLIST_SMARTTAG };
+enum WrongListType
+{
+    WRONGLIST_SPELL,
+    WRONGLIST_GRAMMAR,
+    WRONGLIST_SMARTTAG,
+    WRONGLIST_CHANGETRACKING
+};
 
 class SwWrongList
 {
