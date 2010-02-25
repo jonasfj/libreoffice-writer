@@ -2,12 +2,9 @@
  *
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
  * 
- * Copyright 2008 by Sun Microsystems, Inc.
+ * Copyright 2000, 2010 Oracle and/or its affiliates.
  *
  * OpenOffice.org - a multi-platform office productivity suite
- *
- * $RCSfile: mailmrge.cxx,v $
- * $Revision: 1.39 $
  *
  * This file is part of OpenOffice.org.
  *
@@ -38,9 +35,9 @@
 #include <vcl/msgbox.hxx>
 #include <vcl/svapp.hxx>
 #include <tools/urlobj.hxx>
-#include <svtools/urihelper.hxx>
-#include <svtools/pathoptions.hxx>
-#include <goodies/mailenum.hxx>
+#include <svl/urihelper.hxx>
+#include <unotools/pathoptions.hxx>
+#include <svl/mailenum.hxx>
 #include <svx/svxdlg.hxx>
 #include <svx/dialogs.hrc>
 #include <helpid.h>
@@ -193,7 +190,7 @@ SwMailMergeDlg::SwMailMergeDlg(Window* pParent, SwWrtShell& rShell,
 
     aColumnFT       (this, SW_RES(FT_COLUMN)),
     aColumnLB       (this, SW_RES(LB_COLUMN)),
-    
+
     aPathFT         (this, SW_RES(FT_PATH)),
     aPathED			(this, SW_RES(ED_PATH)),
     aPathPB			(this, SW_RES(PB_PATH)),
@@ -227,6 +224,7 @@ SwMailMergeDlg::SwMailMergeDlg(Window* pParent, SwWrtShell& rShell,
     m_aDialogSize( GetSizePixel() )
 {
     FreeResource();
+    aSingleJobsCB.Show(sal_False); // not supported in since cws printerpullpages anymore
     //task #97066# mailing of form letters is currently not supported
     aMailingRB.Show(FALSE);
     aSubjectFT.Show(FALSE);
@@ -268,7 +266,7 @@ SwMailMergeDlg::SwMailMergeDlg(Window* pParent, SwWrtShell& rShell,
             &aPathFT      ,
             &aPathED      ,
             &aPathPB      ,
-            &aFilterFT    , 
+            &aFilterFT    ,
             &aFilterLB    ,
             &aColumnLB    ,
             &aAddressFldLB,
@@ -347,7 +345,7 @@ SwMailMergeDlg::SwMailMergeDlg(Window* pParent, SwWrtShell& rShell,
 
     pModOpt = SW_MOD()->GetModuleConfig();
 
-    aSingleJobsCB.Check(pModOpt->IsSinglePrintJob());
+    //aSingleJobsCB.Check(pModOpt->IsSinglePrintJob());// not supported in since cws printerpullpages anymore
 
     sal_Int16 nMailingMode(pModOpt->GetMailingFormats());
     aFormatSwCB.Check((nMailingMode & TXTFORMAT_OFFICE) != 0);
@@ -370,9 +368,9 @@ SwMailMergeDlg::SwMailMergeDlg(Window* pParent, SwWrtShell& rShell,
 
     //#i63267# printing might be disabled
     bool bIsPrintable = !Application::GetSettings().GetMiscSettings().GetDisablePrinting();
-    aPrinterRB.Enable(bIsPrintable);    
+    aPrinterRB.Enable(bIsPrintable);
     OutputTypeHdl(bIsPrintable ? &aPrinterRB : &aFileRB);
-    
+
     aLk = LINK(this, SwMailMergeDlg, FilenameHdl);
     aGenerateFromDataBaseCB.SetClickHdl( aLk );
     BOOL bColumn = pModOpt->IsNameFromColumn();
@@ -455,7 +453,7 @@ SwMailMergeDlg::SwMailMergeDlg(Window* pParent, SwWrtShell& rShell,
         {
             comphelper::SequenceAsHashMap aFilter(xList->nextElement());
             OUString sFilter = aFilter.getUnpackedValueOrDefault(sName, OUString());
-            
+
             uno::Any aProps = xFilterFactory->getByName(sFilter);
             uno::Sequence< beans::PropertyValue > aFilterProperties;
             aProps >>= aFilterProperties;
@@ -481,7 +479,7 @@ SwMailMergeDlg::SwMailMergeDlg(Window* pParent, SwWrtShell& rShell,
     }
     catch( const uno::Exception& )
     {
-    }    
+    }
 }
 
 /*------------------------------------------------------------------------
@@ -514,7 +512,7 @@ void SwMailMergeDlg::Apply()
 {
 }
 /*-- 01.06.2007 13:06:50---------------------------------------------------
-    
+
   -----------------------------------------------------------------------*/
 void lcl_MoveControlY( Window* ppW, long nDiffSize )
 {
@@ -533,15 +531,15 @@ void lcl_ChangeWidth( Window* ppW, long nDiffSize )
     Size aSize( ppW->GetSizePixel());
     aSize.Width() += nDiffSize;
     ppW->SetSizePixel( aSize );
-}    
+}
 void    SwMailMergeDlg::Resize()
 {
     //the only controls that profit from the resize is pBeamerWin
     // and aPathED, aFilenameED and aColumnLB
-    
+
     Size aCurSize( GetSizePixel() );
-    //find the difference 
-    Size aDiffSize( aCurSize.Width() - m_aDialogSize.Width(), 
+    //find the difference
+    Size aDiffSize( aCurSize.Width() - m_aDialogSize.Width(),
                             aCurSize.Height() - m_aDialogSize.Height() );
     m_aDialogSize = aCurSize;
     if( pBeamerWin->IsVisible() )
@@ -603,7 +601,7 @@ void    SwMailMergeDlg::Resize()
         lcl_ChangeWidth( &aPathED, aDiffSize.Width() );
         lcl_ChangeWidth( &aFilterLB, aDiffSize.Width() );
         lcl_ChangeWidth( &aDestFL, aDiffSize.Width() );
-        
+
         Size aBeamerSize( pBeamerWin->GetSizePixel() ) ;
         aBeamerSize.Width() += aDiffSize.Width();
         aBeamerSize.Height() += aDiffSize.Height();
@@ -662,7 +660,7 @@ IMPL_LINK( SwMailMergeDlg, OutputTypeHdl, RadioButton *, pBtn )
 IMPL_LINK( SwMailMergeDlg, SaveTypeHdl, RadioButton*,  pBtn )
 {
     bool bIndividual = pBtn == &aSaveIndividualRB;
-    
+
     aGenerateFromDataBaseCB.Enable( bIndividual );
     if( bIndividual )
     {
@@ -730,7 +728,7 @@ bool SwMailMergeDlg::ExecQryShell()
     }
     else
     {
-        nMergeType = static_cast< USHORT >( aSaveSingleDocRB.IsChecked() ? 
+        nMergeType = static_cast< USHORT >( aSaveSingleDocRB.IsChecked() ?
                     DBMGR_MERGE_SINGLE_FILE : DBMGR_MERGE_MAILFILES );
         SfxMedium* pMedium = rSh.GetView().GetDocShell()->GetMedium();
         INetURLObject aAbs;
@@ -755,7 +753,7 @@ bool SwMailMergeDlg::ExecQryShell()
             if( aFilterLB.GetSelectEntryPos() != LISTBOX_ENTRY_NOTFOUND)
                 m_sSaveFilter = *static_cast<const ::rtl::OUString*>(aFilterLB.GetEntryData( aFilterLB.GetSelectEntryPos() ));
         }
-        else 
+        else
         {
             //#i97667# reset column name - otherwise it's remembered from the last run
             pMgr->SetEMailColumn(::rtl::OUString());
@@ -765,7 +763,7 @@ bool SwMailMergeDlg::ExecQryShell()
             if(!sPath.Len())
                 return false;
             m_sSaveFilter = sFilter;
-        }    
+        }
 
         pMgr->SetSubject(sPath);
     }
@@ -872,7 +870,7 @@ IMPL_LINK( SwMailMergeDlg, AttachFileHdl, PushButton *, EMPTYARG )
     SvxAbstractDialogFactory* pFact = SvxAbstractDialogFactory::Create();
     if(pFact)
     {
-        AbstractSvxMultiFileDialog* pFileDlg = pFact->CreateSvxMultiFileDialog( this, RID_SVXDLG_MULTIPATH);
+        AbstractSvxMultiFileDialog* pFileDlg = pFact->CreateSvxMultiFileDialog( this );
         DBG_ASSERT(pFileDlg, "Dialogdiet fail!");
         pFileDlg->SetFiles(aAttachED.GetText());
         pFileDlg->SetHelpId(HID_FILEDLG_MAILMRGE2);
@@ -940,5 +938,4 @@ SwMailMergeFieldConnectionsDlg::SwMailMergeFieldConnectionsDlg(Window* pParent) 
 SwMailMergeFieldConnectionsDlg::~SwMailMergeFieldConnectionsDlg()
 {
 }
-
 

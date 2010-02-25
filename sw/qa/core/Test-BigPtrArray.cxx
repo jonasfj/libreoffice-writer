@@ -2,12 +2,9 @@
  *
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
  * 
- * Copyright 2008 by Sun Microsystems, Inc.
+ * Copyright 2000, 2010 Oracle and/or its affiliates.
  *
  * OpenOffice.org - a multi-platform office productivity suite
- *
- * $RCSfile: Test-BigPtrArray.cxx,v $
- * $Revision: 1.4 $
  *
  * This file is part of OpenOffice.org.
  *
@@ -32,7 +29,7 @@
 #include "precompiled_sw.hxx"
 #define TIMELOG
 
-#include <cppunit/simpleheader.hxx>
+#include <testshl/simpleheader.hxx>
 #include <bparr.hxx>
 #include <string>
 #include <stdlib.h>
@@ -45,37 +42,37 @@ using namespace std;
 
 namespace /* private */
 {
-    const int NUM_ENTRIES = 100000;            
-    
+    const int NUM_ENTRIES = 100000;
+
     class BigPtrEntryMock : public BigPtrEntry
     {
     public:
         BigPtrEntryMock(int count) : count_(count)
         {
         }
-        
+
         ~BigPtrEntryMock()
         {
         #ifdef ENABLE_DEBUG_OUTPUT
             printf("Destructor called (%i)\n", count_);
         #endif
         }
-        
+
         int getCount() const
         {
             return count_;
         }
-        
+
         void setCount(int newCount)
         {
             count_ = newCount;
         }
-        
+
         ULONG Position() const
         {
             return GetPos();
         }
-        
+
     private:
         int count_;
     };
@@ -86,30 +83,30 @@ namespace /* private */
         pbem->setCount(pbem->getCount() + *((int*)pArgs));
         return true;
     }
-    
+
     void dumpBigPtrArray(const BigPtrArray& bparr)
     {
     #ifdef ENABLE_DEBUG_OUTPUT
-        for (int i = 0; i < bparr.Count(); i++)       
+        for (int i = 0; i < bparr.Count(); i++)
             printf("bparr[%i,%i]: %i\n", i, static_cast<BigPtrEntryMock*>(bparr[i])->Position(), static_cast<BigPtrEntryMock*>(bparr[i])->getCount());
-        
-        printf("\n"); 
+
+        printf("\n");
     #endif
     }
-    
+
     void fillBigPtrArray(BigPtrArray& bparr, ULONG numEntries)
-    {        
+    {
         for (int i = 0; i < numEntries; i++)
             bparr.Insert(new BigPtrEntryMock(i), bparr.Count());
     }
-    
+
     void printMethodName(const char* name)
     {
     #ifdef ENABLE_DEBUG_OUTPUT
         printf(name);
     #endif
     }
-    
+
     bool checkElementPositions(const BigPtrArray& bparr)
     {
         for (int i = 0; i < bparr.Count(); i++)
@@ -118,12 +115,12 @@ namespace /* private */
                 return false;
         }
         return true;
-    }        
-    
+    }
+
     void releaseBigPtrArrayContent(BigPtrArray& bparr)
     {
         for (int i = 0; i < bparr.Count(); i++)
-            delete bparr[i];       
+            delete bparr[i];
     }
 
     RTL_LOGFILE_CONTEXT(logFile, "BigPtrArray performance measures" );
@@ -132,37 +129,37 @@ namespace /* private */
 class BigPtrArrayUnittest : public CppUnit::TestFixture
 {
 public:
-    
+
     BigPtrArrayUnittest()
     {
     }
-    
+
     /** Test constructor/destructor
-        The size of the BigPtrArray 
-        aka the 'Count' should be 0 
+        The size of the BigPtrArray
+        aka the 'Count' should be 0
         initially.
     */
     void test_ctor()
-    {               
-        printMethodName("test_ctor\n");               
-        
-        BigPtrArray bparr;                
-        
+    {
+        printMethodName("test_ctor\n");
+
+        BigPtrArray bparr;
+
         CPPUNIT_ASSERT_MESSAGE
         (
-            "BigPtrArray ctor failed", 
+            "BigPtrArray ctor failed",
             bparr.Count() == 0
-        );            
-    }   
-    
+        );
+    }
+
     void test_insert_entries_at_front()
-    {        
+    {
         printMethodName("test_insert_entries_at_front\n");
-        
+
         RTL_LOGFILE_CONTEXT_TRACE(logFile, "START: test_insert_entries_at_front");
-        
-        BigPtrArray bparr;                
-        
+
+        BigPtrArray bparr;
+
         for (int i = 0; i < NUM_ENTRIES; i++)
         {
             ULONG oldCount = bparr.Count();
@@ -173,9 +170,9 @@ public:
                 (bparr.Count() == oldCount + 1)
             )
         }
-        
+
         RTL_LOGFILE_CONTEXT_TRACE(logFile, "END: test_insert_entries_at_front");
-        
+
         for (int i = 0, j = NUM_ENTRIES - 1; i < NUM_ENTRIES; i++, j--)
         {
             CPPUNIT_ASSERT_MESSAGE
@@ -184,17 +181,17 @@ public:
                 static_cast<BigPtrEntryMock*>(bparr[i])->getCount() == j
             )
         }
-        
+
         CPPUNIT_ASSERT_MESSAGE
         (
             "test_insert_entries_at_front failed",
             checkElementPositions(bparr)
         )
-        
+
         releaseBigPtrArrayContent(bparr);
-        dumpBigPtrArray(bparr);               
+        dumpBigPtrArray(bparr);
     }
-    
+
     void test_insert_entries_in_the_middle()
     {
         printMethodName("test_insert_entries_in_the_middle\n");
