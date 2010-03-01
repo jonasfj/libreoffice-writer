@@ -1,13 +1,10 @@
 /*************************************************************************
  *
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
- *
- * Copyright 2008 by Sun Microsystems, Inc.
+ * 
+ * Copyright 2000, 2010 Oracle and/or its affiliates.
  *
  * OpenOffice.org - a multi-platform office productivity suite
- *
- * $RCSfile: viscrs.cxx,v $
- * $Revision: 1.31 $
  *
  * This file is part of OpenOffice.org.
  *
@@ -34,7 +31,7 @@
 
 #ifndef _SVSTDARR_HXX
 #define _SVSTDARR_USHORTS
-#include <svtools/svstdarr.hxx>
+#include <svl/svstdarr.hxx>
 #endif
 
 #include <vcl/dialog.hxx>
@@ -77,42 +74,42 @@ MapMode* SwSelPaintRects::pMapMode = 0;
 
 #ifdef SHOW_BOOKMARKS
 // #include <IMark.hxx>
-// 
+//
 // class SwBookmarkRects : public SwSelPaintRects
 // {
 // 	virtual void Paint( const Rectangle& rRect );
 // 	virtual void FillRects();
-// 
+//
 // public:
 // 	SwBookmarkRects( const SwCrsrShell& rSh ) : SwSelPaintRects( rSh ) {}
 // };
-// 
+//
 // void SwBookmarkRects::Paint( const Rectangle& rRect )
 // {
 // 	Window* pWin = GetShell()->GetWin();
-// 
+//
 // 	RasterOp eOld( pWin->GetRasterOp() );
 // 	BOOL bLCol = pWin->IsLineColor();
 // 	Color aLCol( pWin->GetLineColor() );
 // 	BOOL bFCol = pWin->IsFillColor();
 // 	Color aFCol( pWin->GetFillColor() );
-// 
+//
 // 	pWin->SetRasterOp( ROP_XOR );
 // 	Color aCol( RGB_COLORDATA( 0xF0, 0xC8, 0xF0 ) ^ COL_WHITE );
 // 	pWin->SetFillColor( aCol );
 // 	pWin->SetLineColor( aCol );
-// 
+//
 // 	pWin->DrawRect( rRect );
-// 
+//
 // 	if( bLCol ) pWin->SetLineColor( aLCol ); else pWin->SetLineColor();
 // 	if( bFCol ) pWin->SetFillColor( aFCol ); else pWin->SetFillColor();
 // 	pWin->SetRasterOp( eOld );
 // }
-// 
+//
 // void SwBookmarkRects::FillRects()
 // {
 // 	SwRegionRects aReg( GetShell()->VisArea() );
-// 
+//
 //     const SwBookmarks& rBkmkTbl = GetShell()->getIDocumentMarkAccess()->getBookmarks();
 // 	SwShellCrsr* pCrsr = 0;
 // 	for( USHORT n = 0; n < rBkmkTbl.Count(); ++n )
@@ -131,23 +128,23 @@ MapMode* SwSelPaintRects::pMapMode = 0;
 // 			pCrsr->FillRects();
 // 			for( USHORT i = 0; i < pCrsr->Count(); ++i )
 // 				aReg -= (*pCrsr)[ i ];
-// 
+//
 // 			pCrsr->Remove( 0, i );
 // 		}
 // 	}
 // 	if( pCrsr ) delete pCrsr;
-// 
+//
 // 	aReg.Invert();
 // 	SwRects::Insert( &aReg, 0 );
 // }
-// 
+//
 // SwBookmarkRects* pBookMarkRects = 0;
-// 
+//
 // void ShowBookmarks( const SwCrsrShell* pSh, int nAction, const SwRect* pRect = 0 )
 // {
 //     if( !pBookMarkRects && pSh->getIDocumentMarkAccess()->getBookmarks().Count() )
 // 		pBookMarkRects = new SwBookmarkRects( *pSh );
-// 
+//
 // 	if( pBookMarkRects )
 // 	{
 // 		switch( nAction )
@@ -156,12 +153,12 @@ MapMode* SwSelPaintRects::pMapMode = 0;
 // 		case 2:	pBookMarkRects->Hide(); break;
 // 		case 3: pBookMarkRects->Invalidate( *pRect ); break;
 // 		}
-// 
+//
 // 		if( !pBookMarkRects->Count() )
 // 			delete pBookMarkRects, pBookMarkRects = 0;
 // 	}
 // }
-// 
+//
 // #define SHOWBOOKMARKS1( nAct )			ShowBookmarks( GetShell(),nAct );
 // #define SHOWBOOKMARKS2( nAct, pRect )	ShowBookmarks( GetShell(),nAct, pRect );
 
@@ -517,7 +514,7 @@ void SwVisCrsr::_SetPosAndShow()
 //////////////////////////////////////////////////////////////////////////////
 
 SwSelPaintRects::SwSelPaintRects( const SwCrsrShell& rCSh )
-:	SwRects( 0 ), 
+:	SwRects( 0 ),
     pCShell( &rCSh ),
     mpCursorOverlay(0)
 {
@@ -575,7 +572,7 @@ void SwSelPaintRects::Show()
             const Rectangle aPntRect(aNextRect.SVRect());
 
             aNewRanges.push_back(basegfx::B2DRange(
-                aPntRect.Left(), aPntRect.Top(), 
+                aPntRect.Left(), aPntRect.Top(),
                 aPntRect.Right() + 1, aPntRect.Bottom() + 1));
         }
 
@@ -862,7 +859,7 @@ BOOL SwShellCrsr::UpDown( BOOL bUp, USHORT nCnt )
                             &GetPtPos(), GetShell()->GetUpDownX() );
 }
 
-#ifndef PRODUCT
+#ifdef DBG_UTIL
 
 // JP 05.03.98: zum Testen des UNO-Crsr Verhaltens hier die Implementierung
 //				am sichtbaren Cursor
@@ -1001,7 +998,7 @@ BOOL SwShellTableCrsr::IsInside( const Point& rPt ) const
     return FALSE;
 }
 
-#ifndef PRODUCT
+#ifdef DBG_UTIL
 
 // JP 05.03.98: zum Testen des UNO-Crsr Verhaltens hier die Implementierung
 //				am sichtbaren Cursor

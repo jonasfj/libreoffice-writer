@@ -2,12 +2,9 @@
  *
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
  * 
- * Copyright 2008 by Sun Microsystems, Inc.
+ * Copyright 2000, 2010 Oracle and/or its affiliates.
  *
  * OpenOffice.org - a multi-platform office productivity suite
- *
- * $RCSfile: unoclbck.hxx,v $
- * $Revision: 1.6 $
  *
  * This file is part of OpenOffice.org.
  *
@@ -27,26 +24,30 @@
  * for a copy of the LGPLv3 License.
  *
  ************************************************************************/
-#ifndef _UNOCLBCK_HXX
-#define _UNOCLBCK_HXX
-#include <calbck.hxx>
+#ifndef SW_VBA_DIALOGS_HXX
+#define SW_VBA_DIALOGS_HXX
 
-class SwXReferenceMark;
-class SwFmtRefMark;
-class SwFmtFtn;
-class SwXFootnote;
-class SwTOXMark;
-class SwXDocumentIndexMark;
+#include <com/sun/star/uno/XComponentContext.hpp>
+#include <ooo/vba/word/XDialogs.hpp>
+#include <ooo/vba/XCollection.hpp>
+#include <vbahelper/vbahelperinterface.hxx>
+#include <vbahelper/vbadialogsbase.hxx>
+#include <cppuhelper/implbase1.hxx>
 
-class SwUnoCallBack : public SwModify
+typedef cppu::ImplInheritanceHelper1< VbaDialogsBase, ov::word::XDialogs > SwVbaDialogs_BASE;
+
+class SwVbaDialogs : public SwVbaDialogs_BASE
 {
 public:
-    SwUnoCallBack(SwModify *pToRegisterIn);
-    virtual ~SwUnoCallBack();
+    SwVbaDialogs( const css::uno::Reference< ov::XHelperInterface >& xParent, const css::uno::Reference< css::uno::XComponentContext > &xContext, const css::uno::Reference< css::frame::XModel >& xModel ): SwVbaDialogs_BASE( xParent, xContext, xModel ) {} 
+    virtual ~SwVbaDialogs() {}
 
-    // returns the API object of a reference mark if available
-    SwXReferenceMark* 	GetRefMark(const SwFmtRefMark& rMark);
-    SwXFootnote*		GetFootnote(const SwFmtFtn& rMark);
-    SwXDocumentIndexMark* GetTOXMark(const SwTOXMark& rMark);
+    // XCollection
+    virtual css::uno::Any SAL_CALL Item( const css::uno::Any& Index ) throw (css::uno::RuntimeException);
+
+    // XHelperInterface
+    virtual rtl::OUString& getServiceImplName();
+    virtual css::uno::Sequence<rtl::OUString> getServiceNames();
 };
-#endif
+
+#endif /* SW_VBA_DIALOGS_HXX */
