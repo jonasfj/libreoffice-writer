@@ -2,15 +2,12 @@
  *
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
  * 
- * Copyright 2008 by Sun Microsystems, Inc.
+ * Copyright 2000, 2010 Oracle and/or its affiliates.
  *
  * OpenOffice.org - a multi-platform office productivity suite
  *
- * $RCSfile: doccorr.cxx,v $
- * $Revision: 1.13 $
- *
  * This file is part of OpenOffice.org.
- *	
+ *
  * OpenOffice.org is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License version 3
  * only, as published by the Free Software Foundation.
