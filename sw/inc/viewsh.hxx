@@ -1,13 +1,10 @@
 /*************************************************************************
  *
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
- *
- * Copyright 2008 by Sun Microsystems, Inc.
+ * 
+ * Copyright 2000, 2010 Oracle and/or its affiliates.
  *
  * OpenOffice.org - a multi-platform office productivity suite
- *
- * $RCSfile: viewsh.hxx,v $
- * $Revision: 1.65.40.1 $
  *
  * This file is part of OpenOffice.org.
  *
@@ -192,9 +189,6 @@ class SW_DLLPUBLIC ViewShell : public Ring
     SW_DLLPRIVATE sal_Bool CheckInvalidForPaint( const SwRect & );//Direkt Paint oder lieber
                                                 //eine Aktion ausloesen.
 
-    SW_DLLPRIVATE void Scroll();	//Scrollen wenn sich aus der LayAction Scrollmoeglichkeiten
-                    //ergaben.
-
     SW_DLLPRIVATE void PrepareForPrint( const SwPrintData &rOptions );
 
     SW_DLLPRIVATE void ImplApplyViewOptions( const SwViewOption &rOpt );
@@ -241,11 +235,7 @@ public:
     void ChgHyphenation() { Reformat(); }
     void ChgNumberDigits();
 
-    //Methoden fuer Paint- und Scrollrects, die auf allen Shells im
-    //Ring arbeiten.
     sal_Bool AddPaintRect( const SwRect &rRect );
-    void AddScrollRect( const SwFrm *pFrm, const SwRect &rRect, long nOffs );
-    void SetNoNextScroll();
 
     void InvalidateWindows( const SwRect &rRect );
 
@@ -371,11 +361,11 @@ public:
 
     // printing of one page.
     // bIsPDFExport == true is: do PDF Export (no printing!)
-    sal_Bool PrintOrPDFExport( OutputDevice *pOutDev, const SwPrtOptions &rPrintData, 
+    sal_Bool PrintOrPDFExport( OutputDevice *pOutDev, const SwPrtOptions &rPrintData,
             sal_Int32 nRenderer /* offset in vector of pages to print */ );
 
     // printing of one brochure page
-    void PrintProspect( OutputDevice *pOutDev, const SwPrintData &rPrintData, 
+    void PrintProspect( OutputDevice *pOutDev, const SwPrintData &rPrintData,
             sal_Int32 nRenderer /* offset in vector of page pairs for prospect printing */ );
 
     // printing for OLE 2.0

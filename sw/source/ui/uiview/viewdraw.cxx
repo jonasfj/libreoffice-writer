@@ -1,13 +1,10 @@
 /*************************************************************************
  *
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
- * 
- * Copyright 2008 by Sun Microsystems, Inc.
+ *
+ * Copyright 2000, 2010 Oracle and/or its affiliates.
  *
  * OpenOffice.org - a multi-platform office productivity suite
- *
- * $RCSfile: viewdraw.cxx,v $
- * $Revision: 1.40 $
  *
  * This file is part of OpenOffice.org.
  *
@@ -38,22 +35,22 @@
 #include <svx/svdobj.hxx>
 #include <svx/svdview.hxx>
 #include <svx/svdpage.hxx>
-#include <svx/editview.hxx>
-#include <svx/editeng.hxx>
-#include <svx/outliner.hxx>
+#include <editeng/editview.hxx>
+#include <editeng/editeng.hxx>
+#include <editeng/outliner.hxx>
 #include <svx/fmview.hxx>
 #include <svx/dataaccessdescriptor.hxx>
 #include <sfx2/viewfrm.hxx>
 #include <doc.hxx>
-#include <svx/langitem.hxx>
+#include <editeng/langitem.hxx>
 #include <linguistic/lngprops.hxx>
-#include <svx/unolingu.hxx>
+#include <editeng/unolingu.hxx>
 #include <svx/fontworkbar.hxx>
 #include <svx/fontworkgallery.hxx>
-#include <svx/eeitem.hxx>
+#include <editeng/eeitem.hxx>
 #include <svx/svdogrp.hxx>
 #include <svx/svdetc.hxx>
-#include <svx/editstat.hxx>
+#include <editeng/editstat.hxx>
 #include <sfx2/request.hxx>
 #include <sfx2/bindings.hxx>
 #include <sfx2/printer.hxx>
@@ -174,7 +171,7 @@ void SwView::ExecDraw(SfxRequest& rReq)
 
                     // TODO: unmark all other
                     pWrtShell->EnterStdMode();
-                    pWrtShell->SwFEShell::Insert( *pObj, 0, 0, &aStartPos );
+                    pWrtShell->SwFEShell::InsertDrawObj( *pObj, aStartPos );
                 }
             }
         }
@@ -221,7 +218,7 @@ void SwView::ExecDraw(SfxRequest& rReq)
                     aSize = Size( 2835, 2835 );
 
                 pWrtShell->EnterStdMode();
-                pWrtShell->SwFEShell::Insert( *pObj, 0, 0, &aPos );
+                pWrtShell->SwFEShell::InsertDrawObj( *pObj, aPos );
                 rReq.Ignore ();
             }
         }
@@ -246,8 +243,8 @@ void SwView::ExecDraw(SfxRequest& rReq)
     }
 
     //deselect if same shape is selected again (but different custom shapes do have same slot id)
-    if ( bDeselect || (nSlotId == nDrawSfxId && 
-            (!pStringItem || (pStringItem->GetValue() == sDrawCustom)) 
+    if ( bDeselect || (nSlotId == nDrawSfxId &&
+            (!pStringItem || (pStringItem->GetValue() == sDrawCustom))
                 && (nSlotId != SID_DRAW_CS_ID) ) )
     {
         if (GetDrawFuncPtr())
@@ -421,7 +418,7 @@ void SwView::ExitDraw()
     NoRotate();
 
     if(pShell)
-    {   
+    {
         //#126062 # the shell may be invalid at close/reload/SwitchToViewShell
         SfxDispatcher* pDispatch = GetViewFrame()->GetDispatcher();
         USHORT nIdx = 0;
@@ -431,7 +428,7 @@ void SwView::ExitDraw()
             pTest = pDispatch->GetShell(nIdx++);
         }
         while( pTest && pTest != this && pTest != pShell);
-        if(pTest == pShell && 
+        if(pTest == pShell &&
             // don't call LeaveSelFrmMode() etc. for the below,
             // because objects may still be selected:
             !pShell->ISA(SwDrawBaseShell) &&
