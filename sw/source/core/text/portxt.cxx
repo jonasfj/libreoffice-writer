@@ -1,13 +1,10 @@
 /*************************************************************************
  *
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
- *
- * Copyright 2008 by Sun Microsystems, Inc.
+ * 
+ * Copyright 2000, 2010 Oracle and/or its affiliates.
  *
  * OpenOffice.org - a multi-platform office productivity suite
- *
- * $RCSfile: portxt.cxx,v $
- * $Revision: 1.51.112.3 $
  *
  * This file is part of OpenOffice.org.
  *
@@ -37,16 +34,16 @@
 #ifndef _COM_SUN_STAR_I18N_SCRIPTTYPE_HDL_
 #include <com/sun/star/i18n/ScriptType.hdl>
 #endif
-#include <hintids.hxx>	   // CH_TXTATR
-#include <errhdl.hxx>	// ASSERT
+#include <hintids.hxx>     // CH_TXTATR
+#include <errhdl.hxx>   // ASSERT
 #include <SwPortionHandler.hxx>
 #include <txtcfg.hxx>
 #include <porlay.hxx>
 #include <inftxt.hxx>
-#include <guess.hxx>	// SwTxtGuess, Zeilenumbruch
+#include <guess.hxx>    // SwTxtGuess, Zeilenumbruch
 #include <porglue.hxx>
 #include <portab.hxx>       // pLastTab->
-#include <porfld.hxx>		// SwFldPortion
+#include <porfld.hxx>       // SwFldPortion
 #include <wrong.hxx>
 #include <viewsh.hxx>
 #include <IDocumentSettingAccess.hxx>
@@ -55,11 +52,13 @@
 #include <IMark.hxx>
 #include <pam.hxx>
 #include <doc.hxx>
+#include <xmloff/odffields.hxx>
 
 #if OSL_DEBUG_LEVEL > 1
 const sal_Char *GetLangName( const MSHORT nLang );
 #endif
 
+using namespace ::sw::mark;
 using namespace ::com::sun::star;
 using namespace ::com::sun::star::i18n::ScriptType;
 
@@ -230,7 +229,7 @@ USHORT lcl_AddSpace( const SwTxtSizeInfo &rInf, const XubString* pStr,
 }
 
 /*************************************************************************
- *						class SwTxtPortion
+ *                      class SwTxtPortion
  *************************************************************************/
 
 SwTxtPortion::SwTxtPortion( const SwLinePortion &rPortion )
@@ -240,7 +239,7 @@ SwTxtPortion::SwTxtPortion( const SwLinePortion &rPortion )
 }
 
 /*************************************************************************
- *						SwTxtPortion::BreakCut()
+ *                      SwTxtPortion::BreakCut()
  *************************************************************************/
 
 void SwTxtPortion::BreakCut( SwTxtFormatInfo &rInf, const SwTxtGuess &rGuess )
@@ -289,7 +288,7 @@ void SwTxtPortion::BreakCut( SwTxtFormatInfo &rInf, const SwTxtGuess &rGuess )
 }
 
 /*************************************************************************
- *						SwTxtPortion::BreakUnderflow()
+ *                      SwTxtPortion::BreakUnderflow()
  *************************************************************************/
 
 void SwTxtPortion::BreakUnderflow( SwTxtFormatInfo &rInf )
@@ -303,7 +302,7 @@ void SwTxtPortion::BreakUnderflow( SwTxtFormatInfo &rInf )
 }
 
  /*************************************************************************
- *						SwTxtPortion::_Format()
+ *                      SwTxtPortion::_Format()
  *************************************************************************/
 
 sal_Bool lcl_HasContent( const SwFldPortion& rFld, SwTxtFormatInfo &rInf )
@@ -352,7 +351,7 @@ sal_Bool SwTxtPortion::_Format( SwTxtFormatInfo &rInf )
     //   C2 break iterator does not found a possible line break at all:
     //      ==> line break
 
-      // case A: line not yet full
+    // case A: line not yet full
     if ( !bFull )
     {
         Width( aGuess.BreakWidth() );
@@ -395,12 +394,16 @@ sal_Bool SwTxtPortion::_Format( SwTxtFormatInfo &rInf )
         }
         // case C1
         // - Footnote portions with fake line start (i.e., not at beginning of line)
-        //   should keep together with the text portion.
+        //   should keep together with the text portion. (Note: no keep together
+        //   with only footnote portions.
         // - TabPortions not at beginning of line should keep together with the
         //   text portion, if they are not followed by a blank
         //   (work around different definition of tab stop character - breaking or
         //   non breaking character - in compatibility mode)
-        else if ( ( IsFtnPortion() && rInf.IsFakeLineStart() ) ||
+        else if ( ( IsFtnPortion() && rInf.IsFakeLineStart() &&
+                    // --> OD 2010-01-29 #b6921213#
+                    rInf.IsOtherThanFtnInside() ) ||
+                    // <--
                   ( rInf.GetLast() &&
                     rInf.GetTxtFrm()->GetTxtNode()->getIDocumentSettingAccess()->get(IDocumentSettingAccess::TAB_COMPAT) &&
                     rInf.GetLast()->InTabGrp() &&
@@ -443,7 +446,7 @@ sal_Bool SwTxtPortion::_Format( SwTxtFormatInfo &rInf )
                 Insert( pNew );
             }
         }
-        else	// case C2, last exit
+        else    // case C2, last exit
             BreakCut( rInf, aGuess );
     }
     // breakPos < index or no breakpos at all
@@ -454,9 +457,9 @@ sal_Bool SwTxtPortion::_Format( SwTxtFormatInfo &rInf )
             aGuess.BreakPos() != rInf.GetLineStart() &&
             ( !bFirstPor || rInf.GetFly() || rInf.GetLast()->IsFlyPortion() ||
               rInf.IsFirstMulti() ) &&
-            ( !rInf.GetLast()->IsBlankPortion() ||	((SwBlankPortion*)
+            ( !rInf.GetLast()->IsBlankPortion() ||  ((SwBlankPortion*)
               rInf.GetLast())->MayUnderFlow( rInf, rInf.GetIdx()-1, sal_True )))
-        {		// case C1 (former BreakUnderflow())
+        {       // case C1 (former BreakUnderflow())
             BreakUnderflow( rInf );
         }
         else
@@ -468,7 +471,7 @@ sal_Bool SwTxtPortion::_Format( SwTxtFormatInfo &rInf )
 }
 
 /*************************************************************************
- *				   virtual SwTxtPortion::Format()
+ *                 virtual SwTxtPortion::Format()
  *************************************************************************/
 
 
@@ -497,7 +500,7 @@ sal_Bool SwTxtPortion::Format( SwTxtFormatInfo &rInf )
 }
 
 /*************************************************************************
- *				   virtual SwTxtPortion::FormatEOL()
+ *                 virtual SwTxtPortion::FormatEOL()
  *************************************************************************/
 
 // Format end of line
@@ -542,7 +545,7 @@ void SwTxtPortion::FormatEOL( SwTxtFormatInfo &rInf )
 }
 
 /*************************************************************************
- *				 virtual SwTxtPortion::GetCrsrOfst()
+ *               virtual SwTxtPortion::GetCrsrOfst()
  *************************************************************************/
 
 
@@ -554,7 +557,7 @@ xub_StrLen SwTxtPortion::GetCrsrOfst( const KSHORT nOfst ) const
 }
 
 /*************************************************************************
- *				  virtual SwTxtPortion::GetTxtSize()
+ *                virtual SwTxtPortion::GetTxtSize()
  *************************************************************************/
 // Das GetTxtSize() geht davon aus, dass die eigene Laenge korrekt ist
 
@@ -564,7 +567,7 @@ SwPosSize SwTxtPortion::GetTxtSize( const SwTxtSizeInfo &rInf ) const
 }
 
 /*************************************************************************
- *				 virtual SwTxtPortion::Paint()
+ *               virtual SwTxtPortion::Paint()
  *************************************************************************/
 
 
@@ -608,7 +611,7 @@ void SwTxtPortion::Paint( const SwTxtPaintInfo &rInf ) const
 }
 
 /*************************************************************************
- *				virtual SwTxtPortion::GetExpTxt()
+ *              virtual SwTxtPortion::GetExpTxt()
  *************************************************************************/
 
 
@@ -619,7 +622,7 @@ sal_Bool SwTxtPortion::GetExpTxt( const SwTxtSizeInfo &, XubString & ) const
 }
 
 /*************************************************************************
- *		  xub_StrLen SwTxtPortion::GetSpaceCnt()
+ *        xub_StrLen SwTxtPortion::GetSpaceCnt()
  *              long SwTxtPortion::CalcSpacing()
  * sind fuer den Blocksatz zustaendig und ermitteln die Anzahl der Blanks
  * und den daraus resultierenden zusaetzlichen Zwischenraum
@@ -658,7 +661,7 @@ xub_StrLen SwTxtPortion::GetSpaceCnt( const SwTxtSizeInfo &rInf,
 
 long SwTxtPortion::CalcSpacing( long nSpaceAdd, const SwTxtSizeInfo &rInf ) const
 {
-     xub_StrLen nCnt = 0;
+    xub_StrLen nCnt = 0;
 
     if ( InExpGrp() )
     {
@@ -716,7 +719,7 @@ void SwTxtPortion::HandlePortion( SwPortionHandler& rPH ) const
 }
 
 /*************************************************************************
- *						class SwHolePortion
+ *                      class SwHolePortion
  *************************************************************************/
 
 
@@ -733,7 +736,7 @@ SwHolePortion::SwHolePortion( const SwTxtPortion &rPor )
 SwLinePortion *SwHolePortion::Compress() { return this; }
 
 /*************************************************************************
- *				 virtual SwHolePortion::Paint()
+ *               virtual SwHolePortion::Paint()
  *************************************************************************/
 
 
@@ -750,7 +753,7 @@ void SwHolePortion::Paint( const SwTxtPaintInfo &rInf ) const
 }
 
 /*************************************************************************
- *				   virtual SwHolePortion::Format()
+ *                 virtual SwHolePortion::Format()
  *************************************************************************/
 
 
@@ -769,9 +772,10 @@ void SwHolePortion::HandlePortion( SwPortionHandler& rPH ) const
     rPH.Text( GetLen(), GetWhichPor() );
 }
 
-void SwFieldMarkPortion::Paint( const SwTxtPaintInfo & rInf) const
+void SwFieldMarkPortion::Paint( const SwTxtPaintInfo & /*rInf*/) const
 {
-    SwTxtPortion::Paint(rInf);
+    // These shouldn't be painted!
+    // SwTxtPortion::Paint(rInf);
 }
 
 sal_Bool SwFieldMarkPortion::Format( SwTxtFormatInfo & )
@@ -781,38 +785,96 @@ sal_Bool SwFieldMarkPortion::Format( SwTxtFormatInfo & )
     return ret;
 }
 
-
-//FIXME Fieldbk
-//void SwFieldFormPortion::Paint( const SwTxtPaintInfo& rInf ) const
-void SwFieldFormPortion::Paint( const SwTxtPaintInfo& ) const
-{
-//    SwTxtNode *pNd=const_cast<SwTxtNode*>(rInf.GetTxtFrm()->GetTxtNode());
-//    const SwDoc *doc=pNd->GetDoc();
-//    SwIndex aIndex( pNd, rInf.GetIdx() );
-//    SwPosition aPosition(*pNd, aIndex);
-//    pMark = dynamic_cast< doc->getFieldmarkFor(aPosition);
-//    OSL_ENSURE(pMark,
-//        "SwFieldFormPortion::Paint(..)"
-//        " - Where is my form field bookmark???");
-
-//    bool checked=(pBM!=NULL?pBM->IsChecked():false);
-//    rInf.DrawCheckBox(*this , checked);
+namespace {
+    static sal_Int32 getCurrentListIndex( IFieldmark* pBM,
+            ::rtl::OUString* io_pCurrentText = NULL )
+    {
+        const IFieldmark::parameter_map_t* const pParameters = pBM->GetParameters();
+        sal_Int32 nCurrentIdx = 0;
+        const IFieldmark::parameter_map_t::const_iterator pResult = pParameters->find(::rtl::OUString::createFromAscii(ODF_FORMDROPDOWN_RESULT));
+        if(pResult != pParameters->end())
+            pResult->second >>= nCurrentIdx;
+        if(io_pCurrentText)
+        {
+            const IFieldmark::parameter_map_t::const_iterator pListEntries = pParameters->find(::rtl::OUString::createFromAscii(ODF_FORMDROPDOWN_LISTENTRY));
+            if(pListEntries != pParameters->end())
+            {
+                uno::Sequence< ::rtl::OUString > vListEntries;
+                pListEntries->second >>= vListEntries;
+                if(nCurrentIdx < vListEntries.getLength())
+                    *io_pCurrentText = vListEntries[nCurrentIdx];
+            }
+        }
+        return nCurrentIdx;
+    }
 }
 
-sal_Bool SwFieldFormPortion::Format( SwTxtFormatInfo &rInf )
+//FIXME Fieldbk
+void SwFieldFormPortion::Paint( const SwTxtPaintInfo& rInf ) const
 {
-    sal_Bool ret=0;
-//	ret=SwTxtPortion::Format(rInf);
+    SwTxtNode* pNd = const_cast<SwTxtNode*>(rInf.GetTxtFrm()->GetTxtNode());
+    const SwDoc *doc=pNd->GetDoc();
+    SwIndex aIndex( pNd, rInf.GetIdx() );
+    SwPosition aPosition(*pNd, aIndex);
 
-    Width(rInf.GetTxtHeight());
-    Height(rInf.GetTxtHeight());
-    SetAscent(rInf.GetAscent());
-    //int h=rInf.GetTxtHeight();
+    IFieldmark* pBM = doc->getIDocumentMarkAccess( )->getFieldmarkFor( aPosition );
 
-/*
-    Height(100);
-    SetAscent(100);
-*/
+    OSL_ENSURE( pBM,
+        "SwFieldFormPortion::Paint(..)"
+        " - Where is my form field bookmark???");
+
+    if ( pBM != NULL )
+    {
+        if ( pBM->GetFieldname( ).equalsAscii( ODF_FORMCHECKBOX ) )
+        { // a checkbox...
+            ICheckboxFieldmark* pCheckboxFm = dynamic_cast< ICheckboxFieldmark* >(pBM);
+            bool checked = pCheckboxFm->IsChecked();
+            rInf.DrawCheckBox(*this, checked);
+        }
+        else if ( pBM->GetFieldname( ).equalsAscii(  ODF_FORMDROPDOWN ) )
+        { // a list...
+            rtl::OUString aTxt;
+            rInf.DrawViewOpt( *this, POR_FLD );
+            rInf.DrawText( aTxt, *this, 0, 0/*aTxt.getLength()*/, false );
+        }
+        else
+        {
+            assert(0); // unknown type...
+        }
+    }
+}
+
+sal_Bool SwFieldFormPortion::Format( SwTxtFormatInfo & rInf )
+{
+    sal_Bool ret = 0;
+    SwTxtNode *pNd = const_cast < SwTxtNode * >( rInf.GetTxtFrm(  )->GetTxtNode(  ) );
+    const SwDoc *doc = pNd->GetDoc(  );
+    SwIndex aIndex( pNd, rInf.GetIdx(  ) );
+    SwPosition aPosition( *pNd, aIndex );
+    IFieldmark *pBM = doc->getIDocumentMarkAccess( )->getFieldmarkFor( aPosition );
+    ASSERT( pBM != NULL, "Where is my form field bookmark???" );
+    if ( pBM != NULL )
+    {
+        if ( pBM->GetFieldname( ).equalsAscii( ODF_FORMCHECKBOX ) )
+        {
+            Width( rInf.GetTxtHeight(  ) );
+            Height( rInf.GetTxtHeight(  ) );
+            SetAscent( rInf.GetAscent(  ) );
+        }
+        else if ( pBM->GetFieldname( ).equalsAscii( ODF_FORMDROPDOWN ) )
+        {
+            ::rtl::OUString aTxt;
+            getCurrentListIndex( pBM, &aTxt );
+            SwPosSize aPosSize = rInf.GetTxtSize( aTxt );
+            Width( aPosSize.Width(  ) );
+            Height( aPosSize.Height(  ) );
+            SetAscent( rInf.GetAscent(  ) );
+        }
+        else
+        {
+            assert( 0 );        // unknown type...
+        }
+    }
     return ret;
 }
 
