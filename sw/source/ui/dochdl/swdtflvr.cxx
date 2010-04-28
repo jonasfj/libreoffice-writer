@@ -1,7 +1,7 @@
 /*************************************************************************
  *
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
- * 
+ *
  * Copyright 2000, 2010 Oracle and/or its affiliates.
  *
  * OpenOffice.org - a multi-platform office productivity suite
@@ -2636,7 +2636,9 @@ int SwTransferable::_PasteDBData( TransferableDataHelper& rData,
             if(pFmView) {
                 const OXFormsDescriptor &rDesc = OXFormsTransferable::extractDescriptor(rData);
                 if(0 != (pObj = pFmView->CreateXFormsControl(rDesc)))
-                    rSh.SwFEShell::Insert( *pObj, 0, 0, pDragPt );
+                {
+                    rSh.SwFEShell::InsertDrawObj( *pObj, *pDragPt );
+                }
             }
         }
         else if( nWh )
@@ -2697,7 +2699,7 @@ int SwTransferable::_PasteDBData( TransferableDataHelper& rData,
             if (pFmView && bHaveColumnDescriptor)
             {
                 if ( 0 != (pObj = pFmView->CreateFieldControl( OColumnTransferable::extractColumnDescriptor(rData) ) ) )
-                    rSh.SwFEShell::Insert( *pObj, 0, 0, pDragPt );
+                    rSh.SwFEShell::InsertDrawObj( *pObj, *pDragPt );
             }
         }
         nRet = 1;
@@ -3636,7 +3638,7 @@ SwTrnsfrDdeLink::SwTrnsfrDdeLink( SwTransferable& rTrans, SwWrtShell& rSh )
     }
     else
     {
-        // creating a temp. bookmark without undo 
+        // creating a temp. bookmark without undo
         BOOL bUndo = rSh.DoesUndo();
         rSh.DoUndo( FALSE );
         BOOL bIsModified = rSh.IsModified();
@@ -3646,7 +3648,7 @@ SwTrnsfrDdeLink::SwTrnsfrDdeLink( SwTransferable& rTrans, SwWrtShell& rSh )
             ::rtl::OUString(),
             ::rtl::OUString(),
             IDocumentMarkAccess::DDE_BOOKMARK);
-        if(pMark) 
+        if(pMark)
         {
             sName = pMark->GetName();
             bDelBookmrk = TRUE;
@@ -3754,8 +3756,8 @@ BOOL SwTrnsfrDdeLink::WriteData( SvStream& rStrm )
         }
         ::rtl::OUString sMarkName = pMark->GetName();
 
-        // remove mark 
-        pServerObject->SetNoServer(); // this removes the connection between SwServerObject and mark 
+        // remove mark
+        pServerObject->SetNoServer(); // this removes the connection between SwServerObject and mark
         // N.B. ppMark was not loaded from file and cannot have xml:id
         pMarkAccess->deleteMark(ppMark);
 
