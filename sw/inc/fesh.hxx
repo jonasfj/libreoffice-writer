@@ -1,7 +1,7 @@
 /*************************************************************************
  *
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
- * 
+ *
  * Copyright 2000, 2010 Oracle and/or its affiliates.
  *
  * OpenOffice.org - a multi-platform office productivity suite
@@ -476,7 +476,7 @@ public:
     void EndTextEdit();				//Loescht ggf. das Objekt.
 
     //Ankertyp des selektierten Objektes, -1 bei Uneindeutigkeit oder
-    //Rahmenselektion; FLY_PAGE bzw. FLY_AT_CNTNT aus frmatr.hxx sonst.
+    //Rahmenselektion; FLY_AT_PAGE bzw. FLY_AT_PARA aus frmatr.hxx sonst.
     short GetAnchorId() const;
 
     //Erzeugen von DrawObjekten, beim Begin wird der Objekttyp mitgegeben.

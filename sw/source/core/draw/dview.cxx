@@ -1,7 +1,7 @@
 /*************************************************************************
  *
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
- * 
+ *
  * Copyright 2000, 2010 Oracle and/or its affiliates.
  *
  * OpenOffice.org - a multi-platform office productivity suite
@@ -1004,10 +1004,6 @@ void SwDrawView::CheckPossibilities()
         }
         if ( pFrm )
             bProtect = pFrm->IsProtected(); //Rahmen, Bereiche usw.
-        // --> OD 2006-11-06 #130889# - make code robust
-//        if ( FLY_IN_CNTNT == ::FindFrmFmt( (SdrObject*)pObj )->GetAnchor().GetAnchorId() &&
-//             rMrkList.GetMarkCount() > 1 )
-//            bProtect = TRUE;
         {
             SwFrmFmt* pFrmFmt( ::FindFrmFmt( const_cast<SdrObject*>(pObj) ) );
             if ( !pFrmFmt )
@@ -1022,7 +1018,6 @@ void SwDrawView::CheckPossibilities()
                 bProtect = TRUE;
             }
         }
-        // <--
     }
     bMoveProtect	|= bProtect;
     bResizeProtect	|= bProtect | bSzProtect;

@@ -1,7 +1,7 @@
 /*************************************************************************
  *
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
- * 
+ *
  * Copyright 2000, 2010 Oracle and/or its affiliates.
  *
  * OpenOffice.org - a multi-platform office productivity suite
@@ -420,7 +420,7 @@ void SwFltControlStack::SetAttrInDoc(const SwPosition& rTmpPos, SwFltStackEntry*
     switch(pEntry->pAttr->Which())
     {
     case RES_FLTR_ANCHOR:
-        {            
+        {
             SwFrmFmt* pFmt = ((SwFltAnchor*)pEntry->pAttr)->GetFrmFmt();
             if (pFmt != NULL)
             {
@@ -737,7 +737,7 @@ SwFltAnchor::SwFltAnchor(const SwFltAnchor& rCpy) :
     SfxPoolItem(RES_FLTR_ANCHOR), pFrmFmt(rCpy.pFrmFmt)
 {
     pClient = new SwFltAnchorClient(this);
-    pFrmFmt->Add(pClient);    
+    pFrmFmt->Add(pClient);
 }
 
 SwFltAnchor::~SwFltAnchor()
@@ -782,11 +782,11 @@ void  SwFltAnchorClient::Modify(SfxPoolItem *, SfxPoolItem * pNew)
     if (pNew->Which() == RES_FMT_CHG)
     {
         SwFmtChg * pFmtChg = dynamic_cast<SwFmtChg *> (pNew);
-        
+
         if (pFmtChg != NULL)
         {
             SwFrmFmt * pFrmFmt = dynamic_cast<SwFrmFmt *> (pFmtChg->pChangedFmt);
-            
+
             if (pFrmFmt != NULL)
                 m_pFltAnchor->SetFrmFmt(pFrmFmt);
         }
@@ -1679,7 +1679,7 @@ SfxItemSet* SwFltOutBase::NewFlyDefaults()
     return p;
 }
 
-BOOL SwFltOutBase::BeginFly( RndStdIds eAnchor /*= FLY_AT_CNTNT*/,
+BOOL SwFltOutBase::BeginFly( RndStdIds eAnchor /*= FLY_AT_PARA*/,
                            BOOL bAbsolutePos /*= FALSE*/,
                            const SfxItemSet*
 #ifdef DBG_UTIL
@@ -1731,7 +1731,7 @@ SwFrmFmt* SwFltOutDoc::MakeFly( RndStdIds eAnchor, SfxItemSet* pSet )
     return pFly;
 }
 
-BOOL SwFltOutDoc::BeginFly( RndStdIds eAnchor /*= FLY_AT_CNTNT*/,
+BOOL SwFltOutDoc::BeginFly( RndStdIds eAnchor /*= FLY_AT_PARA*/,
                            BOOL bAbsolutePos /*= FALSE*/,
                            const SfxItemSet* pMoreAttrs /*= 0*/ )
 
@@ -1837,7 +1837,7 @@ void SwFltOutDoc::EndFly()
         return GetDoc().GetAttrPool().GetDefaultItem(nWhich);
 }
 
-BOOL SwFltFormatCollection::BeginFly( RndStdIds eAnchor /*= FLY_AT_CNTNT*/,
+BOOL SwFltFormatCollection::BeginFly( RndStdIds eAnchor /*= FLY_AT_PARA*/,
                            BOOL bAbsolutePos /*= FALSE*/,
                            const SfxItemSet* pMoreAttrs /*= 0*/ )
 
@@ -1865,7 +1865,7 @@ BOOL SwFltFormatCollection::BeginStyleFly( SwFltOutDoc* pOutDoc )
 // Flys in SwFltShell
 //-----------------------------------------------------------------------------
 
-BOOL SwFltShell::BeginFly( RndStdIds eAnchor /*= FLY_AT_CNTNT*/,
+BOOL SwFltShell::BeginFly( RndStdIds eAnchor /*= FLY_AT_PARA*/,
                            BOOL bAbsolutePos /*= FALSE*/ )
 
 {
