@@ -1,7 +1,7 @@
 /*************************************************************************
  *
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
- * 
+ *
  * Copyright 2000, 2010 Oracle and/or its affiliates.
  *
  * OpenOffice.org - a multi-platform office productivity suite
@@ -3281,7 +3281,7 @@ SwWW8ImplReader::SwWW8ImplReader(BYTE nVersionPara, SvStorage* pStorage,
     nSwNumLevel = nWwNumType = 0xff;
     pTableDesc = 0;
     pNumOlst = 0;
-    pNode_FLY_AT_CNTNT = 0;
+    pNode_FLY_AT_PARA = 0;
     pDrawModel = 0;
     pDrawPg = 0;
     mpDrawEditEngine = 0;
@@ -3761,8 +3761,8 @@ ULONG SwWW8ImplReader::CoreLoad(WW8Glossary *pGloss, const SwPosition &rPos)
     if (mbNewDoc && pStg && !pGloss)
         ReadDocInfo();
 
-    ::ww8::WW8FibData * pFibData = new ::ww8::WW8FibData();    
-    
+    ::ww8::WW8FibData * pFibData = new ::ww8::WW8FibData();
+
     if (pWwFib->fReadOnlyRecommended)
         pFibData->setReadOnlyRecommended(true);
     else
@@ -3772,16 +3772,16 @@ ULONG SwWW8ImplReader::CoreLoad(WW8Glossary *pGloss, const SwPosition &rPos)
         pFibData->setWriteReservation(true);
     else
         pFibData->setWriteReservation(false);
-            
+
     ::sw::tExternalDataPointer pExternalFibData(pFibData);
 
     rDoc.setExternalData(::sw::FIB, pExternalFibData);
 
     ::sw::tExternalDataPointer pSttbfAsoc
           (new ::ww8::WW8Sttb<ww8::WW8Struct>(*pTableStream, pWwFib->fcSttbfAssoc, pWwFib->lcbSttbfAssoc));
-    
+
     rDoc.setExternalData(::sw::STTBF_ASSOC, pSttbfAsoc);
-    
+
     if (pWwFib->fWriteReservation || pWwFib->fReadOnlyRecommended)
     {
         SwDocShell * pDocShell = rDoc.GetDocShell();
