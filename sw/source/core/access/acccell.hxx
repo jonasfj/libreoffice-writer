@@ -1,7 +1,7 @@
 /*************************************************************************
  *
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
- * 
+ *
  * Copyright 2000, 2010 Oracle and/or its affiliates.
  *
  * OpenOffice.org - a multi-platform office productivity suite
@@ -26,12 +26,12 @@
  ************************************************************************/
 #ifndef _ACCCELL_HXX
 #define _ACCCELL_HXX
-#ifndef _ACCCONTEXT_HXX
+
 #include "acccontext.hxx"
-#endif
 #include <com/sun/star/accessibility/XAccessibleValue.hpp>
 
 class SwCellFrm;
+class SwFrmFmt;
 
 class SwAccessibleCell : public	SwAccessibleContext,
                   ::com::sun::star::accessibility::XAccessibleValue
