@@ -1,7 +1,7 @@
 /*************************************************************************
  *
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
- * 
+ *
  * Copyright 2000, 2010 Oracle and/or its affiliates.
  *
  * OpenOffice.org - a multi-platform office productivity suite
@@ -602,7 +602,7 @@ void SwView::Replace()
     }
     else
     {
-        if (GetPostItMgr()->GetActivePostIt())
+        if (GetPostItMgr()->HasActiveSidebarWin())
             GetPostItMgr()->Replace(pSrchItem);
         sal_Bool bReplaced = pWrtShell->SwEditShell::Replace( pSrchItem->GetReplaceString(),
                                             pSrchItem->GetRegExp());
