@@ -1,7 +1,7 @@
 /*************************************************************************
  *
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
- * 
+ *
  * Copyright 2000, 2010 Oracle and/or its affiliates.
  *
  * OpenOffice.org - a multi-platform office productivity suite
@@ -133,7 +133,6 @@ void SwBaseShell::InsertURLButton(const String& rURL, const String& rTarget, con
 
         if (rSh.IsObjSelected())
         {
-//			rSh.ChgAnchor(FLY_AT_CNTNT);
             rSh.UnSelectFrm();
         }
     }
