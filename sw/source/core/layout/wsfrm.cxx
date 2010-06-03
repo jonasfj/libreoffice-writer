@@ -1,7 +1,7 @@
 /*************************************************************************
  *
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
- * 
+ *
  * Copyright 2000, 2010 Oracle and/or its affiliates.
  *
  * OpenOffice.org - a multi-platform office productivity suite
@@ -767,28 +767,6 @@ void SwFrm::InsertGroupBefore( SwFrm* pParent, SwFrm* pBehind, SwFrm* pSct )
 void SwFrm::Remove()
 {
     ASSERT( pUpper, "Removen ohne Upper?" );
-
-    // --> OD 2004-09-27 #114344# - inform accessibility API - dispose table the
-    // frame is in - before frame is 'removed from the layout' and
-    // only for cell frames and row frames.
-    if ( IsInTab() && ( IsRowFrm() || IsCellFrm() ) )
-    {
-        SwTabFrm* pTableFrm = FindTabFrm();
-        if( pTableFrm != NULL  &&
-            pTableFrm->IsAccessibleFrm()  &&
-            pTableFrm->GetFmt() != NULL )
-        {
-            SwRootFrm *pRootFrm = pTableFrm->FindRootFrm();
-            if( pRootFrm != NULL &&
-                pRootFrm->IsAnyShellAccessible() )
-            {
-                ViewShell* pShell = pRootFrm->GetCurrShell();
-                if( pShell != NULL )
-                    pShell->Imp()->DisposeAccessibleFrm( pTableFrm, sal_True );
-            }
-        }
-    }
-    // <--
 
     if( pPrev )
         // einer aus der Mitte wird removed
