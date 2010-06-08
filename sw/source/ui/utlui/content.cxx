@@ -1,7 +1,7 @@
 /*************************************************************************
  *
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
- * 
+ *
  * Copyright 2000, 2010 Oracle and/or its affiliates.
  *
  * OpenOffice.org - a multi-platform office productivity suite
@@ -106,7 +106,6 @@
 #include <swundo.hxx>
 #include <ndtxt.hxx>
 #include <PostItMgr.hxx>
-#include <postit.hxx>
 #include <postithelper.hxx>
 #include <redline.hxx>
 #include <docary.hxx>
@@ -335,7 +334,8 @@ void SwContentType::Init(sal_Bool* pbInvalidateWindow)
                 (eTmpType = pFmt->GetSection()->GetType()) != TOX_CONTENT_SECTION
                 && TOX_HEADER_SECTION != eTmpType )
                 {
-                    const String& rSectionName = pFmt->GetSection()->GetName();
+                    const String& rSectionName =
+                        pFmt->GetSection()->GetSectionName();
                     BYTE nLevel = 0;
                     SwSectionFmt* pParentFmt = pFmt->GetParent();
                     while(pParentFmt)
@@ -433,7 +433,7 @@ void SwContentType::Init(sal_Bool* pbInvalidateWindow)
                     if ( (*i)->GetBroadCaster()->ISA(SwFmtFld)) // SwPostit
                     {
                         SwFmtFld* aFmtFld = static_cast<SwFmtFld*>((*i)->GetBroadCaster());
-                        if (aFmtFld->GetTxtFld() && aFmtFld->IsFldInDoc() && 
+                        if (aFmtFld->GetTxtFld() && aFmtFld->IsFldInDoc() &&
                             (*i)->mLayoutStatus!=SwPostItHelper::INVISIBLE )
                         {
                             String sEntry = aFmtFld->GetFld()->GetPar2();
@@ -697,7 +697,7 @@ void	SwContentType::FillMemberList(sal_Bool* pbLevelOrVisibiblityChanged)
                 (eTmpType = pFmt->GetSection()->GetType()) != TOX_CONTENT_SECTION
                 && TOX_HEADER_SECTION != eTmpType )
                 {
-                    String sSectionName = pFmt->GetSection()->GetName();
+                    String sSectionName = pFmt->GetSection()->GetSectionName();
 
                     BYTE nLevel = 0;
                     SwSectionFmt* pParentFmt = pFmt->GetParent();
@@ -800,7 +800,7 @@ void	SwContentType::FillMemberList(sal_Bool* pbLevelOrVisibiblityChanged)
                     if ( (*i)->GetBroadCaster()->ISA(SwFmtFld)) // SwPostit
                     {
                         SwFmtFld* aFmtFld = static_cast<SwFmtFld*>((*i)->GetBroadCaster());
-                        if (aFmtFld->GetTxtFld() && aFmtFld->IsFldInDoc() && 
+                        if (aFmtFld->GetTxtFld() && aFmtFld->IsFldInDoc() &&
                             (*i)->mLayoutStatus!=SwPostItHelper::INVISIBLE )
                         {
                             String sEntry = aFmtFld->GetFld()->GetPar2();
@@ -2670,7 +2670,7 @@ void    SwContentTree::ExcecuteContextMenuAction( USHORT nSelectedPopupEntry )
             break;
         case 602:
             {
-                pActiveShell->GetView().GetPostItMgr()->SetActivePostIt(0);
+                pActiveShell->GetView().GetPostItMgr()->SetActiveSidebarWin(0);
                 pActiveShell->GetView().GetPostItMgr()->Delete();
                 break;
             }
@@ -2932,7 +2932,7 @@ void SwContentTree::EditEntry(SvLBoxEntry* pEntry, sal_uInt8 nMode)
             {
                 if (((SwPostItContent*)pCnt)->IsPostIt())
                 {
-                    pActiveShell->GetView().GetPostItMgr()->SetActivePostIt(0);
+                    pActiveShell->GetView().GetPostItMgr()->SetActiveSidebarWin(0);
                     pActiveShell->DelRight();
                 }
                 /*
@@ -3100,7 +3100,7 @@ void SwContentTree::GotoContent(SwContent* pCnt)
             if (((SwPostItContent*)pCnt)->IsPostIt())
                 pActiveShell->GotoFld(*((SwPostItContent*)pCnt)->GetPostIt());
             else
-                pActiveShell->GetView().GetDocShell()->GetWrtShell()->GotoRedline( 
+                pActiveShell->GetView().GetDocShell()->GetWrtShell()->GotoRedline(
                         pActiveShell->GetView().GetDocShell()->GetWrtShell()->FindRedlineOfData(((SwPostItContent*)pCnt)->GetRedline()->GetRedlineData()));
 
         break;
@@ -3140,7 +3140,7 @@ void SwContentTree::GotoContent(SwContent* pCnt)
     }
     SwView& rView = pActiveShell->GetView();
     rView.StopShellTimer();
-    rView.GetPostItMgr()->SetActivePostIt(0);
+    rView.GetPostItMgr()->SetActiveSidebarWin(0);
     rView.GetEditWin().GrabFocus();
 }
 /*-----------------06.02.97 19.14-------------------
