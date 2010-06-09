@@ -1,7 +1,7 @@
 /*************************************************************************
  *
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
- * 
+ *
  * Copyright 2000, 2010 Oracle and/or its affiliates.
  *
  * OpenOffice.org - a multi-platform office productivity suite
@@ -50,6 +50,10 @@ public:
     virtual void Modify( SfxPoolItem*, SfxPoolItem* );
     virtual void Paint( const SwRect&, const SwPrtOptions *pPrintData = NULL ) const;
     virtual void CheckDirection( BOOL bVert );
+
+    // --> OD 2010-02-17 #i103961#
+    virtual void Cut();
+    // <--
 
     const SwTableBox *GetTabBox() const { return pTabBox; }
 
