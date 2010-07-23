@@ -1277,7 +1277,7 @@ SmShowSymbolSet::SmShowSymbolSet(Window *pParent, const ResId& rResId) :
 void SmShowSymbolSet::SetSymbolSet(const SymbolPtrVec_t& rSymbolSet)
 {
     aSymbolSet = rSymbolSet;
-
+    
     if (static_cast< USHORT >(aSymbolSet.size()) > (nColumns * nRows))
     {
         aVScrollBar.SetRange(Range(0, ((aSymbolSet.size() + (nColumns - 1)) / nColumns) - nRows));
@@ -1599,6 +1599,9 @@ BOOL SmSymbolDialog::SelectSymbolSet(const XubString &rSymbolSetName)
 
         aSymbolSetName  = rSymbolSetName;
         aSymbolSet      = rSymbolMgr.GetSymbolSet( aSymbolSetName );
+
+        // sort symbols by Unicode position (useful for displaying Greek characters alphabetically)
+        std::sort( aSymbolSet.begin(), aSymbolSet.end(), lt_SmSymPtr() );
 
         aSymbolSetDisplay.SetSymbolSet( aSymbolSet );
         if (aSymbolSet.size() > 0)
