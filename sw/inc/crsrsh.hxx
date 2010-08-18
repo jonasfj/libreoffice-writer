@@ -1,13 +1,10 @@
 /*************************************************************************
  *
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
- *
- * Copyright 2008 by Sun Microsystems, Inc.
+ * 
+ * Copyright 2000, 2010 Oracle and/or its affiliates.
  *
  * OpenOffice.org - a multi-platform office productivity suite
- *
- * $RCSfile: crsrsh.hxx,v $
- * $Revision: 1.46 $
  *
  * This file is part of OpenOffice.org.
  *
@@ -30,17 +27,19 @@
 #ifndef _CRSRSH_HXX
 #define _CRSRSH_HXX
 
+#include <com/sun/star/i18n/WordType.hpp>
+
 #include <tools/string.hxx>
 #include <tools/link.hxx>
 #include <tools/rtti.hxx>
 #include "swdllapi.h"
-#include <swtypes.hxx>			// fuer SWPOSDOC
-#include <viewsh.hxx>			// fuer ViewShell
-#include <calbck.hxx>			// fuer SwClient
-#include <cshtyp.hxx>        	// fuer die CursorShell Typen
-#include <crstate.hxx>			// fuer die CursorMove-Staties
-#include <toxe.hxx>				// SwTOXSearchDir
-#include <tblsel.hxx>				//SwTblSearchType
+#include <swtypes.hxx>          // fuer SWPOSDOC
+#include <viewsh.hxx>           // fuer ViewShell
+#include <calbck.hxx>           // fuer SwClient
+#include <cshtyp.hxx>           // fuer die CursorShell Typen
+#include <crstate.hxx>          // fuer die CursorMove-Staties
+#include <toxe.hxx>             // SwTOXSearchDir
+#include <tblsel.hxx>               //SwTblSearchType
 #include <viscrs.hxx>
 #include <node.hxx>
 #include <tblsel.hxx>
@@ -110,10 +109,11 @@ struct SwContentAtPos
         SW_REFMARK          = 0x0100,
         SW_NUMLABEL         = 0x0200, // #i23726#
         SW_CONTENT_CHECK    = 0x0400, // --> FME 2005-05-13 #i43742# <--
-        SW_SMARTTAG         = 0x0800
+        SW_SMARTTAG         = 0x0800,
+        SW_FORMCTRL         = 0x1000
 #ifndef PRODUCT
-        ,SW_CURR_ATTRS 		= 0x4000		// nur zum Debuggen
-        ,SW_TABLEBOXVALUE	= 0x8000		// nur zum Debuggen
+        ,SW_CURR_ATTRS      = 0x4000        // nur zum Debuggen
+        ,SW_TABLEBOXVALUE   = 0x8000        // nur zum Debuggen
 #endif
     } eCntntAtPos;
 
@@ -122,6 +122,7 @@ struct SwContentAtPos
         const SfxPoolItem* pAttr;
         const SwRedline* pRedl;
         SwCntntNode * pNode; // #i23726#
+        const sw::mark::IFieldmark* pFldmark;
     } aFnd;
 
     int nDist; // #i23726#
@@ -150,9 +151,6 @@ const int CRSR_POSOLD = 0x01,   // Cursor bleibt an alter Doc-Position
 
 String *ReplaceBackReferences( const com::sun::star::util::SearchOptions& rSearchOpt, SwPaM* pPam );
 
-// #i75172#
-enum SwOverlayType { SW_OVERLAY_INVERT, SW_OVERLAY_TRANSPARENT };
-
 // die Cursor - Shell
 class SW_DLLPUBLIC SwCrsrShell : public ViewShell, public SwModify
 {
@@ -168,45 +166,45 @@ public:     // public, damit defaultet werden kann !!
 
     /* ein enum fuer den Aufruf von UpdateCrsr */
     enum CrsrFlag {
-        UPDOWN		= (1 << 0),     // Up/Down auf Spalte halten
-        SCROLLWIN	= (1 << 1),     // Window Scrollen
-        CHKRANGE	= (1 << 2),     // ueberpruefen von ueberlappenden PaM's
-        NOCALRECT 	= (1 << 3),		// CharRect nicht neu berechnen
-        READONLY	= (1 << 4)		// Sichtbar machen trotz Readonly
+        UPDOWN      = (1 << 0),     // Up/Down auf Spalte halten
+        SCROLLWIN   = (1 << 1),     // Window Scrollen
+        CHKRANGE    = (1 << 2),     // ueberpruefen von ueberlappenden PaM's
+        NOCALRECT   = (1 << 3),     // CharRect nicht neu berechnen
+        READONLY    = (1 << 4)      // Sichtbar machen trotz Readonly
     };
 
 private:
 
-    SwRect	aCharRect;			// Char-SRectangle auf dem der Cursor steht
-    Point	aCrsrHeight;     	// Hohe&Offset von sichtbaren Cursor
-    Point 	aOldRBPos;			// Right/Bottom von letzter VisArea
+    SwRect  aCharRect;          // Char-SRectangle auf dem der Cursor steht
+    Point   aCrsrHeight;        // Hohe&Offset von sichtbaren Cursor
+    Point   aOldRBPos;          // Right/Bottom von letzter VisArea
                                 // (wird im Invalidate vom Cursor benutzt)
 
 
     // um event. Macro was anhaengt auszufuehren.
-    Link aFlyMacroLnk;			// Link will be called, if the Crsr is set
+    Link aFlyMacroLnk;          // Link will be called, if the Crsr is set
                                 // into a fly. A macro can be then becalled
-    Link aChgLnk;				// link will be called by every attribut/
+    Link aChgLnk;               // link will be called by every attribut/
                                 // format changes at cursor position.
-    Link aGrfArrivedLnk;		// Link calls to UI if a grafik is arrived
+    Link aGrfArrivedLnk;        // Link calls to UI if a grafik is arrived
 
 
-    SwShellCrsr* pCurCrsr; 		// der aktuelle Cursor
-    SwShellCrsr* pCrsrStk;		// Stack fuer den Cursor
+    SwShellCrsr* pCurCrsr;      // der aktuelle Cursor
+    SwShellCrsr* pCrsrStk;      // Stack fuer den Cursor
     SwVisCrsr *pVisCrsr;        // der Sichtbare-Cursor
 
     IBlockCursor *pBlockCrsr;   // interface of cursor for block (=rectangular) selection
 
-    SwShellTableCrsr* pTblCrsr;	// Tabellen-Crsr; nur in Tabellen, wenn
+    SwShellTableCrsr* pTblCrsr; // Tabellen-Crsr; nur in Tabellen, wenn
                                 // die Selection ueber 2 Spalten liegt
 
-    SwNodeIndex* pBoxIdx;		// fuers erkennen der veraenderten
-    SwTableBox* pBoxPtr;		// Tabellen-Zelle
+    SwNodeIndex* pBoxIdx;       // fuers erkennen der veraenderten
+    SwTableBox* pBoxPtr;        // Tabellen-Zelle
 
-    long nUpDownX;				// versuche den Cursor bei Up/Down immer in
+    long nUpDownX;              // versuche den Cursor bei Up/Down immer in
                                 // der gleichen Spalte zu bewegen
     long nLeftFrmPos;
-    ULONG nAktNode;				// save CursorPos at Start-Action
+    ULONG nAktNode;             // save CursorPos at Start-Action
     xub_StrLen nAktCntnt;
     USHORT nAktNdTyp;
     bool bAktSelection;
@@ -218,8 +216,8 @@ private:
      * Cursorbewegungen (ueber Find()) realisiert werden.
      */
     USHORT nCrsrMove;
-    USHORT nBasicActionCnt;		// Actions, die vom Basic geklammert wurden
-    CrsrMoveState eMvState;		// Status fuers Crsr-Travelling - GetCrsrOfst
+    USHORT nBasicActionCnt;     // Actions, die vom Basic geklammert wurden
+    CrsrMoveState eMvState;     // Status fuers Crsr-Travelling - GetCrsrOfst
 
     // --> OD 2008-04-02 #refactorlists#
     String sMarkedListId;
@@ -227,33 +225,30 @@ private:
     // <--
 
     BOOL bHasFocus : 1;         // Shell ist in einem Window "aktiv"
-    BOOL bSVCrsrVis : 1;		// SV-Cursor Un-/Sichtbar
-    BOOL bChgCallFlag : 1;		// Attributaenderung innerhalb von
+    BOOL bSVCrsrVis : 1;        // SV-Cursor Un-/Sichtbar
+    BOOL bChgCallFlag : 1;      // Attributaenderung innerhalb von
                                 // Start- und EndAction
-    BOOL bVisPortChgd : 1;		// befindet sich im VisPortChg-Aufruf
+    BOOL bVisPortChgd : 1;      // befindet sich im VisPortChg-Aufruf
                                 // (wird im Invalidate vom Cursor benutzt)
 
-    BOOL bCallChgLnk : 1;		// Flag fuer abgeleitete Klassen:
+    BOOL bCallChgLnk : 1;       // Flag fuer abgeleitete Klassen:
                                 // TRUE -> ChgLnk callen
                                 // Zugriff nur ueber SwChgLinkFlag
-    BOOL bAllProtect : 1;		// Flag fuer Bereiche
+    BOOL bAllProtect : 1;       // Flag fuer Bereiche
                                 // TRUE -> alles geschuetzt / versteckt
-    BOOL bInCMvVisportChgd : 1;	// Flag fuer CrsrMoves
+    BOOL bInCMvVisportChgd : 1; // Flag fuer CrsrMoves
                                 // TRUE -> die Sicht wurde verschoben
-    BOOL bGCAttr : 1;			// TRUE -> es existieren nichtaufgespannte Attr.
-    BOOL bIgnoreReadonly : 1;	// TRUE -> Beim naechsten EndAction trotz
+    BOOL bGCAttr : 1;           // TRUE -> es existieren nichtaufgespannte Attr.
+    BOOL bIgnoreReadonly : 1;   // TRUE -> Beim naechsten EndAction trotz
                                 // Readonly den Crsr sichtbar machen.
-    BOOL bSelTblCells : 1;		// TRUE -> Zellen uebers InputWin selektieren
-    BOOL bAutoUpdateCells : 1;	// TRUE -> Zellen werden autoformatiert
-    BOOL bBasicHideCrsr : 1;	// TRUE -> HideCrsr vom Basic
+    BOOL bSelTblCells : 1;      // TRUE -> Zellen uebers InputWin selektieren
+    BOOL bAutoUpdateCells : 1;  // TRUE -> Zellen werden autoformatiert
+    BOOL bBasicHideCrsr : 1;    // TRUE -> HideCrsr vom Basic
     BOOL bSetCrsrInReadOnly : 1;// TRUE -> Cursor darf in ReadOnly-Bereiche
-    BOOL bOverwriteCrsr : 1;	// TRUE -> show Overwrite Crsr
+    BOOL bOverwriteCrsr : 1;    // TRUE -> show Overwrite Crsr
 
     // OD 11.02.2003 #100556# - flag to allow/avoid execution of marcos (default: true)
     bool mbMacroExecAllowed : 1;
-
-    // #i88893# the overlay type to use for cursor
-    SwOverlayType maSwOverlayType;
 
     SW_DLLPRIVATE void UpdateCrsr( USHORT eFlags
                             =SwCrsrShell::SCROLLWIN|SwCrsrShell::CHKRANGE,
@@ -352,17 +347,14 @@ public:
     // only for usage in special cases allowed!
     void ExtendedSelectAll();
 
-    // #i88893# the overlay type to use for cursor
-    SwOverlayType getSwOverlayType() const { return maSwOverlayType; }
-
     SwPaM* GetCrsr( BOOL bMakeTblCrsr = TRUE ) const;
     inline SwCursor* GetSwCrsr( BOOL bMakeTblCrsr = TRUE ) const;
     // nur den akt. Cursor returnen
-          SwShellCrsr* _GetCrsr()  						{ return pCurCrsr; }
-    const SwShellCrsr* _GetCrsr() const 				{ return pCurCrsr; }
+          SwShellCrsr* _GetCrsr()                       { return pCurCrsr; }
+    const SwShellCrsr* _GetCrsr() const                 { return pCurCrsr; }
 
     // uebergebenen Cursor anzeigen - fuer UNO
-    void	SetSelection(const SwPaM& rCrsr);
+    void    SetSelection(const SwPaM& rCrsr);
 
     // alle Cursor aus den ContentNodes entfernen und auf 0 setzen.
     // Wurde aus der FEShell hierher verschoben.
@@ -378,7 +370,7 @@ public:
     void EndAction( const BOOL bIdleEnd = FALSE );
 
     // Basiscursortravelling
-    long GetUpDownX() const 			{ return nUpDownX; }
+    long GetUpDownX() const             { return nUpDownX; }
 
     BOOL Left( USHORT nCnt, USHORT nMode, BOOL bAllowVisual = FALSE )
         { return LeftRight( TRUE, nCnt, nMode, bAllowVisual ); }
@@ -418,8 +410,8 @@ public:
 
     // Positionieren des Cursors
     // returnt
-    //	CRSR_POSCHG: wenn der ob der SPoint vom Layout korrigiert wurde.
-    //	CRSR_POSOLD: wenn der Crsr nicht veraendert wurde
+    //  CRSR_POSCHG: wenn der ob der SPoint vom Layout korrigiert wurde.
+    //  CRSR_POSOLD: wenn der Crsr nicht veraendert wurde
     int SetCrsr( const Point &rPt, BOOL bOnlyText = FALSE, bool bBlock = true );
 
 
@@ -454,18 +446,18 @@ public:
 
     void SwapPam();
     BOOL ChgCurrPam( const Point & rPt,
-                     BOOL bTstOnly = TRUE,		//Nur testen, nicht setzen
-                     BOOL bTstHit  = FALSE );	//Nur genaue Treffer
+                     BOOL bTstOnly = TRUE,      //Nur testen, nicht setzen
+                     BOOL bTstHit  = FALSE );   //Nur genaue Treffer
     void KillPams();
 
     // erzeuge eine Kopie vom Cursor und speicher diese im Stack
     void Push();
     /*
      *  Loescht einen Cursor (gesteuert durch bOldCrsr)
-     * 		- vom Stack oder	( bOldCrsr = TRUE )
-     * 		- den aktuellen und der auf dem Stack stehende wird zum aktuellen
+     *      - vom Stack oder    ( bOldCrsr = TRUE )
+     *      - den aktuellen und der auf dem Stack stehende wird zum aktuellen
      *
-     * 	Return:  es war auf dem Stack noch einer vorhanden
+     *  Return:  es war auf dem Stack noch einer vorhanden
      */
     BOOL Pop( BOOL bOldCrsr = TRUE );
     /*
@@ -474,7 +466,7 @@ public:
      */
     void Combine();
 
-#if defined( PRODUCT )
+#if !defined(DBG_UTIL)
     void SttCrsrMove() { ++nCrsrMove; StartAction(); }
     void EndCrsrMove( const BOOL bIdleEnd = FALSE )
             { EndAction( bIdleEnd ); --nCrsrMove; }
@@ -520,7 +512,7 @@ public:
 
     // Methoden fuer aFlyMacroLnk
     void        SetFlyMacroLnk( const Link& rLnk ) { aFlyMacroLnk = rLnk; }
-    const Link& GetFlyMacroLnk() const 			   { return aFlyMacroLnk; }
+    const Link& GetFlyMacroLnk() const             { return aFlyMacroLnk; }
 
     // Methoden geben/aendern den Link fuer die Attribut/Format-Aenderungen
     void        SetChgLnk( const Link &rLnk ) { aChgLnk = rLnk; }
@@ -654,8 +646,8 @@ public:
     BOOL MakeOutlineSel( USHORT nSttPos, USHORT nEndPos,
                         BOOL bWithChilds = FALSE );
 
-    BOOL GotoNextOutline();			// naechster Node mit Outline-Num.
-    BOOL GotoPrevOutline();			// vorheriger Node mit Outline-Num.
+    BOOL GotoNextOutline();         // naechster Node mit Outline-Num.
+    BOOL GotoPrevOutline();         // vorheriger Node mit Outline-Num.
 
     /** Delivers the current shell cursor
 
@@ -688,14 +680,14 @@ public:
     SwShellTableCrsr* GetTableCrsr() { return pTblCrsr; }
     USHORT UpdateTblSelBoxes();
 
-    BOOL GotoFtnTxt();		// springe aus dem Content zur Fussnote
-    BOOL GotoFtnAnchor();	// springe aus der Fussnote zum Anker
+    BOOL GotoFtnTxt();      // springe aus dem Content zur Fussnote
+    BOOL GotoFtnAnchor();   // springe aus der Fussnote zum Anker
     BOOL GotoPrevFtnAnchor();
     BOOL GotoNextFtnAnchor();
 
-    BOOL GotoFlyAnchor();		// springe aus dem Rahmen zum Anker
-    BOOL GotoHeaderTxt();		// springe aus dem Content zum Header
-    BOOL GotoFooterTxt();		// springe aus dem Content zum Footer
+    BOOL GotoFlyAnchor();       // springe aus dem Rahmen zum Anker
+    BOOL GotoHeaderTxt();       // springe aus dem Content zum Header
+    BOOL GotoFooterTxt();       // springe aus dem Content zum Footer
     // springe in den Header/Footer des angegebenen oder akt. PageDesc
     BOOL SetCrsrInHdFt( USHORT nDescNo = USHRT_MAX,
                             BOOL bInHeader = TRUE );
@@ -707,7 +699,7 @@ public:
     BOOL GotoNextTOXBase( const String* = 0 );
     // springe zum vorherigen Verzeichnis [mit dem Namen]
     BOOL GotoPrevTOXBase( const String* = 0 );
-    BOOL GotoTOXMarkBase();		// springe zum Verzeichnis vom TOXMark
+    BOOL GotoTOXMarkBase();     // springe zum Verzeichnis vom TOXMark
     // springe zum naechsten (vorherigen) Verzeichniseintrag
     BOOL GotoNxtPrvTOXMark( BOOL bNext = TRUE );
     // Zur naechsten/ vorherigen Verzeichnismarke dieses Typs traveln
@@ -756,11 +748,12 @@ public:
     BOOL GoStartSentence();
     BOOL GoEndSentence();
     BOOL SelectWord( const Point* pPt = 0 );
+    BOOL ExpandToSentenceBorders();
 
     // Position vom akt. Cursor erfragen
-    BOOL IsStartWord()const;
-    BOOL IsEndWord() const;
-    BOOL IsInWord() const;
+    BOOL IsStartWord( sal_Int16 nWordType = com::sun::star::i18n::WordType::ANYWORD_IGNOREWHITESPACES )const;
+    BOOL IsEndWord( sal_Int16 nWordType = com::sun::star::i18n::WordType::ANYWORD_IGNOREWHITESPACES ) const;
+    BOOL IsInWord( sal_Int16 nWordType = com::sun::star::i18n::WordType::ANYWORD_IGNOREWHITESPACES ) const;
     BOOL IsStartSentence() const;
     BOOL IsEndSentence() const;
     BOOL IsSttPara() const;
@@ -791,7 +784,7 @@ public:
     BOOL ChgCrsrTimerFlag( BOOL bTimerOn = TRUE );
 #endif
 
-    BOOL BasicActionPend() const 	{ return nBasicActionCnt != nStartAction; }
+    BOOL BasicActionPend() const    { return nBasicActionCnt != nStartAction; }
 
         // springe zum benannten Bereich
     BOOL GotoRegion( const String& rName );
@@ -840,9 +833,9 @@ public:
     virtual void NewCoreSelection();
 
     void SetSelTblCells( BOOL bFlag )           { bSelTblCells = bFlag; }
-    BOOL IsSelTblCells() const 					{ return bSelTblCells; }
+    BOOL IsSelTblCells() const                  { return bSelTblCells; }
 
-    BOOL IsAutoUpdateCells() const 				{ return bAutoUpdateCells; }
+    BOOL IsAutoUpdateCells() const              { return bAutoUpdateCells; }
     void SetAutoUpdateCells( BOOL bFlag )       { bAutoUpdateCells = bFlag; }
 
     BOOL GetShadowCrsrPos( const Point& rPt, SwFillMode eFillMode,

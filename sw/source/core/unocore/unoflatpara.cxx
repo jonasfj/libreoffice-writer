@@ -2,12 +2,9 @@
  *
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
  * 
- * Copyright 2008 by Sun Microsystems, Inc.
+ * Copyright 2000, 2010 Oracle and/or its affiliates.
  *
  * OpenOffice.org - a multi-platform office productivity suite
- *
- * $RCSfile: unoflatpara.cxx,v $
- * $Revision: 1.4 $
  *
  * This file is part of OpenOffice.org.
  *
@@ -31,8 +28,9 @@
 // MARKER(update_precomp.py): autogen include statement, do not remove
 #include "precompiled_sw.hxx"
 
-#include <svx/unolingu.hxx>
+#include <editeng/unolingu.hxx>
 
+#include <unobaseclass.hxx>
 #include <unoflatpara.hxx>
 
 #include <vos/mutex.hxx>
@@ -46,7 +44,8 @@
 #include <viewimp.hxx>
 #include <breakit.hxx>
 #include <pam.hxx>
-#include <unoobj.hxx>
+#include <unobaseclass.hxx>
+#include <unotextrange.hxx>
 #include <pagefrm.hxx>
 #include <cntfrm.hxx>
 #include <rootfrm.hxx>
@@ -121,7 +120,7 @@ css::uno::Reference< css::container::XStringKeyMap > SAL_CALL SwXFlatParagraph::
 {
     return SwXTextMarkup::getMarkupInfoContainer();
 }
-    
+
 void SAL_CALL SwXFlatParagraph::commitTextMarkup(::sal_Int32 nType, const ::rtl::OUString & rIdentifier, ::sal_Int32 nStart, ::sal_Int32 nLength, const css::uno::Reference< css::container::XStringKeyMap > & rxMarkupInfoContainer) throw (css::uno::RuntimeException)
 {
     vos::OGuard aGuard(Application::GetSolarMutex());
@@ -138,7 +137,7 @@ void SAL_CALL SwXFlatParagraph::commitTextMarkup(::sal_Int32 nType, const ::rtl:
 void SAL_CALL SwXFlatParagraph::setChecked( ::sal_Int32 nType, ::sal_Bool bVal ) throw (uno::RuntimeException)
 {
     vos::OGuard aGuard(Application::GetSolarMutex());
-    
+
     if ( mpTxtNode )
     {
         if ( text::TextMarkupType::SPELLCHECK == nType )
@@ -195,7 +194,7 @@ lang::Locale SAL_CALL SwXFlatParagraph::getPrimaryLanguageOfText(::sal_Int32 nPo
     throw (uno::RuntimeException, lang::IllegalArgumentException)
 {
     vos::OGuard aGuard(Application::GetSolarMutex());
-    
+
     if (!mpTxtNode)
         return SvxCreateLocale( LANGUAGE_NONE );
 
@@ -217,7 +216,9 @@ void SAL_CALL SwXFlatParagraph::changeText(::sal_Int32 nPos, ::sal_Int32 nLen, c
 
     UnoActionContext aAction( mpTxtNode->GetDoc() );
 
-    uno::Reference< text::XTextRange > xRange = SwXTextRange::CreateTextRangeFromPosition( mpTxtNode->GetDoc(), *aPaM.GetPoint(), aPaM.GetMark() );
+    const uno::Reference< text::XTextRange > xRange =
+        SwXTextRange::CreateXTextRange(
+            *mpTxtNode->GetDoc(), *aPaM.GetPoint(), aPaM.GetMark() );
     uno::Reference< beans::XPropertySet > xPropSet( xRange, uno::UNO_QUERY );
     if ( xPropSet.is() )
     {
@@ -228,7 +229,7 @@ void SAL_CALL SwXFlatParagraph::changeText(::sal_Int32 nPos, ::sal_Int32 nLen, c
     mpTxtNode = pOldTxtNode; // setPropertyValue() modifies this. We restore the old state.
 
     IDocumentContentOperations* pIDCO = mpTxtNode->getIDocumentContentOperations();
-    pIDCO->Replace( aPaM, aNewText, false );
+    pIDCO->ReplaceRange( aPaM, aNewText, false );
 
     mpTxtNode = 0;
 }
@@ -245,7 +246,9 @@ void SAL_CALL SwXFlatParagraph::changeAttributes(::sal_Int32 nPos, ::sal_Int32 n
 
     UnoActionContext aAction( mpTxtNode->GetDoc() );
 
-    uno::Reference< text::XTextRange > xRange = SwXTextRange::CreateTextRangeFromPosition( mpTxtNode->GetDoc(), *aPaM.GetPoint(), aPaM.GetMark() );
+    const uno::Reference< text::XTextRange > xRange =
+        SwXTextRange::CreateXTextRange(
+            *mpTxtNode->GetDoc(), *aPaM.GetPoint(), aPaM.GetMark() );
     uno::Reference< beans::XPropertySet > xPropSet( xRange, uno::UNO_QUERY );
     if ( xPropSet.is() )
     {
@@ -263,6 +266,24 @@ css::uno::Sequence< ::sal_Int32 > SAL_CALL SwXFlatParagraph::getLanguagePortions
     return css::uno::Sequence< ::sal_Int32>();
 }
 
+
+const uno::Sequence< sal_Int8 >&
+SwXFlatParagraph::getUnoTunnelId()
+{
+    static uno::Sequence<sal_Int8> aSeq(CreateUnoTunnelId());
+    return aSeq;
+}
+
+
+sal_Int64 SAL_CALL
+SwXFlatParagraph::getSomething(
+        const uno::Sequence< sal_Int8 >& rId)
+    throw (uno::RuntimeException)
+{
+    return sw::UnoTunnelImpl(rId, this);
+}
+
+
 /******************************************************************************
  * SwXFlatParagraphIterator
  ******************************************************************************/
@@ -277,7 +298,7 @@ SwXFlatParagraphIterator::SwXFlatParagraphIterator( SwDoc& rDoc, sal_Int32 nType
       mbWrapped( sal_False )
 {
     //mnStartNode = mnCurrentNode = get node from current cursor TODO!
-    
+
     // register as listener and get notified when document is closed
     mpDoc->GetPageDescFromPool( RES_POOLPAGE_STANDARD )->Add(this);
 }
@@ -285,7 +306,7 @@ SwXFlatParagraphIterator::SwXFlatParagraphIterator( SwDoc& rDoc, sal_Int32 nType
 SwXFlatParagraphIterator::~SwXFlatParagraphIterator()
 {
 }
-    
+
 
 void SwXFlatParagraphIterator::Modify( SfxPoolItem *pOld, SfxPoolItem *pNew )
 {
@@ -297,7 +318,7 @@ void SwXFlatParagraphIterator::Modify( SfxPoolItem *pOld, SfxPoolItem *pNew )
         mpDoc = 0;
     }
 }
-    
+
 
 uno::Reference< text::XFlatParagraph > SwXFlatParagraphIterator::getFirstPara()
     throw( uno::RuntimeException )
@@ -406,15 +427,6 @@ uno::Reference< text::XFlatParagraph > SwXFlatParagraphIterator::getNextPara()
         m_aFlatParaList.insert( xRet );
     }
 
-    // in case that grammar checking will be finished we now have to reset
-    // the flag at the root frame that indicated grammar checking was still active.
-    if (!xRet.is() && mnType == text::TextMarkupType::PROOFREADING)
-    {
-        SwRootFrm *pRootFrm = mpDoc? mpDoc->GetRootFrm() : NULL;
-        if (pRootFrm)
-            pRootFrm->SetGrammarCheckActive( false );
-    }    
-
     return xRet;
 }
 
@@ -428,13 +440,14 @@ uno::Reference< text::XFlatParagraph > SwXFlatParagraphIterator::getParaAfter(co
     throw ( uno::RuntimeException, lang::IllegalArgumentException )
 {
     vos::OGuard aGuard(Application::GetSolarMutex());
-    
+
     uno::Reference< text::XFlatParagraph > xRet;
     if (!mpDoc)
         return xRet;
 
-    text::XFlatParagraph* pFP = xPara.get();
-    SwXFlatParagraph* pFlatParagraph = static_cast<SwXFlatParagraph*>(pFP);
+    const uno::Reference<lang::XUnoTunnel> xFPTunnel(xPara, uno::UNO_QUERY);
+    OSL_ASSERT(xFPTunnel.is());
+    SwXFlatParagraph* const pFlatParagraph(sw::UnoTunnelGetImplementation<SwXFlatParagraph>(xFPTunnel));
 
     if ( !pFlatParagraph )
         return xRet;
@@ -474,13 +487,14 @@ uno::Reference< text::XFlatParagraph > SwXFlatParagraphIterator::getParaBefore(c
     throw ( uno::RuntimeException, lang::IllegalArgumentException )
 {
     vos::OGuard aGuard(Application::GetSolarMutex());
-    
+
     uno::Reference< text::XFlatParagraph > xRet;
     if (!mpDoc)
         return xRet;
-    
-    text::XFlatParagraph* pFP = xPara.get();
-    SwXFlatParagraph* pFlatParagraph = static_cast<SwXFlatParagraph*>(pFP);
+
+    const uno::Reference<lang::XUnoTunnel> xFPTunnel(xPara, uno::UNO_QUERY);
+    OSL_ASSERT(xFPTunnel.is());
+    SwXFlatParagraph* const pFlatParagraph(sw::UnoTunnelGetImplementation<SwXFlatParagraph>(xFPTunnel));
 
     if ( !pFlatParagraph )
         return xRet;
@@ -515,4 +529,3 @@ uno::Reference< text::XFlatParagraph > SwXFlatParagraphIterator::getParaBefore(c
 
     return xRet;
 }
-

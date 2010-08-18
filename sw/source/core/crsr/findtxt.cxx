@@ -1,13 +1,10 @@
 /*************************************************************************
  *
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
- * 
- * Copyright 2008 by Sun Microsystems, Inc.
+ *
+ * Copyright 2000, 2010 Oracle and/or its affiliates.
  *
  * OpenOffice.org - a multi-platform office productivity suite
- *
- * $RCSfile: findtxt.cxx,v $
- * $Revision: 1.24 $
  *
  * This file is part of OpenOffice.org.
  *
@@ -37,7 +34,7 @@
 
 #define _SVSTDARR_USHORTS
 #define _SVSTDARR_ULONGS
-#include <svtools/svstdarr.hxx>
+#include <svl/svstdarr.hxx>
 #include <vcl/svapp.hxx>
 #include <txatritr.hxx>
 #include <fldbas.hxx>
@@ -51,13 +48,10 @@
 #include <swundo.hxx>
 #include <breakit.hxx>
 
-/*testarea*/
 #include <docsh.hxx>
 #include <PostItMgr.hxx>
 #include <viewsh.hxx>
 #include <vcl/window.hxx>
-
-#define POSTITMGR ((ViewShell*)pNode->GetDoc()->GetDocShell()->GetWrtShell())->GetPostItMgr()
 
 using namespace ::com::sun::star;
 using namespace util;
@@ -90,7 +84,7 @@ String& lcl_CleanStr( const SwTxtNode& rNd, xub_StrLen nStart,
                          STRING_LEN;
 
         if ( bNewSoftHyphen )
-            nSoftHyphen = bRemoveSoftHyphen ? 
+            nSoftHyphen = bRemoveSoftHyphen ?
                           rNd.GetTxt().Search( CHAR_SOFTHYPHEN, nSoftHyphen ) :
                           STRING_LEN;
 
@@ -126,7 +120,7 @@ String& lcl_CleanStr( const SwTxtNode& rNd, xub_StrLen nStart,
         if ( bNewHint )
         {
             const SwTxtAttr* pHt = (*pHts)[n];
-            if ( !pHt->GetEnd() && nStt >= nStart )
+            if ( pHt->HasDummyChar() && (nStt >= nStart) )
             {
                 //JP 17.05.00: Task 75806 ask for ">=" and not for ">"
                    switch( pHt->Which() )
@@ -136,7 +130,9 @@ String& lcl_CleanStr( const SwTxtNode& rNd, xub_StrLen nStart,
                    case RES_TXTATR_FIELD:
                 case RES_TXTATR_REFMARK:
                    case RES_TXTATR_TOXMARK:
-                       {
+                case RES_TXTATR_META:
+                case RES_TXTATR_METAFIELD:
+                    {
                         // JP 06.05.98: mit Bug 50100 werden sie als Trenner erwuenscht und nicht
                         //				mehr zum Wort dazu gehoerend.
                         // MA 23.06.98: mit Bug 51215 sollen sie konsequenterweise auch am
@@ -146,7 +142,9 @@ String& lcl_CleanStr( const SwTxtNode& rNd, xub_StrLen nStart,
                         //				Fuer das Ende merken wir uns die Ersetzungen und entferenen
                         //				hinterher alle am Stringende (koenten ja 'normale' 0x7f drinstehen
                            BOOL bEmpty = RES_TXTATR_FIELD != pHt->Which() ||
-                            !((SwTxtFld*)pHt)->GetFld().GetFld()->Expand().Len();
+                            !(static_cast<SwTxtFld const*>(pHt)
+                                ->GetFld().GetFld()->ExpandField(
+                                    rNd.GetDoc()->IsClipBoard()).Len());
                         if ( bEmpty && nStart == nAkt )
                            {
                             rArr.Insert( nAkt, rArr.Count() );
@@ -161,9 +159,6 @@ String& lcl_CleanStr( const SwTxtNode& rNd, xub_StrLen nStart,
                            }
                        }
                        break;
-                   case RES_TXTATR_HARDBLANK:
-                    rRet.SetChar( nAkt, ((SwTxtHardBlank*)pHt)->GetChar() );
-                    break;
                    default:
                     ASSERT( false, "unknown case in lcl_CleanStr" )
                     break;
@@ -206,7 +201,7 @@ xub_StrLen GetPostIt(xub_StrLen aCount,const SwpHints *pHts)
         {
             aIndex++;
             const SwTxtAttr* pTxtAttr = (*pHts)[i];
-            if ( (pTxtAttr->Which()==RES_TXTATR_FIELD) && 
+            if ( (pTxtAttr->Which()==RES_TXTATR_FIELD) &&
                     (pTxtAttr->GetFld().GetFld()->Which()==RES_POSTITFLD))
             {
                 aCount--;
@@ -219,12 +214,12 @@ xub_StrLen GetPostIt(xub_StrLen aCount,const SwpHints *pHts)
     for (xub_StrLen i = aIndex; i <pHts->Count();i++)
     {
         const SwTxtAttr* pTxtAttr = (*pHts)[i];
-        if ( (pTxtAttr->Which()==RES_TXTATR_FIELD) && 
+        if ( (pTxtAttr->Which()==RES_TXTATR_FIELD) &&
                 (pTxtAttr->GetFld().GetFld()->Which()==RES_POSTITFLD))
             break;
         else
             aIndex++;
-    }	
+    }
     return aIndex;
 }
 
@@ -309,12 +304,12 @@ BYTE SwPaM::Find( const SearchOptions& rSearchOpt, BOOL bSearchInNotes , utl::Te
                     nEnde = nStart;
                     nStart = swap;
                 }
-                
+
                 for (xub_StrLen i = 0; i <pHts->Count();i++)
                 {
                     xub_StrLen aPos = *(*pHts)[i]->GetStart();
                     const SwTxtAttr* pTxtAttr = (*pHts)[i];
-                    if ( (pTxtAttr->Which()==RES_TXTATR_FIELD) && 
+                    if ( (pTxtAttr->Which()==RES_TXTATR_FIELD) &&
                                 (pTxtAttr->GetFld().GetFld()->Which()==RES_POSTITFLD))
                     {
                         if ( (aPos >= nStart) && (aPos <= nEnde) )
@@ -326,7 +321,7 @@ BYTE SwPaM::Find( const SearchOptions& rSearchOpt, BOOL bSearchInNotes , utl::Te
                         }
                     }
                 }
-                
+
                 if (!bSrchForward)
                 {
                     xub_StrLen swap = nEnde;
@@ -335,10 +330,14 @@ BYTE SwPaM::Find( const SearchOptions& rSearchOpt, BOOL bSearchInNotes , utl::Te
                 }
 
             }
-            
+
+            SwDocShell *const pDocShell = pNode->GetDoc()->GetDocShell();
+            ViewShell *const pWrtShell = (pDocShell) ? (ViewShell*)(pDocShell->GetWrtShell()) : 0;
+            SwPostItMgr *const pPostItMgr = (pWrtShell) ? pWrtShell->GetPostItMgr() : 0;
+
             xub_StrLen aStart = 0;
-            // do we need to finish a note? 
-            if (POSTITMGR->GetActivePostIt())
+            // do we need to finish a note?
+            if (pPostItMgr && pPostItMgr->HasActiveSidebarWin())
             {
                 if (bSearchInNotes)
                 {
@@ -350,7 +349,7 @@ BYTE SwPaM::Find( const SearchOptions& rSearchOpt, BOOL bSearchInNotes , utl::Te
                             --aNumberPostits;
                     }
                     //search inside and finsih and put focus back into the doc
-                    if (POSTITMGR->FinishSearchReplace(rSearchOpt,bSrchForward))
+                    if (pPostItMgr->FinishSearchReplace(rSearchOpt,bSrchForward))
                     {
                         bFound = true ;
                         break;
@@ -358,7 +357,7 @@ BYTE SwPaM::Find( const SearchOptions& rSearchOpt, BOOL bSearchInNotes , utl::Te
                 }
                 else
                 {
-                    POSTITMGR->SetActivePostIt(0);
+                    pPostItMgr->SetActiveSidebarWin(0);
                 }
             }
 
@@ -368,9 +367,9 @@ BYTE SwPaM::Find( const SearchOptions& rSearchOpt, BOOL bSearchInNotes , utl::Te
                 xub_StrLen nStartInside = 0;
                 xub_StrLen nEndeInside = 0;
                 sal_Int16 aLoop= bSrchForward ? aStart : aNumberPostits;
-                
+
                 while ( (aLoop>=0) && (aLoop<=aNumberPostits))
-                {	
+                {
                     if (bSrchForward)
                     {
                         nStartInside =  aLoop==0 ? nStart : *(*pHts)[GetPostIt(aLoop+aIgnore-1,pHts)]->GetStart()+1;
@@ -394,14 +393,14 @@ BYTE SwPaM::Find( const SearchOptions& rSearchOpt, BOOL bSearchInNotes , utl::Te
                         if ( (bSrchForward && (GetPostIt(aLoop + aIgnore,pHts) < pHts->Count()) ) || ( !bSrchForward && (aLoop!=0) ))
                         {
                             const SwTxtAttr* pTxtAttr = bSrchForward ?  (*pHts)[GetPostIt(aLoop+aIgnore,pHts)] : (*pHts)[GetPostIt(aLoop+aIgnore-1,pHts)];
-                            if ( POSTITMGR->SearchReplace(((SwTxtFld*)pTxtAttr)->GetFld(),rSearchOpt,bSrchForward) )
+                            if ( pPostItMgr && pPostItMgr->SearchReplace(((SwTxtFld*)pTxtAttr)->GetFld(),rSearchOpt,bSrchForward) )
                             {
                                 bFound = true ;
                                 break;
                             }
                         }
                     }
-                    aLoop = bSrchForward ? aLoop+1 : aLoop-1;						
+                    aLoop = bSrchForward ? aLoop+1 : aLoop-1;
                 }
             }
             else
@@ -442,8 +441,8 @@ bool SwPaM::DoSearch( const SearchOptions& rSearchOpt, utl::TextSearch& rSTxt,
         if ( 1 == rSearchOpt.searchString.getLength() &&
              CHAR_SOFTHYPHEN == rSearchOpt.searchString.toChar() )
              bRemoveSoftHyphens = false;
-    }                                            
-    
+    }
+
     if( bSrchForward )
         lcl_CleanStr( *(SwTxtNode*)pNode, nStart, nEnde,
                         aFltArr, sCleanStr, bRemoveSoftHyphens );
@@ -456,7 +455,7 @@ bool SwPaM::DoSearch( const SearchOptions& rSearchOpt, utl::TextSearch& rSTxt,
     USHORT nCurrScript = 0;
 
     if ( SearchAlgorithms_APPROXIMATE == rSearchOpt.algorithmType &&
-         pBreakIt->xBreak.is() )
+         pBreakIt->GetBreakIter().is() )
     {
         pScriptIter = new SwScriptIterator( sCleanStr, nStart, bSrchForward );
         nSearchScript = pBreakIt->GetRealScriptOfText( rSearchOpt.searchString, 0 );
@@ -593,11 +592,11 @@ int SwFindParaText::Find( SwPaM* pCrsr, SwMoveFn fnMove,
     if( bFnd && bReplace )			// String ersetzen ??
     {
         // Replace-Methode vom SwDoc benutzen
-        int bRegExp = SearchAlgorithms_REGEXP == rSearchOpt.algorithmType;
+        const bool bRegExp(SearchAlgorithms_REGEXP == rSearchOpt.algorithmType);
         SwIndex& rSttCntIdx = pCrsr->Start()->nContent;
         xub_StrLen nSttCnt = rSttCntIdx.GetIndex();
         // damit die Region auch verschoben wird, in den Shell-Cursr-Ring
-        // mit aufnehmen !!	
+        // mit aufnehmen !!
         Ring *pPrev(0);
         if( bRegExp )
         {
@@ -605,12 +604,11 @@ int SwFindParaText::Find( SwPaM* pCrsr, SwMoveFn fnMove,
             ((Ring*)pRegion)->MoveRingTo( &rCursor );
         }
 
-        String *pRepl = bRegExp ? ReplaceBackReferences( rSearchOpt, pCrsr ) : 0;
-        if( pRepl )
-            rCursor.GetDoc()->Replace( *pCrsr, *pRepl, bRegExp );
-        else
-            rCursor.GetDoc()->Replace( *pCrsr, rSearchOpt.replaceString, bRegExp );
-        delete pRepl;
+        ::std::auto_ptr<String> pRepl( (bRegExp)
+                ? ReplaceBackReferences( rSearchOpt, pCrsr ) : 0 );
+        rCursor.GetDoc()->ReplaceRange( *pCrsr,
+            (pRepl.get()) ? *pRepl : String(rSearchOpt.replaceString),
+            bRegExp );
         rCursor.SaveTblBoxCntnt( pCrsr->GetPoint() );
 
         if( bRegExp )
@@ -623,7 +621,7 @@ int SwFindParaText::Find( SwPaM* pCrsr, SwMoveFn fnMove,
                 p->MoveTo( (Ring*)pRegion );
             } while( p != pPrev );
         }
-        rSttCntIdx = nSttCnt;
+        pCrsr->Start()->nContent = nSttCnt;
         return FIND_NO_RING;
     }
     return bFnd ? FIND_FOUND : FIND_NOT_FOUND;

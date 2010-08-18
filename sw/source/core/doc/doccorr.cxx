@@ -2,15 +2,12 @@
  *
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
  * 
- * Copyright 2008 by Sun Microsystems, Inc.
+ * Copyright 2000, 2010 Oracle and/or its affiliates.
  *
  * OpenOffice.org - a multi-platform office productivity suite
  *
- * $RCSfile: doccorr.cxx,v $
- * $Revision: 1.13 $
- *
  * This file is part of OpenOffice.org.
- *	
+ *
  * OpenOffice.org is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License version 3
  * only, as published by the Free Software Foundation.
@@ -183,7 +180,8 @@ void PaMCorrAbs( const SwNodeIndex &rOldNode,
                 lcl_PaMCorrAbs1( PCURCRSR, pOldNode, aNewPos, nOffset );
             FOREACHPAM_END()
 
-            SwUnoTableCrsr* pUnoTblCrsr = (SwUnoTableCrsr*)*rTbl[ n ];
+            SwUnoTableCrsr* pUnoTblCrsr =
+                dynamic_cast<SwUnoTableCrsr*>(rTbl[ n ]);
             if( pUnoTblCrsr )
             {
                 FOREACHPAM_START( &pUnoTblCrsr->GetSelRing() )
@@ -245,7 +243,8 @@ void PaMCorrAbs( const SwNodeIndex &rStartNode,
                 bChange |= lcl_PaMCorrAbs2(PCURCRSR, aNewPos, nSttNode, nEndNode);
             FOREACHPAM_END()
 
-            SwUnoTableCrsr* pUnoTblCrsr = (SwUnoTableCrsr*)*pUnoCursor;
+            SwUnoTableCrsr* pUnoTblCrsr =
+                dynamic_cast<SwUnoTableCrsr*>(pUnoCursor);
             if( pUnoTblCrsr )
             {
                 FOREACHPAM_START( &pUnoTblCrsr->GetSelRing() )
@@ -303,7 +302,8 @@ void PaMCorrAbs( const SwPaM& rRange,
                 lcl_PaMCorrAbs3( PCURCRSR, aStart, aEnd, aNewPos );
             FOREACHPAM_END()
 
-            SwUnoTableCrsr* pUnoTblCrsr = (SwUnoTableCrsr*)*rTbl[ n ];
+            SwUnoTableCrsr* pUnoTblCrsr =
+                dynamic_cast<SwUnoTableCrsr*>(rTbl[ n ]);
             if( pUnoTblCrsr )
             {
                 FOREACHPAM_START( &pUnoTblCrsr->GetSelRing() )
@@ -402,7 +402,8 @@ void PaMCorrRel( const SwNodeIndex &rOldNode,
                 lcl_PaMCorrRel1( PCURCRSR, pOldNode, aNewPos, nCntIdx );
             FOREACHPAM_END()
 
-            SwUnoTableCrsr* pUnoTblCrsr = (SwUnoTableCrsr*)*rTbl[ n ];
+            SwUnoTableCrsr* pUnoTblCrsr =
+                dynamic_cast<SwUnoTableCrsr*>(rTbl[ n ]);
             if( pUnoTblCrsr )
             {
                 FOREACHPAM_START( &pUnoTblCrsr->GetSelRing() )

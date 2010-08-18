@@ -2,12 +2,9 @@
  *
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
  * 
- * Copyright 2008 by Sun Microsystems, Inc.
+ * Copyright 2000, 2010 Oracle and/or its affiliates.
  *
  * OpenOffice.org - a multi-platform office productivity suite
- *
- * $RCSfile: undo.hrc,v $
- * $Revision: 1.6 $
  *
  * This file is part of OpenOffice.org.
  *
@@ -126,14 +123,14 @@
 #define STR_UNDO_SETFLYFRMFMT 	(CORE_REPEAT_END      +39)
 #define STR_UNDO_SETRUBYATTR	(CORE_REPEAT_END      +40)
 // #102505#
-#define STR_UNDO_TMPAUTOCORR 		(CORE_REPEAT_END      +41) 
+#define STR_UNDO_TMPAUTOCORR 		(CORE_REPEAT_END      +41)
 
 #define STR_TOXCHANGE		        (CORE_REPEAT_END      +42)
 #define STR_UNDO_PAGEDESC_CREATE    (CORE_REPEAT_END      +43)
 #define STR_UNDO_PAGEDESC    	    (CORE_REPEAT_END      +44)
 #define STR_UNDO_PAGEDESC_DELETE	(CORE_REPEAT_END      +45)
-#define STR_UNDO_HEADER_FOOTER		(CORE_REPEAT_END      +46) // #i7983# 
-#define STR_UNDO_FIELD      		(CORE_REPEAT_END      +47) // #111840# 
+#define STR_UNDO_HEADER_FOOTER		(CORE_REPEAT_END      +46) // #i7983#
+#define STR_UNDO_FIELD      		(CORE_REPEAT_END      +47) // #111840#
 #define STR_UNDO_TXTFMTCOL_CREATE      		(CORE_REPEAT_END      +48)
 #define STR_UNDO_TXTFMTCOL_DELETE      		(CORE_REPEAT_END      +49)
 #define STR_UNDO_TXTFMTCOL_RENAME      		(CORE_REPEAT_END      +50)
@@ -153,9 +150,11 @@
 #define STR_UNDO_ROW_DELETE                 (CORE_REPEAT_END      +64)
 #define STR_UNDO_PAGEDESC_RENAME            (CORE_REPEAT_END      +65)
 #define STR_NUMDOWN                         (CORE_REPEAT_END      +66)
+#define STR_UNDO_FLYFRMFMT_TITLE                (CORE_REPEAT_END      +67)
+#define STR_UNDO_FLYFRMFMT_DESCRITPTION         (CORE_REPEAT_END      +68)
 
 // !!!!!! umsetzen !!!!!!!!!!! umsetzen !!!!!!!!!!! umsetzen !!!!
-#define CORE_UNDO_END           STR_NUMDOWN// !!!! umsetzen !!!
+#define CORE_UNDO_END           STR_UNDO_FLYFRMFMT_DESCRITPTION// !!!! umsetzen !!!
 
 // UI-Undo Klammerungen
 #define UI_UNDO_BEGIN                   (CORE_UNDO_END + 1)
