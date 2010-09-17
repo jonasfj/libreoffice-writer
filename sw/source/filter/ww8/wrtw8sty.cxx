@@ -1,7 +1,7 @@
 /*************************************************************************
  *
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
- * 
+ *
  * Copyright 2000, 2010 Oracle and/or its affiliates.
  *
  * OpenOffice.org - a multi-platform office productivity suite
@@ -268,7 +268,7 @@ void MSWordStyles::BuildStylesTable()
         pFmt = (SwFmt*)rArr[n];
         pFmtA[ BuildGetSlot( *pFmt ) ] = pFmt;
     }
-    
+
     const SvPtrarr& rArr2 = *m_rExport.pDoc->GetTxtFmtColls();   // dann TxtFmtColls
     // das Default-TextStyle ( 0 ) wird nicht mit ausgegeben !
     for( n = 1; n < rArr2.Count(); n++ )
@@ -300,7 +300,7 @@ void WW8AttributeOutput::EndStyle()
 }
 
 void WW8AttributeOutput::StartStyle( const String& rName, bool bPapFmt, USHORT nWwBase,
-    USHORT nWwNext, USHORT nWwId, USHORT /*nId*/ )
+    USHORT nWwNext, USHORT nWwId, USHORT /*nId*/, bool bAutoUpdate )
 {
     BYTE aWW8_STD[ sizeof( WW8_STD ) ];
     BYTE* pData = aWW8_STD;
@@ -322,12 +322,12 @@ void WW8AttributeOutput::StartStyle( const String& rName, bool bPapFmt, USHORT n
 
     if( m_rWW8Export.bWrtWW8 )
     {
+        nBit16 = bAutoUpdate ? 1 : 0;  // fAutoRedef : 1
+        Set_UInt16( pData, nBit16 );
         //-------- jetzt neu:
         // ab Ver8 gibts zwei Felder mehr:
-        //UINT16    fAutoRedef : 1;    /* auto redefine style when appropriate */
         //UINT16    fHidden : 1;       /* hidden from UI? */
         //UINT16    : 14;              /* unused bits */
-        pData += sizeof( UINT16 );
     }
 
 
@@ -522,12 +522,17 @@ void MSWordStyles::OutputStyle( SwFmt* pFmt, USHORT nPos )
     {
         bool bFmtColl;
         USHORT nBase, nWwNext;
-        
+
         GetStyleData( pFmt, bFmtColl, nBase, nWwNext );
 
-        m_rExport.AttrOutput().StartStyle( pFmt->GetName(), bFmtColl,
-                nBase, nWwNext, GetWWId( *pFmt ), nPos );
-        
+        String aName = pFmt->GetName();
+        if ( aName.EqualsAscii( "Default" ) )
+            aName = String::CreateFromAscii( "Normal" );
+
+        m_rExport.AttrOutput().StartStyle( aName, bFmtColl,
+                nBase, nWwNext, GetWWId( *pFmt ), nPos,
+                pFmt->IsAutoUpdateFmt() );
+
         if ( bFmtColl )
             WriteProperties( pFmt, true, nPos, nBase==0xfff );           // UPX.papx
 
@@ -1148,7 +1153,7 @@ void MSWordSections::SetFooterFlag( BYTE& rHeadFootFlags, const SwFmt& rFmt,
 }
 
 void WW8_WrPlcSepx::OutHeaderFooter( WW8Export& rWrt, bool bHeader,
-                     const SwFmt& rFmt, ULONG& rCpPos, BYTE nHFFlags, 
+                     const SwFmt& rFmt, ULONG& rCpPos, BYTE nHFFlags,
                      BYTE nFlag,  BYTE nBreakCode)
 {
     if ( nFlag & nHFFlags )
@@ -1477,10 +1482,10 @@ void MSWordExportBase::SectionProperties( const WW8_SepInfo& rSepInfo, WW8_PdAtt
         pPd = &const_cast<const SwDoc *>( pDoc )->GetPageDesc( 0 );
 
     pAktPageDesc = pPd;
-    
+
     if ( !pPd )
         return;
-    
+
     bool bOldPg = bOutPageDescs;
     bOutPageDescs = true;
 
@@ -1834,7 +1839,7 @@ void MSWordExportBase::WriteHeaderFooterText( const SwFmt& rFmt, bool bHeader )
         ASSERT( rFt.GetFooterFmt(), "Footer text is not here" );
         pCntnt = &rFt.GetFooterFmt()->GetCntnt();
     }
-    
+
     const SwNodeIndex* pSttIdx = pCntnt->GetCntntIdx();
 
     if ( pSttIdx )
