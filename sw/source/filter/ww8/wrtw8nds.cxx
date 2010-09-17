@@ -1,7 +1,7 @@
 /*************************************************************************
  *
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
- * 
+ *
  * Copyright 2000, 2010 Oracle and/or its affiliates.
  *
  * OpenOffice.org - a multi-platform office productivity suite
@@ -337,7 +337,7 @@ xub_StrLen SwAttrIter::SearchNext( xub_StrLen nStartPos )
     xub_StrLen pos = lcl_getMinPos( fieldEndPos, fieldStartPos );
     pos = lcl_getMinPos( pos, formElementPos );
 
-    if (pos!=STRING_NOTFOUND)  
+    if (pos!=STRING_NOTFOUND)
         nMinPos=pos;
 
     // first the redline, then the attributes
@@ -894,7 +894,7 @@ bool WW8AttributeOutput::AnalyzeURL( const String& rUrl, const String& rTarget, 
 
     if ( sMark.Len() )
         ( ( sURL.APPEND_CONST_ASC( " \\l \"" ) ) += sMark ) += '\"';
-    
+
     if ( rTarget.Len() )
         ( sURL.APPEND_CONST_ASC( " \\n " ) ) += rTarget;
 
@@ -1344,10 +1344,10 @@ short MSWordExportBase::GetDefaultFrameDirection( ) const
         else if ( pOutFmtNode->ISA( SwTxtFmtColl ) )
             nDir = FRMDIR_HORI_LEFT_TOP;    //what else can we do :-(
     }
-    
+
     if ( nDir == FRMDIR_ENVIRONMENT )
         nDir = FRMDIR_HORI_LEFT_TOP;        //Set something
-    
+
     return nDir;
 }
 
@@ -1597,12 +1597,12 @@ void WW8AttributeOutput::FormatDrop( const SwTxtNode& rNode, const SwFmtDrop &rS
     m_rWW8Export.WriteCR( pTextNodeInfoInner );
 
     if ( pTextNodeInfo.get() != NULL )
-    { 
-#ifdef DEBUG            
+    {
+#ifdef DEBUG
         ::std::clog << pTextNodeInfo->toString() << ::std::endl;
 #endif
 
-        TableInfoCell( pTextNodeInfoInner );        
+        TableInfoCell( pTextNodeInfoInner );
     }
 
     m_rWW8Export.pPapPlc->AppendFkpEntry( m_rWW8Export.Strm().Tell(), m_rWW8Export.pO->Count(), m_rWW8Export.pO->GetData() );
@@ -1646,14 +1646,127 @@ void WW8AttributeOutput::FormatDrop( const SwTxtNode& rNode, const SwFmtDrop &rS
     m_rWW8Export.pO->Remove( 0, m_rWW8Export.pO->Count() );
 }
 
-xub_StrLen MSWordExportBase::GetNextPos( SwAttrIter* aAttrIter, const SwTxtNode& /*rNode*/, xub_StrLen /*nAktPos*/  )
+xub_StrLen MSWordExportBase::GetNextPos( SwAttrIter* aAttrIter, const SwTxtNode& rNode, xub_StrLen nAktPos  )
 {
-   return aAttrIter->WhereNext();
+    // Get the bookmarks for the normal run
+    xub_StrLen nNextPos = aAttrIter->WhereNext();
+
+    GetSortedBookmarks( rNode, nAktPos, nNextPos - nAktPos );
+
+    xub_StrLen nNextBookmark = nNextPos;
+    NearestBookmark( nNextPos );
+
+    return std::min( nNextPos, nNextBookmark );
 }
 
-void MSWordExportBase::UpdatePosition( SwAttrIter* aAttrIter, xub_StrLen /*nAktPos*/, xub_StrLen /*nEnd*/ )
+void MSWordExportBase::UpdatePosition( SwAttrIter* aAttrIter, xub_StrLen nAktPos, xub_StrLen /*nEnd*/ )
 {
-    aAttrIter->NextPos();
+    xub_StrLen nNextPos;
+
+    // either no bookmark, or it is not at the current position
+    if ( !NearestBookmark( nNextPos ) || nNextPos > nAktPos )
+        aAttrIter->NextPos();
+}
+
+bool MSWordExportBase::GetBookmarks( const SwTxtNode& rNd, xub_StrLen nStt,
+                    xub_StrLen nEnd, IMarkVector& rArr )
+{
+    IDocumentMarkAccess* const pMarkAccess = pDoc->getIDocumentMarkAccess();
+    ULONG nNd = rNd.GetIndex( );
+
+    const sal_Int32 nMarks = pMarkAccess->getMarksCount();
+    for ( sal_Int32 i = 0; i < nMarks; i++ )
+    {
+        IMark* pMark = ( pMarkAccess->getMarksBegin() + i )->get();
+
+        // Only keep the bookmarks starting or ending in this node
+        if ( pMark->GetMarkStart().nNode == nNd ||
+             pMark->GetMarkEnd().nNode == nNd )
+        {
+            xub_StrLen nBStart = pMark->GetMarkStart().nContent.GetIndex();
+            xub_StrLen nBEnd = pMark->GetMarkEnd().nContent.GetIndex();
+
+            // Keep only the bookmars starting or ending in the snippet
+            bool bIsStartOk = ( nBStart >= nStt ) && ( nBStart <= nEnd );
+            bool bIsEndOk = ( nBEnd >= nStt ) && ( nBEnd <= nEnd );
+
+            if ( bIsStartOk || bIsEndOk )
+                rArr.push_back( pMark );
+        }
+    }
+    return ( rArr.size() > 0 );
+}
+
+class CompareMarksEnd : public std::binary_function < const IMark *, const IMark *, bool >
+{
+public:
+    inline bool operator() ( const IMark * pOneB, const IMark * pTwoB ) const
+    {
+        xub_StrLen nOEnd = pOneB->GetMarkEnd().nContent.GetIndex();
+        xub_StrLen nTEnd = pTwoB->GetMarkEnd().nContent.GetIndex();
+
+        return nOEnd < nTEnd;
+    }
+};
+
+bool MSWordExportBase::NearestBookmark( xub_StrLen& rNearest )
+{
+    bool bHasBookmark = false;
+
+    if ( m_rSortedMarksStart.size( ) > 0 )
+    {
+        IMark* pMarkStart = m_rSortedMarksStart.front();
+        rNearest = pMarkStart->GetMarkStart().nContent.GetIndex();
+        bHasBookmark = true;
+    }
+
+    if ( m_rSortedMarksEnd.size( ) > 0 )
+    {
+        IMark* pMarkEnd = m_rSortedMarksEnd[0];
+        if ( !bHasBookmark )
+            rNearest = pMarkEnd->GetMarkEnd().nContent.GetIndex();
+        else
+            rNearest = std::min( rNearest, pMarkEnd->GetMarkEnd().nContent.GetIndex() );
+        bHasBookmark = true;
+    }
+
+    return bHasBookmark;
+}
+
+void MSWordExportBase::GetSortedBookmarks( const SwTxtNode& rNode, xub_StrLen nAktPos, xub_StrLen nLen )
+{
+    IMarkVector aMarksStart;
+    if ( GetBookmarks( rNode, nAktPos, nAktPos + nLen, aMarksStart ) )
+    {
+        IMarkVector aSortedEnd;
+        IMarkVector aSortedStart;
+        for ( IMarkVector::const_iterator it = aMarksStart.begin(), end = aMarksStart.end();
+              it < end; ++it )
+        {
+            IMark* pMark = (*it);
+
+            // Remove the positions egals to the current pos
+            xub_StrLen nStart = pMark->GetMarkStart().nContent.GetIndex();
+            xub_StrLen nEnd = pMark->GetMarkEnd().nContent.GetIndex();
+
+            if ( nStart > nAktPos )
+                aSortedStart.push_back( pMark );
+
+            if ( nEnd > nAktPos )
+                aSortedEnd.push_back( pMark );
+        }
+
+        // Sort the bookmarks by end position
+        std::sort( aSortedEnd.begin(), aSortedEnd.end(), CompareMarksEnd() );
+
+        m_rSortedMarksStart.swap( aSortedStart );
+        m_rSortedMarksEnd.swap( aSortedEnd );
+    }
+    else
+    {
+        m_rSortedMarksStart.clear( );
+        m_rSortedMarksEnd.clear( );
+    }
 }
 
 void MSWordExportBase::OutputTextNode( const SwTxtNode& rNode )
@@ -1834,7 +1947,7 @@ void MSWordExportBase::OutputTextNode( const SwTxtNode& rNode )
                 }
             }
         }
-        
+
         // Output the character attributes
         AttrOutput().StartRunProperties();
         aAttrIter.OutAttr( nAktPos );   // nAktPos - 1 ??
@@ -1887,7 +2000,7 @@ void MSWordExportBase::OutputTextNode( const SwTxtNode& rNode )
     while ( nAktPos < nEnd );
 
     AttrOutput().StartParagraphProperties( rNode );
-    
+
     AttrOutput().ParagraphStyle( nStyle );
 
     if ( mpParentFrame && !bIsInTable )    // Fly-Attrs
@@ -1903,7 +2016,7 @@ void MSWordExportBase::OutputTextNode( const SwTxtNode& rNode )
         if (pTextNodeInfoInner->isFirstInTable())
         {
             const SwTable * pTable = pTextNodeInfoInner->getTable();
-            const SwTableFmt * pTabFmt = 
+            const SwTableFmt * pTabFmt =
                 dynamic_cast<const SwTableFmt *>(pTable->GetRegisteredIn());
             if (pTabFmt != NULL)
             {
@@ -1911,8 +2024,8 @@ void MSWordExportBase::OutputTextNode( const SwTxtNode& rNode )
                     AttrOutput().PageBreakBefore(true);
             }
         }
-    } 
-    
+    }
+
     if ( !bFlyInTable )
     {
         SfxItemSet* pTmpSet = 0;

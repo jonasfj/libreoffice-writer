@@ -1,7 +1,7 @@
 /*************************************************************************
  *
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
- * 
+ *
  * Copyright 2000, 2010 Oracle and/or its affiliates.
  *
  * OpenOffice.org - a multi-platform office productivity suite
@@ -35,6 +35,7 @@
 #define _SVSTDARR_ULONGS
 #include <svl/svstdarr.hxx>
 #endif
+#include <editeng/editdata.hxx>
 
 #include <map>
 #include <vector>
@@ -55,6 +56,7 @@
 class SwAttrIter;
 class AttributeOutputBase;
 class DocxAttributeOutput;
+class RtfAttributeOutput;
 class BitmapPalette;
 class SwEscherEx;
 class DateTime;
@@ -254,7 +256,7 @@ private:
     void WriteFtnEndTxt( WW8Export& rWrt, ULONG nCpStt );
 public:
     void OutHeaderFooter(WW8Export& rWrt, bool bHeader,
-            const SwFmt& rFmt, ULONG& rCpPos, BYTE nHFFlags, BYTE nFlag,  BYTE nBreakCode); 
+            const SwFmt& rFmt, ULONG& rCpPos, BYTE nHFFlags, BYTE nFlag,  BYTE nBreakCode);
 };
 
 //--------------------------------------------------------------------------
@@ -294,6 +296,7 @@ public:
         rtl_TextEncoding eChrSet, bool bWrtWW8 );
     bool Write( SvStream *pTableStram ) const;
     void WriteDocx( const DocxAttributeOutput* rAttrOutput ) const;
+    void WriteRtf( const RtfAttributeOutput* rAttrOutput ) const;
     rtl::OUString GetFamilyName() const { return rtl::OUString( msFamilyNm ); }
     friend bool operator < (const wwFont &r1, const wwFont &r2);
 };
@@ -309,7 +312,7 @@ private:
     ::std::vector< const wwFont* > AsVector() const;
 
 public:
-    wwFontHelper() : mbWrtWW8(false) {}
+    wwFontHelper() : mbWrtWW8(false), bLoadAllFonts(false) {}
     /// rDoc used only to get the initial standard font(s) in use.
     void InitFontTable(bool bWrtWW8, const SwDoc& rDoc);
     USHORT GetId(const Font& rFont);
@@ -317,6 +320,10 @@ public:
     USHORT GetId(const wwFont& rFont);
     void WriteFontTable( SvStream *pTableStream, WW8Fib& pFib );
     void WriteFontTable( const DocxAttributeOutput& rAttrOutput );
+    void WriteFontTable( const RtfAttributeOutput& rAttrOutput );
+
+    /// If true, all fonts are loaded before processing the document.
+    BYTE bLoadAllFonts: 1;
 };
 
 class DrawObj
@@ -535,12 +542,18 @@ public:
     BYTE bEndAtTxtEnd : 1;      // true: all END at Textend
     BYTE bHasHdr : 1;
     BYTE bHasFtr : 1;
+    BYTE bSubstituteBullets : 1; // true: SubstituteBullet() gets called
 
     SwDoc *pDoc;
     SwPaM *pCurPam, *pOrigPam;
 
     /// Stack to remember the nesting (see MSWordSaveData for more)
     ::std::stack< MSWordSaveData > maSaveData;
+
+    /// Used to split the runs according to the bookmarks start and ends
+    typedef std::vector< ::sw::mark::IMark* > IMarkVector;
+    IMarkVector m_rSortedMarksStart;
+    IMarkVector m_rSortedMarksEnd;
 
 public:
     /// The main function to export the document.
@@ -565,9 +578,9 @@ public:
 
     /// Return the numeric id of the style.
     USHORT GetId( const SwCharFmt& rFmt ) const;
-    
+
     USHORT GetId( const SwTOXType& rTOXType );
-    
+
     const SfxPoolItem& GetItem( USHORT nWhich ) const;
 
     /// Find the reference.
@@ -648,7 +661,7 @@ public:
     /// The return value indicates, if a follow page desc is written.
     bool OutputFollowPageDesc( const SfxItemSet* pSet,
                                const SwTxtNode* pNd );
-    
+
     /// Write header/footer text.
     void WriteHeaderFooterText( const SwFmt& rFmt, bool bHeader);
 
@@ -671,7 +684,7 @@ public:
 
     /// Write static data of SwNumRule - LSTF
     void NumberingDefinitions();
-    
+
     /// Write all Levels for all SwNumRules - LVLF
     void AbstractNumberingDefinitions();
 
@@ -703,7 +716,7 @@ public:
     /// Write the data of the form field
     virtual void WriteFormData( const ::sw::mark::IFieldmark& rFieldmark ) = 0;
     virtual void WriteHyperlinkData( const ::sw::mark::IFieldmark& rFieldmark ) = 0;
-    
+
     virtual void DoComboBox(const rtl::OUString &rName,
                     const rtl::OUString &rHelp,
                     const rtl::OUString &ToolTip,
@@ -749,7 +762,7 @@ protected:
     bool FmtHdFtContainsChapterField(const SwFrmFmt &rFmt) const;
 
     virtual void SectionBreaksAndFrames( const SwTxtNode& rNode ) = 0;
-    
+
     virtual void PrepareNewPageDesc( const SfxItemSet* pSet,
                                      const SwNode& rNd,
                                      const SwFmtPageDesc* pNewPgDescFmt = 0,
@@ -780,7 +793,18 @@ protected:
     ///
     /// One of OutputTextNode(), OutputGrfNode(), or OutputOLENode()
     void OutputContentNode( const SwCntntNode& );
-    
+
+    /// Find the nearest bookmark from the current position.
+    ///
+    /// Returns false when there is no bookmark.
+    bool NearestBookmark( xub_StrLen& rNearest );
+
+    void GetSortedBookmarks( const SwTxtNode& rNd, xub_StrLen nAktPos,
+                xub_StrLen nLen );
+
+    bool GetBookmarks( const SwTxtNode& rNd, xub_StrLen nStt, xub_StrLen nEnd,
+            IMarkVector& rArr );
+
 public:
     MSWordExportBase( SwDoc *pDocument, SwPaM *pCurrentPam, SwPaM *pOriginalPam );
     virtual ~MSWordExportBase();
@@ -984,7 +1008,7 @@ public:
 
     void WriteAsStringTable(const ::std::vector<String>&, INT32& rfcSttbf,
         INT32& rlcbSttbf, USHORT nExtraLen = 0);
-    
+
     virtual ULONG ReplaceCr( BYTE nChar );
 
     virtual void WriteCR( ww8::WW8TableNodeInfoInner::Pointer_t pTableTextNodeInfoInner = ww8::WW8TableNodeInfoInner::Pointer_t() );
@@ -1098,7 +1122,7 @@ protected:
 
     /// Output SwOLENode
     virtual void OutputOLENode( const SwOLENode& );
-    
+
     virtual void AppendSection( const SwPageDesc *pPageDesc, const SwSectionFmt* pFmt, ULONG nLnNum );
 
 private:
@@ -1346,6 +1370,47 @@ public:
     virtual const SfxPoolItem& GetItem( USHORT nWhich ) const = 0;
 };
 
+class MSWord_SdrAttrIter : public MSWordAttrIter
+{
+private:
+    const EditTextObject* pEditObj;
+    const SfxItemPool* pEditPool;
+    EECharAttribArray aTxtAtrArr;
+    SvPtrarr aChrTxtAtrArr;
+    SvUShorts aChrSetArr;
+    USHORT nPara;
+    xub_StrLen nAktSwPos;
+    xub_StrLen nTmpSwPos;                   // for HasItem()
+    rtl_TextEncoding eNdChrSet;
+    USHORT nScript;
+    BYTE mnTyp;
+
+    xub_StrLen SearchNext( xub_StrLen nStartPos );
+    void SetCharSet(const EECharAttrib& rTxtAttr, bool bStart);
+
+    //No copying
+    MSWord_SdrAttrIter(const MSWord_SdrAttrIter&);
+    MSWord_SdrAttrIter& operator=(const MSWord_SdrAttrIter&);
+public:
+    MSWord_SdrAttrIter( MSWordExportBase& rWr, const EditTextObject& rEditObj,
+        BYTE nType );
+    void NextPara( USHORT nPar );
+    void OutParaAttr(bool bCharAttr);
+    void OutEEField(const SfxPoolItem& rHt);
+
+    bool IsTxtAttr(xub_StrLen nSwPos);
+
+    void NextPos() { nAktSwPos = SearchNext( nAktSwPos + 1 ); }
+
+    void OutAttr( xub_StrLen nSwPos );
+    virtual const SfxPoolItem* HasTextItem( USHORT nWhich ) const;
+    virtual const SfxPoolItem& GetItem( USHORT nWhich ) const;
+    bool OutAttrWithRange(xub_StrLen nPos);
+    xub_StrLen WhereNext() const                { return nAktSwPos; }
+    rtl_TextEncoding GetNextCharSet() const;
+    rtl_TextEncoding GetNodeCharSet() const     { return eNdChrSet; }
+};
+
 /// Class to collect and output the styles table.
 class MSWordStyles
 {
@@ -1399,11 +1464,11 @@ class WW8SHDLong
     sal_uInt32 m_cvFore;
     sal_uInt32 m_cvBack;
     sal_uInt16 m_ipat;
-    
+
 public:
     WW8SHDLong() : m_cvFore(0), m_cvBack(0), m_ipat(0) {}
     virtual ~WW8SHDLong() {}
-    
+
     void Write(WW8Export & rExport);
     void setCvFore(sal_uInt32 cvFore) { m_cvFore = cvFore; }
     void setCvBack(sal_uInt32 cvBack) { m_cvBack = cvBack; }
